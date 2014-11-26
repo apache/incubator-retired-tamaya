@@ -74,6 +74,11 @@ class BuildableEnvironment implements Environment {
     }
 
     @Override
+    public Map<String, String> toMap() {
+        return context;
+    }
+
+    @Override
     public Stage getStage(){
         return stage;
     }
