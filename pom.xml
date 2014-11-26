@@ -1,0 +1,413 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>13</version>
+    </parent>
+    <groupId>org.apache.tamaya</groupId>
+	<artifactId>tamaya-all</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Apache Tamaya</name>
+	<description>Apache Tamaya - Java Configuration</description>
+    <url>http://tamaya.incubator.apache.org</url>
+    <inceptionYear>2014</inceptionYear>
+	<organization>
+		<name>Apache Software Foundation</name>
+		<url>http://apache.org</url>
+	</organization>
+
+	
+	<properties>
+		<jdkVersion>1.8</jdkVersion>
+		<maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
+		<maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
+        <maven.compile.optimize>false</maven.compile.optimize>
+        <maven.compile.deprecation>true</maven.compile.deprecation>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<junit.version>4.8.2</junit.version>
+	</properties>
+
+    <licenses>
+        <license>
+            <name>Apache License</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </connection>
+        <developerConnection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </developerConnection>
+        <url>
+            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
+        </url>
+    </scm>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://issues.apache.org/jira/browse/TAMAYA</url>
+    </issueManagement>
+    <mailingLists>
+        <mailingList>
+            <name>Tamaya Development List</name>
+            <post>tamaya-dev@incubator.apache.org</post>
+            <subscribe>tamaya-dev-subscribe@incubator.apache.org</subscribe>
+            <unsubscribe>tamaya-dev-unsubscribe@incubator.apache.org</unsubscribe>
+            <archive>
+                http://mail-archives.apache.org/mod_mbox/incubator-tamaya-dev/
+            </archive>
+        </mailingList>
+        <mailingList>
+            <name>Tamaya Commits List</name>
+            <post>tamaya-commits@incubator.apache.org</post>
+            <subscribe>tamaya-commits-subscribe@incubator.apache.org</subscribe>
+            <unsubscribe>tamaya-commits-unsubscribe@incubator.apache.org</unsubscribe>
+            <archive>
+                http://mail-archives.apache.org/mod_mbox/incubator-tamaya-commits/
+            </archive>
+        </mailingList>
+        <mailingList>
+            <name>tamaya-private</name>
+            <subscribe>private-subscribe@tamaya.incubator.apache.org</subscribe>
+            <unsubscribe>private-unsubscribe@tamaya.incubator.apache.org</unsubscribe>
+            <post>private@tamaya.incubator.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/tamaya-private/</archive>
+        </mailingList>
+    </mailingLists>
+    <distributionManagement>
+        <repository>
+            <id>apache.releases.https</id>
+            <name>Apache Release Distribution Repository</name>
+            <url>
+                https://repository.apache.org/service/local/staging/deploy/maven2
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>apache.snapshots.https</id>
+            <name>${distMgmtSnapshotsName}</name>
+            <url>${distMgmtSnapshotsUrl}</url>
+        </snapshotRepository>
+        <site>
+            <id>apache-tamaya-website</id>
+            <name>Apache Tamaya Website</name>
+            <url>scpexe://people.apache.org/www/incubator.apache.org/tamaya</url>
+        </site>
+    </distributionManagement>
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>https://builds.apache.org/job/tamaya</url>
+    </ciManagement>
+    <developers>
+        <developer>
+            <name>Anatole Tresch</name>
+            <id>atsticks</id>
+            <email>atsticks -at- apache.org</email>
+            <roles>
+                <role>Project Lead</role>
+            </roles>
+            <timezone/>
+        </developer>
+    </developers>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctor-maven-plugin</artifactId>
+                    <version>0.1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.7.2.201409121644</version>
+                </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.1</version>
+					<configuration>
+						<debug>true</debug>
+						<optimize>${maven.compile.optimize}</optimize>
+						<source>${maven.compile.sourceLevel}</source>
+						<target>${maven.compile.targetLevel}</target>
+						<encoding>${project.build.sourceEncoding}</encoding>
+                        <showDeprecation>${maven.compile.deprecation}</showDeprecation>
+					</configuration>
+				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <inherited>true</inherited>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>surefire-report-maven-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <version>2.0-beta-1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>1.0</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>create</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <doCheck>false</doCheck>
+                        <doUpdate>false</doUpdate>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifestEntries>
+                                <Specification-Title>Apache ${project.name}</Specification-Title>
+                                <Specification-Version>${project.version}</Specification-Version>
+                                <Specification-Vendor>The Apache Software Foundation</Specification-Vendor>
+                                <Implementation-Title>${project.name}</Implementation-Title>
+                                <Implementation-Version>${project.version} ${buildNumber} - ${user.name}</Implementation-Version>
+                                <Implementation-Vendor>The Apache Software Foundation</Implementation-Vendor>
+                                <SCM-Revision>${buildNumber}</SCM-Revision>
+                                <SCM-url>${project.scm.url}</SCM-url>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.4</version>
+                    <configuration>
+                        <finalName>apache-tamaya-${project.version}</finalName>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>2.3.7</version>
+                    <inherited>true</inherited>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                    <inherited>true</inherited>
+                </plugin>
+			</plugins>
+		</pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <detectLinks>false</detectLinks>
+                    <keywords>true</keywords>
+                    <linksource>false</linksource>
+                    <failOnError>false</failOnError>
+                    <source>${maven.compile.sourceLevel}</source>
+                    <verbose>false</verbose>
+                </configuration>
+            </plugin>
+        </plugins>
+	</build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>2.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!--  apache gpg profile  -->
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <reporting>
+        <plugins>
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>project-team</report>
+                            <report>license</report>
+                            <report>mailing-list</report>
+                            <report>issue-tracking</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <notimestamp>true</notimestamp>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <detectLinks>false</detectLinks>
+                    <keywords>true</keywords>
+                    <linksource>false</linksource>
+                    <failOnError>false</failOnError>
+                    <source>${maven.compile.sourceLevel}</source>
+                    <verbose>false</verbose>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.9</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <columnNames>Type,Fix Version,Key,Summary,Assignee,Status,Created</columnNames>
+                    <maxEntries>200</maxEntries>
+                    <onlyCurrentVersion>true</onlyCurrentVersion>
+                    <resolutionIds>Fixed</resolutionIds>
+                    <statusIds>Closed,Resolved</statusIds>
+                    <sortColumnNames>Type</sortColumnNames>
+                    <useJql>true</useJql>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>jira-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+    <repositories>
+        <repository>
+            <id>org.apache.people</id>
+            <name>Apache Snapshot Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <modules>
+        <module>api</module>
+        <module>core</module>
+        <module>modules</module>
+    </modules>
+
+</project>

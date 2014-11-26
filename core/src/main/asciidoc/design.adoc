@@ -1,0 +1,1077 @@
+Configuration User Guide
+========================
+Anatole Tresch <atsticks@gmail.com>
+:Author Initials: ATR
+:source-highlighter: coderay
+:toc:
+:icons:
+:numbered:
+:website: http://tamaya.incubator.apache.org/
+
+
+<<<
+:numbered!:
+-----------------------------------------------------------
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-----------------------------------------------------------
+
+:numbered:
+
+'Apache Tamaya Core' is an implementation of the 'Apache Tamaya Config API'. The API is separated
+so also other can provide their own implementations. This document will discuss topics
+from both areas, API and this implementation, using a more general view.
+
+.This document
+**********************************************************************
+This is an overview document that describes all relevant aspects of
+this Java configuration implementation.
+
+For a shorter introduction you may check out the quick start guide
+(tbd).
+**********************************************************************
+
+
+== Introduction to Java Configuration
+
+[NOTE]
+You may also checkout the introductory blog http://javaeeconfig.blogspot.ch/[here].
+
+=== General Aspects
+
+Basically one might ask, what configuration is at all. When looking at the a computation model, where some input is
+converted to some output, configuration can be seen as some kind of control flow, which affects the transformation.
+Nevertheless configuration is not equal to the program converting input to output. Configuration is more like a
+constraint recipe that tells the program in place, what to do, but only within the boundaries of the program allows to
+be configured. Obviously, if the configuration is so powerful, that it is capable of performing any task, it is
+questionable, if this should be called 'configuration' (it may be called more a 'script' or 'recipe').
+
+So summarizing configuration should be
+
+* constrained and limited for purpose.
+* must be interpreted by some algorithmic logic
+
+== Configuration is an API
+
+Configuration is not there just for fun. With configuration your program logic defines an API, which clients interacts
+with. If you change it, you will break the contract. If you replace configuration, you must deprecated it. But things
+get worse. With code you have a compiler that flags out deprecations and will fail if pieces do not fit together
+anymore. With configuration you do not have any such tools.
+
+As a consequence, like with APIs, you must think on what should be configurable. In general, similar as when designing
+programmatic APIs, reduce your API footprint to an absolute minimum. Frankly speaking, if something is not really
+meant to be configured or very complex to configure, or even very rarely used, consider to make it non configurable
+at all. Instead of ensure the component is well encapsulated as a Java artifact, so customers still can replace it
+with their own version if needed.
+
+Configuration Types
+~~~~~~~~~~~~~~~~~~~
+When thinking on configuration types there are a couple of things that are commonly used to 'configure' a program:
+
+* command line arguments
+* environment properties
+* system properties
+* files and classpath resources, using different formats; including standardized deployment descriptors as well as
+vendor specific formats
+* databases
+* remote configuration services
+* ...
+
+This is list is for sure far from being complete. Nevertheless there are some similarities in most cases you will find:
+
+* a configuration entry is *identified by some literal key*.
+* configuration values most of the times are *literal values*.
+* configuration most of the time is *single valued*, but sometimes also *multi valued* (e.g. collections).
+* often keys use a *naming scheme* similar to package and class names (though property names are typically in lower
+case), e.g. +a.b.c.myvalue+. Hereby +myvalue+ can be defined as the 'parameter name' and +a.b.c+ can be named the
+'parameter area'.
+* theoretically configuration values (as well as keys) may be of any type. Nevertheless if we would not constrain
+anything, we are again struggling with complexity and overlapping functionality with other standards, e.g. 'CDI', are
+ the natural consequence.
+
+Configuration Building Blocks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+So given the list above configuration is not a monolithic thing. It is a composite of
+
+* different configuration 'providers'
+* different configuration 'sources'
+* 'Override and priority rules' for resolution of ambiguous entries
+* 'Filters and views' for limiting access and ensure only the information required is visible
+
+Finally composition can be made in different ways:
+
+* 'unions', rendering redundant entries to according multi-value entries.
+* 'resolving unions', where overriding and prioritization mechanism resolve the entries are visible in the composite
+configuration
+* 'extending', where only additional entries not contained in the base configuration are added, but the (redundant ones)
+ are ignored.
+* 'exclusive add', where only entries were taken up into the composite that are contained only in either of the base
+configurations, but never in both.
+* 'subtractive', where you will remove the entries from the base configuration, that are contained in the second
+configuration
+* ...
+
+Additionally configuration
+
+* may be 'static'
+* may be different 'depending' on the current runtime environment
+* or even 'mutable' to some extend (or at least updateable).
+* maybe public or may contain entries to be protected by 'security' mechanism
+
+Configuration Metadata
+~~~~~~~~~~~~~~~~~~~~~~
+Configuration meta data allows to store and provide additional data that 'describes configuration'. It can be scoped on:
+
+* to a 'complete' configuration
+* a 'partial' configuration
+a single configuration 'entry'
+
+Possible meta data could be:
+
+* the data provider
+* any additional provider settings
+* the type of data source
+* the configuration data's sensitivity
+* the configuration data owner
+* the exact source of the data, e.g. the jar file and resource path, where a classpath resource was loaded from.
+
+Configuration Locations
+~~~~~~~~~~~~~~~~~~~~~~~
+Separate Configuration from Code
+An area of discussion is sometimes if configuration must be strictly separated from code. I will not join any of the sometimes religious discussion on that, but define some rules of thumb, when I think configuration should be separated and when it should be deployed along the code.
+Configuration that is internal only, meaning it is not meant being used by clients, should always deployed with the code, basically within the same jar, if possible. This makes sense since such configuration is highly coupled to the code.
+Default configuration that may be overridden, should still be deployed along the code. This ensures the defaults are always visible, when the code is deployed (with an according configuration reading mechanism in place, e.g. that honors the same classloading boundaries). Also it is a precondition to let convention-over-configuration to work effectively.
+In next step I would think of configuration that controls the overall basic deployment setup, but still targets rather general concerns. For example configuration defining which modules are loaded, depending on the current deployment stage is such a case. Such configuration, though it may be stage specific, will not be affected by changes within the current runtime environment. I would recommend to deploy such configuration also with the application, e.g. as part of the deployed ear or war-archives. Reason is, that I tend to see configuration also as a n (optionally stage specific) default configuration.
+Finally there is configuration that targets direct deployment aspects and that may change for each single deployment, regardless if performed manually or in an automated cloud like environment. This configuration should be separated from the code, meaning independently deployed. Hereby there are several options how to achieve this:
+Deploy the files required with ssh, sftp or similar to the target node, where it can be read.
+Mount some specific area into the file system, where the files are locally visible, e.g. nfs etc.
+
+* Access configuration from a configuration server (Pull-scenario).
+* Open a connection and wait, for the configuration server to push the configuration required onto your node
+(push-scenario).
+* Add Configuration as Classpath Resources
+
+Many people tend to see configuration as files that must be deployed to the target system. Nevertheless in case of internal and default configuration (refer to the previous section for more details), deploying this configuration type as files in a separate deployment channel also creates some possible issues:
+
+* It is cumbersome if clients have to care about what additional configuration must be installed to get things running
+. They want to define the dependency on the library and start working with it. In practice this may be even worse, when different versions of the classes require different (default) configuration. Often then outdated configuration is then shipped with newer version of the component, which often end up in hard to find errors.
+* Also on the deployment side (DevOps) it makes the deployment bigger (more files to be deployed) and more complex,
+for configuration updates.
+
+Whereas when configuration is deployed as classpath resources there are some real benefits:
+* The classloader hierarchy ensures the configuration is only visible, where it should be visible. There is less risk,
+ that configuration from different deplyment levels (= class loaders) is mixed up.
+* Reading classpath resources is standard mechanism of the JDK, it is also possibly during very early points of server
+ startup or logging initialization.
+* Reading classpath resources is relatively fast and also can be secured, if necessary.
+
+But deploying configuration as classpath resources also has some disadvantages:
+* First of all, it is less transparent. Theoretically each jar in a 200 jar deployment can contain relevant
+configuration. To find all the relevant entries maybe very difficult, especially if no common configuration lookup mechanism is defined and each code, is looking up configuration at arbitrary locations.
+* Overriding may also be more complex. You can override a file deployed to some file system easily, whereas changing a
+ file contained in a jar, basically requires exchanging the whole jar (we ignore other possibilities here).
+
+Fortunately the disadvantages can be handled relatively easily by externalizing the concern of configuration reading and management into a dedicated configuration service.
+
+Using a Configuration Service
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you would let each code individually lookup the configuration you may end up in systems that hard to control because
+
+* you will have to know which code is reading and using which configuration, and have to look into the source code to
+see what is happening
+* configuration locations are scattered across your system
+* you will probably have to deal with several different formats
+
+Core Functionality
+^^^^^^^^^^^^^^^^^^
+Using a dedicated configuration service for reading and managing configuration has several advantages:
+
+* It allows to define a (or several) configuration meta model, defining
+where configuration is located (CLI arguments, system properties, environment properties, classpath, filesystem, remote resources etc).
+* how configuration can be overridden (ordering of declarations, explicit priorities and overrides etc).
+* in what format configuration must be provided (properties, XML, JSON, ...)
+* manage the configuration read, depending on the current runtime environment and
+* optimize configuration access, e.g. by caching or preloading.
+* provide hooks for listening to configuration changes (new configuration added, configuration altered or deleted)
+* also such s service can provide additional meta data about configuration and configuration entries.
+
+Extended Functionality
+^^^^^^^^^^^^^^^^^^^^^^
+As a benefit, since a configuration service controls everything happening in the area of configuration, it can provide additional services:
+
+* It can intercept configuration access to ensure security constraints
+* It can configuration access to log which code is using what kind of configuration. This can also easily be used of
+configuration evolution, e.g. by writing warning messages when deprecated parameters are read.
+* It can include additional configuration sources and locations to a configuration transparently, without having to
+change any client code.
+* a configuration service can be made remotely accessible, so it acts as a configuration server (pull scenario), or
+* it can be triggered, so it pushes configuration changes, to the according remote instances (push scenario)
+* ...
+
+Configuration Injection
+^^^^^^^^^^^^^^^^^^^^^^^
+We have seen that a configuration service can create huge benefits. Nevertheless we have to be careful to avoid a hard
+dependency on the configuration service component. This would happen, if we access all our configuration using a service
+location pattern, e.g.
+
+[source,java]
+------------------------------------------------------------
+Configuration config =
+       ConfigService.getConfiguration(MyConfigs.MainConfig);
+------------------------------------------------------------
+
+Fortunately since Java EE 6 we have CDI in place, which allows us to transparently inject things, so we might think of
+doing thinks as follows:
+
+[source,java]
+------------------------------------------------------------
+public class MyClass{
+  @Configured
+  private String userName;
+
+  @Configured
+  private int userName;
+
+  ...
+}
+------------------------------------------------------------
+
+The code snippet above does only depend on the +@Configured+ annotation. All configuration management logic is
+completely hidden.
+
+Integration with Other Services
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Basically, since 'Java Configuration' may be used ins such a variety of scenarios, it is wise to implement it
+'independently' of any other standards. This ensures it can be used within standalone SE environments, as well as in a
+Java EE context. Components that rely on configuration can basically access the Configuration service's API to
+access Configuration. In a EE context the application server can access configuration during server or application
+startup to setup the application and its corresponding (administrative) resources. All other EE modules, including CDI,
+may access configuration services to setup, thus enabling servers and applications to be deployed and configured in a
+complete dynamic way.
+
+Basic Concepts
+--------------
+
+Key-Value Paris
+~~~~~~~~~~~~~~~
+
+As explained in the introductory section, configuration is defined to be a set of literal keys, mapped to literal
+values. This basically can be modeled using
++java.util.Map<String,String>+ as the base for modeling a configuration. Additionally we add method for providing
+meta-data and for observing configuration:
+
+[source,java]
+--------------------------------------
+public interface PropertyMap extends Map<String,String>{
+
+    /**
+     * Get the sources read for this {@link PropertyMap} instance.
+     *
+     * @return the sources for the instance, never {@code null}.
+     */
+    Set<String> getSources();
+
+    /**
+     * Get the meta information for the given key.
+     *
+     * @param key the key, not {@code null}.
+     * @return the according meta-info, or {@code null}.
+     */
+    Map<String,String> getMetaInfo(String key);
+
+    /**
+     * Get the property map's general meta-info.
+     *
+     * @return the property map's general meta-info, never null.
+     */
+    Map<String,String> getMetaInfo();
+
+    /**
+     * Reloads the {@link PropertyMap}.
+     */
+    void reload();
+
+    /**
+     * This method allows to check, if an instance is mutable. If an instance is not mutable most of the so called
+     * <i>optional</i> method of {@link java.util.Map} will throw an {@link java.lang.UnsupportedOperationException}:
+     * <ul>
+     * <li>{@link #put(Object, Object)}</li>
+     * <li>{@link #putAll(java.util.Map)}</li>
+     * <li>{@link #clear()}</li>
+     * <li>{@link #putIfAbsent(Object, Object)}</li>
+     * <li>{@link #remove(Object)}</li>
+     * <li>{@link #remove(Object, Object)}</li>
+     * <li>{@link #replace(Object, Object)}</li>
+     * <li>{@link #replace(Object, Object, Object)}</li>
+     * <li>{@link #replaceAll(java.util.function.BiFunction)}</li>
+     * </ul>
+     * <p>Note that if an instance is not mutable, it may still change its state on reload or update,
+     * but it does not support programmatically controlled, arbitrary changes.</p>
+     *
+     * @return true, if this instance is mutable.
+     */
+    boolean isMutable();
+
+    /**
+     * Adds a listener for configuration changes, duplicates are ignored.
+     *
+     * @param l the listener to be added.
+     */
+    public void addConfigChangeListener(ConfigChangeListener l);
+
+    /**
+     * Adds a listener for configuration changes, duplicates are ignored.
+     *
+     * @param l the listener to be added.
+     */
+    public void addWeakConfigChangeListener(ConfigChangeListener l);
+
+    /**
+     * Removes a listener for configuration changes from this configuration.
+     *
+     * @param l the listener to be removed. If the given instance is not mutable, the call will be ignored.
+     */
+    public void removeConfigChangeListener(ConfigChangeListener l);
+
+}
+--------------------------------------
+
+This looks quite simple, but is able to cover additional requirements by adding effective
+
+* extension points like queries and type adapters
+* type support for JDK's standard types (boolean, characters, numbers)
+* enabling child modules
+* and more...
+
+Adding Type Safety
+~~~~~~~~~~~~~~~~~~
+
+The point that configuration is basically modelled as +String+ must not mean, that we only are able use +String+ values
+as configuration representation. So how we can still cover the following requirements, when we basically model
+configuration as +Map<String,String>+ or +javax.config.PropertyMap+ respectively?
+
+* it should be possible to access configuration as non literal type
+* all types contained in java.lang should be supported.
+* nevertheless arbitrary other types should also be enabled
+* it should be possible to register "converters"
+* it should also be possible to pass a matching "converter" programmatically
+* First of all we have to think about, what kind of functionality we want to add here to the basic Configuration
+interface (this is also the reason why converter is written in italic face above).
+* Basically adding type support requires a configuration entry's value, that is a +String+ to be compatible with some
+arbitrary type. This exactly matches the 'GoF's adapter pattern'. So let as define an adapter:
+
+[source,java]
+----------------------------------------
+@FunctionalInterface
+public interface PropertyAdapter<T>{
+   <T> T adapt(String value);
+}
+----------------------------------------
+
+On the configuration part, we must provide a method that allows us to seemlessly access a configured value using such
+an adapter instance:
+
+[source,java]
+----------------------------------------
+/**
+ * Get the property value as type {@code Class<T>}.
+ * <p>
+ * If {@code Class<T>} is not one of
+ * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
+ * BigDecimal, String} , an according {@link PropertyAdapter} must be
+ * available to perform the conversion from {@link String} to
+ * {@code Class<T>}.
+ *
+ * @param key     the property's absolute, or relative path, e.g. @code
+ *                a/b/c/d.myProperty}.
+ * @param adapter the PropertyAdapter to perform the conversion from
+ *                {@link String} to {@code Class<T>}, not {@code null}.
+ * @return the property's value.
+ * @throws IllegalArgumentException if the value could not be converted to the required target
+ *                                  type, or no such property exists.
+ */
+public <T> T getAdapted(String key, PropertyAdapter<T> adapter);
+
+/**
+ * Get the property value as type {@code Class<T>}.
+ *
+ * @param key          the property's absolute, or relative path, e.g. @code
+ *                     a/b/c/d.myProperty}.
+ * @param adapter      the {@link PropertyAdapter} to perform the conversion from
+ *                     {@link String} to {@code Class<T>}, not {@code null}.
+ * @param defaultValue the default value, returned if no such property exists or the
+ *                     property's value is {@code null}.
+ * @return the property's value.
+ * @throws IllegalArgumentException if the value could not be converted to the required target
+ *                                  type.
+ */
+public <T> T getAdaptedOrDefault(String key, PropertyAdapter<T> adapter, T defaultValue);
+----------------------------------------
+
+For existing wrapper types, such as +java.lang.Integer, java.lang.Long+ etc. it is useful to add convenience methods.
+So instead of calling +getAdapted(myPropertyApater)+ I can simply call
+
+[source,java]
+-----------------------------------------
+Integer intValue = configMap.getIntValue("myKey");
+-----------------------------------------
+
+This would add quite a few methods to the configuration abstraction. Unfortunately this would lead in a powerful
+but rather extensive API abstraction, which is hard and cumbersome to implement. Also creating combined composite maps
+based on other maps will be much more complicated because any objects could participate as possible values of the
+child maps involved. So we must separate these concerns.
+
+
+Separating PropertyMap and Configuration
+~~~~~~~~~~~~~~~~~~----------------------
+
+In the previous section we have seen, that adding type safety and adapter support to the +PropertyMap+ interface would
+result in a big and difficult to implement API. So it makes sense to separate these concerns:
+
+* Keep +PropertyMap+ as simple key/value pair, that is also simple to implement. This enables clients to easily
+implement any type of configuration source as long as it is mappable somehow to a +Map<String,String>+.
+* Define another API concept that extends +PropertyMap+ hereby adding additional functionalities as needed.
+
+So let's define a +Configuration+ by extending +PropertyMap+ and adding additional functionalities:
+
+[source,java]
+-------------------------------------------
+public interface Configuration extends PropertyMap{
+   ...
+   Character getCharacter(String key);
+   Byte getByte(String key);
+   Short getShort(String key);
+   Integer getInteger(String key);
+   Long getLong(String key);
+   Float getFloat(String key);
+   Double getDouble(String key);
+   ...
+}
+-------------------------------------------
+
+By default, a +RuntimeException+ is thrown, if a value is missing, so these methods
+never will return null values. Additionally it might be a good idea to let also default values to be returned, so we
+add also defined the following methods:
+
+[source,java]
+-------------------------------------------
+Character getCharacterOrDefault(String key, Character defaultValue);
+Byte getByteOrDefault(String key, Byte defaultValue);
+Short getShortOrDefault(String key, Short defaultValue);
+Integer getIntegerOrDefault(String key, Integer defaultValue);
+Long getLongOrDefault(String key, Long defaultValue);
+Float getFloatOrDefault(String key, Float defaultValue);
+Double getDoubleOrDefault(String key, Double defaultValue);
+<T> T getAdaptedOrDefault(String key, Adapter<T> adapter,  T defaultValue);
+-------------------------------------------
+
+With the above signatures passing null as a default value is completely valid. So one might write:
+
+[source,java]
+-------------------------------------------
+Byte myNumber = config.getByte("minNumber", null);
+if(myNumber==null){
+   // do whatever needed
+}
+-------------------------------------------
+
+Summarizing a +Configuration+ now would be modeled as follows:
+
+[source,java]
+-------------------------------------------
+public interface Configuration extends PropertyMap{
+    public Boolean getBoolean(String key);
+    public Boolean getBooleanOrDefault(String key, Boolean defaultValue);
+    public Byte getByte(String key);
+    public Byte getByteOrDefault(String key, Byte defaultValue);
+    public Short getShort(String key);
+    public Short getShortOrDefault(String key, Short defaultValue);
+    public Integer getInteger(String key);
+    public Integer getIntegerOrDefault(String key, Integer defaultValue);
+    public Long getLong(String key);
+    public Long getLongOrDefault(String key, Long defaultValue);
+    public Float getFloat(String key);
+    public Float getFloatOrDefault(String key, Float defaultValue);
+    public Double getDouble(String key);
+    public Double getDoubleOrDefault(String key, Double defaultValue);
+    public <T> T getAdapted(String key, PropertyAdapter<T> adapter);
+    public <T> T getAdaptedOrDefault(String key, PropertyAdapter<T> adapter, T defaultValue);
+    public <T> T getOrDefault(String key, Class<T> type, T defaultValue);
+    public <T> T get(String key, Class<T> type);
+}
+-------------------------------------------
+
+But still this concept is not flexible enough, so lets add some additional extension points.
+
+Adding Extension Points
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Basically an extension can be modeled as a 'function' that transform a given +Configuration+ into something other:
+
+* as an +UnaryOperator+ a +Configuration+ is transformed into another +Configuration+. This interface is called a
+  +ConfigurationAdjuster+.
+* as a +Function+ a +Configuration+ is transformed to something else (this basically includes the above case). This interface is called a
+  +ConfigurationQuery+.
+
+Both interfaces are modeled as +@FunctionalInterface+.
+
+Given this, the following extension points can be added to a +Configuration+:
+
+[source,java]
+-----------------------------------------------
+/**
+ * Extension point for adjusting configuration.
+ *
+ * @param adjuster A configuration ajuster, e.g. a filter, or an adjuster
+ *                 combining configurations.
+ * @return the new adjusted configuration, never {@code null}.
+ */
+public Configuration with(ConfigurationAdjuster adjuster);
+
+/**
+ * Query some value from a configuration.
+ *
+ * @param query the query, never {@code null}.
+ * @return the result
+ */
+public <T> T query(ConfigurationQuery<T> query);
+-----------------------------------------------
+
+Additional Functions
+~~~~~~~~~~~~~~~~~~~~
+
+Finally a +Configuration+ should also provide functions to inspect the parameters and areas in more detail:
+
+* Get a set of all known areas of a configuration.
+* Get a set of all known transitive areas of a configuration (building a transitive closure or areas).
+* Get all areas that are selected by some +Predicate+.
+* Get all areas that are selected by some +Predicate+ (building a transitive closure or areas).
+* allow to check if a give area is present or not.
+* also a +Configuration+ should be referrable somehow, so it should provides ome kind of identifier. Currently
+this is modeled as a simple +String+.
+
+These aspects can be modelled using the following code:
+
+[source,java]
+--------------------------------------
+/**
+ * Get the Configuration's id.
+ * @return the Configuration's identifier, never null.
+ */
+public String getConfigId();
+
+/**
+ * Return a set with all fully qualifies area names.
+ *
+ * @return s set with all areas, never {@code null}.
+ */
+public Set<String> getAreas();
+
+/**
+ * Return a set with all fully qualified area names, containing the transitive closure also including all
+ * subarea names, regardless if properties are accessible or not.
+ *
+ * @return s set with all transitive areas, never {@code null}.
+ */
+public Set<String> getTransitiveAreas();
+
+/**
+ * Return a set with all fully qualified area names, containing only the
+ * areas that match the predicate and have properties attached
+ *
+ * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
+ * @return s set with all areas, never {@code null}.
+ */
+public Set<String> getAreas(Predicate<String> predicate);
+
+/**
+ * Return a set with all fully qualified area names, containing the transitive closure also including all
+ * subarea names, regardless if properties are accessible or not.
+ *
+ * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
+ * @return s set with all transitive areas, never {@code null}.
+ */
+public Set<String> getTransitiveAreas(Predicate<String> predicate);
+
+/**
+ * Allows to evaluate if an area exists.
+ *
+ * @param key the configuration area (sub)path.
+ * @return {@code true}, if such a node exists.
+ */
+public boolean containsArea(String key);
+--------------------------------------
+
+
+Config Change Listeners
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Many use cases require that configuration may change dynamically or at least is updated during runtime. One example is
+that a remote configuration server is receiving some update that should be reflected throughout all connected systems.
+From a programmatic side on SE level this feature can be implemented by implementing an observer pattern:
+
+[source,java]
+.ConfigChangeListener
+--------------------------------------
+/**
+ * Interface implemented by code interested in configuration changes, especially for code running in
+ * a standalone/non CDI context. When CDI is available, {@link ConfigChangeEvent} are distributed by
+ * sending corresponding enterprise events.
+ */
+@FunctionalInterface
+public interface ConfigChangeListener {
+
+	/**
+	 * Method called on change.
+	 *
+	 * @param event
+	 *            the {@link ConfigChangeEvent}, never {@code null}.
+	 */
+	void configChanged(ConfigChangeEvent event);
+}
+--------------------------------------
+
+Instances of the interface above then can be registered either using hard or soft references on each +PropertyMap+
+instance (and therefore also similarly on each +Configuration+ instance):
+
+[source,java]
+.Adding/removing listeners to Configuration
+--------------------------------------
+/**
+ * Adds a listener for configuration changes, duplicates are ignored.
+ *
+ * @param l the listener to be added.
+ */
+public void addConfigChangeListener(ConfigChangeListener l);
+
+/**
+ * Adds a listener for configuration changes, duplicates are ignored.
+ *
+ * @param l the listener to be added.
+ */
+public void addWeakConfigChangeListener(ConfigChangeListener l);
+
+/**
+ * Removes a listener for configuration changes from this configuration.
+ *
+ * @param l the listener to be removed. If the given instance is not mutable, the call will be ignored.
+ */
+public void removeConfigChangeListener(ConfigChangeListener l);
+--------------------------------------
+
+Configuration changes itself are modeled using a +ConfigChangeEvent+, which provides additional information about
+items removed, added or updated, including old and new values, where available.
+
+Modeling the Runtime Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A runtime environment basically is modeled similarly to Property maps. This allows to include arbitrary additional
+environment parameters as useful. Nevertheless environments also significantly different compared to configuration:
+* Environment data is basically read-only.
+* Environment are organized in an environment tree, allowing to inherit basic properties to subsequent layers.
+* Environment is modeled as a final class, providing a fluent API with a 'builder'. The +EnvironmentContext+ singleton
+provides access to the current environment.
+* Each environment must have an +EnvironmentType+.
+
+Summarizing look at the following snippet:
+
+[source,java]
+.Environment Snippet
+--
+public final class Environment implements Serializable {
+	/** serialVersionUID. */
+	private static final long serialVersionUID = -7410447407000577031L;
+
+	private EnvironmentType environmentType;
+	private String name;
+	private Environment parent;
+	private Map<Class<?>, Map<Object, Object>> attributes = new HashMap<Class<?>, Map<Object, Object>>();
+
+	...
+
+	public static final Builder(){
+	...
+	}
+}
+--
+
+Different to +Environment+ the +EnvironmentType+ is designed as an interface, that can be implemented by arbitrary
+types. This makes it possible that client code can add additional details as needed.:
+
+[source,java]
+.EnvironmentType
+--
+public interface EnvironmentType{
+
+    /**
+     * Get the environment type's name.
+     *
+     * @return the types name.
+     */
+    public String getName();
+
+}
+--
+
+Advanced Concepts
+-----------------
+
+Composite Configurations
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+==== Modeling Common Aspects
+
+Looking at Configuration my working analysis was to model it mainly as a Map<String,String> with additional meta data added. As we have seen this concept comes with several advantages:
+The basic API ( java.util.Map) is already defined by the JDK.
+Since keys as well as values are simple Strings, we inherit all the advantages of the final and immutable  String class, like type and thread safety.
+since we constraint our API to this simple types, we ensure no or minimal overlaps with CDI in the EE context.
+our model is fully compatible with Java SE, providing therefore maximal compatibility also with the SE platform.
+Applied to the configuration format we would define two distinct artifacts:
+a PropertyMap, which models the minimal requirements for a configuration map.
+a Configuration, which extends PropertyMapand provides additional functionalities, such as extension points, type support etc.
+
+[source,java]
+.Interface PropertyMap
+---------------------------------------------------------------
+public interface PropertyMap extends Map<String,String>{
+
+    Set<String> getSources();
+    Map<String,String> getMetaInfo(String key);
+    Map<String,String> getMetaInfo();
+
+    void reload();
+    boolean isMutable();
+}
+---------------------------------------------------------------
+
+[source,java]
+.Interface Configuration
+---------------------------------------------------------------
+public interface Configuration extends PropertyMap{
+
+    String getConfigId();
+
+    Boolean getBoolean(String key);
+    Boolean getBooleanOrDefault(String key,
+                               Boolean defaultValue);
+    Byte getByte(String key);
+    ...
+    <T> T getAdapted(String key, PropertyAdapter<T> adapter);
+    <T> T getAdaptedOrDefault(String key,
+                    PropertyAdapter<T> adapter, T defaultValue);
+
+    <T> T get(String key, Class<T> type);
+    <T> T getOrDefault(String key, Class<T> type,
+                                               T defaultValue);
+    Set<String> getAreas();
+    Set<String> getTransitiveAreas();
+    Set<String> getAreas(Predicate<String> predicate);
+    Set<String> getTransitiveAreas(Predicate<String> predicate);
+    boolean containsArea(String key);
+
+    Configuration with(ConfigurationAdjuster adjuster);
+    <T> T query(ConfigurationQuery<T> query);
+}
+---------------------------------------------------------------
+
+A +Configuration+ instance then can be built using a +PropertyMap+, e.g.
+
+[source,java]
+.Building a Configuration
+---------------------------------------------------------------
+PropertyMap myPropertyMap = ...;
+Configuration config = new BuildableConfiguration
+                                       .Builder("myTestConfig")
+                   .withUnits(myPropertyMap);
+---------------------------------------------------------------
+
+So we can provide partial configurations by just implementing the +PropertyMap+ interface. For convenience an
++AbstractPropertyMap+ class can be defined that additionally supports implementing this interface:
+
+[source,java]
+.Minimal PropertyMap Implementation
+---------------------------------------------------------------
+public class MyPropertyMap extends AbstractPropertyMap{
+    protected Map<String,String> initContentDelegate(){
+      // in reality, provide something useful here...
+      return Collections.emptyMap();
+   }
+}
+---------------------------------------------------------------
+
+==== Using Composites to Build Complex Configurations
+
+Given the simple basic +PropertyMap+ interface we can start thinking on how building more complex configurations by
+combining existing combinations. Basically the ingredients required are:
+* two (or more) existing configurations
+* a combination algorithm or policy
+
+Now thinking on mathematical sets, we may provide similar functionality when combining configurations:
+* union
+* intersection
+* subtraction
+
+Additionally we have to think ow we should resolve conflicts (different values with the same key), most important policies are:
+* ignore duplicates (keeping the original values from former entries)
+* override existing previous values by later values
+* throw an exception, when conflicting entries are encountered
+
+This can be modeled by a corresponding policy enum:
+
+[source,java]
+.Enum Type AggregationPolicy
+---------------------------------------------------------------
+public enum AggregationPolicy{
+    IGNORE,
+    OVERRIDE,
+    EXCEPTION
+}
+---------------------------------------------------------------
+
+Finally we can provide a factory class that provides a commonly used property maps by reading from resolvable paths,
+using common configuration formats, e.g. '.property'-files (the resolution capabilities hereby can be extended by
+implementing and registering a corresponding SPI) most commonly used compositions of partial configurations (maps)
+This can be modeled with a simple singleton as follows:
+
+[source,java]
+.PropertyMaps Singleton Accessor
+---------------------------------------------------------------
+public final class PropertyMaps{
+
+    private PropertyMaps(){ }
+
+    // factory methods
+    public static PropertyMap fromArgs(
+              Map<String,String> metaInfo, String... args);
+    public static PropertyMap fromPaths(
+              Map<String,String> metaInfo, String... paths);
+    public static PropertyMap from(
+              Map<String,String> metaInfo,
+              Map<String,String> map);
+    public static PropertyMap fromArgs(String... args);
+    public static PropertyMap fromPaths(String... paths);
+    public static PropertyMap from(Map<String,String> map);
+    public static PropertyMap fromEnvironmentProperties();
+    public static PropertyMap fromSystemProperties();
+
+    // combinations
+    public static PropertyMap unionSet(
+              PropertyMap... propertyMaps);
+    public static PropertyMap unionSet(
+              AggregationPolicy policy,
+              PropertyMap... propertyMaps);
+    public static PropertyMap intersectedSet(
+              PropertyMap... propertyMaps);
+    public static PropertyMap subtractedSet(
+              PropertyMap target, PropertyMap... subtrahendSets);
+    public static PropertyMap filterSets(
+              Predicate<String> filter, PropertyMap propertyMap);
+}
+---------------------------------------------------------------
+
+With the given mechanism we are able to define complex configurations, realizing some complex override and configuration rules quite easily:
+
+[source,java]
+.More Complex Programmatic Configuration Example
+---------------------------------------------------------------
+String[] cliArgs = ...;
+Map<String,String> defaultMap = ...;
+
+Configuration config = new BuildableConfiguration.Builder(
+                            "myTestConfig").withUnits(
+       PropertyMaps.from(defaultMap),
+       PropertyMaps.fromPaths("classpath:test.properties"),
+       PropertyMaps.fromPaths("classpath:cfg/test.xml"),
+       PropertyMaps.fromSystemProperties(),
+       PropertyMaps.fromPaths(
+                  "url:http://1.2.3.4/remoteCfg.xml"),
+       PropertyMaps.fromArgs(cliArgs),
+      )
+      .build();
+---------------------------------------------------------------
+
+Basically the above creates a full fledged +Configuration+ instance that:
+* is built from properties contained in the given default map.
+* may be overridden by entries in test.properties, read from the classpath
+* may be overridden by entries in cfg/test.xml, using the JDKs xml property format (also read from the classpath)
+* may be overridden by entries from the resource loaded from http://1.2.3.4/remoteCfg.xml
+* may be overridden by entries  from the CLI arguments
+
+Of course, this example uses always the same keys for all different partial configuration sources, which might not be a
+realistic setup. But adding a mapping of provided keys to some other keys is basically a trivial task.
+
+==== Summary
+
+Summarizing separating configuration into a simple basic interface (+PropertyMap+) and a more complex extended variant
+(+Configuration+), allows us to easily build composite configurations by combining more simpler partial property maps.
+Most commonly configuration locations, formats and combination strategies can also provided easily by according factory
+classes. Also in most cases, implementing the more simpler +PropertyMap+ interface should completely sufficient.
+Putting all this to reality, we have defined a quite powerful mechanism, that allows us to implement also complex use
+cases with only a few abstractions.
+
+
+Configuration Formats and Locations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+==== Configuration Formats
+
+Configuration data can be stored in various formats. With the JDK a few possible formats are included by default:
+
+* '.properties' files, readable with +java.util.Properties+ enable storing simple key, value pairs in an ISO-8859-1
+encoded text file, also supporting Unicode escapes.
+* The same +java.util.Properties+ class also provides a corresponding .xml^^ formatted variant, which benefit from all
+ the xml encoding options.
+* Parameters passed with +-Dkey=value+ on the Java command line are accessible from +System.getProperties()+.
+* Finally environment properties inherited by the underlying runtime platform are accessible from +System.getenv()+.
+
+All this mechanisms are provided by the Java SE platform out of the box and therefore are widely used. But there are for
+sure more possible formats that might be used as source of configuration, e.g. other xml formats, JSON or databases.
+Therefore it makes sense to model the configuration format explicitly, so custom (or legacy) formats can be supported
+easily:
+
+[source,java]
+.ConfigurationFormat Interface
+---------------------------------------------------------------
+public interface ConfigurationFormat{
+    String getFormatName();
+    boolean isAccepted(URI resource);
+    Map<String,String> readConfiguration(URI resource);
+}
+---------------------------------------------------------------
+
+Implementations of this class can be simply registered using different component loading mechanism, such as +java
+.util.ServiceLoader+ or, in case of Java EE, alternately as CDI managed bean. Access to the formats can be obtained
+by a corresponding singleton, which provides
+* access to common formats, such as property, or xml-property files.
+* access to other (registered) formats by name
+* access to all currently registered format names
+* access to a matching format given an URI of a resource.
+
+[source,java]
+.ConfigFormats Accessor Singleton
+---------------------------------------------------------------
+public final class ConfigFormats{
+
+    private ConfigFormats(){}
+
+    public static ConfigurationFormat getFormat(String formatName);
+    public static Collection<String> getFormatNames();
+    public static ConfigurationFormat getFormat(URI resource);
+    public static ConfigurationFormat getPropertiesFormat();
+    public static ConfigurationFormat getXmlPropertiesFormat();
+}
+---------------------------------------------------------------
+
+Also the singleton accessor for accessing predefined maps can be easily enriched by corresponding methods (though with increasing complexity and similar method signatures building a Builder maybe more appropriate):
+
+[source,java]
+.PropertyMaps Accessor Singleton
+---------------------------------------------------------------
+public final class PropertyMaps{
+
+    private PropertyMaps(){ }
+
+    // factory methods
+    ...
+    public static PropertyMap fromPaths(
+              Map<String,String> metaInfo,
+              ConfigurationFormat format, String... paths);
+    public static PropertyMap fromPaths(ConfigurationFormat format,
+              String... paths);
+}
+---------------------------------------------------------------
+
+==== Configuration Locations
+
+Similar to the fact that configuration data can be formatted differently, configuration can be also be read/accessed
+from different locations:
+* as class path resources
+* as files on the locale file system
+* as resources accessible from a web server (or configuration server)
+* as remote data accessible from a configuration bean (EJB, managed bean, ...)
+* ...
+
+In the above examples/API we simply pass a literal path to locate/define a configuration. Hereby the idea is that the
+path is formatted in a way, so multiple location mechanisms (called readers) can be transparently added/registered
+to the configuration system. A configuration resource then can be defined as <reader>:<location> (the ones, who know
+Spring will possibly see some similarities with Spring's Resource API). Examples of valid configuration resources can
+be:
+---------------------------------------------------------------
+ classpath:cfg/test-*.xml
+ classpath*:cfg/${STAGE}/*.xml
+ file:${APP_DIR}/cfg/envconfig/*.xml
+ url:http://myconfigserver.intra.net/config/${STAGE}/get?appID=MyApp
+ ds:[ConfigDS]SELECT a.key, a.value FROM Config a WHERE a.appID="MyApp"
+---------------------------------------------------------------
+
+Hereby
+* +classpath+ uses +ClassLoader.getResource(String)+, also supporting Ant-like path expressions
+* +classpath*+ uses +ClassLoader.getResources(String)+, also supporting Ant-like path expressions
+* +file+ locates files on the local file system, also supporting Ant-like path expressions
+* +url+ uses 'new URL(String)', in the example above calling a Restful service
+* +ds+ accesses configuration data using an OQL query, reading from the ConfigDS datasource.
+
+The exact syntax for path expressions, of course, can be discussed and improved. Dynamic parts basically can be
+implemented using expression language (EL) extensions.
+
+A +ConfigurationReader+ hereby can be modeled by a simple interface as illustrated below:
+
+[source,java]
+.ConfigurationReader Interface
+---------------------------------------------------------------
+public interface ConfigurationReader{
+    String getReaderName();
+    Map<String,String> readConfiguration(String readerPath);
+}
+---------------------------------------------------------------
+
+Similarly to formats, readers can be managed and accessed/tested from a +ConfigurationReader+ singleton:
+
+[source,java]
+.ConfigReaders Accessor Singleton
+---------------------------------------------------------------
+public final class ConfigReaders{
+
+    private ConfigReaders(){}
+    public static ConfigurationReader getReader(String readerName);
+    public static Collection<String> getReaderNames();
+
+}
+---------------------------------------------------------------
+
+So given this interfaces and accessors our configuration model now is capable of supporting more or less every type of
+configuration, as long as its mappable to Map<String,String>. It does not imply any constraints, how configuration must
+be stored and managed in an enterprise, nor does it constrain the format of the input source.
+
+But even with that, there are additional things that must be considered:
+* +Configuration+ may also change. Mechanisms must be provided so configuration changes can be propagated to interested
+* parties, both locally optionally also remotely. Such changes might also be propagated across VM boundaries e,g, by
+passing a serialized ChangeSet or Configuration over the network.
+* All examples as of now were programmatically defining the configuration to be used. Typically in an enterprise
+context this is determined by some configuration meta-model (aka meta-configuration).
+* Even worse within an application server running multiple enterprise / web applications several classloaders are
+active. As a consequence configuration that is provided on the classpath must be isolated along the corresponding classloader and its child class loaders.
+Also we have not yet discussed how our configuration service can interoperate / being integrated in more detail within an EE environment. Integration hereby must be enabled on a global or domain level, e.g. for configuring administrative resources, but also interoperate with CDI, enabling powerful injection of configuration.
+
+Contextual Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Configuration Metamodel
+~~~~~~~~~~~~~~~~~~~~~~~
+

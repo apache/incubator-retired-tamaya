@@ -1,0 +1,16 @@
+target/
+/doc
+target
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings
+.metadata
+.idea
+.checkstyle
+atlassian-ide-plugin.xml
+.sonar-ide.properties
+*.patch
+*.log
