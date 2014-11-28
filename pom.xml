@@ -48,6 +48,8 @@ under the License.
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<junit.version>4.8.2</junit.version>
+
+        <asciidoctor.version>1.5.0</asciidoctor.version>
 	</properties>
 
     <licenses>
@@ -140,7 +142,7 @@ under the License.
                 <plugin>
                     <groupId>org.asciidoctor</groupId>
                     <artifactId>asciidoctor-maven-plugin</artifactId>
-                    <version>0.1.4</version>
+                    <version>${asciidoctor.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
