@@ -103,8 +103,13 @@ There are five main section in this document:
 * Implementation Recommendations.
 * An appendix.
 
-include::design/0_UseCases.adoc[]
+<<<
+include::./design/0_UseCases.adoc[]
+
+<<<
 include::design/1_Requirements.adoc[]
+
+<<<
 include::design/2_CoreConcepts.adoc[]
 
 :numbered!:
