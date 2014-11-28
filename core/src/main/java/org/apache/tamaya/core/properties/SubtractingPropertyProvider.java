@@ -56,9 +56,9 @@ class SubtractingPropertyProvider extends AbstractPropertyProvider{
     }
 
     @Override
-    public void load(){
+    public ConfigChangeSet load(){
         unit.load();
-        super.load();
+        return super.load();
     }
 
     /**

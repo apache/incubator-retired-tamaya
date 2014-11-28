@@ -82,8 +82,8 @@ public class ConfigurationDecorator extends AbstractConfiguration{
     }
 
     @Override
-    protected void reload() {
-        provider.load();
+    protected ConfigChangeSet reload() {
+        return provider.load();
     }
 
     @Override

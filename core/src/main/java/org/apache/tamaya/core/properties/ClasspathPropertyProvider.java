@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
 import java.util.*;
 
@@ -120,7 +121,7 @@ public class ClasspathPropertyProvider extends AbstractPropertyProvider{
 	}
 
 	@Override
-	public void load() {
+	public ConfigChangeSet load() {
 		Map<String, String> props = new HashMap<>();
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		if (cl == null) {
@@ -133,7 +134,7 @@ public class ClasspathPropertyProvider extends AbstractPropertyProvider{
 			}
 			cl = cl.getParent();
 		}
-        super.load();
+        return super.load();
 	}
 
     @Override

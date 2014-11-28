@@ -78,8 +78,9 @@ class MapBasedPropertyProvider extends AbstractPropertyProvider{
     }
 
     @Override
-    public void load(){
+    public ConfigChangeSet load(){
         // Can not reload...
+        return ConfigChangeSet.emptyChangeSet(this);
     }
 
     /**

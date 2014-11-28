@@ -127,11 +127,11 @@ class AggregatedPropertyProvider extends AbstractPropertyProvider{
 	}
 
     @Override
-	public void load() {
+	public ConfigChangeSet load() {
 		for (PropertyProvider unit : units) {
 			unit.load();
 		}
-        super.load();
+        return super.load();
 	}
 
 }

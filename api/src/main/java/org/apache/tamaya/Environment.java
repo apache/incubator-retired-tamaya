@@ -83,14 +83,6 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
     Set<String> keySet();
 
     /**
-     * Get an qualified path to this environment instance, by appending the
-     * current environment id and type (in backets) with the ones of its parent and so on, e.g.
-     * <code>root[system].HumanOne[ear].rest[webapp].atsticks[user]</code>
-     * @return the qualified path of this environment instance
-     */
-    String getContext();
-
-    /**
      * Get the parent context.
      * @return the parent context, or null.
      */
@@ -141,7 +133,7 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
      * @param contextId the target context, not null.
      * @return the corresponding environment, if available.
      */
-    public static Optional<Environment> getEnvironment(String environmentType, String contextId){
+    public static Optional<Environment> of(String environmentType, String contextId){
         return EnvironmentManager.getEnvironment(environmentType, contextId);
     }
 

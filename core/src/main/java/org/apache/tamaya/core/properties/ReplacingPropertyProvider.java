@@ -54,8 +54,8 @@ class ReplacingPropertyProvider implements PropertyProvider{
     }
 
     @Override
-    public void load(){
-        mainMap.load();
+    public ConfigChangeSet load(){
+        return mainMap.load();
     }
 
     @Override

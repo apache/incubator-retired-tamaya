@@ -48,24 +48,12 @@ class BuildableEnvironment implements Environment {
     }
 
     @Override
-    public String getContext() {
+    public String getEnvironmentId() {
         return id;
     }
 
-    @Override
-    public String getEnvironmentId() {
-        StringBuilder b = new StringBuilder();
-        if(getParentEnvironment()!=null) {
-            b.append(getParentEnvironment().getContext());
-        }
-        if(b.length()>0)
-            b.append('.');
-        b.append(getFullId());
-        return b.toString();
-    }
-
     public String getFullId() {
-        return getContext()+'('+getEnvironmentType()+')';
+        return getEnvironmentId()+'('+getEnvironmentType()+')';
     }
 
     @Override

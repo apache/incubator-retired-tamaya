@@ -70,13 +70,13 @@ public abstract class AbstractConfiguration extends AbstractPropertyProvider imp
     /**
      * This method reloads the content of this PropertyMap by reloading the contents delegate.
      */
-    protected void reload(){ }
+    protected ConfigChangeSet reload(){ return ConfigChangeSet.emptyChangeSet(this);}
 
     /**
      * This method reloads the content of this PropertyMap by reloading the contents delegate.
      */
     @Override
-    public void load(){
+    public ConfigChangeSet load(){
         Configuration oldState = null;
         Configuration newState = null;
         synchronized(LOCK) {
@@ -84,11 +84,13 @@ public abstract class AbstractConfiguration extends AbstractPropertyProvider imp
             reload();
             newState = FreezedConfiguration.of(this);
             if(oldState.hasSameProperties(newState)){
-                return;
+                return ConfigChangeSet.emptyChangeSet(this);
             }
             this.version = UUID.randomUUID().toString();
         }
-        publishPropertyChangeEvents(ConfigChangeSetBuilder.of(oldState).addChanges(newState).build().getEvents());
+        ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(oldState).addChanges(newState).build();
+        publishPropertyChangeEvents(changeSet.getEvents());
+        return changeSet;
     }
 
     @Override

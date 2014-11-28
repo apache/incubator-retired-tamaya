@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertyProvider;
@@ -53,7 +54,8 @@ final class FreezedPropertyProvider implements PropertyProvider, Serializable{
     }
 
     @Override
-    public void load(){
+    public ConfigChangeSet load(){
+        return ConfigChangeSet.emptyChangeSet(this);
     }
 
     public int size(){

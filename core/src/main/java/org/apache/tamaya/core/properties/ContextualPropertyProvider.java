@@ -88,8 +88,8 @@ class ContextualPropertyProvider implements PropertyProvider{
     }
 
     @Override
-    public void load(){
-        getContextualMap().load();
+    public ConfigChangeSet load(){
+        return getContextualMap().load();
     }
 
     @Override

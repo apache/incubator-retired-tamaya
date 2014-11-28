@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertyProvider;
@@ -60,8 +61,8 @@ class DelegatingPropertyProvider implements PropertyProvider{
     }
 
     @Override
-    public void load(){
-        mainMap.load();
+    public ConfigChangeSet load(){
+        return mainMap.load();
     }
 
     @Override
