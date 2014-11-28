@@ -134,6 +134,7 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 
 [API Property Providers]
 === Property Providers
+==== Basic Model
 
 We have seen that constrain configuration aspects to simple literal key/value pairs provides us with an easy to
 understand, generic, flexible, yet extendible mechanism. Looking at the Java language features a +vava.util.Map<String,
@@ -193,8 +194,60 @@ This simple model will be used within the spi, where configuration can be inject
 But we have seen, that we have to consider additional aspects, such as extendability and type safety. Therefore we
 extend +PropertyMap+ and hereby also apply the 'composite pattern', which results in the following key abstraction.
 
+==== Meta Information
+
+Each instance also provides an instance of +MetaInfo+, which provides meta information for the providers and its properties:
+
+[source,java]
+.Accessing Meta Information
+--------------------------------------------
+PropertyProvider prov = ...;
+MetaInfo metaInfo = prov.getMetaInfo();
+Set<String> keys = metaInfo.keySet();  // returns the attribute keys, for which metainformation is accessible.
+String metaData = metaInfo.get("a.b.c.value"); // access meta information
+String metaData = metaInfo.get(MetaInfoBuilder.METAINFO); // access meta information for the provider
+--------------------------------------------
+
+As we have seen above there is as well a +MetaInfoBuilder+, which must be used to create instances of
++MetaInfo+. This builder class defines a couple of standard keys that can be used:
+
+[source,java]
+--------------------------------------------
+public static final String METAINFO = "_metainfo";
+public static final String TIMESTAMP = "timestamp";
+public static final String CONTEXT = "context";
+public static final String NAME = "name";
+public static final String INFO = "info";
+public static final String TYPE = "type";
+public static final String SOURCE = "source";
+public static final String ENVIRONMENT = "environment";
+public static final String SOURCE_EXPRESSION = "source-expression";
+--------------------------------------------
+
+==== Mutability
+
+Property providers optionally may be mutable. This can be checked by calling +boolean isMutable()+. If a provider
+is mutable a +ConfigChangeSet+ can be passed. This change set can then be applied by the provider. On creation
+of the +ConfigChangeSetBuilder+ a provider can pass version information, so _optimistic locking_ can be implemented
+easily:
+
+[source,java]
+.Creating and applying a +ConfigChangeSet+ to a provider
+--------------------------------------------
+PropertyProvider prov = ...;
+ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(provider)  // creating a default version
+   .remove("key1ToBeRemoved", +key2ToBeRemoved")
+   .put("key2", "key2Value")
+   .put("key3", 12345)
+   .put("key4", 123.45)
+   .build();
+provider.apply(changeSet);
+--------------------------------------------
+
+
 [[API Configuration]]
 === Configuration
+==== Basic Model
 
 Configuration inherits all basic features from +PropertyProvider+, but additionally adds functionality for
 type safety and extension mechanisms:
@@ -258,6 +311,123 @@ Hereby
   ** evaluateValue allows to evaluate a configuration expression based on a given configuration.
   ** +configure+ performs injection of configured values.
 
+==== Type Support
+
+Configuration extend +PropertyProvider+ and add additional support for non String types. This is achieved
+with the help of +PropertyAdapter+ instances:
+
+[source,java]
+.PropertyAdapter
+--------------------------------------------
+@FunctionalInterface
+public interface PropertyAdapter<T>{
+    T adapt(String value);
+}
+--------------------------------------------
+
+PropertyAdapter instances can be implemented manually or registered and accessed from the
++PropertyAdapers+ singleton:
+
+[source,java]
+--------------------------------------------
+public final class PropertyAdapters{
+    public static <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter);
+    public static boolean isTargetTypeSupported(Class<?> targetType);
+    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType);
+    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType, WithPropertyAdapter annotation);
+}
+--------------------------------------------
+
+Whereas this mechanism per se looks not very useful it's power shows up when combining it with the annotations
+API provided, e.g. look at the following annotated class:
+
+[source,java]
+.Annotated Example Class
+--------------------------------------------
+public class ConfiguredClass{
+
+    @ConfiguredProperty
+    private String testProperty;
+
+    @ConfiguredProperty("a.b.c.key1")
+    @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    String value1;
+
+    @ConfiguredProperty("a.b.c.key2")
+    private int value2;
+
+    @ConfiguredProperty
+    @DefaultValue("http://127.0.0.1:8080/res/api/v1/info.json")
+    private URL accessUrl;
+
+    @ConfiguredProperty
+    @DefaultValue("5")
+    private Integer int1;
+
+    @ConfiguredProperty("a.b.customType")
+    private MyCustomType myCustomType;
+
+    @ConfiguredProperty("BD")
+    private BigDecimal bigNumber;
+
+    ...
+}
+--------------------------------------------
+
+The class does not show all the possibilities that are provided, but it shows that arbitrary types can be supported easily.
+This applied similarly to collection types, whereas collections are more advanced and therefore described in a separate section
+later.
+
+Given the class above and the current configuration can provide the values required, configuring an instance of the
+class is simple:
+
+[source,java]
+.Configuring the Example Class
+--------------------------------------------
+ConfiguredClass classInstance = new ConfiguredClass();
+Configuration.configure(configuredClass);
+--------------------------------------------
+
+Additional types can transparently be supported by implementing and registering corresponding SPI instances. This is explained
+in the SPI documentation of {name}.
+
+==== Extension Points
+
+We are well aware of the fact that this library will not be able to cover all kinds of use cases. Therefore
+we have added similar functional extension mechanisms that were used in other areas of the Java eco-system as well:
+
+* +ConfigOperator+ define unary operations on +Configuration+. They can be used for filtering, implementing
+  configuration views, security interception etc.
+* +ConfigQuery+ defines a function returning any kind of result based on a configuration instance. Typical
+  use cases of queries could be the implementation of configuration SPI instances that are required
+  by other libraries or frameworks.
+
+Both interfaces hereby are defined as functional interfaces:
+
+[source,java]
+.ConfigOperator and ConfigQuery
+--------------------------------------------
+@FunctionalInterface
+public interface ConfigOperator{
+    Configuration operate(Configuration config);
+}
+
+@FunctionalInterface
+public interface ConfigQuery<T>{
+    T query(Configuration config);
+}
+--------------------------------------------
+
+Both interfaces can be applied on a +Configuration+ instance:
+
+[source,java]
+.Applying Config operators and queries
+--------------------------------------------
+Configuration secured = Configuration.of().apply(ConfigSecurity::secure);
+ConfigSecurity securityContext = Configuration.of().query(ConfigSecurity::targetSecurityContext);
+--------------------------------------------
+
+NOTE: +ConfigSecurity+ is an arbitrary class.
 
 === Environment
 
@@ -271,7 +441,6 @@ public interface Environments {
 
     String getEnvironmentType();
     String getEnvironmentId();
-    String getContext();
     Environment getParentEnvironment();
 
     Optional<String> get(String key);
@@ -283,7 +452,7 @@ public interface Environments {
     public static Environment getRootEnvironment(){
     public static List<String> getEnvironmentTypeOrder(){
     public static List<String> getEnvironmentHierarchy(){
-    public static Optional<Environment> getEnvironment(String environmentType, String contextId){
+    public static Optional<Environment> of(String environmentType, String contextId){
     public static Set<String> getEnvironmentContexts(String environmentType){
     public static boolean isEnvironmentActive(String environmentType){
 --------------------------------------------
@@ -292,8 +461,47 @@ public interface Environments {
   hereby must contain
   ** all JDK's system properties, with same keys, values
   ** all JDK's environment properties, prefixed with +env:+.
-  ** additionaly root properties as needed.
-* each environment also defines its +Stage+. Hereby, if not set explicitly the +Stage+ is inherited from the root
-  environment. Consequently the root environment must provide a +Stage+, which by default should be +Stage.Development+.
-* the static accessor methods define:
-  ** +of(), of(Class), of(String), of(String, Class)+ return the environment valid for the current runtime environment.
+  ** additional root properties are allowed as well.
+* the root environment is always directly accessible by calling +Environment.getRootEnvironment()+
+* the current environment can be accessed by calling +Environment.of()+.
+* each environment also defines a +Stage+ (implementing +StageSupplier+). Hereby, if not set explicitly the +Stage+ is inherited from the root
+  environment. Consequently the root environment must provide a +Stage+, which by default is +Stage.development()+.
+
+Additionally each environment instance is uniquely identified by the environment type (accessible from
++getEnvironmentType()+ and the environment id (accessible from +getEnvironmentId()+). So it is possible to access
+an +Environment+ by calling +of(String environmentType, String environmentId)+. Implementations may restrict access
+to environments depending on the current runtime environment (runtime context) active. The API does
+not require further aspects.
+
+The call to +getEnvironmentIds(String)+ returns all context ids of the known +Environment+ instances
+of a given type. E.g. assuming there is an environment type +war+ calling +Environment.getEnvironmentIds("war")+
+may return +"/web/app1", "/web/app2"+ (assuming the war context ids equal the web applications root contexts).
+
+All environments are basically ordered. The ordering can be accessed by calling +getEnvironmentTypeOrder()+. Hereby
+not every environment type in a hierarchy must necessarily present. This is reflected by +getEnvironmentHierarchy()+
+which returns the environment type ids in order, but only containing the types of the environments
+currently present and accessible in the hierarchy. As an example an environment type order in an advanced
+use case could be something like +"root","ear","war","saas","user"+, whereas the concrete environment type hierarchy
+may be +"root","war","saas"+, because the application was not included
+in an additional ear archive and no user is currently active (anonymous). The call to +isEnvironmentActive(String)+
+allows to determine if an environment of the given type is currently active.
+Finally the environment hierarchy is of course similarly reflected by the relationship (+getParentEnvironment()+).
+The following code should illustrate some of these concepts:
+
+[source,java]
+.Interface Environment
+--------------------------------------------
+List<String> envHierarchy = Environment.getEnvironmentHierarchy();
+  // -> "root","war","saas"
+Environment env = Environment.of();
+System.out.println(env.getEnvironmentContext()); // saas
+System.out.println(env.getEnvironmentId());      // mysolution_pro
+env = env.getParentEnvironment();
+System.out.println(env.getEnvironmentContext()); // war
+System.out.println(env.getEnvironmentId());      // pro
+env = env.getParentEnvironment();
+System.out.println(env.getEnvironmentContext()); // root
+System.out.println(env.getEnvironmentId());      // system
+env = env.getParentEnvironment();
+// env is null now!
+--------------------------------------------

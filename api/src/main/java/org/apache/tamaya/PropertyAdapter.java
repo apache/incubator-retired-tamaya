@@ -22,6 +22,7 @@ package org.apache.tamaya;
 /**
  * Interface for an adapter that converts a configured String into something else.
  */
+@FunctionalInterface
 public interface PropertyAdapter<T>{
 
     /**

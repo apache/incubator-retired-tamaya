@@ -19,6 +19,7 @@
 package org.apache.tamaya;
 
 import java.beans.PropertyChangeEvent;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -46,6 +47,15 @@ public final class ConfigChangeSetBuilder {
         Objects.requireNonNull(source);
         this.source = source;
         this.baseVersion= baseVersion;
+    }
+
+    /**
+     * Creates a new instance of this builder.
+     * @param source the underlying property provider/configuration, not null.
+     * @return the builder for chaining.
+     */
+    public static ConfigChangeSetBuilder of(PropertyProvider source) {
+        return new ConfigChangeSetBuilder(source, Instant.now().toString());
     }
 
     /**
@@ -141,7 +151,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Boolean value) {
+    public ConfigChangeSetBuilder put(String key, boolean value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }
@@ -152,7 +162,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Byte value) {
+    public ConfigChangeSetBuilder put(String key, byte value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }
@@ -163,7 +173,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Character value) {
+    public ConfigChangeSetBuilder put(String key, char value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }
@@ -174,7 +184,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Short value) {
+    public ConfigChangeSetBuilder put(String key, short value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }
@@ -185,7 +195,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Integer value) {
+    public ConfigChangeSetBuilder put(String key, int value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }
@@ -196,7 +206,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Long value) {
+    public ConfigChangeSetBuilder put(String key, long value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }
@@ -207,7 +217,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Float value) {
+    public ConfigChangeSetBuilder put(String key, float value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }
@@ -218,7 +228,7 @@ public final class ConfigChangeSetBuilder {
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder put(String key, Double value) {
+    public ConfigChangeSetBuilder put(String key, double value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value).toString()));
         return this;
     }

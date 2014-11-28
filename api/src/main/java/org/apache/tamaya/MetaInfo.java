@@ -26,6 +26,7 @@ import java.util.*;
  */
 public final class MetaInfo{
 
+    private static final String OWNER_KEY = "_owner";
     private final Map<String, String> metaInfo = new HashMap<>();
 
     MetaInfo(MetaInfoBuilder builder){
@@ -41,6 +42,11 @@ public final class MetaInfo{
         return this.metaInfo.get(key);
 
     }
+
+    public String getOwnerInfo(){
+        return this.metaInfo.get(OWNER_KEY);
+    }
+
     public Set<String> keySet(){
         return this.metaInfo.keySet();
     }
