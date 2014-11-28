@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.env;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.Environment;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.env.EnvironmentBuilder;
@@ -32,13 +30,19 @@ import org.apache.tamaya.core.spi.ResourceLoader;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 17.10.2014.
+ * Application environment provider that is dependent on the current context classloader and tries to
+ * evaluate {@code META-INF/env/application.properties, META-INF/env/application.xml and META-INF/env/application.ini}.
+ * Only if a property named {@code org.apache.tamaya.env.applicationId} is found, it will
+ * be used as the {@code environmentId} and a corresponding {@link org.apache.tamaya.Environment} instance
+ * is created and attached.
  */
 public class ClassLoaderDependentApplicationEnvironmentProvider implements EnvironmentProvider {
 
-    private static  final Logger LOG = LogManager.getLogger(ClassLoaderDependentApplicationEnvironmentProvider.class);
+    private static  final Logger LOG = Logger.getLogger(ClassLoaderDependentApplicationEnvironmentProvider.class.getName());
 
     private static final String WARID_PROP = "org.apache.tamaya.env.applicationId";
 
@@ -82,7 +86,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
                 data.putAll(read);
             }
             catch(Exception e){
-                LOG.error("Error reading application environment data from " + uri, e);
+                LOG.log(Level.SEVERE, e, () -> "Error reading application environment data from " + uri);
             }
         }
         String applicationId = data.getOrDefault(WARID_PROP, cl.toString());

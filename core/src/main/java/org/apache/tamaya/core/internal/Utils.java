@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
@@ -29,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class simplifying some implementation aspects.
@@ -36,7 +35,7 @@ import java.util.List;
  */
 public final class Utils {
 
-    private static final Logger LOG = LogManager.getLogger(Utils.class);
+    private static final Logger LOG = Logger.getLogger(Utils.class.getName());
 
     private Utils(){}
 
@@ -56,12 +55,12 @@ public final class Utils {
         List<T> result = new ArrayList<>();
         R containerAnnot = annotated.getAnnotation(annotationContainer);
         if(containerAnnot!=null){
-            Method valueMethod = null;
+            Method valueMethod;
             try {
                 valueMethod = annotationContainer.getMethod("value");
                 result.addAll(Arrays.asList((T[])valueMethod.invoke(containerAnnot)));
             } catch (Exception e) {
-                LOG.error("Failed to evaluate repeatable annotation.", e);
+                LOG.log(Level.SEVERE, "Failed to evaluate repeatable annotation.", e);
             }
         }
         else{
@@ -89,12 +88,12 @@ public final class Utils {
         List<T> result = new ArrayList<>();
         R containerAnnot = annotated.getAnnotation(annotationContainer);
         if(containerAnnot!=null){
-            Method valueMethod = null;
+            Method valueMethod;
             try {
                 valueMethod = annotationContainer.getMethod("value");
                 result.addAll(Arrays.asList((T[])valueMethod.invoke(containerAnnot)));
             } catch (Exception e) {
-                LOG.error("Failed to evaluate repeatable annotation.", e);
+                LOG.log(Level.SEVERE, "Failed to evaluate repeatable annotation.", e);
             }
         }
         else{

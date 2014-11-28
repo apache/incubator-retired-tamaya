@@ -18,14 +18,13 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
 
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * Models a {@link org.apache.tamaya.PropertyProvider} that can be build using a builder pattern.
@@ -34,7 +33,7 @@ class MapBasedPropertyProvider extends AbstractPropertyProvider{
 
     private static final long serialVersionUID = 7601389831472839249L;
 
-    private static final Logger LOG = LogManager.getLogger(MapBasedPropertyProvider.class);
+    private static final Logger LOG = Logger.getLogger(MapBasedPropertyProvider.class.getName());
     /**
      * The unit's entries.
      */
@@ -43,7 +42,7 @@ class MapBasedPropertyProvider extends AbstractPropertyProvider{
     /**
      * Constructor used by {@link MapBasedPropertyProviderBuilder}, or subclasses.
      *
-     * @param entries
+     * @param entries the config entries, not null.
      */
     MapBasedPropertyProvider(MetaInfo metaInfo, Map<String,String> entries){
         super(metaInfo);
@@ -74,7 +73,7 @@ class MapBasedPropertyProvider extends AbstractPropertyProvider{
 
     @Override
     public Map<String, String> toMap() {
-        return new HashMap(this.entries);
+        return new HashMap<>(this.entries);
     }
 
     @Override
@@ -95,7 +94,7 @@ class MapBasedPropertyProvider extends AbstractPropertyProvider{
     }
 
     private void applyChange(PropertyChangeEvent propertyChangeEvent) {
-        LOG.debug("Applying change to map provider: " + propertyChangeEvent);
+        LOG.finest(() -> "Applying change to map provider: " + propertyChangeEvent);
         if(propertyChangeEvent.getNewValue()==null){
             this.entries.remove(propertyChangeEvent.getPropertyName());
         }

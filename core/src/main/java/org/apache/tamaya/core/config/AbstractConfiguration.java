@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.AbstractPropertyProvider;
 import org.apache.tamaya.core.properties.Store;
@@ -29,10 +27,12 @@ import org.apache.tamaya.spi.Bootstrap;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractConfiguration extends AbstractPropertyProvider implements Configuration{
 
-    private static final Logger LOG = LogManager.getLogger(AbstractConfiguration.class);
+    private static final Logger LOG = Logger.getLogger(AbstractConfiguration.class.getName());
 
     private static final long serialVersionUID = 503764580971917964L;
 
@@ -77,8 +77,8 @@ public abstract class AbstractConfiguration extends AbstractPropertyProvider imp
      */
     @Override
     public ConfigChangeSet load(){
-        Configuration oldState = null;
-        Configuration newState = null;
+        Configuration oldState;
+        Configuration newState;
         synchronized(LOCK) {
             oldState = FreezedConfiguration.of(this);
             reload();
@@ -122,7 +122,7 @@ public abstract class AbstractConfiguration extends AbstractPropertyProvider imp
                 try {
                     l.propertyChange(evt);
                 } catch (Exception e) {
-                    LOG.error("Error thrown by ConfigChangeListener: " + l, e);
+                    LOG.log(Level.SEVERE, e, () -> "Error thrown by ConfigChangeListener: " + l);
                 }
             }
         }

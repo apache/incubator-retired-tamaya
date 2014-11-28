@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.env;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.Environment;
 import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.config.ConfigurationFormats;
@@ -33,13 +31,21 @@ import org.apache.tamaya.core.spi.ResourceLoader;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 17.10.2014.
+ * This class implements a {@link org.apache.tamaya.core.spi.EnvironmentProvider} that tries
+ * to read configuration for an ear deployment located under {@code META-INF/env/ear.properties,
+ * META-INF/env/ear.xml or META-INF/env/ear.ini}. The environment id hereby is defined by a
+ * configuration entry named {@code org.apache.tamaya.core.env.earId}.
+ *
+ * Only if such a configuration with such an {@code earId} is found an {@link org.apache.tamaya.Environment}
+ * is created and attached to the corresponding ear classloader.
  */
 public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentProvider {
 
-    private static  final Logger LOG = LogManager.getLogger(ClassLoaderDependentEarEnvironmentProvider.class);
+    private static  final Logger LOG = Logger.getLogger(ClassLoaderDependentEarEnvironmentProvider.class.getName());
 
     private static final String EARID_PROP = "org.apache.tamaya.core.env.earId";
 
@@ -83,7 +89,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
                 data.putAll(read);
             }
             catch(Exception e){
-                LOG.error("Error reading ear environment data from " + uri, e);
+                LOG.log(Level.SEVERE, e, () -> "Error reading ear environment data from " + uri);
             }
         }
         String earId = data.getOrDefault(EARID_PROP, cl.toString());

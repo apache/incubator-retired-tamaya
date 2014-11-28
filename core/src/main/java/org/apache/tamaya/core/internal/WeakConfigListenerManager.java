@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.core.properties.Store;
 
 
@@ -27,13 +25,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 29.03.14.
+ * Simple listener container that only holds weak references on the listeners.
  */
 public class WeakConfigListenerManager{
 
-    private static final Logger LOG = LogManager.getLogger(WeakConfigListenerManager.class);
+    private static final Logger LOG = Logger.getLogger(WeakConfigListenerManager.class.getName());
     private Map<String,Store<PropertyChangeListener>> changeListeners = new ConcurrentHashMap<>();
 
 
@@ -66,7 +66,7 @@ public class WeakConfigListenerManager{
                         l.propertyChange(evt);
                     }
                     catch(Exception e){
-                        LOG.error("Error thrown by PropertyChangeListener: " + l, e);
+                        LOG.log(Level.SEVERE, e, () -> "Error thrown by PropertyChangeListener: " + l);
                     }
                 }
 
@@ -84,7 +84,7 @@ public class WeakConfigListenerManager{
                         l.propertyChange(evt);
                     }
                     catch(Exception e){
-                        LOG.error("Error thrown by ConfigChangeListener: " + l, e);
+                        LOG.log(Level.SEVERE, e, () -> "Error thrown by ConfigChangeListener: " + l);
                     }
                 }
 

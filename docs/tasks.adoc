@@ -382,17 +382,6 @@ Provides dynamic (configurable) CXF adapters, e.g. usable within ServiceMix or s
 
 Provides an implementation for configuring Apache MQ.
 
-=== Dynamic Logging
-
-Provide a dynamic solution, where logging systems are configured (handlers, log levels etc), e.g. for
-
-* slf4j
-* log4j
-* JUL
-
-Also interesting is a feature that allows to dynamically log on a more finer level depending on a concrete
-subject/user, session id or server or ...
-
 === Dynamic ...
 
 Interested to see what other ideas are around. Let us know!

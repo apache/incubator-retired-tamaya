@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyAdapter;
@@ -29,18 +27,18 @@ import org.apache.tamaya.core.internal.Utils;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance of
- * it (referenced by a weak reference). It also implements all aspects of value filtering, conversiong any applying the
+ * it (referenced by a weak reference). It also implements all aspects of value filtering, converting any applying the
  * final value by reflection.
- * Created by Anatole on 01.10.2014.
  */
 @SuppressWarnings("UnusedDeclaration")
 public class ConfiguredField {
 
-    private Logger LOG = LogManager.getLogger(ConfiguredField.class);
+    private Logger LOG = Logger.getLogger(ConfiguredField.class.getName());
 
     /**
      * The configured field instance.
@@ -83,10 +81,6 @@ public class ConfiguredField {
      * @return the value to be applied, or null.
      */
     private String getConfigValue(WithLoadPolicy loadPolicyAnnot, DefaultAreas areasAnnot, Collection<ConfiguredProperty> propertiesAnnot, DefaultValue defaultAnnot) {
-        String[] areas = null;
-        if (areasAnnot != null) {
-            areas = areasAnnot.value();
-        }
         List<String> keys = evaluateKeys(areasAnnot, propertiesAnnot);
         annotatedField.setAccessible(true);
         Configuration config = getConfiguration();
@@ -126,7 +120,7 @@ public class ConfiguredField {
             }
             // Check for adapter/filter
             WithPropertyAdapter adapterAnnot = this.annotatedField.getAnnotation(WithPropertyAdapter.class);
-            Class<? extends PropertyAdapter> propertyAdapterType = null;
+            Class<? extends PropertyAdapter> propertyAdapterType;
             if (adapterAnnot != null) {
                 propertyAdapterType = adapterAnnot.value();
                 if (!propertyAdapterType.equals(PropertyAdapter.class)) {

@@ -18,10 +18,8 @@
  */
 package org.apache.tamaya.core.env;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.Environment;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -30,20 +28,19 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 01.10.2014.
+ * Properties implementation class that can be applied as current System properties by calling
+ * {@link org.apache.tamaya.core.env.ConfiguredSystemProperties#install()}. The system properties will
+ * then behave contextually depending on the current runtime configuration active.
  */
 public class ConfiguredSystemProperties extends Properties {
-    private static final Logger LOG = LogManager.getLogger(ConfiguredSystemProperties.class);
+    private static final Logger LOG = Logger.getLogger(ConfiguredSystemProperties.class.getName());
     private Properties initialProperties;
     private static volatile Map<String, Properties> contextualProperties = new ConcurrentHashMap<>();
     private static volatile Supplier<String> contextProvider = () ->
             Environment.of().get("context.id").orElse("<system>");
-
-    public static interface ContextProvider {
-        String getContextId();
-    }
 
     private static Supplier<String> loadContextProvider() {
         return null;
@@ -63,7 +60,7 @@ public class ConfiguredSystemProperties extends Properties {
             return;
         }
         ConfiguredSystemProperties systemProps = new ConfiguredSystemProperties(props);
-        LOG.debug("Installing enhanced system properties...");
+        LOG.finest("Installing enhanced system properties...");
         System.setProperties(systemProps);
         LOG.info("Installed enhanced system properties successfully.");
     }
@@ -72,7 +69,7 @@ public class ConfiguredSystemProperties extends Properties {
         Properties props = System.getProperties();
         if (props instanceof ConfiguredSystemProperties) {
             Properties initialProperties = ((ConfiguredSystemProperties) props).initialProperties;
-            LOG.debug("Uninstalling enhanced system properties...");
+            LOG.finest("Uninstalling enhanced system properties...");
             System.setProperties(initialProperties);
             LOG.info("Uninstalled enhanced system properties successfully.");
         }
@@ -216,7 +213,7 @@ public class ConfiguredSystemProperties extends Properties {
     }
 
     @Override
-    public void loadFromXML(InputStream in) throws IOException, InvalidPropertiesFormatException {
+    public void loadFromXML(InputStream in) throws IOException {
         getContextualProperties().loadFromXML(in);
     }
 
@@ -309,6 +306,10 @@ public class ConfiguredSystemProperties extends Properties {
         return initialProperties;
     }
 
+    /**
+     * Uninstalls the contextual system properties for the current context, as determined by the current
+     * context provider active.
+     */
     public static void resetProperties() {
         String contextId = contextProvider == null ? "" : contextProvider.get();
         contextualProperties.remove(contextId);
@@ -316,10 +317,10 @@ public class ConfiguredSystemProperties extends Properties {
 
     protected Properties getContextualProperties() {
         String contextId = contextProvider == null ? "" : contextProvider.get();
-        Properties props = this.contextualProperties.get(contextId);
+        Properties props = ConfiguredSystemProperties.contextualProperties.get(contextId);
         if (props == null) {
             synchronized (LOCK) {
-                props = this.contextualProperties.get(contextId);
+                props = ConfiguredSystemProperties.contextualProperties.get(contextId);
                 if (props == null) {
                     props = createNewProperties();
                     contextualProperties.put(contextId, props);

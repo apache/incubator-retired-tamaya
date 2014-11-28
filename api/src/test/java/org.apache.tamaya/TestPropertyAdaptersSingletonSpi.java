@@ -32,7 +32,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by Anatole on 08.09.2014.
+ * Test implementation of {@link PropertyAdaptersSingletonSpi}, which provides adapters
+ * for some basic types.
  */
 public final class TestPropertyAdaptersSingletonSpi implements PropertyAdaptersSingletonSpi{
 
@@ -76,7 +77,7 @@ public final class TestPropertyAdaptersSingletonSpi implements PropertyAdaptersS
     @Override
     public <T> PropertyAdapter<T> getAdapter(Class<T> targetType, WithPropertyAdapter annotation){
         if(annotation!=null){
-            Class adapterType = annotation.value();
+            Class<?> adapterType = annotation.value();
             if(!adapterType.equals(PropertyAdapter.class)){
                 try{
                     return (PropertyAdapter<T>)adapterType.newInstance();

@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyAdapter;
@@ -29,6 +27,8 @@ import org.apache.tamaya.core.internal.Utils;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance of
@@ -39,7 +39,7 @@ import java.util.*;
 @SuppressWarnings("UnusedDeclaration")
 public class ConfiguredMethod {
 
-    private static final Logger LOG = LogManager.getLogger(ConfiguredMethod.class);
+    private static final Logger LOG = Logger.getLogger(ConfiguredMethod.class.getName());
 
     /**
      * The configured field instance.
@@ -96,13 +96,10 @@ public class ConfiguredMethod {
      * @return the list of keys in order how they should be processed/looked up.
      */
     private List<String> evaluateKeys(DefaultAreas areasAnnot, Collection<ConfiguredProperty> propertyAnnotations) {
-        List<String> keys = new ArrayList<>();
-        Objects.requireNonNull(propertyAnnotations);
-        for (ConfiguredProperty property : propertyAnnotations) {
-            if (!property.value().isEmpty()) {
-                keys.add(property.value());
-            }
-        }
+        List<String> keys =
+                Objects.requireNonNull(propertyAnnotations).stream()
+                        .filter(p -> !p.value().isEmpty())
+                        .map(ConfiguredProperty::value).collect(Collectors.toList());
         if (keys.isEmpty()) //noinspection UnusedAssignment
             keys.add(annotatedMethod.getName());
         ListIterator<String> iterator = keys.listIterator();
@@ -148,7 +145,7 @@ public class ConfiguredMethod {
      */
     public Configuration getConfiguration() {
         WithConfig name = annotatedMethod.getAnnotation(WithConfig.class);
-        if(name!=null) {
+        if (name != null) {
             return Configuration.of(name.value());
         }
         return Configuration.of();
@@ -165,7 +162,7 @@ public class ConfiguredMethod {
         try {
             // Check for adapter/filter
             WithPropertyAdapter adapterAnnot = this.annotatedMethod.getAnnotation(WithPropertyAdapter.class);
-            Class<? extends PropertyAdapter> propertyAdapterType = null;
+            Class<? extends PropertyAdapter> propertyAdapterType;
             if (adapterAnnot != null) {
                 propertyAdapterType = adapterAnnot.value();
                 if (!propertyAdapterType.equals(PropertyAdapter.class)) {
@@ -181,7 +178,7 @@ public class ConfiguredMethod {
                         this.annotatedMethod.getName());
                 return null;
             } else {
-                Class baseType = annotatedMethod.getReturnType();
+                Class<?> baseType = annotatedMethod.getReturnType();
                 if (String.class.equals(baseType) || baseType.isAssignableFrom(configValue.getClass())) {
                     return configValue;
                 } else {

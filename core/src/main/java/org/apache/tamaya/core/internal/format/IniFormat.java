@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.format;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 
 
@@ -30,10 +28,12 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IniFormat implements ConfigurationFormat{
 
-    private static final Logger LOG = LogManager.getLogger(IniFormat.class);
+    private static final Logger LOG = Logger.getLogger(IniFormat.class.getName());
 
 
     @Override
@@ -85,7 +85,7 @@ public class IniFormat implements ConfigurationFormat{
                 }
             }
             catch(Exception e){
-                LOG.error("Error reading configuration: " + resource, e);
+                LOG.log(Level.SEVERE, e, () -> "Error reading configuration: " + resource);
             }
         }
         return result;

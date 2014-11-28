@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.env;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.Environment;
 import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.config.ConfigurationFormats;
@@ -32,13 +30,16 @@ import org.apache.tamaya.core.spi.ResourceLoader;
 
 import java.net.URI;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 17.10.2014.
+ * System environment provider (loaded only once using the system class loader) that loads additional environment properties from the classpath evaluating
+ * {@code META-INF/env/system.properties, META-INF/env/system.xml and META-INF/env/system.ini}.
  */
 public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider {
 
-    private static  final Logger LOG = LogManager.getLogger(SystemClassLoaderEnvironmentProvider.class);
+    private static  final Logger LOG = Logger.getLogger(SystemClassLoaderEnvironmentProvider.class.getName());
 
     private Map<String,Environment> environments = new HashMap<>();
 
@@ -68,7 +69,7 @@ public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider
                 builder.setAll(data);
             }
             catch(Exception e){
-                LOG.error("Error readong environment data from " + uri, e);
+                LOG.log(Level.SEVERE, e, () -> "Error readong environment data from " + uri);
             }
         }
         builder.setParent(parentEnvironment);

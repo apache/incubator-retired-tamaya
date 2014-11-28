@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
@@ -30,6 +28,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Singleton to read the configuration for the configuration system
@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public final class MetaConfig {
 
-    private static  final Logger LOG = LogManager.getLogger(MetaConfig.class);
+    private static  final Logger LOG = Logger.getLogger(MetaConfig.class.getName());
 
     private static final MetaConfig INSTANCE = new MetaConfig();
 
@@ -54,7 +54,7 @@ public final class MetaConfig {
                 properties.putAll(read);
             }
             catch(Exception e){
-                LOG.error("Error reading meta configuration from " + uri, e);
+                LOG.log(Level.SEVERE, e, () -> "Error reading meta configuration from " + uri);
             }
         }
     }

@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertyProvider;
@@ -29,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 /**
  * Accessor factory for several standard {@link org.apache.tamaya.PropertyProvider} instances, usable for creating {@code Configuration}
@@ -39,7 +38,7 @@ public final class PropertyProviders {
     private static final PropertyProvider EMPTY_PROPERTYPROVIDER = from(Collections.emptyMap());
     private static final PropertyProvider ENV_PROPERTYPROVIDER = new EnvironmentPropertyProvider();
 
-    private static final Logger LOG = LogManager.getLogger(PropertyProviders.class);
+    private static final Logger LOG = Logger.getLogger(PropertyProviders.class.getName());
 
     /**
      * Private singleton constructor.
@@ -238,22 +237,11 @@ public final class PropertyProviders {
      * @param args the CLI arguments, not null.
      * @return the corresponding meta information.
      */
-    private static MetaInfo createArgsMetaInfo(String... args) {
+    public static MetaInfo createArgsMetaInfo(String... args) {
         MetaInfoBuilder metaBuilder = MetaInfoBuilder.of();
         return metaBuilder.setType("cli").set("args", Arrays.toString(args)).build();
     }
 
-
-    /**
-     * Create meta information for CLI arguments passed.
-     *
-     * @param paths the paths to be resolved by the {@code PathResolverService} , not null.
-     * @return the corresponding meta information.
-     */
-    private static MetaInfo createPathMetaInfo(String... paths) {
-        MetaInfoBuilder metaBuilder = MetaInfoBuilder.of();
-        return metaBuilder.setSourceExpressions(paths).build();
-    }
 
     /**
      * Get an empty and immutable PropertyProvider instance.

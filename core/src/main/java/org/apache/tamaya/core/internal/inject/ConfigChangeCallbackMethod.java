@@ -18,20 +18,20 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 03.10.2014.
+ * This class holds a method object that is annotated to be a callback method to be called on configuration
+ * changes.
  */
 public final class ConfigChangeCallbackMethod {
 
-    private static final Logger LOG = LogManager.getLogger(ConfigChangeCallbackMethod.class);
+    private static final Logger LOG = Logger.getLogger(ConfigChangeCallbackMethod.class.getName());
 
     private Method callbackMethod;
 
@@ -48,7 +48,7 @@ public final class ConfigChangeCallbackMethod {
             callbackMethod.setAccessible(true);
             callbackMethod.invoke(instance, configChangeEvent);
         } catch (Exception e) {
-            LOG.error("Error calling ConfigChange callback method " + callbackMethod.getDeclaringClass().getName() + '.' + callbackMethod.getName() + " on " + instance, e);
+            LOG.log(Level.SEVERE, e, () -> "Error calling ConfigChange callback method " + callbackMethod.getDeclaringClass().getName() + '.' + callbackMethod.getName() + " on " + instance);
         }
     }
 }
