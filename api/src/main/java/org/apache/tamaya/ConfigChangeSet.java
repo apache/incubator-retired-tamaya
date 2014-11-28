@@ -37,6 +37,15 @@ public final class ConfigChangeSet {
     private Map<String,PropertyChangeEvent> changes = new HashMap<>();
 
     /**
+     * Get an empty change set for the given provider.
+     * @param propertyProvider The base property provider/configuration, not null.
+     * @return an empty ConfigChangeSet instance.
+     */
+    public static final ConfigChangeSet emptyChangeSet(PropertyProvider propertyProvider){
+        return new ConfigChangeSet(propertyProvider, "<empty>", Collections.emptySet());
+    }
+
+    /**
      * Constructor used by {@link ConfigChangeSetBuilder}.
      * @param propertyProvider The base property provider/configuration, not null.
      * @param baseVersion The base version, usable for optimistic locking.
@@ -50,7 +59,7 @@ public final class ConfigChangeSet {
 
     /**
      * Get the underlying property provider/configuration.
-     * @return the underlying property provider/configuration, never null.
+     * @return the underlying property provider/configuration, never null, unless for {@link EMPTY_CHANGESET}.
      */
     public PropertyProvider getPropertyProvider(){
         return this.propertyProvider;

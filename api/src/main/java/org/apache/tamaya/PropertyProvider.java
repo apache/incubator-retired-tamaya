@@ -78,15 +78,6 @@ public interface PropertyProvider {
         return this == provider || ConfigChangeSetBuilder.compare(this, provider).isEmpty();
     }
 
-//    /**
-//     * Access a property.
-//     * @param key the property's key, not null.
-//     * @return the property's value.
-//     */
-//    default String getOrDefault(String key, String defaultValue){
-//        return get(key).orElse(defaultValue);
-//    }
-
     /**
      * Access the set of property keys, defined by this provider.
      * @return the key set, never null.
@@ -98,8 +89,18 @@ public interface PropertyProvider {
     /**
      * Reloads the {@link org.apache.tamaya.PropertyProvider}.
      */
-    default void load(){
+    default ConfigChangeSet load(){
         // by default do nothing
+        return ConfigChangeSet.emptyChangeSet(this);
+    }
+
+    /**
+     * Allows to evaluate if the provider is mutable.
+     * @return true, if the provider is mutable.
+     * @see #apply(ConfigChangeSet)
+     */
+    default boolean isMutable(){
+        return false;
     }
 
     /**
@@ -107,6 +108,7 @@ public interface PropertyProvider {
      * @param change the config change
      * @throws ConfigException if an unrelated change was passed.
      * @throws UnsupportedOperationException when the configuration is not writable.
+     * @see #isMutable()
      */
     default void apply(ConfigChangeSet change){
         throw new UnsupportedOperationException("Config/properties not mutable: "+ this);

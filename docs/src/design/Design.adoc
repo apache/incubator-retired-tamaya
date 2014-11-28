@@ -1,0 +1,112 @@
+Apache Tamaya -- Design Documentation
+=====================================
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya
+:revnumber: 0.1-SNAPSHOT
+:revremark: Incubator
+:revdate: November 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch, Anatole Tresch
+:email: <atsticks@gmail.com>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:iconsdir: {imagesdir}/icons
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
+
+'''
+
+<<<
+
+-> add image : : https://raw.githubusercontent.com/JavaConfig/config-api/master/src/main/asciidoc/images/javaconfig.jpg[]
+
+toc::[]
+
+<<<
+:numbered!:
+-----------------------------------------------------------
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-----------------------------------------------------------
+
+:numbered:
+
+<<<
+
+== Introduction
+This document describes the {name} API for Configuration. The technical objective is to provide a
+unified configuration model in Java, targeting Java ME, SE as well as the EE platform.
+The API will provide support for key/value based application configuration. It will provide
+as well higher level APIs that are based on the low level ke</value pairs. Finally it will
+provide extension points for adding additional features and additional modules for extension
+or adaption.
+
+=== Working Group
+This work is being conducted as part of a community lead joint effort under the Apache Software Foundation. This
+specification is the result of the collaborative work of the members of the {name} Users Group and the community at
+large. Currently the project is lead by Anatole Tresch (atsticks at gmail.dot com).
+
+=== Goals
+Configuration is a key feature in all kind of programming languages. Basically configuration is the parametrization of
+well defined aspects of a software product without having to recompile/rebuild the code.
+
+==== Targets
+{name} targets to support all general configuration aspects, e.g.
+
+* spplication configuration
+** plugins
+** modules
+** components
+* Configuration of Java EE related aspects for Java enterprise application portability and dynamic provisioning, such as
+** Configuration of CDI (interceptors, decorators and alternatives)
+** Configuration of Bean Validation, JSF, web applications etc.
+* Configuration of instances within Java SE, e.g. by passing instances to a method that injects configured values, or by providing
+  accessors to evaluate current configuration vlues. This can be used explicitly or transparently by client code.
+
+Additionally the solution should support
+
+* multiple configuration locations, including remote locations
+* multiple configuration formats, including custom formats
+* multiple configuration loading mechanisms, including custom mechanisms. By default reading the classpath, files und URIs are supported by default.
+* type conversion
+* configuration of collections
+
+
+=== Required Java version
+The API is based on Java SE 8.0 language features.
+
+=== How this document is organized
+There are five main section in this document:
+
+* Use cases.
+* Requirements.
+* Specification.
+* Implementation Recommendations.
+* An appendix.
+
+include::src/design/content/0_UseCases.adoc[]
+include::src/design/content/1_Requirements.adoc[]
+include::src/design/content/2_CoreConcepts.adoc[]
+
+:numbered!:
+== APPENDIX
+

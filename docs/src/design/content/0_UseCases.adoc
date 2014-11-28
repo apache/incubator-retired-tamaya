@@ -1,0 +1,255 @@
+<<<
+[[Use Cases]]
+== Use Cases
+
+This section describes some, but not all, of the use cases that should be covered with this JSR.
+
+[[UC Simple Configuration]]
+=== Simple Property Based Configuration
+
+In this most simple usage scenario an application is created that is preconfigured by some property files contained in the
+Java archive. Using the command line it is possible to redefine/override some of the properties, e.g. by using system properties.
+Typical example are small command line tools.
+
+-> It must be possible to define default configuration and package it with the (SE) application.
+
+-> It must be possible to consider system properties or other command line arguments for usage with configuration.
+
+-> It must be possible that command line arguments can override defaults configured.
+
+[[UC Advanced Property Based Configuration]]
+=== Advanced Property Based Configuration
+
+Enhancing the previous scenario, we might as well consider the current environment. Saying that our overriding mechanisms
+must be improved, since
+
+* some environment settings should not be overridable
+* some defaults should be overridden by environment or system properties, whereas others may not
+
+Additionally the user may have an option, where he is allowed to define an external configuration file that should be used to configure
+the application. This is especially useful for applications with lots of command line options (under windows even command
+execution may fail die to exceeding command length). Finally application developers may have their own formats in place, so the
+system should be able to support these formats.
+
+-> Environment properties must be considered as well.
+
+-> It must be possible to control overriding.
+
+-> It must be possible to dynamically add configuration locations to be considered.
+
+-> It must be possible to define customized configuration formats.
+
+[[UC Modularized Configuration]]
+=== Modularized Configuration
+
+When systems grow they must be modularized to keep control. Whereas that sounds not really fancy, it leads to additional things
+to be considered by a configuration system:
+
+* The different modules must have access to their own "module configuration".
+* Modules may want to define a contract, which properties may be overriden.
+
+Consequently
+
+-> Parts of Configuration must be identifiable and accessible in a isolated way.
+
+-> Module configuration requires partial isolation or other mechanisms to ensure only configuration aspects
+   that are allowed to be overriden can be overriden.
+
+[[UC Dynamic Provisioning]]
+=== Dynamic Provisioning
+
+In Cloud Computing, especially the PaaS and SaaS areas a typical use case would be that an application (or server)
+is deployed, configured and started dynamically. Typically things are controlled by some "active controller components",
+which are capable of
+* creating new nodes (using IaaS services)
+* deploying and starting the required runtime platform , e.g. as part of a PaaS solution.
+* deploying and starting the application modules.
+
+All these steps require some kind of configuration. As of today required files are often created on the target node
+before the systems are started, using proprietary formats and mechanism. Similarly accessing the configuration in place
+may require examining the file system or using again proprietary management functions. Of course, a configuration
+solution should not try to solve that, but it can provide a significant bunch of functionality useful in such scenarios:
+
+* provide remote capabilities for configuration
+* allow configuration to be updated remotely.
+* allow client code to listen for configuration changes and react as needed.
+
+Consequently:
+
+-> Ensure Configuration can be transferred over the network easily.
+
+-> Whereas many people will no think serializability is the solution, it would be much more useful to define
+   a text based format for serialization, e.g. in +XML+ or +JSON+.
+
+-> Similarly a management API should be defined, which allows to inspect the configuration in place, e.g. using
+   JMX or REST services.
+
+[[UC Java EE]]
+=== Java EE
+
+Considering Java EE different aspects should be considered:
+
+* Java EE is a complex multi-layered architecture with different levels of runtime contexts:
+** application server boot level (system classloader),
+** (optional) deployment/undeployment of ears (ear classloader),
+** (optional) deployment/undeployment of web applications (war classloader),
+** different runtime setups, e.g. EJB calls, MDB execution, Servlet Requests, scheduled and timed executions.
+* Configuring administrative resources (e.g. datasources, users, security etc) is typically vendor specific.
+* The environment is inherently multi-threaded.
+
+Given that a couple of additional requirements araise:
+
+-> Configuration must be contextual, depending on the current runtime context (e.g. boot level, ear, war, ...).
+
+-> Hereby contextual aspects can even exceed the levels described above, e.g. for SaaS scenarios.
+
+-> Resources can be unloaded, e.g. wars, ears can be restarted.
+
+-> The different contextual levels can also be used for overriding, e.g. application specific configuration
+may override ear or system configuration.
+
+-> Configuration may be read from different sources (different classloaders, files, databases, remote locations).
+
+-> Configuration may be read in different formats (deployment descriptors, +ServiceLoader+ configuration, alt-DD feature, ...)
+
+-> JSF also knows the concept of stages.
+
+-> Many SPI's of Java EE require the implementation of some well defined Java interface, so it would be useful if the
+   configuration solution supports easy implementation of such instances.
+
+-> In general it would be useful to model the +Environment+ explicitly.
+
+-> Configuration used as preferences is writable as well. This requires mutability to be modelled in way, without the
+   need of synchronization.
+
+-> JNDI can be used for configuration as well.
+
+[[UC MultiTenancy]]
+=== Scenario MultiTenancy
+In multi tenancy setups a hierarchical/graph model of contexts for configurations is required. For example there might
+be some kind of layering as follows:
+
+* Layer 0: Low level system configuration
+* Layer 1: Domain configuration
+* Layer 2: Default App configuration
+* Layer 3: Tenant specific configuration
+* Layer 4: User specific configuration
+
+Configurations made in the tenant or user layer override the default app configuration etc.
+
+-> It must be possible to structure Configuration in layers that can override/extend each other.
+
+-> The current environment must be capable of mapping tenant, user and other aspects, so a corresponding configuration
+   (or layer) can be derived.
+
+[[UC Java API]]
+=== Accessing Configuration
+
+So far we described much how configuration must be organized and managed, but we got not concrete, how it is accessed.
+Basically there are two basic scenarios to be distinguished, which mainly depend on the way how the lifecycle of a component
+to be configured is managed:
+
+* If the lifecycle is managed manually by the developer, the configuration system
+** can inject configuration values, when explicitly called to to so
+** can provide an accessor for configuration.
+* If the lifecycle is managed by some container such as a DI container, the configuration
+  system should leverage the functionality of the container, where possible.
+
+The most simplest way is using injection, e.g. a POJO can be written as follows:
+
+[source, java]
+.Configured POJO Example
+----------------------------------------------------
+public class MyPojo {
+  @ConfigProperty("myCurrency")
+  @DefaultValue("CHF")
+  private String currency;
+
+  @ConfigProperty("myCurrencyRate")
+  private Long currencyRate;
+
+  // complex algorithm based on the currency
+}
+----------------------------------------------------
+
+The instance then can be passed for being configured:
+
+[source, java]
+.Configuring a POJO
+----------------------------------------------------
+MyPojo instance = new MyPojo();
+Configuration.configure(instance);
+----------------------------------------------------
+
+Another way of accessing configuration would be by defining a type safe template
+providing access to the configured values and let the configuration system implement
+the interface:
+
+[source, java]
+.Type Safe Configuration Template Example
+----------------------------------------------------
+public interface MyConfig {
+  @ConfigProperty("myCurrency")
+  @DefaultValue("CHF")
+  String getCurrency();
+
+  @ConfigProperty("myCurrencyRate")
+  Long getCurrencyRate();
+
+}
+----------------------------------------------------
+
+The configuration system will then implement the
+interface using configuration as follows:
+
+[source, java]
+.Accessing a type safe Configuration Template
+----------------------------------------------------
+MyConfig config = Configuration.of(MyConfig.class);
+----------------------------------------------------
+
+Finally there is a generic +Configuration+ type that can be used as well, which
+provides full access to all features:
+
+[source, java]
+.Accessing Configuration
+----------------------------------------------------
+Configuration config = Configuration.of(Configuration.class);
+----------------------------------------------------
+
+
+[[UC Testing]]
+=== Testing
+When testing a Java solution, it must be possible to easily control the configuration provided, so isolated
+component tests can be written effectively. Also it should be possible to control/isolate the configuration level for
+each test case.
+
+-> isolation of configuration services is required
+
+-> API for controlling the configuration provided, required for according implementations in the testing frameworks.
+
+[[UC Staging]]
+=== Staging
+Different companies go through different staging levels during the development of software components. Currently only
+rarely the EE frameworks support staging aspects, nevertheless no broader, well modelled staging concept is defined.
+Different companies also have different staging or sub-staging levels in place, which also must be reflected.
+Especially with sub-stages inheritance of stage related configuration is common sense and should be supported.
+
+-> Main stages available and to be supported must be defined.
+
+-> Enable additional stages to be added, so also custom stages can be supported.
+
+
+[[UC CotsIntegration]]
+=== Custom of the Shelf (COTS) Integration
+When buying software from an external software company it is often very cumbersome to integrate, adapt and customize
+third party software to the internal operational requirements. Especially, when software is delivered as ear modules
+portability is often very difficult and time consuming. Configuration should enable COTS providers to define a
+customization contract, which also can be part of the COTS software interface and integration specifications. This
+would allow operations to better control and configure third party solutions as possible, whereas in the evaluation
+phase the integration and configuration options can explicitly be defined.
+
+-> It must be possible to document configuration aspects supported.
+
+-> Configuration must be overridable from external sources (the operations which must operate the COTS solution).
+

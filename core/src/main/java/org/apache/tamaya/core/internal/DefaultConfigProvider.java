@@ -41,7 +41,7 @@ public class DefaultConfigProvider implements ConfigurationProviderSpi{
     @Override
     public Configuration getConfiguration(){
         if(config == null){
-            config = ConfigurationBuilder.of("")
+            config = ConfigurationBuilder.of(getConfigName())
                     .addResources("classpath*:META-INF/config/**/*.xml", "classpath*:META-INF/config/**/*.properties",
                                   "classpath*:META-INF/config/**/*.init").setMetainfo(
                             MetaInfoBuilder.of("Default Configuration")

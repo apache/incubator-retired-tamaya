@@ -1,0 +1,33 @@
+<<<
+[[Requirements]]
+== Requirements
+=== Core Configuration Requirements
+Based on the scope and use cases described above the following core requirements can be identified:
+
+* Configuration is modelled as String based key/value pairs.
+* Configuration can be combined using the GoF composite pattern. Hereby different composition policies can be applied, such as
+  ** override: subsequent entries override existing ones.
+  ** substraction: keys present in the second configuration will be removed.
+  ** union-resolve: key/values were added, in case of conflicts a +ConfigException+ must be thrown.
+  ** union-ignore: similar to union, whereas duplicates are ignored (leaving the initial value loaded).
+  ** intersection:
+
+[[RequirementsServer]]
+=== Server Configuration Requirements
+shskjdhskhds sdkj ksjdks skjdskjd:
+
+. Req1
+. Req2
+
+[[RequirementsExtensions]]
+=== Extensions Requirements
+shskjdhskhds sdkj ksjdks skjdskjd:
+
+. Req1
+. Req2
+
+[[RequirementsNonFunctional]]
+=== Non Functional Requirements
+. Req1
+. Req2
+

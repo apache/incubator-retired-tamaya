@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.MetaInfo;
+import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertyProvider;
 
 import java.io.Serializable;
@@ -92,6 +93,7 @@ public abstract class AbstractPropertyProvider implements PropertyProvider, Seri
     @Override
     public String toString(){
         StringBuilder b = new StringBuilder(getClass().getSimpleName()).append("{\n");
+        b.append("  ").append("(").append(MetaInfoBuilder.NAME).append(" = ").append(getMetaInfo().get(MetaInfoBuilder.NAME)).append(")\n");
         printContents(b);
         return b.append('}').toString();
     }

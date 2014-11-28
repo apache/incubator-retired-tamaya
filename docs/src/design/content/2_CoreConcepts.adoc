@@ -1,0 +1,299 @@
+<<<
+[[Core Concepts]]
+== {name} Core Concepts
+Though {name} is a very powerful and flexible solution there are basically only a few simple core concepts required that build
+the base of all the other mechanisms:
+
+* Key/Value Pairs
+* Property Providers
+* Meta Data
+* Combining property providers
+* Environment Model
+* Configuration
+* Configuration Injection
+
+These parts are explained in the following sections. It is recommended that user's of the API read through this part.
+All subsequent parts are building upon this concepts and may be more difficult to understand without having read
+this section.
+
+[[API KeyValues]]
+=== Key/Value Pairs
+
+Basically configuration is a very generic concept. Therefore it should be modelled in a generic way. The most simple
+and similarly most commonly used are simple literal key/value pairs. So the core building block of {name} are key/value pairs.
+You can think of a common +.properties+ file, e.g.
+
+[source,properties]
+.A simple properties file
+--------------------------------------------
+a.b.c=cVal
+a.b.c.1=cVal1
+a.b.c.2=cVal2
+a=aVal
+a.b=abVal
+a.b2=abVal
+--------------------------------------------
+
+Now you can use +java.util.Properties+ to read this file and access the corresponding properties, e.g.
+
+[source,properties]
+.Accessing some properties
+--------------------------------------------
+Properties props = new Properties();
+props.readProperties(...);
+String val = props.getProperty("a.b.c");
+val = props.getProperty("a.b.c.1");
+...
+--------------------------------------------
+
+This looks familiar to most of you. Nevertheless when looking closer to the above key/value pairs,
+there are more concepts in place: looking at the keys +a.b.c+, +a.b.c.1+, +a.b.c.2+, +a+, +a.b+ we
+see that the key names build up a flattened tree structure. So we can define the following:
+
+Given a key +p1.p2.p3.k=value+:
+
+* +p1.p2.p3.k+ is called the _qualified key_
+* +p1.p2.p3+ is the key's _area_
+* the child areas +p1.p2", "p1+ are called _areas_ as well
+* +k+ is the _(unqualified) key_
+
+Given that you can perform some very useful actions:
+
+* you can filter the keys with an area. E.g. in the example before you can query for all keys within the area +a.b.c+
+  and map them to new properties set as follows:
+
+[source,properties]
+.Accessing an area
+--------------------------------------------
+1=cVal1
+2=cVal2
+--------------------------------------------
+
+Similarly accessing the area +a+ results in the following properties:
+
+[source,properties]
+.Accessing the area +a+
+--------------------------------------------
+b=abVal
+b2=abVal
+--------------------------------------------
+
+Additionally you can access all values of an area recursively, so accessing +a+ recursively results in
+the following properties:
+
+[source,properties]
+.Accessing area +a+ recursively
+--------------------------------------------
+b.c=cVal
+b.c.1=cVal1
+b.c.2=cVal2
+b=abVal
+b2=abVal
+--------------------------------------------
+
+Why this is useful? Well there are different use cases:
+
+* you can segregate your configuration properties, e.g. a module can access its module configuration by
+  querying all properties under the area +config.modules.myModule+ (or whatever would be appropriate).
+* you can use this mechanism to configure maps (or more generally: collections).
+* you can easily filter parts of configuration
+* ...and more.
+
+==== Why Using Strings Only
+
+Using Strings as base representation of configuration comes with several huge advantages:
+
+* Strings are simple to understand
+* Strings are human readable and therefore easy to prove for correctness
+* Strings can easily be used within different language, different VMs, files or network communications.
+* Strings can easily be compared and manipulated
+* Strings can easily be searched, indexed and cached
+* It is very easy to provide Strings as configuration, which gives much flexibility for providing configuration in
+  production as well in testing.
+* and more
+
+On the other side there are also disadvantages:
+
+* Strings are inherently not type safe, they do not provide validation out of the box for special types, such as
+numbers,
+  dates etc.
+* Often you want not to work with Strings, but with according types.
+* Strings are not hierarchical, so mapping hierarchical structures requires some extra efforts.
+
+Nevertheless most of these advantages can be mitigated easily, hereby still keeping all the benefits from above:
+
+* Adding type safe converters on top of String allow to add any type easily, that can be directly mapped out of Strings.
+  This includes all common base types such as numbers, dates, time, but also timezones, formatting patterns and more.
+* Even more complex mappings can be easily realized, by using String not as a direct representation of configuration,
+  but a reference that defines where the more complex configuration artifact is available. This mechanism is similarly
+  easy to understand as parsing Strings to numbers, but is powerful enough to provide e.g. all kind of deployment
+  descriptors in Java EE.
+* Hierarchical and collection types can be mapped in different ways:
+** The keys of configuration can have additional syntax/semantics. E.g. when adding dor-separating path semantics
+*** trees/maps can also simply be mapped:
+
+[API Property Providers]
+=== Property Providers
+
+We have seen that constrain configuration aspects to simple literal key/value pairs provides us with an easy to
+understand, generic, flexible, yet extendible mechanism. Looking at the Java language features a +vava.util.Map<String,
+String>+ and +java.util.Properties+ basically model these quite well out of the box.
+So it makes sense to build configuration on top of the JDK's +Map+ interface. This creates immediately additional
+benefits:
+
+* we inherit full Lambda and collection support
+* Maps are widely known and well understood
+
+Nevertheless there are some things to be considered:
+
+* Configuration also requires meta-data, such as
+** the origin of a certain configuration entry and how it was derived from other values
+** the sensitivity of some data
+** the provider that have read the data
+** the time, when the data was read
+** the timestamp, when some data may be outdated
+** ...
+
+Basically the same is also the not related to some single configuration key, but also to a whole map.
+The +PropertyProvider+ interface models exact these aspects and looks as illustrated below:
+
+[source,java]
+.Interface PropertyProvider
+--------------------------------------------
+public interface PropertyProvider{
+
+      Optional<String> get(String key);
+      boolean containsKey(String key);
+      Map<String, String> toMap();
+      MetaInfo getMetaInfo();
+
+      default boolean hasSameProperties(PropertyProvider provider);
+      default Set<String> keySet();
+      default ConfigChangeSet load();
+      default boolean isMutable();
+      default void apply(ConfigChangeSet change);
+}
+--------------------------------------------
+
+Hereby
+
+* +getMetaInfo()+ return the meta information for the property provider, as well as for individual property key/value pairs.
+* +get, containsKey, keySet+ look similar to the methods on +Map+, though +get+ uses the +Optional+ type introduced
+  with Java 8. This avoids returning +null+ or throwing exceptions in case no such entry is available and also
+  reduced the API's footprint, since default values can be easily implemented by calling +Optional.orElse+.
+* +isMutable()+ allows to easy check, if a property provider is mutable, which is more elegant than catching
+  +NonSupportedOperation+ exception thrown on the according methods of +Map+.
+* +load()+ finally allows to (re)load a property map. It depends on the implementing source, if this operation
+  has any effect. If the map changes an according +ConfigChange+ must be returned, describing the
+  changes applied.
+* +hasSameProperties+ allows to perform a comparison with another provider.
+* +toMap+ allows to extract thing to a +Map+.
+
+This simple model will be used within the spi, where configuration can be injected/provided from external resources.
+But we have seen, that we have to consider additional aspects, such as extendability and type safety. Therefore we
+extend +PropertyMap+ and hereby also apply the 'composite pattern', which results in the following key abstraction.
+
+[[API Configuration]]
+=== Configuration
+
+Configuration inherits all basic features from +PropertyProvider+, but additionally adds functionality for
+type safety and extension mechanisms:
+
+[source,java]
+.Interface Configuration
+--------------------------------------------
+public interface Configuration extends PropertyProvider{
+
+    default OptionalBoolean getBoolean(String key);
+    default OptionalInt getInteger(String key);
+    default OptionalLong getLong(String key);
+    default OptionalDouble getDouble(String key);
+    default <T> Optional<T> getAdapted(String key, PropertyAdapter<T> adapter);
+    <T> Optional<T> get(String key, Class<T> type);
+
+    // accessing areas
+    default Set<String> getAreas();
+    default Set<String> getTransitiveAreas();
+    default Set<String> getAreas(final Predicate<String> predicate);
+    default Set<String> getTransitiveAreas(Predicate<String> predicate);
+    default boolean containsArea(String key);
+
+    // extension points
+    default Configuration with(ConfigOperator operator);
+    default <T> T query(ConfigQuery<T> query);
+
+    // versioning
+    default String getVersion(){return "N/A";}
+    void addPropertyChangeListener(PropertyChangeListener l);
+    void removePropertyChangeListener(PropertyChangeListener l);
+
+    // singleton accessors
+    public static boolean isDefined(String name);
+    public static <T> T of(String name, Class<T> template);
+    public static Configuration of(String name);
+    public static Configuration of();
+    public static <T> T of(Class<T> type){
+    public static void configure(Object instance);
+    public static String evaluateValue(String expression);
+    public static String evaluateValue(Configuration config, String expression);
+    public static void addGlobalPropertyChangeListener(PropertyChangeListener listener);
+    public static void removeGlobalPropertyChangeListener(PropertyChangeListener listener);
+}
+--------------------------------------------
+
+Hereby
+
+* +XXX getXXX(String)+ provide type safe accessors for all basic wrapper types of the JDK.
+* +getAdapted+ allow accessing any type, hereby also passing a +PropertyAdapter+ that converts
+  the configured literal value to the type required.
+* +getAreas()+, +getTransitiveAreas()+ allow to examine the hierarchical tree modeled by the configuration tree.
+  Optionally also predicates can be passed to select only part of the tree to be returned.
+* +containsArea+ allows to check, if an area is defined.
+* +with, query+ provide the extension points for adding additional functionality.
+
+* the static accessor methods define:
+  ** +of(), of(Class), of(String), of(String, Class)+ return the configuration valid for the current runtime environment.
+  ** +addGlobalPropertyChangeListener, removeGlobalPropertyChangeListener+ allow to register or unregister
+     global config change listener instances.
+  ** evaluateValue allows to evaluate a configuration expression based on a given configuration.
+  ** +configure+ performs injection of configured values.
+
+
+=== Environment
+
+The environment basically is also a kind of property/value provider similar to +System.getProperties()+ and +System
+.getenv()+ in the JDK. Nevertheless it provides additional functionality:
+
+[source,java]
+.Interface Environment
+--------------------------------------------
+public interface Environments {
+
+    String getEnvironmentType();
+    String getEnvironmentId();
+    String getContext();
+    Environment getParentEnvironment();
+
+    Optional<String> get(String key);
+    boolean containsKey(String key);
+    Set<String> keySet();
+    Map<String,String> toMap();
+
+    public static Environment of(){
+    public static Environment getRootEnvironment(){
+    public static List<String> getEnvironmentTypeOrder(){
+    public static List<String> getEnvironmentHierarchy(){
+    public static Optional<Environment> getEnvironment(String environmentType, String contextId){
+    public static Set<String> getEnvironmentContexts(String environmentType){
+    public static boolean isEnvironmentActive(String environmentType){
+--------------------------------------------
+
+* environments are hierarchical. Hereby all environments inherit from the root environment. The root environment
+  hereby must contain
+  ** all JDK's system properties, with same keys, values
+  ** all JDK's environment properties, prefixed with +env:+.
+  ** additionaly root properties as needed.
+* each environment also defines its +Stage+. Hereby, if not set explicitly the +Stage+ is inherited from the root
+  environment. Consequently the root environment must provide a +Stage+, which by default should be +Stage.Development+.
+* the static accessor methods define:
+  ** +of(), of(Class), of(String), of(String, Class)+ return the environment valid for the current runtime environment.

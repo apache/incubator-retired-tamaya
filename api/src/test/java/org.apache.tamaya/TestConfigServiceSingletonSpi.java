@@ -16,11 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
 import java.beans.PropertyChangeListener;
@@ -50,7 +47,7 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
         config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
         config.put("testProperty", "value of testProperty");
         config.put("runtimeVersion", "${java.version}");
-        configs.put("test", new MapConfiguration(MetaInfoBuilder.of().setName("test").build(), config));
+        // configs.put("test", new MapConfiguration(MetaInfoBuilder.of().setName("test").build(), config));
     }
 
     @Override

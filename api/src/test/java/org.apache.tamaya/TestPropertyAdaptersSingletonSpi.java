@@ -16,10 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.PropertyAdapter;
 import org.apache.tamaya.annot.WithPropertyAdapter;
 import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
 import java.math.BigDecimal;
@@ -36,11 +34,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Anatole on 08.09.2014.
  */
-public final class TestPropertyAdaptersSingletonSpiSpi implements PropertyAdaptersSingletonSpi{
+public final class TestPropertyAdaptersSingletonSpi implements PropertyAdaptersSingletonSpi{
 
     private Map<Class, PropertyAdapter<?>> adapters = new ConcurrentHashMap<>();
 
-    private TestPropertyAdaptersSingletonSpiSpi(){
+    private TestPropertyAdaptersSingletonSpi(){
         register(char.class, (s) -> s.charAt(0));
         register(int.class, Integer::parseInt);
         register(byte.class, Byte::parseByte);

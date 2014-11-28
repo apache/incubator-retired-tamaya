@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya;
 
-import org.apache.tamaya.Environment;
 import org.apache.tamaya.spi.EnvironmentManagerSingletonSpi;
 
 import java.util.Collections;
