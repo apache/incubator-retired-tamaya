@@ -104,7 +104,7 @@ There are five main section in this document:
 * An appendix.
 
 <<<
-include::./design/0_UseCases.adoc[]
+include::design/0_UseCases.adoc[]
 
 <<<
 include::design/1_Requirements.adoc[]
