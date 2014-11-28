@@ -308,6 +308,20 @@ under the License.
                 </plugins>
             </build>
         </profile>
+
+        <!-- Generate all documents -->
+        <profile>
+            <id>generateDocuments</id>
+            <activation>
+                <property>
+                    <name>generateDocuments</name>
+                </property>
+            </activation>
+
+            <modules>
+                <module>docs</module>
+            </modules>
+        </profile>
     </profiles>
     <reporting>
         <plugins>
