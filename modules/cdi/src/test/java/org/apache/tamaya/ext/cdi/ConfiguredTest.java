@@ -15,24 +15,32 @@
  */
 package org.apache.tamaya.ext.cdi;
 
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
+import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.enterprise.inject.spi.CDI;
+import java.util.OptionalDouble;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 /**
  * Created by Anatole on 08.09.2014.
  */
+@RunWith(CdiTestRunner.class)
 public class ConfiguredTest{
 
     @Test
     public void testInjection(){
-        Weld weld = new Weld();
-        WeldContainer container = weld.initialize();
-        ConfiguredClass item = container.instance().select(ConfiguredClass.class).get();
+        ConfiguredClass item = CDI.current().select(ConfiguredClass.class).get();
         System.out.println("********************************************");
         System.out.println(item);
         System.out.println("********************************************");
-        weld.shutdown();
+
+        double actual = 1234.5678;
+        assertThat(item.getDoubleValue(),is(actual));
     }
 
 }
