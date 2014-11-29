@@ -1,5 +1,5 @@
 <<<
-[[Core Concepts]]
+[[CoreConcepts]]
 == {name} Core Concepts
 Though {name} is a very powerful and flexible solution there are basically only a few simple core concepts required that build
 the base of all the other mechanisms:
@@ -16,7 +16,7 @@ These parts are explained in the following sections. It is recommended that user
 All subsequent parts are building upon this concepts and may be more difficult to understand without having read
 this section.
 
-[[API KeyValues]]
+[[APIKeyValues]]
 === Key/Value Pairs
 
 Basically configuration is a very generic concept. Therefore it should be modelled in a generic way. The most simple
@@ -132,7 +132,7 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 ** The keys of configuration can have additional syntax/semantics. E.g. when adding dor-separating path semantics
 *** trees/maps can also simply be mapped:
 
-[API Property Providers]
+[APIPropertyProviders]
 === Property Providers
 ==== Basic Model
 
