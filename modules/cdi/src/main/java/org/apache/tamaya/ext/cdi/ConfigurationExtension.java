@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.ext.cdi;
 
+import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
 import org.apache.tamaya.core.internal.inject.ConfiguredInstancesManager;
 import org.apache.tamaya.core.internal.inject.ConfiguredType;
 
@@ -28,25 +29,25 @@ import javax.enterprise.inject.spi.*;
 import java.util.*;
 
 /**
- * Created by Anatole on 08.09.2014.
+ * CDI portable extension that integrates {@link org.apache.tamaya.core.internal.inject.ConfigurationInjector}
+ * with CDI by adding configuration features to CDI (config enable CDI beans).
  */
 @Vetoed
-public final class ConfigurationInjector implements Extension {
+public final class ConfigurationExtension implements Extension {
 
     public <T> void initializeConfiguredFields(final @Observes ProcessInjectionTarget<T> pit) {
         final AnnotatedType<T> at = pit.getAnnotatedType();
         if (!ConfiguredType.isConfigured(at.getJavaClass())) {
             return;
         }
-        final ConfiguredType configuredType = new ConfiguredType(at.getJavaClass());
+        final ConfiguredType configuredType = ConfigurationInjector.registerType(at.getJavaClass());
 
         final InjectionTarget<T> it = pit.getInjectionTarget();
         InjectionTarget<T> wrapped = new InjectionTarget<T>() {
             @Override
             public void inject(T instance, CreationalContext<T> ctx) {
                 it.inject(instance, ctx);
-                configuredType.configure(instance);
-                ConfiguredInstancesManager.register(configuredType, instance);
+                ConfigurationInjector.configure(instance);
             }
 
             @Override
