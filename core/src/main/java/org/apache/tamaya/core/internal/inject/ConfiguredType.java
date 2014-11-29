@@ -150,6 +150,17 @@ public class ConfiguredType {
                 return true;
             }
         }
+        for (Field field : type.getDeclaredFields()) {
+            if (field.isAnnotationPresent(ConfiguredProperty.class)) {
+                return true;
+            }
+        }
+        // if no class level annotation is there we might have method level annotations only
+        for (Method method : type.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(ConfiguredProperty.class)) {
+                return true;
+            }
+        }
         return false;
     }
 
