@@ -54,6 +54,10 @@ public class ConfiguredClass{
     @ConfiguredProperty("BD")
     private BigDecimal bigNumber;
 
+    @WithConfig("test")
+    @ConfiguredProperty("double1")
+    private double doubleValue;
+
     @ConfigChanged
     public void changeListener1(PropertyChangeEvent configChange){
         // will be called
@@ -93,6 +97,10 @@ public class ConfiguredClass{
 
     public BigDecimal getBigNumber() {
         return bigNumber;
+    }
+
+    public double getDoubleValue() {
+        return doubleValue;
     }
 
     public String toString(){
