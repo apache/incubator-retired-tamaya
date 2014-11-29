@@ -75,21 +75,24 @@ public class EnvironmentManagerTest {
         List<String> envOrder = Environment.getEnvironmentHierarchy();
         assertNotNull(envOrder);
         assertTrue(envOrder.size()>0);
-        assertTrue(envOrder.contains("root(root)"));
-        assertTrue(envOrder.contains("system(system)"));
-        assertTrue(envOrder.contains("myEar1(ear)"));
-        assertTrue(envOrder.contains("MyApp1(application)"));
-        assertTrue(envOrder.get(0).equals("MyApp1(application)"));
+        assertTrue(envOrder.contains("root"));
+        assertTrue(envOrder.contains("system"));
+        assertTrue(envOrder.contains("myEar1"));
+        assertTrue(envOrder.contains("MyApp1"));
+        assertTrue(envOrder.get(0).equals("MyApp1"));
     }
 
     @Test
     public void testEnvironmentId(){
         String envId = Environment.of().getEnvironmentId();
         assertNotNull(envId);
-        assertTrue(envId.contains("root(root)"));
-        assertTrue(envId.contains("system(system)"));
-        assertTrue(envId.contains("myEar1(ear)"));
-        assertTrue(envId.contains("MyApp1(application)"));
+        assertEquals(envId, "MyApp1");
+        envId = Environment.of().getParentEnvironment().getEnvironmentId();
+        assertEquals(envId, "myEar1");
+        envId = Environment.of().getParentEnvironment().getParentEnvironment().getEnvironmentId();
+        assertEquals(envId, "system");
+        envId = Environment.getRootEnvironment().getEnvironmentId();
+        assertEquals(envId, "root");
     }
 
     @Test

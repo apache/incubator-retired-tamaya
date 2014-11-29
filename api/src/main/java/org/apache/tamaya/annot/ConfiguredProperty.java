@@ -21,7 +21,48 @@ package org.apache.tamaya.annot;
 import java.lang.annotation.*;
 
 /**
- * Annotation to enable injection of a configured property.
+ * Annotation to enable injection of a configured property or define the returned data for
+ * a configuration template method. Hereby this annotation can be used in multiple ways and combined
+ * with other annotations such as {@link org.apache.tamaya.annot.DefaultValue},
+ * {@link org.apache.tamaya.annot.WithLoadPolicy}, {@link org.apache.tamaya.annot.WithConfig},
+ * {@link org.apache.tamaya.annot.WithConfigOperator}, {@link org.apache.tamaya.annot.WithPropertyAdapter}.
+ *
+ * Below the most simple variant of a configured class is given:
+ * {@code
+ * pubic class ConfiguredItem{
+ *
+ *   @ConfiguredProperty
+ *   private String aValue;
+ * }
+ * When this class is configured, e.g. by passing it to {@link org.apache.tamaya.Configuration#configure(Object)},
+ * the following is happening:
+ * <ul>
+ *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.of();}</li>
+ *     <li>The current property String value is evaluated by calling {@code cfg.get("aValue");}</li>
+ *     <li>if not successful, an error is thrown ({@link org.apache.tamaya.ConfigException}.</li>
+ *     <li>On success, since no type conversion is involved, the value is injected.</li>
+ *     <li>The configured bean is registered as a weak change listener in the config system's underlying
+ *     configuration, so future config changes can be propagated (controlled by {@link org.apache.tamaya.annot.WithLoadPolicy}
+ *     annotations).</li>
+ * </ul>
+ *
+ * In the next example we explicitly define the property value:
+ * {@code
+ * pubic class ConfiguredItem{
+ *
+ *   @ConfiguredProperty
+ *   @ConfiguredProperty("a.b.value")
+ *   @configuredProperty("a.b.deprecated.value")
+ *   @DefaultValue("${env:java.version}")
+ *   private String aValue;
+ * }
+ *
+ * Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
+ * resolved. Hereby the ordering of the annotations define the ordering of resolution, so in the example above
+ * resolution equals to {@code "aValue", "a.b.value", "a.b.deprecated.value"}. If no value could be read
+ * from the configuration, it uses the value from the {@code DefaultValue} annotation. Interesting here
+ * is that this value is not static, it is evaluated by calling
+ * {@link org.apache.tamaya.Configuration#evaluateValue(org.apache.tamaya.Configuration, String)}.
  */
 @Repeatable(ConfiguredProperties.class)
 @Retention(RetentionPolicy.RUNTIME)

@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.samples.annotations;
 
-import org.apache.tamaya.annot.ConfigChanged;
 import org.apache.tamaya.annot.ConfiguredProperty;
 import org.apache.tamaya.annot.DefaultValue;
 

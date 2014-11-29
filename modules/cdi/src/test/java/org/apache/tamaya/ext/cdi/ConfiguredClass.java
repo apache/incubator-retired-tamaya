@@ -1,6 +1,6 @@
 package org.apache.tamaya.ext.cdi;
 
-import org.apache.tamaya.annot.ConfigChanged;
+import org.apache.tamaya.annot.ConfigChangeListener;
 import org.apache.tamaya.annot.ConfiguredProperty;
 import org.apache.tamaya.annot.DefaultValue;
 import org.apache.tamaya.annot.WithConfig;
@@ -58,7 +58,7 @@ public class ConfiguredClass{
     @ConfiguredProperty("double1")
     private double doubleValue;
 
-    @ConfigChanged
+    @ConfigChangeListener
     public void changeListener1(PropertyChangeEvent configChange){
         // will be called
     }

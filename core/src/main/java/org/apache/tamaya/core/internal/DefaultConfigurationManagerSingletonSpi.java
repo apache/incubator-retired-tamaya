@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
 
@@ -86,7 +87,7 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
 
     @Override
     public void configure(Object instance) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        ConfigurationInjector.configure(instance);
     }
 
     private String getConfigId(Annotation... qualifiers) {
@@ -111,12 +112,12 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        Configuration.of().addPropertyChangeListener(listener);
     }
 
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        Configuration.of().removePropertyChangeListener(listener);
     }
 
     @Override

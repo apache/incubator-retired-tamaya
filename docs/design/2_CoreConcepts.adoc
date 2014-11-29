@@ -429,6 +429,55 @@ ConfigSecurity securityContext = Configuration.of().query(ConfigSecurity::target
 
 NOTE: +ConfigSecurity+ is an arbitrary class.
 
+=== Configuration Injection
+
+The +Configuration+ interface provides static methods that allow to anykind of instances be configured
+ny just passing the instances calling +Configuration.configure(instance);+. The classes passed hereby must
+be annotated with +@ConfiguredProperty+ to define the configured properties. Hereby this annotation can be
+used in multiple ways and combined with other annotations such as +@DefaultValue+,
++@WithLoadPolicy+, +@WithConfig+, +@WithConfigOperator+, +@WithPropertyAdapter+.
+
+To illustrate the mechanism below the most simple variant of a configured class is given:
+
+[source,java]
+.Most simple configured class
+--------------------------------------------
+pubic class ConfiguredItem{
+  @ConfiguredProperty
+  private String aValue;
+}
+--------------------------------------------
+
+When this class is configured, e.g. by passing it to +Configuration.configure(Object)+,
+the following is happening:
+
+* The current valid +Configuration+ is evaluated by calling +Configuration cfg = Configuration.of();+
+* The current property value (String) is evaluated by calling +cfg.get("aValue");+
+* if not successful, an error is thrown (+ConfigException+)
+* On success, since no type conversion is involved, the value is injected.
+* The configured bean is registered as a weak change listener in the config system's underlying
+  configuration, so future config changes can be propagated (controllable by applying the
+  +@WithLoadPolicy+ annotation).
+
+In the next example we explicitly define the property value:
+[source,java]
+--------------------------------------------
+pubic class ConfiguredItem{
+
+  @ConfiguredProperty
+  @ConfiguredProperty("a.b.value")
+  @configuredProperty("a.b.deprecated.value")
+  @DefaultValue("${env:java.version}")
+  private String aValue;
+}
+--------------------------------------------
+
+Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
+resolved. Hereby the ordering of the annotations define the ordering of resolution, so in the example above
+resolution equals to +"aValue", "a.b.value", "a.b.deprecated.value"+. If no value could be read
+from the configuration, it uses the value from the +@DefaultValue+ annotation. Interesting here
+is that this value is not static, it is evaluated by calling +Configuration.evaluateValue(Configuration, String)+.
+
 === Environment
 
 The environment basically is also a kind of property/value provider similar to +System.getProperties()+ and +System
@@ -505,3 +554,5 @@ System.out.println(env.getEnvironmentId());      // system
 env = env.getParentEnvironment();
 // env is null now!
 --------------------------------------------
+
+

@@ -24,7 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to enable injection of a configured property.
+ * Annotation to enable injection of multiple {@link org.apache.tamaya.annot.ConfiguredProperty}
+ * annotations. Hereby the ordering of annotations imply the defaulting. The first value that
+ * could be resolved successfully in the chain of annotations will be used.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })

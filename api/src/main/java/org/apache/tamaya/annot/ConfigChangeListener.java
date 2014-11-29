@@ -25,9 +25,12 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to annotate a method on a class to be informed on config changes.
+ * The exact behaviour, when configuration change events are sent can be configured
+ * on each configured property/method by adding the {@link org.apache.tamaya.annot.WithLoadPolicy}
+ * annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.METHOD })
-public @interface ConfigChanged {
+public @interface ConfigChangeListener {
 
 }

@@ -22,98 +22,95 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import org.apache.tamaya.annot.ConfiguredProperty;
+import org.apache.tamaya.annot.DefaultValue;
 import org.apache.tamaya.core.internal.DefaultConfigurationManagerSingletonSpi;
 import org.junit.Test;
+
+import java.beans.PropertyChangeListener;
 
 /**
  * Test class for {@link org.apache.tamaya.core.internal.DefaultConfigurationManagerSingletonSpi}.
  */
-public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest{
+public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
+    private static final PropertyChangeListener LISTENER = System.out::println;
 
+    @Test
+    public void testSEConfigurationService() {
+        new DefaultConfigurationManagerSingletonSpi();
+    }
 
-	@Test
-	public void testSEConfigurationService() {
-		new DefaultConfigurationManagerSingletonSpi();
-	}
-
-	@Test
-	public void testGetConfigurationString() {
-		Configuration config = Configuration.of("default");
-		assertNotNull(config);
+    @Test
+    public void testGetConfigurationString() {
+        Configuration config = Configuration.of("default");
+        assertNotNull(config);
         assertTrue(config.toString().contains("default"));
         assertNotNull(config.getMetaInfo());
         assertTrue(config.getMetaInfo().toString().contains("default"));
         System.out.println("CONFIG: " + config);
-		assertEquals(System.getProperty("java.version"),
-				config.get("java.version"));
-		
-		config = Configuration.of("system.properties");
-		assertNotNull(config);
+        assertEquals(System.getProperty("java.version"),
+                config.get("java.version").get());
+
+        config = Configuration.of("system.properties");
+        assertNotNull(config);
         assertNotNull(config.getMetaInfo());
         assertTrue(config.getMetaInfo().toString().contains("system.properties"));
-		assertEquals(System.getProperty("java.version"),
-				config.get("java.version"));
-	}
+        assertEquals(System.getProperty("java.version"),
+                config.get("java.version").get());
+    }
 
-	@Test
-	public void testGetConfigurationStringEnvironment() {
-		fail("Not yet implemented");
-	}
+    @Test
+    public void testIsConfigurationDefined() {
+        assertTrue(Configuration.isDefined("test"));
+        assertFalse(Configuration.isDefined("sdksajdsajdlkasj dlkjaslkd"));
+    }
 
-	@Test
-	public void testIsConfigurationDefined() {
-		assertTrue(Configuration.isDefined("test"));
-		assertFalse(Configuration.isDefined("sdksajdsajdlkasj dlkjaslkd"));
-	}
+    @Test
+    public void testGetCurrentEnvironment() {
+        Environment env = Environment.of();
+        assertNotNull(env);
+        assertEquals(System.getProperty("java.version"),
+                env.get("java.version").get());
+    }
 
-	@Test
-	public void testGetCurrentEnvironment() {
-		Environment env = Environment.of();
-		assertNotNull(env);
-		assertEquals(System.getProperty("java.version"),
-				env.get("java.version").get());
-	}
+    @Test
+    public void testGetRootEnvironment() {
+        DefaultConfigurationManagerSingletonSpi s = new DefaultConfigurationManagerSingletonSpi();
+        Environment env = Environment.getRootEnvironment();
+        assertNotNull(env);
+        assertEquals(System.getProperty("java.version"),
+                env.get("java.version").get());
+    }
 
-	@Test
-	public void testGetRootEnvironment() {
-		DefaultConfigurationManagerSingletonSpi s = new DefaultConfigurationManagerSingletonSpi();
-		Environment env =  Environment.getRootEnvironment();
-		assertNotNull(env);
-		assertEquals(System.getProperty("java.version"),
-				env.get("java.version").get());
-	}
+    @Test
+    public void testAddRemoveGlobalConfigChangeListener() {
+        Configuration.addGlobalPropertyChangeListener(LISTENER);
+        Configuration.removeGlobalPropertyChangeListener(LISTENER);
+        Configuration.addGlobalPropertyChangeListener(LISTENER);
+        Configuration.addGlobalPropertyChangeListener(LISTENER);
+        Configuration.removeGlobalPropertyChangeListener(LISTENER);
+        Configuration.removeGlobalPropertyChangeListener(LISTENER);
+        Configuration.removeGlobalPropertyChangeListener(LISTENER);
+    }
 
-	@Test
-	public void testQueryConfiguration() {
-		fail("Not yet implemented");
-	}
+    @Test
+    public void testConfigure() {
+        ConfigureTest test = new ConfigureTest();
+        Configuration.configure(test);
+        assertEquals(test.mustBeTrue, true);
+        assertEquals(test.val1, "YES, it works!");
+    }
 
-	@Test
-	public void testCreateConfiguration() {
-		fail("Not yet implemented");
-	}
+    private static class ConfigureTest {
+        @ConfiguredProperty
+        @DefaultValue("YES, it works!")
+        String val1;
 
-	@Test
-	public void testUpdateConfiguration() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAddConfigChangeListener() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRemoveConfigChangeListener() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testConfigure() {
-		fail("Not yet implemented");
-	}
+        @ConfiguredProperty
+        @DefaultValue("true")
+        boolean mustBeTrue;
+    }
 
 }
