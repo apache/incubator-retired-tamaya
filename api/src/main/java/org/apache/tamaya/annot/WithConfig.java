@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
- * resolve the required properties.
+ * resolve the required properties. the configured value is passed to {@code Configuration.of(String)}
+ * to evaluate the required configuration required.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })

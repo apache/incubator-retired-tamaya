@@ -25,10 +25,10 @@ import java.beans.PropertyChangeListener;
 /**
  * Manager for {@link org.apache.tamaya.Configuration} instances. Implementations must register an instance
  * using the {@link Bootstrap} mechanism in place (by default this is based on the {@link java.util.ServiceLoader}.
- * The {@link org.javaconfig.ConfigurationManager} Singleton in the API delegates its corresponding calls to the
+ * The {@link org.apache.tamaya.ConfigurationManager} Singleton in the API delegates its corresponding calls to the
  * instance returned by the current bootstrap service in place.
  *
- * @see org.javaconfig.ConfigurationManager
+ * @see org.apache.tamaya.ConfigurationManager
  * @see Bootstrap
  */
 public interface ConfigurationManagerSingletonSpi{
@@ -64,8 +64,7 @@ public interface ConfigurationManagerSingletonSpi{
      * entries.
      *
      * @param instance the instance with configuration annotations, not null.
-     * @return the corresponding typed Configuration instance, never null.
-     * @throws org.apache.tamaya.ConfigException if the configuration could not be resolved.
+     * @throws org.apache.tamaya.ConfigException if any required configuration could not be resolved/injected.
      */
     void configure(Object instance);
 

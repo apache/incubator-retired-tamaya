@@ -24,7 +24,7 @@ import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
 import java.util.Optional;
 
 /**
- * Singleton accessor that provides {@link PropertyAdapter} instance, usable for converting String
+ * Singleton manager that provides {@link PropertyAdapter} instance, usable for converting String
  * based configuration entries into any other target types.
  */
 public final class PropertyAdapters{

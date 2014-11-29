@@ -23,7 +23,7 @@ import org.apache.tamaya.Stage;
 import java.util.Collection;
 
 /**
- * Spi o be registered using the Bootstrap mechanism for backing up the {@link org.javaconfig.Stages} singleton.
+ * Spi to be registered using the Bootstrap mechanism for backing up the {@link org.apache.tamaya.Stages} singleton.
  * This SPI is loaded on boot time.
  */
 public interface StagesSingletonSpi {

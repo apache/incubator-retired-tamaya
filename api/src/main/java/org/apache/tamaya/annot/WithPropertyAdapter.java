@@ -26,7 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define an adapter to be used before injecting a configured value.
+ * Annotation to define a type adapter to be used before injecting a configured value.
+ * This will override any other adapter for performing the type conversion before
+ * injecting the field value.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })

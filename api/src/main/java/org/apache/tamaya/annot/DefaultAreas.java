@@ -24,7 +24,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to control injection and resolution of a configured bean.
+ * Annotation to control injection and resolution of a configured bean. The configuration keys
+ * to be resolved are basically determined by the {@link org.apache.tamaya.annot.ConfiguredProperty}
+ * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
+ * to define a configuration area that is prefixed to all relative configuration keys within the
+ * corresponding class/template interface.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })

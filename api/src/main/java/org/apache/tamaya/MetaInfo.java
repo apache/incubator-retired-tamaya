@@ -25,32 +25,59 @@ import java.util.*;
  * configuration or some if its entries.
  */
 public final class MetaInfo{
-
+    /** The key used for storing the data owner. */
     private static final String OWNER_KEY = "_owner";
+    /** The meta information data. */
     private final Map<String, String> metaInfo = new HashMap<>();
 
+    /**
+     * Constructor, used from the builder.
+     * @param builder the builder, not null.
+     */
     MetaInfo(MetaInfoBuilder builder){
         Objects.requireNonNull(builder);
         this.metaInfo.putAll(builder.map);
     }
 
+    /**
+     * Returns a new instance of this class, adding only a general information property.
+     * @param info the info property, not null.
+     * @return a new instance of this class, never null.
+     */
     public static MetaInfo of(String info){
         return MetaInfoBuilder.of(info).build();
     }
 
+    /**
+     * Access a meta data property.
+     * @param key the property key, not null.
+     * @return the corresponding property value, or null.
+     */
     public String get(String key){
         return this.metaInfo.get(key);
 
     }
 
+    /**
+     * Get the information about the data owner.
+     * @return the data owner info, or null.
+     */
     public String getOwnerInfo(){
         return this.metaInfo.get(OWNER_KEY);
     }
 
+    /**
+     * @see java.util.Map#keySet()
+     * @return the key set.
+     */
     public Set<String> keySet(){
         return this.metaInfo.keySet();
     }
 
+    /**
+     * Access the meta info as map.
+     * @return the corresponding map, never null.
+     */
     public Map<? extends String,? extends String> toMap(){
         return Collections.unmodifiableMap(this.metaInfo);
     }
@@ -68,6 +95,11 @@ public final class MetaInfo{
         return b.toString();
     }
 
+    /**
+     * Helper method to escape "=\\[]".
+     * @param val the input value, not null.
+     * @return the escaped String, not null.
+     */
     static String escape(String val){
         return val.replaceAll("=", "\\\\=").replaceAll("\\[", "\\\\[").replaceAll("]", "\\\\]").replaceAll("\\,", "\\\\,");
     }

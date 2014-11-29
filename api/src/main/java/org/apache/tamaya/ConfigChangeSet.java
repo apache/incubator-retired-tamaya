@@ -59,7 +59,7 @@ public final class ConfigChangeSet {
 
     /**
      * Get the underlying property provider/configuration.
-     * @return the underlying property provider/configuration, never null, unless for {@link EMPTY_CHANGESET}.
+     * @return the underlying property provider/configuration, never null.
      */
     public PropertyProvider getPropertyProvider(){
         return this.propertyProvider;

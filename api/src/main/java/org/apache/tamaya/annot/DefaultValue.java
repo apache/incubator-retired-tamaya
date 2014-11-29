@@ -24,7 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to enable injection of a configured property.
+ * Annotation to define a default value to be returned, when no configured value could be
+ * determined for a property/template accessor. The value hereby can also contain a
+ * dynamic expression that is evaluated by the configuration system.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })

@@ -21,14 +21,16 @@ package org.apache.tamaya;
 
 /**
  * Interface for an adapter that converts a configured String into something else.
+ * This is typically used for implementing type conversion from String to a certain target
+ * type of the configured property.
  */
 @FunctionalInterface
 public interface PropertyAdapter<T>{
 
     /**
      * Adapt the given configuration value to the required target type.
-     * @param value
-     * @return
+     * @param value the configuration value
+     * @return adapted value
      */
     T adapt(String value);
 

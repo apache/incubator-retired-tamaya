@@ -26,7 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define an adapter to be used before injecting a configured value.
+ * Annotation to define an configuration operator to be used before accessing a configured value.
+ * This allows filtering of configuration, e.g. for realizing views or ensuring security
+ * constraints.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
