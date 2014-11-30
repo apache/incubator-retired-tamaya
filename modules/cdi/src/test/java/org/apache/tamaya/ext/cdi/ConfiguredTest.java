@@ -16,14 +16,12 @@
 package org.apache.tamaya.ext.cdi;
 
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.enterprise.inject.spi.CDI;
-import java.util.OptionalDouble;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 /**
@@ -40,7 +38,8 @@ public class ConfiguredTest{
         System.out.println("********************************************");
 
         double actual = 1234.5678;
-        assertThat(item.getDoubleValue(),is(actual));
+
+        MatcherAssert.assertThat(item.getDoubleValue(), is(actual));
     }
 
 }

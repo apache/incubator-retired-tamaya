@@ -32,7 +32,6 @@ under the License.
 
     <properties>
         <jdkVersion>1.8</jdkVersion>
-        <junit.version>4.8.2</junit.version>
         <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
         <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
     </properties>
