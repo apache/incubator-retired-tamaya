@@ -40,6 +40,7 @@ under the License.
 
 	
 	<properties>
+        <findbugs.skip>true</findbugs.skip>
 		<jdkVersion>1.8</jdkVersion>
 		<maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
 		<maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
@@ -49,7 +50,9 @@ under the License.
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<junit.version>4.8.2</junit.version>
 
+        <!-- Dependency and plugin relate version properties go here -->
         <asciidoctor.version>1.5.0</asciidoctor.version>
+        <findbugs.version>3.0.0</findbugs.version>
 	</properties>
 
     <licenses>
@@ -139,6 +142,27 @@ under the License.
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs.version}</version>
+
+                    <executions>
+                        <execution>
+                            <id>findbugs-analyze</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <failOnError>true</failOnError>
+                    </configuration>
+
+                </plugin>
                 <plugin>
                     <groupId>org.asciidoctor</groupId>
                     <artifactId>asciidoctor-maven-plugin</artifactId>
@@ -246,6 +270,10 @@ under the License.
 		</pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
@@ -323,6 +351,20 @@ under the License.
             <modules>
                 <module>docs</module>
             </modules>
+        </profile>
+
+        <profile>
+            <id>runFindbugs</id>
+            <activation>
+                <property>
+                    <name>runFindbugs</name>
+                </property>
+            </activation>
+
+            <properties>
+                <findbugs.skip>false</findbugs.skip>
+            </properties>
+
         </profile>
     </profiles>
     <reporting>
@@ -411,6 +453,7 @@ under the License.
     </repositories>
 
     <modules>
+        <module>buildtools</module>
         <module>api</module>
         <module>core</module>
         <module>modules</module>

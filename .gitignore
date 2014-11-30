@@ -6,5 +6,6 @@ pom.xml.next
 release.properties
 .idea
 *.iml
+*.log
 *~
 .DS_Store
