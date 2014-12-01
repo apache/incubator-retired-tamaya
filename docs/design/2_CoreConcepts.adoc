@@ -16,6 +16,11 @@ These parts are explained in the following sections. It is recommended that user
 All subsequent parts are building upon this concepts and may be more difficult to understand without having read
 this section.
 
+[[DataTypeConversion]]
+=== Data Type Conversion
+
+To be added.
+
 [[APIKeyValues]]
 === Key/Value Pairs
 
