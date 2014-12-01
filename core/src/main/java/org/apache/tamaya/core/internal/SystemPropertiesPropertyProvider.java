@@ -16,17 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.core.env.ConfiguredSystemProperties;
+import org.apache.tamaya.core.properties.AbstractPropertyProvider;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-class SystemPropertiesPropertyProvider extends AbstractPropertyProvider{
+class SystemPropertiesPropertyProvider extends AbstractPropertyProvider {
 
 
     private static final long serialVersionUID = -5935940312707001199L;

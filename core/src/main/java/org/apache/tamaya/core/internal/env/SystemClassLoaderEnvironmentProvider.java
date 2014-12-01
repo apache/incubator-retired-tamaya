@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * System environment provider (loaded only once using the system class loader) that loads additional environment properties from the classpath evaluating
+ * System environment provider (loaded only once using the system class loader) that loads additional environment properties fromMap the classpath evaluating
  * {@code META-INF/env/system.properties, META-INF/env/system.xml and META-INF/env/system.ini}.
  */
 public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider {
@@ -69,7 +69,7 @@ public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider
                 builder.setAll(data);
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error readong environment data from " + uri);
+                LOG.log(Level.SEVERE, e, () -> "Error readong environment data fromMap " + uri);
             }
         }
         builder.setParent(parentEnvironment);

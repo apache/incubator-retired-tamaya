@@ -118,12 +118,12 @@ public interface Configuration extends PropertyProvider{
      * If {@code Class<T>} is not one of
      * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
      * BigDecimal, String} , an according adapter must be
-     * available to perform the conversion from {@link String} to
+     * available to perform the conversion fromMap {@link String} to
      * {@code Class<T>}.
      *
      * @param key     the property's absolute, or relative path, e.g. @code
      *                a/b/c/d.myProperty}.
-     * @param adapter the PropertyAdapter to perform the conversion from
+     * @param adapter the PropertyAdapter to perform the conversion fromMap
      *                {@link String} to {@code Class<T>}, not {@code null}.
      * @return the property's value.
      * @throws IllegalArgumentException if the value could not be converted to the required target
@@ -141,7 +141,7 @@ public interface Configuration extends PropertyProvider{
     /**
      * Get the property value as type T. This will implicitly require a corresponding {@link
      * PropertyAdapter} to be available that is capable of providing type T
-     * from the given String value.
+     * fromMap the given String value.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
@@ -150,7 +150,9 @@ public interface Configuration extends PropertyProvider{
      * @throws IllegalArgumentException if the value could not be converted to the required target
      *                                  type.
      */
-    <T> Optional<T> get(String key, Class<T> type);
+    default <T> Optional<T> get(String key, Class<T> type){
+        return getAdapted(key, PropertyAdapters.getAdapter(type));
+    }
 
     /**
      * Return a set with all fully qualifies area names.
@@ -219,11 +221,11 @@ public interface Configuration extends PropertyProvider{
     /**
      * Allows to evaluate if an area exists.
      *
-     * @param key the configuration area (sub)path.
+     * @param areaKey the configuration area (sub)path.
      * @return {@code true}, if such a node exists.
      */
-    default boolean containsArea(String key){
-        return getAreas().contains(key);
+    default boolean containsArea(String areaKey){
+        return getAreas().contains(areaKey);
     }
 
     /**
@@ -238,7 +240,7 @@ public interface Configuration extends PropertyProvider{
     }
 
     /**
-     * Query some value from a configuration.
+     * Query some value fromMap a configuration.
      *
      * @param query the query, never {@code null}.
      * @return the result
@@ -259,13 +261,21 @@ public interface Configuration extends PropertyProvider{
      * Add a ConfigChangeListener to this configuration instance.
      * @param l the listener, not null.
      */
-    void addPropertyChangeListener(PropertyChangeListener l);
+    default void addPropertyChangeListener(PropertyChangeListener l){
+        addConfigChangeListener((p) -> {
+            if (p.getSource() == this) l.propertyChange(p);
+        });
+    }
 
     /**
      * Removes a ConfigChangeListener to this configuration instance.
      * @param l the listener, not null.
      */
-    void removePropertyChangeListener(PropertyChangeListener l);
+    default void removePropertyChangeListener(PropertyChangeListener l){
+        removeConfigChangeListener((p) -> {
+            if (p.getSource() == this) l.propertyChange(p);
+        });
+    }
 
     /**
      * Allows to check if a configuration with a given name is defined.
@@ -361,8 +371,8 @@ public interface Configuration extends PropertyProvider{
      * Adds a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind of config changes.
      * @param listener the {@link java.beans.PropertyChangeListener} instance to be added, not null.
      */
-    public static void addGlobalPropertyChangeListener(PropertyChangeListener listener){
-        ConfigurationManager.addPropertyChangeListener(listener);
+    public static void addConfigChangeListener(PropertyChangeListener listener){
+        ConfigurationManager.addConfigChangeListener(listener);
     }
 
     /**
@@ -370,7 +380,7 @@ public interface Configuration extends PropertyProvider{
      * if one is currently registered.
      * @param listener the {@link java.beans.PropertyChangeListener} instance to be removed, not null.
      */
-    public static void removeGlobalPropertyChangeListener(PropertyChangeListener listener){
-        ConfigurationManager.removePropertyChangeListener(listener);
+    public static void removeConfigChangeListener(PropertyChangeListener listener){
+        ConfigurationManager.removeConfigChangeListener(listener);
     }
 }

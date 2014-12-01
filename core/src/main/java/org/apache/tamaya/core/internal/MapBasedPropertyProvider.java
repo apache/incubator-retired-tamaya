@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
+import org.apache.tamaya.core.properties.AbstractPropertyProvider;
 
 import java.beans.PropertyChangeEvent;
 import java.util.*;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
 /**
  * Models a {@link org.apache.tamaya.PropertyProvider} that can be build using a builder pattern.
  */
-class MapBasedPropertyProvider extends AbstractPropertyProvider{
+class MapBasedPropertyProvider extends AbstractPropertyProvider {
 
     private static final long serialVersionUID = 7601389831472839249L;
 
@@ -40,7 +41,7 @@ class MapBasedPropertyProvider extends AbstractPropertyProvider{
     private Map<String,String> entries = new ConcurrentHashMap<>();
 
     /**
-     * Constructor used by {@link MapBasedPropertyProviderBuilder}, or subclasses.
+     * Constructor used by {@link org.apache.tamaya.core.properties.MapBasedPropertyProviderBuilder}, or subclasses.
      *
      * @param entries the config entries, not null.
      */
@@ -52,7 +53,7 @@ class MapBasedPropertyProvider extends AbstractPropertyProvider{
 
 
     /**
-     * Constructor used by {@link MapBasedPropertyProviderBuilder}, or subclasses.
+     * Constructor used by {@link org.apache.tamaya.core.properties.MapBasedPropertyProviderBuilder}, or subclasses.
      *
      * @param entries the entries
      * @param sources the sources

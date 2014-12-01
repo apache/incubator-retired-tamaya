@@ -22,7 +22,9 @@ import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
 import java.beans.PropertyChangeListener;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Singleton accessor for accessing {@link Configuration} instances and
@@ -41,7 +43,7 @@ final class ConfigurationManager{
     }
 
     /**
-     * Method to initially load the singleton SPI from the {@link org.apache.tamaya.spi.Bootstrap} mechanism.
+     * Method to initially load the singleton SPI fromMap the {@link org.apache.tamaya.spi.Bootstrap} mechanism.
      * The instance loaded will be used until the VM is shutdown. In case use cases require more flexibility
      * it should be transparently implemented in the SPI implementation. This singleton will simply delegate calls
      * and not cache any responses.
@@ -146,7 +148,7 @@ final class ConfigurationManager{
      * Adds a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind of config changes.
      * @param listener the {@link java.beans.PropertyChangeListener} instance to be added, not null.
      */
-    public static void addPropertyChangeListener(PropertyChangeListener listener){
+    public static void addConfigChangeListener(PropertyChangeListener listener){
         Optional.of(configManagerSingletonSpi).get().addPropertyChangeListener(listener);
     }
 
@@ -155,7 +157,8 @@ final class ConfigurationManager{
      * if one is currently registered.
      * @param listener the {@link java.beans.PropertyChangeListener} instance to be removed, not null.
      */
-    public static void removePropertyChangeListener(PropertyChangeListener listener){
+    public static void removeConfigChangeListener(PropertyChangeListener listener){
         Optional.of(configManagerSingletonSpi).get().removePropertyChangeListener(listener);
     }
+
 }

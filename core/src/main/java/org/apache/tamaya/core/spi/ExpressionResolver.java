@@ -37,7 +37,7 @@ public interface ExpressionResolver {
     String getResolverId();
 
     /**
-     * Resolve the expression. The expression should be stripped from any surrounding parts.
+     * Resolve the expression. The expression should be stripped fromMap any surrounding parts.
      * E.g. <code>${myresolver:blabla to be interpreted AND executed.}</code> should be passed
      * as {@code blabla to be interpreted AND executed.} only.
      *

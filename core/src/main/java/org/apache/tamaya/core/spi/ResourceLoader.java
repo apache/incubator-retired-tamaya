@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Interface to be implemented by containers that decouples loading of classpath resources from the effective
+ * Interface to be implemented by containers that decouples loading of classpath resources fromMap the effective
  * classloader architecture of a runtime environment. Implementations of this class encapsulate the mechanism of
  * determining the
  * concrete resources available base on an expression defining the configuration

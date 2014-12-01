@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.core.properties.AggregationPolicy;
-import org.apache.tamaya.core.properties.PropertyProviders;
+import org.apache.tamaya.AggregationPolicy;
+import org.apache.tamaya.PropertyProviders;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 import org.apache.tamaya.Configuration;
@@ -35,7 +35,8 @@ public class SystemPropertiesConfigProvider implements ConfigurationProviderSpi{
     private Configuration systemConfig;
 
     public SystemPropertiesConfigProvider(){
-        systemConfig = ConfigurationBuilder.of("system.properties").addConfigMaps(AggregationPolicy.OVERRIDE, PropertyProviders.fromSystemProperties()).build();
+        systemConfig = ConfigurationBuilder.of("system.properties").addConfigMaps(AggregationPolicy.OVERRIDE,
+                PropertyProviders.fromSystemProperties()).build();
     }
 
     @Override

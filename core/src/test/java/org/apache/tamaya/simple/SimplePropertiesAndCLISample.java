@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.simple.simple;
+package org.apache.tamaya.simple;
 
+import org.apache.tamaya.PropertyProviders;
 import org.apache.tamaya.core.config.ConfigurationBuilder;
 import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.core.properties.AggregationPolicy;
-import org.apache.tamaya.core.properties.PropertyProviders;
+import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.junit.Test;
 
@@ -55,7 +55,7 @@ public class SimplePropertiesAndCLISample{
                   PropertyProviders
                           .fromPaths("classpath:cfg/test.xml"),
                   PropertyProviders.fromArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}),
-                  PropertyProviders.from(cfgMap)).build();
+                  PropertyProviders.fromMap(cfgMap)).build();
         System.out.println(config.getAreas());
         System.out.println("---");
         System.out.println(config.getAreas(s -> s.startsWith("another")));

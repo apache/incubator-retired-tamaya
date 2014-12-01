@@ -60,6 +60,7 @@ public class IniFormat implements ConfigurationFormat{
                     lineNum++;
                     line = line.trim();
                     if(line.isEmpty()){
+                        line = reader.readLine();
                         continue;
                     }
                     if(line.startsWith("[")){

@@ -16,40 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.PropertyProvider;
+import org.apache.tamaya.*;
+import org.apache.tamaya.core.properties.AbstractPropertyProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by Anatole on 22.10.2014.
+ * Provider implementation that combines multiple other providers by intersecting
+ * the key/values common to all providers, conflicting keys are resolved using an
+ * {@link org.apache.tamaya.AggregationPolicy}.
  */
 class IntersectingPropertyProvider extends AbstractPropertyProvider {
 
-    private Collection<PropertyProvider> providers;
-    private PropertyProvider union;
+    private List<PropertyProvider> providers;
+    private PropertyProvider aggregatedDelegate;
 
-    public IntersectingPropertyProvider(AggregationPolicy policy, PropertyProvider... providers) {
-        super(MetaInfoBuilder.of().setType("intersection").set("providers", Arrays.toString(providers)).build());
-        this.providers = Arrays.asList(Objects.requireNonNull(providers));
-        union = PropertyProviders.union(policy, providers);
+    public IntersectingPropertyProvider(AggregationPolicy policy, List<PropertyProvider> providers) {
+        super(MetaInfoBuilder.of().setType("intersection").build());
+        this.providers = new ArrayList<>(providers);
+        aggregatedDelegate = PropertyProviders.aggregate(policy, this.providers);
     }
 
     public IntersectingPropertyProvider(MetaInfo metaInfo, AggregationPolicy policy, PropertyProvider... providers) {
         super(metaInfo);
         this.providers = Arrays.asList(Objects.requireNonNull(providers));
-        union = PropertyProviders.union(policy, providers);
+        aggregatedDelegate = PropertyProviders.aggregate(policy, providers);
     }
 
 
     @Override
     public Optional<String> get(String key) {
         if (containsKey(key))
-            return union.get(key);
+            return aggregatedDelegate.get(key);
         return Optional.empty();
     }
 
@@ -69,7 +70,7 @@ class IntersectingPropertyProvider extends AbstractPropertyProvider {
 
     @Override
     public Map<String, String> toMap() {
-        return union.toMap().entrySet().stream().filter(en -> containsKey(en.getKey())).collect(
+        return aggregatedDelegate.toMap().entrySet().stream().filter(en -> containsKey(en.getKey())).collect(
                 Collectors.toConcurrentMap(en -> en.getKey(), en -> en.getValue()));
     }
 

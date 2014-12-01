@@ -69,7 +69,7 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
     @Override
     public Level getLevel() {
         final Level level;
-        // Verify from the wider (trace) to the narrower (error)
+        // Verify fromMap the wider (trace) to the narrower (error)
         if (logger.isTraceEnabled()) {
             level = Level.FINEST;
         } else if (logger.isDebugEnabled()) {

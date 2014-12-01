@@ -79,7 +79,7 @@ final class Stages {
 
 
     /**
-     * Method that loads the singleton backing bean from the {@link org.apache.tamaya.spi.Bootstrap} component.
+     * Method that loads the singleton backing bean fromMap the {@link org.apache.tamaya.spi.Bootstrap} component.
      * @return the PropertyAdaptersSingletonSpi, never null.
      */
     private static StagesSingletonSpi loadStagesSingletonSpi(){

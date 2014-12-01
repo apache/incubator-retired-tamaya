@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
@@ -27,7 +27,7 @@ import java.util.*;
 
 /**
  * Implementation for a {@link org.apache.tamaya.PropertyProvider} that is an aggregate of
- * multiple child instances. Controlled by an {@link org.apache.tamaya.core.properties.AggregationPolicy} the
+ * multiple child instances. Controlled by an {@link org.apache.tamaya.AggregationPolicy} the
  * following aggregations are supported:
  * <ul>
  * <li><b>IGNORE: </b>Ignore all overrides.</li>

@@ -21,6 +21,9 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.Configuration;
 
 import java.beans.PropertyChangeListener;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Manager for {@link org.apache.tamaya.Configuration} instances. Implementations must register an instance

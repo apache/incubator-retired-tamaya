@@ -21,11 +21,13 @@ package org.apache.tamaya.core.properties;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertyProvider;
+import org.apache.tamaya.PropertyProviders;
+
 import java.util.*;
 
 /**
  * Builder class for creating a new instance of
- * {@link MapBasedPropertyProvider}-
+ * {@link org.apache.tamaya.core.internal.MapBasedPropertyProvider}-
  */
 public final class MapBasedPropertyProviderBuilder {
     protected MetaInfoBuilder metaInfoBuilder = MetaInfoBuilder.of();
@@ -106,8 +108,8 @@ public final class MapBasedPropertyProviderBuilder {
     }
 
     public PropertyProvider build(){
-        MetaInfo finalMetaInfo = metaInfoBuilder.setTimestamp(configReadDT).build();
-        return new MapBasedPropertyProvider(finalMetaInfo, entries);
+        MetaInfo metaInfo = metaInfoBuilder.setTimestamp(configReadDT).build();
+        return PropertyProviders.fromMap(metaInfo, entries);
     }
 
     /*

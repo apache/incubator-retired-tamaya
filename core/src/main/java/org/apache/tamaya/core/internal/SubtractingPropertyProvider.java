@@ -16,26 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertyProvider;
+import org.apache.tamaya.core.properties.AbstractPropertyProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-class SubtractingPropertyProvider extends AbstractPropertyProvider{
+class SubtractingPropertyProvider extends AbstractPropertyProvider {
 
     private static final long serialVersionUID = 4301042530074932562L;
     private PropertyProvider unit;
-    private Collection<PropertyProvider> subtrahends;
+    private List<PropertyProvider> subtrahends;
 
-    public SubtractingPropertyProvider(PropertyProvider configuration, PropertyProvider... subtrahends){
-        super(MetaInfoBuilder.of(configuration.getMetaInfo()).setType("sutracted").set("subtrahends", Arrays.toString(subtrahends)).build());
+    public SubtractingPropertyProvider(PropertyProvider configuration, List<PropertyProvider> subtrahends){
+        super(MetaInfoBuilder.of(configuration.getMetaInfo()).setType("sutracted").build());
         Objects.requireNonNull(configuration);
         this.unit = configuration;
-        this.subtrahends = Arrays.asList(subtrahends);
+        this.subtrahends = new ArrayList<>(subtrahends);
     }
 
     private boolean filter(Map.Entry<String,String> entry){

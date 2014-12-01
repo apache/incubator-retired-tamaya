@@ -31,7 +31,7 @@ public final class MetaInfo{
     private final Map<String, String> metaInfo = new HashMap<>();
 
     /**
-     * Constructor, used from the builder.
+     * Constructor, used fromMap the builder.
      * @param builder the builder, not null.
      */
     MetaInfo(MetaInfoBuilder builder){

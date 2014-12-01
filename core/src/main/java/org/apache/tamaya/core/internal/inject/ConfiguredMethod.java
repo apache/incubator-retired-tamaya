@@ -123,7 +123,7 @@ public class ConfiguredMethod {
     }
 
     /**
-     * This method checks if the given (qualified) configuration key is referenced from this field.
+     * This method checks if the given (qualified) configuration key is referenced fromMap this field.
      * This is useful to determine, if a key changed in a configuration should trigger any change events
      * on the related instances.
      *

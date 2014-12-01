@@ -46,7 +46,7 @@ public interface ConfigurationFormat{
     boolean isAccepted(URI resource);
 
     /**
-     * Reads a {@link javax.config.PropertyMap} from the given URI, using this format.
+     * Reads a {@link org.apache.tamaya.PropertyProvider} fromMap the given URI, using this format.
      *
      * @param resource    the configuration location, not null
      * @return the corresponding {@link java.util.Map}, never {@code null}.

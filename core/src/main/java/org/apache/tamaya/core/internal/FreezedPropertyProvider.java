@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
@@ -38,19 +38,23 @@ final class FreezedPropertyProvider implements PropertyProvider, Serializable{
     private MetaInfo metaInfo;
     private Map<String,String> properties = new HashMap<>();
 
-    private FreezedPropertyProvider(PropertyProvider propertyMap){
-        Map<String,String> map = propertyMap.toMap();
+    private FreezedPropertyProvider(MetaInfo metaInfo, PropertyProvider propertyMap) {
+        Map<String, String> map = propertyMap.toMap();
         this.properties.putAll(map);
         this.properties = Collections.unmodifiableMap(this.properties);
-        this.metaInfo =
-                MetaInfoBuilder.of(propertyMap.getMetaInfo()).set("freezedAt", Instant.now().toString()).build();
+        if (metaInfo == null) {
+            this.metaInfo =
+                    MetaInfoBuilder.of(propertyMap.getMetaInfo()).set("freezedAt", Instant.now().toString()).build();
+        } else {
+            this.metaInfo = metaInfo;
+        }
     }
 
-    public static PropertyProvider of(PropertyProvider propertyProvider){
+    public static PropertyProvider of(MetaInfo metaInfo, PropertyProvider propertyProvider){
         if(propertyProvider instanceof FreezedPropertyProvider){
             return propertyProvider;
         }
-        return new FreezedPropertyProvider(propertyProvider);
+        return new FreezedPropertyProvider(metaInfo, propertyProvider);
     }
 
     @Override

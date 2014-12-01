@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.PropertyProvider;
+import org.apache.tamaya.*;
+import org.apache.tamaya.core.properties.AbstractPropertyProvider;
+
 import java.util.*;
 
 /**
  * Implementation for a {@link org.apache.tamaya.PropertyProvider} that is an aggregate of
- * multiple child instances. Controlled by an {@link AggregationPolicy} the
+ * multiple child instances. Controlled by an {@link org.apache.tamaya.AggregationPolicy} the
  * following aggregations are supported:
  * <ul>
  * <li><b>IGNORE: </b>Ignore all overrides.</li>
@@ -34,7 +34,7 @@ import java.util.*;
  * <li><b>: </b></li>
  * </ul>
  */
-class AggregatedPropertyProvider extends AbstractPropertyProvider{
+class AggregatedPropertyProvider extends AbstractPropertyProvider {
 
     private static final long serialVersionUID = -1419376385695224799L;
 	private AggregationPolicy policy = AggregationPolicy.IGNORE;
@@ -50,11 +50,11 @@ class AggregatedPropertyProvider extends AbstractPropertyProvider{
      * @param propertyMaps
      *            The property sets to be included.
      */
-	public AggregatedPropertyProvider(PropertyProvider mutableProvider, AggregationPolicy policy, PropertyProvider... propertyMaps) {
-        super(MetaInfoBuilder.of().setType("aggregated").set("policy", policy.toString()).build());
+	public AggregatedPropertyProvider(MetaInfo metaInfo, PropertyProvider mutableProvider, AggregationPolicy policy, List<PropertyProvider> propertyMaps) {
+        super(MetaInfoBuilder.of(metaInfo).setType("aggregated").build());
         Objects.requireNonNull(policy);
         this.policy = policy;
-		units.addAll(Arrays.asList(propertyMaps));
+		units.addAll(propertyMaps);
         this.mutableProvider = mutableProvider;
 	}
 

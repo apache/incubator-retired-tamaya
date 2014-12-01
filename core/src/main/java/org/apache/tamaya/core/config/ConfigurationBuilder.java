@@ -18,14 +18,9 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.core.properties.AggregationPolicy;
-import org.apache.tamaya.core.properties.PropertyProviders;
+import org.apache.tamaya.*;
 import org.apache.tamaya.core.spi.ResourceLoader;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.PropertyProvider;
 import org.apache.tamaya.spi.Bootstrap;
 import java.net.URI;
 import java.util.*;
@@ -118,13 +113,13 @@ public final class ConfigurationBuilder{
         }
         PropertyProvider prov = PropertyProviders.fromUris(metaInfo, sourcesToRead.collect(Collectors.toList()));
         if(!this.data.isEmpty()){
-            prov = PropertyProviders.union(AggregationPolicy.OVERRIDE, prov, PropertyProviders.from(this.data));
+            prov = PropertyProviders.aggregate(AggregationPolicy.OVERRIDE, prov, PropertyProviders.fromMap(this.data));
         }
         for(ConfigMapAddition addition : addedMaps){
             PropertyProvider[] newMaps = new PropertyProvider[addition.configMaps.length + 1];
             newMaps[0] = prov;
             System.arraycopy(addition.configMaps, 0, newMaps, 1, addition.configMaps.length);
-            prov = PropertyProviders.union(addition.policy, newMaps);
+            prov = PropertyProviders.aggregate(addition.policy, newMaps);
         }
         final PropertyProvider finalProvider = prov;
         return new MapConfiguration(metaInfo, () -> finalProvider.toMap());

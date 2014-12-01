@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
  * This store encapsulates an list of WeakReferences to items.
- * It cleans up the list from null references, when an item is removed, or an Iterator is created.
+ * It cleans up the list fromMap null references, when an item is removed, or an Iterator is created.
  * Created by Anatole on 10.04.2014.
  */
 public class Store<T>implements Iterable<T> {

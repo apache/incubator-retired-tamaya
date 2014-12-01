@@ -18,9 +18,9 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.PropertyProviders;
 import org.apache.tamaya.core.config.ConfigurationBuilder;
-import org.apache.tamaya.core.properties.AggregationPolicy;
-import org.apache.tamaya.core.properties.PropertyProviders;
+import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 import org.apache.tamaya.Configuration;

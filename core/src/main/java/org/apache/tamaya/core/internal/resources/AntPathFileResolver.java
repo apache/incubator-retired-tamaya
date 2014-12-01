@@ -18,7 +18,11 @@
  */
 package org.apache.tamaya.core.internal.resources;
 
+import org.apache.tamaya.core.internal.resources.io.PathMatchingResourcePatternResolver;
+import org.apache.tamaya.core.internal.resources.io.Resource;
+
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Stream;
@@ -33,14 +37,22 @@ public class AntPathFileResolver implements PathResolver{
 
     @Override
     public Collection<URI> resolve(ClassLoader classLoader, Stream<String> expressions){
+        PathMatchingResourcePatternResolver resolver = PathMatchingResourcePatternResolver.of(classLoader);
         List<URI> result = new ArrayList<>();
         expressions.forEach((expression) -> {
-            if(expression.startsWith("file:")){
-                String exp = expression.substring("file:".length());
-                File f = new File(exp);
-                if(f.exists() && f.isFile()){
-                    result.add(f.toURI());
+            try {
+                Resource[] resources = resolver.getResources(expression);
+                for (Resource res : resources) {
+                    try {
+                        result.add(res.getURI());
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
+            }
+            catch(IOException e){
+                // TODO log
             }
         });
         return result;

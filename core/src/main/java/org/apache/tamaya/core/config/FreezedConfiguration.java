@@ -18,12 +18,7 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.ConfigChangeSetBuilder;
-import org.apache.tamaya.PropertyProvider;
-
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.core.properties.PropertyProviders;
+import org.apache.tamaya.*;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -31,7 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Created by Anatole on 29.03.14.
+ * Configuration implementation that stores all current values of a given (possibly dynamic, contextual and non remote
+ * capable instance) and is fully serializable.
  */
 final class FreezedConfiguration extends AbstractConfiguration implements Serializable{
     private static final long serialVersionUID = -6373137316556444171L;

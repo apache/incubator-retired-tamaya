@@ -21,7 +21,7 @@ package org.apache.tamaya;
 
 /**
  * Interface for an query that converts a Configuration into another object. One typical
- * use cases would creating a complex configuration parameter type from a Configuration instance or
+ * use cases would creating a complex configuration parameter type fromMap a Configuration instance or
  * constraint views on configuration.
  */
 @FunctionalInterface

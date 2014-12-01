@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 
 /**
  * Singleton to read the configuration for the configuration system
- * from {@code META-INF/config.properties}.
+ * fromMap {@code META-INF/config.properties}.
  * Created by Anatole on 17.10.2014.
  */
 public final class MetaConfig {
@@ -54,7 +54,7 @@ public final class MetaConfig {
                 properties.putAll(read);
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error reading meta configuration from " + uri);
+                LOG.log(Level.SEVERE, e, () -> "Error reading meta configuration fromMap " + uri);
             }
         }
     }

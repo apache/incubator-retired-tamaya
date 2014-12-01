@@ -60,7 +60,7 @@ import java.lang.annotation.*;
  * Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
  * resolved. Hereby the ordering of the annotations define the ordering of resolution, so in the example above
  * resolution equals to {@code "aValue", "a.b.value", "a.b.deprecated.value"}. If no value could be read
- * from the configuration, it uses the value from the {@code DefaultValue} annotation. Interesting here
+ * fromMap the configuration, it uses the value fromMap the {@code DefaultValue} annotation. Interesting here
  * is that this value is not static, it is evaluated by calling
  * {@link org.apache.tamaya.Configuration#evaluateValue(org.apache.tamaya.Configuration, String)}.
  */

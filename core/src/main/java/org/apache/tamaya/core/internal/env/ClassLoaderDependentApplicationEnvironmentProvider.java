@@ -86,7 +86,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
                 data.putAll(read);
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error reading application environment data from " + uri);
+                LOG.log(Level.SEVERE, e, () -> "Error reading application environment data fromMap " + uri);
             }
         }
         String applicationId = data.getOrDefault(WARID_PROP, cl.toString());

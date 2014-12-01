@@ -21,7 +21,7 @@ package org.apache.tamaya;
 
 /**
  * Interface for an adapter that converts a configured String into something else.
- * This is typically used for implementing type conversion from String to a certain target
+ * This is typically used for implementing type conversion fromMap String to a certain target
  * type of the configured property.
  */
 @FunctionalInterface

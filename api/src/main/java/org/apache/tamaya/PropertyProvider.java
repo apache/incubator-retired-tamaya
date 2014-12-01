@@ -24,7 +24,7 @@ import java.util.Set;
 
 /**
  * This interface models a provider that serves configuration properties. The contained
- * properties may be read from single or several sources (composite).<br/>
+ * properties may be read fromMap single or several sources (composite).<br/>
  * Property providers are the building blocks out of which complex
  * configuration is setup.
  * <p/>
@@ -114,4 +114,36 @@ public interface PropertyProvider {
         throw new UnsupportedOperationException("Config/properties not mutable: "+ this);
     }
 
+    /**
+     * Allows to quickly check, if a provider is empty.
+     * @return true, if the provier is empty.
+     */
+    default boolean isEmpty(){
+        return keySet().isEmpty();
+    }
+
+    /**
+     * Convert the this PropertyProvider instance to a {@link org.apache.tamaya.Configuration}.
+     * @return the configuration, never null.
+     */
+    default Configuration toConfiguration(){
+        return new Configuration(){
+            @Override
+            public Optional<String> get(String key) {
+                return PropertyProvider.this.get(key);
+            }
+            @Override
+            public boolean containsKey(String key) {
+                return PropertyProvider.this.containsKey(key);
+            }
+            @Override
+            public Map<String, String> toMap() {
+                return PropertyProvider.this.toMap();
+            }
+            @Override
+            public MetaInfo getMetaInfo() {
+                return PropertyProvider.this.getMetaInfo();
+            }
+        };
+    }
 }

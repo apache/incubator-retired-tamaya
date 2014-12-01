@@ -86,13 +86,13 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
     @Test
     public void testAddRemoveGlobalConfigChangeListener() {
-        Configuration.addGlobalPropertyChangeListener(LISTENER);
-        Configuration.removeGlobalPropertyChangeListener(LISTENER);
-        Configuration.addGlobalPropertyChangeListener(LISTENER);
-        Configuration.addGlobalPropertyChangeListener(LISTENER);
-        Configuration.removeGlobalPropertyChangeListener(LISTENER);
-        Configuration.removeGlobalPropertyChangeListener(LISTENER);
-        Configuration.removeGlobalPropertyChangeListener(LISTENER);
+        Configuration.addConfigChangeListener(LISTENER);
+        Configuration.removeConfigChangeListener(LISTENER);
+        Configuration.addConfigChangeListener(LISTENER);
+        Configuration.addConfigChangeListener(LISTENER);
+        Configuration.removeConfigChangeListener(LISTENER);
+        Configuration.removeConfigChangeListener(LISTENER);
+        Configuration.removeConfigChangeListener(LISTENER);
     }
 
     @Test

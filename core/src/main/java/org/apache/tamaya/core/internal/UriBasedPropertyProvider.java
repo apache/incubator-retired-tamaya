@@ -16,11 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.AggregationPolicy;
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.core.config.ConfigurationFormats;
+import org.apache.tamaya.core.properties.AbstractPropertyProvider;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 
@@ -34,11 +37,12 @@ final class URIBasedPropertyProvider extends AbstractPropertyProvider {
 
     private List<URI> uris = new ArrayList<>();
     private Map<String,String> properties = new HashMap<>();
+    private AggregationPolicy aggregationPolicy;
 
-    public URIBasedPropertyProvider(MetaInfo metaInfo, Collection<URI> uris) {
+    public URIBasedPropertyProvider(MetaInfo metaInfo, List<URI> uris, AggregationPolicy aggregationPolicy) {
         super(metaInfo);
-        Objects.requireNonNull(uris);
-        this.uris.addAll(uris);
+        this.uris.addAll(Objects.requireNonNull(uris));
+        this.aggregationPolicy = Objects.requireNonNull(aggregationPolicy);
         init();
     }
 
@@ -48,8 +52,28 @@ final class URIBasedPropertyProvider extends AbstractPropertyProvider {
             ConfigurationFormat format = ConfigurationFormats.getFormat(uri);
             if(format != null){
                 try{
-                    properties.putAll(format.readConfiguration(uri));
+                    Map<String, String> read = format.readConfiguration(uri);
                     sources.add(uri.toString());
+                    read.forEach((k, v) -> {
+                        switch (aggregationPolicy) {
+                            case OVERRIDE:
+                                properties.put(k, v);
+                                break;
+                            case IGNORE:
+                                properties.putIfAbsent(k, v);
+                                break;
+                            case EXCEPTION:
+                            default:
+                                String prev = properties.putIfAbsent(k, v);
+                                if (prev != null) {
+                                    throw new ConfigException("Duplicate value encountered in " + uri
+                                            + ": key=" + k + ", value=" + v + ", existing=" + prev);
+                                }
+                        }
+                    });
+                }
+                catch(ConfigException e){
+                    throw e;
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -57,7 +81,7 @@ final class URIBasedPropertyProvider extends AbstractPropertyProvider {
             }
         }
         MetaInfoBuilder metaInfoBuilder = MetaInfoBuilder.of(getMetaInfo());
-        super.metaInfo = metaInfoBuilder
+        metaInfo = metaInfoBuilder
                 .setSources(sources.toString()).build();
     }
 

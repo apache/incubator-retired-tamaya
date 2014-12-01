@@ -113,7 +113,7 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Marks the given key(s) from the configuration/properties to be removed.
+     * Marks the given key(s) fromMap the configuration/properties to be removed.
      * @param key the key of the entry, not null.
      * @param otherKeys additional keys to be removed (convenience), not null.
      * @return the builder for chaining.
@@ -256,7 +256,7 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * This method will create a change set that clears all entries from the given base configuration/properties.
+     * This method will create a change set that clears all entries fromMap the given base configuration/properties.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder clear() {

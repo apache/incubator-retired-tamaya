@@ -27,7 +27,7 @@ package org.apache.tamaya;
 public interface ConfigOperator{
 
     /**
-     * Method that creates a Configuration from another Configuration. This can be used for implementing
+     * Method that creates a Configuration fromMap another Configuration. This can be used for implementing
      * views, security constraints or for overriding/inheriting of configuration.
      * @param config The target configuration to be operated, never nnull.
      * @return the operated configuration, never null.

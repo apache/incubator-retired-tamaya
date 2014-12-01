@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
+import org.apache.tamaya.PropertyProviders;
 import org.junit.Test;
 
 import org.apache.tamaya.PropertyProvider;

@@ -56,7 +56,7 @@ public class ConfiguredField {
     }
 
     /**
-     * Evaluate the initial value from the configuration and apply it to the field.
+     * Evaluate the initial value fromMap the configuration and apply it to the field.
      *
      * @param target the target instance.
      * @throws ConfigException if evaluation or conversion failed.
@@ -185,7 +185,7 @@ public class ConfiguredField {
     }
 
     /**
-     * This method checks if the given (qualified) configuration key is referenced from this field.
+     * This method checks if the given (qualified) configuration key is referenced fromMap this field.
      * This is useful to determine, if a key changed in a configuration should trigger any change events
      * on the related instances.
      *

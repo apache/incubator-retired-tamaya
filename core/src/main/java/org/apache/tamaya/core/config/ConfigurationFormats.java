@@ -40,7 +40,7 @@ public final class ConfigurationFormats{
     private static final ConfigurationFormatsSingletonSpi spi = loadSpi();
 
     /**
-     * Method to load the spi from the Bootstrap component.
+     * Method to load the spi fromMap the Bootstrap component.
      *
      * @return an instance of ConfigurationFormatsSingletonSpi, never null.
      */
@@ -96,10 +96,10 @@ public final class ConfigurationFormats{
     }
 
     /**
-     * Get an instance for reading configuration from a {@code .properties} file,
+     * Get an instance for reading configuration fromMap a {@code .properties} file,
      * as defined by {@link java.util.Properties#load(java.io.InputStream)}.
      *
-     * @return a format instance for reading configuration from a {@code .properties} file, never null.
+     * @return a format instance for reading configuration fromMap a {@code .properties} file, never null.
      */
     public static ConfigurationFormat getPropertiesFormat(){
         return Optional.ofNullable(spi)
@@ -108,10 +108,10 @@ public final class ConfigurationFormats{
     }
 
     /**
-     * Get an instance for reading configuration from a {@code .xml} properties file,
+     * Get an instance for reading configuration fromMap a {@code .xml} properties file,
      * as defined by {@link java.util.Properties#loadFromXML(java.io.InputStream)}.
      *
-     * @return a format instance for reading configuration from a {@code .xml} properties file, never null.
+     * @return a format instance for reading configuration fromMap a {@code .xml} properties file, never null.
      */
     public static ConfigurationFormat getXmlPropertiesFormat(){
         return Optional.ofNullable(spi)

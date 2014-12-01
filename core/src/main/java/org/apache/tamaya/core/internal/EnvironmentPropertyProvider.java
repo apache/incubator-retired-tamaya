@@ -16,23 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
-/**
- * Policy that defines how the different aggregates should be combined.
- */
-public enum AggregationPolicy{
-    /** Ignore overrides, only extend (additive). */
-    IGNORE,
-    /**
-     * Interpret later keys as override (additive and override), replacing
-     * the key loaded earlier/from previous contained
-     * {@link javax.config.PropertyMap}.
-     */
-    OVERRIDE,
-    /**
-     * Throw an exception, when keys are not disjunctive (strictly
-     * additive).
-     */
-    EXCEPTION
+import org.apache.tamaya.MetaInfoBuilder;
+import org.apache.tamaya.core.properties.AbstractPropertyProvider;
+
+import java.util.Map;
+
+class EnvironmentPropertyProvider extends AbstractPropertyProvider {
+
+    private static final long serialVersionUID = 4753258482658331010L;
+
+    public Map<String,String> toMap(){
+        return System.getenv();
+    }
+
+    public EnvironmentPropertyProvider(){
+        super(MetaInfoBuilder.of().setType("env-properties").build());
+    }
+
+    @Override
+    public String toString(){
+        return "EnvironmentPropertyMap{" +
+                "props=" + super.toString() +
+                '}';
+    }
+
 }

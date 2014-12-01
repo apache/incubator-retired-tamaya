@@ -24,7 +24,7 @@ import java.util.Collection;
 /**
  * Service for accessing configuration. A configuration service is always base
  * on the environment definition provided by one instance of
- * {@link org.apache.tamaya.core.spi.EnvironmentManagerSingletonSpi}. It is possible to define multiple
+ * {@link org.apache.tamaya.spi.EnvironmentManagerSingletonSpi}. It is possible to define multiple
  * {@link org.apache.tamaya.core.properties.PropertyProviderManager} instances, if required. <h3>Implementation
  * PropertyMapSpec</h3> Implementations of this interface must be
  * <ul>

@@ -18,10 +18,15 @@
  */
 package org.apache.tamaya.core.internal.resources;
 
+import org.apache.tamaya.core.internal.resources.io.PathMatchingResourcePatternResolver;
+import org.apache.tamaya.core.internal.resources.io.Resource;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 public class AntPathClasspathResolver implements PathResolver{
@@ -33,22 +38,38 @@ public class AntPathClasspathResolver implements PathResolver{
 
     @Override
     public Collection<URI> resolve(ClassLoader classLoader, Stream<String> expressions){
+        PathMatchingResourcePatternResolver resolver = PathMatchingResourcePatternResolver.of(classLoader);
         List<URI> result = new ArrayList<>();
         expressions.forEach((expression) -> {
-            if(expression.startsWith("classpath:")){
-                String exp = expression.substring("classpath:".length());
-                URL url = classLoader.getResource(exp);
-                if(url != null){
-                    try{
-                        result.add(url.toURI());
-                    }
-                    catch(URISyntaxException e){
+            try {
+                Resource[] resources = resolver.getResources(expression);
+                for (Resource res : resources) {
+                    try {
+                        result.add(res.getURI());
+                    } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
             }
+            catch(IOException e){
+                // TODO log
+            }
         });
+//            if(expression.startsWith("classpath:")){
+//                String exp = expression.substring("classpath:".length());
+//                URL url = classLoader.getResource(exp);
+//                if(url != null){
+//                    try{
+//                        result.add(url.toURI());
+//                    }
+//                    catch(URISyntaxException e){
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
         return result;
     }
 }

@@ -89,7 +89,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
                 data.putAll(read);
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error reading ear environment data from " + uri);
+                LOG.log(Level.SEVERE, e, () -> "Error reading ear environment data fromMap " + uri);
             }
         }
         String earId = data.getOrDefault(EARID_PROP, cl.toString());

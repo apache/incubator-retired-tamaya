@@ -20,9 +20,6 @@ package org.apache.tamaya;
 
 import org.apache.tamaya.core.config.ConfigurationBuilder;
 import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.core.properties.AggregationPolicy;
-import org.apache.tamaya.core.properties.PropertyProviders;
-import org.apache.tamaya.samples.annotations.ConfiguredClass;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.junit.Test;
 
@@ -62,7 +59,7 @@ public class JavaOneDemo{
                                                            PropertyProviders
                                                                    .fromPaths("classpath:cfg/test.xml"),
                                                            PropertyProviders.fromArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}),
-                                                           PropertyProviders.from(cfgMap)).build();
+                                                           PropertyProviders.fromMap(cfgMap)).build();
         System.out.println(config.getAreas());
         System.out.println("---");
         System.out.println(config.getAreas(s -> s.startsWith("another")));

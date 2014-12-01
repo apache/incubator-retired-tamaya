@@ -18,6 +18,9 @@
  */
 package org.apache.tamaya.core.internal.resources;
 
+import org.apache.tamaya.core.internal.resources.io.PathMatchingResourcePatternResolver;
+import org.apache.tamaya.core.internal.resources.io.Resource;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,31 +37,49 @@ public class AntPathClasspathsResolver implements PathResolver{
 
     @Override
     public Collection<URI> resolve(ClassLoader classLoader, Stream<String> expressions){
+        PathMatchingResourcePatternResolver resolver = PathMatchingResourcePatternResolver.of(classLoader);
         List<URI> result = new ArrayList<>();
-        Objects.requireNonNull(classLoader);
         expressions.forEach((expression) -> {
-            if(expression.startsWith("classpath*:")){
-                String exp = expression.substring("classpath*:".length());
-                Enumeration<URL> urls;
-                try{
-                    urls = classLoader.getResources(exp);
-                    while(urls.hasMoreElements()){
-                        URL url = (URL) urls.nextElement();
-                        try{
-                            result.add(url.toURI());
-                        }
-                        catch(URISyntaxException e){
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
+            try {
+                Resource[] resources = resolver.getResources(expression);
+                for (Resource res : resources) {
+                    try {
+                        result.add(res.getURI());
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
                 }
-                catch(IOException e1){
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+            }
+            catch(IOException e){
+                // TODO log
             }
         });
+//        List<URI> result = new ArrayList<>();
+//        Objects.requireNonNull(classLoader);
+//        expressions.forEach((expression) -> {
+//            if(expression.startsWith("classpath*:")){
+//                String exp = expression.substring("classpath*:".length());
+//                Enumeration<URL> urls;
+//                try{
+//                    urls = classLoader.getResources(exp);
+//                    while(urls.hasMoreElements()){
+//                        URL url = (URL) urls.nextElement();
+//                        try{
+//                            result.add(url.toURI());
+//                        }
+//                        catch(URISyntaxException e){
+//                            // TODO Auto-generated catch block
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//                catch(IOException e1){
+//                    // TODO Auto-generated catch block
+//                    e1.printStackTrace();
+//                }
+//            }
+//        });
         return result;
     }
 }

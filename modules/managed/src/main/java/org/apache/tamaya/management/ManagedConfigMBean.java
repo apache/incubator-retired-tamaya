@@ -20,7 +20,7 @@ package org.apache.tamaya.management;
 
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.properties.AggregationPolicy;
+import org.apache.tamaya.AggregationPolicy;
 
 import java.util.Map;
 import java.util.Set;

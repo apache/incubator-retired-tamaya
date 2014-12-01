@@ -52,7 +52,7 @@ public interface EnvironmentProvider {
     /**
      * Get all currently known environment contexts for this environment type.
      * @return all currently known environment contexts, never null. Environment
-     * providers may prevent abritrary access to environment from outside of the
+     * providers may prevent abritrary access to environment fromMap outside of the
      * regarding runtime context by just not including the context information
      * in this call's result.
      * @return all currently known environment contexts, never null.

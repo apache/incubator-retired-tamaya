@@ -40,7 +40,7 @@ public final class ConfiguredInstancesManager implements PropertyChangeListener{
     private final Object LOCK = new Object();
 
     private ConfiguredInstancesManager(){
-//        Configuration.addGlobalPropertyChangeListener(this);
+//        Configuration.addConfigChangeListener(this);
     }
 
     public static <T> void register(ConfiguredType configuredType, Object instance) {

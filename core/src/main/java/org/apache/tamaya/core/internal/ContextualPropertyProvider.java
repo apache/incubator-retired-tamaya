@@ -16,12 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.properties;
+package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.PropertyProvider;
+import org.apache.tamaya.*;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,7 +40,7 @@ class ContextualPropertyProvider implements PropertyProvider{
 
     /**
      * Creates a new contextual PropertyMap. Contextual maps delegate to different instances of PropertyMap depending
-     * on the keys returned from the isolationP
+     * on the keys returned fromMap the isolationP
      *
      * @param mapSupplier
      * @param isolationKeySupplier
@@ -58,7 +56,7 @@ class ContextualPropertyProvider implements PropertyProvider{
 
     /**
      * This method provides the contextual Map for the current environment. Hereby, ba default, for each different
-     * key returned by the #isolationKeySupplier a separate PropertyMap instance is acquired from the #mapSupplier.
+     * key returned by the #isolationKeySupplier a separate PropertyMap instance is acquired fromMap the #mapSupplier.
      * If the map supplier returns an instance it is cached in the local #cachedMaps.
      *
      * @return the current contextual PropertyMap.
