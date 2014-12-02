@@ -40,7 +40,7 @@ public class ConfiguredSystemProperties extends Properties {
     private Properties initialProperties;
     private static volatile Map<String, Properties> contextualProperties = new ConcurrentHashMap<>();
     private static volatile Supplier<String> contextProvider = () ->
-            Environment.of().get("context.id").orElse("<system>");
+            Environment.current().get("context.id").orElse("<system>");
 
     private static Supplier<String> loadContextProvider() {
         return null;
@@ -332,7 +332,7 @@ public class ConfiguredSystemProperties extends Properties {
 
     protected Properties createNewProperties() {
         Properties props = new Properties(initialProperties);
-        Configuration config = Configuration.of();
+        Configuration config = Configuration.current();
         Map<String, String> configMap = config.toMap();
         for (Map.Entry<String, String> en : configMap.entrySet()) {
             props.put(en.getKey(), en.getValue());

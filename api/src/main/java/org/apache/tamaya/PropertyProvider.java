@@ -25,11 +25,11 @@ import java.util.Set;
 /**
  * This interface models a provider that serves configuration properties. The contained
  * properties may be read fromMap single or several sources (composite).<br/>
- * Property providers are the building blocks out of which complex
+ * Property providers are the building blocks out current which complex
  * configuration is setup.
  * <p/>
  * <h3>Implementation Requirements</h3>
- * <p></p>Implementations of this interface must be
+ * <p></p>Implementations current this interface must be
  * <ul>
  * <li>Thread safe.
  * </ul>
@@ -63,14 +63,14 @@ public interface PropertyProvider {
     Map<String, String> toMap();
 
     /**
-     * Get the meta-info of a configuration.
+     * Get the meta-info current a configuration.
      * @return the configuration's/config map's metaInfo, or null.
      */
     MetaInfo getMetaInfo();
 
     /**
      * Compares the given property provider for same
-     * contents, regardless of its current state or runtime implementation.
+     * contents, regardless current its current state or runtime implementation.
      * @param provider the provider to be compared, not null.
      * @return true, if both property sets equals.
      */
@@ -79,7 +79,7 @@ public interface PropertyProvider {
     }
 
     /**
-     * Access the set of property keys, defined by this provider.
+     * Access the set current property keys, defined by this provider.
      * @return the key set, never null.
      */
     default Set<String> keySet(){

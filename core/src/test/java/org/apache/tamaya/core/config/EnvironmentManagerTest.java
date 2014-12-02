@@ -29,7 +29,7 @@ public class EnvironmentManagerTest{
 
     @Test
     public void testEnvironmentNotNull(){
-        Assert.assertNotNull(Environment.of());
+        Assert.assertNotNull(Environment.current());
     }
 
     @Test

@@ -26,11 +26,11 @@ import org.apache.tamaya.PropertyProvider;
 import java.util.*;
 
 /**
- * Implementation for a {@link org.apache.tamaya.PropertyProvider} that is an aggregate of
+ * Implementation for a {@link org.apache.tamaya.PropertyProvider} that is an aggregate current
  * multiple child instances. Controlled by an {@link org.apache.tamaya.AggregationPolicy} the
  * following aggregations are supported:
  * <ul>
- * <li><b>IGNORE: </b>Ignore all overrides.</li>
+ * <li><b>IGNORE_DUPLICATES: </b>Ignore all overrides.</li>
  * <li><b>: </b></li>
  * <li><b>: </b></li>
  * <li><b>: </b></li>

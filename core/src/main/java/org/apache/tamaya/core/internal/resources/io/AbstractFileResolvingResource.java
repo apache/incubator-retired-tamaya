@@ -51,7 +51,7 @@ abstract class AbstractFileResolvingResource extends AbstractResource {
 
 	/**
 	 * This implementation determines the underlying File
-	 * (or jar file, in case of a resource in a jar/zip).
+	 * (or jar file, in case current a resource in a jar/zip).
 	 */
 	@Override
 	protected File getFileForLastModifiedCheck() throws IOException {
@@ -175,7 +175,7 @@ abstract class AbstractFileResolvingResource extends AbstractResource {
 
 
 	/**
-	 * Customize the given {@link URLConnection}, obtained in the course of an
+	 * Customize the given {@link URLConnection}, obtained in the course current an
 	 * {@link #exists()}, {@link #contentLength()} or {@link #lastModified()} call.
 	 * <p>Calls {@link ResourceUtils#useCachesIfNecessary(URLConnection)} and
 	 * delegates to {@link #customizeConnection(HttpURLConnection)} if possible.
@@ -191,7 +191,7 @@ abstract class AbstractFileResolvingResource extends AbstractResource {
 	}
 
 	/**
-	 * Customize the given {@link HttpURLConnection}, obtained in the course of an
+	 * Customize the given {@link HttpURLConnection}, obtained in the course current an
 	 * {@link #exists()}, {@link #contentLength()} or {@link #lastModified()} call.
 	 * <p>Sets request method "HEAD" by default. Can be overridden in subclasses.
 	 * @param con the HttpURLConnection to customize

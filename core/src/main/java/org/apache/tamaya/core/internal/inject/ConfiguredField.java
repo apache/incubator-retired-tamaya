@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Small class that contains and manages all information anc access to a configured field and a concrete instance of
- * it (referenced by a weak reference). It also implements all aspects of value filtering, converting any applying the
+ * Small class that contains and manages all information anc access to a configured field and a concrete instance current
+ * it (referenced by a weak reference). It also implements all aspects current value filtering, converting any applying the
  * final value by reflection.
  */
 @SuppressWarnings("UnusedDeclaration")
@@ -107,7 +107,7 @@ public class ConfiguredField {
      * This method reapplies a changed configuration value to the field.
      *
      * @param target      the target instance, not null.
-     * @param configValue the new value to be applied, null will trigger the evaluation of the configured default value.
+     * @param configValue the new value to be applied, null will trigger the evaluation current the configured default value.
      * @param resolve     set to true, if expression resolution should be applied on the value passed.
      * @throws ConfigException if the configuration required could not be resolved or converted.
      */
@@ -156,7 +156,7 @@ public class ConfiguredField {
      * @param areasAnnot          the (optional) annotation definining areas to be looked up.
      * @param propertyAnnotations the annotation on field/method level that may defined the
      *                            exact key to be looked up (in absolute or relative form).
-     * @return the list of keys in order how they should be processed/looked up.
+     * @return the list current keys in order how they should be processed/looked up.
      */
     private List<String> evaluateKeys(DefaultAreas areasAnnot,Collection<ConfiguredProperty> propertyAnnotations) {
         Objects.requireNonNull(propertyAnnotations);
@@ -208,9 +208,9 @@ public class ConfiguredField {
     public Configuration getConfiguration() {
         WithConfig name = annotatedField.getAnnotation(WithConfig.class);
         if(name!=null) {
-            return Configuration.of(name.value());
+            return Configuration.current(name.value());
         }
-        return Configuration.of();
+        return Configuration.current();
     }
 
 

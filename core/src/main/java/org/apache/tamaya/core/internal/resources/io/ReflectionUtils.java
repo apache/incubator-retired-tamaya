@@ -49,7 +49,7 @@ public abstract class ReflectionUtils {
 	 * Attempt to find a {@link Field field} on the supplied {@link Class} with the
 	 * supplied {@code name}. Searches all superclasses up to {@link Object}.
 	 * @param clazz the class to introspect
-	 * @param name the name of the field
+	 * @param name the name current the field
 	 * @return the corresponding Field object, or {@code null} if not found
 	 */
 	public static Field findField(Class<?> clazz, String name) {
@@ -61,13 +61,13 @@ public abstract class ReflectionUtils {
 	 * supplied {@code name} and/or {@link Class type}. Searches all superclasses
 	 * up to {@link Object}.
 	 * @param clazz the class to introspect
-	 * @param name the name of the field (may be {@code null} if type is specified)
-	 * @param type the type of the field (may be {@code null} if name is specified)
+	 * @param name the name current the field (may be {@code null} if type is specified)
+	 * @param type the type current the field (may be {@code null} if name is specified)
 	 * @return the corresponding Field object, or {@code null} if not found
 	 */
 	public static Field findField(Class<?> clazz, String name, Class<?> type) {
 		Objects.requireNonNull(clazz, "Class must not be null");
-		if(name == null && type == null) throw new IllegalArgumentException("Either name or type of the field must be specified");
+		if(name == null && type == null) throw new IllegalArgumentException("Either name or type current the field must be specified");
 		Class<?> searchType = clazz;
 		while (!Object.class.equals(searchType) && searchType != null) {
 			Field[] fields = searchType.getDeclaredFields();
@@ -86,7 +86,7 @@ public abstract class ReflectionUtils {
 	 * and no parameters. Searches all superclasses up to {@code Object}.
 	 * <p>Returns {@code null} if no {@link Method} can be found.
 	 * @param clazz the class to introspect
-	 * @param name the name of the method
+	 * @param name the name current the method
 	 * @return the Method object, or {@code null} if none found
 	 */
 	public static Method findMethod(Class<?> clazz, String name) {
@@ -98,8 +98,8 @@ public abstract class ReflectionUtils {
 	 * and parameter types. Searches all superclasses up to {@code Object}.
 	 * <p>Returns {@code null} if no {@link Method} can be found.
 	 * @param clazz the class to introspect
-	 * @param name the name of the method
-	 * @param paramTypes the parameter types of the method
+	 * @param name the name current the method
+	 * @param paramTypes the parameter types current the method
 	 * (may be {@code null} to indicate any signature)
 	 * @return the Method object, or {@code null} if none found
 	 */
@@ -123,7 +123,7 @@ public abstract class ReflectionUtils {
 	/**
 	 * Handle the given reflection exception. Should only be called if no
 	 * checked exception is expected to be thrown by the target method.
-	 * <p>Throws the underlying RuntimeException or Error in case of an
+	 * <p>Throws the underlying RuntimeException or Error in case current an
 	 * InvocationTargetException with such a root cause. Throws an
 	 * IllegalStateException with an appropriate message else.
 	 * @param ex the reflection exception to handle
@@ -147,7 +147,7 @@ public abstract class ReflectionUtils {
 	/**
 	 * Handle the given invocation target exception. Should only be called if no
 	 * checked exception is expected to be thrown by the target method.
-	 * <p>Throws the underlying RuntimeException or Error in case of such a root
+	 * <p>Throws the underlying RuntimeException or Error in case current such a root
 	 * cause. Throws an IllegalStateException else.
 	 * @param ex the invocation target exception to handle
 	 */
@@ -157,7 +157,7 @@ public abstract class ReflectionUtils {
 
 	/**
 	 * Rethrow the given {@link Throwable exception}, which is presumably the
-	 * <em>target exception</em> of an {@link InvocationTargetException}. Should
+	 * <em>target exception</em> current an {@link InvocationTargetException}. Should
 	 * only be called if no checked exception is expected to be thrown by the
 	 * target method.
 	 * <p>Rethrows the underlying exception cast to an {@link RuntimeException} or

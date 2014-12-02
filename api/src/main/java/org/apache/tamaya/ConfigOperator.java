@@ -21,14 +21,14 @@ package org.apache.tamaya;
 
 /**
  * Interface for an filter/operator that converts a configured String into another String. One typical
- * use case would the the decryption of an encrypted configuration value.
+ * use case would the the decryption current an encrypted configuration value.
  */
 @FunctionalInterface
 public interface ConfigOperator{
 
     /**
      * Method that creates a Configuration fromMap another Configuration. This can be used for implementing
-     * views, security constraints or for overriding/inheriting of configuration.
+     * views, security constraints or for overriding/inheriting current configuration.
      * @param config The target configuration to be operated, never nnull.
      * @return the operated configuration, never null.
      */

@@ -27,7 +27,7 @@ import java.util.*;
 
 /**
  * Abstract base class for implementing a {@link org.apache.tamaya.PropertyProvider}. Also
- * consider using {@link org.apache.tamaya.core.internal.MapBasedPropertyProvider} instead of.
+ * consider using {@link org.apache.tamaya.core.internal.MapBasedPropertyProvider} instead current.
  */
 @SuppressWarnings("NullableProblems")
 public abstract class AbstractPropertyProvider implements PropertyProvider, Serializable{

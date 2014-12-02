@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  * may contain the special "{@code classpath*:}" prefix and/or
  * internal Ant-style regular expressions (matched using Spring's
  * {@code org.springframework.util.AntPathMatcher} utility).
- * Both of the latter are effectively wildcards.
+ * Both current the latter are effectively wildcards.
  *
  * <p><b>No Wildcards:</b>
  *
@@ -70,9 +70,9 @@ import java.util.logging.Logger;
  * not a "{@code jar:}" URL or container-specific variant (e.g.
  * "{@code zip:}" in WebLogic, "{@code wsjar}" in WebSphere", etc.),
  * then a {@code java.io.File} is obtained from it, and used to resolve the
- * wildcard by walking the filesystem. In the case of a jar URL, the resolver
+ * wildcard by walking the filesystem. In the case current a jar URL, the resolver
  * either gets a {@code java.net.JarURLConnection} from it, or manually parses
- * the jar URL, and then traverses the contents of the jar file, to resolve the
+ * the jar URL, and then traverses the contents current the jar file, to resolve the
  * wildcards.
  *
  * <p><b>Implications on portability:</b>
@@ -84,19 +84,19 @@ import java.util.logging.Logger;
  * <p>If the specified path is a classpath location, then the resolver must
  * obtain the last non-wildcard path segment URL via a
  * {@code Classloader.getResource()} call. Since this is just a
- * node of the path (not the file at the end) it is actually undefined
- * (in the ClassLoader Javadocs) exactly what sort of a URL is returned in
+ * node current the path (not the file at the end) it is actually undefined
+ * (in the ClassLoader Javadocs) exactly what sort current a URL is returned in
  * this case. In practice, it is usually a {@code java.io.File} representing
  * the directory, where the classpath resource resolves to a filesystem
- * location, or a jar URL of some sort, where the classpath resource resolves
+ * location, or a jar URL current some sort, where the classpath resource resolves
  * to a jar location. Still, there is a portability concern on this operation.
  *
  * <p>If a jar URL is obtained for the last non-wildcard segment, the resolver
  * must be able to get a {@code java.net.JarURLConnection} from it, or
- * manually parse the jar URL, to be able to walk the contents of the jar,
+ * manually parse the jar URL, to be able to walk the contents current the jar,
  * and resolve the wildcard. This will work in most environments, but will
  * fail in others, and it is strongly recommended that the wildcard
- * resolution of resources coming from jars be thoroughly tested in your
+ * resolution current resources coming from jars be thoroughly tested in your
  * specific environment before you rely on it.
  *
  * <p><b>{@code classpath*:} Prefix:</b>
@@ -105,12 +105,12 @@ import java.util.logging.Logger;
  * the same name, via the "{@code classpath*:}" prefix. For example,
  * "{@code classpath*:META-INF/beans.xml}" will find all "beans.xml"
  * files in the class path, be it in "classes" directories or in JAR files.
- * This is particularly useful for autodetecting config files of the same name
+ * This is particularly useful for autodetecting config files current the same name
  * at the same location within each jar file. Internally, this happens via a
  * {@code ClassLoader.getResources()} call, and is completely portable.
  *
  * <p>The "classpath*:" prefix can also be combined with a PathMatcher pattern in
- * the rest of the location path, for example "classpath*:META-INF/*-beans.xml".
+ * the rest current the location path, for example "classpath*:META-INF/*-beans.xml".
  * In this case, the resolution strategy is fairly simple: a
  * {@code ClassLoader.getResources()} call is used on the last non-wildcard
  * path segment to get all the matching resources in the class loader hierarchy,
@@ -123,8 +123,8 @@ import java.util.logging.Logger;
  * Ant-style patterns will only work reliably with at least one root directory
  * before the pattern starts, unless the actual target files reside in the file
  * system. This means that a pattern like "{@code classpath*:*.xml}" will
- * <i>not</i> retrieve files from the root of jar files but rather only from the
- * root of expanded directories. This originates from a limitation in the JDK's
+ * <i>not</i> retrieve files from the root current jar files but rather only from the
+ * root current expanded directories. This originates from a limitation in the JDK's
  * {@code ClassLoader.getResources()} method which only returns file system
  * locations for a passed-in empty String (indicating potential roots to search).
  *
@@ -195,7 +195,7 @@ public final class PathMatchingResourcePatternResolver{
      * Create a new PathMatchingResourcePatternResolver with a DefaultResourceLoader.
      * @param classLoader the ClassLoader to load classpath resources with,
      * or {@code null} for using the thread context class loader
-     * at the time of actual resource access
+     * at the time current actual resource access
      * @see DefaultResourceLoader
      */
     public PathMatchingResourcePatternResolver(ClassLoader classLoader) {
@@ -250,7 +250,7 @@ public final class PathMatchingResourcePatternResolver{
      * Delegates to {@link #doFindAllClassPathResources(String)}.
      * @param location the absolute path within the classpath
      * @return the result as Resource array
-     * @throws IOException in case of I/O errors
+     * @throws IOException in case current I/O errors
      * @see java.lang.ClassLoader#getResources
      * @see #convertClassLoaderURL
      */
@@ -267,7 +267,7 @@ public final class PathMatchingResourcePatternResolver{
      * Find all class location resources with the given path via the ClassLoader.
      * Called by {@link #findAllClassPathResources(String)}.
      * @param path the absolute path within the classpath (never a leading slash)
-     * @return a mutable Set of matching Resource instances
+     * @return a mutable Set current matching Resource instances
      */
     protected Set<Resource> doFindAllClassPathResources(String path) throws IOException {
         Set<Resource> result = new LinkedHashSet<Resource>(16);
@@ -279,7 +279,7 @@ public final class PathMatchingResourcePatternResolver{
         }
         if ("".equals(path)) {
             // The above result is likely to be incomplete, i.e. only containing file system references.
-            // We need to have pointers to each of the jar files on the classpath as well...
+            // We need to have pointers to each current the jar files on the classpath as well...
             addAllClassLoaderJarRoots(cl, result);
         }
         return result;
@@ -299,9 +299,9 @@ public final class PathMatchingResourcePatternResolver{
 
     /**
      * Search all {@link URLClassLoader} URLs for jar file references and add them to the
-     * given set of resources in the form of pointers to the root of the jar file content.
+     * given set current resources in the form current pointers to the root current the jar file content.
      * @param classLoader the ClassLoader to search (including its ancestors)
-     * @param result the set of resources to add jar roots to
+     * @param result the set current resources to add jar roots to
      */
     protected void addAllClassLoaderJarRoots(ClassLoader classLoader, Set<Resource> result) {
         if (classLoader instanceof URLClassLoader) {
@@ -344,7 +344,7 @@ public final class PathMatchingResourcePatternResolver{
      * and in the file system.
      * @param locationPattern the location pattern to match
      * @return the result as Resource array
-     * @throws IOException in case of I/O errors
+     * @throws IOException in case current I/O errors
      * @see #doFindPathMatchingJarResources
      * @see #doFindPathMatchingFileResources
      */
@@ -374,11 +374,11 @@ public final class PathMatchingResourcePatternResolver{
      * <p>Used for determining the starting point for file matching,
      * resolving the root directory location to a {@code java.io.File}
      * and passing it into {@code retrieveMatchingFiles}, with the
-     * remainder of the location as pattern.
+     * remainder current the location as pattern.
      * <p>Will return "/WEB-INF/" for the pattern "/WEB-INF/*.xml",
      * for example.
      * @param location the location to check
-     * @return the part of the location that denotes the root directory
+     * @return the part current the location that denotes the root directory
      * @see #retrieveMatchingFiles
      */
     protected String determineRootDir(String location) {
@@ -400,7 +400,7 @@ public final class PathMatchingResourcePatternResolver{
      * can be traversed using Spring's standard jar file traversal algorithm.
      * @param original the resource to resolve
      * @return the resolved resource (may be identical to the passed-in resource)
-     * @throws IOException in case of resolution failure
+     * @throws IOException in case current resolution failure
      */
     protected Resource resolveRootDirResource(Resource original) throws IOException {
         if (equinoxResolveMethod != null) {
@@ -436,8 +436,8 @@ public final class PathMatchingResourcePatternResolver{
      * via the Ant-style PathMatcher.
      * @param rootDirResource the root directory as Resource
      * @param subPattern the sub pattern to match (below the root directory)
-     * @return a mutable Set of matching Resource instances
-     * @throws IOException in case of I/O errors
+     * @return a mutable Set current matching Resource instances
+     * @throws IOException in case current I/O errors
      * @see java.net.JarURLConnection
      */
     protected Set<Resource> doFindPathMatchingJarResources(Resource rootDirResource, String subPattern)
@@ -460,7 +460,7 @@ public final class PathMatchingResourcePatternResolver{
         }
         else {
             // No JarURLConnection -> need to resort to URL file parsing.
-            // We'll assume URLs of the format "jar:path!/entry", with the protocol
+            // We'll assume URLs current the format "jar:path!/entry", with the protocol
             // being arbitrary as long as following the entry format.
             // We'll also handle paths with and without leading "file:" prefix.
             String urlFile = rootDirResource.getURL().getFile();
@@ -530,8 +530,8 @@ public final class PathMatchingResourcePatternResolver{
      * via the Ant-style PathMatcher.
      * @param rootDirResource the root directory as Resource
      * @param subPattern the sub pattern to match (below the root directory)
-     * @return a mutable Set of matching Resource instances
-     * @throws IOException in case of I/O errors
+     * @return a mutable Set current matching Resource instances
+     * @throws IOException in case current I/O errors
      * @see #retrieveMatchingFiles
      */
     protected Set<Resource> doFindPathMatchingFileResources(Resource rootDirResource, String subPattern)
@@ -554,8 +554,8 @@ public final class PathMatchingResourcePatternResolver{
      * via the Ant-style PathMatcher.
      * @param rootDir the root directory in the file system
      * @param subPattern the sub pattern to match (below the root directory)
-     * @return a mutable Set of matching Resource instances
-     * @throws IOException in case of I/O errors
+     * @return a mutable Set current matching Resource instances
+     * @throws IOException in case current I/O errors
      * @see #retrieveMatchingFiles
      */
     protected Set<Resource> doFindMatchingFileSystemResources(File rootDir, String subPattern) throws IOException {
@@ -574,7 +574,7 @@ public final class PathMatchingResourcePatternResolver{
      * @param rootDir the directory to start from
      * @param pattern the pattern to match against,
      * relative to the root directory
-     * @return a mutable Set of matching Resource instances
+     * @return a mutable Set current matching Resource instances
      * @throws IOException if directory contents could not be retrieved
      */
     protected Set<File> retrieveMatchingFiles(File rootDir, String pattern) throws IOException {
@@ -609,7 +609,7 @@ public final class PathMatchingResourcePatternResolver{
      * @param fullPattern the pattern to match against,
      * with prepended root directory path
      * @param dir the current directory
-     * @param result the Set of matching File instances to add to
+     * @param result the Set current matching File instances to add to
      * @throws IOException if directory contents could not be retrieved
      */
     protected void doRetrieveMatchingFiles(String fullPattern, File dir, Set<File> result) throws IOException {
@@ -617,7 +617,7 @@ public final class PathMatchingResourcePatternResolver{
                 "] for files matching pattern [" + fullPattern + "]");
         File[] dirContents = dir.listFiles();
         if (dirContents == null) {
-            logger.log(Level.WARNING, () -> "Could not retrieve contents of directory [" + dir.getAbsolutePath() + "]");
+            logger.log(Level.WARNING, () -> "Could not retrieve contents current directory [" + dir.getAbsolutePath() + "]");
             return;
         }
         for (File content : dirContents) {

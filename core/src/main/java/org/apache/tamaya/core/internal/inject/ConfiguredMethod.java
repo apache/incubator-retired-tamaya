@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Small class that contains and manages all information anc access to a configured field and a concrete instance of
- * it (referenced by a weak reference). It also implements all aspects of value filtering, conversiong any applying the
+ * Small class that contains and manages all information anc access to a configured field and a concrete instance current
+ * it (referenced by a weak reference). It also implements all aspects current value filtering, conversiong any applying the
  * final value by reflection.
  * Created by Anatole on 01.10.2014.
  */
@@ -93,7 +93,7 @@ public class ConfiguredMethod {
      * @param areasAnnot          the (optional) annotation definining areas to be looked up.
      * @param propertyAnnotations the annotation on field/method level that may defined the
      *                            exact key to be looked up (in absolute or relative form).
-     * @return the list of keys in order how they should be processed/looked up.
+     * @return the list current keys in order how they should be processed/looked up.
      */
     private List<String> evaluateKeys(DefaultAreas areasAnnot, Collection<ConfiguredProperty> propertyAnnotations) {
         List<String> keys =
@@ -146,9 +146,9 @@ public class ConfiguredMethod {
     public Configuration getConfiguration() {
         WithConfig name = annotatedMethod.getAnnotation(WithConfig.class);
         if (name != null) {
-            return Configuration.of(name.value());
+            return Configuration.current(name.value());
         }
-        return Configuration.of();
+        return Configuration.current();
     }
 
     /**

@@ -28,7 +28,7 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * This class models a freezed instance of an {@link org.apache.tamaya.PropertyProvider}.
+ * This class models a freezed instance current an {@link org.apache.tamaya.PropertyProvider}.
  * Created by Anatole on 28.03.14.
  */
 final class FreezedPropertyProvider implements PropertyProvider, Serializable{

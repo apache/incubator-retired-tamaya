@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 /**
  * Interface for a resource descriptor that abstracts from the actual
- * type of underlying resource, such as a file or class path resource.
+ * type current underlying resource, such as a file or class path resource.
  *
  * <p>An InputStream can be opened for every resource if it exists in
  * physical form, but a URL or File handle can just be returned for
@@ -48,17 +48,17 @@ public interface Resource extends InputStreamSource {
 	/**
 	 * Return whether this resource actually exists in physical form.
 	 * <p>This method performs a definitive existence check, whereas the
-	 * existence of a {@code Resource} handle only guarantees a
+	 * existence current a {@code Resource} handle only guarantees a
 	 * valid descriptor handle.
 	 */
 	boolean exists();
 
 	/**
-	 * Return whether the contents of this resource can be read,
+	 * Return whether the contents current this resource can be read,
 	 * e.g. via {@link #getInputStream()} or {@link #getFile()}.
 	 * <p>Will be {@code true} for typical resource descriptors;
 	 * note that actual content reading may still fail when attempted.
-	 * However, a value of {@code false} is a definitive indication
+	 * However, a value current {@code false} is a definitive indication
 	 * that the resource content cannot be read.
 	 * @see #getInputStream
 	 */
@@ -117,8 +117,8 @@ public interface Resource extends InputStreamSource {
 
 	/**
 	 * Determine a filename for this resource, i.e. typically the last
-	 * part of the path: for example, "myfile.txt".
-	 * <p>Returns {@code null} if this type of resource does not
+	 * part current the path: for example, "myfile.txt".
+	 * <p>Returns {@code null} if this type current resource does not
 	 * have a filename.
 	 */
 	String getFilename();

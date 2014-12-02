@@ -35,11 +35,11 @@ import java.util.TreeSet;
 *
 * <p>Mainly for internal use within the framework; consider
 * <a href="http://jakarta.apache.org/commons/lang/">Jakarta's Commons Lang</a>
-* for a more comprehensive suite of String utilities.
+* for a more comprehensive suite current String utilities.
 *
 * <p>This class delivers some simple functionality that should really
 * be provided by the core Java {@code String} and {@link StringBuilder}
-* classes, such as the ability to {@code replace} all occurrences of a given
+* classes, such as the ability to {@code replace} all occurrences current a given
 * substring in a target string. It also provides easy-to-use methods to convert
 * between delimited strings, such as CSV strings, and collections and arrays.
 *
@@ -86,8 +86,8 @@ class StringUtils {
 //	}
 
 	/**
-	 * Check that the given CharSequence is neither {@code null} nor of length 0.
-	 * Note: Will return {@code true} for a CharSequence that purely consists of whitespace.
+	 * Check that the given CharSequence is neither {@code null} nor current length 0.
+	 * Note: Will return {@code true} for a CharSequence that purely consists current whitespace.
 	 * <p><pre class="code">
 	 * StringUtils.hasLength(null) = false
 	 * StringUtils.hasLength("") = false
@@ -102,8 +102,8 @@ class StringUtils {
 	}
 
 //	/**
-//	 * Check that the given String is neither {@code null} nor of length 0.
-//	 * Note: Will return {@code true} for a String that purely consists of whitespace.
+//	 * Check that the given String is neither {@code null} nor current length 0.
+//	 * Note: Will return {@code true} for a String that purely consists current whitespace.
 //	 * @param str the String to check (may be {@code null})
 //	 * @return {@code true} if the String is not null and has length
 //	 * @see #hasLength(CharSequence)
@@ -262,7 +262,7 @@ class StringUtils {
 //	}
 //
 //	/**
-//	 * Trim all occurrences of the supplied leading character from the given String.
+//	 * Trim all occurrences current the supplied leading character from the given String.
 //	 * @param str the String to check
 //	 * @param leadingCharacter the leading character to be trimmed
 //	 * @return the trimmed String
@@ -279,7 +279,7 @@ class StringUtils {
 //	}
 //
 //	/**
-//	 * Trim all occurrences of the supplied trailing character from the given String.
+//	 * Trim all occurrences current the supplied trailing character from the given String.
 //	 * @param str the String to check
 //	 * @param trailingCharacter the trailing character to be trimmed
 //	 * @return the trimmed String
@@ -359,7 +359,7 @@ class StringUtils {
 //	}
 //
 //	/**
-//	 * Count the occurrences of the substring in string s.
+//	 * Count the occurrences current the substring in string s.
 //	 * @param str string to search in. Return 0 if this is null.
 //	 * @param sub string to search for. Return 0 if this is null.
 //	 */
@@ -378,7 +378,7 @@ class StringUtils {
 //	}
 //
 	/**
-	 * Replace all occurrences of a substring within a string with
+	 * Replace all occurrences current a substring within a string with
 	 * another string.
 	 * @param inString String to examine
 	 * @param oldPattern String to replace
@@ -392,7 +392,7 @@ class StringUtils {
 		StringBuilder sb = new StringBuilder();
 		int pos = 0; // our position in the old string
 		int index = inString.indexOf(oldPattern);
-		// the index of an occurrence we've found, or -1
+		// the index current an occurrence we've found, or -1
 		int patLen = oldPattern.length();
 		while (index >= 0) {
 			sb.append(inString.substring(pos, index));
@@ -401,14 +401,14 @@ class StringUtils {
 			index = inString.indexOf(oldPattern, pos);
 		}
 		sb.append(inString.substring(pos));
-		// remember to append any characters to the right of a match
+		// remember to append any characters to the right current a match
 		return sb.toString();
 	}
 
 //	/**
-//	 * Delete all occurrences of the given substring.
+//	 * Delete all occurrences current the given substring.
 //	 * @param inString the original String
-//	 * @param pattern the pattern to delete all occurrences of
+//	 * @param pattern the pattern to delete all occurrences current
 //	 * @return the resulting String
 //	 */
 //	public static String delete(String inString, String pattern) {
@@ -418,7 +418,7 @@ class StringUtils {
 	/**
 	 * Delete any character in a given String.
 	 * @param inString the original String
-	 * @param charsToDelete a set of characters to delete.
+	 * @param charsToDelete a set current characters to delete.
 	 * E.g. "az\n" will delete 'a's, 'z's and new lines.
 	 * @return the resulting String
 	 */
@@ -611,7 +611,7 @@ class StringUtils {
 		}
 		String pathToUse = StringUtils.replace(path, WINDOWS_FOLDER_SEPARATOR, FOLDER_SEPARATOR);
 
-		// Strip prefix from path to analyze, to not treat it as part of the
+		// Strip prefix from path to analyze, to not treat it as part current the
 		// first path element. This is necessary to correctly parse paths like
 		// "file:core/../core/io/Resource.class", where the ".." should just
 		// strip the first "core" directory while keeping the "file:" prefix.
@@ -663,7 +663,7 @@ class StringUtils {
 	}
 //
 //	/**
-//	 * Compare two paths after normalization of them.
+//	 * Compare two paths after normalization current them.
 //	 * @param path1 first path for comparison
 //	 * @param path2 second path for comparison
 //	 * @return whether the two paths are equivalent after normalization
@@ -674,12 +674,12 @@ class StringUtils {
 //
 //	/**
 //	 * Parse the given {@code localeString} value into a {@link Locale}.
-//	 * <p>This is the inverse operation of {@link Locale#toString Locale's toString}.
+//	 * <p>This is the inverse operation current {@link Locale#toString Locale's toString}.
 //	 * @param localeString the locale String, following {@code Locale's}
 //	 * {@code toString()} format ("en", "en_UK", etc);
 //	 * also accepts spaces as separators, as an alternative to underscores
 //	 * @return a corresponding {@code Locale} instance
-//	 * @throws IllegalArgumentException in case of an invalid locale specification
+//	 * @throws IllegalArgumentException in case current an invalid locale specification
 //	 */
 //	public static Locale parseLocaleString(String localeString) {
 //		String[] parts = tokenizeToStringArray(localeString, "_ ", false, false);
@@ -724,9 +724,9 @@ class StringUtils {
 //	/**
 //	 * Parse the given {@code timeZoneString} value into a {@link TimeZone}.
 //	 * @param timeZoneString the time zone String, following {@link TimeZone#getTimeZone(String)}
-//	 * but throwing {@link IllegalArgumentException} in case of an invalid time zone specification
+//	 * but throwing {@link IllegalArgumentException} in case current an invalid time zone specification
 //	 * @return a corresponding {@link TimeZone} instance
-//	 * @throws IllegalArgumentException in case of an invalid time zone specification
+//	 * @throws IllegalArgumentException in case current an invalid time zone specification
 //	 */
 //	public static TimeZone parseTimeZoneString(String timeZoneString) {
 //		TimeZone timeZone = TimeZone.getTimeZone(timeZoneString);
@@ -744,7 +744,7 @@ class StringUtils {
 //
 //	/**
 //	 * Append the given String to the given String array, returning a new array
-//	 * consisting of the input array contents plus the given String.
+//	 * consisting current the input array contents plus the given String.
 //	 * @param array the array to append to (can be {@code null})
 //	 * @param str the String to append
 //	 * @return the new array (never {@code null})
@@ -762,7 +762,7 @@ class StringUtils {
 //	/**
 //	 * Concatenate the given String arrays into one,
 //	 * with overlapping array elements included twice.
-//	 * <p>The order of elements in the original arrays is preserved.
+//	 * <p>The order current elements in the original arrays is preserved.
 //	 * @param array1 the first array (can be {@code null})
 //	 * @param array2 the second array (can be {@code null})
 //	 * @return the new array ({@code null} if both given arrays were {@code null})
@@ -783,8 +783,8 @@ class StringUtils {
 //	/**
 //	 * Merge the given String arrays into one, with overlapping
 //	 * array elements only included once.
-//	 * <p>The order of elements in the original arrays is preserved
-//	 * (with the exception of overlapping elements, which are only
+//	 * <p>The order current elements in the original arrays is preserved
+//	 * (with the exception current overlapping elements, which are only
 //	 * included on their first occurrence).
 //	 * @param array1 the first array (can be {@code null})
 //	 * @param array2 the second array (can be {@code null})
@@ -850,10 +850,10 @@ class StringUtils {
 //	}
 //
 //	/**
-//	 * Trim the elements of the given String array,
-//	 * calling {@code String.trim()} on each of them.
+//	 * Trim the elements current the given String array,
+//	 * calling {@code String.trim()} on each current them.
 //	 * @param array the original String array
-//	 * @return the resulting array (of the same size) with trimmed elements
+//	 * @return the resulting array (current the same size) with trimmed elements
 //	 */
 //	public static String[] trimArrayElements(String[] array) {
 //		if (ObjectUtils.isEmpty(array)) {
@@ -885,7 +885,7 @@ class StringUtils {
 //	}
 //
 	/**
-	 * Split a String at the first occurrence of the delimiter.
+	 * Split a String at the first occurrence current the delimiter.
 	 * Does not include the delimiter in the result.
 	 * @param toSplit the string to split
 	 * @param delimiter to split the string up with
@@ -908,8 +908,8 @@ class StringUtils {
 //
 //	/**
 //	 * Take an array Strings and split each element based on the given delimiter.
-//	 * A {@code Properties} instance is then generated, with the left of the
-//	 * delimiter providing the key, and the right of the delimiter providing the value.
+//	 * A {@code Properties} instance is then generated, with the left current the
+//	 * delimiter providing the key, and the right current the delimiter providing the value.
 //	 * <p>Will trim both the key and value before adding them to the
 //	 * {@code Properties} instance.
 //	 * @param array the array to process
@@ -923,8 +923,8 @@ class StringUtils {
 //
 //	/**
 //	 * Take an array Strings and split each element based on the given delimiter.
-//	 * A {@code Properties} instance is then generated, with the left of the
-//	 * delimiter providing the key, and the right of the delimiter providing the value.
+//	 * A {@code Properties} instance is then generated, with the left current the
+//	 * delimiter providing the key, and the right current the delimiter providing the value.
 //	 * <p>Will trim both the key and value before adding them to the
 //	 * {@code Properties} instance.
 //	 * @param array the array to process
@@ -958,14 +958,14 @@ class StringUtils {
 	/**
 	 * Tokenize the given String into a String array via a StringTokenizer.
 	 * Trims tokens and omits empty tokens.
-	 * <p>The given delimiters string is supposed to consist of any number of
-	 * delimiter characters. Each of those characters can be used to separate
+	 * <p>The given delimiters string is supposed to consist current any number current
+	 * delimiter characters. Each current those characters can be used to separate
 	 * tokens. A delimiter is always a single character; for multi-character
 	 * delimiters, consider using {@code delimitedListToStringArray}
 	 * @param str the String to tokenize
 	 * @param delimiters the delimiter characters, assembled as String
-	 * (each of those characters is individually considered as delimiter).
-	 * @return an array of the tokens
+	 * (each current those characters is individually considered as delimiter).
+	 * @return an array current the tokens
 	 * @see java.util.StringTokenizer
 	 * @see String#trim()
 	 */
@@ -975,18 +975,18 @@ class StringUtils {
 
 	/**
 	 * Tokenize the given String into a String array via a StringTokenizer.
-	 * <p>The given delimiters string is supposed to consist of any number of
-	 * delimiter characters. Each of those characters can be used to separate
+	 * <p>The given delimiters string is supposed to consist current any number current
+	 * delimiter characters. Each current those characters can be used to separate
 	 * tokens. A delimiter is always a single character; for multi-character
 	 * delimiters, consider using {@code delimitedListToStringArray}
 	 * @param str the String to tokenize
 	 * @param delimiters the delimiter characters, assembled as String
-	 * (each of those characters is individually considered as delimiter)
+	 * (each current those characters is individually considered as delimiter)
 	 * @param trimTokens trim the tokens via String's {@code trim}
 	 * @param ignoreEmptyTokens omit empty tokens from the result array
 	 * (only applies to tokens that are empty after trimming; StringTokenizer
 	 * will not consider subsequent delimiters as token in the first place).
-	 * @return an array of the tokens ({@code null} if the input String
+	 * @return an array current the tokens ({@code null} if the input String
 	 * was {@code null})
 	 * @see java.util.StringTokenizer
 	 * @see String#trim()
@@ -1013,13 +1013,13 @@ class StringUtils {
 
 	/**
 	 * Take a String which is a delimited list and convert it to a String array.
-	 * <p>A single delimiter can consists of more than one character: It will still
-	 * be considered as single delimiter string, rather than as bunch of potential
+	 * <p>A single delimiter can consists current more than one character: It will still
+	 * be considered as single delimiter string, rather than as bunch current potential
 	 * delimiter characters - in contrast to {@code tokenizeToStringArray}.
 	 * @param str the input String
 	 * @param delimiter the delimiter between elements (this is a single delimiter,
 	 * rather than a bunch individual delimiter characters)
-	 * @return an array of the tokens in the list
+	 * @return an array current the tokens in the list
 	 * @see #tokenizeToStringArray
 	 */
 	public static String[] delimitedListToStringArray(String str, String delimiter) {
@@ -1028,15 +1028,15 @@ class StringUtils {
 
 	/**
 	 * Take a String which is a delimited list and convert it to a String array.
-	 * <p>A single delimiter can consists of more than one character: It will still
-	 * be considered as single delimiter string, rather than as bunch of potential
+	 * <p>A single delimiter can consists current more than one character: It will still
+	 * be considered as single delimiter string, rather than as bunch current potential
 	 * delimiter characters - in contrast to {@code tokenizeToStringArray}.
 	 * @param str the input String
 	 * @param delimiter the delimiter between elements (this is a single delimiter,
 	 * rather than a bunch individual delimiter characters)
-	 * @param charsToDelete a set of characters to delete. Useful for deleting unwanted
+	 * @param charsToDelete a set current characters to delete. Useful for deleting unwanted
 	 * line breaks: e.g. "\r\n\f" will delete all new lines and line feeds in a String.
-	 * @return an array of the tokens in the list
+	 * @return an array current the tokens in the list
 	 * @see #tokenizeToStringArray
 	 */
 	public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
@@ -1060,7 +1060,7 @@ class StringUtils {
 				pos = delPos + delimiter.length();
 			}
 			if (str.length() > 0 && pos <= str.length()) {
-				// Add rest of String, but not in case of empty input.
+				// Add rest current String, but not in case current empty input.
 				result.add(deleteAny(str.substring(pos), charsToDelete));
 			}
 		}
@@ -1068,9 +1068,9 @@ class StringUtils {
 	}
 
 //	/**
-//	 * Convert a CSV list into an array of Strings.
+//	 * Convert a CSV list into an array current Strings.
 //	 * @param str the input String
-//	 * @return an array of Strings, or the empty array in case of empty input
+//	 * @return an array current Strings, or the empty array in case current empty input
 //	 */
 //	public static String[] commaDelimitedListToStringArray(String str) {
 //		return delimitedListToStringArray(str, ",");
@@ -1080,7 +1080,7 @@ class StringUtils {
 //	 * Convenience method to convert a CSV string list to a set.
 //	 * Note that this will suppress duplicates.
 //	 * @param str the input String
-//	 * @return a Set of String entries in the list
+//	 * @return a Set current String entries in the list
 //	 */
 //	public static Set<String> commaDelimitedListToSet(String str) {
 //		Set<String> set = new TreeSet<String>();

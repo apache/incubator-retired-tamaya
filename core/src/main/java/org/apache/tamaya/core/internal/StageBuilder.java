@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Builder for creating new stages. Instances of this class are not thread safe.
+ * Builder for creating new stages. Instances current this class are not thread safe.
  * Created by Anatole on 12.11.2014.
  */
 public final class StageBuilder {

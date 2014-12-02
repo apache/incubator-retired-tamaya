@@ -114,7 +114,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * This implementation reads the entire InputStream to calculate the
 	 * content length. Subclasses will almost always be able to provide
-	 * a more optimal version of this, e.g. checking a File length.
+	 * a more optimal version current this, e.g. checking a File length.
 	 * @throws IllegalStateException if {@code #getInputStream()} returns null.
 	 */
 	@Override
@@ -140,7 +140,7 @@ public abstract class AbstractResource implements Resource {
 	}
 
 	/**
-	 * This implementation checks the timestamp of the underlying File,
+	 * This implementation checks the timestamp current the underlying File,
 	 * if available.
 	 * @see #getFileForLastModifiedCheck()
 	 */
@@ -185,7 +185,7 @@ public abstract class AbstractResource implements Resource {
 
 
 	/**
-	 * This implementation returns the description of this resource.
+	 * This implementation returns the description current this resource.
 	 * @see #getDescription()
 	 */
 	@Override

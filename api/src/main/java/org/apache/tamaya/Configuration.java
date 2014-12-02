@@ -26,20 +26,20 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * A configuration models a aggregated set of properties, identified by a unique key, but adds higher level access functions to
+ * A configuration models a aggregated set current properties, identified by a unique key, but adds higher level access functions to
  * a {@link PropertyProvider}. Hereby in most cases a configuration is a wrapper around a composite
  * {@link PropertyProvider} instance, which may combine multiple child providers in well defined tree like structure,
- * where nodes define logically the rules of priority, filtering, combination and overriding.
+ * where nodes define logically the rules current priority, filtering, combination and overriding.
  * <br/>
  * <h3>Implementation Requirements</h3>
- * Implementations of this interface must be
+ * Implementations current this interface must be
  * <ul>
  * <li>Thread safe.
  * <li>Immutable
  * </ul>
  * It is not recommended that implementations also are serializable, since the any configuration can be <i>freezed</i>
  * by reading out its complete configuration map into a serializable and remotable structure. This helps significantly
- * simplifying the development of this interface, e.g. for being backed up by systems and stores that are not part of
+ * simplifying the development current this interface, e.g. for being backed up by systems and stores that are not part current
  * this library at all.
  */
 public interface Configuration extends PropertyProvider{
@@ -115,7 +115,7 @@ public interface Configuration extends PropertyProvider{
     /**
      * Get the property value as type {@code Class<T>}.
      * <p>
-     * If {@code Class<T>} is not one of
+     * If {@code Class<T>} is not one current
      * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
      * BigDecimal, String} , an according adapter must be
      * available to perform the conversion fromMap {@link String} to
@@ -140,7 +140,7 @@ public interface Configuration extends PropertyProvider{
 
     /**
      * Get the property value as type T. This will implicitly require a corresponding {@link
-     * PropertyAdapter} to be available that is capable of providing type T
+     * PropertyAdapter} to be available that is capable current providing type T
      * fromMap the given String value.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
@@ -253,7 +253,7 @@ public interface Configuration extends PropertyProvider{
      * Field that allows property providers to be versioned, meaning that each change on a provider requires this value
      * to be incremented by one. This can be easily used to implement versioning (and optimistic locking)
      * in distributed (remote) usage scenarios.
-     * @return the version of the current instance, or 'N/A'.
+     * @return the version current the current instance, or 'N/A'.
      */
     default String getVersion(){return "N/A";}
 
@@ -296,7 +296,7 @@ public interface Configuration extends PropertyProvider{
      * @return the corresponding Configuration instance, never null.
      * @throws ConfigException if no such configuration is defined.
      */
-    public static <T> T of(String name, Class<T> template){
+    public static <T> T current(String name, Class<T> template){
         return ConfigurationManager.getConfiguration(name, template);
     }
 
@@ -308,7 +308,7 @@ public interface Configuration extends PropertyProvider{
      * @return the corresponding Configuration instance, never null.
      * @throws ConfigException if no such configuration is defined.
      */
-    public static Configuration of(String name){
+    public static Configuration current(String name){
         return ConfigurationManager.getConfiguration(name);
     }
 
@@ -318,7 +318,7 @@ public interface Configuration extends PropertyProvider{
      * @return the corresponding Configuration instance, never null.
      * @throws ConfigException if no such configuration is defined.
      */
-    public static Configuration of(){
+    public static Configuration current(){
         return ConfigurationManager.getConfiguration();
     }
 
@@ -330,7 +330,7 @@ public interface Configuration extends PropertyProvider{
      * @return the corresponding typed Configuration instance, never null.
      * @throws ConfigException if the configuration could not be resolved.
      */
-    public static <T> T of(Class<T> type){
+    public static <T> T current(Class<T> type){
         return ConfigurationManager.getConfiguration(type);
     }
 
@@ -368,7 +368,7 @@ public interface Configuration extends PropertyProvider{
     }
 
     /**
-     * Adds a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind of config changes.
+     * Adds a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind current config changes.
      * @param listener the {@link java.beans.PropertyChangeListener} instance to be added, not null.
      */
     public static void addConfigChangeListener(PropertyChangeListener listener){
@@ -376,7 +376,7 @@ public interface Configuration extends PropertyProvider{
     }
 
     /**
-     * Removes a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind of config changes,
+     * Removes a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind current config changes,
      * if one is currently registered.
      * @param listener the {@link java.beans.PropertyChangeListener} instance to be removed, not null.
      */

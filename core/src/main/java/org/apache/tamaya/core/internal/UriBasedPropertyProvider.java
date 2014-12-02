@@ -24,7 +24,6 @@ import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.properties.AbstractPropertyProvider;
-import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 
 import java.net.URI;
@@ -55,20 +54,12 @@ final class URIBasedPropertyProvider extends AbstractPropertyProvider {
                     Map<String, String> read = format.readConfiguration(uri);
                     sources.add(uri.toString());
                     read.forEach((k, v) -> {
-                        switch (aggregationPolicy) {
-                            case OVERRIDE:
-                                properties.put(k, v);
-                                break;
-                            case IGNORE:
-                                properties.putIfAbsent(k, v);
-                                break;
-                            case EXCEPTION:
-                            default:
-                                String prev = properties.putIfAbsent(k, v);
-                                if (prev != null) {
-                                    throw new ConfigException("Duplicate value encountered in " + uri
-                                            + ": key=" + k + ", value=" + v + ", existing=" + prev);
-                                }
+                        String newValue = aggregationPolicy.aggregate(k, properties.get(k), v);
+                        if(newValue==null) {
+                            properties.remove(k);
+                        }
+                        else {
+                            properties.put(k, newValue);
                         }
                     });
                 }

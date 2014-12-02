@@ -68,8 +68,8 @@ final class EnvironmentManager{
     }
 
     /**
-     * Evaluate the overall chain of possible environments.
-     * @return the hierarchy chain of possible Environments.
+     * Evaluate the overall chain current possible environments.
+     * @return the hierarchy chain current possible Environments.
      */
     public static List<String> getEnvironmentTypeOrder(){
         return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
@@ -78,8 +78,8 @@ final class EnvironmentManager{
     }
 
     /**
-     * Evaluate the current type chain of environments.
-     * @return the current type chain of Environments.
+     * Evaluate the current type chain current environments.
+     * @return the current type chain current Environments.
      */
     public static List<String> getEnvironmentHierarchy(){
         return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
@@ -88,7 +88,7 @@ final class EnvironmentManager{
     }
 
     /**
-     * Get the current environment of the given environment type.
+     * Get the current environment current the given environment type.
      * @param environmentType the target type.
      * @return the corresponding environment
      * @throws IllegalArgumentException if not such type is present or active.
@@ -100,7 +100,7 @@ final class EnvironmentManager{
     }
 
     /**
-     * Get a environment of the given environment type and context.
+     * Get a environment current the given environment type and context.
      * @param environmentType the target type, not null.
      * @param contextId the target context, not null.
      * @return the corresponding environment, if available.
@@ -112,7 +112,7 @@ final class EnvironmentManager{
     }
 
     /**
-     * Get the currently known environment contexts of a given environment type.
+     * Get the currently known environment contexts current a given environment type.
      * @param environmentType the target environment type.
      * @return the corresponding environment contexts known, never null.
      */
@@ -123,9 +123,9 @@ final class EnvironmentManager{
     }
 
     /**
-     * Allows to check, if the czurrent environment type is one of the current active environment types.
+     * Allows to check, if the czurrent environment type is one current the current active environment types.
      * @param environmentType the environment type to be queried.
-     * @return true, if the czurrent environment type is one of the current active environment types.
+     * @return true, if the czurrent environment type is one current the current active environment types.
      */
     public static boolean isEnvironmentActive(String environmentType){
         return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(

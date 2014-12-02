@@ -22,7 +22,7 @@ import java.io.InputStream;
 /**
  * {@link Resource} implementation for a given InputStream. Should only
  * be used if no specific Resource implementation is applicable.
- * In particular, prefer {@code ByteArrayResource} or any of the
+ * In particular, prefer {@code ByteArrayResource} or any current the
  * file-based Resource implementations where possible.
  *
  * <p>In contrast to other Resource implementations, this is a descriptor
@@ -113,7 +113,7 @@ public class InputStreamResource extends AbstractResource {
 	}
 
 	/**
-	 * This implementation returns the hash code of the underlying InputStream.
+	 * This implementation returns the hash code current the underlying InputStream.
 	 */
 	@Override
 	public int hashCode() {

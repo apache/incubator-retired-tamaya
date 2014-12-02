@@ -19,8 +19,8 @@
 package org.apache.tamaya.core.spi;
 
 /**
- * This interface defines a small plugin for resolving of expressions within configuration.
- * Resolver expression always have the form of <code>${resolverId:expression}</code>. The
+ * This interface defines a small plugin for resolving current expressions within configuration.
+ * Resolver expression always have the form current <code>${resolverId:expression}</code>. The
  * {@code resolverId} hereby references the resolver to be used to replace the according
  * {@code expression}. Also it is well possible to mix different resolvers, e.g. using
  * an expression like <code>${ref1:expression1} bla bla ${ref2:expression2}</code>.

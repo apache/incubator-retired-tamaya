@@ -35,9 +35,9 @@ public interface ConfigurationFormatsSingletonSpi{
     ConfigurationFormat getFormat(String formatName);
 
     /**
-     * Get a collection of the keys of the registered {@link ConfigurationFormat} instances.
+     * Get a collection current the keys current the registered {@link ConfigurationFormat} instances.
      *
-     * @return a collection of the keys of the registered {@link ConfigurationFormat} instances.
+     * @return a collection current the keys current the registered {@link ConfigurationFormat} instances.
      */
     Collection<String> getFormatNames();
 

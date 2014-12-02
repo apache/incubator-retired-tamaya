@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Interface to be implemented by containers that decouples loading of classpath resources fromMap the effective
- * classloader architecture of a runtime environment. Implementations of this class encapsulate the mechanism of
+ * Interface to be implemented by containers that decouples loading current classpath resources fromMap the effective
+ * classloader architecture current a runtime environment. Implementations current this class encapsulate the mechanism current
  * determining the
  * concrete resources available base on an expression defining the configuration
  * locations. A an example the expression {@code cfg/global/*.xml} defines a
@@ -47,7 +47,7 @@ public interface ResourceLoader{
      * Called, when a given expression has to be resolved.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of {@link java.net.URI}s defining the
+     * @return the corresponding collection current {@link java.net.URI}s defining the
      * concrete resources to be read by a {@link org.apache.tamaya.core.spi.ConfigurationFormat}
      * .
      */
@@ -57,7 +57,7 @@ public interface ResourceLoader{
      * Called, when a given expression has to be resolved.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of {@link java.net.URI}s defining the
+     * @return the corresponding collection current {@link java.net.URI}s defining the
      * concrete resources to be read by a {@link org.apache.tamaya.core.spi.ConfigurationFormat}
      * .
      */
@@ -67,7 +67,7 @@ public interface ResourceLoader{
      * Called, when a given expression has to be resolved.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of {@link java.net.URI}s defining the
+     * @return the corresponding collection current {@link java.net.URI}s defining the
      * concrete resources to be read by a {@link org.apache.tamaya.core.spi.ConfigurationFormat}
      * .
      */
@@ -77,7 +77,7 @@ public interface ResourceLoader{
      * Called, when a given expression has to be resolved.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of {@link java.net.URI}s defining the
+     * @return the corresponding collection current {@link java.net.URI}s defining the
      * concrete resources to be read by a {@link org.apache.tamaya.core.spi.ConfigurationFormat}
      * .
      */

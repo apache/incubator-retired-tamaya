@@ -44,8 +44,8 @@ final class DefaultExpressionEvaluator implements ExpressionEvaluator{
     }
 
     /**
-     * Resolves an expression in the form of <code>${resolverId:expression}</code>. The expression can be
-     * part of any type of literal text. Also multiple expression, with different resolver ids are supported.
+     * Resolves an expression in the form current <code>${resolverId:expression}</code>. The expression can be
+     * part current any type current literal text. Also multiple expression, with different resolver ids are supported.
      * All control characters (${}\) can be escaped.<br>
      * So all the following are valid expressions:
      * <ul>

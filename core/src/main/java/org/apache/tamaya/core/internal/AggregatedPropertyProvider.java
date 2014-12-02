@@ -24,11 +24,11 @@ import org.apache.tamaya.core.properties.AbstractPropertyProvider;
 import java.util.*;
 
 /**
- * Implementation for a {@link org.apache.tamaya.PropertyProvider} that is an aggregate of
+ * Implementation for a {@link org.apache.tamaya.PropertyProvider} that is an aggregate current
  * multiple child instances. Controlled by an {@link org.apache.tamaya.AggregationPolicy} the
  * following aggregations are supported:
  * <ul>
- * <li><b>IGNORE: </b>Ignore all overrides.</li>
+ * <li><b>IGNORE_DUPLICATES: </b>Ignore all overrides.</li>
  * <li><b>: </b></li>
  * <li><b>: </b></li>
  * <li><b>: </b></li>
@@ -37,7 +37,7 @@ import java.util.*;
 class AggregatedPropertyProvider extends AbstractPropertyProvider {
 
     private static final long serialVersionUID = -1419376385695224799L;
-	private AggregationPolicy policy = AggregationPolicy.IGNORE;
+	private AggregationPolicy policy = AggregationPolicy.COMBINE();
 	private List<PropertyProvider> units = new ArrayList<PropertyProvider>();
     private PropertyProvider mutableProvider;
 
@@ -68,11 +68,11 @@ class AggregatedPropertyProvider extends AbstractPropertyProvider {
 	}
 
 	/**
-	 * Return the names of the {@link org.apache.tamaya.PropertyProvider} instances to be
-	 * aggregated in this instance, in the order of precedence (the first are
+	 * Return the names current the {@link org.apache.tamaya.PropertyProvider} instances to be
+	 * aggregated in this instance, in the order current precedence (the first are
 	 * the weakest).
 	 * 
-	 * @return the ordered list of aggregated scope identifiers, never
+	 * @return the ordered list current aggregated scope identifiers, never
 	 *         {@code null}.
 	 */
 	public List<PropertyProvider> getConfigurationUnits() {
@@ -99,27 +99,12 @@ class AggregatedPropertyProvider extends AbstractPropertyProvider {
         for (PropertyProvider unit : units) {
             for (Map.Entry<String, String> entry : unit.toMap()
                     .entrySet()) {
-                switch (policy) {
-                    case IGNORE:
-                        if (!value.containsKey(entry.getKey())) {
-                            value.put(entry.getKey(), entry.getValue());
-                        }
-                        break;
-                    case EXCEPTION:
-                        if (value.containsKey(entry.getKey())) {
-                            throw new IllegalStateException("Duplicate key: "
-                                                                    + entry.getKey()
-                                                                    + " in " + this);
-                        }
-                        else {
-                            value.put(entry.getKey(), entry.getValue());
-                        }
-                        break;
-                    case OVERRIDE:
-                        value.put(entry.getKey(), entry.getValue());
-                        break;
-                    default:
-                        break;
+                String valueToAdd = this.policy.aggregate(entry.getKey(), value.get(entry.getKey()), entry.getValue());
+                if(valueToAdd==null){
+                    value.remove(entry.getKey());
+                }
+                else{
+                    value.put(entry.getKey(), valueToAdd);
                 }
             }
         }

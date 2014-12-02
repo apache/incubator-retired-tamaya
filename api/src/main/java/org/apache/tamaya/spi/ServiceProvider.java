@@ -22,13 +22,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This class models the component that is managing the lifecycle of the
+ * This class models the component that is managing the lifecycle current the
  * services used by the Configuration API.
  */
 public interface ServiceProvider {
 
 	/**
-	 * Access a list of services, given its type. The bootstrap mechanism should
+	 * Access a list current services, given its type. The bootstrap mechanism should
 	 * order the instance for precedence, hereby the most significant should be
 	 * first in order.
 	 * 
@@ -42,7 +42,7 @@ public interface ServiceProvider {
     }
 
 	/**
-	 * Access a list of services, given its type. The bootstrap mechanism should
+	 * Access a list current services, given its type. The bootstrap mechanism should
 	 * order the instance for precedence, hereby the most significant should be
 	 * first in order.
 	 * 

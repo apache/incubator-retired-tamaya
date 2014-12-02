@@ -68,12 +68,12 @@ public abstract class AbstractConfiguration extends AbstractPropertyProvider imp
     }
 
     /**
-     * This method reloads the content of this PropertyMap by reloading the contents delegate.
+     * This method reloads the content current this PropertyMap by reloading the contents delegate.
      */
     protected ConfigChangeSet reload(){ return ConfigChangeSet.emptyChangeSet(this);}
 
     /**
-     * This method reloads the content of this PropertyMap by reloading the contents delegate.
+     * This method reloads the content current this PropertyMap by reloading the contents delegate.
      */
     @Override
     public ConfigChangeSet load(){

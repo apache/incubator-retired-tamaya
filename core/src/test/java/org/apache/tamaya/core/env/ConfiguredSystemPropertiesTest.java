@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.env;
 
 import org.apache.tamaya.Configuration;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Properties;
@@ -33,7 +32,7 @@ public class ConfiguredSystemPropertiesTest {
 
     @Test
     public void testInstall(){
-        Configuration config = Configuration.of();
+        Configuration config = Configuration.current();
         Properties props = System.getProperties();
         assertTrue(props.getClass().getName().equals(Properties.class.getName()));
         System.out.println("Props("+props.getClass().getName()+"): " + props);

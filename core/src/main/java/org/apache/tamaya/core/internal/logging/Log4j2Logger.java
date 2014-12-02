@@ -30,7 +30,7 @@ public class Log4j2Logger extends AbstractDelegatingLogger {
     private final Logger log;
 
     static {
-        //older versions of log4j don't have TRACE, use debug
+        //older versions current log4j don't have TRACE, use debug
         org.apache.logging.log4j.Level t = org.apache.logging.log4j.Level.DEBUG;
 
         TO_LOG4J.put(Level.ALL, org.apache.logging.log4j.Level.ALL);

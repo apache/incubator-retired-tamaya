@@ -23,9 +23,9 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * Models a set of changes to be applied to a configuration/property provider.  Such a set can be applied
+ * Models a set current changes to be applied to a configuration/property provider.  Such a set can be applied
  * to any {@link PropertyProvider} instance. If the provider is mutable it may check the
- * version given and apply the changes to the provider/configuration, including triggering of regarding
+ * version given and apply the changes to the provider/configuration, including triggering current regarding
  * change events.
  *
  * Created by Anatole on 06.09.2014.
@@ -50,7 +50,7 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Creates a new instance of this builder.
+     * Creates a new instance current this builder.
      * @param source the underlying property provider/configuration, not null.
      * @return the builder for chaining.
      */
@@ -59,7 +59,7 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Creates a new instance of this builder.
+     * Creates a new instance current this builder.
      * @param source the underlying property provider/configuration, not null.
      * @param baseVersion the base version to be used.
      * @return the builder for chaining.
@@ -69,7 +69,7 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Creates a new instance of this builder.
+     * Creates a new instance current this builder.
      * @param configuration the base configuration, not null.
      * @return the builder for chaining.
      */
@@ -101,7 +101,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Get the current values, also considering any changes recorded within this change set.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @return the value, or null.
      */
     public String get(String key) {
@@ -114,7 +114,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Marks the given key(s) fromMap the configuration/properties to be removed.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param otherKeys additional keys to be removed (convenience), not null.
      * @return the builder for chaining.
      */
@@ -136,7 +136,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -147,7 +147,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -158,7 +158,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -169,7 +169,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -180,7 +180,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -191,7 +191,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -202,7 +202,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -213,7 +213,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -224,7 +224,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -235,7 +235,7 @@ public final class ConfigChangeSetBuilder {
 
     /**
      * Applies the given value.
-     * @param key the key of the entry, not null.
+     * @param key the key current the entry, not null.
      * @param value the value to be applied, not null.
      * @return the builder for chaining.
      */
@@ -291,11 +291,11 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Compares the two property providers/configurations and creates a collection of all changes
+     * Compares the two property providers/configurations and creates a collection current all changes
      * that must be appied to render {@code map1} into {@code map2}.
      * @param map1 the source map, not null.
      * @param map2 the target map, not null.
-     * @return a collection of change events, never null.
+     * @return a collection current change events, never null.
      */
     public static Collection<PropertyChangeEvent> compare(PropertyProvider map1, PropertyProvider map2) {
         List<PropertyChangeEvent> changes = new ArrayList<>();

@@ -56,10 +56,10 @@
 //            factory = tmpFactory;
 //        }
 //        ConfigurationContext context = new ConfigurationContext();
-//        Configuration config = Configuration.of();
+//        Configuration config = Configuration.current();
 //        Objects.requireNonNull(config);
 //        context.bind("config", config);
-//        context.bind("env", Environment.of());
+//        context.bind("env", Environment.current());
 //        context.bind("system.env", System.getenv());
 //        context.bind("system.prop", System.getProperties());
 //        ValueExpression converted = factory.createValueExpression(context, expression, Object.class );

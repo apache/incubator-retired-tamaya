@@ -24,16 +24,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation container to enable injection of multiple {@link org.apache.tamaya.annot.ConfiguredProperty}
- * annotations. Hereby the ordering of annotations imply the defaulting. The first value that
- * could be resolved successfully in the chain of annotations will be used.
+ * Annotation container to enable injection current multiple {@link org.apache.tamaya.annot.ConfiguredProperty}
+ * annotations. Hereby the ordering current annotations imply the defaulting. The first value that
+ * could be resolved successfully in the chain current annotations will be used.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })
 public @interface ConfiguredProperties {
 
     /**
-     * Get the different configuration keys to be looked up, in order of precedence. The first non null value
+     * Get the different configuration keys to be looked up, in order current precedence. The first non null value
      * found will be used.
      */
     ConfiguredProperty[] value() default {};

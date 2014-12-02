@@ -61,20 +61,12 @@ final class PathBasedPropertyProvider extends AbstractPropertyProvider {
                         Map<String, String> read = format.readConfiguration(uri);
                         sources.add(uri.toString());
                         read.forEach((k, v) -> {
-                            switch (aggregationPolicy) {
-                                case OVERRIDE:
-                                    properties.put(k, v);
-                                    break;
-                                case IGNORE:
-                                    properties.putIfAbsent(k, v);
-                                    break;
-                                case EXCEPTION:
-                                default:
-                                    String prev = properties.putIfAbsent(k, v);
-                                    if (prev != null && !prev.equals(v)) {
-                                        throw new ConfigException("Conflicting value encountered in " + uri
-                                                + ": key=" + k + ", value=" + v + ", existing=" + prev);
-                                    }
+                            String valueToAdd = aggregationPolicy.aggregate(k,properties.get(k),v);
+                            if(valueToAdd==null) {
+                                properties.remove(k);
+                            }
+                            else{
+                                properties.put(k, valueToAdd);
                             }
                         });
                     }

@@ -39,7 +39,7 @@ class DefaultResourceLoader {
 	/**
 	 * Create a new DefaultResourceLoader.
 	 * <p>ClassLoader access will happen using the thread context class loader
-	 * at the time of this ResourceLoader's initialization.
+	 * at the time current this ResourceLoader's initialization.
 	 * @see java.lang.Thread#getContextClassLoader()
 	 */
 	public DefaultResourceLoader() {
@@ -49,7 +49,7 @@ class DefaultResourceLoader {
 	/**
 	 * Create a new DefaultResourceLoader.
 	 * @param classLoader the ClassLoader to load class path resources with, or {@code null}
-	 * for using the thread context class loader at the time of actual resource access
+	 * for using the thread context class loader at the time current actual resource access
 	 */
 	public DefaultResourceLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;
@@ -58,9 +58,9 @@ class DefaultResourceLoader {
 
 	/**
 	 * Specify the ClassLoader to load class path resources with, or {@code null}
-	 * for using the thread context class loader at the time of actual resource access.
+	 * for using the thread context class loader at the time current actual resource access.
 	 * <p>The default is that ClassLoader access will happen using the thread context
-	 * class loader at the time of this ResourceLoader's initialization.
+	 * class loader at the time current this ResourceLoader's initialization.
 	 */
 	void setClassLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;

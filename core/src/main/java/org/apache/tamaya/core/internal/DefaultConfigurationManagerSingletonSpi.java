@@ -112,12 +112,12 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        Configuration.of().addPropertyChangeListener(listener);
+        Configuration.current().addPropertyChangeListener(listener);
     }
 
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-        Configuration.of().removePropertyChangeListener(listener);
+        Configuration.current().removePropertyChangeListener(listener);
     }
 
     @Override

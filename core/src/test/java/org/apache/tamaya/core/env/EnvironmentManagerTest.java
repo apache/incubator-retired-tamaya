@@ -33,9 +33,9 @@ public class EnvironmentManagerTest {
 
     @Test
     public void testGetEnvironment(){
-        Environment env = Environment.of();
+        Environment env = Environment.current();
         assertNotNull(env);
-        Environment env2 = Environment.of();
+        Environment env2 = Environment.current();
         assertNotNull(env2);
         assertTrue("Current Environments requested in same context are not the same!", env==env2);
     }
@@ -52,7 +52,7 @@ public class EnvironmentManagerTest {
     @Test
     public void testRootIsNotCurrentEnvironment(){
         Environment env1 = Environment.getRootEnvironment();
-        Environment env2 = Environment.of();
+        Environment env2 = Environment.current();
         assertNotNull(env1);
         assertNotNull(env2);
         assertNotSame(env1, env2);
@@ -84,12 +84,12 @@ public class EnvironmentManagerTest {
 
     @Test
     public void testEnvironmentId(){
-        String envId = Environment.of().getEnvironmentId();
+        String envId = Environment.current().getEnvironmentId();
         assertNotNull(envId);
         assertEquals(envId, "MyApp1");
-        envId = Environment.of().getParentEnvironment().getEnvironmentId();
+        envId = Environment.current().getParentEnvironment().getEnvironmentId();
         assertEquals(envId, "myEar1");
-        envId = Environment.of().getParentEnvironment().getParentEnvironment().getEnvironmentId();
+        envId = Environment.current().getParentEnvironment().getParentEnvironment().getEnvironmentId();
         assertEquals(envId, "system");
         envId = Environment.getRootEnvironment().getEnvironmentId();
         assertEquals(envId, "root");
@@ -98,6 +98,6 @@ public class EnvironmentManagerTest {
     @Test
     public void testEnvironmentOverride(){
         assertEquals(Environment.getRootEnvironment().get("user.country").get(),System.getProperty("user.country"));
-        assertEquals(Environment.of().get("user.country").get(), "DE_1234");
+        assertEquals(Environment.current().get("user.country").get(), "DE_1234");
     }
 }

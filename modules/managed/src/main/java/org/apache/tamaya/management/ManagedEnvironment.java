@@ -51,7 +51,7 @@ public class ManagedEnvironment implements ManagedEnvironmentMBean{
     @Override
     public Map<String, String> getEnvironment(String environmentType, String context) {
         try {
-            Optional<Environment> env = Environment.of(environmentType, context);
+            Optional<Environment> env = Environment.getInstance(environmentType, context);
             if (env.isPresent()) {
                 return env.get().toMap();
             }

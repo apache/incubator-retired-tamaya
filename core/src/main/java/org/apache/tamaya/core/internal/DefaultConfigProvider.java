@@ -48,7 +48,7 @@ public class DefaultConfigProvider implements ConfigurationProviderSpi{
                                     .setSourceExpressions("classpath*:META-INF/config/**/*.xml",
                                                           "classpath*:META-INF/config/**/*" + ".properties",
                                                           "classpath*:META-INF/config/**/*.ini").build())
-                    .addConfigMaps(AggregationPolicy.OVERRIDE, PropertyProviders.fromEnvironmentProperties(),
+                    .addConfigMaps(AggregationPolicy.OVERRIDE(), PropertyProviders.fromEnvironmentProperties(),
                                    PropertyProviders.fromSystemProperties()).build();
         }
         return config;

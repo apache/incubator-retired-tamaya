@@ -44,7 +44,7 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
     @Test
     public void testGetConfigurationString() {
-        Configuration config = Configuration.of("default");
+        Configuration config = Configuration.current("default");
         assertNotNull(config);
         assertTrue(config.toString().contains("default"));
         assertNotNull(config.getMetaInfo());
@@ -53,7 +53,7 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
         assertEquals(System.getProperty("java.version"),
                 config.get("java.version").get());
 
-        config = Configuration.of("system.properties");
+        config = Configuration.current("system.properties");
         assertNotNull(config);
         assertNotNull(config.getMetaInfo());
         assertTrue(config.getMetaInfo().toString().contains("system.properties"));
@@ -69,7 +69,7 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
     @Test
     public void testGetCurrentEnvironment() {
-        Environment env = Environment.of();
+        Environment env = Environment.current();
         assertNotNull(env);
         assertEquals(System.getProperty("java.version"),
                 env.get("java.version").get());

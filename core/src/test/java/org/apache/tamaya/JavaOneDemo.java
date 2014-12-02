@@ -55,7 +55,7 @@ public class JavaOneDemo{
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole
         Configuration config = ConfigurationBuilder.of("myTestConfig").addResources(
-                "classpath:test.properties").addConfigMaps(AggregationPolicy.OVERRIDE,
+                "classpath:test.properties").addConfigMaps(AggregationPolicy.OVERRIDE(),
                                                            PropertyProviders
                                                                    .fromPaths("classpath:cfg/test.xml"),
                                                            PropertyProviders.fromArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}),

@@ -36,7 +36,7 @@ public interface EnvironmentSelector {
 
 	/**
 	 * Method that evaluates if a concrete environment is matching the
-	 * constraints of this selector.
+	 * constraints current this selector.
 	 * 
 	 * @param configurationContext
 	 *            The environment, not {@code null}.

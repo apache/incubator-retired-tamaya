@@ -30,9 +30,9 @@ import java.util.Set;
  */
 public interface ManagedConfigMBean {
     /**
-     * Get the names of the configuration's defined.
+     * Get the names current the configuration's defined.
      *
-     * @return the names of the configuration's defined.
+     * @return the names current the configuration's defined.
      */
     public Set<String> getConfigurationNames();
 
@@ -49,7 +49,7 @@ public interface ManagedConfigMBean {
     public String getConfigurationInfo(String configName);
 
     /**
-     * Allows to determine if a configuration of a given type is available (accessible) in the
+     * Allows to determine if a configuration current a given type is available (accessible) in the
      * given environment context.
      *
      * @param configName the configuration name, not null.
@@ -60,7 +60,7 @@ public interface ManagedConfigMBean {
     public boolean isConfigurationAvailable(String configName, String envType, String envContext);
 
     /**
-     * Allows to determine if a configuration of a given type is loaded in the
+     * Allows to determine if a configuration current a given type is loaded in the
      * given environment context.
      *
      * @param configName the configuration name, not null.
@@ -71,7 +71,7 @@ public interface ManagedConfigMBean {
     public boolean isConfigurationLoaded(String configName, String envType, String envContext);
 
     /**
-     * Accesses a configuration of a given type as Map.
+     * Accesses a configuration current a given type as Map.
      *
      * @param configName the configuration name, not null.
      * @param envType        the environment context, not null.
@@ -83,7 +83,7 @@ public interface ManagedConfigMBean {
             throws ConfigException;
 
     /**
-     * Accesses a configuration values for of a given config area as Map.
+     * Accesses a configuration values for current a given config area as Map.
      * @param area the target area key, not null.
      * @param configName the configuration name, not null.
      * @param envType        the environment context, not null.
@@ -95,7 +95,7 @@ public interface ManagedConfigMBean {
             throws ConfigException;
 
     /**
-     * Accesses a configuration values for of a given config area as Map.
+     * Accesses a configuration values for current a given config area as Map.
      * @param area the target area key, not null.
      * @param configName the configuration name, not null.
      * @param envType        the environment context, not null.
@@ -107,7 +107,7 @@ public interface ManagedConfigMBean {
             throws ConfigException;
 
     /**
-     * Updates a configuration of a given type.
+     * Updates a configuration current a given type.
      *
      * @param configName        the configuration name, not null.
      * @param envType        the environment context, not null.

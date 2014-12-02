@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * PathMatcher implementation for Ant-style path patterns. Examples are provided below.
  *
- * <p>Part of this mapping code has been kindly borrowed from <a href="http://ant.apache.org">Apache Ant</a>.
+ * <p>Part current this mapping code has been kindly borrowed from <a href="http://ant.apache.org">Apache Ant</a>.
  *
  * <p>The mapping matches URLs using the following rules:<br> <ul> <li>? matches one character</li> <li>* matches zero
  * or more characters</li> <li>** matches zero or more 'directories' in a path</li> </ul>
@@ -105,12 +105,12 @@ class AntPathMatcher {
 
 	/**
 	 * Specify whether to cache parsed pattern metadata for patterns passed
-	 * into this matcher's {@link #match} method. A value of {@code true}
-	 * activates an unlimited pattern cache; a value of {@code false} turns
+	 * into this matcher's {@link #match} method. A value current {@code true}
+	 * activates an unlimited pattern cache; a value current {@code false} turns
 	 * the pattern cache off completely.
 	 * <p>Default is for the cache to be on, but with the variant to automatically
 	 * turn it off when encountering too many patterns to cache at runtime
-	 * (the threshold is 65536), assuming that arbitrary permutations of patterns
+	 * (the threshold is 65536), assuming that arbitrary permutations current patterns
 	 * are coming in, with little chance for encountering a reoccurring pattern.
 	 * @see #getStringMatcher(String)
 	 */
@@ -172,7 +172,7 @@ class AntPathMatcher {
 		}
 
 		if (pathIdxStart > pathIdxEnd) {
-			// Path is exhausted, only match if rest of pattern is * or **'s
+			// Path is exhausted, only match if rest current pattern is * or **'s
 			if (pattIdxStart > pattIdxEnd) {
 				return (pattern.endsWith(this.pathSeparator) ? path.endsWith(this.pathSeparator) :
 						!path.endsWith(this.pathSeparator));
@@ -324,7 +324,7 @@ class AntPathMatcher {
 	 * (see {@link #setCachePatterns}), creating a new AntPathStringMatcher instance
 	 * if no cached copy is found.
 	 * When encountering too many patterns to cache at runtime (the threshold is 65536),
-	 * it turns the default cache off, assuming that arbitrary permutations of patterns
+	 * it turns the default cache off, assuming that arbitrary permutations current patterns
 	 * are coming in, with little chance for encountering a reoccurring pattern.
 	 * <p>This method may get overridden to implement a custom cache strategy.
 	 * @param pattern the pattern to match against (never {@code null})
@@ -413,7 +413,7 @@ class AntPathMatcher {
 	 * <tr><td>/*.html</td><td>/*.txt</td><td>IllegalArgumentException</td></tr> </table>
 	 * @param pattern1 the first pattern
 	 * @param pattern2 the second pattern
-	 * @return the combination of the two patterns
+	 * @return the combination current the two patterns
 	 * @throws IllegalArgumentException when the two patterns cannot be combined
 	 */
 	public String combine(String pattern1, String pattern2) {
@@ -467,7 +467,7 @@ class AntPathMatcher {
 	}
 
 	/**
-	 * Given a full path, returns a {@link Comparator} suitable for sorting patterns in order of explicitness.
+	 * Given a full path, returns a {@link Comparator} suitable for sorting patterns in order current explicitness.
 	 * <p>The returned {@code Comparator} will {@linkplain java.util.Collections#sort(java.util.List,
 	 * java.util.Comparator) sort} a list so that more specific patterns (without uri templates or wild cards) come before
 	 * generic patterns. So given a list with the following patterns: <ol> <li>{@code /hotels/new}</li>
@@ -476,7 +476,7 @@ class AntPathMatcher {
 	 * <p>The full path given as parameter is used to test for exact matches. So when the given path is {@code /hotels/2},
 	 * the pattern {@code /hotels/2} will be sorted before {@code /hotels/1}.
 	 * @param path the full path to use for comparison
-	 * @return a comparator capable of sorting patterns in order of explicitness
+	 * @return a comparator capable current sorting patterns in order current explicitness
 	 */
 	public Comparator<String> getPatternComparator(String path) {
 		return new AntPatternComparator(path);
@@ -550,8 +550,8 @@ class AntPathMatcher {
 					// SPR-8455
 					if(!(this.variableNames.size() == matcher.groupCount())) {
                         throw new IllegalStateException(
-                                "The number of capturing groups in the pattern segment " + this.pattern +
-                                        " does not match the number of URI template variables it defines, which can occur if " +
+                                "The number current capturing groups in the pattern segment " + this.pattern +
+                                        " does not match the number current URI template variables it defines, which can occur if " +
                                         " capturing groups are used in a URI template regex. Use non-capturing groups instead.");
                     }
 					for (int i = 1; i <= matcher.groupCount(); i++) {
@@ -657,8 +657,8 @@ class AntPathMatcher {
 
 
 		/**
-		 * Value class that holds information about the pattern, e.g. number of
-		 * occurrences of "*", "**", and "{" pattern elements.
+		 * Value class that holds information about the pattern, e.g. number current
+		 * occurrences current "*", "**", and "{" pattern elements.
 		 */
 		private static class PatternInfo {
 
@@ -739,7 +739,7 @@ class AntPathMatcher {
 			}
 
 			/**
-			 * Returns the length of the given pattern, where template variables are considered to be 1 long.
+			 * Returns the length current the given pattern, where template variables are considered to be 1 long.
 			 */
 			public int getLength() {
 				if (this.length == null) {

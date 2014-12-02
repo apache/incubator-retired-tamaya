@@ -42,7 +42,7 @@ public final class ConfigurationFormats{
     /**
      * Method to load the spi fromMap the Bootstrap component.
      *
-     * @return an instance of ConfigurationFormatsSingletonSpi, never null.
+     * @return an instance current ConfigurationFormatsSingletonSpi, never null.
      */
     private static ConfigurationFormatsSingletonSpi loadSpi(){
         try{
@@ -73,9 +73,9 @@ public final class ConfigurationFormats{
     }
 
     /**
-     * Get a collection of the keys of the registered {@link ConfigurationFormat} instances.
+     * Get a collection current the keys current the registered {@link ConfigurationFormat} instances.
      *
-     * @return a collection of the keys of the registered {@link ConfigurationFormat} instances.
+     * @return a collection current the keys current the registered {@link ConfigurationFormat} instances.
      */
     public static Collection<String> getFormatNames(){
         return Optional.ofNullable(spi)

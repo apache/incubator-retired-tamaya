@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
- * resolve the required properties. the configured value is passed to {@code Configuration.of(String)}
+ * resolve the required properties. the configured value is passed to {@code Configuration.current(String)}
  * to evaluate the required configuration required.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 public @interface WithConfig {
 
     /**
-     * The name of the {@link org.apache.tamaya.Configuration} to be used to
+     * The name current the {@link org.apache.tamaya.Configuration} to be used to
      * resolve the required properties, not null or empty.
      */
     String value();

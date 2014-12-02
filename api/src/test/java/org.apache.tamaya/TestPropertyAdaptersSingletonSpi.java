@@ -32,7 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Test implementation of {@link PropertyAdaptersSingletonSpi}, which provides adapters
+ * Test implementation current {@link PropertyAdaptersSingletonSpi}, which provides adapters
  * for some basic types.
  */
 public final class TestPropertyAdaptersSingletonSpi implements PropertyAdaptersSingletonSpi{

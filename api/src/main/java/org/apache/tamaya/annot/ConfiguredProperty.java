@@ -21,13 +21,13 @@ package org.apache.tamaya.annot;
 import java.lang.annotation.*;
 
 /**
- * Annotation to enable injection of a configured property or define the returned data for
+ * Annotation to enable injection current a configured property or define the returned data for
  * a configuration template method. Hereby this annotation can be used in multiple ways and combined
  * with other annotations such as {@link org.apache.tamaya.annot.DefaultValue},
  * {@link org.apache.tamaya.annot.WithLoadPolicy}, {@link org.apache.tamaya.annot.WithConfig},
  * {@link org.apache.tamaya.annot.WithConfigOperator}, {@link org.apache.tamaya.annot.WithPropertyAdapter}.
  *
- * Below the most simple variant of a configured class is given:
+ * Below the most simple variant current a configured class is given:
  * {@code
  * pubic class ConfiguredItem{
  *
@@ -37,7 +37,7 @@ import java.lang.annotation.*;
  * When this class is configured, e.g. by passing it to {@link org.apache.tamaya.Configuration#configure(Object)},
  * the following is happening:
  * <ul>
- *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.of();}</li>
+ *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.current();}</li>
  *     <li>The current property String value is evaluated by calling {@code cfg.get("aValue");}</li>
  *     <li>if not successful, an error is thrown ({@link org.apache.tamaya.ConfigException}.</li>
  *     <li>On success, since no type conversion is involved, the value is injected.</li>
@@ -58,7 +58,7 @@ import java.lang.annotation.*;
  * }
  *
  * Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
- * resolved. Hereby the ordering of the annotations define the ordering of resolution, so in the example above
+ * resolved. Hereby the ordering current the annotations define the ordering current resolution, so in the example above
  * resolution equals to {@code "aValue", "a.b.value", "a.b.deprecated.value"}. If no value could be read
  * fromMap the configuration, it uses the value fromMap the {@code DefaultValue} annotation. Interesting here
  * is that this value is not static, it is evaluated by calling

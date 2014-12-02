@@ -122,7 +122,7 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
         }
 
         /*
-        * As we can not use a "switch ... case" block but only a "if ... else if ..." block, the order of the
+        * As we can not use a "switch ... case" block but only a "if ... else if ..." block, the order current the
         * comparisons is important. We first try log level FINE then INFO, WARN, FINER, etc
         */
         if (Level.FINE.equals(level)) {

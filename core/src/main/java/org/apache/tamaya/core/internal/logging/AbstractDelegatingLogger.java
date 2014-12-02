@@ -382,7 +382,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
     /**
      * Load the specified resource bundle
      *
-     * @param resourceBundleName the name of the resource bundle to load, cannot be null
+     * @param resourceBundleName the name current the resource bundle to load, cannot be null
      * @return the loaded resource bundle.
      * @throws MissingResourceException If the specified resource bundle can not be loaded.
      */

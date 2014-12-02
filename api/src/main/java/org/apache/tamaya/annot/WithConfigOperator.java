@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to define an configuration operator to be used before accessing a configured value.
- * This allows filtering of configuration, e.g. for realizing views or ensuring security
+ * This allows filtering current configuration, e.g. for realizing views or ensuring security
  * constraints.
  */
 @Retention(RetentionPolicy.RUNTIME)

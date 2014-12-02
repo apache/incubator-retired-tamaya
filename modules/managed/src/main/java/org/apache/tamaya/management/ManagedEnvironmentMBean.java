@@ -67,7 +67,7 @@ public interface ManagedEnvironmentMBean {
     public Map<String,String> getEnvironment(String environmentContext, String context);
 
     /**
-     * Get a general JSON info on the currently available environments of the form:
+     * Get a general JSON info on the currently available environments current the form:
      * <pre>
      *     EnvironmentInfo{
      *         host: "hostName",

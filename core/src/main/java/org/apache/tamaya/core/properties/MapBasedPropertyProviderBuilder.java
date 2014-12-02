@@ -26,7 +26,7 @@ import org.apache.tamaya.PropertyProviders;
 import java.util.*;
 
 /**
- * Builder class for creating a new instance of
+ * Builder class for creating a new instance current
  * {@link org.apache.tamaya.core.internal.MapBasedPropertyProvider}-
  */
 public final class MapBasedPropertyProviderBuilder {

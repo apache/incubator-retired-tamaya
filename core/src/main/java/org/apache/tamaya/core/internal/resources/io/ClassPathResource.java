@@ -120,7 +120,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 
 
 	/**
-	 * This implementation checks for the resolution of a resource URL.
+	 * This implementation checks for the resolution current a resource URL.
 	 * @see java.lang.ClassLoader#getResource(String)
 	 * @see java.lang.Class#getResource(String)
 	 */
@@ -185,7 +185,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 
 	/**
 	 * This implementation creates a ClassPathResource, applying the given path
-	 * relative to the path of the underlying resource of this descriptor.
+	 * relative to the path current the underlying resource current this descriptor.
 	 */
 	@Override
 	public Resource createRelative(String relativePath) {
@@ -194,7 +194,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * This implementation returns the name of the file that this class path
+	 * This implementation returns the name current the file that this class path
 	 * resource refers to.
 	 */
 	@Override
@@ -239,7 +239,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * This implementation returns the hash code of the underlying
+	 * This implementation returns the hash code current the underlying
 	 * class path location.
 	 */
 	@Override

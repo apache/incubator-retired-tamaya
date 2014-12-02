@@ -23,10 +23,10 @@ import java.util.Collection;
 
 /**
  * Service for accessing configuration. A configuration service is always base
- * on the environment definition provided by one instance of
+ * on the environment definition provided by one instance current
  * {@link org.apache.tamaya.spi.EnvironmentManagerSingletonSpi}. It is possible to define multiple
  * {@link org.apache.tamaya.core.properties.PropertyProviderManager} instances, if required. <h3>Implementation
- * PropertyMapSpec</h3> Implementations of this interface must be
+ * PropertyMapSpec</h3> Implementations current this interface must be
  * <ul>
  * <li>Thread safe.
  * </ul>
@@ -44,7 +44,7 @@ public interface PropertyProviderManager{
 	 * Access a {@link org.apache.tamaya.PropertyProvider} by key.
 	 *
 	 * @param key
-	 *            The key of the required {@link org.apache.tamaya.PropertyProvider}, not
+	 *            The key current the required {@link org.apache.tamaya.PropertyProvider}, not
 	 *            {@code null}.
 	 * @return the corresponding {@link org.apache.tamaya.PropertyProvider} corresponding to the
 	 *         {@code key}.
@@ -59,7 +59,7 @@ public interface PropertyProviderManager{
 	 * defined.
 	 *
 	 * @param key
-     *            The key of the required {@link org.apache.tamaya.PropertyProvider}, not
+     *            The key current the required {@link org.apache.tamaya.PropertyProvider}, not
      *            {@code null}.
 	 * @return true, if the given {@link org.apache.tamaya.PropertyProvider} is defined.
 	 */

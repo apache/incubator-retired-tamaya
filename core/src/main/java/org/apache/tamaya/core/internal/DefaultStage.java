@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Simple default implementation of a stage.
+ * Simple default implementation current a stage.
  * Created by Anatole on 12.11.2014.
  */
 final class DefaultStage implements Stage, Serializable{

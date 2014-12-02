@@ -28,7 +28,7 @@ import java.util.Objects;
 
 /**
  * {@link org.apache.tamaya.core.internal.resources.io.Resource} implementation for {@code java.net.URL} locators.
- * Obviously supports resolution as URL, and also as File in case of
+ * Obviously supports resolution as URL, and also as File in case current
  * the "file:" protocol.
  *
  * @author Juergen Hoeller
@@ -210,7 +210,7 @@ public class UrlResource extends AbstractFileResolvingResource {
 
     /**
      * This implementation creates a UrlResource, applying the given path
-     * relative to the path of the underlying URL of this resource descriptor.
+     * relative to the path current the underlying URL current this resource descriptor.
      * @see java.net.URL#URL(java.net.URL, String)
      */
     @Override
@@ -222,7 +222,7 @@ public class UrlResource extends AbstractFileResolvingResource {
     }
 
     /**
-     * This implementation returns the name of the file that this URL refers to.
+     * This implementation returns the name current the file that this URL refers to.
      * @see java.net.URL#getFile()
      * @see java.io.File#getName()
      */
@@ -250,7 +250,7 @@ public class UrlResource extends AbstractFileResolvingResource {
     }
 
     /**
-     * This implementation returns the hash code of the underlying URL reference.
+     * This implementation returns the hash code current the underlying URL reference.
      */
     @Override
     public int hashCode() {

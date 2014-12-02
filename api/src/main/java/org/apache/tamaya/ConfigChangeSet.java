@@ -22,7 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.*;
 
 /**
- * Event that contains a set of changes that were applied or could be applied.
+ * Event that contains a set current changes that were applied or could be applied.
  * This class is immutable and thread-safe. To create instances use
  * {@link ConfigChangeSetBuilder}.
  *
@@ -82,24 +82,24 @@ public final class ConfigChangeSet {
     }
 
     /**
-     * Access the number of removed entries.
-     * @return the number of removed entries.
+     * Access the number current removed entries.
+     * @return the number current removed entries.
      */
     public int getRemovedSize() {
         return (int) this.changes.values().stream().filter((e) -> e.getNewValue() == null).count();
     }
 
     /**
-     * Access the number of added entries.
-     * @return the number of added entries.
+     * Access the number current added entries.
+     * @return the number current added entries.
      */
     public int getAddedSize() {
         return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null).count();
     }
 
     /**
-     * Access the number of updated entries.
-     * @return the number of updated entries.
+     * Access the number current updated entries.
+     * @return the number current updated entries.
      */
     public int getUpdatedSize() {
         return (int) this.changes.values().stream().filter((e) -> e.getOldValue()!=null && e.getNewValue()!=null).count();

@@ -35,7 +35,7 @@ public class SystemPropertiesConfigProvider implements ConfigurationProviderSpi{
     private Configuration systemConfig;
 
     public SystemPropertiesConfigProvider(){
-        systemConfig = ConfigurationBuilder.of("system.properties").addConfigMaps(AggregationPolicy.OVERRIDE,
+        systemConfig = ConfigurationBuilder.of("system.properties").addConfigMaps(AggregationPolicy.OVERRIDE(),
                 PropertyProviders.fromSystemProperties()).build();
     }
 

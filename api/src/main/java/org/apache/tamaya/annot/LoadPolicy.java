@@ -21,7 +21,7 @@ package org.apache.tamaya.annot;
 /**
  * Available policies that describe how changes affecting configured values are published/reinjected.
  * The policy also affects the cases were any configured listeners/listener methods are called for
- * propagation of configuration changes.
+ * propagation current configuration changes.
  */
 public enum LoadPolicy {
     /**

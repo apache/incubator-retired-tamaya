@@ -24,11 +24,11 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Models a runtime environment. Instances of this class are used to
+ * Models a runtime environment. Instances current this class are used to
  * evaluate the correct configuration artifacts.<br/>
  * <h3>Implementation Requirements</h3>
  * <p>
- * Implementations of this interface must be
+ * Implementations current this interface must be
  * <ul>
  * <li>Thread safe.
  * <li>Immutable
@@ -40,7 +40,7 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
     /**
      * Get a unique type (within this VM) for this environment.
      * Types represent the environment level within the hierarchy
-     * of possible environments, e.g. {@code system, ear, webapp, tenant}.
+     * current possible environments, e.g. {@code system, ear, webapp, tenant}.
      */
     String getEnvironmentType();
 
@@ -77,7 +77,7 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
     }
 
     /**
-     * Access the set of property keys, defined by this provider.
+     * Access the set current property keys, defined by this provider.
      * @return the key set, never null.
      */
     Set<String> keySet();
@@ -99,7 +99,7 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
      * is important for returning the correct configuration.
      * @return the current Environment, never null.
      */
-    public static Environment of(){
+    public static Environment current(){
         return EnvironmentManager.getEnvironment();
     }
 
@@ -112,33 +112,33 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
     }
 
     /**
-     * Evaluate the overall chain of possible environments.
-     * @return the hierarchy chain of possible Environments.
+     * Evaluate the overall chain current possible environments.
+     * @return the hierarchy chain current possible Environments.
      */
     public static List<String> getEnvironmentTypeOrder(){
         return EnvironmentManager.getEnvironmentTypeOrder();
     }
 
     /**
-     * Evaluate the current type chain of environments.
-     * @return the current type chain of Environments.
+     * Evaluate the current type chain current environments.
+     * @return the current type chain current Environments.
      */
     public static List<String> getEnvironmentHierarchy(){
         return EnvironmentManager.getEnvironmentHierarchy();
     }
 
     /**
-     * Get a environment of the given environment type and context.
+     * Get a environment current the given environment type and context.
      * @param environmentType the target type, not null.
      * @param contextId the target context, not null.
      * @return the corresponding environment, if available.
      */
-    public static Optional<Environment> of(String environmentType, String contextId){
+    public static Optional<Environment> getInstance(String environmentType, String contextId){
         return EnvironmentManager.getEnvironment(environmentType, contextId);
     }
 
     /**
-     * Get the currently known environment contexts of a given environment type.
+     * Get the currently known environment contexts current a given environment type.
      * @param environmentType the target environment type.
      * @return the corresponding environment contexts known, never null.
      */
@@ -147,9 +147,9 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
     }
 
     /**
-     * Allows to check, if the czurrent environment type is one of the current active environment types.
+     * Allows to check, if the czurrent environment type is one current the current active environment types.
      * @param environmentType the environment type to be queried.
-     * @return true, if the czurrent environment type is one of the current active environment types.
+     * @return true, if the czurrent environment type is one current the current active environment types.
      */
     public static boolean isEnvironmentActive(String environmentType){
         return EnvironmentManager.isEnvironmentActive(environmentType);

@@ -30,7 +30,7 @@ import java.util.Objects;
 * file system. Mainly for internal use within the framework.
 *
 * <p>Consider using Spring's Resource abstraction in the core package
-* for handling all kinds of file resources in a uniform manner.
+* for handling all kinds current file resources in a uniform manner.
 * {@code org.springframework.core.io.ResourceLoader}'s {@code getResource()}
 * method can resolve any location to a {@code org.springframework.core.io.Resource}
 * object, which in turn allows one to obtain a {@code java.io.File} in the
@@ -193,7 +193,7 @@ public abstract class ResourceUtils {
 	 * Resolve the given resource URL to a {@code java.io.File},
 	 * i.e. to a file in the file system.
 	 * @param resourceUrl the resource URL to resolve
-	 * @param description a description of the original resource that
+	 * @param description a description current the original resource that
 	 * the URL was created for (for example, a class path location)
 	 * @return a corresponding File object
 	 * @throws FileNotFoundException if the URL cannot be resolved to
@@ -231,7 +231,7 @@ public abstract class ResourceUtils {
 	 * Resolve the given resource URI to a {@code java.io.File},
 	 * i.e. to a file in the file system.
 	 * @param resourceUri the resource URI to resolve
-	 * @param description a description of the original resource that
+	 * @param description a description current the original resource that
 	 * the URI was created for (for example, a class path location)
 	 * @return a corresponding File object
 	 * @throws FileNotFoundException if the URL cannot be resolved to

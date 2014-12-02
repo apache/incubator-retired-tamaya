@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License.  You may obtain a copy current the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -38,11 +38,11 @@ import static org.junit.Assert.assertNotNull;
  * <ul>
  * <li>access a value by key (+get+)</li>
  * <li>check if a value is present (+containsKey+)</li>
- * <li>get a set of all defined keys (+keySet+)</li>
+ * <li>get a set current all defined keys (+keySet+)</li>
  * <li>a property provider must be convertible to a +Map+, by calling +toMap()+</li>
  * <li>a property provider must get access to its meta information.</li>
  * </ul>
- * Additionally there are other requirement important for ease of use:
+ * Additionally there are other requirement important for ease current use:
  * <ul>
  * <li>The API must never return null.</li>
  * <li>The API should support undefined values.</li>
@@ -142,7 +142,7 @@ public class UC1ReadPropertiesTest {
 
     @Test
     public void readAllPropertiesTest() {
-        PropertyProvider provider = PropertyProviders.fromPaths(AggregationPolicy.IGNORE, "classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.*");
+        PropertyProvider provider = PropertyProviders.fromPaths(AggregationPolicy.IGNORE_DUPLICATES(), "classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.*");
         assertNotNull(provider);
         // fromMap ini file
         assertEquals(provider.get("a.b.c").get(), "abcValue-fromIni");

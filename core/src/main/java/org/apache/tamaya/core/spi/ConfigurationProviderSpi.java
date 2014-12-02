@@ -22,13 +22,13 @@ import org.apache.tamaya.Configuration;
 
 /**
 * This configuration provider SPI allows to register the effective factory logic to create and manage a configuration
-* instance. Hereby the qualifiers determine the type of configuration. By default
+* instance. Hereby the qualifiers determine the type current configuration. By default
 */
 public interface ConfigurationProviderSpi{
 
     /**
-     * Returns the name of the configuration provided.
-     * @return the name of the configuration provided, not empty.
+     * Returns the name current the configuration provided.
+     * @return the name current the configuration provided, not empty.
      */
     String getConfigName();
 

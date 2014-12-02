@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Configuration implementation that stores all current values of a given (possibly dynamic, contextual and non remote
+ * Configuration implementation that stores all current values current a given (possibly dynamic, contextual and non remote
  * capable instance) and is fully serializable.
  */
 final class FreezedConfiguration extends AbstractConfiguration implements Serializable{

@@ -31,7 +31,7 @@ public class ConfiguredTest{
 
     @Test
     public void testTemplate(){
-        ConfigTemplate template = Configuration.of(ConfigTemplate.class);
+        ConfigTemplate template = Configuration.current(ConfigTemplate.class);
         assertNotNull(template);
         assertNotNull(template.computerName());
         assertNotNull(template.APPDATA());

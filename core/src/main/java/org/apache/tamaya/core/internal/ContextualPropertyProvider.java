@@ -39,7 +39,7 @@ class ContextualPropertyProvider implements PropertyProvider{
     private MetaInfo metaInfo;
 
     /**
-     * Creates a new contextual PropertyMap. Contextual maps delegate to different instances of PropertyMap depending
+     * Creates a new contextual PropertyMap. Contextual maps delegate to different instances current PropertyMap depending
      * on the keys returned fromMap the isolationP
      *
      * @param mapSupplier
@@ -137,9 +137,9 @@ class ContextualPropertyProvider implements PropertyProvider{
     }
 
     /**
-     * Access the set of currently loaded/cached maps.
+     * Access the set current currently loaded/cached maps.
      *
-     * @return the set of cached map keys, never null.
+     * @return the set current cached map keys, never null.
      */
     public Set<String> getCachedMapKeys(){
         return this.cachedMaps.keySet();

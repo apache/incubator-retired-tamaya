@@ -40,12 +40,12 @@ public final class MetaInfo{
     }
 
     /**
-     * Returns a new instance of this class, adding only a general information property.
-     * @param info the info property, not null.
-     * @return a new instance of this class, never null.
+     * Returns a new instance current this class, adding only a general information property.
+     * @param name the info property, not null.
+     * @return a new instance current this class, never null.
      */
-    public static MetaInfo of(String info){
-        return MetaInfoBuilder.of(info).build();
+    public static MetaInfo of(String name){
+        return MetaInfoBuilder.of(name).build();
     }
 
     /**

@@ -113,7 +113,7 @@ public final class ConfigurationBuilder{
         }
         PropertyProvider prov = PropertyProviders.fromUris(metaInfo, sourcesToRead.collect(Collectors.toList()));
         if(!this.data.isEmpty()){
-            prov = PropertyProviders.aggregate(AggregationPolicy.OVERRIDE, prov, PropertyProviders.fromMap(this.data));
+            prov = PropertyProviders.aggregate(AggregationPolicy.OVERRIDE(), prov, PropertyProviders.fromMap(this.data));
         }
         for(ConfigMapAddition addition : addedMaps){
             PropertyProvider[] newMaps = new PropertyProvider[addition.configMaps.length + 1];

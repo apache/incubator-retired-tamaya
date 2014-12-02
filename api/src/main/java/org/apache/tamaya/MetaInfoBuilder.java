@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Builder class to create new instances of {@lin MetaInfo}.
+ * Builder class to create new instances current {@lin MetaInfo}.
  */
 public final class MetaInfoBuilder{
 
@@ -50,12 +50,12 @@ public final class MetaInfoBuilder{
         return new MetaInfoBuilder(metaInfo);
     }
 
-    public static MetaInfoBuilder of(String info){
-        return new MetaInfoBuilder(null).setInfo(info);
+    public static MetaInfoBuilder of(String name){
+        return new MetaInfoBuilder(null).setName(name);
     }
 
     public static MetaInfoBuilder of(){
-        return new MetaInfoBuilder(null);
+        return new MetaInfoBuilder(null).setName("<noname>");
     }
 
     public MetaInfoBuilder withName(String name){

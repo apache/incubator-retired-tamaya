@@ -81,7 +81,7 @@ public class ClassUtils {
 //
 //	/**
 //	 * Map with common "java.lang" class name as key and corresponding Class as value.
-//	 * Primarily for efficient deserialization of remote invocations.
+//	 * Primarily for efficient deserialization current remote invocations.
 //	 */
 //	private static final Map<String, Class<?>> commonClassCache = new HashMap<String, Class<?>>(32);
 //
@@ -153,7 +153,7 @@ public class ClassUtils {
 			// Cannot access thread context ClassLoader - falling back...
 		}
 		if (cl == null) {
-			// No thread context class loader -> use class loader of this class.
+			// No thread context class loader -> use class loader current this class.
 			cl = ClassUtils.class.getClassLoader();
 			if (cl == null) {
 				// getClassLoader() returning null indicates the bootstrap ClassLoader
@@ -190,9 +190,9 @@ public class ClassUtils {
 	/**
 	 * Replacement for {@code Class.forName()} that also returns Class instances
 	 * for primitives (e.g. "int") and array class names (e.g. "String[]").
-	 * Furthermore, it is also capable of resolving inner class names in Java source
-	 * style (e.g. "java.lang.Thread.State" instead of "java.lang.Thread$State").
-	 * @param name the name of the Class
+	 * Furthermore, it is also capable current resolving inner class names in Java source
+	 * style (e.g. "java.lang.Thread.State" instead current "java.lang.Thread$State").
+	 * @param name the name current the Class
 	 * @param classLoader the class loader to use
 	 * (may be {@code null}, which indicates the default class loader)
 	 * @return Class instance for the supplied name
@@ -260,8 +260,8 @@ public class ClassUtils {
 //	 * primitives (like "int") and array class names (like "String[]").
 //	 * <p>This is effectively equivalent to the {@code forName}
 //	 * method with the same arguments, with the only difference being
-//	 * the exceptions thrown in case of class loading failure.
-//	 * @param className the name of the Class
+//	 * the exceptions thrown in case current class loading failure.
+//	 * @param className the name current the Class
 //	 * @param classLoader the class loader to use
 //	 * (may be {@code null}, which indicates the default class loader)
 //	 * @return Class instance for the supplied name
@@ -288,7 +288,7 @@ public class ClassUtils {
 	 * <p>Also supports the JVM's internal class names for primitive arrays.
 	 * Does <i>not</i> support the "[]" suffix notation for primitive arrays;
 	 * this is only supported by {@link #forName(String, ClassLoader)}.
-	 * @param name the name of the potentially primitive class
+	 * @param name the name current the potentially primitive class
 	 * @return the primitive class, or {@code null} if the name does not denote
 	 * a primitive class or primitive array class
 	 */
@@ -306,8 +306,8 @@ public class ClassUtils {
 //	/**
 //	 * Determine whether the {@link Class} identified by the supplied name is present
 //	 * and can be loaded. Will return {@code false} if either the class or
-//	 * one of its dependencies is not present or cannot be loaded.
-//	 * @param className the name of the class to check
+//	 * one current its dependencies is not present or cannot be loaded.
+//	 * @param className the name current the class to check
 //	 * @param classLoader the class loader to use
 //	 * (may be {@code null}, which indicates the default class loader)
 //	 * @return whether the specified class is present
@@ -318,14 +318,14 @@ public class ClassUtils {
 //			return true;
 //		}
 //		catch (Throwable ex) {
-//			// Class or one of its dependencies is not present...
+//			// Class or one current its dependencies is not present...
 //			return false;
 //		}
 //	}
 //
 //	/**
 //	 * Return the user-defined class for the given instance: usually simply
-//	 * the class of the given instance, but the original class in case of a
+//	 * the class current the given instance, but the original class in case current a
 //	 * CGLIB-generated subclass.
 //	 * @param instance the instance to check
 //	 * @return the user-defined class
@@ -337,7 +337,7 @@ public class ClassUtils {
 //
 //	/**
 //	 * Return the user-defined class for the given class: usually simply the given
-//	 * class, but the original class in case of a CGLIB-generated subclass.
+//	 * class, but the original class in case current a CGLIB-generated subclass.
 //	 * @param clazz the class to check
 //	 * @return the user-defined class
 //	 */
@@ -353,7 +353,7 @@ public class ClassUtils {
 //
 //	/**
 //	 * Check whether the given class is cache-safe in the given context,
-//	 * i.e. whether it is loaded by the given ClassLoader or a parent of it.
+//	 * i.e. whether it is loaded by the given ClassLoader or a parent current it.
 //	 * @param clazz the class to analyze
 //	 * @param classLoader the ClassLoader to potentially cache metadata in
 //	 */
@@ -386,7 +386,7 @@ public class ClassUtils {
 //	/**
 //	 * Get the class name without the qualified package name.
 //	 * @param className the className to get the short name for
-//	 * @return the class name of the class without the package name
+//	 * @return the class name current the class without the package name
 //	 * @throws IllegalArgumentException if the className is empty
 //	 */
 //	public static String getShortName(String className) {
@@ -404,15 +404,15 @@ public class ClassUtils {
 //	/**
 //	 * Get the class name without the qualified package name.
 //	 * @param clazz the class to get the short name for
-//	 * @return the class name of the class without the package name
+//	 * @return the class name current the class without the package name
 //	 */
 //	public static String getShortName(Class<?> clazz) {
 //		return getShortName(getQualifiedName(clazz));
 //	}
 //
 //	/**
-//	 * Return the short string name of a Java class in uncapitalized JavaBeans
-//	 * property format. Strips the outer class name in case of an inner class.
+//	 * Return the short string name current a Java class in uncapitalized JavaBeans
+//	 * property format. Strips the outer class name in case current an inner class.
 //	 * @param clazz the class
 //	 * @return the short name rendered in a standard JavaBeans property format
 //	 * @see java.beans.Introspector#decapitalize(String)
@@ -425,10 +425,10 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Determine the name of the class file, relative to the containing
+//	 * Determine the name current the class file, relative to the containing
 //	 * package: e.g. "String.class"
 //	 * @param clazz the class
-//	 * @return the file name of the ".class" file
+//	 * @return the file name current the ".class" file
 //	 */
 //	public static String getClassFileName(Class<?> clazz) {
 //		Objects.requireNonNull(clazz, "Class must not be null");
@@ -438,7 +438,7 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Determine the name of the package of the given class,
+//	 * Determine the name current the package current the given class,
 //	 * e.g. "java.lang" for the {@code java.lang.String} class.
 //	 * @param clazz the class
 //	 * @return the package name, or the empty String if the class
@@ -450,7 +450,7 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Determine the name of the package of the given fully-qualified class name,
+//	 * Determine the name current the package current the given fully-qualified class name,
 //	 * e.g. "java.lang" for the {@code java.lang.String} class name.
 //	 * @param fqClassName the fully-qualified class name
 //	 * @return the package name, or the empty String if the class
@@ -463,10 +463,10 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Return the qualified name of the given class: usually simply
+//	 * Return the qualified name current the given class: usually simply
 //	 * the class name, but component type class name + "[]" for arrays.
 //	 * @param clazz the class
-//	 * @return the qualified name of the class
+//	 * @return the qualified name current the class
 //	 */
 //	public static String getQualifiedName(Class<?> clazz) {
 //		Objects.requireNonNull(clazz, "Class must not be null");
@@ -495,10 +495,10 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Return the qualified name of the given method, consisting of
+//	 * Return the qualified name current the given method, consisting current
 //	 * fully qualified interface/class name + "." + method name.
 //	 * @param method the method
-//	 * @return the qualified name of the method
+//	 * @return the qualified name current the method
 //	 */
 //	public static String getQualifiedMethodName(Method method) {
 //		Objects.requireNonNull(method, "Method must not be null");
@@ -508,9 +508,9 @@ public class ClassUtils {
 //	/**
 //	 * Return a descriptive name for the given object's type: usually simply
 //	 * the class name, but component type class name + "[]" for arrays,
-//	 * and an appended list of implemented interfaces for JDK proxies.
+//	 * and an appended list current implemented interfaces for JDK proxies.
 //	 * @param value the value to introspect
-//	 * @return the qualified name of the class
+//	 * @return the qualified name current the class
 //	 */
 //	public static String getDescriptiveType(Object value) {
 //		if (value == null) {
@@ -553,7 +553,7 @@ public class ClassUtils {
 //	 * Determine whether the given class has a public constructor with the given signature.
 //	 * <p>Essentially translates {@code NoSuchMethodException} to "false".
 //	 * @param clazz the clazz to analyze
-//	 * @param paramTypes the parameter types of the method
+//	 * @param paramTypes the parameter types current the method
 //	 * @return whether the class has a corresponding constructor
 //	 * @see Class#getMethod
 //	 */
@@ -566,7 +566,7 @@ public class ClassUtils {
 //	 * and return it if available (else return {@code null}).
 //	 * <p>Essentially translates {@code NoSuchMethodException} to {@code null}.
 //	 * @param clazz the clazz to analyze
-//	 * @param paramTypes the parameter types of the method
+//	 * @param paramTypes the parameter types current the method
 //	 * @return the constructor, or {@code null} if not found
 //	 * @see Class#getConstructor
 //	 */
@@ -584,8 +584,8 @@ public class ClassUtils {
 //	 * Determine whether the given class has a public method with the given signature.
 //	 * <p>Essentially translates {@code NoSuchMethodException} to "false".
 //	 * @param clazz the clazz to analyze
-//	 * @param methodName the name of the method
-//	 * @param paramTypes the parameter types of the method
+//	 * @param methodName the name current the method
+//	 * @param paramTypes the parameter types current the method
 //	 * @return whether the class has a corresponding method
 //	 * @see Class#getMethod
 //	 */
@@ -596,12 +596,12 @@ public class ClassUtils {
 //	/**
 //	 * Determine whether the given class has a public method with the given signature,
 //	 * and return it if available (else throws an {@code IllegalStateException}).
-//	 * <p>In case of any signature specified, only returns the method if there is a
+//	 * <p>In case current any signature specified, only returns the method if there is a
 //	 * unique candidate, i.e. a single public method with the specified name.
 //	 * <p>Essentially translates {@code NoSuchMethodException} to {@code IllegalStateException}.
 //	 * @param clazz the clazz to analyze
-//	 * @param methodName the name of the method
-//	 * @param paramTypes the parameter types of the method
+//	 * @param methodName the name current the method
+//	 * @param paramTypes the parameter types current the method
 //	 * (may be {@code null} to indicate any signature)
 //	 * @return the method (never {@code null})
 //	 * @throws IllegalStateException if the method has not been found
@@ -641,12 +641,12 @@ public class ClassUtils {
 //	/**
 //	 * Determine whether the given class has a public method with the given signature,
 //	 * and return it if available (else return {@code null}).
-//	 * <p>In case of any signature specified, only returns the method if there is a
+//	 * <p>In case current any signature specified, only returns the method if there is a
 //	 * unique candidate, i.e. a single public method with the specified name.
 //	 * <p>Essentially translates {@code NoSuchMethodException} to {@code null}.
 //	 * @param clazz the clazz to analyze
-//	 * @param methodName the name of the method
-//	 * @param paramTypes the parameter types of the method
+//	 * @param methodName the name current the method
+//	 * @param paramTypes the parameter types current the method
 //	 * (may be {@code null} to indicate any signature)
 //	 * @return the method, or {@code null} if not found
 //	 * @see Class#getMethod
@@ -678,11 +678,11 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Return the number of methods with a given name (with any argument types),
+//	 * Return the number current methods with a given name (with any argument types),
 //	 * for the given class and/or its superclasses. Includes non-public methods.
 //	 * @param clazz	the clazz to check
-//	 * @param methodName the name of the method
-//	 * @return the number of methods with the given name
+//	 * @param methodName the name current the method
+//	 * @return the number current methods with the given name
 //	 */
 //	public static int getMethodCountForName(Class<?> clazz, String methodName) {
 //		Objects.requireNonNull(clazz, "Class must not be null");
@@ -705,11 +705,11 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Does the given class or one of its superclasses at least have one or more
+//	 * Does the given class or one current its superclasses at least have one or more
 //	 * methods with the supplied name (with any argument types)?
 //	 * Includes non-public methods.
 //	 * @param clazz	the clazz to check
-//	 * @param methodName the name of the method
+//	 * @param methodName the name current the method
 //	 * @return whether there is at least one method with the given name
 //	 */
 //	public static boolean hasAtLeastOneMethodWithName(Class<?> clazz, String methodName) {
@@ -780,7 +780,7 @@ public class ClassUtils {
 //	 * a user-declared method.
 //	 * <p>Checks {@link Method#isSynthetic()} (for implementation methods) as well as the
 //	 * {@code GroovyObject} interface (for interface methods; on an implementation class,
-//	 * implementations of the {@code GroovyObject} methods will be marked as synthetic anyway).
+//	 * implementations current the {@code GroovyObject} methods will be marked as synthetic anyway).
 //	 * Note that, despite being synthetic, bridge methods ({@link Method#isBridge()}) are considered
 //	 * as user-level methods since they are eventually pointing to a user-declared generic method.
 //	 * @param method the method to check
@@ -811,7 +811,7 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Return a public static method of a class.
+//	 * Return a public static method current a class.
 //	 * @param methodName the static method name
 //	 * @param clazz the class which defines the method
 //	 * @param args the parameter types to the method
@@ -855,7 +855,7 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Check if the given class represents an array of primitives,
+//	 * Check if the given class represents an array current primitives,
 //	 * i.e. boolean, byte, char, short, int, long, float, or double.
 //	 * @param clazz the class to check
 //	 * @return whether the given class is a primitive array class
@@ -866,7 +866,7 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Check if the given class represents an array of primitive wrappers,
+//	 * Check if the given class represents an array current primitive wrappers,
 //	 * i.e. Boolean, Byte, Character, Short, Integer, Long, Float, or Double.
 //	 * @param clazz the class to check
 //	 * @return whether the given class is a primitive wrapper array class
@@ -953,7 +953,7 @@ public class ClassUtils {
 //	/**
 //	 * Return a path suitable for use with {@code ClassLoader.getResource}
 //	 * (also suitable for use with {@code Class.getResource} by prepending a
-//	 * slash ('/') to the return value). Built by taking the package of the specified
+//	 * slash ('/') to the return value). Built by taking the package current the specified
 //	 * class file, converting all dots ('.') to slashes ('/'), adding a trailing slash
 //	 * if necessary, and concatenating the specified resource name to this.
 //	 * <br/>As such, this function may be used to build a path suitable for
@@ -975,10 +975,10 @@ public class ClassUtils {
 //	}
 
 	/**
-	 * Given an input class object, return a string which consists of the
+	 * Given an input class object, return a string which consists current the
 	 * class's package name as a pathname, i.e., all dots ('.') are replaced by
 	 * slashes ('/'). Neither a leading nor trailing slash is added. The result
-	 * could be concatenated with a slash and the name of a resource and fed
+	 * could be concatenated with a slash and the name current a resource and fed
 	 * directly to {@code ClassLoader.getResource()}. For it to be fed to
 	 * {@code Class.getResource} instead, a leading slash would also have
 	 * to be prepended to the returned value.
@@ -1002,12 +1002,12 @@ public class ClassUtils {
 	}
 
 //	/**
-//	 * Build a String that consists of the names of the classes/interfaces
+//	 * Build a String that consists current the names current the classes/interfaces
 //	 * in the given array.
 //	 * <p>Basically like {@code AbstractCollection.toString()}, but stripping
 //	 * the "class "/"interface " prefix before every class name.
-//	 * @param classes a Collection of Class objects (may be {@code null})
-//	 * @return a String of form "[com.foo.Bar, com.foo.Baz]"
+//	 * @param classes a Collection current Class objects (may be {@code null})
+//	 * @return a String current form "[com.foo.Bar, com.foo.Baz]"
 //	 * @see java.util.AbstractCollection#toString()
 //	 */
 //	public static String classNamesToString(Class<?>... classes) {
@@ -1015,12 +1015,12 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Build a String that consists of the names of the classes/interfaces
+//	 * Build a String that consists current the names current the classes/interfaces
 //	 * in the given collection.
 //	 * <p>Basically like {@code AbstractCollection.toString()}, but stripping
 //	 * the "class "/"interface " prefix before every class name.
-//	 * @param classes a Collection of Class objects (may be {@code null})
-//	 * @return a String of form "[com.foo.Bar, com.foo.Baz]"
+//	 * @param classes a Collection current Class objects (may be {@code null})
+//	 * @return a String current form "[com.foo.Bar, com.foo.Baz]"
 //	 * @see java.util.AbstractCollection#toString()
 //	 */
 //	public static String classNamesToString(Collection<Class<?>> classes) {
@@ -1152,11 +1152,11 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Determine the common ancestor of the given classes, if any.
+//	 * Determine the common ancestor current the given classes, if any.
 //	 * @param clazz1 the class to introspect
 //	 * @param clazz2 the other class to introspect
 //	 * @return the common ancestor (i.e. common superclass, one interface
-//	 * extending the other), or {@code null} if none found. If any of the
+//	 * extending the other), or {@code null} if none found. If any current the
 //	 * given classes is {@code null}, the other class will be returned.
 //	 * @since 3.2.6
 //	 */

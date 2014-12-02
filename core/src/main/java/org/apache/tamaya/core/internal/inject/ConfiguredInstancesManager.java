@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This service class manages the configured instances that are currently attached to the configuration
- * system. References to instances are rest as WeakReference instances, and cleanup of internal structures
+ * system. References to instances are rest as WeakReference instances, and cleanup current internal structures
  * is performed implictly during event triggering for configuration changes.
  * Created by Anatole on 03.10.2014.
  */

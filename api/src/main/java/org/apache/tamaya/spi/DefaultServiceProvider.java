@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * {@link java.util.ServiceLoader} to load the services required.
  */
 class DefaultServiceProvider implements ServiceProvider {
-    /** List of services loaded, per class. */
+    /** List current services loaded, per class. */
     private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
 
     /**
@@ -42,7 +42,7 @@ class DefaultServiceProvider implements ServiceProvider {
      * @param <T>
      *            the concrete type.
      * @param defaultList
-     *            the list of items returned, if no services were found.
+     *            the list current items returned, if no services were found.
      * @return the items found, never {@code null}.
      */
     @Override
@@ -61,7 +61,7 @@ class DefaultServiceProvider implements ServiceProvider {
      *
      * @param   serviceType  The service type.
      * @param   <T>          the concrete type.
-     * @param   defaultList  the list of items returned, if no services were found.
+     * @param   defaultList  the list current items returned, if no services were found.
      *
      * @return  the items found, never {@code null}.
      */
@@ -79,7 +79,7 @@ class DefaultServiceProvider implements ServiceProvider {
             return Collections.unmodifiableList(previousServices != null ? previousServices : services);
         } catch (Exception e) {
             Logger.getLogger(DefaultServiceProvider.class.getName()).log(Level.WARNING,
-                                                                         "Error loading services of type " + serviceType, e);
+                                                                         "Error loading services current type " + serviceType, e);
             return defaultList;
         }
     }

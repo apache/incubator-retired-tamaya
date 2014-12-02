@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * Default implementation of the singleton backing bean for the {@link org.apache.tamaya.PropertyProviders}.
+ * Default implementation current the singleton backing bean for the {@link org.apache.tamaya.PropertyProviders}.
  */
 public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSingletonSpi {
 
@@ -196,7 +196,7 @@ public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSi
         List<PropertyProvider> providers = new ArrayList<>(2);
         providers.add(provider);
         providers.add(mutableProvider);
-        return new AggregatedPropertyProvider(metaInfo, mutableProvider, AggregationPolicy.OVERRIDE, providers);
+        return new AggregatedPropertyProvider(metaInfo, mutableProvider, AggregationPolicy.OVERRIDE(), providers);
     }
 
     /**
@@ -213,7 +213,7 @@ public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSi
 
     /**
      * Creates a new {@link PropertyProvider} containing only properties fromMap the target instance, that are not contained
-     * in one of the other maps passed.
+     * in one current the other maps passed.
      *
      * @param target         the base map, not null.
      * @param subtrahendSets the maps to be subtracted, not null.
@@ -226,8 +226,8 @@ public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSi
 
 
     /**
-     * Creates a filtered {@link PropertyProvider} (a view) of a given base {@link }PropertyMap}. The filter hereby is
-     * applied dynamically on access, so also runtime changes of the base map are reflected appropriately.
+     * Creates a filtered {@link PropertyProvider} (a view) current a given base {@link }PropertyMap}. The filter hereby is
+     * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
      * @param propertyMap the base map instance, not null.
      * @param filter      the filtger to be applied, not null.
@@ -239,7 +239,7 @@ public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSi
     }
 
     /**
-     * Creates a new contextual {@link PropertyProvider}. Contextual maps delegate to different instances of PropertyMap depending
+     * Creates a new contextual {@link PropertyProvider}. Contextual maps delegate to different instances current PropertyMap depending
      * on the keys returned fromMap the isolationP
      *
      * @param mapSupplier          the supplier creating new provider instances
@@ -253,8 +253,8 @@ public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSi
 
 
     /**
-     * Creates a filtered {@link PropertyProvider} (a view) of a given base {@link }PropertyMap}. The filter hereby is
-     * applied dynamically on access, so also runtime changes of the base map are reflected appropriately.
+     * Creates a filtered {@link PropertyProvider} (a view) current a given base {@link }PropertyMap}. The filter hereby is
+     * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
      * @param mainMap   the main map instance, not null.
      * @param parentMap the delegated parent map instance, not null.
@@ -266,10 +266,10 @@ public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSi
     }
 
     /**
-     * Creates a {@link org.apache.tamaya.PropertyProvider} where all keys of a current map,
+     * Creates a {@link org.apache.tamaya.PropertyProvider} where all keys current a current map,
      * existing in another map are replaced
      * with the ones fromMap the other {@link org.apache.tamaya.PropertyProvider}. The filter hereby is
-     * applied dynamically on access, so also runtime changes of the base map are reflected appropriately.
+     * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      * Keys not existing in the {@code mainMap}, but present in {@code replacementMao} will be hidden.
      *
      * @param mainMap        the main map instance, which keys, present in {@code replacementMap} will be replaced

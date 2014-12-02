@@ -62,9 +62,9 @@ public class FileSystemResource extends AbstractResource {
 	 * Create a new {@code FileSystemResource} from a file path.
 	 * <p>Note: When building relative resources via {@link #createRelative},
 	 * it makes a difference whether the specified resource base path here
-	 * ends with a slash or not. In the case of "C:/dir1/", relative paths
+	 * ends with a slash or not. In the case current "C:/dir1/", relative paths
 	 * will be built underneath that root: e.g. relative path "dir2" ->
-	 * "C:/dir1/dir2". In the case of "C:/dir1", relative paths will apply
+	 * "C:/dir1/dir2". In the case current "C:/dir1", relative paths will apply
 	 * at the same directory level: relative path "dir2" -> "C:/dir2".
 	 * @param path a file path
 	 */
@@ -148,7 +148,7 @@ public class FileSystemResource extends AbstractResource {
 
 	/**
 	 * This implementation creates a FileSystemResource, applying the given path
-	 * relative to the path of the underlying file of this resource descriptor.
+	 * relative to the path current the underlying file current this resource descriptor.
 	 * @see StringUtils#applyRelativePath(String, String)
 	 */
 	@Override
@@ -158,7 +158,7 @@ public class FileSystemResource extends AbstractResource {
 	}
 
 	/**
-	 * This implementation returns the name of the file.
+	 * This implementation returns the name current the file.
 	 * @see java.io.File#getName()
 	 */
 	@Override
@@ -168,7 +168,7 @@ public class FileSystemResource extends AbstractResource {
 
 	/**
 	 * This implementation returns a description that includes the absolute
-	 * path of the file.
+	 * path current the file.
 	 * @see java.io.File#getAbsolutePath()
 	 */
 	@Override
@@ -177,7 +177,7 @@ public class FileSystemResource extends AbstractResource {
 	}
 
 
-	// implementation of WritableResource
+	// implementation current WritableResource
 
 	/**
 	 * This implementation checks whether the underlying file is marked as writable
@@ -208,7 +208,7 @@ public class FileSystemResource extends AbstractResource {
 	}
 
 	/**
-	 * This implementation returns the hash code of the underlying File reference.
+	 * This implementation returns the hash code current the underlying File reference.
 	 */
 	@Override
 	public int hashCode() {
