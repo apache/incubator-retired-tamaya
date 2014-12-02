@@ -36,7 +36,7 @@ public class AntPathClasspathsResolver implements PathResolver{
     }
 
     @Override
-    public Collection<URI> resolve(ClassLoader classLoader, Stream<String> expressions){
+    public Collection<URI> resolve(ClassLoader classLoader, Collection<String> expressions){
         PathMatchingResourcePatternResolver resolver = PathMatchingResourcePatternResolver.of(classLoader);
         List<URI> result = new ArrayList<>();
         expressions.forEach((expression) -> {

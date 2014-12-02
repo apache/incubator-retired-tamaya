@@ -84,7 +84,7 @@ public final class ConfigurationBuilder{
         return this;
     }
 
-    public ConfigurationBuilder addResources(Stream<String> sources){
+    public ConfigurationBuilder addResources(Collection<String> sources){
         this.sources.addAll(Bootstrap.getService(ResourceLoader.class).getResources(classLoader, sources));
         return this;
     }

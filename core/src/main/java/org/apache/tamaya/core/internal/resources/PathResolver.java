@@ -40,6 +40,6 @@ public interface PathResolver{
      * @param expressions expressions, never null.
      * @return the resolved URIs, never null.
      */
-    public Collection<URI> resolve(ClassLoader classLoader, Stream<String> expressions);
+    public Collection<URI> resolve(ClassLoader classLoader, Collection<String> expressions);
 
 }

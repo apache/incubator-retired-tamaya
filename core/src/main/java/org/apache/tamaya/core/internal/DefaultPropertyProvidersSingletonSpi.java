@@ -44,7 +44,9 @@ public class DefaultPropertyProvidersSingletonSpi implements PropertyProvidersSi
 
     @Override
     public PropertyProvider fromArgs(MetaInfo metaInfo, String... args) {
-        Objects.requireNonNull(metaInfo);
+        if(metaInfo==null){
+            metaInfo = MetaInfo.of("CLI");
+        }
         // TODO read the CLI with some better library, e.g. move parsing service to ext. service SPI
         Map<String, String> properties = new HashMap<>();
         for (int base = 0; base < args.length; base++) {

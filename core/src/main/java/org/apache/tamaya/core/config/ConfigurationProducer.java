@@ -47,7 +47,7 @@ final class ConfigurationProducer implements Supplier<Configuration>{
         if(ignoredSourcesFilter!=null){
             builder.setIgnoredSourcesFilter(ignoredSourcesFilter);
         }
-        builder.addResources(resources.stream());
+        builder.addResources(resources);
         if(classLoader!=null){
             builder.setClassLoader(classLoader);
         }

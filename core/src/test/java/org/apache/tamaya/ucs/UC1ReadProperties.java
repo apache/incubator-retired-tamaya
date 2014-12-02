@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.ucs.UC1ReadProperties;
+package org.apache.tamaya.ucs;
 
 import org.apache.tamaya.*;
 import org.junit.Test;
@@ -54,7 +54,7 @@ import static org.junit.Assert.assertNotNull;
  * <li>Properties can also be provided as properties, or as a Map<String,String></li>
  * </ul>
  */
-public class UC1ReadPropertiesTest {
+public class UC1ReadProperties {
 
     @Test
     public void example() {

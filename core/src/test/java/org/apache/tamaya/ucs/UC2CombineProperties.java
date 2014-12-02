@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.ucs.UC2CombineProperties;
+package org.apache.tamaya.ucs;
 
 import org.apache.tamaya.*;
 import org.junit.Test;
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * multiple property maps and applying hereby some combination policy. This test class demonstrates the different
  * options Tamaya is providing and the according mechanisms.
  */
-public class UC2CombinePropertiesTest {
+public class UC2CombineProperties {
 
     /**
      * The most common use cases is aggregating two property providers to new provider, hereby {@link org.apache.tamaya.AggregationPolicy}

@@ -34,7 +34,7 @@ public interface AggregationPolicy {
 
     /** Ignore overrides, only extend (additive). */
     public static AggregationPolicy IGNORE_DUPLICATES() {
-        return (k, v1, v2) -> v1;
+        return (k, v1, v2) -> v1 == null? v2 : v1;
     }
 
     /** Combine multiple values into a comma separated list. */

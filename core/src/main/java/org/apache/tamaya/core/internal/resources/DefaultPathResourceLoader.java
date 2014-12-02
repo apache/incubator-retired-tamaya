@@ -24,12 +24,16 @@ import org.apache.tamaya.spi.Bootstrap;
 
 import java.net.URI;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
  * Singleton accessor to access registered reader mechanism.
  */
 public class DefaultPathResourceLoader implements ResourceLoader{
+
+    private static final Logger LOG = Logger.getLogger(DefaultPathResourceLoader.class.getName());
 
     @Override
     public Collection<String> getResolverIds(){
@@ -50,7 +54,7 @@ public class DefaultPathResourceLoader implements ResourceLoader{
     }
 
     @Override
-    public List<URI> getResources(Stream<String> expressions){
+    public List<URI> getResources(Collection<String> expressions){
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             cl = getClass().getClassLoader();
@@ -62,16 +66,26 @@ public class DefaultPathResourceLoader implements ResourceLoader{
     public List<URI> getResources(ClassLoader classLoader, String... expressions){
         List<URI> uris = new ArrayList<>();
         for(PathResolver resolver : Bootstrap.getServices(PathResolver.class)){
-            uris.addAll(resolver.resolve(classLoader, Arrays.asList(expressions).stream()));
+            try {
+                uris.addAll(resolver.resolve(classLoader, Arrays.asList(expressions)));
+            }
+            catch(Exception e){
+                LOG.log(Level.FINEST, e, () -> "Resource not found: " + Arrays.toString(expressions));
+            }
         }
         return uris;
     }
 
     @Override
-    public List<URI> getResources(ClassLoader classLoader, Stream<String> expressions){
+    public List<URI> getResources(ClassLoader classLoader, Collection<String> expressions){
         List<URI> uris = new ArrayList<>();
         for(PathResolver resolver : Bootstrap.getServices(PathResolver.class)){
-            uris.addAll(resolver.resolve(classLoader, expressions));
+            try{
+                uris.addAll(resolver.resolve(classLoader, expressions));
+            }
+            catch(Exception e){
+                LOG.log(Level.FINEST, e, () -> "Resource not found: " + expressions.toString());
+            }
         }
         return uris;
     }

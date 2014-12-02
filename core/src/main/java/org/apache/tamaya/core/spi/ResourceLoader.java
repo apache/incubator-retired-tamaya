@@ -61,7 +61,7 @@ public interface ResourceLoader{
      * concrete resources to be read by a {@link org.apache.tamaya.core.spi.ConfigurationFormat}
      * .
      */
-    List<URI> getResources(Stream<String> expressions);
+    List<URI> getResources(Collection<String> expressions);
 
     /**
      * Called, when a given expression has to be resolved.
@@ -81,6 +81,6 @@ public interface ResourceLoader{
      * concrete resources to be read by a {@link org.apache.tamaya.core.spi.ConfigurationFormat}
      * .
      */
-    List<URI> getResources(ClassLoader classLoader, Stream<String> expressions);
+    List<URI> getResources(ClassLoader classLoader, Collection<String> expressions);
 
 }
