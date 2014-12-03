@@ -349,6 +349,22 @@ under the License.
     </dependencyManagement>
 
     <profiles>
+        <!-- The release profile. It ensures that all checks
+             will be done and everything will be build what need
+             to be build. -->
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                </property>
+            </activation>
+            <properties>
+                <enforcer.skip>false</enforcer.skip>
+                <findbugs.skip>false</findbugs.skip>
+            </properties>
+        </profile>
+
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
