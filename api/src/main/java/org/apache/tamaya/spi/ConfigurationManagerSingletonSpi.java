@@ -102,17 +102,4 @@ public interface ConfigurationManagerSingletonSpi{
      */
     String evaluateValue(Configuration config, String expression);
 
-    /**
-     * Adds a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind current config changes.
-     * @param listener the {@link java.beans.PropertyChangeListener} instance to be added, not null.
-     */
-    void addPropertyChangeListener(PropertyChangeListener listener);
-
-    /**
-     * Removes a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind current config changes,
-     * if one is currently registered.
-     * @param listener the {@link java.beans.PropertyChangeListener} instance to be removed, not null.
-     */
-    void removePropertyChangeListener(PropertyChangeListener listener);
-
 }

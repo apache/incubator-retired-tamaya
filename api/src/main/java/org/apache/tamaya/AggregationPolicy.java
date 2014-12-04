@@ -33,34 +33,27 @@ public interface AggregationPolicy {
     public String aggregate(String key, String value1, String value2);
 
     /** Ignore overrides, only extend (additive). */
-    public static AggregationPolicy IGNORE_DUPLICATES() {
-        return (k, v1, v2) -> v1 == null? v2 : v1;
-    }
+    public static final AggregationPolicy IGNORE_DUPLICATES = (k, v1, v2) -> v1 == null? v2 : v1;
 
     /** Combine multiple values into a comma separated list. */
-    public static AggregationPolicy COMBINE() {
-        return (k, v1, v2) -> v1 != null && v2 != null ? v1 + ',' + v2: v2;
-    }
+    public static final AggregationPolicy COMBINE = (k, v1, v2) -> v1 != null && v2 != null ? v1 + ',' + v2: v2;
 
     /**
      * Interpret later keys as override (additive and override), replacing
      * the key loaded earlier/fromMap previous contained
      * {@link org.apache.tamaya.PropertyProvider}.
      */
-    public static AggregationPolicy OVERRIDE() {
-        return (k, v1, v2) -> v2;
-    }
+    public static final AggregationPolicy OVERRIDE = (k, v1, v2) -> v2;
 
     /**
      * Throw an exception, when keys are not disjunctive (strictly
      * additive).
      */
-    public static AggregationPolicy EXCEPTION() {
-        return (String key, String value, String newValue) -> {
+    public static final AggregationPolicy EXCEPTION =
+        (String key, String value, String newValue) -> {
             if(value!=null && newValue!=null && !value.equals(newValue)){
                 throw new ConfigException("Conflicting values encountered key="+key+", value="+value+", newValue="+newValue);
             }
             return newValue;
         };
-    }
 }

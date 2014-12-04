@@ -85,15 +85,4 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
         return expression;
     }
 
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        // TODO
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        // TODO
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 }

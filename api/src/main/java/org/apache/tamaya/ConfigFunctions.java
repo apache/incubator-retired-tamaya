@@ -28,12 +28,14 @@ public final class ConfigFunctions {
     /**
      * Private singleton constructor.
      */
-    private ConfigFunctions(){}
+    private ConfigFunctions() {
+    }
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given area (non recursive). Hereby
      * the area key is stripped away fromMap the resulting key.
+     *
      * @param areaKey the area key, not null
      * @return the area configuration, with the areaKey stripped away.
      */
@@ -44,32 +46,34 @@ public final class ConfigFunctions {
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given area (non recursive).
-     * @param areaKey the area key, not null
+     *
+     * @param areaKey   the area key, not null
      * @param stripKeys if set to true, the area key is stripped away fromMap the resulting key.
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator selectArea(String areaKey, boolean stripKeys){
+    public static ConfigOperator selectArea(String areaKey, boolean stripKeys) {
         return config -> {
             Map<String, String> area = new HashMap<>();
             area.putAll(
                     config.toMap().entrySet().stream()
-                    .filter(e -> isKeyInArea(e.getKey(), areaKey))
-                    .collect(Collectors.toMap(
-                            e -> stripKeys? e.getKey().substring(areaKey.length()+1) : e.getKey(),
-                            e -> e.getValue())));
-            return PropertyProviders.fromMap(area).toConfiguration();
+                            .filter(e -> isKeyInArea(e.getKey(), areaKey))
+                            .collect(Collectors.toMap(
+                                    e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
+                                    e -> e.getValue())));
+            return PropertyProviderBuilder.create("area: " + areaKey).addMap(area).build().toConfiguration();
         };
     }
 
     /**
      * Calculates the current area key and compares it with the given key.
-     * @param key the fully qualified entry key, not null
+     *
+     * @param key     the fully qualified entry key, not null
      * @param areaKey the area key, not null
      * @return true, if the entry is exact in this area
      */
-    public static boolean isKeyInArea(String key, String areaKey){
+    public static boolean isKeyInArea(String key, String areaKey) {
         int lastIndex = key.lastIndexOf('.');
-        String curAreaKey =  lastIndex > 0 ? key.substring(0, lastIndex) : "";
+        String curAreaKey = lastIndex > 0 ? key.substring(0, lastIndex) : "";
         return curAreaKey.equals(areaKey);
     }
 
@@ -77,6 +81,7 @@ public final class ConfigFunctions {
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given area (recursive). Hereby
      * the area key is stripped away fromMap the resulting key.
+     *
      * @param areaKey the area key, not null
      * @return the area configuration, with the areaKey stripped away.
      */
@@ -87,21 +92,22 @@ public final class ConfigFunctions {
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given area (recursive).
-     * @param areaKey the area key, not null
+     *
+     * @param areaKey   the area key, not null
      * @param stripKeys if set to true, the area key is stripped away fromMap the resulting key.
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator selectAreaRecursive(String areaKey, boolean stripKeys){
+    public static ConfigOperator selectAreaRecursive(String areaKey, boolean stripKeys) {
         return config -> {
             Map<String, String> area = new HashMap<>();
             String lookupKey = areaKey + '.';
             area.putAll(
                     config.toMap().entrySet().stream()
-                    .filter(e -> e.getKey().startsWith(lookupKey))
-                    .collect(Collectors.toMap(
-                            e -> stripKeys? e.getKey().substring(areaKey.length()+1) : e.getKey(),
-                            e -> e.getValue())));
-            return PropertyProviders.fromMap(area).toConfiguration();
+                            .filter(e -> e.getKey().startsWith(lookupKey))
+                            .collect(Collectors.toMap(
+                                    e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
+                                    e -> e.getValue())));
+            return PropertyProviderBuilder.create("area (recursive): " + areaKey).addMap(area).build().toConfiguration();
         };
     }
 }

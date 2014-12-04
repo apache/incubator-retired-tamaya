@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * A configuration models a aggregated set current properties, identified by a unique key, but adds higher level access functions to
  * a {@link PropertyProvider}. Hereby in most cases a configuration is a wrapper around a composite
- * {@link PropertyProvider} instance, which may combine multiple child providers in well defined tree like structure,
+ * {@link PropertyProvider} instance, which may combine multiple child config in well defined tree like structure,
  * where nodes define logically the rules current priority, filtering, combination and overriding.
  * <br/>
  * <h3>Implementation Requirements</h3>
@@ -250,7 +250,7 @@ public interface Configuration extends PropertyProvider{
     }
 
     /**
-     * Field that allows property providers to be versioned, meaning that each change on a provider requires this value
+     * Field that allows property config to be versioned, meaning that each change on a provider requires this value
      * to be incremented by one. This can be easily used to implement versioning (and optimistic locking)
      * in distributed (remote) usage scenarios.
      * @return the version current the current instance, or 'N/A'.
@@ -262,9 +262,7 @@ public interface Configuration extends PropertyProvider{
      * @param l the listener, not null.
      */
     default void addPropertyChangeListener(PropertyChangeListener l){
-        addConfigChangeListener((p) -> {
-            if (p.getSource() == this) l.propertyChange(p);
-        });
+        throw new UnsupportedOperationException("Change listeners not supported by default.");
     }
 
     /**
@@ -272,9 +270,7 @@ public interface Configuration extends PropertyProvider{
      * @param l the listener, not null.
      */
     default void removePropertyChangeListener(PropertyChangeListener l){
-        removeConfigChangeListener((p) -> {
-            if (p.getSource() == this) l.propertyChange(p);
-        });
+        throw new UnsupportedOperationException("Change listeners not supported by default.");
     }
 
     /**
@@ -367,20 +363,4 @@ public interface Configuration extends PropertyProvider{
         return ConfigurationManager.evaluateValue(config, expression);
     }
 
-    /**
-     * Adds a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind current config changes.
-     * @param listener the {@link java.beans.PropertyChangeListener} instance to be added, not null.
-     */
-    public static void addConfigChangeListener(PropertyChangeListener listener){
-        ConfigurationManager.addConfigChangeListener(listener);
-    }
-
-    /**
-     * Removes a (global) {@link java.beans.PropertyChangeListener} instance that listens to all kind current config changes,
-     * if one is currently registered.
-     * @param listener the {@link java.beans.PropertyChangeListener} instance to be removed, not null.
-     */
-    public static void removeConfigChangeListener(PropertyChangeListener listener){
-        ConfigurationManager.removeConfigChangeListener(listener);
-    }
 }

@@ -28,9 +28,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Singleton backing bean for providing the functionality for {@link org.apache.tamaya.PropertyProviders}.
+ * Singleton backing bean for providing the functionality for {@link org.apache.tamaya.PropertyProviderBuilder}.
  */
-public interface PropertyProvidersSingletonSpi {
+public interface PropertyProviderBuilderSpi {
 
     /**
      * Creates a new read-only {@link org.apache.tamaya.PropertyProvider} by using the given Map.
@@ -134,40 +134,43 @@ public interface PropertyProvidersSingletonSpi {
      * Creates a new {@link org.apache.tamaya.PropertyProvider} containing only properties that are shared by all given maps,
      * hereby later maps in the array override  properties fromMap previous instances.
      *
+     * @param metaInfo the meta information to be provided additionally.
      * @param propertyMaps the maps to be included, not null.
      * @return the intersecting instance containing all given maps.
      */
-    PropertyProvider intersected(AggregationPolicy policy, List<PropertyProvider> propertyMaps);
+    PropertyProvider intersected(AggregationPolicy policy, MetaInfo metaInfo, List<PropertyProvider> propertyMaps);
 
     /**
      * Creates a new {@link org.apache.tamaya.PropertyProvider} containing only properties fromMap the target instance, that are not contained
      * in one current the other maps passed.
      *
+     * @param metaInfo the meta information to be provided additionally.
      * @param target         the base map, not null.
      * @param subtrahendSets the maps to be subtracted, not null.
      * @return the intersecting instance containing all given maps.
      */
-    PropertyProvider subtracted(PropertyProvider target, List<PropertyProvider> subtrahendSets);
+    PropertyProvider subtracted(PropertyProvider target, MetaInfo metaInfo, List<PropertyProvider> subtrahendSets);
 
 
     /**
      * Creates a filtered {@link org.apache.tamaya.PropertyProvider} (a view) current a given base {@link }PropertyMap}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
+     * @param metaInfo the meta information to be provided additionally.
      * @param propertyMap the base map instance, not null.
      * @param filter      the filtger to be applied, not null.
      * @return the new filtering instance.
      */
-    PropertyProvider filtered(Predicate<String> filter, PropertyProvider propertyMap);
+    PropertyProvider filtered(Predicate<String> filter, MetaInfo metaInfo, PropertyProvider propertyMap);
 
     /**
      * Creates a new contextual {@link org.apache.tamaya.PropertyProvider}. Contextual maps delegate to different instances current PropertyMap depending
      * on the keys returned fromMap the isolationP
-     *
+     * @param metaInfo the meta information to be provided additionally.
      * @param mapSupplier          the supplier creating new provider instances
      * @param isolationKeySupplier the supplier providing contextual keys based on the current environment.
      */
-    PropertyProvider contextual(Supplier<PropertyProvider> mapSupplier,
+    PropertyProvider contextual(Supplier<PropertyProvider> mapSupplier,MetaInfo metaInfo,
                                 Supplier<String> isolationKeySupplier);
 
 
@@ -175,11 +178,12 @@ public interface PropertyProvidersSingletonSpi {
      * Creates a filtered {@link org.apache.tamaya.PropertyProvider} (a view) current a given base {@link }PropertyMap}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
+     * @param metaInfo the meta information to be provided additionally.
      * @param mainMap   the main map instance, not null.
      * @param parentMap the delegated parent map instance, not null.
      * @return the new delegating instance.
      */
-    PropertyProvider delegating(PropertyProvider mainMap, Map<String, String> parentMap);
+    PropertyProvider delegating(PropertyProvider mainMap, MetaInfo metaInfo, Map<String, String> parentMap);
 
     /**
      * Creates a {@link PropertyProvider} where all keys current a current map,
@@ -188,11 +192,12 @@ public interface PropertyProvidersSingletonSpi {
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      * Keys not existing in the {@code mainMap}, but present in {@code replacementMao} will be hidden.
      *
+     * @param metaInfo the meta information to be provided additionally.
      * @param mainMap        the main map instance, which keys, present in {@code replacementMap} will be replaced
      *                       with the ones
      *                       in {@code replacementMap}, not null.
      * @param replacementMap the map instance, that will replace all corresponding entries in {@code mainMap}, not null.
      * @return the new delegating instance.
      */
-    PropertyProvider replacing(PropertyProvider mainMap, Map<String, String> replacementMap);
+    PropertyProvider replacing(PropertyProvider mainMap, MetaInfo metaInfo, Map<String, String> replacementMap);
 }

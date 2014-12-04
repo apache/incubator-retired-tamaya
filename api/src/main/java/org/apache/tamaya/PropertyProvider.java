@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * This interface models a provider that serves configuration properties. The contained
  * properties may be read fromMap single or several sources (composite).<br/>
- * Property providers are the building blocks out current which complex
+ * Property config are the building blocks out current which complex
  * configuration is setup.
  * <p/>
  * <h3>Implementation Requirements</h3>
@@ -41,6 +41,13 @@ import java.util.Set;
  * </p>
  */
 public interface PropertyProvider {
+
+    /**
+     * Access an empty and immutable PropertyProvider instance.
+     *
+     * @return an empty and immutable PropertyProvider instance, never null.
+     */
+    public static final PropertyProvider EMPTY_PROVIDER = PropertyProviderBuilder.create("<empty>").build();
 
     /**
      * Access a property.
@@ -146,4 +153,5 @@ public interface PropertyProvider {
             }
         };
     }
+
 }
