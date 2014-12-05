@@ -46,6 +46,7 @@ under the License.
 		<maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <rat.skip>true</rat.skip>
@@ -55,6 +56,7 @@ under the License.
         <asciidoctor.version>1.5.0</asciidoctor.version>
         <enforcer.version>1.3.1</enforcer.version>
         <hamcrest.version>1.3</hamcrest.version>
+        <javadoc.version>2.9.1</javadoc.version>
         <findbugs.version>3.0.0</findbugs.version>
         <rat.version>0.11</rat.version>
 	</properties>
@@ -308,7 +310,7 @@ under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>${javadoc.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -373,6 +375,7 @@ under the License.
             <properties>
                 <enforcer.skip>false</enforcer.skip>
                 <findbugs.skip>false</findbugs.skip>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
                 <rat.skip>false</rat.skip>
             </properties>
         </profile>
@@ -431,6 +434,18 @@ under the License.
                 <findbugs.skip>false</findbugs.skip>
             </properties>
 
+        </profile>
+
+        <profile>
+            <id>javadoc</id>
+            <activation>
+                <property>
+                    <name>javadoc</name>
+                </property>
+            </activation>
+            <properties>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+            </properties>
         </profile>
     </profiles>
     <reporting>
