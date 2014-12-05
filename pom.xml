@@ -48,6 +48,7 @@ under the License.
         <maven.compile.deprecation>true</maven.compile.deprecation>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <rat.skip>true</rat.skip>
 		<junit.version>4.11</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
@@ -55,6 +56,7 @@ under the License.
         <enforcer.version>1.3.1</enforcer.version>
         <hamcrest.version>1.3</hamcrest.version>
         <findbugs.version>3.0.0</findbugs.version>
+        <rat.version>0.11</rat.version>
 	</properties>
 
     <licenses>
@@ -194,6 +196,11 @@ under the License.
                     <inherited>true</inherited>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>≈${rat.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>surefire-report-maven-plugin</artifactId>
                     <inherited>true</inherited>
@@ -320,6 +327,10 @@ under the License.
                     <verbose>false</verbose>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+            </plugin>
         </plugins>
 	</build>
 
@@ -362,6 +373,7 @@ under the License.
             <properties>
                 <enforcer.skip>false</enforcer.skip>
                 <findbugs.skip>false</findbugs.skip>
+                <rat.skip>false</rat.skip>
             </properties>
         </profile>
 
