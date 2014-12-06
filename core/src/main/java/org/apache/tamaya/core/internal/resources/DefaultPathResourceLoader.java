@@ -27,6 +27,7 @@ import org.apache.tamaya.spi.Bootstrap;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Singleton accessor to access registered reader mechanism.
@@ -37,11 +38,7 @@ public class DefaultPathResourceLoader implements ResourceLoader{
 
     @Override
     public Collection<String> getResolverIds(){
-        Set<String> ids = new HashSet<>();
-        for(PathResolver resolver : Bootstrap.getServices(PathResolver.class)){
-            ids.add(resolver.getResolverId());
-        }
-        return ids;
+        return Bootstrap.getServices(PathResolver.class).stream().map(PathResolver::getResolverId).collect(Collectors.toSet());
     }
 
     @Override

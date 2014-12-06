@@ -34,6 +34,7 @@ import java.net.URISyntaxException;
 import java.net.URLClassLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 /**
@@ -564,9 +565,7 @@ public final class PathMatchingResourcePatternResolver{
         logger.finest(() -> "Looking for matching resources in directory tree [" + rootDir.getPath() + "]");
         Set<File> matchingFiles = retrieveMatchingFiles(rootDir, subPattern);
         Set<Resource> result = new LinkedHashSet<Resource>(matchingFiles.size());
-        for (File file : matchingFiles) {
-            result.add(new FileSystemResource(file));
-        }
+        result.addAll(matchingFiles.stream().map(FileSystemResource::new).collect(Collectors.toList()));
         return result;
     }
 

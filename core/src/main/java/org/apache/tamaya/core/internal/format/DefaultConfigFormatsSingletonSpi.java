@@ -23,6 +23,7 @@ import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.ConfigurationFormatsSingletonSpi;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.tamaya.spi.Bootstrap;
 
@@ -49,9 +50,8 @@ public final class DefaultConfigFormatsSingletonSpi implements ConfigurationForm
     public Collection<String> getFormatNames(){
         Set<String> result = new HashSet<>();
         try {
-            for (ConfigurationFormat configFormat : Bootstrap.getServices(ConfigurationFormat.class)) {
-                result.add(configFormat.getFormatName());
-            }
+            result.addAll(Bootstrap.getServices(ConfigurationFormat.class).stream().map(ConfigurationFormat::getFormatName)
+                    .collect(Collectors.toList()));
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
