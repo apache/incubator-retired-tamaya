@@ -35,8 +35,6 @@ under the License.
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
-        <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
     </properties>
 
     <build>
@@ -58,16 +56,7 @@ under the License.
                     <keywords>true</keywords>
                     <linksource>false</linksource>
                     <failOnError>false</failOnError>
-                    <source>${maven.compile.sourceLevel}</source>
                     <verbose>false</verbose>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${maven.compile.sourceLevel}</source>
-                    <target>${maven.compile.targetLevel}</target>
                 </configuration>
             </plugin>
             <plugin>

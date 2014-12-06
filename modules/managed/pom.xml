@@ -31,9 +31,6 @@ under the License.
     <packaging>jar</packaging>
 
     <properties>
-        <jdkVersion>1.8</jdkVersion>
-        <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
-        <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
     </properties>
 
     <build>
@@ -49,14 +46,6 @@ under the License.
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${maven.compile.sourceLevel}</source>
-                    <target>${maven.compile.targetLevel}</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -31,9 +31,6 @@ under the License.
     <packaging>jar</packaging>
 
     <properties>
-        <jdkVersion>1.8</jdkVersion>
-        <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
-        <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
         <owb.version>1.5.0-SNAPSHOT</owb.version>
         <weld.version>2.2.7.Final</weld.version>
         <geronimo-jcdi-1.1-spec.version>1.0-SNAPSHOT</geronimo-jcdi-1.1-spec.version>
@@ -56,14 +53,6 @@ under the License.
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${maven.compile.sourceLevel}</source>
-                    <target>${maven.compile.targetLevel}</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>
