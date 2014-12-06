@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annot;
+package org.apache.tamaya.mapping;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation to annotate a method on a class to be informed on config changes.
  * The exact behaviour, when configuration change events are sent can be configured
- * on each configured property/method by adding the {@link org.apache.tamaya.annot.WithLoadPolicy}
+ * on each configured property/method by adding the {@link org.apache.tamaya.mapping.WithLoadPolicy}
  * annotation. By default listeners are only informed about changes that are affecting configured
  * values current the containing class/instance.
  */

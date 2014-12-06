@@ -20,7 +20,7 @@ package org.apache.tamaya.core.internal.properties;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.PropertyAdapter;
-import org.apache.tamaya.annot.WithPropertyAdapter;
+import org.apache.tamaya.mapping.WithPropertyAdapter;
 import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
 import java.math.BigDecimal;
 import java.math.BigInteger;

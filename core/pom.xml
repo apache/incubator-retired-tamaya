@@ -52,7 +52,7 @@ under the License.
                     <instructions>
                         <Import-package>org.apache.tamaya.*</Import-package>
                         <Import-package>org.apache.tamaya.spi.*</Import-package>
-                        <Import-package>org.apache.tamaya.annot.*</Import-package>
+                        <Import-package>org.apache.tamaya.injectt.*</Import-package>
                         <Export-Package>org.apache.tamaya.core.cdi.*</Export-Package>
                         <Export-Package>org.apache.tamaya.core.config.*</Export-Package>
                         <Export-Package>org.apache.tamaya.core.env.*</Export-Package>

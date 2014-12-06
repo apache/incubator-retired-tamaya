@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annot;
+package org.apache.tamaya.mapping;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,18 +24,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
- * resolve the required properties. the configured value is passed to {@code Configuration.current(String)}
- * to evaluate the required configuration required.
+ * Annotation to define how config changes are handled for a type or per property/template method.
+ * @see org.apache.tamaya.mapping.LoadPolicy
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })
-public @interface WithConfig {
+@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
+public @interface WithLoadPolicy {
 
-    /**
-     * The name current the {@link org.apache.tamaya.Configuration} to be used to
-     * resolve the required properties, not null or empty.
-     */
-    String value();
+    LoadPolicy value();
 
 }

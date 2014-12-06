@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annot;
+package org.apache.tamaya.mapping;
+
+import org.apache.tamaya.ConfigOperator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,18 +26,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation container to enable injection current multiple {@link org.apache.tamaya.annot.ConfiguredProperty}
- * annotations. Hereby the ordering current annotations imply the defaulting. The first value that
- * could be resolved successfully in the chain current annotations will be used.
+ * Annotation to define an configuration operator to be used before accessing a configured value.
+ * This allows filtering current configuration, e.g. for realizing views or ensuring security
+ * constraints.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD })
-public @interface ConfiguredProperties {
+@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
+public @interface WithConfigOperator {
 
     /**
-     * Get the different configuration keys to be looked up, in order current precedence. The first non null value
-     * found will be used.
+     * Define a custom adapter that should be used to adapt the configuration entry injected. This overrides any
+     * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
+     * registered, it is handled as a deployment error.
      */
-    ConfiguredProperty[] value() default {};
+    Class<? extends ConfigOperator> value();
 
 }

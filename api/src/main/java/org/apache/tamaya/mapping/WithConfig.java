@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annot;
+package org.apache.tamaya.mapping;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,18 +24,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define a default value to be returned, when no configured value could be
- * determined for a property/template accessor. The value hereby can also contain a
- * dynamic expression that is evaluated by the configuration system.
+ * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
+ * resolve the required properties. the configured value is passed to {@code Configuration.current(String)}
+ * to evaluate the required configuration required.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD })
-public @interface DefaultValue {
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })
+public @interface WithConfig {
 
     /**
-     * The default value to be injected, if no such configuration entry was found. If value was found and no default
-     * is defined, it is handled as a deployment error.
+     * The name current the {@link org.apache.tamaya.Configuration} to be used to
+     * resolve the required properties, not null or empty.
      */
-    String value() default "";
+    String value();
 
 }

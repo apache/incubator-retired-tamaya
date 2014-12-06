@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.annot.WithPropertyAdapter;
+import org.apache.tamaya.mapping.WithPropertyAdapter;
 import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
 import java.math.BigDecimal;
 import java.math.BigInteger;

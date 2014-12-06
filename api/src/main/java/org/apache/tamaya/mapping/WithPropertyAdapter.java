@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annot;
+package org.apache.tamaya.mapping;
+
+import org.apache.tamaya.PropertyAdapter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,13 +26,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define how config changes are handled for a type or per property/template method.
- * @see org.apache.tamaya.annot.LoadPolicy
+ * Annotation to define a type adapter to be used before injecting a configured value.
+ * This will override any other adapter for performing the type conversion before
+ * injecting the field value.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
-public @interface WithLoadPolicy {
+@Target(value = { ElementType.FIELD, ElementType.METHOD })
+public @interface WithPropertyAdapter {
 
-    LoadPolicy value();
+    /**
+     * Define a custom adapter that should be used to adapt the configuration entry injected. This overrides any
+     * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
+     * registered, it is handled as a deployment error.
+     */
+    Class<? extends PropertyAdapter> value();
 
 }

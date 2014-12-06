@@ -19,7 +19,7 @@
 package org.apache.tamaya.spi;
 
 import org.apache.tamaya.PropertyAdapter;
-import org.apache.tamaya.annot.WithPropertyAdapter;
+import org.apache.tamaya.mapping.WithPropertyAdapter;
 
 /**
  * SPI that is used by the {@link org.apache.tamaya.PropertyAdapters} singleton as delegation instance.

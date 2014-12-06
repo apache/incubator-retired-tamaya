@@ -23,8 +23,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.tamaya.annot.ConfiguredProperty;
-import org.apache.tamaya.annot.DefaultValue;
+import org.apache.tamaya.mapping.ConfiguredProperty;
+import org.apache.tamaya.mapping.DefaultValue;
 import org.apache.tamaya.core.internal.config.DefaultConfigurationManagerSingletonSpi;
 import org.junit.Test;
 

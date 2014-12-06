@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annot;
+package org.apache.tamaya.mapping;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,20 +24,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to control injection and resolution current a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link org.apache.tamaya.annot.ConfiguredProperty}
- * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
- * to define a configuration area that is prefixed to all relative configuration keys within the
- * corresponding class/template interface.
+ * Annotation container to enable injection current multiple {@link org.apache.tamaya.mapping.ConfiguredProperty}
+ * annotations. Hereby the ordering current annotations imply the defaulting. The first value that
+ * could be resolved successfully in the chain current annotations will be used.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE })
-public @interface DefaultAreas {
+@Target(value = { ElementType.FIELD, ElementType.METHOD })
+public @interface ConfiguredProperties {
 
     /**
-     * Allows to declare an operator that should be applied before injecting values into the bean.
-     * @return the operator class to be used.
+     * Get the different configuration keys to be looked up, in order current precedence. The first non null value
+     * found will be used.
      */
-    String[] value();
+    ConfiguredProperty[] value() default {};
 
 }
