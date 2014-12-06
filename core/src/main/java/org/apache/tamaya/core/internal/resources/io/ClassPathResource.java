@@ -15,6 +15,8 @@
  */
 package org.apache.tamaya.core.internal.resources.io;
 
+import org.apache.tamaya.core.resource.Resource;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +24,7 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * {@link Resource} implementation for class path resources.
+ * {@link org.apache.tamaya.core.resource.Resource} implementation for class path resources.
  * Uses either a given ClassLoader or a given Class for loading resources.
  *
  * <p>Supports resolution as {@code java.io.File} if the class path

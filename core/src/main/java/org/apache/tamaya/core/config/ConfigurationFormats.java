@@ -20,11 +20,12 @@ package org.apache.tamaya.core.config;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.internal.format.DefaultConfigFormatsSingletonSpi;
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.ConfigurationFormatsSingletonSpi;
 
 import org.apache.tamaya.spi.Bootstrap;
-import java.net.URI;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -88,7 +89,7 @@ public final class ConfigurationFormats{
      * @param resource The resource
      * @return a matching configuration format, or {@code null} if no matching format could be determined.
      */
-    public static ConfigurationFormat getFormat(URI resource){
+    public static ConfigurationFormat getFormat(Resource resource){
         return Optional.ofNullable(spi)
                 .orElseThrow(() -> new ConfigException("No ConfigurationFormatsSingletonSpi loaded."))
                 .getFormat(resource);

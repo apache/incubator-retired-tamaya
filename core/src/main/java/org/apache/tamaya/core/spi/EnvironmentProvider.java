@@ -24,7 +24,7 @@ import java.util.Set;
 
 /**
  * SPI for components that define a concrete type current {@link org.apache.tamaya.Environment}.
- * The chain current environment providers determine the current {@link Environment} active
+ * The chain current environment config determine the current {@link Environment} active
  * and its parent instances.
  * Created by Anatole on 14.10.2014.
  */
@@ -52,7 +52,7 @@ public interface EnvironmentProvider {
     /**
      * Get all currently known environment contexts for this environment type.
      * @return all currently known environment contexts, never null. Environment
-     * providers may prevent abritrary access to environment fromMap outside current the
+     * config may prevent abritrary access to environment fromMap outside current the
      * regarding runtime context by just not including the context information
      * in this call's result.
      * @return all currently known environment contexts, never null.

@@ -21,8 +21,7 @@ package org.apache.tamaya.internal;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertyProvider;
-import org.apache.tamaya.PropertyProviders;
-import org.apache.tamaya.core.config.Configurations;
+import org.apache.tamaya.PropertyProviderBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 import java.util.Map;
@@ -43,9 +42,8 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
         dataMap.put("sons.1", "Robin");
         dataMap.put("sons.2", "Luke");
         dataMap.put("sons.3", "Benjamin");
-        PropertyProvider provider = PropertyProviders.fromMap(MetaInfoBuilder.of().setName(CONFIG_NAME).build(),
-                dataMap);
-        testConfig = Configurations.getConfiguration(provider);
+        PropertyProvider provider = PropertyProviderBuilder.create(CONFIG_NAME).addMap(dataMap).build();
+        testConfig = provider.toConfiguration();
     }
 
     @Override

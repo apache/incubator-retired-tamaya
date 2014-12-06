@@ -15,6 +15,8 @@
  */
 package org.apache.tamaya.core.internal.resources.io;
 
+import org.apache.tamaya.core.resource.Resource;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +25,7 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * JBoss VFS based {@link Resource} implementation.
+ * JBoss VFS based {@link org.apache.tamaya.core.resource.Resource} implementation.
  *
  * <p>As current Spring 4.0, this class supports VFS 3.x on JBoss AS 6+ (package
  * {@code org.jboss.vfs}) and is in particular compatible with JBoss AS 7 and

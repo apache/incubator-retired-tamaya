@@ -22,13 +22,13 @@ import org.apache.tamaya.Environment;
 import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.env.EnvironmentBuilder;
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
-import org.apache.tamaya.core.spi.ResourceLoader;
+import org.apache.tamaya.core.resource.ResourceLoader;
 
 
-import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,17 +59,17 @@ public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider
         if(env!=null){
             return env;
         }
-        List<URI> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(ClassLoader.getSystemClassLoader(),
-                "classpath*:META-INF/env/system.properties", "classpath*:META-INF/env/system.xml", "classpath*:META-INF/env/system.ini");
+        List<Resource> propertyResources = Bootstrap.getService(ResourceLoader.class).getResources(ClassLoader.getSystemClassLoader(),
+                "classpath:META-INF/env/system.properties", "classpath:META-INF/env/system.xml", "classpath:META-INF/env/system.ini");
         EnvironmentBuilder builder = EnvironmentBuilder.of("system", getEnvironmentType());
-        for(URI uri:propertyUris){
+        for(Resource resource:propertyResources){
             try{
-                ConfigurationFormat format = ConfigurationFormats.getFormat(uri);
-                Map<String,String> data = format.readConfiguration(uri);
+                ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
+                Map<String,String> data = format.readConfiguration(resource);
                 builder.setAll(data);
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error readong environment data fromMap " + uri);
+                LOG.log(Level.INFO, e, () -> "Could not read environment data from " + resource);
             }
         }
         builder.setParent(parentEnvironment);
@@ -81,9 +81,9 @@ public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider
         builder.setStage(stage);
         builder.set("classloader.type", ClassLoader.getSystemClassLoader().getClass().getName());
         builder.set("classloader.info", ClassLoader.getSystemClassLoader().toString());
-        Set<URI> uris = new HashSet<>();
-        uris.addAll(propertyUris);
-        builder.set("environment.sources", uris.toString());
+        Set<Resource> resourceSet = new HashSet<>();
+        resourceSet.addAll(propertyResources);
+        builder.set("environment.sources", resourceSet.toString());
         env = builder.build();
         this.environments.put("system", env);
         return env;

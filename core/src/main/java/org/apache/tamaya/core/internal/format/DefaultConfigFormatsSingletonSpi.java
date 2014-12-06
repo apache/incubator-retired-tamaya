@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.core.internal.format;
 
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.ConfigurationFormatsSingletonSpi;
 
-import java.net.URI;
 import java.util.*;
 
 import org.apache.tamaya.spi.Bootstrap;
@@ -59,7 +59,7 @@ public final class DefaultConfigFormatsSingletonSpi implements ConfigurationForm
         return result;
     }
 
-	public ConfigurationFormat getFormat(URI resource) {
+	public ConfigurationFormat getFormat(Resource resource) {
         Objects.requireNonNull(resource);
         try {
             for (ConfigurationFormat configFormat : Bootstrap.getServices(ConfigurationFormat.class)) {

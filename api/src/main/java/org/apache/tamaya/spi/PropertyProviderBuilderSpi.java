@@ -22,7 +22,9 @@ import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.PropertyProvider;
 
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -61,7 +63,7 @@ public interface PropertyProviderBuilderSpi {
      * @param aggregationPolicy the {@link org.apache.tamaya.AggregationPolicy} to be used to resolve conflicts.
      * @return a new {@link }PropertyMap} instance with the given paths contained as properties.
      */
-    PropertyProvider fromPaths(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<String> paths);
+    PropertyProvider fromPaths(MetaInfo metaInfo, AggregationPolicy aggregationPolicy, List<String> paths);
 
 
     /**
@@ -69,10 +71,10 @@ public interface PropertyProviderBuilderSpi {
      * read hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
      *
      * @param metaInfo the meat information to be provided additionally.
-     * @param uris     the uris to be read, not null.
+     * @param urls     the urls to be read, not null.
      * @return a new {@link }PropertyMap} instance based on the given paths/resources found.
      */
-    PropertyProvider fromUris(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<URI> uris);
+    PropertyProvider fromURLs(MetaInfo metaInfo, AggregationPolicy aggregationPolicy, List<URL> urls);
 
     /**
      * Get an empty and immutable PropertyProvider instance. The meta-information contains the given String
@@ -81,14 +83,6 @@ public interface PropertyProviderBuilderSpi {
      * @return an empty and immutable PropertyProvider instance, never null, with the given Strings as info meta-data..
      */
     PropertyProvider empty(MetaInfo metaInfo);
-
-    /**
-     * Get an empty and mutable PropertyProvider instance. The meta-information contains the given String
-     * under the key 'info'.
-     *
-     * @return an empty and immutable PropertyProvider instance, never null, with the given Strings as info meta-data..
-     */
-    PropertyProvider emptyMutable(MetaInfo metaInfo);
 
     /**
      * Returns a read-only {@link org.apache.tamaya.PropertyProvider} reflecting the current runtime environment properties.
@@ -120,7 +114,7 @@ public interface PropertyProviderBuilderSpi {
      * @param propertyMaps the maps to be included, not null.
      * @return the aggregated instance containing all given maps.
      */
-    PropertyProvider aggregate(AggregationPolicy policy, MetaInfo metaInfo, List<PropertyProvider> propertyMaps);
+    PropertyProvider aggregate(MetaInfo metaInfo, AggregationPolicy policy, List<PropertyProvider> propertyMaps);
 
     /**
      * Creates a new {@link org.apache.tamaya.PropertyProvider} that is mutable by adding a map based instance that overrides
@@ -138,7 +132,7 @@ public interface PropertyProviderBuilderSpi {
      * @param propertyMaps the maps to be included, not null.
      * @return the intersecting instance containing all given maps.
      */
-    PropertyProvider intersected(AggregationPolicy policy, MetaInfo metaInfo, List<PropertyProvider> propertyMaps);
+    PropertyProvider intersected(MetaInfo metaInfo, AggregationPolicy policy, List<PropertyProvider> propertyMaps);
 
     /**
      * Creates a new {@link org.apache.tamaya.PropertyProvider} containing only properties fromMap the target instance, that are not contained
@@ -149,7 +143,7 @@ public interface PropertyProviderBuilderSpi {
      * @param subtrahendSets the maps to be subtracted, not null.
      * @return the intersecting instance containing all given maps.
      */
-    PropertyProvider subtracted(PropertyProvider target, MetaInfo metaInfo, List<PropertyProvider> subtrahendSets);
+    PropertyProvider subtracted(MetaInfo metaInfo, PropertyProvider target, List<PropertyProvider> subtrahendSets);
 
 
     /**
@@ -161,7 +155,7 @@ public interface PropertyProviderBuilderSpi {
      * @param filter      the filtger to be applied, not null.
      * @return the new filtering instance.
      */
-    PropertyProvider filtered(Predicate<String> filter, MetaInfo metaInfo, PropertyProvider propertyMap);
+    PropertyProvider filtered(MetaInfo metaInfo, Predicate<String> filter, PropertyProvider propertyMap);
 
     /**
      * Creates a new contextual {@link org.apache.tamaya.PropertyProvider}. Contextual maps delegate to different instances current PropertyMap depending
@@ -170,7 +164,7 @@ public interface PropertyProviderBuilderSpi {
      * @param mapSupplier          the supplier creating new provider instances
      * @param isolationKeySupplier the supplier providing contextual keys based on the current environment.
      */
-    PropertyProvider contextual(Supplier<PropertyProvider> mapSupplier,MetaInfo metaInfo,
+    PropertyProvider contextual(MetaInfo metaInfo, Supplier<PropertyProvider> mapSupplier,
                                 Supplier<String> isolationKeySupplier);
 
 
@@ -183,7 +177,7 @@ public interface PropertyProviderBuilderSpi {
      * @param parentMap the delegated parent map instance, not null.
      * @return the new delegating instance.
      */
-    PropertyProvider delegating(PropertyProvider mainMap, MetaInfo metaInfo, Map<String, String> parentMap);
+    PropertyProvider delegating(MetaInfo metaInfo, PropertyProvider mainMap, Map<String, String> parentMap);
 
     /**
      * Creates a {@link PropertyProvider} where all keys current a current map,
@@ -199,5 +193,5 @@ public interface PropertyProviderBuilderSpi {
      * @param replacementMap the map instance, that will replace all corresponding entries in {@code mainMap}, not null.
      * @return the new delegating instance.
      */
-    PropertyProvider replacing(PropertyProvider mainMap, MetaInfo metaInfo, Map<String, String> replacementMap);
+    PropertyProvider replacing(MetaInfo metaInfo, PropertyProvider mainMap, Map<String, String> replacementMap);
 }

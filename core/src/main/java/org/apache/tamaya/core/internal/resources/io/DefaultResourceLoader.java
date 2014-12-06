@@ -16,6 +16,8 @@
 
 package org.apache.tamaya.core.internal.resources.io;
 
+import org.apache.tamaya.core.resource.Resource;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;

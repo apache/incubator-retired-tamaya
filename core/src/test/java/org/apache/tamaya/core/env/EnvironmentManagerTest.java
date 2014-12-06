@@ -75,11 +75,12 @@ public class EnvironmentManagerTest {
         List<String> envOrder = Environment.getEnvironmentHierarchy();
         assertNotNull(envOrder);
         assertTrue(envOrder.size()>0);
-        assertTrue(envOrder.contains("root"));
-        assertTrue(envOrder.contains("system"));
-        assertTrue(envOrder.contains("myEar1"));
-        assertTrue(envOrder.contains("MyApp1"));
-        assertTrue(envOrder.get(0).equals("MyApp1"));
+        assertTrue(envOrder.contains("root(root)"));
+        assertTrue(envOrder.contains("system(system)"));
+        assertTrue(envOrder.get(1).contains("(ear)"));
+        assertTrue(envOrder.get(0).contains("(application)"));
+        assertTrue(envOrder.get(2).equals("system(system)"));
+        assertTrue(envOrder.get(3).equals("root(root)"));
     }
 
     @Test
@@ -98,6 +99,6 @@ public class EnvironmentManagerTest {
     @Test
     public void testEnvironmentOverride(){
         assertEquals(Environment.getRootEnvironment().get("user.country").get(),System.getProperty("user.country"));
-        assertEquals(Environment.current().get("user.country").get(), "DE_1234");
+        assertEquals(Environment.current().get("user.country").get(), System.getProperty("user.country"));
     }
 }

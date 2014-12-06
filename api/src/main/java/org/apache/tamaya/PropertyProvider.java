@@ -151,6 +151,10 @@ public interface PropertyProvider {
             public MetaInfo getMetaInfo() {
                 return PropertyProvider.this.getMetaInfo();
             }
+            @Override
+            public String toString() {
+                return "Configuration ["+getMetaInfo().getOwnerInfo()+"]";
+            }
         };
     }
 

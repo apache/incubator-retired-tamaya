@@ -18,44 +18,42 @@
  */
 package org.apache.tamaya.simple;
 
-import org.apache.tamaya.PropertyProviders;
-import org.apache.tamaya.core.config.ConfigurationBuilder;
+import org.apache.tamaya.PropertyProviderBuilder;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.junit.Test;
 
 import org.apache.tamaya.Configuration;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Anatole on 24.02.14.
  */
-public class SimplePropertiesAndCLISample{
+public class SimplePropertiesAndCLISample {
 
     @Test
-    public void testSystemPropertyResolution(){
+    public void testSystemPropertyResolution() {
         System.out.println(Configuration.evaluateValue("${sys:java.version}"));
     }
 
     @Test
-    public void testProgrammatixPropertySet(){
-        System.out.println(PropertyProviders.fromPaths("test", "classpath:test.properties"));
+    public void testProgrammatixPropertySet() {
+        System.out.println(PropertyProviderBuilder.create("test").addPaths("test", "classpath:test.properties").build());
     }
 
     @Test
-    public void testProgrammaticConfig(){
+    public void testProgrammaticConfig() {
         ConfigurationFormat format = ConfigurationFormats.getPropertiesFormat();
-        Map<String,String> cfgMap = new HashMap<>();
+        Map<String, String> cfgMap = new HashMap<>();
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole
-        Configuration config = ConfigurationBuilder.of("myTestConfig").addResources(
-                "classpath:test.properties").addConfigMaps(AggregationPolicy.OVERRIDE(),
-                  PropertyProviders
-                          .fromPaths("classpath:cfg/test.xml"),
-                  PropertyProviders.fromArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}),
-                  PropertyProviders.fromMap(cfgMap)).build();
+        Configuration config = PropertyProviderBuilder.create("myTestConfig").addPaths(
+                "classpath:test.properties").addPaths("classpath:cfg/test.xml")
+                .addArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}).addMap(cfgMap)
+                .build().toConfiguration();
         System.out.println(config.getAreas());
         System.out.println("---");
         System.out.println(config.getAreas(s -> s.startsWith("another")));
@@ -68,7 +66,7 @@ public class SimplePropertiesAndCLISample{
         System.out.print("--- b=");
         System.out.println(config.get("b"));
         System.out.println("--- only a,b,c)");
-        System.out.println(PropertyProviders.filtered((f) -> f.equals("a") || f.equals("b") || f.equals("c"), config));
+        System.out.println(PropertyProviderBuilder.create(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
     }
 
 }

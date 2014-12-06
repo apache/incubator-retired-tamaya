@@ -21,13 +21,13 @@ package org.apache.tamaya.core.internal.env;
 import org.apache.tamaya.Environment;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.env.EnvironmentBuilder;
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
-import org.apache.tamaya.core.spi.ResourceLoader;
+import org.apache.tamaya.core.resource.ResourceLoader;
 
 
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -44,9 +44,10 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
 
     private static  final Logger LOG = Logger.getLogger(ClassLoaderDependentApplicationEnvironmentProvider.class.getName());
 
-    private static final String WARID_PROP = "org.apache.tamaya.env.applicationId";
+    private static final String WARID_PROP = "environment.applicationId";
 
     private Map<ClassLoader, Environment> environments = new ConcurrentHashMap<>();
+    private Map<ClassLoader, Boolean> environmentAvailable = new ConcurrentHashMap<>();
     private Map<String, Environment> environmentsByAppId = new ConcurrentHashMap<>();
 
     @Override
@@ -60,9 +61,15 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
         if(cl==null){
             return false;
         }
-        List<URI> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
-                "classpath*:META-INF/env/application.properties", "classpath*:META-INF/env/application.xml", "classpath*:META-INF/env/application.ini");
-        return !propertyUris.isEmpty();
+        Boolean available = this.environmentAvailable.get(cl);
+        if(available!=null && !available){
+            return false;
+        }
+        List<Resource> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
+                "classpath:META-INF/env/application.properties", "classpath:META-INF/env/application.xml", "classpath:META-INF/env/application.ini");
+        available = !propertyUris.isEmpty();
+        this.environmentAvailable.put(cl, available);
+        return available.booleanValue();
     }
 
     @Override
@@ -75,18 +82,18 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
         if(environment!=null){
             return environment;
         }
-        List<URI> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
-                "classpath*:META-INF/env/application.properties", "classpath*:META-INF/env/application.xml", "classpath*:META-INF/env/application.ini");
+        List<Resource> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
+                "classpath:META-INF/env/application.properties", "classpath:META-INF/env/application.xml", "classpath:META-INF/env/application.ini");
         Map<String,String> data = new HashMap<>();
 
-        for(URI uri:propertyUris){
+        for(Resource resource:propertyUris){
             try{
-                ConfigurationFormat format = ConfigurationFormats.getFormat(uri);
-                Map<String,String> read = format.readConfiguration(uri);
+                ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
+                Map<String,String> read = format.readConfiguration(resource);
                 data.putAll(read);
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error reading application environment data fromMap " + uri);
+                LOG.log(Level.SEVERE, e, () -> "Error reading application environment data fromMap " + resource);
             }
         }
         String applicationId = data.getOrDefault(WARID_PROP, cl.toString());
@@ -94,7 +101,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
         builder.setParent(parentEnvironment);
         builder.set("classloader.type", cl.getClass().getName());
         builder.set("classloader.info", cl.toString());
-        Set<URI> uris = new HashSet<>();
+        Set<Resource> uris = new HashSet<>();
         uris.addAll(propertyUris);
         builder.set("environment.sources", uris.toString());
         builder.setAll(data);

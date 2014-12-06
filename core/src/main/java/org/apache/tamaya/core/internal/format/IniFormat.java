@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.format;
 
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 
 
@@ -25,7 +26,6 @@ import org.apache.tamaya.ConfigException;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -42,16 +42,16 @@ public class IniFormat implements ConfigurationFormat{
     }
 
     @Override
-    public boolean isAccepted(URI resource){
-        String path = resource.getPath();
+    public boolean isAccepted(Resource resource){
+        String path = resource.getFilename();
         return path != null && path.endsWith(".ini");
     }
 
     @Override
-    public Map<String,String> readConfiguration(URI resource){
+    public Map<String,String> readConfiguration(Resource resource){
         Map<String,String> result = new HashMap<>();
-        if(isAccepted(resource)){
-            try(InputStream is = resource.toURL().openStream()){
+        if(isAccepted(resource) && resource.exists()){
+            try(InputStream is = resource.getInputStream()){
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                 String line = reader.readLine();
                 int lineNum = 0;
@@ -63,7 +63,10 @@ public class IniFormat implements ConfigurationFormat{
                         line = reader.readLine();
                         continue;
                     }
-                    if(line.startsWith("[")){
+                    if(line.trim().startsWith("#")){
+                        // comment
+                    }
+                    else if(line.startsWith("[")){
                         int end = line.indexOf(']');
                         if(end < 0){
                             throw new ConfigException(
@@ -86,7 +89,7 @@ public class IniFormat implements ConfigurationFormat{
                 }
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error reading configuration: " + resource);
+                LOG.log(Level.SEVERE, e, () -> "Could not read configuration: " + resource);
             }
         }
         return result;

@@ -15,6 +15,8 @@
  */
 package org.apache.tamaya.core.internal.resources.io;
 
+import org.apache.tamaya.core.resource.Resource;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +29,7 @@ import java.net.URLConnection;
 import java.util.Objects;
 
 /**
- * {@link org.apache.tamaya.core.internal.resources.io.Resource} implementation for {@code java.net.URL} locators.
+ * {@link org.apache.tamaya.core.resource.Resource} implementation for {@code java.net.URL} locators.
  * Obviously supports resolution as URL, and also as File in case current
  * the "file:" protocol.
  *

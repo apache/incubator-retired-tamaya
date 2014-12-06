@@ -22,13 +22,13 @@ import org.apache.tamaya.Environment;
 import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.env.EnvironmentBuilder;
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
-import org.apache.tamaya.core.spi.ResourceLoader;
+import org.apache.tamaya.core.resource.ResourceLoader;
 
 
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -47,9 +47,10 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
 
     private static  final Logger LOG = Logger.getLogger(ClassLoaderDependentEarEnvironmentProvider.class.getName());
 
-    private static final String EARID_PROP = "org.apache.tamaya.core.env.earId";
+    private static final String EARID_PROP = "environment.earId";
 
     private Map<ClassLoader, Environment> environments = new ConcurrentHashMap<>();
+    private Map<ClassLoader, Boolean> environmentAvailable = new ConcurrentHashMap<>();
     private Map<String, Environment> environmentsByEarId = new ConcurrentHashMap<>();
 
     @Override
@@ -63,9 +64,15 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
         if(cl==null){
             return false;
         }
-        List<URI> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
-                "classpath*:META-INF/env/ear.properties", "classpath*:META-INF/env/ear.xml", "classpath*:META-INF/env/ear.ini");
-        return !propertyUris.isEmpty();
+        Boolean available = this.environmentAvailable.get(cl);
+        if(available!=null && !available){
+            return false;
+        }
+        List<Resource> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
+                "classpath:META-INF/env/ear.properties", "classpath:META-INF/env/ear.xml", "classpath:META-INF/env/ear.ini");
+        available = !propertyUris.isEmpty();
+        this.environmentAvailable.put(cl, available);
+        return available.booleanValue();
     }
 
     @Override
@@ -78,18 +85,18 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
         if(environment!=null){
             return environment;
         }
-        List<URI> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
-                "classpath*:META-INF/env/ear.properties", "classpath*:META-INF/env/ear.xml", "classpath*:META-INF/env/ear.ini");
+        List<Resource> resources = Bootstrap.getService(ResourceLoader.class).getResources(cl,
+                "classpath:META-INF/env/ear.properties", "classpath:META-INF/env/ear.xml", "classpath:META-INF/env/ear.ini");
         Map<String,String> data = new HashMap<>();
 
-        for(URI uri:propertyUris){
+        for(Resource resource:resources){
             try{
-                ConfigurationFormat format = ConfigurationFormats.getFormat(uri);
-                Map<String,String> read = format.readConfiguration(uri);
+                ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
+                Map<String,String> read = format.readConfiguration(resource);
                 data.putAll(read);
             }
             catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error reading ear environment data fromMap " + uri);
+                LOG.log(Level.SEVERE, e, () -> "Error reading ear environment data fromMap " + resource);
             }
         }
         String earId = data.getOrDefault(EARID_PROP, cl.toString());
@@ -102,9 +109,9 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
         }
         builder.set("classloader.type", cl.getClass().getName());
         builder.set("classloader.info", cl.toString());
-        Set<URI> uris = new HashSet<>();
-        uris.addAll(propertyUris);
-        builder.set("environment.sources", uris.toString());
+        Set<Resource> resourceSet = new HashSet<>();
+        resourceSet.addAll(resources);
+        builder.set("environment.sources", resourceSet.toString());
         builder.setAll(data);
         environment = builder.build();
         this.environments.put(cl, environment);

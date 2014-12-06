@@ -18,9 +18,11 @@ package org.apache.tamaya.core.internal.resources.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
- * {@link Resource} implementation for a given InputStream. Should only
+ * {@link org.apache.tamaya.core.resource.Resource} implementation for a given InputStream. Should only
  * be used if no specific Resource implementation is applicable.
  * In particular, prefer {@code ByteArrayResource} or any current the
  * file-based Resource implementations where possible.
@@ -56,10 +58,7 @@ public class InputStreamResource extends AbstractResource {
 	 * @param description where the InputStream comes from
 	 */
 	public InputStreamResource(InputStream inputStream, String description) {
-		if (inputStream == null) {
-			throw new IllegalArgumentException("InputStream must not be null");
-		}
-		this.inputStream = inputStream;
+		this.inputStream = Objects.requireNonNull(inputStream);
 		this.description = (description != null ? description : "");
 	}
 

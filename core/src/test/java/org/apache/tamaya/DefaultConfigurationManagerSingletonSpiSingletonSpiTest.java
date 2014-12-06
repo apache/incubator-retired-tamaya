@@ -25,13 +25,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.tamaya.annot.ConfiguredProperty;
 import org.apache.tamaya.annot.DefaultValue;
-import org.apache.tamaya.core.internal.DefaultConfigurationManagerSingletonSpi;
+import org.apache.tamaya.core.internal.config.DefaultConfigurationManagerSingletonSpi;
 import org.junit.Test;
 
 import java.beans.PropertyChangeListener;
 
 /**
- * Test class for {@link org.apache.tamaya.core.internal.DefaultConfigurationManagerSingletonSpi}.
+ * Test class for {@link org.apache.tamaya.core.internal.config.DefaultConfigurationManagerSingletonSpi}.
  */
 public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 

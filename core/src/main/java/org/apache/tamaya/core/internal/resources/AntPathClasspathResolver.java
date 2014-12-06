@@ -19,17 +19,17 @@
 package org.apache.tamaya.core.internal.resources;
 
 import org.apache.tamaya.core.internal.resources.io.PathMatchingResourcePatternResolver;
-import org.apache.tamaya.core.internal.resources.io.Resource;
+import org.apache.tamaya.core.spi.PathResolver;
+import org.apache.tamaya.core.resource.Resource;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class AntPathClasspathResolver implements PathResolver{
+public class AntPathClasspathResolver implements PathResolver {
+
+    private static final Logger LOG = Logger.getLogger(AntPathClasspathResolver.class.getName());
 
     @Override
     public String getResolverId(){
@@ -37,39 +37,24 @@ public class AntPathClasspathResolver implements PathResolver{
     }
 
     @Override
-    public Collection<URI> resolve(ClassLoader classLoader, Collection<String> expressions){
+    public Collection<Resource> resolve(ClassLoader classLoader, Collection<String> expressions){
         PathMatchingResourcePatternResolver resolver = PathMatchingResourcePatternResolver.of(classLoader);
-        List<URI> result = new ArrayList<>();
+        List<Resource> result = new ArrayList<>();
         expressions.forEach((expression) -> {
             try {
                 Resource[] resources = resolver.getResources(expression);
                 for (Resource res : resources) {
                     try {
-                        result.add(res.getURI());
+                        result.add(res);
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOG.log(Level.FINEST, "URI could not be extracted from Resource: " + res.toString(), e);
                     }
                 }
             }
             catch(IOException e){
-                // TODO log
+                LOG.log(Level.FINE, "Failed to load resource expression: " + expression.toString(), e);
             }
         });
-//            if(expression.startsWith("classpath:")){
-//                String exp = expression.substring("classpath:".length());
-//                URL url = classLoader.getResource(exp);
-//                if(url != null){
-//                    try{
-//                        result.add(url.toURI());
-//                    }
-//                    catch(URISyntaxException e){
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
         return result;
     }
 }

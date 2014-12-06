@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.spi;
 
-import java.net.URI;
+import org.apache.tamaya.core.resource.Resource;
+
 import java.util.Map;
 
 /**
@@ -43,7 +44,7 @@ public interface ConfigurationFormat{
      * @return {@code true} if the given resource is in a format supported by
      * this instance.
      */
-    boolean isAccepted(URI resource);
+    boolean isAccepted(Resource resource);
 
     /**
      * Reads a {@link org.apache.tamaya.PropertyProvider} fromMap the given URI, using this format.
@@ -51,6 +52,6 @@ public interface ConfigurationFormat{
      * @param resource    the configuration location, not null
      * @return the corresponding {@link java.util.Map}, never {@code null}.
      */
-    Map<String,String> readConfiguration(URI resource);
+    Map<String,String> readConfiguration(Resource resource);
 
 }

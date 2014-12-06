@@ -46,16 +46,20 @@ public final class MetaInfoBuilder{
         }
     }
 
+    private MetaInfoBuilder(String name){
+        this.map.put(NAME, Objects.requireNonNull(name));
+    }
+
     public static MetaInfoBuilder of(MetaInfo metaInfo){
         return new MetaInfoBuilder(metaInfo);
     }
 
     public static MetaInfoBuilder of(String name){
-        return new MetaInfoBuilder(null).setName(name);
+        return new MetaInfoBuilder(name);
     }
 
     public static MetaInfoBuilder of(){
-        return new MetaInfoBuilder(null).setName("<noname>");
+        return new MetaInfoBuilder("<noname>");
     }
 
     public MetaInfoBuilder withName(String name){

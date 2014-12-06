@@ -18,13 +18,13 @@
  */
 package org.apache.tamaya.core.properties;
 
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.Bootstrap;
-import org.apache.tamaya.core.spi.ResourceLoader;
+import org.apache.tamaya.core.resource.ResourceLoader;
 
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 
-import java.net.URI;
 import java.util.*;
 
 public abstract class AbstractResourceConfigMap extends AbstractPropertyProvider{
@@ -52,9 +52,9 @@ public abstract class AbstractResourceConfigMap extends AbstractPropertyProvider
                       .build());
         Objects.requireNonNull(sources, "sources required.");
         Objects.requireNonNull(sourceExpression, "sourceExpression required.");
-        List<URI> urls = Bootstrap.getService(ResourceLoader.class).getResources(classLoader, sourceExpression);
-        for(URI url : urls){
-            addSource(url.toString());
+        List<Resource> resources = Bootstrap.getService(ResourceLoader.class).getResources(classLoader, sourceExpression);
+        for(Resource res : resources){
+            addSource(res.toString());
         }
         this.classLoader = classLoader;
         this.parentConfig = parentConfig;

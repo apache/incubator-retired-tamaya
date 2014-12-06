@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.spi;
 
-import java.net.URI;
+import org.apache.tamaya.core.resource.Resource;
+
 import java.util.Collection;
 
 /**
@@ -47,7 +48,7 @@ public interface ConfigurationFormatsSingletonSpi{
      * @param resource The resource
      * @return a matching configuration format, or {@code null} if no matching format could be determined.
      */
-    ConfigurationFormat getFormat(URI resource);
+    ConfigurationFormat getFormat(Resource resource);
 
     default ConfigurationFormat getPropertiesFormat(){
         return getFormat("properties");

@@ -16,6 +16,8 @@
 
 package org.apache.tamaya.core.internal.resources.io;
 
+import org.apache.tamaya.core.resource.Resource;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,7 +29,7 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * {@link Resource} implementation for {@code java.io.File} handles.
+ * {@link org.apache.tamaya.core.resource.Resource} implementation for {@code java.io.File} handles.
  * Obviously supports resolution as File, and also as URL.
  *
  * @author Juergen Hoeller

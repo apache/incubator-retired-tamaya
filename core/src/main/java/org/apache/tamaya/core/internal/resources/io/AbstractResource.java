@@ -15,6 +15,8 @@
  */
 package org.apache.tamaya.core.internal.resources.io;
 
+import org.apache.tamaya.core.resource.Resource;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,7 +28,7 @@ import java.util.Objects;
 
 
 /**
- * Convenience base class for {@link Resource} implementations,
+ * Convenience base class for {@link org.apache.tamaya.core.resource.Resource} implementations,
  * pre-implementing typical behavior.
  *
  * <p>The "exists" method will check whether a File or InputStream can
@@ -115,7 +117,7 @@ public abstract class AbstractResource implements Resource {
 	 * This implementation reads the entire InputStream to calculate the
 	 * content length. Subclasses will almost always be able to provide
 	 * a more optimal version current this, e.g. checking a File length.
-	 * @throws IllegalStateException if {@code #getInputStream()} returns null.
+	 * @throws IllegalStateException if {@code #getInputStreamSupplier()} returns null.
 	 */
 	@Override
 	public long contentLength() throws IOException {

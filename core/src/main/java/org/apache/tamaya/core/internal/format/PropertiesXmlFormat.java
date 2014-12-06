@@ -18,16 +18,20 @@
  */
 package org.apache.tamaya.core.internal.format;
 
+import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class PropertiesXmlFormat implements ConfigurationFormat{
+
+    private final static Logger LOG = Logger.getLogger(PropertiesXmlFormat.class.getName());
 
     @Override
     public String getFormatName(){
@@ -35,21 +39,20 @@ public class PropertiesXmlFormat implements ConfigurationFormat{
     }
 
     @Override
-    public boolean isAccepted(URI resource){
-        String path = resource.getPath();
+    public boolean isAccepted(Resource resource){
+        String path = resource.getFilename();
         return path != null && path.endsWith(".xml");
     }
 
     @Override
-    public Map<String,String> readConfiguration(URI resource) {
-        if (isAccepted(resource)) {
-            try (InputStream is = resource.toURL().openStream()) {
+    public Map<String,String> readConfiguration(Resource resource) {
+        if (isAccepted(resource) && resource.exists()) {
+            try (InputStream is = resource.getInputStream()) {
                 Properties p = new Properties();
                 p.loadFromXML(is);
                 return Map.class.cast(p);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + resource);
             }
         }
         return Collections.emptyMap();

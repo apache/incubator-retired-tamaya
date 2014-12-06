@@ -16,6 +16,8 @@
 
 package org.apache.tamaya.core.internal.resources.io;
 
+import org.apache.tamaya.core.resource.Resource;
+
 import java.io.IOException;
 import java.io.OutputStream;
 

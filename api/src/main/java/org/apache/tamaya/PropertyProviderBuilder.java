@@ -21,7 +21,7 @@ package org.apache.tamaya;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.spi.PropertyProviderBuilderSpi;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -109,6 +109,15 @@ public final class PropertyProviderBuilder {
         return create(MetaInfo.of(name));
     }
 
+    /**
+     * Creates a new builder instance.
+     *
+     * @return a new builder instance, never null.
+     */
+    public static PropertyProviderBuilder create() {
+        return create(MetaInfo.of("<noname>"));
+    }
+
 
     /**
      * Sets the aggregation policy to be used, when adding additional property sets. The policy will
@@ -134,7 +143,11 @@ public final class PropertyProviderBuilder {
     }
 
     public PropertyProviderBuilder addProviders(PropertyProvider... providers) {
-        List<PropertyProvider> allProviders = Arrays.asList(providers);
+        return addProviders(Arrays.asList(providers));
+    }
+
+    public PropertyProviderBuilder addProviders(List<PropertyProvider> providers) {
+        List<PropertyProvider> allProviders = new ArrayList<>(providers);
         if (this.current != null) {
             allProviders.add(0, this.current);
         }
@@ -143,16 +156,17 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current()).build();
         }
         this.current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .aggregate(this.aggregationPolicy, mi, allProviders);
+                .aggregate(mi, this.aggregationPolicy, allProviders);
         this.metaInfo = null;
         return this;
     }
 
     /**
-     * Creates a new {@link }PropertyMap} using the given command line arguments
+     * Creates a new {@link PropertyProvider} using the given command line arguments and adds it
+     * using the current aggregation policy in place.
      *
      * @param args the command line arguments, not null.
-     * @return a new {@link }PropertyMap} instance with the given arguments contained as properties.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder addArgs(String... args) {
         MetaInfo mi = this.metaInfo;
@@ -167,33 +181,23 @@ public final class PropertyProviderBuilder {
     /**
      * Creates a new read-only {@link PropertyProvider} by reading the according path resources. The effective resources read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
-     * Properties read fromMap resources evaluated on
-     * paths with lower order are overriding any duplicate values fromMap previous paths hereby.
+     * Properties read are aggregated using the current aggregation policy active.
      *
      * @param paths the paths to be resolved by the {@code PathResolverService} , not null.
-     * @return a new {@link }PropertyMap} instance with the given paths contained as properties.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder addPaths(String... paths) {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current()).build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("paths", Arrays.toString(paths)).build();
-        }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromPaths(aggregationPolicy, mi, Arrays.asList(paths)));
+        return addPaths(Arrays.asList(paths));
     }
 
 
     /**
      * Creates a new read-only {@link PropertyProvider} by reading the according path resources. The effective resources read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
-     * Properties read fromMap resources evaluated on
-     * paths with lower order are overriding any duplicate values fromMap previous paths hereby.
+     * Properties read are aggregated using the current aggregation policy active.
      *
      * @param paths the paths to be resolved by the {@code PathResolverService} , not null.
-     * @return a new {@link }PropertyMap} instance with the given paths contained as properties.
-     * @throws ConfigException if duplicate entries are encountered (AggregationPolicy.EXCEPTION).
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder addPaths(List<String> paths) {
         MetaInfo mi = this.metaInfo;
@@ -203,34 +207,45 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("paths", paths.toString()).build();
         }
         return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromPaths(aggregationPolicy, metaInfo, paths));
+                .fromPaths(mi, aggregationPolicy, paths));
     }
 
     /**
-     * Creates a new read-only {@link PropertyProvider} based on the resources defined by the given paths. The effective resources
-     * read hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
+     * Creates a new read-only {@link PropertyProvider} by reading the according URL resources.
+     * Properties read are aggregated using the current aggregation policy active.
      *
-     * @param uris the uris to be read, not null.
-     * @return a new {@link }PropertyMap} instance based on the given paths/resources found.
-     * @throws ConfigException if duplicate entries are encountered (AggregationPolicy.EXCEPTION).
+     * @param urls the urls to be read, not null.
+     * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addUris(URI... uris) {
+    public PropertyProviderBuilder addURLs(URL... urls) {
+        return addURLs(Arrays.asList(urls));
+    }
+
+    /**
+     * Creates a new read-only {@link PropertyProvider} by reading the according URL resources.
+     * Properties read are aggregated using the current aggregation policy active.
+     *
+     * @param urls the urls to be read, not null.
+     * @return the builder for chaining.
+     */
+    public PropertyProviderBuilder addURLs(List<URL> urls) {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").set("uris", Arrays.toString(uris)).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("aggregate").set("urls", urls.toString()).setEnvironment(Environment.current()).build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("paths", uris.toString()).build();
+            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("urls", urls.toString()).build();
         }
         return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromUris(this.aggregationPolicy, mi, Arrays.asList(uris)));
+                .fromURLs(mi, this.aggregationPolicy, urls));
     }
 
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertyProvider} by using the given Map.
+     * Creates a new read-only {@link PropertyProvider} based on the given map.
+     * Properties read are aggregated using the current aggregation policy active.
      *
-     * @param map the properties to be included, not null.
-     * @return a new {@link }PropertyMap} instance with the given properties fromMap the Map instance passed.
+     * @param map the map to be added, not null.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder addMap(Map<String, String> map) {
         MetaInfo mi = this.metaInfo;
@@ -240,14 +255,14 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
         return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromMap(metaInfo, map));
+                .fromMap(mi, map));
     }
 
 
     /**
-     * Returns a read-only {@link org.apache.tamaya.PropertyProvider} reflecting the current runtime environment properties.
+     * Add the current environment properties. Aggregation is based on the current {@link org.apache.tamaya.AggregationPolicy} acvtive.
      *
-     * @return a new read-only {@link org.apache.tamaya.PropertyProvider} instance based on the current runtime environment properties.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder addEnvironmentProperties() {
         MetaInfo mi = this.metaInfo;
@@ -261,9 +276,9 @@ public final class PropertyProviderBuilder {
     }
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertyProvider} reflecting the current system properties.
+     * Add the current system properties. Aggregation is based on the current {@link org.apache.tamaya.AggregationPolicy} acvtive.
      *
-     * @return a new read-only {@link org.apache.tamaya.PropertyProvider} instance based on the current system properties.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder addSystemProperties() {
         MetaInfo mi = this.metaInfo;
@@ -277,11 +292,11 @@ public final class PropertyProviderBuilder {
     }
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertyProvider} containing all property maps given, hereby later maps in the array override
-     * properties fromMap previous instances.
+     * Adds the given {@link org.apache.tamaya.PropertyProvider} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * active.
      *
      * @param providers the maps to be included, not null.
-     * @return the union instance containing all given maps.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder aggregate(PropertyProvider... providers) {
         MetaInfo mi = this.metaInfo;
@@ -291,16 +306,16 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
         return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .aggregate(aggregationPolicy, mi, Arrays.asList(providers)));
+                .aggregate(mi, aggregationPolicy, Arrays.asList(providers)));
     }
 
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertyProvider} containing all property maps given, hereby later maps in the array override
-     * properties fromMap previous instances.
+     * Adds the given {@link org.apache.tamaya.PropertyProvider} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * active.
      *
      * @param providers the maps to be included, not null.
-     * @return the union instance containing all given maps.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder aggregate(List<PropertyProvider> providers) {
         MetaInfo mi = this.metaInfo;
@@ -310,7 +325,7 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
         return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .aggregate(aggregationPolicy, metaInfo, providers));
+                .aggregate(mi, aggregationPolicy, providers));
     }
 
 
@@ -326,12 +341,12 @@ public final class PropertyProviderBuilder {
                 .mutable(null, provider);
     }
 
+
     /**
-     * Creates a new {@link org.apache.tamaya.PropertyProvider} containing only properties that are shared by all given maps,
-     * hereby later maps in the array override  properties fromMap previous instances.
+     * Intersetcs the current properties with the given {@link org.apache.tamaya.PropertyProvider} instance.
      *
-     * @param providers the maps to be included, not null.
-     * @return the intersecting instance containing all given maps.
+     * @param providers the maps to be intersected, not null.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder intersect(PropertyProvider... providers) {
         MetaInfo mi = this.metaInfo;
@@ -341,16 +356,15 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
         return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .intersected(aggregationPolicy, mi, Arrays.asList(providers)));
+                .intersected(mi,aggregationPolicy,  Arrays.asList(providers)));
     }
 
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertyProvider} containing only properties fromMap the target instance, that are not contained
-     * in one current the other maps passed.
+     * Subtracts with the given {@link org.apache.tamaya.PropertyProvider} instance from the current properties.
      *
      * @param providers the maps to be subtracted, not null.
-     * @return the intersecting instance containing all given maps.
+     * @return the builder for chaining.
      */
     public PropertyProviderBuilder subtract(PropertyProvider... providers) {
         MetaInfo mi = this.metaInfo;
@@ -360,16 +374,15 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
         current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .subtracted(current, mi, Arrays.asList(providers));
+                .subtracted(mi, current, Arrays.asList(providers));
         return this;
     }
 
 
     /**
-     * Creates a filtered {@link org.apache.tamaya.PropertyProvider} (a view) current a given base {@link }PropertyMap}. The filter hereby is
-     * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
+     * Filters the current properties based on the given predicate..
      *
-     * @param filter the filtger to be applied, not null.
+     * @param filter the filter to be applied, not null.
      * @return the new filtering instance.
      */
     public PropertyProviderBuilder filter(Predicate<String> filter) {
@@ -380,7 +393,7 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).set("filter", filter.toString()).setEnvironment(Environment.current()).build();
         }
         current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .filtered(filter, mi, current);
+                .filtered(mi, filter, current);
         return this;
     }
 
@@ -400,34 +413,11 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).setEnvironment(Environment.current()).build();
         }
         return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .contextual(mapSupplier, mi, isolationKeySupplier));
+                .contextual(mi, mapSupplier, isolationKeySupplier));
     }
 
     /**
-     * Creates a filtered {@link org.apache.tamaya.PropertyProvider} (a view) current a given base {@link }PropertyMap}. The filter hereby is
-     * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
-     *
-     * @param delegates the delegated parent map instance, not null.
-     * @return the new delegating instance.
-     */
-    public PropertyProviderBuilder addDefaults(Map<String, String> delegates) {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("filtered").setEnvironment(Environment.current()).set("delegates", delegates.toString()).build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("delegates", delegates.toString()).setEnvironment(Environment.current()).build();
-        }
-        current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .delegating(current, mi, delegates);
-        return this;
-    }
-
-    /**
-     * Creates a {@link PropertyProvider} where all keys current a current map,
-     * existing in another map are replaced
-     * with the ones fromMap the other {@link PropertyProvider}. The filter hereby is
-     * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
-     * Keys not existing in the {@code mainMap}, but present in {@code replacementMao} will be hidden.
+     * Replaces all keys in the current provider by the given map.
      *
      * @param replacementMap the map instance, that will replace all corresponding entries in {@code mainMap}, not null.
      * @return the new delegating instance.
@@ -440,13 +430,17 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
         current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .replacing(current, mi, replacementMap);
+                .replacing(mi, current, replacementMap);
         return this;
     }
 
+    /**
+     * Build a new property provider based on the input.
+     * @return a new property provider, or null.
+     */
     public PropertyProvider build() {
         if (current != null) {
-            return current;
+            return current; // TODO add meta info here...
         }
         return Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
                 .empty(metaInfo);

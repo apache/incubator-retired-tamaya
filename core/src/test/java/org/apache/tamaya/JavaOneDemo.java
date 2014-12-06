@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.core.config.ConfigurationBuilder;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.junit.Test;
@@ -32,34 +31,32 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Anatole on 30.09.2014.
  */
-public class JavaOneDemo{
+public class JavaOneDemo {
 
     @Test
-    public void testFromSystemProperties(){
-        PropertyProvider prov = PropertyProviders.fromSystemProperties();
+    public void testFromSystemProperties() {
+        PropertyProvider prov = PropertyProviderBuilder.create("Sys-conf").addSystemProperties().build();
         assertNotNull(prov);
-        for(Map.Entry<Object,Object> en:System.getProperties().entrySet()){
+        for (Map.Entry<Object, Object> en : System.getProperties().entrySet()) {
             assertEquals(en.getValue(), prov.get(en.getKey().toString()).get());
         }
     }
 
     @Test
-    public void testProgrammatixPropertySet(){
-        System.out.println(PropertyProviders.fromPaths("test", "classpath:test.properties"));
+    public void testProgrammatixPropertySet() {
+        System.out.println(PropertyProviderBuilder.create("test").addPaths("test", "classpath:test.properties"));
     }
 
     @Test
-    public void testProgrammaticConfig(){
+    public void testProgrammaticConfig() {
         ConfigurationFormat format = ConfigurationFormats.getPropertiesFormat();
-        Map<String,String> cfgMap = new HashMap<>();
+        Map<String, String> cfgMap = new HashMap<>();
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole
-        Configuration config = ConfigurationBuilder.of("myTestConfig").addResources(
-                "classpath:test.properties").addConfigMaps(AggregationPolicy.OVERRIDE(),
-                                                           PropertyProviders
-                                                                   .fromPaths("classpath:cfg/test.xml"),
-                                                           PropertyProviders.fromArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}),
-                                                           PropertyProviders.fromMap(cfgMap)).build();
+        Configuration config = PropertyProviderBuilder.create("myTestConfig").addPaths(
+                "classpath:test.properties").addPaths("classpath:cfg/test.xml")
+                .addArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"})
+                .addMap(cfgMap).build().toConfiguration();
         System.out.println(config.getAreas());
         System.out.println("---");
         System.out.println(config.getAreas(s -> s.startsWith("another")));
@@ -72,6 +69,6 @@ public class JavaOneDemo{
         System.out.print("--- b=");
         System.out.println(config.get("b"));
         System.out.println("--- only a,b,c)");
-        System.out.println(PropertyProviders.filtered((f) -> f.equals("a") || f.equals("b") || f.equals("c"), config));
+        System.out.println(PropertyProviderBuilder.create(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
     }
 }

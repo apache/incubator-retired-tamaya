@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.core.spi.ResourceLoader;
+import org.apache.tamaya.core.resource.ResourceLoader;
 
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.spi.Bootstrap;
