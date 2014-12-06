@@ -43,7 +43,7 @@ public class ConfiguredTest {
 
     @Test
     public void testTemplateWithEnvironmentVariableOnWindows(){
-        assumeTrue(OS.indexOf("win") >= 0);
+        assumeTrue(OS.contains("win"));
 
         ConfigTemplate template = Configuration.current(ConfigTemplate.class);
         assertNotNull(template.computerName());
@@ -51,7 +51,7 @@ public class ConfiguredTest {
 
     @Test
     public void testTemplateWithEnvironmentVariableOnMac(){
-        assumeTrue(OS.indexOf("mac") >= 0);
+        assumeTrue(OS.contains("mac"));
 
         ConfigTemplate template = Configuration.current(ConfigTemplate.class);
         assertNotNull(template.homeDir());
@@ -59,7 +59,7 @@ public class ConfiguredTest {
 
     @Test
     public void testTemplateWithEnvironmentVariableOnUnixoidSystem(){
-        assumeTrue(OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0);
+        assumeTrue(OS.contains("nix") || OS.contains("nux") || OS.indexOf("aix") > 0);
 
         ConfigTemplate template = Configuration.current(ConfigTemplate.class);
         assertNotNull(template.homeDir());
