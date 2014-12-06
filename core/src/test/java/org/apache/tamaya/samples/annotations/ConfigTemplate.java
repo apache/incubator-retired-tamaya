@@ -35,11 +35,12 @@ public interface ConfigTemplate {
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1();
 
+    // COMPUTERNAME is only under Windows available
     @ConfiguredProperty("COMPUTERNAME")
     String computerName();
 
-    @ConfiguredProperty()
-    String APPDATA();
+    @ConfiguredProperty("HOME")
+    String homeDir();
 
     @ConfiguredProperty
     @DefaultValue("N/A")
@@ -62,5 +63,4 @@ public interface ConfigTemplate {
 
     @ConfiguredProperty("BD")
     BigDecimal bigNumber();
-
 }
