@@ -59,7 +59,7 @@ public class DefaultPropertyAdaptersSingletonSpi implements PropertyAdaptersSing
         register(BigDecimal.class, BigDecimal::new);
         register(BigInteger.class, BigInteger::new);
 
-        register(Currency.class, (s) -> Currency.getInstance(s));
+        register(Currency.class, Currency::getInstance);
 
         register(LocalDate.class, LocalDate::parse);
         register(LocalTime.class, LocalTime::parse);
