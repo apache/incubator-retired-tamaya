@@ -53,8 +53,8 @@ class SubtractingPropertyProvider extends AbstractPropertyProvider {
     @Override
     public Map<String,String> toMap(){
         return this.unit.toMap().entrySet().stream().filter(this::filter).collect(Collectors.toMap(
-                (en) -> en.getKey(),
-                (en) -> en.getValue()
+                Map.Entry::getKey,
+                Map.Entry::getValue
         ));
     }
 

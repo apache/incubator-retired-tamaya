@@ -65,7 +65,7 @@ class IntersectingPropertyProvider extends AbstractPropertyProvider {
     @Override
     public Map<String, String> toMap() {
         return aggregatedDelegate.toMap().entrySet().stream().filter(en -> containsKey(en.getKey())).collect(
-                Collectors.toConcurrentMap(en -> en.getKey(), en -> en.getValue()));
+                Collectors.toConcurrentMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
 }
