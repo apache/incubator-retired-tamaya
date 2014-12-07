@@ -182,7 +182,7 @@ public final class PathMatchingResourcePatternResolver{
     private static Map<ClassLoader, PathMatchingResourcePatternResolver> resolvers = new ConcurrentHashMap<>();
 
     public static PathMatchingResourcePatternResolver of(ClassLoader loader){
-        return resolvers.computeIfAbsent(loader, (cl) -> new PathMatchingResourcePatternResolver(cl));
+        return resolvers.computeIfAbsent(loader, PathMatchingResourcePatternResolver::new);
     }
 
     /**

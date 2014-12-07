@@ -35,7 +35,7 @@ public final class ConfigurationInjector {
         if (!ConfiguredType.isConfigured(type)) {
             return null;
         }
-        return INSTANCE.configuredTypes.computeIfAbsent(type, (c) -> new ConfiguredType(c));
+        return INSTANCE.configuredTypes.computeIfAbsent(type, ConfiguredType::new);
     }
 
     public static void configure(Object instance){

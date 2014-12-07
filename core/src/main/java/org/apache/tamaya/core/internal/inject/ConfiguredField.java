@@ -160,7 +160,7 @@ public class ConfiguredField {
      */
     private List<String> evaluateKeys(DefaultAreas areasAnnot,Collection<ConfiguredProperty> propertyAnnotations) {
         Objects.requireNonNull(propertyAnnotations);
-        List<String> keys = propertyAnnotations.stream().map(s -> s.value()).filter(s -> !s.isEmpty())
+        List<String> keys = propertyAnnotations.stream().map(ConfiguredProperty::value).filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
         if (keys.isEmpty()) //noinspection UnusedAssignment
             keys.add(annotatedField.getName());
