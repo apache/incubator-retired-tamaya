@@ -19,6 +19,7 @@
 package org.apache.tamaya.ucs;
 
 import org.apache.tamaya.*;
+import org.apache.tamaya.core.config.ConfigFunctions;
 import org.junit.Test;
 
 import java.math.BigDecimal;

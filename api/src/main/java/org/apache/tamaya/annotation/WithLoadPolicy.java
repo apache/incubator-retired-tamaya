@@ -31,6 +31,10 @@ import java.lang.annotation.Target;
 @Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
 public @interface WithLoadPolicy {
 
+    /**
+     * The load policy to be used. If this annotation is present a load policy must be defined.
+     * @return The load policy to be used, not null.
+     */
     LoadPolicy value();
 
 }
