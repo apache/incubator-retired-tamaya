@@ -31,11 +31,10 @@ import java.util.List;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Created by Anatole on 22.10.2014.
+ * Simple test for a mutable Configuration instance.
  */
 public class MutableConfigTest {
 
-    @Ignore
     @Test
     public void accessMutableConfig(){
         Configuration config = Configuration.current("mutableTestConfig");
