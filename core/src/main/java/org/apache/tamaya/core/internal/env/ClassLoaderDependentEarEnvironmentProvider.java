@@ -72,7 +72,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
                 "classpath:META-INF/env/ear.properties", "classpath:META-INF/env/ear.xml", "classpath:META-INF/env/ear.ini");
         available = !propertyUris.isEmpty();
         this.environmentAvailable.put(cl, available);
-        return available.booleanValue();
+        return available;
     }
 
     @Override

@@ -69,7 +69,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
                 "classpath:META-INF/env/application.properties", "classpath:META-INF/env/application.xml", "classpath:META-INF/env/application.ini");
         available = !propertyUris.isEmpty();
         this.environmentAvailable.put(cl, available);
-        return available.booleanValue();
+        return available;
     }
 
     @Override
