@@ -134,7 +134,7 @@ public final class MetaInfoBuilder{
 
     public MetaInfoBuilder setEnvironment(Environment configurationContext){
         Objects.requireNonNull(configurationContext);
-        map.put(ENVIRONMENT, configurationContext.toString());
+        map.put(ENVIRONMENT, configurationContext.getEnvironmentType()+'['+configurationContext.getEnvironmentId()+']');
         return this;
     }
 
@@ -143,6 +143,11 @@ public final class MetaInfoBuilder{
         Objects.requireNonNull(value);
         map.put(key, value);
         return this;
+    }
+
+    public String get(String key){
+        Objects.requireNonNull(key);
+        return map.get(key);
     }
 
     public MetaInfo build(){

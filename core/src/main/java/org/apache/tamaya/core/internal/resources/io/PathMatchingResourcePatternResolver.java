@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 /**
  * A {@code ResourcePatternResolver} implementation that is able to resolve a
  * specified resource location path into one or more matching Resources.
- * The source path may be a simple path which has a one-to-one mapping to a
+ * The source path may be a simple path which has a one-to-one annotation to a
  * target {@code org.springframework.core.io.Resource}, or alternatively
  * may contain the special "{@code classpath*:}" prefix and/or
  * internal Ant-style regular expressions (matched using Spring's

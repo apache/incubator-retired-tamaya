@@ -40,9 +40,15 @@ public final class PropertyProviderBuilder {
      */
     private static final Logger LOG = Logger.getLogger(PropertyProviderBuilder.class.getName());
     /**
-     * The current meta info, or null, if a default should be generated.
+     * The final meta info to be used, or null, if a default should be generated.
+     */
+    private MetaInfoBuilder metaInfoBuilder;
+
+    /**
+     * Meta info used for the next operation.
      */
     private MetaInfo metaInfo;
+
     /**
      * the current property provider, or null.
      */
@@ -56,14 +62,21 @@ public final class PropertyProviderBuilder {
      * Private singleton constructor.
      */
     private PropertyProviderBuilder(MetaInfo metaInfo) {
-        this.metaInfo = Objects.requireNonNull(metaInfo);
+        this.metaInfoBuilder = MetaInfoBuilder.of(Objects.requireNonNull(metaInfo)).setInfo("Built by PropertyProviderBuilder.");
+    }
+
+    /**
+     * Private singleton constructor.
+     */
+    private PropertyProviderBuilder(String name) {
+        this.metaInfoBuilder = MetaInfoBuilder.of(name);
     }
 
     /**
      * Private singleton constructor.
      */
     private PropertyProviderBuilder(PropertyProvider provider) {
-        this.metaInfo = Objects.requireNonNull(provider).getMetaInfo();
+        this.metaInfoBuilder = MetaInfoBuilder.of(Objects.requireNonNull(provider).getMetaInfo());
         this.current = provider;
     }
 
@@ -106,7 +119,7 @@ public final class PropertyProviderBuilder {
      * @return a new builder instance, never null.
      */
     public static PropertyProviderBuilder create(String name) {
-        return create(MetaInfo.of(name));
+        return new PropertyProviderBuilder(Objects.requireNonNull(name));
     }
 
     /**
@@ -115,8 +128,10 @@ public final class PropertyProviderBuilder {
      * @return a new builder instance, never null.
      */
     public static PropertyProviderBuilder create() {
-        return create(MetaInfo.of("<noname>"));
+        return new PropertyProviderBuilder("<noname>");
     }
+
+
 
 
     /**
@@ -142,23 +157,62 @@ public final class PropertyProviderBuilder {
         return this;
     }
 
+    /**
+     * Adds the given providers with the current active {@link org.apache.tamaya.AggregationPolicy}. By
+     * default {@link org.apache.tamaya.AggregationPolicy#OVERRIDE} is used.
+     * @see #withAggregationPolicy(AggregationPolicy)
+     * @param providers providers to be added, not null.
+     * @return the builder for chaining.
+     */
     public PropertyProviderBuilder addProviders(PropertyProvider... providers) {
+        if(providers.length==0){
+            return this;
+        }
         return addProviders(Arrays.asList(providers));
     }
 
+    /**
+     * Adds the given providers with the current active {@link org.apache.tamaya.AggregationPolicy}. By
+     * default {@link org.apache.tamaya.AggregationPolicy#OVERRIDE} is used.
+     * @see #withAggregationPolicy(AggregationPolicy)
+     * @param providers providers to be added, not null.
+     * @return the builder for chaining.
+     */
     public PropertyProviderBuilder addProviders(List<PropertyProvider> providers) {
+        if(providers.isEmpty()){
+            return this;
+        }
         List<PropertyProvider> allProviders = new ArrayList<>(providers);
         if (this.current != null) {
             allProviders.add(0, this.current);
         }
+        StringBuilder b = new StringBuilder();
+        providers.forEach(p -> b.append(p.getMetaInfo().toString()).append(','));
+        b.setLength(b.length()-1);
+        String source = b.toString();
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current())
+                    .set(MetaInfoBuilder.SOURCE,source).build();
         }
         this.current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
                 .aggregate(mi, this.aggregationPolicy, allProviders);
+
+        addProviderChainInfo(source);
         this.metaInfo = null;
         return this;
+    }
+
+    private void addProviderChainInfo(String info){
+        String providerChain = metaInfoBuilder.get("providerChain");
+
+        if(providerChain == null){
+            providerChain = "\n  " + info;
+        }
+        else{
+            providerChain = providerChain + ",\n  " + info;
+        }
+        metaInfoBuilder.set("providerChain", providerChain);
     }
 
     /**
@@ -169,6 +223,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder addArgs(String... args) {
+        if(args.length==0){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("args").setEnvironment(Environment.current()).build();
@@ -187,6 +244,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder addPaths(String... paths) {
+        if(paths.length==0){
+            return this;
+        }
         return addPaths(Arrays.asList(paths));
     }
 
@@ -200,6 +260,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder addPaths(List<String> paths) {
+        if(paths.isEmpty()){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("aggregate").set("paths", paths.toString()).setEnvironment(Environment.current()).build();
@@ -218,6 +281,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder addURLs(URL... urls) {
+        if(urls.length==0){
+            return this;
+        }
         return addURLs(Arrays.asList(urls));
     }
 
@@ -229,6 +295,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder addURLs(List<URL> urls) {
+        if(urls.isEmpty()){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("aggregate").set("urls", urls.toString()).setEnvironment(Environment.current()).build();
@@ -248,6 +317,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder addMap(Map<String, String> map) {
+        if(map.isEmpty()){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("map").setEnvironment(Environment.current()).build();
@@ -267,7 +339,7 @@ public final class PropertyProviderBuilder {
     public PropertyProviderBuilder addEnvironmentProperties() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("with env-props").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("environment.properties").setEnvironment(Environment.current()).build();
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
@@ -283,7 +355,7 @@ public final class PropertyProviderBuilder {
     public PropertyProviderBuilder addSystemProperties() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("with sys-props").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("system.properties").setEnvironment(Environment.current()).build();
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
@@ -299,6 +371,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder aggregate(PropertyProvider... providers) {
+        if(providers.length==0){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current()).build();
@@ -318,6 +393,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder aggregate(List<PropertyProvider> providers) {
+        if(providers.isEmpty()){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current()).build();
@@ -349,6 +427,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder intersect(PropertyProvider... providers) {
+        if(providers.length==0){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("intersect").setEnvironment(Environment.current()).build();
@@ -367,6 +448,9 @@ public final class PropertyProviderBuilder {
      * @return the builder for chaining.
      */
     public PropertyProviderBuilder subtract(PropertyProvider... providers) {
+        if(providers.length==0){
+            return this;
+        }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("subtract").setEnvironment(Environment.current()).build();
@@ -394,6 +478,8 @@ public final class PropertyProviderBuilder {
         }
         current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
                 .filtered(mi, filter, current);
+        addProviderChainInfo("filter->" + filter.toString());
+        this.metaInfo = null;
         return this;
     }
 
@@ -431,6 +517,21 @@ public final class PropertyProviderBuilder {
         }
         current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
                 .replacing(mi, current, replacementMap);
+        this.metaInfo = null;
+        addProviderChainInfo("replace->" + replacementMap.toString());
+        return this;
+    }
+
+    /**
+     * Sets an additional key on the final {@link org.apache.tamaya.MetaInfo} of the provider
+     * created.
+     *
+     * @param key the key to be added, not null.
+     * @param value the value to be added, not null.
+     * @return this builder for chaining
+     */
+    public PropertyProviderBuilder setMeta(String key, String value){
+        this.metaInfoBuilder.set(key, value);
         return this;
     }
 
@@ -440,10 +541,11 @@ public final class PropertyProviderBuilder {
      */
     public PropertyProvider build() {
         if (current != null) {
-            return current; // TODO add meta info here...
+            return Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
+                .build(metaInfoBuilder.build(), current);
         }
         return Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .empty(metaInfo);
+                .empty(metaInfoBuilder.build());
     }
 
     /**
@@ -452,15 +554,17 @@ public final class PropertyProviderBuilder {
      *
      * @return the freezed instance, never null.
      */
-    public PropertyProvider freeze() {
+    public PropertyProvider buildFreezed() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("freezed").set("freezed", "true").setEnvironment(Environment.current()).build();
         } else {
             mi = MetaInfoBuilder.of(metaInfo).set("freezed", "true").setEnvironment(Environment.current()).build();
         }
-        return Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
+        PropertyProvider prov = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
                 .freezed(mi, current);
+        this.metaInfo = null;
+        return prov;
     }
 
 }

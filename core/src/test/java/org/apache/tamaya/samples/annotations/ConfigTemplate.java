@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.samples.annotations;
 
-import org.apache.tamaya.mapping.ConfiguredProperty;
-import org.apache.tamaya.mapping.DefaultValue;
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultValue;
 
 import java.math.BigDecimal;
 

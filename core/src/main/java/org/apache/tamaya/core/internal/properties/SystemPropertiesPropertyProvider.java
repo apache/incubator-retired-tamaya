@@ -49,5 +49,9 @@ class SystemPropertiesPropertyProvider extends AbstractPropertyProvider {
         return Collections.unmodifiableMap(props);
     }
 
+    @Override
+    public String toString(){
+        return "SystemPropertiesPropertyProvider[" + System.getProperties().size() + " system properties]";
+    }
 
 }

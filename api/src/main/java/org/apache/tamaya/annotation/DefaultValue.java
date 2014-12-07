@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.mapping;
+package org.apache.tamaya.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,18 +24,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation container to enable injection current multiple {@link org.apache.tamaya.mapping.ConfiguredProperty}
- * annotations. Hereby the ordering current annotations imply the defaulting. The first value that
- * could be resolved successfully in the chain current annotations will be used.
+ * Annotation to define a default value to be returned, when no configured value could be
+ * determined for a property/template accessor. The value hereby can also contain a
+ * dynamic expression that is evaluated by the configuration system.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })
-public @interface ConfiguredProperties {
+public @interface DefaultValue {
 
     /**
-     * Get the different configuration keys to be looked up, in order current precedence. The first non null value
-     * found will be used.
+     * The default value to be injected, if no such configuration entry was found. If value was found and no default
+     * is defined, it is handled as a deployment error.
      */
-    ConfiguredProperty[] value() default {};
+    String value() default "";
 
 }

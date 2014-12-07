@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.mapping;
+package org.apache.tamaya.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,14 +24,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to annotate a method on a class to be informed on config changes.
- * The exact behaviour, when configuration change events are sent can be configured
- * on each configured property/method by adding the {@link org.apache.tamaya.mapping.WithLoadPolicy}
- * annotation. By default listeners are only informed about changes that are affecting configured
- * values current the containing class/instance.
+ * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
+ * resolve the required properties. the configured value is passed to {@code Configuration.current(String)}
+ * to evaluate the required configuration required.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.METHOD })
-public @interface ConfigChangeListener {
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })
+public @interface WithConfig {
+
+    /**
+     * The name current the {@link org.apache.tamaya.Configuration} to be used to
+     * resolve the required properties, not null or empty.
+     */
+    String value();
 
 }

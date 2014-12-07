@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 /**
  * PathMatcher implementation for Ant-style path patterns. Examples are provided below.
  *
- * <p>Part current this mapping code has been kindly borrowed from <a href="http://ant.apache.org">Apache Ant</a>.
+ * <p>Part current this annotation code has been kindly borrowed from <a href="http://ant.apache.org">Apache Ant</a>.
  *
- * <p>The mapping matches URLs using the following rules:<br> <ul> <li>? matches one character</li> <li>* matches zero
+ * <p>The annotation matches URLs using the following rules:<br> <ul> <li>? matches one character</li> <li>* matches zero
  * or more characters</li> <li>** matches zero or more 'directories' in a path</li> </ul>
  *
  * <p>Some examples:<br> <ul> <li>{@code com/t?st.jsp} - matches {@code com/test.jsp} but also

@@ -279,4 +279,9 @@ public class DefaultPropertyProviderBuilderSpi implements PropertyProviderBuilde
         return new ReplacingPropertyProvider(metaInfo, mainMap, replacementMap);
     }
 
+    @Override
+    public PropertyProvider build(MetaInfo metaInfo, PropertyProvider baseProvider) {
+        return new BuildablePropertyProvider(metaInfo, baseProvider);
+    }
+
 }

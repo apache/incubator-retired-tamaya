@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.mapping;
+package org.apache.tamaya.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,13 +24,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define how config changes are handled for a type or per property/template method.
- * @see org.apache.tamaya.mapping.LoadPolicy
+ * Annotation container to enable injection current multiple {@link org.apache.tamaya.annotation.ConfiguredProperty}
+ * annotations. Hereby the ordering current annotations imply the defaulting. The first value that
+ * could be resolved successfully in the chain current annotations will be used.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
-public @interface WithLoadPolicy {
+@Target(value = { ElementType.FIELD, ElementType.METHOD })
+public @interface ConfiguredProperties {
 
-    LoadPolicy value();
+    /**
+     * Get the different configuration keys to be looked up, in order current precedence. The first non null value
+     * found will be used.
+     */
+    ConfiguredProperty[] value() default {};
 
 }

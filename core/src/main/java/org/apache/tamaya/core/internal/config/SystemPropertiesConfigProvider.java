@@ -34,7 +34,7 @@ public class SystemPropertiesConfigProvider implements ConfigurationProviderSpi{
     private Configuration systemConfig;
 
     public SystemPropertiesConfigProvider(){
-        systemConfig = PropertyProviderBuilder.create("environment.properties").addSystemProperties().build().toConfiguration();
+        systemConfig = PropertyProviderBuilder.create("system.properties").addSystemProperties().build().toConfiguration();
     }
 
     @Override

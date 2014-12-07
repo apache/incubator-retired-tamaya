@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.samples.annotations;
 
-import org.apache.tamaya.mapping.ConfigChangeListener;
-import org.apache.tamaya.mapping.ConfiguredProperty;
-import org.apache.tamaya.mapping.DefaultValue;
-import org.apache.tamaya.mapping.WithConfig;
+import org.apache.tamaya.annotation.ConfigChangeListener;
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultValue;
+import org.apache.tamaya.annotation.WithConfig;
 
 import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;

@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.mapping;
-
-import org.apache.tamaya.ConfigOperator;
+package org.apache.tamaya.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,19 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define an configuration operator to be used before accessing a configured value.
- * This allows filtering current configuration, e.g. for realizing views or ensuring security
- * constraints.
+ * Annotation to annotate a method on a class to be informed on config changes.
+ * The exact behaviour, when configuration change events are sent can be configured
+ * on each configured property/method by adding the {@link org.apache.tamaya.annotation.WithLoadPolicy}
+ * annotation. By default listeners are only informed about changes that are affecting configured
+ * values current the containing class/instance.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
-public @interface WithConfigOperator {
-
-    /**
-     * Define a custom adapter that should be used to adapt the configuration entry injected. This overrides any
-     * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
-     * registered, it is handled as a deployment error.
-     */
-    Class<? extends ConfigOperator> value();
+@Target(value = { ElementType.METHOD })
+public @interface ConfigChangeListener {
 
 }

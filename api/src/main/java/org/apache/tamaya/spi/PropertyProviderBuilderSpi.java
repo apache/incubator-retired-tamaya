@@ -110,7 +110,7 @@ public interface PropertyProviderBuilderSpi {
     /**
      * Creates a new {@link org.apache.tamaya.PropertyProvider} containing all property maps given, hereby using the given AggregationPolicy.
      *
-     * @param policy       the mapping to be used, not null.
+     * @param policy       the annotation to be used, not null.
      * @param propertyMaps the maps to be included, not null.
      * @return the aggregated instance containing all given maps.
      */
@@ -194,4 +194,13 @@ public interface PropertyProviderBuilderSpi {
      * @return the new delegating instance.
      */
     PropertyProvider replacing(MetaInfo metaInfo, PropertyProvider mainMap, Map<String, String> replacementMap);
+
+    /**
+     * Create a new PropertyProvider instance given the metaInfo and the baseProvider, masking hereby the base provider's
+     * meta information.
+     * @param metaInfo the meta information to be provided, not null.
+     * @param baseProvider the base provider to be used.
+     * @return a PropertyProvider with the given meta info, providing data from the baseProvider, never null.
+     */
+    PropertyProvider build(MetaInfo metaInfo, PropertyProvider baseProvider);
 }

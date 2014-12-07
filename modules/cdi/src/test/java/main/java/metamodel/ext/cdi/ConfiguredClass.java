@@ -1,9 +1,9 @@
 package main.java.metamodel.ext.cdi;
 
-import org.apache.tamaya.mapping.ConfigChangeListener;
-import org.apache.tamaya.mapping.ConfiguredProperty;
-import org.apache.tamaya.mapping.DefaultValue;
-import org.apache.tamaya.mapping.WithConfig;
+import org.apache.tamaya.annotation.ConfigChangeListener;
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultValue;
+import org.apache.tamaya.annotation.WithConfig;
 
 import javax.inject.Singleton;
 import java.beans.PropertyChangeEvent;

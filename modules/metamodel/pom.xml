@@ -27,7 +27,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-ext-metamodel</artifactId>
-    <name>Apache Tamaya Module - Management Beans</name>
+    <name>Apache Tamaya Module - Configuration Metamodels</name>
     <packaging>jar</packaging>
 
     <properties>

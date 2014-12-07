@@ -32,7 +32,7 @@ import java.util.logging.LogRecord;
  * {@link java.util.logging.Logger#getUseParentHandlers()} are not overrriden.
  * </p>
  * <p>
- * Level mapping inspired by {@link org.slf4j.bridge.SLF4JBridgeHandler}:
+ * Level annotation inspired by {@link org.slf4j.bridge.SLF4JBridgeHandler}:
  * </p>
  * <p/>
  * <pre>

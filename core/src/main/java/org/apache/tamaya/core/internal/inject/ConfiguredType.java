@@ -20,7 +20,7 @@ package org.apache.tamaya.core.internal.inject;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.mapping.*;
+import org.apache.tamaya.annotation.*;
 
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Field;

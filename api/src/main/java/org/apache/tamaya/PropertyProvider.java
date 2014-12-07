@@ -153,7 +153,7 @@ public interface PropertyProvider {
             }
             @Override
             public String toString() {
-                return "Configuration ["+getMetaInfo().getOwnerInfo()+"]";
+                return "Configuration [PropertyProvider "+getMetaInfo()+"]";
             }
         };
     }

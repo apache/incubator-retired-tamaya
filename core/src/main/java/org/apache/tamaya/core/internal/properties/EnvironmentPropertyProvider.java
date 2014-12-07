@@ -37,9 +37,7 @@ class EnvironmentPropertyProvider extends AbstractPropertyProvider {
 
     @Override
     public String toString(){
-        return "EnvironmentPropertyMap{" +
-                "props=" + super.toString() +
-                '}';
+        return "EnvironmentPropertyProvider[" + System.getenv().size() + " environment properties]";
     }
 
 }

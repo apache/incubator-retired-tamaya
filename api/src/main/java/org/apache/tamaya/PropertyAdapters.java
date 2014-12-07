@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.mapping.WithPropertyAdapter;
+import org.apache.tamaya.annotation.WithPropertyAdapter;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
 import java.util.Optional;
@@ -79,7 +79,7 @@ public final class PropertyAdapters{
     /**
      * Get an adapter converting to the given target type.
      * @param targetType the target type class
-     * @param annotation the {@link org.apache.tamaya.mapping.WithPropertyAdapter} annotation, or null. If the annotation is not null and
+     * @param annotation the {@link org.apache.tamaya.annotation.WithPropertyAdapter} annotation, or null. If the annotation is not null and
      *                   defines an overriding adapter, this instance is created and returned.
      * @param <T> the target type
      * @return the corresponding adapter, never null.

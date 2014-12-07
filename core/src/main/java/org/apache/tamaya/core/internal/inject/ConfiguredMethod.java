@@ -22,7 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyAdapter;
 import org.apache.tamaya.PropertyAdapters;
-import org.apache.tamaya.mapping.*;
+import org.apache.tamaya.annotation.*;
 import org.apache.tamaya.core.internal.Utils;
 
 import java.lang.reflect.Method;
@@ -187,7 +187,7 @@ public class ConfiguredMethod {
                 }
             }
         } catch (Exception e) {
-            throw new ConfigException("Failed to mapping configured field: " + this.annotatedMethod.getDeclaringClass()
+            throw new ConfigException("Failed to annotation configured field: " + this.annotatedMethod.getDeclaringClass()
                     .getName() + '.' + annotatedMethod.getName(), e);
         }
     }
