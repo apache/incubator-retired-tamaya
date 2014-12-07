@@ -53,7 +53,7 @@ public class AntPathFileResolver implements PathResolver {
                 }
             }
             catch(IOException e){
-                LOG.log(Level.FINE, "Failed to load resource expression: " + expression.toString(), e);
+                LOG.log(Level.FINE, "Failed to load resource expression: " + expression, e);
             }
         });
         return result;

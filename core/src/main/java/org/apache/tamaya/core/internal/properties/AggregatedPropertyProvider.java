@@ -38,7 +38,7 @@ class AggregatedPropertyProvider extends AbstractPropertyProvider {
 
     private static final long serialVersionUID = -1419376385695224799L;
 	private AggregationPolicy policy = AggregationPolicy.COMBINE;
-	private List<PropertyProvider> units = new ArrayList<PropertyProvider>();
+	private List<PropertyProvider> units = new ArrayList<>();
     private PropertyProvider mutableProvider;
 
     /**

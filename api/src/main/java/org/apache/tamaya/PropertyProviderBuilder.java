@@ -31,6 +31,9 @@ import java.util.logging.Logger;
  * Builder for assembling non trivial property providers.
  */
 public final class PropertyProviderBuilder {
+    private static final Supplier<IllegalStateException> noPropertyProviderAvailable =
+        () -> new IllegalStateException("No PropertyProvidersSingletonSpi available.");
+
     /**
      * SPI backing up this builder.
      */
@@ -39,6 +42,7 @@ public final class PropertyProviderBuilder {
      * THe logger used.
      */
     private static final Logger LOG = Logger.getLogger(PropertyProviderBuilder.class.getName());
+
     /**
      * The final meta info to be used, or null, if a default should be generated.
      */
@@ -195,8 +199,9 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current())
                     .set(MetaInfoBuilder.SOURCE,source).build();
         }
-        this.current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .aggregate(mi, this.aggregationPolicy, allProviders);
+
+        this.current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                               .aggregate(mi, this.aggregationPolicy, allProviders);
 
         addProviderChainInfo(source);
         this.metaInfo = null;
@@ -230,7 +235,7 @@ public final class PropertyProviderBuilder {
         if (mi == null) {
             mi = MetaInfoBuilder.of("args").setEnvironment(Environment.current()).build();
         }
-        PropertyProvider argProvider = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
+        PropertyProvider argProvider = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
                 .fromArgs(mi, args);
         return addProviders(argProvider);
     }
@@ -269,8 +274,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("paths", paths.toString()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromPaths(mi, aggregationPolicy, paths));
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .fromPaths(mi, aggregationPolicy, paths));
     }
 
     /**
@@ -304,8 +310,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("urls", urls.toString()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromURLs(mi, this.aggregationPolicy, urls));
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .fromURLs(mi, this.aggregationPolicy, urls));
     }
 
 
@@ -326,7 +333,7 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
                 .fromMap(mi, map));
     }
 
@@ -343,8 +350,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromEnvironmentProperties());
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .fromEnvironmentProperties());
     }
 
     /**
@@ -359,8 +367,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .fromSystemProperties());
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .fromSystemProperties());
     }
 
     /**
@@ -380,8 +389,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .aggregate(mi, aggregationPolicy, Arrays.asList(providers)));
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .aggregate(mi, aggregationPolicy, Arrays.asList(providers)));
     }
 
 
@@ -402,8 +412,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .aggregate(mi, aggregationPolicy, providers));
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .aggregate(mi, aggregationPolicy, providers));
     }
 
 
@@ -415,8 +426,8 @@ public final class PropertyProviderBuilder {
      * @return the mutable instance.
      */
     public static PropertyProvider mutable(PropertyProvider provider) {
-        return Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .mutable(null, provider);
+        return Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                       .mutable(null, provider);
     }
 
 
@@ -436,8 +447,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .intersected(mi,aggregationPolicy,  Arrays.asList(providers)));
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .intersected(mi, aggregationPolicy, Arrays.asList(providers)));
     }
 
 
@@ -457,7 +469,7 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
+        current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
                 .subtracted(mi, current, Arrays.asList(providers));
         return this;
     }
@@ -476,8 +488,8 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).set("filter", filter.toString()).setEnvironment(Environment.current()).build();
         }
-        current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .filtered(mi, filter, current);
+        current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                          .filtered(mi, filter, current);
         addProviderChainInfo("filter->" + filter.toString());
         this.metaInfo = null;
         return this;
@@ -498,8 +510,9 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .contextual(mi, mapSupplier, isolationKeySupplier));
+
+        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                    .contextual(mi, mapSupplier, isolationKeySupplier));
     }
 
     /**
@@ -515,7 +528,7 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        current = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
+        current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
                 .replacing(mi, current, replacementMap);
         this.metaInfo = null;
         addProviderChainInfo("replace->" + replacementMap.toString());
@@ -539,13 +552,15 @@ public final class PropertyProviderBuilder {
      * Build a new property provider based on the input.
      * @return a new property provider, or null.
      */
-    public PropertyProvider build() {
+    public PropertyProvider build()
+    {
         if (current != null) {
-            return Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .build(metaInfoBuilder.build(), current);
+            return Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                           .build(metaInfoBuilder.build(), current);
         }
-        return Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .empty(metaInfoBuilder.build());
+
+        return Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                       .empty(metaInfoBuilder.build());
     }
 
     /**
@@ -561,8 +576,10 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).set("freezed", "true").setEnvironment(Environment.current()).build();
         }
-        PropertyProvider prov = Optional.of(spi).orElseThrow(() -> new IllegalStateException("No PropertyProvidersSingletonSpi available."))
-                .freezed(mi, current);
+
+        PropertyProvider prov = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
+                                        .freezed(mi, current);
+
         this.metaInfo = null;
         return prov;
     }

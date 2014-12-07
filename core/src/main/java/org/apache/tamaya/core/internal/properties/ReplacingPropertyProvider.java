@@ -70,11 +70,9 @@ class ReplacingPropertyProvider implements PropertyProvider{
     @Override
     public Map<String,String> toMap(){
         Map<String,String> result = new HashMap<>(replacingMap);
-        for(Map.Entry<String,String> en : mainMap.toMap().entrySet()){
-            if(!replacingMap.containsKey(en.getKey())){
-                result.put(en.getKey(), en.getValue());
-            }
-        }
+        mainMap.toMap().entrySet().stream().filter(en -> !replacingMap.containsKey(en.getKey())).forEach(en -> {
+            result.put(en.getKey(), en.getValue());
+        });
         return result;
     }
 

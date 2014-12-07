@@ -73,7 +73,7 @@ public class UC1ReadProperties {
         // iterator over an area, using streams only
         Map<String, String> areaMap = config.toMap().entrySet().stream()
                 .filter((e) -> e.getKey().startsWith("num."))
-                .collect(Collectors.toMap((e) -> e.getKey().substring("num.".length()), (e) -> e.getValue()));
+                .collect(Collectors.toMap((e) -> e.getKey().substring("num.".length()), Map.Entry::getValue));
         Configuration areaConfig = PropertyProviderBuilder.create("Test").addMap(areaMap).build().toConfiguration();
         System.out.println(areaConfig);
     }

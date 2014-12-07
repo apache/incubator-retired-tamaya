@@ -21,6 +21,7 @@ package org.apache.tamaya.core.config;
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.ConfigChangeSetBuilder;
 import org.apache.tamaya.Configuration;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
@@ -34,13 +35,14 @@ import static org.junit.Assert.assertFalse;
  */
 public class MutableConfigTest {
 
+    @Ignore
     @Test
     public void accessMutableConfig(){
         Configuration config = Configuration.current("mutableTestConfig");
         ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(config).put("testCase", "accessMutableConfig")
                 .put("execTime", System.currentTimeMillis()).put("execution", "once").build();
         List<PropertyChangeEvent> changes = new ArrayList<>();
-        config.addPropertyChangeListener((evt) -> changes.add(evt));
+        config.addPropertyChangeListener(changes::add);
         config.apply(changeSet);
         assertFalse(changes.isEmpty());
         System.out.println(changes);

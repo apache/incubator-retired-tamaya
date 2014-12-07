@@ -61,9 +61,9 @@ class AntPathMatcher {
 
 	private volatile Boolean cachePatterns;
 
-	private final Map<String, String[]> tokenizedPatternCache = new ConcurrentHashMap<String, String[]>(256);
+	private final Map<String, String[]> tokenizedPatternCache = new ConcurrentHashMap<>(256);
 
-	final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<String, AntPathStringMatcher>(256);
+	final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<>(256);
 
 
 	/**
@@ -280,7 +280,7 @@ class AntPathMatcher {
 	protected String[] tokenizePattern(String pattern) {
 		String[] tokenized = null;
 		Boolean cachePatterns = this.cachePatterns;
-		if (cachePatterns == null || cachePatterns.booleanValue()) {
+		if (cachePatterns == null || cachePatterns) {
 			tokenized = this.tokenizedPatternCache.get(pattern);
 		}
 		if (tokenized == null) {
@@ -292,7 +292,7 @@ class AntPathMatcher {
 				deactivatePatternCache();
 				return tokenized;
 			}
-			if (cachePatterns == null || cachePatterns.booleanValue()) {
+			if (cachePatterns == null || cachePatterns) {
 				this.tokenizedPatternCache.put(pattern, tokenized);
 			}
 		}
@@ -334,7 +334,7 @@ class AntPathMatcher {
 	protected AntPathStringMatcher getStringMatcher(String pattern) {
 		AntPathStringMatcher matcher = null;
 		Boolean cachePatterns = this.cachePatterns;
-		if (cachePatterns == null || cachePatterns.booleanValue()) {
+		if (cachePatterns == null || cachePatterns) {
 			matcher = this.stringMatcherCache.get(pattern);
 		}
 		if (matcher == null) {
@@ -346,7 +346,7 @@ class AntPathMatcher {
 				deactivatePatternCache();
 				return matcher;
 			}
-			if (cachePatterns == null || cachePatterns.booleanValue()) {
+			if (cachePatterns == null || cachePatterns) {
 				this.stringMatcherCache.put(pattern, matcher);
 			}
 		}
@@ -389,7 +389,7 @@ class AntPathMatcher {
 	}
 
 	public Map<String, String> extractUriTemplateVariables(String pattern, String path) {
-		Map<String, String> variables = new LinkedHashMap<String, String>();
+		Map<String, String> variables = new LinkedHashMap<>();
 		boolean result = doMatch(pattern, path, true, variables);
 		if(!result){
             throw new IllegalArgumentException("Pattern \"" + pattern + "\" is not a match for \"" + path + "\"");
@@ -496,7 +496,7 @@ class AntPathMatcher {
 
 		private final Pattern pattern;
 
-		private final List<String> variableNames = new LinkedList<String>();
+		private final List<String> variableNames = new LinkedList<>();
 
 		public AntPathStringMatcher(String pattern) {
 			StringBuilder patternBuilder = new StringBuilder();
