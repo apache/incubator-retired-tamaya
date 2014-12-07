@@ -60,6 +60,18 @@ under the License.
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>${rat.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>src/test/resources/META-INF/services/org.apache.tamaya.spi.ConfigurationManagerSingletonSpi</exclude>
+                        <exclude>src/test/resources/META-INF/services/org.apache.tamaya.spi.EnvironmentManagerSingletonSpi</exclude>
+                        <exclude>src/test/resources/META-INF/services/org.apache.tamaya.spi.PropertyAdaptersSingletonSpi</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
