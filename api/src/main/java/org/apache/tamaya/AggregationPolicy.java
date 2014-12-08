@@ -25,12 +25,12 @@ public interface AggregationPolicy {
 
     /**
      * Method which decides how keys/values are aggregated.
-     * @param key the key current the entry
-     * @param value1 the current value, or null.
-     * @param value2 the new value, never null.
+     * @param key the key current the entry, must not be {@code null}.
+     * @param currentValue the current value, or {@code null}.
+     * @param newValue the new value, never {@code null}.
      * @return the target value to be used in the resulting property set, or null, to remove the property.
      */
-    public String aggregate(String key, String value1, String value2);
+    public String aggregate(String key, String currentValue, String newValue);
 
     /** Ignore overrides, only extend (additive). */
     public static final AggregationPolicy IGNORE_DUPLICATES = (k, v1, v2) -> v1 == null? v2 : v1;
