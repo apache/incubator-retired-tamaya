@@ -1,0 +1,63 @@
+= Tamayas Asciidoctor Example Document
+Oliver B. Fischer
+
+:encoding: UTF-8
+:source-highlighter: coderay
+
+This document is used to see if the current setup
+of Asciidoctor within the Tamaya project is working
+correctly. Therefore it contains some sections
+with different examples of Asciidoctors capabilities.
+
+== Asciidoctor Environment
+
+Some facts on the current Asciidoctor environment.
+
+Asciidoctor verision:: {asciidoctor-version}
+
+
+== Plant UML
+
+This chapter contains a
+http://plantuml.sourceforge.net/[Plant UML] diagram.
+
+
+[plantuml, diagram-classes, png]
+....
+class BlockProcessor
+class DiagramBlock
+class DitaaBlock
+class PlantUmlBlock
+
+BlockProcessor <|-- DiagramBlock
+DiagramBlock <|-- DitaaBlock
+DiagramBlock <|-- PlantUmlBlock
+....
+
+
+== Ditaa
+
+This section contains a diagram from
+http://asciidoctor.org/docs/asciidoctor-diagram/[Asciidoctor Diagram website]
+generated with http://ditaa.sourceforge.net/[ditaa].
+
+[ditaa, "asciidoctor-diagram-process"]
+....
+                   +-------------+
+                   | Asciidoctor |-------+
+                   |   diagram   |       |
+                   +-------------+       | PNG out
+                       ^                 |
+                       | ditaa in        |
+                       |                 v
+ +--------+   +--------+----+    /---------------\
+ |        |---+ Asciidoctor +--->|               |
+ |  Text  |   +-------------+    |   Beautiful   |
+ |Document|   |   !magic!   |    |    Output     |
+ |     {d}|   |             |    |               |
+ +---+----+   +-------------+    \---------------/
+     :                                   ^
+     |          Lots of work             |
+     +-----------------------------------+
+....
+
