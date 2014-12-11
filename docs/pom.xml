@@ -66,6 +66,23 @@ under the License.
                             <sourceDocumentName>Design.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>output-example-doc</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <baseDir>${project.basedir}/src/main/asciidoc/example/</baseDir>
+                            <outputDirectory>target/example</outputDirectory>
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <backend>html</backend>
+                            <embedAssets>true</embedAssets>
+                            <sourceDirectory>${project.basedir}/src/main/asciidoc/example/</sourceDirectory>
+                            <sourceDocumentName>example.adoc</sourceDocumentName>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
         </plugins>
