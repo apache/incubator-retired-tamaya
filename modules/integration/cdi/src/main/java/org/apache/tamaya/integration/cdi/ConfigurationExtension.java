@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package main.java.metamodel.ext.cdi;
+package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
 import org.apache.tamaya.core.internal.inject.ConfiguredType;

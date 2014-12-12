@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-main.java.metamodel.ext.cdi.ConfigurationExtension
+org.apache.tamaya.integration.cdi.ConfigurationExtension
