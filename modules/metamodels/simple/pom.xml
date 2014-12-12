@@ -21,13 +21,14 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-modules</artifactId>
+        <groupId>org.apache.tamaya.metamodels</groupId>
+        <artifactId>tamaya-metamodels-all</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-ext-metamodel</artifactId>
-    <name>Apache Tamaya Module - Configuration Metamodels</name>
+    <artifactId>tamaya-metamodel-simple</artifactId>
+    <name>Apache Tamaya Modules Metamodels - Simple</name>
+    <description>Simple Tamaya Metamodel, e.g. feasible for SE commandline tools and simple use cases.</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -58,25 +59,6 @@ under the License.
                     <target>${maven.compile.targetLevel}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctor-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>output-html</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/docs</outputDirectory>
-                            <sourceHighlighter>highlightjs</sourceHighlighter>
-                            <!-- coderay -->
-                            <backend>html</backend>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -85,16 +67,6 @@ under the License.
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>tamaya-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

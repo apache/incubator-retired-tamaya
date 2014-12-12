@@ -21,13 +21,13 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-modules</artifactId>
+        <groupId>org.apache.tamaya.integration</groupId>
+        <artifactId>tamaya-integration-all</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-ext-cdi</artifactId>
-    <name>Apache Tamaya Module - CDI Integration</name>
+    <artifactId>tamaya-cdi</artifactId>
+    <name>Apache Tamaya Modules Integration - CDI</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -74,7 +74,7 @@ under the License.
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
         </dependency>

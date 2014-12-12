@@ -21,14 +21,14 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
+        <groupId>org.apache.tamaya.ext</groupId>
+        <artifactId>tamaya-ext-all</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-ext-all</artifactId>
-    <groupId>org.apache.tamaya.ext</groupId>
-    <name>Apache Tamaya Modules</name>
+    <groupId>org.apache.tamaya.integration</groupId>
+    <artifactId>tamaya-integration-all</artifactId>
+    <name>Apache Tamaya Modules Integration</name>
     <packaging>pom</packaging>
 
     <properties>
@@ -38,22 +38,8 @@ under the License.
         <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>mbean-annotation-api</artifactId>
-            <version>4.7.1</version>
-        </dependency>
-    </dependencies>
-
     <modules>
-        <module>metamodels</module>
-        <module>integration</module>
+        <module>cdi</module>
     </modules>
 
 </project>

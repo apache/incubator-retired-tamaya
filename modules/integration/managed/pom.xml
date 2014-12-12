@@ -21,13 +21,13 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-modules</artifactId>
+        <groupId>org.apache.tamaya.integration</groupId>
+        <artifactId>tamaya-integration-all</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-ext-managed</artifactId>
-    <name>Apache Tamaya Module - Management Beans</name>
+    <artifactId>tamaya-integration-managed</artifactId>
+    <name>Apache Tamaya Modules Integration - Java Management Extensions</name>
     <packaging>jar</packaging>
 
     <properties>
