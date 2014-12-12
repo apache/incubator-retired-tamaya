@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyProviderBuilder;
 
 import java.util.*;
@@ -43,7 +43,7 @@ public final class ConfigFunctions {
      * @param areaKey the area key, not null
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator selectArea(String areaKey) {
+    public static UnaryOperator<Configuration> selectArea(String areaKey) {
         return selectArea(areaKey, true);
     }
 
@@ -55,7 +55,7 @@ public final class ConfigFunctions {
      * @param stripKeys if set to true, the area key is stripped away fromMap the resulting key.
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator selectArea(String areaKey, boolean stripKeys) {
+    public static UnaryOperator<Configuration> selectArea(String areaKey, boolean stripKeys) {
         return config -> {
             Map<String, String> area = new HashMap<>();
             area.putAll(
@@ -89,7 +89,7 @@ public final class ConfigFunctions {
      * @param areaKey the area key, not null
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator selectAreaRecursive(String areaKey) {
+    public static UnaryOperator<Configuration> selectAreaRecursive(String areaKey) {
         return selectAreaRecursive(areaKey, true);
     }
 
@@ -101,7 +101,7 @@ public final class ConfigFunctions {
      * @param stripKeys if set to true, the area key is stripped away fromMap the resulting key.
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator selectAreaRecursive(String areaKey, boolean stripKeys) {
+    public static UnaryOperator<Configuration> selectAreaRecursive(String areaKey, boolean stripKeys) {
         return config -> {
             Map<String, String> area = new HashMap<>();
             String lookupKey = areaKey + '.';
@@ -121,22 +121,23 @@ public final class ConfigFunctions {
      * the area key is stripped away fromMap the resulting key.
      *
      * @param areaKey the area key, not null
+     * @param mappedAreaKey the target key, not null
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator mapArea(String areaKey, String mappedAreaKey) {
+    public static UnaryOperator<Configuration> mapArea(String areaKey, String mappedAreaKey) {
         return mapKeys(key -> key.startsWith(areaKey + '.')?
                 mappedAreaKey + key.substring(areaKey.length()):key);
     }
 
     /**
-     * Creates a {@link ConfigOperator} that creates a {@link org.apache.tamaya.Configuration} that maps any keys as
+     * Creates a {@link UnaryOperator} that creates a {@link org.apache.tamaya.Configuration} that maps any keys as
      * defined by the {@code keyMapper} given. If the {@code keyMapper} returns
      * {@code null} for a value, it is removed from the resulting map.
      *
      * @param keyMapper the key mapper, not null
      * @return the area configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator mapKeys(UnaryOperator<String> keyMapper) {
+    public static UnaryOperator<Configuration> mapKeys(UnaryOperator<String> keyMapper) {
         return (c) -> new MappedConfiguration(c, keyMapper);
     }
 

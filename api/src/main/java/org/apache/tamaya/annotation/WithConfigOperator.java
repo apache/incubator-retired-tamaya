@@ -18,12 +18,13 @@
  */
 package org.apache.tamaya.annotation;
 
-import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.Configuration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.UnaryOperator;
 
 /**
  * Annotation to define an configuration operator to be used before accessing a configured value.
@@ -39,6 +40,6 @@ public @interface WithConfigOperator {
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
      */
-    Class<? extends ConfigOperator> value();
+    Class<? extends UnaryOperator<Configuration>> value();
 
 }

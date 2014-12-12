@@ -23,6 +23,7 @@ import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -235,8 +236,8 @@ public interface Configuration extends PropertyProvider{
      *                 combining configurations.
      * @return the new adjusted configuration, never {@code null}.
      */
-    default Configuration with(ConfigOperator operator){
-        return operator.operate(this);
+    default Configuration with(UnaryOperator<Configuration> operator){
+        return operator.apply(this);
     }
 
     /**
