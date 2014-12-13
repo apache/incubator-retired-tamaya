@@ -20,6 +20,7 @@ package org.apache.tamaya.internal;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.config.AbstractConfiguration;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 import java.beans.PropertyChangeEvent;
@@ -47,7 +48,7 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
         dataMap.put("sons.1", "Robin");
         dataMap.put("sons.2", "Luke");
         dataMap.put("sons.3", "Benjamin");
-        PropertyProvider provider = PropertyProviderBuilder.create(CONFIG_NAME).addMap(dataMap).build();
+        PropertySource provider = PropertySourceBuilder.create(CONFIG_NAME).addMap(dataMap).build();
         testConfig = new MutableConfiguration(dataMap, MetaInfo.of(CONFIG_NAME));
     }
 
@@ -59,6 +60,11 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
     @Override
     public Configuration getConfiguration(){
         return testConfig;
+    }
+
+    @Override
+    public void reload() {
+
     }
 
     /**
@@ -93,7 +99,7 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
                     this.data.put(change.getPropertyName(), (String) change.getNewValue());
                 }
             }
-            publishPropertyChangeEvents(changeSet.getEvents());
+            Configuration.publishChange(changeSet);
         }
 
         @Override

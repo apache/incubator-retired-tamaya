@@ -23,6 +23,8 @@ import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Created by Anatole on 09.09.2014.
@@ -83,6 +85,21 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
             expression = expression.replaceAll("\\$\\{"+en.getKey()+"\\}", en.getValue());
         }
         return expression;
+    }
+
+    @Override
+    public void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+        // ignore
+    }
+
+    @Override
+    public void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+        // ignore
+    }
+
+    @Override
+    public void publishChange(ConfigChangeSet configChangeSet) {
+        // ignore
     }
 
 }

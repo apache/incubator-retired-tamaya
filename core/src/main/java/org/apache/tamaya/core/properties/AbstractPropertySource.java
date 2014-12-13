@@ -20,16 +20,16 @@ package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.PropertyProvider;
+import org.apache.tamaya.PropertySource;
 
 import java.io.Serializable;
 import java.util.*;
 
 /**
- * Abstract base class for implementing a {@link org.apache.tamaya.PropertyProvider}.
+ * Abstract base class for implementing a {@link org.apache.tamaya.PropertySource}.
  */
 @SuppressWarnings("NullableProblems")
-public abstract class AbstractPropertyProvider implements PropertyProvider, Serializable{
+public abstract class AbstractPropertySource implements PropertySource, Serializable{
     /**
      * serialVersionUID.
      */
@@ -45,7 +45,7 @@ public abstract class AbstractPropertyProvider implements PropertyProvider, Seri
     /**
      * Constructor.
      */
-    protected AbstractPropertyProvider(MetaInfo metaInfo){
+    protected AbstractPropertySource(MetaInfo metaInfo){
         Objects.requireNonNull(metaInfo);
         this.metaInfo = metaInfo;
     }

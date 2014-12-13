@@ -18,27 +18,31 @@
  */
 package org.apache.tamaya.core.internal.config;
 
-import org.apache.tamaya.PropertyProviderBuilder;
+import org.apache.tamaya.*;
 import org.apache.tamaya.core.internal.el.DefaultExpressionEvaluator;
 import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 
 public class DefaultConfigurationManagerSingletonSpi implements ConfigurationManagerSingletonSpi {
 
+    private static final String DEFAULT_CONFIG_NAME = "default";
+
     private Map<String, ConfigurationProviderSpi> configProviders = new ConcurrentHashMap<>();
+
+    private Map<Consumer<ConfigChangeSet>, List<Predicate<PropertySource>>> listenerMap = new ConcurrentHashMap<>();
 
     private ExpressionEvaluator expressionEvaluator = loadEvaluator();
 
@@ -60,11 +64,10 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     public <T> T getConfiguration(String name, Class<T> type) {
         ConfigurationProviderSpi provider = configProviders.get(name);
         if (provider == null) {
-            if(DefaultConigProvider.DEFAULT_CONFIG_NAME.equals(name)){
-                provider = new DefaultConigProvider();
-                configProviders.put(DefaultConigProvider.DEFAULT_CONFIG_NAME, provider);
-            }
-            else{
+            if (DEFAULT_CONFIG_NAME.equals(name)) {
+                provider = new FallbackSimpleConfigProvider();
+                configProviders.put(DEFAULT_CONFIG_NAME, provider);
+            } else {
                 throw new ConfigException("No such config: " + name);
             }
         }
@@ -89,7 +92,7 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     private <T> T createAdapterProxy(Configuration config, Class<T> type) {
         ClassLoader cl = Optional.ofNullable(Thread.currentThread()
                 .getContextClassLoader()).orElse(getClass().getClassLoader());
-        return (T)Proxy.newProxyInstance(cl,new Class[]{type}, new ConfigTemplateInvocationHandler(type, config));
+        return (T) Proxy.newProxyInstance(cl, new Class[]{type}, new ConfigTemplateInvocationHandler(type, config));
     }
 
     @Override
@@ -118,24 +121,53 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     }
 
     @Override
+    public void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+        List<Predicate<PropertySource>> predicates = listenerMap.computeIfAbsent(l,
+                cs -> Collections.synchronizedList(new ArrayList<>()));
+        if (predicate == null) {
+            predicates.add(p -> true); // select all events!
+        } else {
+            predicates.add(predicate);
+        }
+    }
+
+    @Override
+    public void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+        List<Predicate<PropertySource>> predicates = listenerMap.get(l);
+        if (predicate == null) {
+            listenerMap.remove(l); // select all events!
+        } else {
+            predicates.add(predicate);
+        }
+    }
+
+    @Override
+    public void publishChange(ConfigChangeSet configChangeSet) {
+        listenerMap.entrySet().forEach(
+                (en) -> {
+                    if (en.getValue().stream()
+                            .filter(v -> v.test(configChangeSet.getPropertySource())).findAny().isPresent()) {
+                        en.getKey().accept(configChangeSet);
+                    }
+                }
+        );
+    }
+
+    @Override
     public boolean isConfigurationDefined(String name) {
         ConfigurationProviderSpi spi = this.configProviders.get(name);
         return spi != null;
     }
 
     /**
-     * This config provider is loaded if no
+     * Implementation of a default config provider used as fallback, if no {@link org.apache.tamaya.core.spi.ConfigurationProviderSpi}
+     * instance is registered for providing the {@code default} {@link org.apache.tamaya.Configuration}.
      */
-    private static final class DefaultConigProvider implements ConfigurationProviderSpi{
-        private static final String DEFAULT_CONFIG_NAME = "default";
-
-        private Configuration defaultConfig = PropertyProviderBuilder.create(DEFAULT_CONFIG_NAME)
-                .addEnvironmentProperties()
-                .addPaths("META-INF/cfg/default/**/*.properties","META-INF/cfg/default/**/*.xml","META-INF/cfg/default/**/*.ini")
-                .addPaths("META-INF/cfg/config/**/*.properties","META-INF/cfg/config/**/*.xml","META-INF/cfg/config/**/*.ini")
-                .addSystemProperties()
-                .addPaths("META-INF/cfg/fixed/**/*.properties","META-INF/cfg/fixed/**/*.xml","META-INF/cfg/fixed/**/*.ini")
-                .build().toConfiguration();
+    private static final class FallbackSimpleConfigProvider implements ConfigurationProviderSpi {
+        /**
+         * The loaded configuration instance.
+         */
+        private volatile Configuration configuration;
 
         @Override
         public String getConfigName() {
@@ -144,7 +176,30 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
 
         @Override
         public Configuration getConfiguration() {
-            return defaultConfig;
+            Configuration cfg = configuration;
+            if (cfg == null) {
+                reload();
+                cfg = configuration;
+            }
+            return cfg;
+        }
+
+
+        @Override
+        public void reload() {
+            this.configuration =
+                    PropertySourceBuilder.create(DEFAULT_CONFIG_NAME)
+                            .addProviders(PropertySourceBuilder.create("CL default")
+                                    .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
+                                    .addPaths("META-INF/cfg/default/**/*.xml", "META-INF/cfg/default/**/*.properties", "META-INF/cfg/default/**/*.ini")
+                                    .build())
+                            .addProviders(PropertySourceBuilder.create("CL default")
+                                    .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
+                                    .addPaths("META-INF/cfg/config/**/*.xml", "META-INF/cfg/config/**/*.properties", "META-INF/cfg/config/**/*.ini")
+                                    .build())
+                            .addSystemProperties()
+                            .addEnvironmentProperties()
+                            .build().toConfiguration();
         }
     }
 

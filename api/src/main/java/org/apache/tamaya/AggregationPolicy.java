@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya;
 
+import java.util.logging.Logger;
+
 /**
  * Policy that defines how the different aggregates should be combined.
  */
@@ -41,7 +43,7 @@ public interface AggregationPolicy {
     /**
      * Interpret later keys as override (additive and override), replacing
      * the key loaded earlier/fromMap previous contained
-     * {@link org.apache.tamaya.PropertyProvider}.
+     * {@link PropertySource}.
      */
     public static final AggregationPolicy OVERRIDE = (k, v1, v2) -> v2;
 
@@ -56,4 +58,58 @@ public interface AggregationPolicy {
             }
             return newValue;
         };
+
+    /**
+     * Ignores any duplicates, but logs the conflict encountered to error/severe level.
+     */
+    public static final AggregationPolicy LOG_ERROR =
+            (String key, String value, String newValue) -> {
+                if(value!=null && newValue!=null && !value.equals(newValue)){
+                    Logger.getLogger(AggregationPolicy.class.getName())
+                            .severe(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                    return value;
+                }
+                return newValue;
+            };
+
+    /**
+     * Ignores any duplicates, but logs the conflict encountered to info level.
+     */
+    public static final AggregationPolicy LOG_WARNING =
+            (String key, String value, String newValue) -> {
+                if(value!=null && newValue!=null && !value.equals(newValue)){
+                    Logger.getLogger(AggregationPolicy.class.getName())
+                            .warning(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                    return value;
+                }
+                return newValue;
+            };
+
+    /**
+     * Ignores any duplicates, but logs the conflict encountered to info level.
+     */
+    public static final AggregationPolicy LOG_INFO =
+        (String key, String value, String newValue) -> {
+            if(value!=null && newValue!=null && !value.equals(newValue)){
+                Logger.getLogger(AggregationPolicy.class.getName())
+                        .info(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                return value;
+            }
+            return newValue;
+        };
+
+    /**
+     * Ignores any duplicates, but logs the conflict encountered to debug/finest level.
+     */
+    public static final AggregationPolicy LOG_DEBUG =
+            (String key, String value, String newValue) -> {
+                if(value!=null && newValue!=null && !value.equals(newValue)){
+                    Logger.getLogger(AggregationPolicy.class.getName())
+                            .finest(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                    return value;
+                }
+                return newValue;
+            };
+
+
 }

@@ -19,6 +19,7 @@
 package org.apache.tamaya.ucs;
 
 import org.apache.tamaya.*;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
@@ -37,16 +38,16 @@ public class UC2CombineProperties {
      */
     @Test
     public void simpleAggregationTests() {
-        PropertyProvider props1 = PropertyProviderBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
-        PropertyProvider props2 = PropertyProviderBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
-        PropertyProvider unionOverriding = PropertyProviderBuilder.create(props1).withAggregationPolicy(AggregationPolicy.OVERRIDE).addProviders(props2).build();
+        PropertySource props1 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
+        PropertySource props2 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
+        PropertySource unionOverriding = PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.OVERRIDE).addProviders(props2).build();
         System.out.println("unionOverriding: " + unionOverriding);
-        PropertyProvider unionIgnoringDuplicates = PropertyProviderBuilder.create(props1).withAggregationPolicy(AggregationPolicy.IGNORE_DUPLICATES).addProviders(props2).build();
+        PropertySource unionIgnoringDuplicates = PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.IGNORE_DUPLICATES).addProviders(props2).build();
         System.out.println("unionIgnoringDuplicates: " + unionIgnoringDuplicates);
-        PropertyProvider unionCombined = PropertyProviderBuilder.create(props1).withAggregationPolicy(AggregationPolicy.COMBINE).addProviders(props2).build();
+        PropertySource unionCombined = PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.COMBINE).addProviders(props2).build();
         System.out.println("unionCombined: " + unionCombined);
         try{
-            PropertyProviderBuilder.create(props1).withAggregationPolicy(AggregationPolicy.EXCEPTION).addProviders(props2).build();
+            PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.EXCEPTION).addProviders(props2).build();
         }
         catch(ConfigException e){
             // expected!
@@ -58,9 +59,9 @@ public class UC2CombineProperties {
      */
     @Test
     public void dynamicAggregationTests() {
-        PropertyProvider props1 = PropertyProviderBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
-        PropertyProvider props2 = PropertyProviderBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
-        PropertyProvider props = PropertyProviderBuilder.create().withAggregationPolicy((k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]").withMetaInfo(MetaInfo.of("dynamicAggregationTests"))
+        PropertySource props1 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
+        PropertySource props2 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
+        PropertySource props = PropertySourceBuilder.create().withAggregationPolicy((k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]").withMetaInfo(MetaInfo.of("dynamicAggregationTests"))
                 .aggregate(props1, props2).build();
         System.out.println(props);
     }

@@ -41,7 +41,7 @@ public class MutableConfigTest {
         ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(config).put("testCase", "accessMutableConfig")
                 .put("execTime", System.currentTimeMillis()).put("execution", "once").build();
         List<PropertyChangeEvent> changes = new ArrayList<>();
-        config.addPropertyChangeListener(changes::add);
+        Configuration.addChangeListener(cfg -> cfg == config, change -> changes.addAll(change.getEvents()));
         config.apply(changeSet);
         assertFalse(changes.isEmpty());
         System.out.println(changes);

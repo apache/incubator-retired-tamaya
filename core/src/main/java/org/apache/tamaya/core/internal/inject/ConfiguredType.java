@@ -65,7 +65,7 @@ public class ConfiguredType {
             }
         }
         for (Method m : type.getDeclaredMethods()) {
-            ConfigChangeListener mAnnot = m.getAnnotation(ConfigChangeListener.class);
+            ObservesConfigChange mAnnot = m.getAnnotation(ObservesConfigChange.class);
             if(mAnnot!=null) {
                 if (m.getParameterTypes().length != 1) {
                     continue;

@@ -20,7 +20,7 @@
  */
 package main.java.metamodel.ext.cdi;
 
-import org.apache.tamaya.annotation.ConfigChangeListener;
+import org.apache.tamaya.annotation.ObservesConfigChange;
 import org.apache.tamaya.annotation.ConfiguredProperty;
 import org.apache.tamaya.annotation.DefaultValue;
 import org.apache.tamaya.annotation.WithConfig;
@@ -78,7 +78,7 @@ public class ConfiguredClass{
     @ConfiguredProperty("double1")
     private double doubleValue;
 
-    @ConfigChangeListener
+    @ObservesConfigChange
     public void changeListener1(PropertyChangeEvent configChange){
         // will be called
     }

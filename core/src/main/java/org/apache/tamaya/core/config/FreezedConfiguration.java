@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.config;
 
 import org.apache.tamaya.*;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -32,12 +33,12 @@ import java.util.Objects;
 final class FreezedConfiguration extends AbstractConfiguration implements Serializable{
     private static final long serialVersionUID = -6373137316556444171L;
 
-    private PropertyProvider properties;
+    private PropertySource properties;
     private String version;
 
     private FreezedConfiguration(Configuration config){
         super(MetaInfoBuilder.of(config.getMetaInfo()).set("freezedAt", Instant.now().toString()).build());
-        this.properties = PropertyProviderBuilder.create(config).buildFreezed();
+        this.properties = PropertySourceBuilder.create(config).buildFreezed();
         this.version = Objects.requireNonNull(config.getVersion());
     }
 

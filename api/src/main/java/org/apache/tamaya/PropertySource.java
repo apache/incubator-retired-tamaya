@@ -1,53 +1,77 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.apache.tamaya;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * This interface models a provider that serves configuration properties. The contained
- * properties may be read fromMap single or several sources (composite).<br/>
- * Property config are the building blocks out current which complex
- * configuration is setup.
- * <p/>
- * <h3>Implementation Requirements</h3>
- * <p></p>Implementations current this interface must be
- * <ul>
- * <li>Thread safe.
- * </ul>
- * It is highly recommended that implementations also are
- * <ul>
- * <li>Immutable</li>
- * <li>serializable</li>
- * </ul>
- * </p>
- */
-public interface PropertyProvider {
+* This interface models a provider that serves configuration properties. The contained
+* properties may be read fromMap single or several sources (composite).<br/>
+* Property config are the building blocks out current which complex
+* configuration is setup.
+* <p/>
+* <h3>Implementation Requirements</h3>
+* <p></p>Implementations current this interface must be
+* <ul>
+* <li>Thread safe.
+* </ul>
+* It is highly recommended that implementations also are
+* <ul>
+* <li>Immutable</li>
+* <li>serializable</li>
+* </ul>
+* </p>
+*/
+public interface PropertySource {
 
     /**
      * Access an empty and immutable PropertyProvider instance.
      *
      * @return an empty and immutable PropertyProvider instance, never null.
      */
-    public static final PropertyProvider EMPTY_PROVIDER = PropertyProviderBuilder.create("<empty>").build();
+    public static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource(){
+
+        private MetaInfo metaInfo = MetaInfo.of("<empty>");
+
+        @Override
+        public Optional<String> get(String key) {
+            return Optional.empty();
+        }
+
+        @Override
+        public boolean containsKey(String key) {
+            return false;
+        }
+
+        @Override
+        public Map<String, String> toMap() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public MetaInfo getMetaInfo() {
+            return metaInfo;
+        }
+    };
 
     /**
      * Access a property.
@@ -81,7 +105,7 @@ public interface PropertyProvider {
      * @param provider the provider to be compared, not null.
      * @return true, if both property sets equals.
      */
-    default boolean hasSameProperties(PropertyProvider provider) {
+    default boolean hasSameProperties(PropertySource provider) {
         return this == provider || ConfigChangeSetBuilder.compare(this, provider).isEmpty();
     }
 
@@ -94,7 +118,7 @@ public interface PropertyProvider {
     }
 
     /**
-     * Reloads the {@link org.apache.tamaya.PropertyProvider}.
+     * Reloads the {@link PropertySource}.
      */
     default ConfigChangeSet load(){
         // by default do nothing
@@ -137,23 +161,23 @@ public interface PropertyProvider {
         return new Configuration(){
             @Override
             public Optional<String> get(String key) {
-                return PropertyProvider.this.get(key);
+                return PropertySource.this.get(key);
             }
             @Override
             public boolean containsKey(String key) {
-                return PropertyProvider.this.containsKey(key);
+                return PropertySource.this.containsKey(key);
             }
             @Override
             public Map<String, String> toMap() {
-                return PropertyProvider.this.toMap();
+                return PropertySource.this.toMap();
             }
             @Override
             public MetaInfo getMetaInfo() {
-                return PropertyProvider.this.getMetaInfo();
+                return PropertySource.this.getMetaInfo();
             }
             @Override
             public String toString() {
-                return "Configuration [PropertyProvider "+getMetaInfo()+"]";
+                return "Configuration [source: PropertyProvider "+getMetaInfo()+"]";
             }
         };
     }

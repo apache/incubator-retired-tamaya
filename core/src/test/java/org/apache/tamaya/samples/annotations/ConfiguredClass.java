@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.samples.annotations;
 
-import org.apache.tamaya.annotation.ConfigChangeListener;
+import org.apache.tamaya.annotation.ObservesConfigChange;
 import org.apache.tamaya.annotation.ConfiguredProperty;
 import org.apache.tamaya.annotation.DefaultValue;
 import org.apache.tamaya.annotation.WithConfig;
@@ -69,7 +69,7 @@ public class ConfiguredClass{
     @ConfiguredProperty("BD")
     private BigDecimal bigNumber;
 
-    @ConfigChangeListener
+    @ObservesConfigChange
     public void changeListener1(PropertyChangeEvent configChange){
         // will be called
     }

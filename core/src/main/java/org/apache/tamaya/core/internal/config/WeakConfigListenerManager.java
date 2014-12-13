@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.config;
 
-import org.apache.tamaya.core.properties.Store;
-
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

@@ -21,10 +21,9 @@ package org.apache.tamaya;
 import org.apache.tamaya.spi.Bootstrap;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
-import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Singleton accessor for accessing {@link Configuration} instances and
@@ -144,4 +143,32 @@ final class ConfigurationManager{
         return Optional.of(configManagerSingletonSpi).get().evaluateValue(config, expression);
     }
 
+    /**
+     * Add a ConfigChangeSet listener to the given configuration instance.
+     * @param predicate the event filtering predicate, or null, for selecting all changes.
+     * @param l the listener, not null.
+     */
+    public static void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+        Optional.of(configManagerSingletonSpi).get().addChangeListener(predicate, Objects.requireNonNull(l));
+    }
+
+    /**
+     * Removes a ConfigChangeSet listener from the given configuration instance.
+     * @param predicate the event filtering predicate, or null, for selecting all changes.
+     * @param l the listener, not null.
+     */
+    public static void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+        Optional.of(configManagerSingletonSpi).get().removeChangeListener(predicate, Objects.requireNonNull(l));
+    }
+
+    /**
+     * Method to publish changes on a {@link org.apache.tamaya.Configuration} to all interested parties.
+     * Basically this method gives an abstraction on the effective event bus design fo listeners. In a CDI context
+     * the CDI enterprise event bus should be used internally to do the work, whereas in a SE only environment
+     * a more puristic approach would be useful.
+     * @param configChange the change to be published, not null.
+     */
+    public static void publishChange(ConfigChangeSet configChange) {
+        Optional.of(configManagerSingletonSpi).get().publishChange(Objects.requireNonNull(configChange));
+    }
 }

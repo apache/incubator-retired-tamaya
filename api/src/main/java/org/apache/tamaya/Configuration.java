@@ -20,16 +20,16 @@ package org.apache.tamaya;
 
 import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 
-import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
  * A configuration models a aggregated set current properties, identified by a unique key, but adds higher level access functions to
- * a {@link PropertyProvider}. Hereby in most cases a configuration is a wrapper around a composite
- * {@link PropertyProvider} instance, which may combine multiple child config in well defined tree like structure,
+ * a {@link PropertySource}. Hereby in most cases a configuration is a wrapper around a composite
+ * {@link PropertySource} instance, which may combine multiple child config in well defined tree like structure,
  * where nodes define logically the rules current priority, filtering, combination and overriding.
  * <br/>
  * <h3>Implementation Requirements</h3>
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * simplifying the development current this interface, e.g. for being backed up by systems and stores that are not part current
  * this library at all.
  */
-public interface Configuration extends PropertyProvider{
+public interface Configuration extends PropertySource {
 
     /**
      * Get the property value as {@link Boolean}.
@@ -258,21 +258,6 @@ public interface Configuration extends PropertyProvider{
      */
     default String getVersion(){return "N/A";}
 
-    /**
-     * Add a ConfigChangeListener to this configuration instance.
-     * @param l the listener, not null.
-     */
-    default void addPropertyChangeListener(PropertyChangeListener l){
-        throw new UnsupportedOperationException("Change listeners not supported by default.");
-    }
-
-    /**
-     * Removes a ConfigChangeListener to this configuration instance.
-     * @param l the listener, not null.
-     */
-    default void removePropertyChangeListener(PropertyChangeListener l){
-        throw new UnsupportedOperationException("Change listeners not supported by default.");
-    }
 
     /**
      * Allows to check if a configuration with a given name is defined.
@@ -362,6 +347,35 @@ public interface Configuration extends PropertyProvider{
      */
     public static String evaluateValue(Configuration config, String expression){
         return ConfigurationManager.evaluateValue(config, expression);
+    }
+
+    /**
+     * Add a ConfigChangeListener to this configuration instance.
+     * @param predicate the event filtering predicate
+     * @param l the listener, not null.
+     */
+    public static  void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l){
+        ConfigurationManager.addChangeListener(predicate, l);
+    }
+
+    /**
+     * Removes a ConfigChangeListener to this configuration instance.
+     * @param predicate the event filtering predicate
+     * @param l the listener, not null.
+     */
+    public static void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l){
+        ConfigurationManager.removeChangeListener(predicate, l);
+    }
+
+    /**
+     * Method to publish changes on a {@link org.apache.tamaya.Configuration} to all interested parties.
+     * Basically this method gives an abstraction on the effective event bus design fo listeners. In a CDI context
+     * the CDI enterprise event bus should be used internally to do the work, whereas in a SE only environment
+     * a more puristic approach would be useful.
+     * @param configChange the change to be published, not null.
+     */
+    public static void publishChange(ConfigChangeSet configChange){
+        ConfigurationManager.publishChange(configChange);
     }
 
 }

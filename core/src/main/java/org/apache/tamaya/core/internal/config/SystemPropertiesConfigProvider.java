@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.internal.config;
 
-import org.apache.tamaya.PropertyProviderBuilder;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 import org.apache.tamaya.Configuration;
@@ -34,7 +34,7 @@ public class SystemPropertiesConfigProvider implements ConfigurationProviderSpi{
     private Configuration systemConfig;
 
     public SystemPropertiesConfigProvider(){
-        systemConfig = PropertyProviderBuilder.create("system.properties").addSystemProperties().build().toConfiguration();
+        systemConfig = PropertySourceBuilder.create("system.properties").addSystemProperties().build().toConfiguration();
     }
 
     @Override
@@ -45,5 +45,10 @@ public class SystemPropertiesConfigProvider implements ConfigurationProviderSpi{
     @Override
     public Configuration getConfiguration(){
         return systemConfig;
+    }
+
+    @Override
+    public void reload() {
+        // nothing todo here
     }
 }

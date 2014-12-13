@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.config;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyProviderBuilder;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
@@ -64,7 +64,7 @@ public final class ConfigFunctions {
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
                                     e -> e.getValue())));
-            return PropertyProviderBuilder.create("area: " + areaKey).addMap(area).build().toConfiguration();
+            return PropertySourceBuilder.create("area: " + areaKey).addMap(area).build().toConfiguration();
         };
     }
 
@@ -111,7 +111,7 @@ public final class ConfigFunctions {
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
                                     e -> e.getValue())));
-            return PropertyProviderBuilder.create("area (recursive): " + areaKey).addMap(area).build().toConfiguration();
+            return PropertySourceBuilder.create("area (recursive): " + areaKey).addMap(area).build().toConfiguration();
         };
     }
 

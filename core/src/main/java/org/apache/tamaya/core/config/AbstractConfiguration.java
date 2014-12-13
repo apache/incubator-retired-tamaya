@@ -19,27 +19,18 @@
 package org.apache.tamaya.core.config;
 
 import org.apache.tamaya.*;
-import org.apache.tamaya.core.properties.AbstractPropertyProvider;
-import org.apache.tamaya.core.properties.Store;
+import org.apache.tamaya.core.properties.AbstractPropertySource;
 import org.apache.tamaya.core.spi.AdapterProviderSpi;
 import org.apache.tamaya.spi.Bootstrap;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class AbstractConfiguration extends AbstractPropertyProvider implements Configuration{
+public abstract class AbstractConfiguration extends AbstractPropertySource implements Configuration{
 
     private static final Logger LOG = Logger.getLogger(AbstractConfiguration.class.getName());
 
     private static final long serialVersionUID = 503764580971917964L;
-
-    /**
-     * The registered change listeners, or null.
-     */
-    private volatile Store<PropertyChangeListener> changeListeners;
 
     private final Object LOCK = new Object();
 
@@ -89,42 +80,9 @@ public abstract class AbstractConfiguration extends AbstractPropertyProvider imp
             this.version = UUID.randomUUID().toString();
         }
         ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(oldState).addChanges(newState).build();
-        publishPropertyChangeEvents(changeSet.getEvents());
+        Configuration.publishChange(changeSet);
         return changeSet;
     }
 
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener l){
-        if(this.changeListeners == null){
-            synchronized(LOCK){
-                if(this.changeListeners == null){
-                    this.changeListeners = new Store<>();
-                }
-            }
-        }
-        this.changeListeners.addWeak(l);
-    }
 
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener l){
-        if(changeListeners == null){
-            return;
-        }
-        this.changeListeners.remove(l);
-    }
-
-    protected void publishPropertyChangeEvents(Collection<PropertyChangeEvent> events){
-        if(changeListeners == null){
-            return;
-        }
-        for(PropertyChangeListener l : changeListeners){
-            for(PropertyChangeEvent evt: events) {
-                try {
-                    l.propertyChange(evt);
-                } catch (Exception e) {
-                    LOG.log(Level.SEVERE, e, () -> "Error thrown by ConfigChangeListener: " + l);
-                }
-            }
-        }
-    }
 }

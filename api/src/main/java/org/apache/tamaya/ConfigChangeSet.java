@@ -30,7 +30,7 @@ import java.util.*;
  */
 public final class ConfigChangeSet {
     /** The base property provider/configuration. */
-    private PropertyProvider propertyProvider;
+    private PropertySource propertyProvider;
     /** The base version, usable for optimistic locking. */
     private String baseVersion;
     /** The recorded changes. */
@@ -41,7 +41,7 @@ public final class ConfigChangeSet {
      * @param propertyProvider The base property provider/configuration, not null.
      * @return an empty ConfigChangeSet instance.
      */
-    public static final ConfigChangeSet emptyChangeSet(PropertyProvider propertyProvider){
+    public static final ConfigChangeSet emptyChangeSet(PropertySource propertyProvider){
         return new ConfigChangeSet(propertyProvider, "<empty>", Collections.emptySet());
     }
 
@@ -51,7 +51,7 @@ public final class ConfigChangeSet {
      * @param baseVersion The base version, usable for optimistic locking.
      * @param changes The recorded changes, not null.
      */
-    ConfigChangeSet(PropertyProvider propertyProvider, String baseVersion, Collection<PropertyChangeEvent> changes) {
+    ConfigChangeSet(PropertySource propertyProvider, String baseVersion, Collection<PropertyChangeEvent> changes) {
         this.propertyProvider = Objects.requireNonNull(propertyProvider);
         this.baseVersion = baseVersion;
         changes.forEach((c) -> this.changes.put(c.getPropertyName(), c));
@@ -61,7 +61,7 @@ public final class ConfigChangeSet {
      * Get the underlying property provider/configuration.
      * @return the underlying property provider/configuration, never null.
      */
-    public PropertyProvider getPropertyProvider(){
+    public PropertySource getPropertySource(){
         return this.propertyProvider;
     }
 

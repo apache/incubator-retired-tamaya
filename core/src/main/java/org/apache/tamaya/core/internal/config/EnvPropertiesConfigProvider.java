@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.internal.config;
 
-import org.apache.tamaya.PropertyProviderBuilder;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 import org.apache.tamaya.Configuration;
@@ -34,7 +34,7 @@ public class EnvPropertiesConfigProvider implements ConfigurationProviderSpi{
     private Configuration envConfig;
 
     public EnvPropertiesConfigProvider(){
-        envConfig = PropertyProviderBuilder.create("environment.properties").addEnvironmentProperties().build().toConfiguration();
+        envConfig = PropertySourceBuilder.create("environment.properties").addEnvironmentProperties().build().toConfiguration();
     }
 
     @Override
@@ -45,5 +45,10 @@ public class EnvPropertiesConfigProvider implements ConfigurationProviderSpi{
     @Override
     public Configuration getConfiguration(){
         return envConfig;
+    }
+
+    @Override
+    public void reload() {
+        // nothing todo here
     }
 }

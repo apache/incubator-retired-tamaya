@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertySource;
 
-import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Manager for {@link org.apache.tamaya.Configuration} instances. Implementations must register an instance
@@ -102,4 +102,26 @@ public interface ConfigurationManagerSingletonSpi{
      */
     String evaluateValue(Configuration config, String expression);
 
+    /**
+     * Add a ConfigChangeSet listener to the given configuration instance.
+     * @param predicate the event filtering predicate, or null, for selecting all changes.
+     * @@param l the listener, not null.
+     */
+    void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l);
+
+    /**
+     * Removes a ConfigChangeSet listener from the given configuration instance.
+     * @param predicate the event filtering predicate, or null, for selecting all changes.
+     * @param l the listener, not null.
+     */
+    void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l);
+
+    /**
+     * Method to publish changes on a {@link org.apache.tamaya.Configuration} to all interested parties.
+     * Basically this method gives an abstraction on the effective event bus design fo listeners. In a CDI context
+     * the CDI enterprise event bus should be used internally to do the work, whereas in a SE only environment
+     * a more puristic approach would be useful.
+     * @param configChangeSet the change to be published, not null.
+     */
+    void publishChange(ConfigChangeSet configChangeSet);
 }

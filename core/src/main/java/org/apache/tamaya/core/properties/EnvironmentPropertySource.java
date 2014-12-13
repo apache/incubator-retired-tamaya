@@ -16,22 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.core.properties;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.tamaya.MetaInfoBuilder;
+import org.apache.tamaya.core.properties.AbstractPropertySource;
 
-/**
- * Annotation to annotate a method on a class to be informed on config changes.
- * The exact behaviour, when configuration change events are sent can be configured
- * on each configured property/method by adding the {@link org.apache.tamaya.annotation.WithLoadPolicy}
- * annotation. By default listeners are only informed about changes that are affecting configured
- * values current the containing class/instance.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.METHOD })
-public @interface ConfigChangeListener {
+import java.util.Map;
+
+class EnvironmentPropertySource extends AbstractPropertySource {
+
+    private static final long serialVersionUID = 4753258482658331010L;
+
+    public Map<String,String> toMap(){
+        return System.getenv();
+    }
+
+    public EnvironmentPropertySource(){
+        super(MetaInfoBuilder.of().setType("env-properties").build());
+    }
+
+    @Override
+    public String toString(){
+        return "EnvironmentPropertyProvider[" + System.getenv().size() + " environment properties]";
+    }
 
 }

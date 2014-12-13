@@ -27,17 +27,17 @@ import org.apache.tamaya.MetaInfoBuilder;
 
 import java.util.*;
 
-public abstract class AbstractResourceConfigMap extends AbstractPropertyProvider{
+public abstract class AbstractClasspathAwarePropertySource extends AbstractPropertySource {
 
     private static final long serialVersionUID = 5484306410557548246L;
     private ClassLoader classLoader;
-    private AbstractResourceConfigMap parentConfig;
+    private AbstractClasspathAwarePropertySource parentConfig;
     private Set<String> sources;
 
 
-    public AbstractResourceConfigMap(ClassLoader classLoader, AbstractResourceConfigMap parentConfig,
-                                     Set<String> sourceExpressions, long configReadDT, Map<String,String> entries,
-                                     MetaInfo metaInfo, Set<String> sources, List<Throwable> errors){
+    public AbstractClasspathAwarePropertySource(ClassLoader classLoader, AbstractClasspathAwarePropertySource parentConfig,
+                                                Set<String> sourceExpressions, long configReadDT, Map<String, String> entries,
+                                                MetaInfo metaInfo, Set<String> sources, List<Throwable> errors){
         super(metaInfo);
         Objects.requireNonNull(sources, "sources required.");
         Objects.requireNonNull(classLoader, "classLoader required.");
@@ -46,8 +46,8 @@ public abstract class AbstractResourceConfigMap extends AbstractPropertyProvider
         this.parentConfig = parentConfig;
     }
 
-    public AbstractResourceConfigMap(ClassLoader classLoader, AbstractResourceConfigMap parentConfig,
-                                     String sourceExpression){
+    public AbstractClasspathAwarePropertySource(ClassLoader classLoader, AbstractClasspathAwarePropertySource parentConfig,
+                                                String sourceExpression){
         super(MetaInfoBuilder.of().setSourceExpressions(sourceExpression).set("parentConfig", parentConfig.toString())
                       .build());
         Objects.requireNonNull(sources, "sources required.");
@@ -78,7 +78,7 @@ public abstract class AbstractResourceConfigMap extends AbstractPropertyProvider
         return classLoader;
     }
 
-    public AbstractResourceConfigMap getParentConfig(){
+    public AbstractClasspathAwarePropertySource getParentConfig(){
         return this.parentConfig;
     }
 

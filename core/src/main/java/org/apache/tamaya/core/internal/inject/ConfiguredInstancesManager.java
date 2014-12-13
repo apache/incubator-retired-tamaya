@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.internal.inject;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyProvider;
+import org.apache.tamaya.PropertySource;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -62,7 +62,7 @@ public final class ConfiguredInstancesManager implements PropertyChangeListener{
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         for(Map.Entry<ConfiguredType,List<WeakReference<Object>>> en: configuredInstances.entrySet()){
-            PropertyProvider propertyProvider = (PropertyProvider)propertyChangeEvent.getSource();
+            PropertySource propertyProvider = (PropertySource)propertyChangeEvent.getSource();
             if((propertyProvider instanceof Configuration) && en.getKey().isConfiguredBy((Configuration)propertyProvider)){
                 List<WeakReference<Object>> instances = en.getValue();
                 synchronized (instances){

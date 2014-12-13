@@ -38,4 +38,9 @@ public interface ConfigurationProviderSpi{
      */
     Configuration getConfiguration();
 
+    /**
+     * Reloads the provider for the current context.
+     */
+    void reload();
+
 }

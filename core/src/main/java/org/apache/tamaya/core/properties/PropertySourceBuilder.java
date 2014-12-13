@@ -1,25 +1,24 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-package org.apache.tamaya;
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
+package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.spi.Bootstrap;
-import org.apache.tamaya.spi.PropertyProviderBuilderSpi;
+import org.apache.tamaya.*;
 
 import java.net.URL;
 import java.util.*;
@@ -28,20 +27,16 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * Builder for assembling non trivial property providers.
- */
-public final class PropertyProviderBuilder {
+* Builder for assembling non trivial property providers.
+*/
+public final class PropertySourceBuilder {
     private static final Supplier<IllegalStateException> noPropertyProviderAvailable =
         () -> new IllegalStateException("No PropertyProvidersSingletonSpi available.");
 
     /**
-     * SPI backing up this builder.
-     */
-    private static final PropertyProviderBuilderSpi spi = loadPropertyProvidersSpi();
-    /**
      * THe logger used.
      */
-    private static final Logger LOG = Logger.getLogger(PropertyProviderBuilder.class.getName());
+    private static final Logger LOG = Logger.getLogger(PropertySourceBuilder.class.getName());
 
     /**
      * The final meta info to be used, or null, if a default should be generated.
@@ -56,7 +51,7 @@ public final class PropertyProviderBuilder {
     /**
      * the current property provider, or null.
      */
-    private PropertyProvider current;
+    private PropertySource current;
     /**
      * The current aggregation policy used, when aggregating providers.
      */
@@ -65,36 +60,25 @@ public final class PropertyProviderBuilder {
     /**
      * Private singleton constructor.
      */
-    private PropertyProviderBuilder(MetaInfo metaInfo) {
+    private PropertySourceBuilder(MetaInfo metaInfo) {
         this.metaInfoBuilder = MetaInfoBuilder.of(Objects.requireNonNull(metaInfo)).setInfo("Built by PropertyProviderBuilder.");
     }
 
     /**
      * Private singleton constructor.
      */
-    private PropertyProviderBuilder(String name) {
+    private PropertySourceBuilder(String name) {
         this.metaInfoBuilder = MetaInfoBuilder.of(name);
     }
 
     /**
      * Private singleton constructor.
      */
-    private PropertyProviderBuilder(PropertyProvider provider) {
+    private PropertySourceBuilder(PropertySource provider) {
         this.metaInfoBuilder = MetaInfoBuilder.of(Objects.requireNonNull(provider).getMetaInfo());
         this.current = provider;
     }
 
-    /**
-     * Method to initially load the singleton SPI fromMap the {@link org.apache.tamaya.spi.Bootstrap} mechanism.
-     * The instance loaded will be used until the VM is shutdown. In case use cases require more flexibility
-     * it should be transparently implemented in the SPI implementation. This singleton will simply delegate calls
-     * and not cache any responses.
-     *
-     * @return the SPI, never null.
-     */
-    private static PropertyProviderBuilderSpi loadPropertyProvidersSpi() {
-        return Bootstrap.getService(PropertyProviderBuilderSpi.class);
-    }
 
     /**
      * Creates a new builder instance.
@@ -102,8 +86,8 @@ public final class PropertyProviderBuilder {
      * @param provider the base provider to be used, not null.
      * @return a new builder instance, never null.
      */
-    public static PropertyProviderBuilder create(PropertyProvider provider) {
-        return new PropertyProviderBuilder(provider);
+    public static PropertySourceBuilder create(PropertySource provider) {
+        return new PropertySourceBuilder(provider);
     }
 
     /**
@@ -112,8 +96,8 @@ public final class PropertyProviderBuilder {
      * @param metaInfo the meta information, not null.
      * @return a new builder instance, never null.
      */
-    public static PropertyProviderBuilder create(MetaInfo metaInfo) {
-        return new PropertyProviderBuilder(metaInfo);
+    public static PropertySourceBuilder create(MetaInfo metaInfo) {
+        return new PropertySourceBuilder(metaInfo);
     }
 
     /**
@@ -122,8 +106,8 @@ public final class PropertyProviderBuilder {
      * @param name the provider name, not null.
      * @return a new builder instance, never null.
      */
-    public static PropertyProviderBuilder create(String name) {
-        return new PropertyProviderBuilder(Objects.requireNonNull(name));
+    public static PropertySourceBuilder create(String name) {
+        return new PropertySourceBuilder(Objects.requireNonNull(name));
     }
 
     /**
@@ -131,8 +115,8 @@ public final class PropertyProviderBuilder {
      *
      * @return a new builder instance, never null.
      */
-    public static PropertyProviderBuilder create() {
-        return new PropertyProviderBuilder("<noname>");
+    public static PropertySourceBuilder create() {
+        return new PropertySourceBuilder("<noname>");
     }
 
 
@@ -145,7 +129,7 @@ public final class PropertyProviderBuilder {
      * @param aggregationPolicy the aggregation policy, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder withAggregationPolicy(AggregationPolicy aggregationPolicy) {
+    public PropertySourceBuilder withAggregationPolicy(AggregationPolicy aggregationPolicy) {
         this.aggregationPolicy = Objects.requireNonNull(aggregationPolicy);
         return this;
     }
@@ -156,7 +140,7 @@ public final class PropertyProviderBuilder {
      * @param metaInfo the meta info, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder withMetaInfo(MetaInfo metaInfo) {
+    public PropertySourceBuilder withMetaInfo(MetaInfo metaInfo) {
         this.metaInfo = Objects.requireNonNull(metaInfo);
         return this;
     }
@@ -168,7 +152,7 @@ public final class PropertyProviderBuilder {
      * @param providers providers to be added, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addProviders(PropertyProvider... providers) {
+    public PropertySourceBuilder addProviders(PropertySource... providers) {
         if(providers.length==0){
             return this;
         }
@@ -182,11 +166,11 @@ public final class PropertyProviderBuilder {
      * @param providers providers to be added, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addProviders(List<PropertyProvider> providers) {
+    public PropertySourceBuilder addProviders(List<PropertySource> providers) {
         if(providers.isEmpty()){
             return this;
         }
-        List<PropertyProvider> allProviders = new ArrayList<>(providers);
+        List<PropertySource> allProviders = new ArrayList<>(providers);
         if (this.current != null) {
             allProviders.add(0, this.current);
         }
@@ -199,9 +183,7 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current())
                     .set(MetaInfoBuilder.SOURCE,source).build();
         }
-
-        this.current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                               .aggregate(mi, this.aggregationPolicy, allProviders);
+        this.current = PropertySourceFactory.aggregate(mi, this.aggregationPolicy, allProviders);
 
         addProviderChainInfo(source);
         this.metaInfo = null;
@@ -221,13 +203,13 @@ public final class PropertyProviderBuilder {
     }
 
     /**
-     * Creates a new {@link PropertyProvider} using the given command line arguments and adds it
+     * Creates a new {@link PropertySource} using the given command line arguments and adds it
      * using the current aggregation policy in place.
      *
      * @param args the command line arguments, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addArgs(String... args) {
+    public PropertySourceBuilder addArgs(String... args) {
         if(args.length==0){
             return this;
         }
@@ -235,20 +217,19 @@ public final class PropertyProviderBuilder {
         if (mi == null) {
             mi = MetaInfoBuilder.of("args").setEnvironment(Environment.current()).build();
         }
-        PropertyProvider argProvider = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                .fromArgs(mi, args);
+        PropertySource argProvider = PropertySourceFactory.fromArgs(mi, args);
         return addProviders(argProvider);
     }
 
     /**
-     * Creates a new read-only {@link PropertyProvider} by reading the according path resources. The effective resources read
+     * Creates a new read-only {@link PropertySource} by reading the according path resources. The effective resources read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param paths the paths to be resolved by the {@code PathResolverService} , not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addPaths(String... paths) {
+    public PropertySourceBuilder addPaths(String... paths) {
         if(paths.length==0){
             return this;
         }
@@ -257,14 +238,14 @@ public final class PropertyProviderBuilder {
 
 
     /**
-     * Creates a new read-only {@link PropertyProvider} by reading the according path resources. The effective resources read
+     * Creates a new read-only {@link PropertySource} by reading the according path resources. The effective resources read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param paths the paths to be resolved by the {@code PathResolverService} , not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addPaths(List<String> paths) {
+    public PropertySourceBuilder addPaths(List<String> paths) {
         if(paths.isEmpty()){
             return this;
         }
@@ -274,19 +255,17 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("paths", paths.toString()).build();
         }
-
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .fromPaths(mi, aggregationPolicy, paths));
+        return addProviders(PropertySourceFactory.fromPaths(mi, aggregationPolicy, paths));
     }
 
     /**
-     * Creates a new read-only {@link PropertyProvider} by reading the according URL resources.
+     * Creates a new read-only {@link PropertySource} by reading the according URL resources.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param urls the urls to be read, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addURLs(URL... urls) {
+    public PropertySourceBuilder addURLs(URL... urls) {
         if(urls.length==0){
             return this;
         }
@@ -294,13 +273,13 @@ public final class PropertyProviderBuilder {
     }
 
     /**
-     * Creates a new read-only {@link PropertyProvider} by reading the according URL resources.
+     * Creates a new read-only {@link PropertySource} by reading the according URL resources.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param urls the urls to be read, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addURLs(List<URL> urls) {
+    public PropertySourceBuilder addURLs(List<URL> urls) {
         if(urls.isEmpty()){
             return this;
         }
@@ -311,19 +290,18 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("urls", urls.toString()).build();
         }
 
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .fromURLs(mi, this.aggregationPolicy, urls));
+        return addProviders(PropertySourceFactory.fromURLs(mi, this.aggregationPolicy, urls));
     }
 
 
     /**
-     * Creates a new read-only {@link PropertyProvider} based on the given map.
+     * Creates a new read-only {@link PropertySource} based on the given map.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param map the map to be added, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addMap(Map<String, String> map) {
+    public PropertySourceBuilder addMap(Map<String, String> map) {
         if(map.isEmpty()){
             return this;
         }
@@ -333,8 +311,7 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                .fromMap(mi, map));
+        return addProviders(PropertySourceFactory.fromMap(mi, map));
     }
 
 
@@ -343,7 +320,7 @@ public final class PropertyProviderBuilder {
      *
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addEnvironmentProperties() {
+    public PropertySourceBuilder addEnvironmentProperties() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("environment.properties").setEnvironment(Environment.current()).build();
@@ -351,8 +328,7 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
 
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .fromEnvironmentProperties());
+        return addProviders(PropertySourceFactory.fromEnvironmentProperties());
     }
 
     /**
@@ -360,7 +336,7 @@ public final class PropertyProviderBuilder {
      *
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder addSystemProperties() {
+    public PropertySourceBuilder addSystemProperties() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("system.properties").setEnvironment(Environment.current()).build();
@@ -368,18 +344,17 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
 
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .fromSystemProperties());
+        return addProviders(PropertySourceFactory.fromSystemProperties());
     }
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertyProvider} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link org.apache.tamaya.AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder aggregate(PropertyProvider... providers) {
+    public PropertySourceBuilder aggregate(PropertySource... providers) {
         if(providers.length==0){
             return this;
         }
@@ -390,19 +365,18 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
 
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .aggregate(mi, aggregationPolicy, Arrays.asList(providers)));
+        return addProviders(PropertySourceFactory.aggregate(mi, aggregationPolicy, Arrays.asList(providers)));
     }
 
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertyProvider} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link org.apache.tamaya.AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder aggregate(List<PropertyProvider> providers) {
+    public PropertySourceBuilder aggregate(List<PropertySource> providers) {
         if(providers.isEmpty()){
             return this;
         }
@@ -413,31 +387,29 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
 
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .aggregate(mi, aggregationPolicy, providers));
+        return addProviders(PropertySourceFactory.aggregate(mi, aggregationPolicy, providers));
     }
 
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertyProvider} that is mutable by adding a map based instance that overrides
+     * Creates a new {@link org.apache.tamaya.PropertySource} that is mutable by adding a map based instance that overrides
      * values fromMap the original map.
      *
      * @param provider the provider to be made mutable, not null.
      * @return the mutable instance.
      */
-    public static PropertyProvider mutable(PropertyProvider provider) {
-        return Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                       .mutable(null, provider);
+    public static PropertySource mutable(PropertySource provider) {
+        return PropertySourceFactory.mutable(null, provider);
     }
 
 
     /**
-     * Intersetcs the current properties with the given {@link org.apache.tamaya.PropertyProvider} instance.
+     * Intersetcs the current properties with the given {@link org.apache.tamaya.PropertySource} instance.
      *
      * @param providers the maps to be intersected, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder intersect(PropertyProvider... providers) {
+    public PropertySourceBuilder intersect(PropertySource... providers) {
         if(providers.length==0){
             return this;
         }
@@ -448,18 +420,17 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
 
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .intersected(mi, aggregationPolicy, Arrays.asList(providers)));
+        return addProviders(PropertySourceFactory.intersected(mi, aggregationPolicy, Arrays.asList(providers)));
     }
 
 
     /**
-     * Subtracts with the given {@link org.apache.tamaya.PropertyProvider} instance from the current properties.
+     * Subtracts with the given {@link org.apache.tamaya.PropertySource} instance from the current properties.
      *
      * @param providers the maps to be subtracted, not null.
      * @return the builder for chaining.
      */
-    public PropertyProviderBuilder subtract(PropertyProvider... providers) {
+    public PropertySourceBuilder subtract(PropertySource... providers) {
         if(providers.length==0){
             return this;
         }
@@ -469,8 +440,7 @@ public final class PropertyProviderBuilder {
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                .subtracted(mi, current, Arrays.asList(providers));
+        current = PropertySourceFactory.subtracted(mi, current, Arrays.asList(providers));
         return this;
     }
 
@@ -481,28 +451,27 @@ public final class PropertyProviderBuilder {
      * @param filter the filter to be applied, not null.
      * @return the new filtering instance.
      */
-    public PropertyProviderBuilder filter(Predicate<String> filter) {
+    public PropertySourceBuilder filter(Predicate<String> filter) {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("filtered").setEnvironment(Environment.current()).set("filter", filter.toString()).build();
         } else {
             mi = MetaInfoBuilder.of(metaInfo).set("filter", filter.toString()).setEnvironment(Environment.current()).build();
         }
-        current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                          .filtered(mi, filter, current);
+        current = PropertySourceFactory.filtered(mi, filter, current);
         addProviderChainInfo("filter->" + filter.toString());
         this.metaInfo = null;
         return this;
     }
 
     /**
-     * Creates a new contextual {@link org.apache.tamaya.PropertyProvider}. Contextual maps delegate to different instances current PropertyMap depending
+     * Creates a new contextual {@link org.apache.tamaya.PropertySource}. Contextual maps delegate to different instances current PropertyMap depending
      * on the keys returned fromMap the isolationP
      *
      * @param mapSupplier          the supplier creating new provider instances
      * @param isolationKeySupplier the supplier providing contextual keys based on the current environment.
      */
-    public PropertyProviderBuilder addContextual(Supplier<PropertyProvider> mapSupplier,
+    public PropertySourceBuilder addContextual(Supplier<PropertySource> mapSupplier,
                                                  Supplier<String> isolationKeySupplier) {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
@@ -511,8 +480,7 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).setEnvironment(Environment.current()).build();
         }
 
-        return addProviders(Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                    .contextual(mi, mapSupplier, isolationKeySupplier));
+        return addProviders(PropertySourceFactory.contextual(mi, mapSupplier, isolationKeySupplier));
     }
 
     /**
@@ -521,15 +489,14 @@ public final class PropertyProviderBuilder {
      * @param replacementMap the map instance, that will replace all corresponding entries in {@code mainMap}, not null.
      * @return the new delegating instance.
      */
-    public PropertyProviderBuilder replace(Map<String, String> replacementMap) {
+    public PropertySourceBuilder replace(Map<String, String> replacementMap) {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("replace").setEnvironment(Environment.current()).build();
         } else {
             mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
         }
-        current = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                .replacing(mi, current, replacementMap);
+        current = PropertySourceFactory.replacing(mi, current, replacementMap);
         this.metaInfo = null;
         addProviderChainInfo("replace->" + replacementMap.toString());
         return this;
@@ -543,7 +510,7 @@ public final class PropertyProviderBuilder {
      * @param value the value to be added, not null.
      * @return this builder for chaining
      */
-    public PropertyProviderBuilder setMeta(String key, String value){
+    public PropertySourceBuilder setMeta(String key, String value){
         this.metaInfoBuilder.set(key, value);
         return this;
     }
@@ -552,24 +519,21 @@ public final class PropertyProviderBuilder {
      * Build a new property provider based on the input.
      * @return a new property provider, or null.
      */
-    public PropertyProvider build()
-    {
+    public PropertySource build(){
         if (current != null) {
-            return Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                           .build(metaInfoBuilder.build(), current);
+            return PropertySourceFactory.build(metaInfoBuilder.build(), current);
         }
 
-        return Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                       .empty(metaInfoBuilder.build());
+        return PropertySourceFactory.empty(metaInfoBuilder.build());
     }
 
     /**
-     * Creates a {@link PropertyProvider} instance that is serializable and immutable,
+     * Creates a {@link PropertySource} instance that is serializable and immutable,
      * so it can be sent over a network connection.
      *
      * @return the freezed instance, never null.
      */
-    public PropertyProvider buildFreezed() {
+    public PropertySource buildFreezed() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("freezed").set("freezed", "true").setEnvironment(Environment.current()).build();
@@ -577,9 +541,7 @@ public final class PropertyProviderBuilder {
             mi = MetaInfoBuilder.of(metaInfo).set("freezed", "true").setEnvironment(Environment.current()).build();
         }
 
-        PropertyProvider prov = Optional.ofNullable(spi).orElseThrow(noPropertyProviderAvailable)
-                                        .freezed(mi, current);
-
+        PropertySource prov = PropertySourceFactory.freezed(mi, current);
         this.metaInfo = null;
         return prov;
     }

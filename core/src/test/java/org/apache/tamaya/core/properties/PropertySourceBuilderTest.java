@@ -18,10 +18,8 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.PropertyProviderBuilder;
+import org.apache.tamaya.PropertySource;
 import org.junit.Test;
-
-import org.apache.tamaya.PropertyProvider;
 
 import java.util.Map;
 
@@ -31,11 +29,11 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Anatole on 30.09.2014.
  */
-public class PropertyProviderBuilderTest {
+public class PropertySourceBuilderTest {
 
     @Test
     public void testFromEnvironmentProperties(){
-        PropertyProvider prov = PropertyProviderBuilder.create("test").addEnvironmentProperties().build();
+        PropertySource prov = PropertySourceBuilder.create("test").addEnvironmentProperties().build();
         assertNotNull(prov);
         for(Map.Entry<String,String> en:System.getenv().entrySet()){
             assertEquals(en.getValue(), prov.get(en.getKey()).get());
@@ -44,7 +42,7 @@ public class PropertyProviderBuilderTest {
 
     @Test
     public void testFromSystemProperties(){
-        PropertyProvider prov = PropertyProviderBuilder.create("test").addSystemProperties().build();
+        PropertySource prov = PropertySourceBuilder.create("test").addSystemProperties().build();
         assertNotNull(prov);
         for(Map.Entry<Object,Object> en:System.getProperties().entrySet()){
             assertEquals(en.getValue(), prov.get(en.getKey().toString()).get());

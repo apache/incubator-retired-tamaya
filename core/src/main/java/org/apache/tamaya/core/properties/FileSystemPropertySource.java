@@ -28,22 +28,22 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class FileSystemPropertyProvider extends AbstractResourceConfigMap{
+public class FileSystemPropertySource extends AbstractClasspathAwarePropertySource {
 
-	private static final Logger LOG = Logger.getLogger(FileSystemPropertyProvider.class.getName());
+	private static final Logger LOG = Logger.getLogger(FileSystemPropertySource.class.getName());
     private static final long serialVersionUID = -2016119697552480056L;
 	private Map<String, Map<String, String>> propMetaInfo = new HashMap<>();
 
-	public FileSystemPropertyProvider(String resourcePath, ClassLoader classLoader,
-                                      AbstractResourceConfigMap parentConfig) {
+	public FileSystemPropertySource(String resourcePath, ClassLoader classLoader,
+                                    AbstractClasspathAwarePropertySource parentConfig) {
 		super(classLoader, parentConfig, resourcePath);
 	}
 
-	public FileSystemPropertyProvider(String resourcePath, AbstractResourceConfigMap parentConfig) {
+	public FileSystemPropertySource(String resourcePath, AbstractClasspathAwarePropertySource parentConfig) {
 		super(getCurrentClassLoader(), parentConfig, resourcePath);
 	}
 
-	public FileSystemPropertyProvider(String resourcePath) {
+	public FileSystemPropertySource(String resourcePath) {
 		super(getCurrentClassLoader(), null, resourcePath);
 	}
 
@@ -89,7 +89,7 @@ public class FileSystemPropertyProvider extends AbstractResourceConfigMap{
 	private static ClassLoader getCurrentClassLoader() {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		if (cl == null) {
-			return FileSystemPropertyProvider.class.getClassLoader();
+			return FileSystemPropertySource.class.getClassLoader();
 		}
 		return cl;
 	}

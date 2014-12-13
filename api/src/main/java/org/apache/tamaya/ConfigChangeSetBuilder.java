@@ -24,7 +24,7 @@ import java.util.*;
 
 /**
  * Models a set current changes to be applied to a configuration/property provider.  Such a set can be applied
- * to any {@link PropertyProvider} instance. If the provider is mutable it may check the
+ * to any {@link PropertySource} instance. If the provider is mutable it may check the
  * version given and apply the changes to the provider/configuration, including triggering current regarding
  * change events.
  *
@@ -34,7 +34,7 @@ public final class ConfigChangeSetBuilder {
     /** The recorded changes. */
     final SortedMap<String, PropertyChangeEvent> delta = new TreeMap<>();
     /** The underlying configuration/provider. */
-    PropertyProvider source;
+    PropertySource source;
     /** The base version, if any. Used for optimistic version checking. */
     String baseVersion;
 
@@ -43,7 +43,7 @@ public final class ConfigChangeSetBuilder {
      * @param source the underlying configuration/provider, not null.
      * @param baseVersion the base version, used for optimistic version checking.
      */
-    private ConfigChangeSetBuilder(PropertyProvider source, String baseVersion) {
+    private ConfigChangeSetBuilder(PropertySource source, String baseVersion) {
         Objects.requireNonNull(source);
         this.source = source;
         this.baseVersion= baseVersion;
@@ -54,7 +54,7 @@ public final class ConfigChangeSetBuilder {
      * @param source the underlying property provider/configuration, not null.
      * @return the builder for chaining.
      */
-    public static ConfigChangeSetBuilder of(PropertyProvider source) {
+    public static ConfigChangeSetBuilder of(PropertySource source) {
         return new ConfigChangeSetBuilder(source, Instant.now().toString());
     }
 
@@ -64,7 +64,7 @@ public final class ConfigChangeSetBuilder {
      * @param baseVersion the base version to be used.
      * @return the builder for chaining.
      */
-    public static ConfigChangeSetBuilder of(PropertyProvider source, String baseVersion) {
+    public static ConfigChangeSetBuilder of(PropertySource source, String baseVersion) {
         return new ConfigChangeSetBuilder(source, baseVersion);
     }
 
@@ -94,7 +94,7 @@ public final class ConfigChangeSetBuilder {
      * @param newState the new target state, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder addChanges(PropertyProvider newState) {
+    public ConfigChangeSetBuilder addChanges(PropertySource newState) {
         compare(newState, this.source).forEach((c) -> this.delta.put(c.getPropertyName(), c));
         return this;
     }
@@ -297,7 +297,7 @@ public final class ConfigChangeSetBuilder {
      * @param map2 the target map, not null.
      * @return a collection current change events, never null.
      */
-    public static Collection<PropertyChangeEvent> compare(PropertyProvider map1, PropertyProvider map2) {
+    public static Collection<PropertyChangeEvent> compare(PropertySource map1, PropertySource map2) {
         List<PropertyChangeEvent> changes = new ArrayList<>();
 
         for (Map.Entry<String, String> en : map1.toMap().entrySet()) {
