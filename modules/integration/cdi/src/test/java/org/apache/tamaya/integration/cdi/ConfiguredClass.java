@@ -18,7 +18,7 @@
  * under the License.
  *
  */
-package main.java.metamodel.ext.cdi;
+package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.annotation.ObservesConfigChange;
 import org.apache.tamaya.annotation.ConfiguredProperty;

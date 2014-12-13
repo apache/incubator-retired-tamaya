@@ -18,7 +18,7 @@
  *
  */
 
-package main.java.metamodel.ext.cdi;
+package org.apache.tamaya.integration.cdi;
 
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.hamcrest.MatcherAssert;
