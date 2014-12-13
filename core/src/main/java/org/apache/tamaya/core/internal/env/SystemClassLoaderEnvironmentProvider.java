@@ -76,7 +76,7 @@ public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider
         String stageValue =  builder.getProperty(InitialEnvironmentProvider.STAGE_PROP);
         Stage stage = InitialEnvironmentProvider.DEFAULT_STAGE;
         if (stageValue != null) {
-            stage = Stage.of(stageValue);
+            stage = Stage.valueOf(stageValue);
         }
         builder.setStage(stage);
         builder.set("classloader.type", ClassLoader.getSystemClassLoader().getClass().getName());

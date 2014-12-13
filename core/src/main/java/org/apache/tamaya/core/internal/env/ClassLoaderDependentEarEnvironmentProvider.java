@@ -104,7 +104,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
         builder.setParent(parentEnvironment);
         String stageValue =  data.get(InitialEnvironmentProvider.STAGE_PROP);
         if (stageValue != null) {
-            Stage stage = Stage.of(stageValue);
+            Stage stage = Stage.valueOf(stageValue);
             builder.setStage(stage);
         }
         builder.set("classloader.type", cl.getClass().getName());

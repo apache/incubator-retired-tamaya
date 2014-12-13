@@ -34,7 +34,7 @@ public final class EnvironmentBuilder{
     Environment parent;
     String id;
     String type;
-    Stage stage = Stage.development();
+    Stage stage = Stage.DEVELOPMENT;
 
     private EnvironmentBuilder(String id, String type) {
         Objects.requireNonNull(id);

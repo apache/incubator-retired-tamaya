@@ -35,7 +35,7 @@ import org.apache.tamaya.core.spi.EnvironmentProvider;
 public final class InitialEnvironmentProvider implements EnvironmentProvider{
 
 	public static final String STAGE_PROP = "org.apache.tamaya.stage";
-    public static final Stage DEFAULT_STAGE = Stage.development();
+    public static final Stage DEFAULT_STAGE = Stage.DEVELOPMENT;
     private Map<String,Environment> environments = new HashMap<>();
 
 	public InitialEnvironmentProvider() {
@@ -47,7 +47,7 @@ public final class InitialEnvironmentProvider implements EnvironmentProvider{
         String stageValue =  props.getProperty(STAGE_PROP);
         Stage stage = DEFAULT_STAGE;
         if (stageValue != null) {
-            stage = Stage.of(stageValue);
+            stage = Stage.valueOf(stageValue);
         }
         builder.setStage(stage);
         // Copy system properties....
