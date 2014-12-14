@@ -70,9 +70,8 @@ class ReplacingPropertySource implements PropertySource {
     @Override
     public Map<String,String> toMap(){
         Map<String,String> result = new HashMap<>(replacingMap);
-        mainMap.toMap().entrySet().stream().filter(en -> !replacingMap.containsKey(en.getKey())).forEach(en -> {
-            result.put(en.getKey(), en.getValue());
-        });
+        mainMap.toMap().entrySet().stream().filter(en -> !replacingMap.containsKey(en.getKey())).forEach(en ->
+                result.put(en.getKey(), en.getValue()));
         return result;
     }
 

@@ -113,9 +113,7 @@ class AggregatedPropertySource extends AbstractPropertySource {
 
     @Override
 	public ConfigChangeSet load() {
-		for (PropertySource unit : units) {
-			unit.load();
-		}
+        units.forEach(org.apache.tamaya.PropertySource::load);
         return super.load();
 	}
 
