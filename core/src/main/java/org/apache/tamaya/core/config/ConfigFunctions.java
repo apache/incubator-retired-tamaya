@@ -63,7 +63,7 @@ public final class ConfigFunctions {
                             .filter(e -> isKeyInArea(e.getKey(), areaKey))
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
-                                    e -> e.getValue())));
+                                    Map.Entry::getValue)));
             return PropertySourceBuilder.create("area: " + areaKey).addMap(area).build().toConfiguration();
         };
     }
@@ -110,7 +110,7 @@ public final class ConfigFunctions {
                             .filter(e -> e.getKey().startsWith(lookupKey))
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
-                                    e -> e.getValue())));
+                                    Map.Entry::getValue)));
             return PropertySourceBuilder.create("area (recursive): " + areaKey).addMap(area).build().toConfiguration();
         };
     }
