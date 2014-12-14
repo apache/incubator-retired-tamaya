@@ -393,7 +393,7 @@ class AntPathMatcher {
 		boolean result = doMatch(pattern, path, true, variables);
 		if(!result){
             throw new IllegalArgumentException("Pattern \"" + pattern + "\" is not a match for \"" + path + "\"");
-        };
+        }
 		return variables;
 	}
 
