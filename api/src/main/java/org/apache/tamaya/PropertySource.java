@@ -24,31 +24,29 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
-* This interface models a provider that serves configuration properties. The contained
-* properties may be read fromMap single or several sources (composite).<br/>
-* Property config are the building blocks out current which complex
-* configuration is setup.
-* <p/>
-* <h3>Implementation Requirements</h3>
-* <p></p>Implementations current this interface must be
-* <ul>
-* <li>Thread safe.
-* </ul>
-* It is highly recommended that implementations also are
-* <ul>
-* <li>Immutable</li>
-* <li>serializable</li>
-* </ul>
-* </p>
-*/
+ * This interface models a provider that serves configuration properties. The contained
+ * properties may be read fromMap single or several sources (composite).<br/>
+ * Property config are the building blocks out current which complex
+ * configuration is setup.
+ * <p/>
+ * <h3>Implementation Requirements</h3>
+ * <p></p>Implementations current this interface must be
+ * <ul>
+ * <li>Thread safe.
+ * </ul>
+ * It is highly recommended that implementations also are
+ * <ul>
+ * <li>Immutable</li>
+ * <li>serializable</li>
+ * </ul>
+ * </p>
+ */
 public interface PropertySource {
 
     /**
-     * Access an empty and immutable PropertyProvider instance.
-     *
-     * @return an empty and immutable PropertyProvider instance, never null.
+     * An empty and immutable PropertyProvider instance.
      */
-    public static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource(){
+    public static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource() {
 
         private MetaInfo metaInfo = MetaInfo.of("<empty>");
 
@@ -75,75 +73,26 @@ public interface PropertySource {
 
     /**
      * Access a property.
+     *
      * @param key the property's key, not null.
      * @return the property's value.
      */
     Optional<String> get(String key);
 
     /**
-     * Checks if a property is defined.
-     * @param key the property's key, not null.
-     * @return true, if the property is existing.
-     */
-    boolean containsKey(String key);
-
-    /**
-     * Access the current properties as Map.
-     * @return the a corresponding map, never null.
-     */
-    Map<String, String> toMap();
-
-    /**
      * Get the meta-info current a configuration.
+     *
      * @return the configuration's/config map's metaInfo, or null.
      */
     MetaInfo getMetaInfo();
 
     /**
-     * Compares the given property provider for same
-     * contents, regardless current its current state or runtime implementation.
-     * @param provider the provider to be compared, not null.
-     * @return true, if both property sets equals.
+     * Checks if a property is defined/accessible.
+     * @throws java.lang.UnsupportedOperationException If the underlying storage does not support introspection.
+     * @param key the property's key, not null.
+     * @return true, if the property is existing.
      */
-    default boolean hasSameProperties(PropertySource provider) {
-        return this == provider || ConfigChangeSetBuilder.compare(this, provider).isEmpty();
-    }
-
-    /**
-     * Access the set current property keys, defined by this provider.
-     * @return the key set, never null.
-     */
-    default Set<String> keySet(){
-        return toMap().keySet();
-    }
-
-    /**
-     * Reloads the {@link PropertySource}.
-     */
-    default ConfigChangeSet load(){
-        // by default do nothing
-        return ConfigChangeSet.emptyChangeSet(this);
-    }
-
-    /**
-     * Allows to evaluate if the provider is mutable.
-     * @return true, if the provider is mutable.
-     * @see #apply(ConfigChangeSet)
-     */
-    default boolean isMutable(){
-        return false;
-    }
-
-    /**
-     * Apply a config change to this item. Hereby the change must be related to the same instance.
-     * @param change the config change
-     * @throws ConfigException if an unrelated change was passed.
-     * @throws UnsupportedOperationException when the configuration is not writable.
-     * @see #isMutable()
-     */
-    default void apply(ConfigChangeSet change){
-        throw new UnsupportedOperationException("Config/properties not mutable: "+ this);
-    }
+    boolean containsKey(String key);
 
     /**
      * Allows to quickly check, if a provider is empty.
@@ -154,11 +103,60 @@ public interface PropertySource {
     }
 
     /**
+     * Access the set current property keys, defined by this provider. The resulting Set may not return all keys
+     * accessible, e.g. when the underlying storage does not support iteration of its entries.
+     *
+     * @return the key set, never null.
+     */
+    default Set<String> keySet() {
+        return toMap().keySet();
+    }
+
+    /**
+     * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
+     * when the underlying storage does not support iteration of its entries.
+     * @return the a corresponding map, never null.
+     */
+    Map<String, String> toMap();
+
+
+    /**
+     * Reloads the {@link PropertySource}.
+     */
+    default ConfigChangeSet load() {
+        // by default do nothing
+        return ConfigChangeSet.emptyChangeSet(this);
+    }
+
+    /**
+     * Allows to evaluate if the provider is mutable.
+     *
+     * @return true, if the provider is mutable.
+     * @see #apply(ConfigChangeSet)
+     */
+    default boolean isMutable() {
+        return false;
+    }
+
+    /**
+     * Apply a config change to this item. Hereby the change must be related to the same instance.
+     *
+     * @param change the config change
+     * @throws ConfigException               if an unrelated change was passed.
+     * @throws UnsupportedOperationException when the configuration is not writable.
+     * @see #isMutable()
+     */
+    default void apply(ConfigChangeSet change) {
+        throw new UnsupportedOperationException("Config/properties not mutable: " + this);
+    }
+
+    /**
      * Convert the this PropertyProvider instance to a {@link org.apache.tamaya.Configuration}.
+     *
      * @return the configuration, never null.
      */
-    default Configuration toConfiguration(){
-        return new Configuration(){
+    default Configuration toConfiguration() {
+        return new Configuration() {
             @Override
             public Optional<String> get(String key) {
                 return PropertySource.this.get(key);
@@ -177,7 +175,7 @@ public interface PropertySource {
             }
             @Override
             public String toString() {
-                return "Configuration [source: PropertyProvider "+getMetaInfo()+"]";
+                return "Configuration [source: PropertySource "+getMetaInfo()+"]";
             }
         };
     }

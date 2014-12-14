@@ -21,7 +21,7 @@ package org.apache.tamaya.core.config;
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.AbstractPropertySource;
 import org.apache.tamaya.core.spi.AdapterProviderSpi;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -43,7 +43,7 @@ public abstract class AbstractConfiguration extends AbstractPropertySource imple
 
     @Override
     public <T> Optional<T> get(String key, Class<T> type){
-        AdapterProviderSpi as = Bootstrap.getService(AdapterProviderSpi.class);
+        AdapterProviderSpi as = ServiceContext.getInstance().getSingleton(AdapterProviderSpi.class);
         PropertyAdapter<T> adapter = as.getAdapter(type);
         if(adapter == null){
             throw new ConfigException(
@@ -70,19 +70,19 @@ public abstract class AbstractConfiguration extends AbstractPropertySource imple
     public ConfigChangeSet load(){
         Configuration oldState;
         Configuration newState;
+        ConfigChangeSet changeSet = null;
         synchronized(LOCK) {
             oldState = FreezedConfiguration.of(this);
             reload();
             newState = FreezedConfiguration.of(this);
-            if(oldState.hasSameProperties(newState)){
-                return ConfigChangeSet.emptyChangeSet(this);
-            }
-            this.version = UUID.randomUUID().toString();
+            changeSet = ConfigChangeSetBuilder.of(oldState).addChanges(newState).build();
         }
-        ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(oldState).addChanges(newState).build();
+        if(changeSet.isEmpty()){
+            return ConfigChangeSet.emptyChangeSet(this);
+        }
+        this.version = UUID.randomUUID().toString();
         Configuration.publishChange(changeSet);
         return changeSet;
     }
-
 
 }

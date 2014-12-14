@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
 import org.apache.tamaya.MetaInfo;
@@ -52,7 +52,7 @@ public abstract class AbstractClasspathAwarePropertySource extends AbstractPrope
                       .build());
         Objects.requireNonNull(sources, "sources required.");
         Objects.requireNonNull(sourceExpression, "sourceExpression required.");
-        List<Resource> resources = Bootstrap.getService(ResourceLoader.class).getResources(classLoader, sourceExpression);
+        List<Resource> resources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(classLoader, sourceExpression);
         for(Resource res : resources){
             addSource(res.toString());
         }

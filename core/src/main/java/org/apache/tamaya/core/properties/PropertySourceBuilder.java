@@ -86,7 +86,7 @@ public final class PropertySourceBuilder {
      * @param provider the base provider to be used, not null.
      * @return a new builder instance, never null.
      */
-    public static PropertySourceBuilder create(PropertySource provider) {
+    public static PropertySourceBuilder of(PropertySource provider) {
         return new PropertySourceBuilder(provider);
     }
 
@@ -96,7 +96,7 @@ public final class PropertySourceBuilder {
      * @param metaInfo the meta information, not null.
      * @return a new builder instance, never null.
      */
-    public static PropertySourceBuilder create(MetaInfo metaInfo) {
+    public static PropertySourceBuilder of(MetaInfo metaInfo) {
         return new PropertySourceBuilder(metaInfo);
     }
 
@@ -106,7 +106,7 @@ public final class PropertySourceBuilder {
      * @param name the provider name, not null.
      * @return a new builder instance, never null.
      */
-    public static PropertySourceBuilder create(String name) {
+    public static PropertySourceBuilder of(String name) {
         return new PropertySourceBuilder(Objects.requireNonNull(name));
     }
 
@@ -115,7 +115,7 @@ public final class PropertySourceBuilder {
      *
      * @return a new builder instance, never null.
      */
-    public static PropertySourceBuilder create() {
+    public static PropertySourceBuilder of() {
         return new PropertySourceBuilder("<noname>");
     }
 

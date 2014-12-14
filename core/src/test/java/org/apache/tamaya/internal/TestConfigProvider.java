@@ -22,7 +22,7 @@ import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfoBuilder;
+
 import java.util.*;
 
 /**
@@ -47,7 +47,7 @@ public class TestConfigProvider implements ConfigurationProviderSpi{
         config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
         config.put("testProperty", "value current testProperty");
         config.put("runtimeVersion", "${java.version}");
-        testConfig = PropertySourceBuilder.create("test").addMap(
+        testConfig = PropertySourceBuilder.of("test").addMap(
                 config).build().toConfiguration();
     }
 

@@ -48,7 +48,7 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
         dataMap.put("sons.1", "Robin");
         dataMap.put("sons.2", "Luke");
         dataMap.put("sons.3", "Benjamin");
-        PropertySource provider = PropertySourceBuilder.create(CONFIG_NAME).addMap(dataMap).build();
+        PropertySource provider = PropertySourceBuilder.of(CONFIG_NAME).addMap(dataMap).build();
         testConfig = new MutableConfiguration(dataMap, MetaInfo.of(CONFIG_NAME));
     }
 

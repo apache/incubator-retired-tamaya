@@ -27,12 +27,12 @@ import java.util.function.Predicate;
 
 /**
  * Manager for {@link org.apache.tamaya.Configuration} instances. Implementations must register an instance
- * using the {@link Bootstrap} mechanism in place (by default this is based on the {@link java.util.ServiceLoader}.
+ * using the {@link ServiceContextManager} mechanism in place (by default this is based on the {@link java.util.ServiceLoader}.
  * The {@link org.apache.tamaya.ConfigurationManager} Singleton in the API delegates its corresponding calls to the
  * instance returned by the current bootstrap service in place.
  *
  * @see org.apache.tamaya.ConfigurationManager
- * @see Bootstrap
+ * @see ServiceContextManager
  */
 public interface ConfigurationManagerSingletonSpi{
 

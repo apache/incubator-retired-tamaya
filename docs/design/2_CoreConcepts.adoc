@@ -23,7 +23,7 @@ the base of all the other mechanisms:
 The API contains the following core concepts/artifacts:
 
 * Literal Key/Value Pairs
-* _PropertyProvider:_ is the the SPI for a source that provides configuration data. A +PropertyProvider+
+* _PropertySource:_ is the the SPI for a source that provides configuration data. A +PropertySource+
      hereby defines
      ** a minimalistic SPI to be implemented by the config data source
      ** provides data key/value pairs in raw format as String key/values only
@@ -36,34 +36,34 @@ The API contains the following core concepts/artifacts:
      ** provides functional extension points (+with,query+)
      ** allows registering/deregistering of change listeners
      ** is the entry point for evaluating the current +Configuration+
-     ** each +PropertyProvider+ can be easily converted into a +Configuration+
+     ** each +PropertySource+ can be easily converted into a +Configuration+
      ** allows configuration entries to be injected
      ** to access configuration _templates_ (annotated interfaces).
      ** Configuration may support mutability by allowing instances of +ConfigChangeSet+ to be passed.
-* _PropertyProviders_ allows to aggregate different property providers. Hereby property providers are
-  seen as sets, which can be combined to new providers using set styled operations (aggregate, intersect, subtract).
-  This allows to model and create composite container providers, to build up more complex configuration models
+* _PropertySourceBuilder_ allows to aggregate different property sources. Hereby property sources are
+  seen as sets, which can be combined to new sources using set styled operations (aggregation, intersection, subtraction).
+  This allows to model and create composite sources, to build up more complex configuration models
   step by step.
-* _MetaInfo_ is provided by each +Configuration, PropertyProvider+ and describes the configuration/provider and its entries.
+* _MetaInfo_ is provided by each +Configuration, PropertySource+ and describes the configuration/provider and its entries.
 * _Environment_ is the base model for modelling the environment and the accessor for getting the current +Environment+ instance.
 * _Annotations_ a set of annotations allows to configure configuration injection on classes or interface (aka config templates).
 
 The SPI contains the following core concepts/artifacts:
 
-* _Bootstrap_ is the delegate singleton that is used by the framework to resolve components. The effective component
-  loading can be accessed by implementing and registering an instance of +ServiceProvider+ using +java.util.ServiceLoader+.
-* All the singleton used explicitly (+PropertyAdapters,PropertyProviders+ are backed up corresponding API interfaces.
+* _ServiceContext_ is the delegate singleton that is used by the framework to resolve components. The effective component
+  loading can be accessed by implementing and registering an instance of +ServiceContextProvider+ using +java.util.ServiceLoader+.
+* All the singleton used explicitly (+PropertyAdapters,Configuration+ are backed up corresponding API interfaces.
   To override a singleton's behaviour the corresponding SPI has to be implemented and registered, so it can be loaded
-  by the current +Bootstrap+ setup (by default ServiceLoader based).
-* Also the singleton used implicitly by +Configuration, Environment, Stage+ are backed up corresponding SPI interfaces.
+  by the current +ServiceContext+ setup (by default ServiceLoader based).
+* Also the singleton used implicitly by +Configuration, Environment+ are backed up corresponding SPI interfaces.
   To override a singleton's behaviour the corresponding SPI has to be implemented and registered, so it can be loaded
-  by the current +Bootstrap+ setup (by default ServiceLoader based).
+  by the current +ServiceContext+ setup (by default ServiceLoader based).
 
 This is also reflected in the main parts of the API, which is quite small:
 
-* +org.apache.tamaya+ contains the main abstractions +Configuration, ConfigOperator, ConfigQuery, PropertyAdapter, Stage,
-  Environment, PropertyProvider, MetaInfo+
-* +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +Bootstrap+ mechanism.
+* +org.apache.tamaya+ contains the main abstractions +Configuration, ConfigQuery, PropertyAdapter, Stage,
+  Environment, PropertySource, MetaInfo+
+* +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +ServiceContext+ mechanism.
 + +org.apache.tamaya.annot+ contains the annotations defined.
 
 In the implementation are there are additional projects:
@@ -200,20 +200,20 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 ** The keys of configuration can have additional syntax/semantics. E.g. when adding dor-separating path semantics
 *** trees/maps can also simply be mapped.
 
-[APIPropertyProviders]
-=== Property Providers
+[APIPropertySources]
+=== PropertySource
 ==== Basic Model
 
 We have seen that constrain configuration aspects to simple literal key/value pairs provides us with an easy to
-understand, generic, flexible, yet expendable mechanism. Looking at the Java language features a +vava.util.Map<String,
+understand, generic, flexible, yet expendable mechanism. Looking at the Java language features a +java.util.Map<String,
 String>+ and +java.util.Properties+ basically model these quite well out of the box.
-So it makes sense to build configuration on top of the JDK's +Map+ interface. This creates immediately additional
+So it would make sense to build configuration on top of the JDK's +Map+ interface. This creates immediately additional
 benefits:
 
 * we inherit full Lambda and collection support
 * Maps are widely known and well understood
 
-Nevertheless there are some things to be considered:
+Nevertheless there are some severe drawbacks:
 
 * Configuration also requires meta-data, such as
 ** the origin of a certain configuration entry and how it was derived from other values
@@ -224,12 +224,12 @@ Nevertheless there are some things to be considered:
 ** ...
 
 Basically the same is also the not related to some single configuration key, but also to a whole map.
-The +PropertyProvider+ interface models exact these aspects and looks as illustrated below:
+The +PropertySource+ interface models exact these aspects and looks as illustrated below:
 
 [source,java]
-.Interface PropertyProvider
+.Interface PropertySource
 --------------------------------------------
-public interface PropertyProvider{
+public interface PropertySource{
 
       Optional<String> get(String key);
       boolean containsKey(String key);
@@ -246,20 +246,22 @@ public interface PropertyProvider{
 Hereby
 
 * +getMetaInfo()+ return the meta information for the property provider, as well as for individual property key/value pairs.
-* +get, containsKey, keySet+ look similar to the methods on +Map+, though +get+ uses the +Optional+ type introduced
+* +get+ look similar to the methods on +Map+, though +get+ uses the +Optional+ type introduced
   with Java 8. This avoids returning +null+ or throwing exceptions in case no such entry is available and also
   reduced the API's footprint, since default values can be easily implemented by calling +Optional.orElse+.
+* +containsKey, keySet+ are as well methods similar to +java.util.Map+ though implementations may only returns
+  limited data, especially when the underlying map storage does not support iteration.
 * +isMutable()+ allows to easy check, if a property provider is mutable, which is more elegant than catching
   +NonSupportedOperation+ exception thrown on the according methods of +Map+.
 * +load()+ finally allows to (re)load a property map. It depends on the implementing source, if this operation
   has any effect. If the map changes an according +ConfigChange+ must be returned, describing the
   changes applied.
-* +hasSameProperties+ allows to perform a comparison with another provider.
-* +toMap+ allows to extract thing to a +Map+.
+* +toMap+ allows to extract thing to a +Map+. Similar to +containsKey, keySet+ implementations may only return
+  a limited data map, especially when the underlying map storage does not support iteration.
 
 This simple model will be used within the spi, where configuration can be injected/provided from external resources.
 But we have seen, that we have to consider additional aspects, such as extendability and type safety. Therefore we
-extend +PropertyMap+ and hereby also apply the 'composite pattern', which results in the following key abstraction.
+extend +PropertySource+ and hereby also apply the 'composite pattern', which results in the following key abstraction.
 
 ==== Meta Information
 
@@ -268,7 +270,7 @@ Each instance also provides an instance of +MetaInfo+, which provides meta infor
 [source,java]
 .Accessing Meta Information
 --------------------------------------------
-PropertyProvider prov = ...;
+PropertySource prov = ...;
 MetaInfo metaInfo = prov.getMetaInfo();
 Set<String> keys = metaInfo.keySet();  // returns the attribute keys, for which meta-information is accessible.
 String metaData = metaInfo.get("a.b.c.value"); // access meta information
@@ -280,32 +282,32 @@ As we have seen above there is as well a +MetaInfoBuilder+, which must be used t
 
 ==== Mutability
 
-Property providers optionally may be mutable. This can be checked by calling +boolean isMutable()+. If a provider
-is mutable a +ConfigChangeSet+ can be passed. This change set can then be applied by the provider. On creation
-of the +ConfigChangeSetBuilder+ a provider can pass version information, so _optimistic locking_ can be implemented
+Property sources optionally may be mutable. This can be checked by calling +boolean isMutable()+. If a source
+is mutable a +ConfigChangeSet+ can be passed. This change set can then be applied by the source. On creation
+of the +ConfigChangeSetBuilder+ a source can pass version information, so _optimistic locking_ can be implemented
 easily:
 
 [source,java]
-.Creating and applying a +ConfigChangeSet+ to a provider
+.Creating and applying a +ConfigChangeSet+ to a PropertySource
 --------------------------------------------
-PropertyProvider prov = ...;
+PropertySource source = ...;
 ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(provider)  // creating a default version
    .remove("key1ToBeRemoved", +key2ToBeRemoved")
    .put("key2", "key2Value")
    .put("key3", 12345)
    .put("key4", 123.45)
    .build();
-provider.apply(changeSet);
+source.apply(changeSet);
 --------------------------------------------
 
-[[API CombineProviders]]
-==== Combining Property Providers
+[[API PropertySourceBuilder]]
+==== Building Property Sources
 
 Looking at the structures of configuration system used by large companies we typically encounter some kind of configuration
 hierarchies that are combined in arbitrary ways. Users of the systems are typically not aware of the complexities in this
 area, since they simply know the possible locations, formats and the overriding policies. Framework providers on the other
 side must face the complexities and it would be very useful if Tamaya can support here by providing prebuilt functionality
-that helps implementing these aspects. All this leads to the feature set of combining property providers. Hereby the following
+that helps implementing these aspects. All this leads to the feature set of combining property sources. Hereby the following
 strategies are useful:
 
 * aggregating providers, hereby later providers added
@@ -318,7 +320,7 @@ strategies are useful:
 * subtracting providers
 * filtering providers
 
-These common functionality is provided by the +PropertyProviders+ singleton. Additionally to the base strategies above a +MetaInfo+
+These common functionality is provided by the +PropertySources+ singleton. Additionally to the base strategies above a +MetaInfo+
 instance can be passed optionally as well to define the meta information for the newly created provider instances.
 Let's assume we have two property providers with the following data:
 
@@ -348,26 +350,26 @@ Looking in detail you see that the entries +a,b,c+ are present in both providers
 and +g,h,i+ only in provider 2.
 
 [source,java]
-.Example Combining PropertyProviders
+.Example Combining PropertySources
 --------------------------------------------
-PropertyProvider provider1 = ...
-PropertyProvider provider2 = ...
+PropertySource provider1 = ...
+PropertySource provider2 = ...
 
 // aggregate, hereby values from provider 2 override values from provider 1
-PropertyProvider unionOverriding = PropertyProviders.aggregate(AggregationPolicy.OVERRIDE(), provider1, provider2);
+PropertySource unionOverriding = PropertySources.aggregate(AggregationPolicy.OVERRIDE(), provider1, provider2);
 System.out.println("unionOverriding: " + unionOverriding);
 
 // ignore duplicates, values present in provider 1 are not overriden by provider 2
-PropertyProvider unionIgnoringDuplicates = PropertyProviders.aggregate(AggregationPolicy.IGNORE_DUPLICATES(), provider1, provider2);
+PropertySource unionIgnoringDuplicates = PropertySources.aggregate(AggregationPolicy.IGNORE_DUPLICATES(), provider1, provider2);
 System.out.println("unionIgnoringDuplicates: " + unionIgnoringDuplicates);
 
 // this variant combines/maps duplicate values into a new value
-PropertyProvider unionCombined = PropertyProviders.aggregate(AggregationPolicy.COMBINE(), provider1, provider2);
+PropertySource unionCombined = PropertySources.aggregate(AggregationPolicy.COMBINE(), provider1, provider2);
 System.out.println("unionCombined: " + unionCombined);
 
 // This variant throws an exception since there are key/value paris in both providers, but with different values
 try{
-    PropertyProviders.aggregate(AggregationPolicy.EXCEPTION(), provider1, provider2);
+    PropertySources.aggregate(AggregationPolicy.EXCEPTION(), provider1, provider2);
 }
 catch(ConfigException e){
     // expected!
@@ -377,9 +379,9 @@ catch(ConfigException e){
 The example above produces the following outpout:
 
 [source,listing]
-.Example Combining PropertyProviders
+.Example Combining PropertySources
 --------------------------------------------
-AggregatedPropertyProvider{
+AggregatedPropertySource{
   (name = dynamicAggregationTests)
   a = "[a][A]"
   b = "[b][B]"
@@ -391,7 +393,7 @@ AggregatedPropertyProvider{
   h = "[h]"
   i = "[i]"
 }
-unionOverriding: AggregatedPropertyProvider{
+unionOverriding: AggregatedPropertySource{
   (name = <noname>)
   a = "A"
   b = "B"
@@ -403,7 +405,7 @@ unionOverriding: AggregatedPropertyProvider{
   h = "h"
   i = "i"
 }
-unionIgnoringDuplicates: AggregatedPropertyProvider{
+unionIgnoringDuplicates: AggregatedPropertySource{
   (name = <noname>)
   a = "a"
   b = "b"
@@ -415,7 +417,7 @@ unionIgnoringDuplicates: AggregatedPropertyProvider{
   h = "h"
   i = "i"
 }
-unionCombined: AggregatedPropertyProvider{
+unionCombined: AggregatedPropertySource{
   (name = <noname>)
   a = "a,A"
   b = "b,B"
@@ -445,9 +447,9 @@ So we can also define our own aggregation strategy using a Lambda expression:
 [source,java]
 .Use a Custom AggregationPolicy
 --------------------------------------------
-PropertyProvider provider1 = ...;
-PropertyProvider provider2 = ...;
-PropertyProvider props = PropertyProviders.aggregate(
+PropertySource provider1 = ...;
+PropertySource provider2 = ...;
+PropertySource props = PropertySources.aggregate(
       (k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]",
       MetaInfo.of("dynamicAggregationTests"),
       props1, props2);
@@ -459,7 +461,7 @@ Additionally we also pass here an instance of +MetaInfo+. The output of this cod
 [source,listing]
 .Listing of dynamic aggregation policy
 --------------------------------------------
-AggregatedPropertyProvider{
+AggregatedPropertySource{
   (name = dynamicAggregationTests)
   a = "[a][A]"
   b = "[b][B]"
@@ -473,54 +475,54 @@ AggregatedPropertyProvider{
 }
 --------------------------------------------
 
-Summarizing the +PropertyProviders+ singleton allows to combine providers in various forms:
+Summarizing the +PropertySources+ singleton allows to combine providers in various forms:
 
 [source,listing]
-.Methods provided on PropertyProviders
+.Methods provided on PropertySources
 --------------------------------------------
-public final class PropertyProviders {
+public final class PropertySources {
 
-    private PropertyProviders() {}
+    private PropertySources() {}
 
-    public static PropertyProvider fromArgs(String... args) {
-    public static PropertyProvider fromArgs(MetaInfo metaInfo, String... args) {
-    public static PropertyProvider fromPaths(AggregationPolicy aggregationPolicy, String... paths) {
-    public static PropertyProvider fromPaths(String... paths) {
-    public static PropertyProvider fromPaths(List<String> paths) {
-    public static PropertyProvider fromPaths(AggregationPolicy aggregationPolicy, List<String> paths) {
-    public static PropertyProvider fromPaths(MetaInfo metaInfo, List<String> paths) {
-    public static PropertyProvider fromPaths(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<String> paths) {
-    public static PropertyProvider fromUris(URI... uris) {
-    public static PropertyProvider fromUris(AggregationPolicy aggregationPolicy, URI... uris) {
-    public static PropertyProvider fromUris(List<URI> uris) {
-    public static PropertyProvider fromUris(AggregationPolicy aggregationPolicy, List<URI> uris) {
-    public static PropertyProvider fromUris(MetaInfo metaInfo, URI... uris) {
-    public static PropertyProvider fromUris(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, URI... uris) {
-    public static PropertyProvider fromUris(MetaInfo metaInfo, List<URI> uris) {
-    public static PropertyProvider fromUris(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<URI> uris) {
-    public static PropertyProvider fromMap(Map<String, String> map) {
-    public static PropertyProvider fromMap(MetaInfo metaInfo, Map<String, String> map) {
-    public static PropertyProvider empty() {
-    public static PropertyProvider emptyMutable() {
-    public static PropertyProvider empty(MetaInfo metaInfo) {
-    public static PropertyProvider emptyMutable(MetaInfo metaInfo) {
-    public static PropertyProvider fromEnvironmentProperties() {
-    public static PropertyProvider fromSystemProperties() {
-    public static PropertyProvider freezed(PropertyProvider provider) {
-    public static PropertyProvider aggregate(AggregationPolicy mapping, MetaInfo metaInfo, PropertyProvider... providers){
-    public static PropertyProvider aggregate(PropertyProvider... providers) {
-    public static PropertyProvider aggregate(List<PropertyProvider> providers) {
-    public static PropertyProvider aggregate(AggregationPolicy mapping, PropertyProvider... propertyMaps) {
-    public static PropertyProvider aggregate(AggregationPolicy mapping, List<PropertyProvider> providers) {
-    public static PropertyProvider mutable(PropertyProvider provider) {
-    public static PropertyProvider intersected(AggregationPolicy aggregationPolicy, PropertyProvider... providers) {
-    public static PropertyProvider intersected(PropertyProvider... providers) {
-    public static PropertyProvider subtracted(PropertyProvider target, PropertyProvider... providers) {
-    public static PropertyProvider filtered(Predicate<String> filter, PropertyProvider provider) {
-    public static PropertyProvider contextual(Supplier<PropertyProvider> mapSupplier,
+    public static PropertySource fromArgs(String... args) {
+    public static PropertySource fromArgs(MetaInfo metaInfo, String... args) {
+    public static PropertySource fromPaths(AggregationPolicy aggregationPolicy, String... paths) {
+    public static PropertySource fromPaths(String... paths) {
+    public static PropertySource fromPaths(List<String> paths) {
+    public static PropertySource fromPaths(AggregationPolicy aggregationPolicy, List<String> paths) {
+    public static PropertySource fromPaths(MetaInfo metaInfo, List<String> paths) {
+    public static PropertySource fromPaths(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<String> paths) {
+    public static PropertySource fromUris(URI... uris) {
+    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, URI... uris) {
+    public static PropertySource fromUris(List<URI> uris) {
+    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, List<URI> uris) {
+    public static PropertySource fromUris(MetaInfo metaInfo, URI... uris) {
+    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, URI... uris) {
+    public static PropertySource fromUris(MetaInfo metaInfo, List<URI> uris) {
+    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<URI> uris) {
+    public static PropertySource fromMap(Map<String, String> map) {
+    public static PropertySource fromMap(MetaInfo metaInfo, Map<String, String> map) {
+    public static PropertySource empty() {
+    public static PropertySource emptyMutable() {
+    public static PropertySource empty(MetaInfo metaInfo) {
+    public static PropertySource emptyMutable(MetaInfo metaInfo) {
+    public static PropertySource fromEnvironmentProperties() {
+    public static PropertySource fromSystemProperties() {
+    public static PropertySource freezed(PropertySource provider) {
+    public static PropertySource aggregate(AggregationPolicy mapping, MetaInfo metaInfo, PropertySource... providers){
+    public static PropertySource aggregate(PropertySource... providers) {
+    public static PropertySource aggregate(List<PropertySource> providers) {
+    public static PropertySource aggregate(AggregationPolicy mapping, PropertySource... propertyMaps) {
+    public static PropertySource aggregate(AggregationPolicy mapping, List<PropertySource> providers) {
+    public static PropertySource mutable(PropertySource provider) {
+    public static PropertySource intersected(AggregationPolicy aggregationPolicy, PropertySource... providers) {
+    public static PropertySource intersected(PropertySource... providers) {
+    public static PropertySource subtracted(PropertySource target, PropertySource... providers) {
+    public static PropertySource filtered(Predicate<String> filter, PropertySource provider) {
+    public static PropertySource contextual(Supplier<PropertySource> mapSupplier,
                                               Supplier<String> isolationKeySupplier) {
-    public static PropertyProvider delegating(PropertyProvider mainMap, Map<String, String> parentMap) {
-    public static PropertyProvider replacing(PropertyProvider mainMap, Map<String, String> replacementMap) {
+    public static PropertySource delegating(PropertySource mainMap, Map<String, String> parentMap) {
+    public static PropertySource replacing(PropertySource mainMap, Map<String, String> replacementMap) {
 }
 --------------------------------------------
 
@@ -529,13 +531,13 @@ public final class PropertyProviders {
 === Configuration
 ==== Basic Model
 
-Configuration inherits all basic features from +PropertyProvider+, but additionally adds functionality for
+Configuration inherits all basic features from +PropertySource+, but additionally adds functionality for
 type safety and extension mechanisms:
 
 [source,java]
 .Interface Configuration
 --------------------------------------------
-public interface Configuration extends PropertyProvider{
+public interface Configuration extends PropertySource{
 
     default OptionalBoolean getBoolean(String key);
     default OptionalInt getInteger(String key);
@@ -594,7 +596,7 @@ Hereby
 [[TypeConversion]]
 ==== Type Conversion
 
-Configuration extend +PropertyProvider+ and add additional support for non String types. This is achieved
+Configuration extend +PropertySource+ and add additional support for non String types. This is achieved
 with the help of +PropertyAdapter+ instances:
 
 [source,java]

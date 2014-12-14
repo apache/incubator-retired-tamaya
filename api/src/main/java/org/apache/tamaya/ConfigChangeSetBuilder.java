@@ -299,7 +299,6 @@ public final class ConfigChangeSetBuilder {
      */
     public static Collection<PropertyChangeEvent> compare(PropertySource map1, PropertySource map2) {
         List<PropertyChangeEvent> changes = new ArrayList<>();
-
         for (Map.Entry<String, String> en : map1.toMap().entrySet()) {
             Optional<String> val = map2.get(en.getKey());
             if(!val.isPresent()) {
@@ -309,7 +308,6 @@ public final class ConfigChangeSetBuilder {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), val.get(), en.getValue()));
             }
         }
-
         for (Map.Entry<String, String> en : map2.toMap().entrySet()) {
             Optional<String> val = map1.get(en.getKey());
             if(!val.isPresent()) {

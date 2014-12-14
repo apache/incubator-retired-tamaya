@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
-import org.apache.tamaya.core.properties.AbstractPropertySource;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +36,7 @@ class IntersectingPropertySource extends AbstractPropertySource {
     public IntersectingPropertySource(MetaInfo metaInfo, AggregationPolicy policy, List<PropertySource> providers) {
         super(MetaInfoBuilder.of(metaInfo).setType("intersection").build());
         this.providers = new ArrayList<>(providers);
-        aggregatedDelegate = PropertySourceBuilder.create(getMetaInfo()).withAggregationPolicy(policy)
+        aggregatedDelegate = PropertySourceBuilder.of(getMetaInfo()).withAggregationPolicy(policy)
                 .addProviders(this.providers).build();
     }
 

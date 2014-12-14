@@ -43,7 +43,7 @@ public interface EnvironmentProvider {
     boolean isEnvironmentActive();
 
     /**
-     * Access (or create) a new environment for the given context.
+     * Access (or of) a new environment for the given context.
      * @param parentEnvironment the parent environment to b e set
      * @return the environment, or null.
      */

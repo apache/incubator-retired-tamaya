@@ -22,7 +22,7 @@ import org.apache.tamaya.core.spi.PathResolver;
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -38,7 +38,7 @@ public class DefaultPathResourceLoader implements ResourceLoader{
 
     @Override
     public Collection<String> getResolverIds(){
-        return Bootstrap.getServices(PathResolver.class).stream().map(PathResolver::getResolverId)
+        return ServiceContext.getInstance().getServices(PathResolver.class).stream().map(PathResolver::getResolverId)
                 .collect(Collectors.toSet());
     }
 
@@ -68,7 +68,7 @@ public class DefaultPathResourceLoader implements ResourceLoader{
     @Override
     public List<Resource> getResources(ClassLoader classLoader, Collection<String> expressions){
         List<Resource> resources = new ArrayList<>();
-        for(PathResolver resolver : Bootstrap.getServices(PathResolver.class)){
+        for(PathResolver resolver : ServiceContext.getInstance().getServices(PathResolver.class)){
             try{
                 resources.addAll(resolver.resolve(classLoader, expressions));
             }

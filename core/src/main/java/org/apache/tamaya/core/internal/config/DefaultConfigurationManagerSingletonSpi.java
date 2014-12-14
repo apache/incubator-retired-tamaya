@@ -25,7 +25,7 @@ import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
 
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
 import java.lang.annotation.Annotation;
@@ -47,7 +47,7 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     private ExpressionEvaluator expressionEvaluator = loadEvaluator();
 
     private ExpressionEvaluator loadEvaluator() {
-        ExpressionEvaluator eval = Bootstrap.getService(ExpressionEvaluator.class, null);
+        ExpressionEvaluator eval = ServiceContext.getInstance().getService(ExpressionEvaluator.class).orElse(null);
         if (eval == null) {
             eval = new DefaultExpressionEvaluator();
         }
@@ -55,7 +55,7 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     }
 
     public DefaultConfigurationManagerSingletonSpi() {
-        for (ConfigurationProviderSpi spi : Bootstrap.getServices(ConfigurationProviderSpi.class)) {
+        for (ConfigurationProviderSpi spi : ServiceContext.getInstance().getServices(ConfigurationProviderSpi.class, Collections.emptyList())) {
             configProviders.put(spi.getConfigName(), spi);
         }
     }
@@ -188,12 +188,12 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
         @Override
         public void reload() {
             this.configuration =
-                    PropertySourceBuilder.create(DEFAULT_CONFIG_NAME)
-                            .addProviders(PropertySourceBuilder.create("CL default")
+                    PropertySourceBuilder.of(DEFAULT_CONFIG_NAME)
+                            .addProviders(PropertySourceBuilder.of("CL default")
                                     .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
                                     .addPaths("META-INF/cfg/default/**/*.xml", "META-INF/cfg/default/**/*.properties", "META-INF/cfg/default/**/*.ini")
                                     .build())
-                            .addProviders(PropertySourceBuilder.create("CL default")
+                            .addProviders(PropertySourceBuilder.of("CL default")
                                     .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
                                     .addPaths("META-INF/cfg/config/**/*.xml", "META-INF/cfg/config/**/*.properties", "META-INF/cfg/config/**/*.ini")
                                     .build())

@@ -19,25 +19,14 @@
 package org.apache.tamaya;
 
 import org.apache.tamaya.annotation.WithPropertyAdapter;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
-import java.util.Optional;
 
 /**
  * Singleton manager that provides {@link PropertyAdapter} instance, usable for converting String
  * based configuration entries into any other target types.
  */
 public final class PropertyAdapters{
-    /** The SPI finally registered backing this singleton. */
-    private static final PropertyAdaptersSingletonSpi propertyAdaptersSingletonSpi = loadConfigAdapterProviderSpi();
-
-    /**
-     * Method that loads the singleton backing bean fromMap the {@link org.apache.tamaya.spi.Bootstrap} component.
-     * @return the PropertyAdaptersSingletonSpi, never null.
-     */
-    private static PropertyAdaptersSingletonSpi loadConfigAdapterProviderSpi(){
-        return Bootstrap.getService(PropertyAdaptersSingletonSpi.class);
-    }
 
     /**
      * Orivate singleton constructor.
@@ -53,7 +42,7 @@ public final class PropertyAdapters{
      * @return any adapter replaced with the new adapter, or null.
      */
     public static <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter){
-        return Optional.of(propertyAdaptersSingletonSpi).get().register(targetType, adapter);
+        return ServiceContext.getInstance().getSingleton(PropertyAdaptersSingletonSpi.class).register(targetType, adapter);
     }
 
     /**
@@ -62,7 +51,7 @@ public final class PropertyAdapters{
      * @return true, if the given target type is supported.
      */
     public static boolean isTargetTypeSupported(Class<?> targetType){
-        return Optional.of(propertyAdaptersSingletonSpi).get().isTargetTypeSupported(targetType);
+        return ServiceContext.getInstance().getSingleton(PropertyAdaptersSingletonSpi.class).isTargetTypeSupported(targetType);
     }
 
     /**
@@ -87,7 +76,7 @@ public final class PropertyAdapters{
      * instantiated.
      */
     public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType, WithPropertyAdapter annotation){
-        return Optional.of(propertyAdaptersSingletonSpi).get().getAdapter(targetType, annotation);
+        return ServiceContext.getInstance().getSingleton(PropertyAdaptersSingletonSpi.class).getAdapter(targetType, annotation);
     }
 
 }

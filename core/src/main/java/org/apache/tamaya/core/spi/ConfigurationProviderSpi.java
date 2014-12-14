@@ -21,7 +21,7 @@ package org.apache.tamaya.core.spi;
 import org.apache.tamaya.Configuration;
 
 /**
-* This configuration provider SPI allows to register the effective factory logic to create and manage a configuration
+* This configuration provider SPI allows to register the effective factory logic to of and manage a configuration
 * instance. Hereby the qualifiers determine the type current configuration. By default
 */
 public interface ConfigurationProviderSpi{

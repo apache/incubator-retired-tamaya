@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
 import java.util.*;
@@ -30,27 +30,11 @@ import java.util.function.Predicate;
  * proxied configuration templates.
  */
 final class ConfigurationManager{
-    /**
-     * The backing SPI instance.
-     */
-    private static final ConfigurationManagerSingletonSpi configManagerSingletonSpi = loadConfigServiceSingletonSpi();
 
     /**
      * Private singleton constructor.
      */
     private ConfigurationManager(){
-    }
-
-    /**
-     * Method to initially load the singleton SPI fromMap the {@link org.apache.tamaya.spi.Bootstrap} mechanism.
-     * The instance loaded will be used until the VM is shutdown. In case use cases require more flexibility
-     * it should be transparently implemented in the SPI implementation. This singleton will simply delegate calls
-     * and not cache any responses.
-     *
-     * @return the SPI, never null.
-     */
-    private static ConfigurationManagerSingletonSpi loadConfigServiceSingletonSpi(){
-        return Bootstrap.getService(ConfigurationManagerSingletonSpi.class);
     }
 
     /**
@@ -60,7 +44,7 @@ final class ConfigurationManager{
      * @return true, if such a configuration is defined.
      */
     public static boolean isConfigurationDefined(String name){
-        return Optional.of(configManagerSingletonSpi).get().isConfigurationDefined(name);
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).isConfigurationDefined(name);
     }
 
     /**
@@ -73,7 +57,7 @@ final class ConfigurationManager{
      * @throws ConfigException if no such configuration is defined.
      */
     public static <T> T getConfiguration(String name, Class<T> template){
-        return Optional.of(configManagerSingletonSpi).get().getConfiguration(name, template);
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).getConfiguration(name, template);
     }
 
 
@@ -85,7 +69,7 @@ final class ConfigurationManager{
      * @throws ConfigException if no such configuration is defined.
      */
     public static Configuration getConfiguration(String name){
-        return Optional.of(configManagerSingletonSpi).get().getConfiguration(name);
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).getConfiguration(name);
     }
 
     /**
@@ -95,7 +79,7 @@ final class ConfigurationManager{
      * @throws ConfigException if no such configuration is defined.
      */
     public static Configuration getConfiguration(){
-        return Optional.of(configManagerSingletonSpi).get().getConfiguration();
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).getConfiguration();
     }
 
     /**
@@ -107,7 +91,7 @@ final class ConfigurationManager{
      * @throws ConfigException if the configuration could not be resolved.
      */
     public static <T> T getConfiguration(Class<T> type){
-        return Optional.of(configManagerSingletonSpi).get().getConfiguration(type);
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).getConfiguration(type);
     }
 
     /**
@@ -119,7 +103,7 @@ final class ConfigurationManager{
      * @throws ConfigException if the configuration could not be resolved.
      */
     public static void configure(Object instance){
-        Optional.of(configManagerSingletonSpi).get().configure(instance);
+        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).configure(instance);
     }
 
     /**
@@ -140,7 +124,7 @@ final class ConfigurationManager{
      * @return the evaluated config expression.
      */
     public static String evaluateValue(Configuration config, String expression){
-        return Optional.of(configManagerSingletonSpi).get().evaluateValue(config, expression);
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).evaluateValue(config, expression);
     }
 
     /**
@@ -149,7 +133,7 @@ final class ConfigurationManager{
      * @param l the listener, not null.
      */
     public static void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
-        Optional.of(configManagerSingletonSpi).get().addChangeListener(predicate, Objects.requireNonNull(l));
+        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).addChangeListener(predicate, Objects.requireNonNull(l));
     }
 
     /**
@@ -158,7 +142,7 @@ final class ConfigurationManager{
      * @param l the listener, not null.
      */
     public static void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
-        Optional.of(configManagerSingletonSpi).get().removeChangeListener(predicate, Objects.requireNonNull(l));
+        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).removeChangeListener(predicate, Objects.requireNonNull(l));
     }
 
     /**
@@ -169,6 +153,6 @@ final class ConfigurationManager{
      * @param configChange the change to be published, not null.
      */
     public static void publishChange(ConfigChangeSet configChange) {
-        Optional.of(configManagerSingletonSpi).get().publishChange(Objects.requireNonNull(configChange));
+        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).publishChange(Objects.requireNonNull(configChange));
     }
 }

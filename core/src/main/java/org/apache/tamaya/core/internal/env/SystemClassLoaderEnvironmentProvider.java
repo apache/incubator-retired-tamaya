@@ -23,7 +23,7 @@ import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.env.EnvironmentBuilder;
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
 import org.apache.tamaya.core.resource.ResourceLoader;
@@ -59,7 +59,7 @@ public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider
         if(env!=null){
             return env;
         }
-        List<Resource> propertyResources = Bootstrap.getService(ResourceLoader.class).getResources(ClassLoader.getSystemClassLoader(),
+        List<Resource> propertyResources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(ClassLoader.getSystemClassLoader(),
                 "classpath:META-INF/env/system.properties", "classpath:META-INF/env/system.xml", "classpath:META-INF/env/system.ini");
         EnvironmentBuilder builder = EnvironmentBuilder.of("system", getEnvironmentType());
         for(Resource resource:propertyResources){

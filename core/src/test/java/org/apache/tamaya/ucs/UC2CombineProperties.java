@@ -38,16 +38,16 @@ public class UC2CombineProperties {
      */
     @Test
     public void simpleAggregationTests() {
-        PropertySource props1 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
-        PropertySource props2 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
-        PropertySource unionOverriding = PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.OVERRIDE).addProviders(props2).build();
+        PropertySource props1 = PropertySourceBuilder.of().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
+        PropertySource props2 = PropertySourceBuilder.of().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
+        PropertySource unionOverriding = PropertySourceBuilder.of(props1).withAggregationPolicy(AggregationPolicy.OVERRIDE).addProviders(props2).build();
         System.out.println("unionOverriding: " + unionOverriding);
-        PropertySource unionIgnoringDuplicates = PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.IGNORE_DUPLICATES).addProviders(props2).build();
+        PropertySource unionIgnoringDuplicates = PropertySourceBuilder.of(props1).withAggregationPolicy(AggregationPolicy.IGNORE_DUPLICATES).addProviders(props2).build();
         System.out.println("unionIgnoringDuplicates: " + unionIgnoringDuplicates);
-        PropertySource unionCombined = PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.COMBINE).addProviders(props2).build();
+        PropertySource unionCombined = PropertySourceBuilder.of(props1).withAggregationPolicy(AggregationPolicy.COMBINE).addProviders(props2).build();
         System.out.println("unionCombined: " + unionCombined);
         try{
-            PropertySourceBuilder.create(props1).withAggregationPolicy(AggregationPolicy.EXCEPTION).addProviders(props2).build();
+            PropertySourceBuilder.of(props1).withAggregationPolicy(AggregationPolicy.EXCEPTION).addProviders(props2).build();
         }
         catch(ConfigException e){
             // expected!
@@ -59,9 +59,9 @@ public class UC2CombineProperties {
      */
     @Test
     public void dynamicAggregationTests() {
-        PropertySource props1 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
-        PropertySource props2 = PropertySourceBuilder.create().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
-        PropertySource props = PropertySourceBuilder.create().withAggregationPolicy((k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]").withMetaInfo(MetaInfo.of("dynamicAggregationTests"))
+        PropertySource props1 = PropertySourceBuilder.of().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
+        PropertySource props2 = PropertySourceBuilder.of().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
+        PropertySource props = PropertySourceBuilder.of().withAggregationPolicy((k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]").withMetaInfo(MetaInfo.of("dynamicAggregationTests"))
                 .aggregate(props1, props2).build();
         System.out.println(props);
     }

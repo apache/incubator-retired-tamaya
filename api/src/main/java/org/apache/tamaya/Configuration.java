@@ -156,7 +156,9 @@ public interface Configuration extends PropertySource {
     }
 
     /**
-     * Return a set with all fully qualifies area names.
+     * Return a set with all fully qualifies area names. This method should return the areas as accurate as possible,
+     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * does not support key iteration.
      *
      * @return s set with all areas, never {@code null}.
      */
@@ -176,7 +178,9 @@ public interface Configuration extends PropertySource {
 
     /**
      * Return a set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not.
+     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate
+     * as possible, but may not provide a complete set of areas that are finally accessible, especially when the
+     * underlying storage does not support key iteration.
      *
      * @return s set with all transitive areas, never {@code null}.
      */
@@ -199,7 +203,9 @@ public interface Configuration extends PropertySource {
 
     /**
      * Return a set with all fully qualified area names, containing only the
-     * areas that match the predicate and have properties attached
+     * areas that match the predicate and have properties attached. This method should return the areas as accurate as possible,
+     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * does not support key iteration.
      *
      * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
      * @return s set with all areas, never {@code null}.
@@ -210,7 +216,9 @@ public interface Configuration extends PropertySource {
 
     /**
      * Return a set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not.
+     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate as possible,
+     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * does not support key iteration.
      *
      * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
      * @return s set with all transitive areas, never {@code null}.
@@ -220,7 +228,8 @@ public interface Configuration extends PropertySource {
     }
 
     /**
-     * Allows to evaluate if an area exists.
+     * Allows to evaluate if an area exists. In case where the underlying storage implementation does not allow
+     * querying the keys available, {@code false} should be returned.
      *
      * @param areaKey the configuration area (sub)path.
      * @return {@code true}, if such a node exists.
@@ -350,16 +359,16 @@ public interface Configuration extends PropertySource {
     }
 
     /**
-     * Add a ConfigChangeListener to this configuration instance.
+     * Add a ConfigChangeListener to the given PropertySource instance.
      * @param predicate the event filtering predicate
      * @param l the listener, not null.
      */
-    public static  void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l){
+    public static void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l){
         ConfigurationManager.addChangeListener(predicate, l);
     }
 
     /**
-     * Removes a ConfigChangeListener to this configuration instance.
+     * Removes a ConfigChangeListener from the given PropertySource instance.
      * @param predicate the event filtering predicate
      * @param l the listener, not null.
      */
@@ -368,7 +377,7 @@ public interface Configuration extends PropertySource {
     }
 
     /**
-     * Method to publish changes on a {@link org.apache.tamaya.Configuration} to all interested parties.
+     * Method to publish changes on a {@link org.apache.tamaya.PropertySource} to all interested parties.
      * Basically this method gives an abstraction on the effective event bus design fo listeners. In a CDI context
      * the CDI enterprise event bus should be used internally to do the work, whereas in a SE only environment
      * a more puristic approach would be useful.

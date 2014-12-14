@@ -19,8 +19,7 @@
 package org.apache.tamaya.core.internal.el;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
 import org.apache.tamaya.core.spi.ExpressionResolver;
 
@@ -37,10 +36,10 @@ public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
     private ExpressionResolver defaultResolver;
 
     public DefaultExpressionEvaluator() {
-        for(ExpressionResolver resolver: Bootstrap.getServices(ExpressionResolver.class)){
+        for(ExpressionResolver resolver: ServiceContext.getInstance().getServices(ExpressionResolver.class)){
             resolvers.put(resolver.getResolverId(), resolver);
         }
-        defaultResolver = Bootstrap.getService(ExpressionResolver.class);
+        defaultResolver = ServiceContext.getInstance().getSingleton(ExpressionResolver.class);
     }
 
     /**

@@ -173,7 +173,7 @@ public abstract class AbstractResource implements Resource {
 	 */
 	@Override
 	public Resource createRelative(String relativePath) throws IOException {
-		throw new FileNotFoundException("Cannot create a relative resource for " + getDescription());
+		throw new FileNotFoundException("Cannot of a relative resource for " + getDescription());
 	}
 
 	/**

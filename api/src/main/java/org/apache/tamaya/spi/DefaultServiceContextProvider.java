@@ -18,21 +18,42 @@
  */
 package org.apache.tamaya.spi;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class implements the (default) {@link ServiceProvider} interface and hereby uses the JDK
+ * This class implements the (default) {@link ServiceContext} interface and hereby uses the JDK
  * {@link java.util.ServiceLoader} to load the services required.
  */
-class DefaultServiceProvider implements ServiceProvider {
+class DefaultServiceContextProvider implements ServiceContext {
     /** List current services loaded, per class. */
     private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+    /** Singletons. */
+    private final ConcurrentHashMap<Class, Optional<?>> singletons = new ConcurrentHashMap<>();
+    /** Comparator for ordering of multiple services found. */
+    private DefaultServiceComparator serviceComparator;
+
+    public DefaultServiceContextProvider(){
+        serviceComparator = new DefaultServiceComparator(getServices(OrdinalProvider.class, Collections.emptyList()));
+    }
+
+    @Override
+    public <T> Optional<T> getService(Class<T> serviceType) {
+        Optional<T> cached = (Optional<T>)singletons.get(serviceType);
+        if(cached==null) {
+            List<? extends T> services = getServices(serviceType, Collections.emptyList());
+            if (services.isEmpty()) {
+                cached = Optional.empty();
+            }
+            else{
+                cached = Optional.of(services.get(0));
+            }
+            singletons.put(serviceType, cached);
+        }
+        return cached;
+    }
 
     /**
      * Loads and registers services.
@@ -46,13 +67,12 @@ class DefaultServiceProvider implements ServiceProvider {
      * @return the items found, never {@code null}.
      */
     @Override
-    public <T> List<T> getServices(final Class<T> serviceType, final List<T> defaultList) {
+    public <T> List<? extends T> getServices(final Class<T> serviceType, final List<? extends T> defaultList) {
         @SuppressWarnings("unchecked")
         List<T> found = (List<T>) servicesLoaded.get(serviceType);
         if (found != null) {
             return found;
         }
-
         return loadServices(serviceType, defaultList);
     }
 
@@ -65,7 +85,7 @@ class DefaultServiceProvider implements ServiceProvider {
      *
      * @return  the items found, never {@code null}.
      */
-    private <T> List<T> loadServices(final Class<T> serviceType, final List<T> defaultList) {
+    private <T> List<? extends T> loadServices(final Class<T> serviceType, final List<? extends T> defaultList) {
         try {
             List<T> services = new ArrayList<>();
             for (T t : ServiceLoader.load(serviceType)) {
@@ -74,11 +94,14 @@ class DefaultServiceProvider implements ServiceProvider {
             if(services.isEmpty()){
                 services.addAll(defaultList);
             }
-            @SuppressWarnings("unchecked")
-            final List<T> previousServices = (List<T>) servicesLoaded.putIfAbsent(serviceType, (List<Object>) services);
-            return Collections.unmodifiableList(previousServices != null ? previousServices : services);
+            if(!serviceType.equals(OrdinalProvider.class)) {
+                services.sort(serviceComparator);
+            }
+            services = Collections.unmodifiableList(services);
+            final List<T> previousServices = (List<T>) servicesLoaded.putIfAbsent(serviceType, (List<Object>)services);
+            return previousServices != null ? previousServices : services;
         } catch (Exception e) {
-            Logger.getLogger(DefaultServiceProvider.class.getName()).log(Level.WARNING,
+            Logger.getLogger(DefaultServiceContextProvider.class.getName()).log(Level.WARNING,
                                                                          "Error loading services current type " + serviceType, e);
             return defaultList;
         }

@@ -20,7 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
@@ -45,7 +45,7 @@ public final class MetaConfig {
     private Map<String,String> properties = new HashMap<>();
 
     private MetaConfig(){
-        List<Resource> resources = Bootstrap.getService(ResourceLoader.class).getResources(MetaConfig.class.getClassLoader(),
+        List<Resource> resources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(MetaConfig.class.getClassLoader(),
                 "classpath:META-INF/config.properties");
         for(Resource res:resources){
             try{

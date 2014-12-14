@@ -18,41 +18,19 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.internal.format.DefaultConfigFormatsSingletonSpi;
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.ConfigurationFormatsSingletonSpi;
 
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Singleton accessor for accessing {@link org.apache.tamaya.core.spi.ConfigurationFormat} instances.
  * Created by Anatole on 26.02.14.
  */
 public final class ConfigurationFormats{
-
-    /**
-     * Spi to which calls are effectively delegated, never null.
-     */
-    private static final ConfigurationFormatsSingletonSpi spi = loadSpi();
-
-    /**
-     * Method to load the spi fromMap the Bootstrap component.
-     *
-     * @return an instance current ConfigurationFormatsSingletonSpi, never null.
-     */
-    private static ConfigurationFormatsSingletonSpi loadSpi(){
-        try{
-            return Bootstrap.getService(ConfigurationFormatsSingletonSpi.class);
-        }
-        catch(Exception e){
-            return new DefaultConfigFormatsSingletonSpi();
-        }
-    }
 
     /**
      * Private singleton constructor.
@@ -68,9 +46,7 @@ public final class ConfigurationFormats{
      * not available for the given environment.
      */
     public static ConfigurationFormat getFormat(String formatName){
-        return Optional.ofNullable(spi)
-                .orElseThrow(() -> new ConfigException("No ConfigurationFormatsSingletonSpi loaded."))
-                .getFormat(formatName);
+        return ServiceContext.getInstance().getSingleton(ConfigurationFormatsSingletonSpi.class).getFormat(formatName);
     }
 
     /**
@@ -79,8 +55,7 @@ public final class ConfigurationFormats{
      * @return a collection current the keys current the registered {@link ConfigurationFormat} instances.
      */
     public static Collection<String> getFormatNames(){
-        return Optional.ofNullable(spi)
-                .orElseThrow(() -> new ConfigException("No ConfigurationFormatsSingletonSpi loaded.")).getFormatNames();
+        return ServiceContext.getInstance().getSingleton(ConfigurationFormatsSingletonSpi.class).getFormatNames();
     }
 
     /**
@@ -90,9 +65,7 @@ public final class ConfigurationFormats{
      * @return a matching configuration format, or {@code null} if no matching format could be determined.
      */
     public static ConfigurationFormat getFormat(Resource resource){
-        return Optional.ofNullable(spi)
-                .orElseThrow(() -> new ConfigException("No ConfigurationFormatsSingletonSpi loaded."))
-                .getFormat(resource);
+        return ServiceContext.getInstance().getSingleton(ConfigurationFormatsSingletonSpi.class).getFormat(resource);
 
     }
 
@@ -103,9 +76,7 @@ public final class ConfigurationFormats{
      * @return a format instance for reading configuration fromMap a {@code .properties} file, never null.
      */
     public static ConfigurationFormat getPropertiesFormat(){
-        return Optional.ofNullable(spi)
-                .orElseThrow(() -> new ConfigException("No ConfigurationFormatsSingletonSpi loaded."))
-                .getPropertiesFormat();
+        return ServiceContext.getInstance().getSingleton(ConfigurationFormatsSingletonSpi.class).getPropertiesFormat();
     }
 
     /**
@@ -115,9 +86,7 @@ public final class ConfigurationFormats{
      * @return a format instance for reading configuration fromMap a {@code .xml} properties file, never null.
      */
     public static ConfigurationFormat getXmlPropertiesFormat(){
-        return Optional.ofNullable(spi)
-                .orElseThrow(() -> new ConfigException("No ConfigurationFormatsSingletonSpi loaded."))
-                .getXmlPropertiesFormat();
+        return ServiceContext.getInstance().getSingleton(ConfigurationFormatsSingletonSpi.class).getXmlPropertiesFormat();
     }
 
 }

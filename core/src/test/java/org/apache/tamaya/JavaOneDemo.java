@@ -36,7 +36,7 @@ public class JavaOneDemo {
 
     @Test
     public void testFromSystemProperties() {
-        PropertySource prov = PropertySourceBuilder.create("Sys-conf").addSystemProperties().build();
+        PropertySource prov = PropertySourceBuilder.of("Sys-conf").addSystemProperties().build();
         assertNotNull(prov);
         for (Map.Entry<Object, Object> en : System.getProperties().entrySet()) {
             assertEquals(en.getValue(), prov.get(en.getKey().toString()).get());
@@ -45,7 +45,7 @@ public class JavaOneDemo {
 
     @Test
     public void testProgrammatixPropertySet() {
-        System.out.println(PropertySourceBuilder.create("test").addPaths("test", "classpath:test.properties"));
+        System.out.println(PropertySourceBuilder.of("test").addPaths("test", "classpath:test.properties"));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class JavaOneDemo {
         Map<String, String> cfgMap = new HashMap<>();
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole
-        Configuration config = PropertySourceBuilder.create("myTestConfig").addPaths(
+        Configuration config = PropertySourceBuilder.of("myTestConfig").addPaths(
                 "classpath:test.properties").addPaths("classpath:cfg/test.xml")
                 .addArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"})
                 .addMap(cfgMap).build().toConfiguration();
@@ -70,6 +70,6 @@ public class JavaOneDemo {
         System.out.print("--- b=");
         System.out.println(config.get("b"));
         System.out.println("--- only a,b,c)");
-        System.out.println(PropertySourceBuilder.create(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
+        System.out.println(PropertySourceBuilder.of(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
     }
 }

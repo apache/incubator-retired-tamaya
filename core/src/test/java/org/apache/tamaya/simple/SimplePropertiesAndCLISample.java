@@ -19,7 +19,6 @@
 package org.apache.tamaya.simple;
 
 import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class SimplePropertiesAndCLISample {
 
     @Test
     public void testProgrammatixPropertySet() {
-        System.out.println(PropertySourceBuilder.create("test").addPaths("test", "classpath:test.properties").build());
+        System.out.println(PropertySourceBuilder.of("test").addPaths("test", "classpath:test.properties").build());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class SimplePropertiesAndCLISample {
         Map<String, String> cfgMap = new HashMap<>();
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole
-        Configuration config = PropertySourceBuilder.create("myTestConfig").addPaths(
+        Configuration config = PropertySourceBuilder.of("myTestConfig").addPaths(
                 "classpath:test.properties").addPaths("classpath:cfg/test.xml")
                 .addArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}).addMap(cfgMap)
                 .build().toConfiguration();
@@ -66,7 +65,7 @@ public class SimplePropertiesAndCLISample {
         System.out.print("--- b=");
         System.out.println(config.get("b"));
         System.out.println("--- only a,b,c)");
-        System.out.println(PropertySourceBuilder.create(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
+        System.out.println(PropertySourceBuilder.of(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
     }
 
 }

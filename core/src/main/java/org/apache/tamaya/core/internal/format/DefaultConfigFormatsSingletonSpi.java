@@ -25,7 +25,7 @@ import org.apache.tamaya.core.spi.ConfigurationFormatsSingletonSpi;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Singleton accessor to access registered reader mechanism.
@@ -35,7 +35,7 @@ public final class DefaultConfigFormatsSingletonSpi implements ConfigurationForm
     public ConfigurationFormat getFormat(String formatName){
         Objects.requireNonNull(formatName);
         try {
-            for (ConfigurationFormat configFormat : Bootstrap.getServices(ConfigurationFormat.class)) {
+            for (ConfigurationFormat configFormat : ServiceContext.getInstance().getServices(ConfigurationFormat.class)) {
                 if(formatName.equals(configFormat.getFormatName())){
                     return configFormat;
                 }
@@ -50,7 +50,7 @@ public final class DefaultConfigFormatsSingletonSpi implements ConfigurationForm
     public Collection<String> getFormatNames(){
         Set<String> result = new HashSet<>();
         try {
-            result.addAll(Bootstrap.getServices(ConfigurationFormat.class).stream().map(ConfigurationFormat::getFormatName)
+            result.addAll(ServiceContext.getInstance().getServices(ConfigurationFormat.class).stream().map(ConfigurationFormat::getFormatName)
                     .collect(Collectors.toList()));
         } catch (Exception e) {
             // TODO: handle exception
@@ -62,7 +62,7 @@ public final class DefaultConfigFormatsSingletonSpi implements ConfigurationForm
 	public ConfigurationFormat getFormat(Resource resource) {
         Objects.requireNonNull(resource);
         try {
-            for (ConfigurationFormat configFormat : Bootstrap.getServices(ConfigurationFormat.class)) {
+            for (ConfigurationFormat configFormat : ServiceContext.getInstance().getServices(ConfigurationFormat.class)) {
                 if(configFormat.isAccepted(resource)){
                     return configFormat;
                 }

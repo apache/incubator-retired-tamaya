@@ -64,7 +64,7 @@ public final class ConfigFunctions {
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
                                     e -> e.getValue())));
-            return PropertySourceBuilder.create("area: " + areaKey).addMap(area).build().toConfiguration();
+            return PropertySourceBuilder.of("area: " + areaKey).addMap(area).build().toConfiguration();
         };
     }
 
@@ -111,7 +111,7 @@ public final class ConfigFunctions {
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
                                     e -> e.getValue())));
-            return PropertySourceBuilder.create("area (recursive): " + areaKey).addMap(area).build().toConfiguration();
+            return PropertySourceBuilder.of("area (recursive): " + areaKey).addMap(area).build().toConfiguration();
         };
     }
 

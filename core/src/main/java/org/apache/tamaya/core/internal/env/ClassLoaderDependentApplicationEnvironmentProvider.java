@@ -22,7 +22,7 @@ import org.apache.tamaya.Environment;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.env.EnvironmentBuilder;
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
 import org.apache.tamaya.core.resource.ResourceLoader;
@@ -65,7 +65,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
         if(available!=null && !available){
             return false;
         }
-        List<Resource> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
+        List<Resource> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/env/application.properties", "classpath:META-INF/env/application.xml", "classpath:META-INF/env/application.ini");
         available = !propertyUris.isEmpty();
         this.environmentAvailable.put(cl, available);
@@ -82,7 +82,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
         if(environment!=null){
             return environment;
         }
-        List<Resource> propertyUris = Bootstrap.getService(ResourceLoader.class).getResources(cl,
+        List<Resource> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/env/application.properties", "classpath:META-INF/env/application.xml", "classpath:META-INF/env/application.ini");
         Map<String,String> data = new HashMap<>();
 

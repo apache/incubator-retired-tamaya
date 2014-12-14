@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.EnvironmentManagerSingletonSpi;
 
 import java.util.List;
@@ -31,20 +31,10 @@ import java.util.Set;
  */
 final class EnvironmentManager{
 
-    private static final EnvironmentManagerSingletonSpi environmentManagerSingletonSpi = loadContextProviderSpi();
-
     /**
      * Private singleton constructor.
      */
     private EnvironmentManager(){}
-
-    /**
-     * Method to load the environment SPI during initial load.
-     * @return the EnvironmentProviderSpi SPI, never null.
-     */
-    private static EnvironmentManagerSingletonSpi loadContextProviderSpi(){
-        return Bootstrap.getService(EnvironmentManagerSingletonSpi.class);
-    }
 
     /**
      * Get the current {@link Environment}. The environment is used to determine the current runtime state, which
@@ -52,9 +42,7 @@ final class EnvironmentManager{
      * @return the current Environment, never null.
      */
     public static Environment getEnvironment(){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).getEnvironment();
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).getEnvironment();
     }
 
     /**
@@ -62,9 +50,7 @@ final class EnvironmentManager{
      * @return the current root Environment, never null.
      */
     public static Environment getRootEnvironment(){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).getRootEnvironment();
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).getRootEnvironment();
     }
 
     /**
@@ -72,9 +58,7 @@ final class EnvironmentManager{
      * @return the hierarchy chain current possible Environments.
      */
     public static List<String> getEnvironmentTypeOrder(){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).getEnvironmentTypeOrder();
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).getEnvironmentTypeOrder();
     }
 
     /**
@@ -82,9 +66,7 @@ final class EnvironmentManager{
      * @return the current type chain current Environments.
      */
     public static List<String> getEnvironmentHierarchy(){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).getEnvironmentHierarchy();
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).getEnvironmentHierarchy();
     }
 
     /**
@@ -94,9 +76,7 @@ final class EnvironmentManager{
      * @throws IllegalArgumentException if not such type is present or active.
      */
     public static Optional<Environment> getEnvironment(String environmentType){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).getEnvironment(environmentType);
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).getEnvironment(environmentType);
     }
 
     /**
@@ -106,9 +86,7 @@ final class EnvironmentManager{
      * @return the corresponding environment, if available.
      */
     public static Optional<Environment> getEnvironment(String environmentType, String contextId){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).getEnvironment(environmentType, contextId);
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).getEnvironment(environmentType, contextId);
     }
 
     /**
@@ -117,9 +95,7 @@ final class EnvironmentManager{
      * @return the corresponding environment contexts known, never null.
      */
     public static Set<String> getEnvironmentContexts(String environmentType){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).getEnvironmentContexts(environmentType);
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).getEnvironmentContexts(environmentType);
     }
 
     /**
@@ -128,9 +104,7 @@ final class EnvironmentManager{
      * @return true, if the czurrent environment type is one current the current active environment types.
      */
     public static boolean isEnvironmentActive(String environmentType){
-        return Optional.ofNullable(environmentManagerSingletonSpi).orElseThrow(
-                () -> new IllegalStateException("No SPI loaded.")
-        ).isEnvironmentActive(environmentType);
+        return ServiceContext.getInstance().getSingleton(EnvironmentManagerSingletonSpi.class).isEnvironmentActive(environmentType);
     }
 
 }

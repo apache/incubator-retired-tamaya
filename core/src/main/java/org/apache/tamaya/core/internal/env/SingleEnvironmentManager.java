@@ -21,7 +21,7 @@ package org.apache.tamaya.core.internal.env;
 import org.apache.tamaya.Environment;
 
 import org.apache.tamaya.core.internal.MetaConfig;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.EnvironmentManagerSingletonSpi;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
 
@@ -46,7 +46,7 @@ public class SingleEnvironmentManager implements EnvironmentManagerSingletonSpi{
     private final List<EnvironmentProvider> environmentProviders = loadEnvironmentProviders();
 
     private List<EnvironmentProvider> loadEnvironmentProviders() {
-        for(EnvironmentProvider prov: Bootstrap.getServices(EnvironmentProvider.class)){
+        for(EnvironmentProvider prov: ServiceContext.getInstance().getServices(EnvironmentProvider.class)){
             providerMap.put(prov.getEnvironmentType(), prov);
         }
         String providerOrdering = MetaConfig.getOrDefault(ENVIRONMENT_ORDER_KEY, DEFAULT_ENVIRONMENT_ORDER);

@@ -20,16 +20,15 @@ package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.core.properties.AbstractPropertySource;
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.spi.Bootstrap;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
 import java.util.*;
 
 /**
- * Created by Anatole on 16.10.2014.
+ * Implementation of a PropertySource that reads configuration from some given resource paths.
  */
 final class PathBasedPropertySource extends AbstractPropertySource {
 
@@ -54,7 +53,7 @@ final class PathBasedPropertySource extends AbstractPropertySource {
         List<String> effectivePaths = new ArrayList<>();
         paths.forEach((path) -> {
             effectivePaths.add(path);
-            for (Resource res : Bootstrap.getService(ResourceLoader.class).getResources(path)) {
+            for (Resource res : ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(path)) {
                 ConfigurationFormat format = ConfigurationFormats.getFormat(res);
                 if (format != null) {
                     try {
