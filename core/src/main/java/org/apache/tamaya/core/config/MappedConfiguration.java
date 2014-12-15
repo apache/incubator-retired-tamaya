@@ -1,6 +1,5 @@
 package org.apache.tamaya.core.config;
 
-import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 import org.apache.tamaya.*;
 
 import java.util.*;

@@ -9,3 +9,15 @@ release.properties
 *.log
 *~
 .DS_Store
+modules/.project
+modules/.settings/
+modules/integration/.project
+modules/integration/.settings/
+modules/integration/cdi/.classpath
+modules/integration/cdi/.project
+modules/integration/cdi/.settings/
+modules/metamodels/.project
+modules/metamodels/.settings/
+modules/metamodels/simple/.classpath
+modules/metamodels/simple/.project
+modules/metamodels/simple/.settings/

@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya;
 
-import com.sun.javafx.scene.control.behavior.OptionalBoolean;
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -52,16 +50,13 @@ public interface Configuration extends PropertySource {
      *            a/b/c/d.myProperty}.
      * @return the property's value.
      */
-    default OptionalBoolean getBoolean(String key){
-        Optional<Boolean> val = get(key, Boolean.class);
-        if(val.isPresent()){
-            if(val.get()){
-                return OptionalBoolean.TRUE;
-            }
-            return OptionalBoolean.FALSE;
-        }
-        return OptionalBoolean.ANY;
-    }
+	default Boolean getBoolean(String key) {
+		Optional<Boolean> val = get(key, Boolean.class);
+		if (val.isPresent()) {
+			return val.get();
+		}
+		return null;
+	}
 
     /**
      * Get the property value as {@link Integer}.
