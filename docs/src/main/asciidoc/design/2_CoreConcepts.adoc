@@ -52,7 +52,7 @@ The SPI contains the following core concepts/artifacts:
 
 * _ServiceContext_ is the delegate singleton that is used by the framework to resolve components. The effective component
   loading can be accessed by implementing and registering an instance of +ServiceContextProvider+ using +java.util.ServiceLoader+.
-* All the singleton used explicitly (+PropertyAdapters,Configuration+ are backed up corresponding API interfaces.
+* All the singleton used explicitly (+Environment,Configuration+ are backed up corresponding API interfaces.
   To override a singleton's behaviour the corresponding SPI has to be implemented and registered, so it can be loaded
   by the current +ServiceContext+ setup (by default ServiceLoader based).
 * Also the singleton used implicitly by +Configuration, Environment+ are backed up corresponding SPI interfaces.
@@ -61,7 +61,7 @@ The SPI contains the following core concepts/artifacts:
 
 This is also reflected in the main parts of the API, which is quite small:
 
-* +org.apache.tamaya+ contains the main abstractions +Configuration, ConfigQuery, PropertyAdapter, Stage,
+* +org.apache.tamaya+ contains the main abstractions +Configuration, ConfigQuery, PropertyAdapter,
   Environment, PropertySource, MetaInfo+
 * +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +ServiceContext+ mechanism.
 + +org.apache.tamaya.annot+ contains the annotations defined.
@@ -200,7 +200,7 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 ** The keys of configuration can have additional syntax/semantics. E.g. when adding dor-separating path semantics
 *** trees/maps can also simply be mapped.
 
-[APIPropertySources]
+[API PropertySource]
 === PropertySource
 ==== Basic Model
 
@@ -215,7 +215,7 @@ benefits:
 
 Nevertheless there are some severe drawbacks:
 
-* Configuration also requires meta-data, such as
+* +Configuration+ also requires meta-data, such as
 ** the origin of a certain configuration entry and how it was derived from other values
 ** the sensitivity of some data
 ** the provider that have read the data
@@ -300,232 +300,6 @@ ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(provider)  // creating a d
 source.apply(changeSet);
 --------------------------------------------
 
-[[API PropertySourceBuilder]]
-==== Building Property Sources
-
-Looking at the structures of configuration system used by large companies we typically encounter some kind of configuration
-hierarchies that are combined in arbitrary ways. Users of the systems are typically not aware of the complexities in this
-area, since they simply know the possible locations, formats and the overriding policies. Framework providers on the other
-side must face the complexities and it would be very useful if Tamaya can support here by providing prebuilt functionality
-that helps implementing these aspects. All this leads to the feature set of combining property sources. Hereby the following
-strategies are useful:
-
-* aggregating providers, hereby later providers added
-  ** override any existing entries from earlier providers
-  ** combine conflicting entries from earlier providers, e.g. into a comma-separated structure.
-  ** may throw a ConfigExcepotion ig entries are conflicting
-  ** may only add entries not yet defined by former providers, preventing entries that are already present to be overwritte
-  ** any custom aggregation strategy, which may be a mix of above
-* intersecting providers
-* subtracting providers
-* filtering providers
-
-These common functionality is provided by the +PropertySources+ singleton. Additionally to the base strategies above a +MetaInfo+
-instance can be passed optionally as well to define the meta information for the newly created provider instances.
-Let's assume we have two property providers with the following data:
-
-[source,properties]
-.Provider 1
---------------------------------------------
-a=a
-b=b
-c=c
-g=g
-h=h
-i=i
---------------------------------------------
-
-[source,properties]
-.Provider 2
---------------------------------------------
-a=A
-b=B
-c=C
-d=D
-e=E
-f=F
---------------------------------------------
-
-Looking in detail you see that the entries +a,b,c+ are present in both providers, whereas +d,e,f+ are only present in provider 1,
-and +g,h,i+ only in provider 2.
-
-[source,java]
-.Example Combining PropertySources
---------------------------------------------
-PropertySource provider1 = ...
-PropertySource provider2 = ...
-
-// aggregate, hereby values from provider 2 override values from provider 1
-PropertySource unionOverriding = PropertySources.aggregate(AggregationPolicy.OVERRIDE(), provider1, provider2);
-System.out.println("unionOverriding: " + unionOverriding);
-
-// ignore duplicates, values present in provider 1 are not overriden by provider 2
-PropertySource unionIgnoringDuplicates = PropertySources.aggregate(AggregationPolicy.IGNORE_DUPLICATES(), provider1, provider2);
-System.out.println("unionIgnoringDuplicates: " + unionIgnoringDuplicates);
-
-// this variant combines/maps duplicate values into a new value
-PropertySource unionCombined = PropertySources.aggregate(AggregationPolicy.COMBINE(), provider1, provider2);
-System.out.println("unionCombined: " + unionCombined);
-
-// This variant throws an exception since there are key/value paris in both providers, but with different values
-try{
-    PropertySources.aggregate(AggregationPolicy.EXCEPTION(), provider1, provider2);
-}
-catch(ConfigException e){
-    // expected!
-}
---------------------------------------------
-
-The example above produces the following outpout:
-
-[source,listing]
-.Example Combining PropertySources
---------------------------------------------
-AggregatedPropertySource{
-  (name = dynamicAggregationTests)
-  a = "[a][A]"
-  b = "[b][B]"
-  c = "[c][C]"
-  d = "[D]"
-  e = "[E]"
-  f = "[F]"
-  g = "[g]"
-  h = "[h]"
-  i = "[i]"
-}
-unionOverriding: AggregatedPropertySource{
-  (name = <noname>)
-  a = "A"
-  b = "B"
-  c = "C"
-  d = "D"
-  e = "E"
-  f = "F"
-  g = "g"
-  h = "h"
-  i = "i"
-}
-unionIgnoringDuplicates: AggregatedPropertySource{
-  (name = <noname>)
-  a = "a"
-  b = "b"
-  c = "c"
-  d = "D"
-  e = "E"
-  f = "F"
-  g = "g"
-  h = "h"
-  i = "i"
-}
-unionCombined: AggregatedPropertySource{
-  (name = <noname>)
-  a = "a,A"
-  b = "b,B"
-  c = "c,C"
-  d = "D"
-  e = "E"
-  f = "F"
-  g = "g"
-  h = "h"
-  i = "i"
-}
---------------------------------------------
-
-No +AggregationPolicy+ is also an interface that can be implemented:
-
-[source,java]
-.AggregationPolicy Interface
---------------------------------------------
-@FunctionalInterface
-public interface AggregationPolicy {
-    String aggregate(String key, String value1, String value2);
-}
---------------------------------------------
-
-So we can also define our own aggregation strategy using a Lambda expression:
-
-[source,java]
-.Use a Custom AggregationPolicy
---------------------------------------------
-PropertySource provider1 = ...;
-PropertySource provider2 = ...;
-PropertySource props = PropertySources.aggregate(
-      (k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]",
-      MetaInfo.of("dynamicAggregationTests"),
-      props1, props2);
-System.out.println(props);
---------------------------------------------
-
-Additionally we also pass here an instance of +MetaInfo+. The output of this code snippet is as follows:
-
-[source,listing]
-.Listing of dynamic aggregation policy
---------------------------------------------
-AggregatedPropertySource{
-  (name = dynamicAggregationTests)
-  a = "[a][A]"
-  b = "[b][B]"
-  c = "[c][C]"
-  d = "[D]"
-  e = "[E]"
-  f = "[F]"
-  g = "[g]"
-  h = "[h]"
-  i = "[i]"
-}
---------------------------------------------
-
-Summarizing the +PropertySources+ singleton allows to combine providers in various forms:
-
-[source,listing]
-.Methods provided on PropertySources
---------------------------------------------
-public final class PropertySources {
-
-    private PropertySources() {}
-
-    public static PropertySource fromArgs(String... args) {
-    public static PropertySource fromArgs(MetaInfo metaInfo, String... args) {
-    public static PropertySource fromPaths(AggregationPolicy aggregationPolicy, String... paths) {
-    public static PropertySource fromPaths(String... paths) {
-    public static PropertySource fromPaths(List<String> paths) {
-    public static PropertySource fromPaths(AggregationPolicy aggregationPolicy, List<String> paths) {
-    public static PropertySource fromPaths(MetaInfo metaInfo, List<String> paths) {
-    public static PropertySource fromPaths(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<String> paths) {
-    public static PropertySource fromUris(URI... uris) {
-    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, URI... uris) {
-    public static PropertySource fromUris(List<URI> uris) {
-    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, List<URI> uris) {
-    public static PropertySource fromUris(MetaInfo metaInfo, URI... uris) {
-    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, URI... uris) {
-    public static PropertySource fromUris(MetaInfo metaInfo, List<URI> uris) {
-    public static PropertySource fromUris(AggregationPolicy aggregationPolicy, MetaInfo metaInfo, List<URI> uris) {
-    public static PropertySource fromMap(Map<String, String> map) {
-    public static PropertySource fromMap(MetaInfo metaInfo, Map<String, String> map) {
-    public static PropertySource empty() {
-    public static PropertySource emptyMutable() {
-    public static PropertySource empty(MetaInfo metaInfo) {
-    public static PropertySource emptyMutable(MetaInfo metaInfo) {
-    public static PropertySource fromEnvironmentProperties() {
-    public static PropertySource fromSystemProperties() {
-    public static PropertySource freezed(PropertySource provider) {
-    public static PropertySource aggregate(AggregationPolicy mapping, MetaInfo metaInfo, PropertySource... providers){
-    public static PropertySource aggregate(PropertySource... providers) {
-    public static PropertySource aggregate(List<PropertySource> providers) {
-    public static PropertySource aggregate(AggregationPolicy mapping, PropertySource... propertyMaps) {
-    public static PropertySource aggregate(AggregationPolicy mapping, List<PropertySource> providers) {
-    public static PropertySource mutable(PropertySource provider) {
-    public static PropertySource intersected(AggregationPolicy aggregationPolicy, PropertySource... providers) {
-    public static PropertySource intersected(PropertySource... providers) {
-    public static PropertySource subtracted(PropertySource target, PropertySource... providers) {
-    public static PropertySource filtered(Predicate<String> filter, PropertySource provider) {
-    public static PropertySource contextual(Supplier<PropertySource> mapSupplier,
-                                              Supplier<String> isolationKeySupplier) {
-    public static PropertySource delegating(PropertySource mainMap, Map<String, String> parentMap) {
-    public static PropertySource replacing(PropertySource mainMap, Map<String, String> replacementMap) {
-}
---------------------------------------------
-
 
 [[API Configuration]]
 === Configuration
@@ -539,7 +313,7 @@ type safety and extension mechanisms:
 --------------------------------------------
 public interface Configuration extends PropertySource{
 
-    default OptionalBoolean getBoolean(String key);
+    default Optional<Boolean> getBoolean(String key);
     default OptionalInt getInteger(String key);
     default OptionalLong getLong(String key);
     default OptionalDouble getDouble(String key);
@@ -554,13 +328,11 @@ public interface Configuration extends PropertySource{
     default boolean containsArea(String key);
 
     // extension points
-    default Configuration with(ConfigOperator operator);
+    default Configuration with(UnaryOperator<Configuration> operator);
     default <T> T query(ConfigQuery<T> query);
 
     // versioning
     default String getVersion(){return "N/A";}
-    void addPropertyChangeListener(PropertyChangeListener l);
-    void removePropertyChangeListener(PropertyChangeListener l);
 
     // singleton accessors
     public static boolean isDefined(String name);
@@ -571,8 +343,8 @@ public interface Configuration extends PropertySource{
     public static void configure(Object instance);
     public static String evaluateValue(String expression);
     public static String evaluateValue(Configuration config, String expression);
-    public static void addGlobalPropertyChangeListener(PropertyChangeListener listener);
-    public static void removeGlobalPropertyChangeListener(PropertyChangeListener listener);
+    public static void addChangeListener(ConfigChangeListener listener);
+    public static void removeChangeListener(ConfigChangeListener listener);
 }
 --------------------------------------------
 
@@ -588,7 +360,7 @@ Hereby
 
 * the static accessor methods define:
   ** +current(), current(Class), current(String), current(String, Class)+ return the configuration valid for the current runtime environment.
-  ** +addPropertyChangeListener, removePropertyChangeListener+ allow to register or unregister
+  ** +addChangeListener, removeChangeListener+ allow to register or unregister
      global config change listener instances.
   ** evaluateValue allows to evaluate a configuration expression based on a given configuration.
   ** +configure+ performs injection of configured values.
@@ -690,29 +462,32 @@ we have added similar functional extension mechanisms that were used in other ar
 Both interfaces hereby are defined as functional interfaces:
 
 [source,java]
-.ConfigOperator and ConfigQuery
+.ConfigQuery
 --------------------------------------------
-@FunctionalInterface
-public interface ConfigOperator{
-    Configuration operate(Configuration config);
-}
-
 @FunctionalInterface
 public interface ConfigQuery<T>{
     T query(Configuration config);
 }
 --------------------------------------------
 
-Both interfaces can be applied on a +Configuration+ instance:
+Instances of this interface can be applied on a +Configuration+ instance:
 
 [source,java]
 .Applying Config operators and queries
 --------------------------------------------
-Configuration secured = Configuration.of().apply(ConfigSecurity::secure);
-ConfigSecurity securityContext = Configuration.of().query(ConfigSecurity::targetSecurityContext);
+ConfigSecurity securityContext = Configuration.current().query(ConfigSecurity::targetSecurityContext);
 --------------------------------------------
 
 NOTE: +ConfigSecurity+ is an arbitrary class.
+
+Similarly an instance of +UnaryOpertor<Configuration>+ can be applied as well to decorate an existing +Configuration+
+instance:
+
+[source,java]
+.Applying Config operators
+--------------------------------------------
+Configuration secured = Configuration.current().with(ConfigSecurity::secure);
+--------------------------------------------
 
 === Configuration Injection
 
@@ -763,81 +538,312 @@ resolution equals to +"aValue", "a.b.value", "a.b.deprecated.value"+. If no valu
 from the configuration, it uses the value from the +@DefaultValue+ annotation. Interesting here
 is that this value is not static, it is evaluated by calling +Configuration.evaluateValue(Configuration, String)+.
 
+[[API ConfigurationBuilder]]
+==== Building Simple Configuration
+
+Looking at the structures of configuration system used by large companies we typically encounter some kind of configuration
+hierarchies that are combined in arbitrary ways. Users of the systems are typically not aware of the complexities in this
+area, since they simply know the possible locations, formats and the overriding policies. Framework providers on the other
+side must face the complexities and it would be very useful if Tamaya can support here by providing prebuilt functionality
+that helps implementing these aspects. All this leads to the feature set of combining property sources. Hereby the following
+strategies are useful:
+
+* aggregating configurations, hereby later configurations added
+  ** override any existing entries from earlier configurations
+  ** combine conflicting entries from earlier configurations, e.g. into a comma-separated structure.
+  ** may throw a ConfigException ig entries are conflicting
+  ** may only add entries not yet defined by former providers, preventing entries that are already present to be overwrite
+  ** any custom aggregation strategy, which may be a mix of above
+* intersecting configurations
+* subtracting configurations
+* filtering configurations
+
+These common functionality is provided by +ConfigurationBuilder+ instances. Additionally to the base strategies above a
++MetaInfo+ instance can be passed optionally as well to define the meta information for the newly created configuration.
+Let's assume we have two configurations with the following data:
+
+[source,properties]
+.Configuration 1
+--------------------------------------------
+a=a
+b=b
+c=c
+g=g
+h=h
+i=i
+--------------------------------------------
+
+[source,properties]
+.Configuration 2
+--------------------------------------------
+a=A
+b=B
+c=C
+d=D
+e=E
+f=F
+--------------------------------------------
+
+Looking in detail you see that the entries +a,b,c+ are present in both configurations, whereas +d,e,f+ are only present in Configuration 1,
+and +g,h,i+ only in Configuration 2.
+
+[source,java]
+.Example Combining Configurations
+--------------------------------------------
+Configuration cfg1 = ...
+Configuration cfg2 = ...
+
+// aggregate, hereby values from Configuration 2 override values from Configuration 1
+Configuration unionOverriding = ConfigurationBuilder.of().aggregate(cfg1, cfg2).build();
+System.out.println("unionOverriding: " + unionOverriding);
+
+// ignore duplicates, values present in Configuration 1 are not overriden by Configuration 2
+Configuration unionIgnoringDuplicates = ConfigurationBuilder.of()
+                       .withAggregationPolicy(AggregationPolicy.IGNORE_DUPLICATES).aggregate(cfg1, cfg2).build();
+System.out.println("unionIgnoringDuplicates: " + unionIgnoringDuplicates);
+
+// this variant combines/maps duplicate values into a new value
+Configuration unionCombined = ConfigurationBuilder.of().withAggregationPolicy(AggregationPolicy.COMBINE)
+                       .aggregate(cfg1, cfg2);
+System.out.println("unionCombined: " + unionCombined);
+
+// This variant throws an exception since there are key/value paris in both providers, but with different values
+try{
+    ConfigurationBuilder.of().withAggregationPolicy(AggregationPolicy.EXCEPTION).aggregate(provider1, provider2)
+                       .build();
+}
+catch(ConfigException e){
+    // expected!
+}
+--------------------------------------------
+
+The example above produces the following outpout:
+
+[source,listing]
+.Example Combining Configurations
+--------------------------------------------
+AggregatedConfiguration{
+  (name = dynamicAggregationTests)
+  a = "[a][A]"
+  b = "[b][B]"
+  c = "[c][C]"
+  d = "[D]"
+  e = "[E]"
+  f = "[F]"
+  g = "[g]"
+  h = "[h]"
+  i = "[i]"
+}
+unionOverriding: AggregatedConfigurations{
+  (name = <noname>)
+  a = "A"
+  b = "B"
+  c = "C"
+  d = "D"
+  e = "E"
+  f = "F"
+  g = "g"
+  h = "h"
+  i = "i"
+}
+unionIgnoringDuplicates: AggregatedConfigurations{
+  (name = <noname>)
+  a = "a"
+  b = "b"
+  c = "c"
+  d = "D"
+  e = "E"
+  f = "F"
+  g = "g"
+  h = "h"
+  i = "i"
+}
+unionCombined: AggregatedConfigurations{
+  (name = <noname>)
+  a = "a,A"
+  b = "b,B"
+  c = "c,C"
+  d = "D"
+  e = "E"
+  f = "F"
+  g = "g"
+  h = "h"
+  i = "i"
+}
+--------------------------------------------
+
+No +AggregationPolicy+ is also a functional interface that can be implemented:
+
+[source,java]
+.AggregationPolicy Interface
+--------------------------------------------
+@FunctionalInterface
+public interface AggregationPolicy {
+    String aggregate(String key, String value1, String value2);
+}
+--------------------------------------------
+
+So we can also define our own aggregation strategy using a Lambda expression:
+
+[source,java]
+.Use a Custom AggregationPolicy
+--------------------------------------------
+Configuration cfg1 = ...;
+Configuration cfg2 = ...;
+Configuration config = ConfigurationBuilder.of("dynamicAggregationTests")
+      .withAggregationPolicy((k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]")
+      .aggregate(cfg1, cfg2).build();
+System.out.println(config);
+--------------------------------------------
+
+Additionally we also create here an instance of +MetaInfo+. The output of this code snippet is as follows:
+
+[source,listing]
+.Listing of dynamic aggregation policy
+--------------------------------------------
+AggregatedConfiguration{
+  (name = dynamicAggregationTests)
+  a = "[a][A]"
+  b = "[b][B]"
+  c = "[c][C]"
+  d = "[D]"
+  e = "[E]"
+  f = "[F]"
+  g = "[g]"
+  h = "[h]"
+  i = "[i]"
+}
+--------------------------------------------
+
+Summarizing the +ConfigurationBuilder+ allows to combine providers in various forms:
+
+[source,listing]
+.Methods provided on PropertySources
+--------------------------------------------
+public final class ConfigurationBuilder {
+
+    private ConfigurationBuilder() {}
+
+    public static ConfigurationBuilder of();
+    public static ConfigurationBuilder of(PropertySource config);
+    public static ConfigurationBuilder of(MetaInfo metaInfo);
+    public static ConfigurationBuilder of(String name);
+
+    public ConfigurationBuilder withMetaInfo(MetaInfo metaInfo);
+    public ConfigurationBuilder withAggregationPolicy(AggregationPolicy aggregationPolicy);
+
+    public ConfigurationBuilder addArgs(String... args);
+    public ConfigurationBuilder addPaths(List<String> paths);
+    public ConfigurationBuilder addUrls(URL... urls);
+    public ConfigurationBuilder addUrls(List<URL> urls);
+    public ConfigurationBuilder addMap(Map<String, String> map);
+
+    public ConfigurationBuilder empty();
+    public ConfigurationBuilder empty(MetaInfo metaInfo);
+    public ConfigurationBuilder emptyMutable(MetaInfo metaInfo);
+    public ConfigurationBuilder addEnvironmentProperties();
+    public ConfigurationBuilder addSystemProperties();
+    public ConfigurationBuilder aggregate(Configuration... configs){
+    public ConfigurationBuilder aggregate(List<Configuration> configs) {
+    public ConfigurationBuilder mutable(Configuration config) {
+    public ConfigurationBuilder intersected(Configuration... providers) {
+    public ConfigurationBuilder subtracted(Configuration target, Configuration... providers) {
+    public ConfigurationBuilder filtered(Predicate<String> filter, Configuration config) {
+    public ConfigurationBuilder contextual(Supplier<Configuration> mapSupplier,
+                                              Supplier<String> isolationKeySupplier) {
+    public ConfigurationBuilder delegating(Configuration mainMap, Map<String, String> parentMap) {
+    public ConfigurationBuilder replacing(Configuration mainMap, Map<String, String> replacementMap);
+
+    public Configuration build();
+    public Configuration buildFrozen();
+}
+--------------------------------------------
+
+
+
 === Environment
 
-The environment basically is also a kind of property/value provider similar to +System.getProperties()+ and +System
+The environment basically is also a kind of property/value provider similar to +System
 .getenv()+ in the JDK. Nevertheless it provides additional functionality:
 
 [source,java]
 .Interface Environment
 --------------------------------------------
-public interface Environments {
-
-    String getEnvironmentType();
-    String getEnvironmentId();
-    Environment getParentEnvironment();
+public interface Environment {
 
     Optional<String> get(String key);
     boolean containsKey(String key);
     Set<String> keySet();
     Map<String,String> toMap();
 
-    public static Environment current(){
-    public static Environment getRootEnvironment(){
-    public static List<String> getEnvironmentTypeOrder(){
-    public static List<String> getEnvironmentHierarchy(){
-    public static Optional<Environment> getInstance(String environmentType, String contextId){
-    public static Set<String> getEnvironmentContexts(String environmentType){
-    public static boolean isEnvironmentActive(String environmentType){
+    public static Environment current();
+    public static Environment root();
 --------------------------------------------
 
-* environments are hierarchical. Hereby all environments inherit from the root environment. The root environment
-  hereby must contain
-  ** all JDK's system properties, with same keys, values
-  ** all JDK's environment properties, prefixed with +env:+.
+* Basically an environment can contain any properties. The root environment
+  hereby must contain at least
+  ** all JDK's environment properties.
   ** additional root properties are allowed as well.
-* the root environment is always directly accessible by calling +Environment.getRootEnvironment()+
-* the current environment can be accessed by calling +Environment.of()+.
-* each environment also defines a +Stage+ (implementing +StageSupplier+). Hereby, if not set explicitly the +Stage+ is inherited from the root
-  environment. Consequently the root environment must provide a +Stage+, which by default is +Stage.development()+.
+* the root environment is always directly accessible by calling +Environment.root()+
+* the current environment can be accessed by calling +Environment.current()+.
 
-Additionally each environment instance is uniquely identified by the environment type (accessible from
-+getEnvironmentType()+ and the environment id (accessible from +getEnvironmentId()+). So it is possible to access
-an +Environment+ by calling +of(String environmentType, String environmentId)+. Implementations may restrict access
-to environments depending on the current runtime environment (runtime context) active. The API does
-not require further aspects.
+Summarizing the Environment can be seen as a runtime context. This also implies, that this context changes
+depending on the current runtime context. Developers implementing an environment mechanism should be aware that
+an environment can be accessed very frequently, so evaluation and access of an +Environment+ must be fast. For
+further details we recommend the SPI details section of the core implementation.
 
-The call to +getEnvironmentIds(String)+ returns all context ids of the known +Environment+ instances
-of a given type. E.g. assuming there is an environment type +war+ calling +Environment.getEnvironmentIds("war")+
-may return +"/web/app1", "/web/app2"+ (assuming the war context ids equal the web applications root contexts).
 
-All environments are basically ordered. The ordering can be accessed by calling +getEnvironmentTypeOrder()+. Hereby
-not every environment type in a hierarchy must necessarily present. This is reflected by +getEnvironmentHierarchy()+
-which returns the environment type ids in order, but only containing the types of the environments
-currently present and accessible in the hierarchy. As an example an environment type order in an advanced
-use case could be something like +"root","ear","war","saas","user"+, whereas the concrete environment type hierarchy
-may be +"root","war","saas"+, because the application was not included
-in an additional ear archive and no user is currently active (anonymous). The call to +isEnvironmentActive(String)+
-allows to determine if an environment of the given type is currently active.
-Finally the environment hierarchy is of course similarly reflected by the relationship (+getParentEnvironment()+).
-The following code should illustrate some of these concepts:
+== SPI
+
+[[API PropertySourceBuilder]]
+==== Building Property Sources
+
+In [[PropertSource]] we have outlines that the essence of a property key store for configuration can be modelled by
+the +PropertySource+ interface. Similarly to the +ConfigurationBuilder+ you can also combine several +PropertySource+
+instances to assemble more complex configuration scenarios. Typically assembling is done within a +ConfigProvider+,
+which is responsible for providing correct Configuration corresponding to the current environment.
+
+Summarizing you can
+* aggregate providers, hereby later providers added
+  ** override any existing entries from earlier providers
+  ** combine conflicting entries from earlier providers, e.g. into a comma-separated structure.
+  ** may throw a ConfigException ig entries are conflicting
+  ** may only add entries not yet defined by former providers, preventing entries that are already present to be overwritten
+  ** any custom aggregation strategy, which may be a mix of above
+* intersecting providers
+* subtracting providers
+* filtering providers
+
+The following code snippet gives a couple of examples:
 
 [source,java]
-.Interface Environment
+.Example Combining PropertySources
 --------------------------------------------
-List<String> envHierarchy = Environment.getEnvironmentHierarchy();
-  // -> "root","war","saas"
-Environment env = Environment.of();
-System.out.println(env.getEnvironmentContext()); // saas
-System.out.println(env.getEnvironmentId());      // mysolution_pro
-env = env.getParentEnvironment();
-System.out.println(env.getEnvironmentContext()); // war
-System.out.println(env.getEnvironmentId());      // pro
-env = env.getParentEnvironment();
-System.out.println(env.getEnvironmentContext()); // root
-System.out.println(env.getEnvironmentId());      // system
-env = env.getParentEnvironment();
-// env is null now!
+PropertySource provider1 = ...
+PropertySource provider2 = ...
+
+// aggregate, hereby values from provider 2 override values from provider 1
+PropertySource unionOverriding = PropertySourceBuilder.of()
+             .aggregate(provider1, provider2).build(); // OVERRIDE policy is default
+System.out.println("unionOverriding: " + unionOverriding);
+
+// ignore duplicates, values present in provider 1 are not overriden by provider 2
+PropertySource unionIgnoringDuplicates = PropertySources
+             .aggregate(AggregationPolicy.IGNORE_DUPLICATES(), provider1, provider2).build();
+System.out.println("unionIgnoringDuplicates: " + unionIgnoringDuplicates);
+
+// this variant combines/maps duplicate values into a new value
+PropertySource unionCombined = PropertySourceBuilder.of().withAggregationPolicy(AggregationPolicy.COMBINE))
+            .aggregate(provider1, provider2).build();
+System.out.println("unionCombined: " + unionCombined);
+
+// This variant throws an exception since there are key/value paris in both providers, but with different values
+try{
+    PropertySourceBuilder.of().withAggregationPolicy(AggregationPolicy.EXCEPTION).aggregate(provider1, provider2);
+}
+catch(ConfigException e){
+    // expected!
+}
 --------------------------------------------
 
 

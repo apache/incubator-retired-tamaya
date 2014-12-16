@@ -62,7 +62,7 @@ under the License.
                             <embedAssets>true</embedAssets>
                             <imagesDir>${project.build.sourceDirectory}/images/</imagesDir>
                             <sourceDirectory>.</sourceDirectory>
-                            <sourceDocumentName>Design.adoc</sourceDocumentName>
+                            <sourceDocumentName>src/main/asciidoc/design/Design.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
                     <execution>
