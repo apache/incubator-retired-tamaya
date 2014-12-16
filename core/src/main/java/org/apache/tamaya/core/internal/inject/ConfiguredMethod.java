@@ -21,7 +21,6 @@ package org.apache.tamaya.core.internal.inject;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyAdapter;
-import org.apache.tamaya.PropertyAdapters;
 import org.apache.tamaya.annotation.*;
 import org.apache.tamaya.core.internal.Utils;
 
@@ -182,7 +181,7 @@ public class ConfiguredMethod {
                 if (String.class.equals(baseType) || baseType.isAssignableFrom(configValue.getClass())) {
                     return configValue;
                 } else {
-                    PropertyAdapter<?> adapter = PropertyAdapters.getAdapter(baseType);
+                    PropertyAdapter<?> adapter = PropertyAdapter.getAdapter(baseType);
                     return adapter.adapt(configValue);
                 }
             }

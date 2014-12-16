@@ -26,7 +26,7 @@ import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
  * Singleton manager that provides {@link PropertyAdapter} instance, usable for converting String
  * based configuration entries into any other target types.
  */
-public final class PropertyAdapters{
+final class PropertyAdapters{
 
     /**
      * Orivate singleton constructor.
