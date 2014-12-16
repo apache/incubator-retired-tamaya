@@ -18,10 +18,7 @@
  */
 package org.apache.tamaya.core.internal.env;
 
-import org.apache.tamaya.Environment;
-import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.core.env.EnvironmentBuilder;
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.spi.ConfigurationFormat;
@@ -41,57 +38,37 @@ public class SystemClassLoaderEnvironmentProvider implements EnvironmentProvider
 
     private static  final Logger LOG = Logger.getLogger(SystemClassLoaderEnvironmentProvider.class.getName());
 
-    private Map<String,Environment> environments = new HashMap<>();
+    private Map<String,String> data = new HashMap<>();
 
-    @Override
-    public String getEnvironmentType() {
-        return "system";
-    }
 
-    @Override
-    public boolean isEnvironmentActive() {
-        return true;
-    }
-
-    @Override
-    public Environment getEnvironment(Environment parentEnvironment) {
-        Environment env = this.environments.get("system");
-        if(env!=null){
-            return env;
-        }
+    public SystemClassLoaderEnvironmentProvider(){
         List<Resource> propertyResources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(ClassLoader.getSystemClassLoader(),
                 "classpath:META-INF/env/system.properties", "classpath:META-INF/env/system.xml", "classpath:META-INF/env/system.ini");
-        EnvironmentBuilder builder = EnvironmentBuilder.of("system", getEnvironmentType());
         for(Resource resource:propertyResources){
             try{
                 ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
                 Map<String,String> data = format.readConfiguration(resource);
-                builder.setAll(data);
+                data.putAll(data);
             }
             catch(Exception e){
                 LOG.log(Level.INFO, e, () -> "Could not read environment data from " + resource);
             }
         }
-        builder.setParent(parentEnvironment);
-        String stageValue =  builder.getProperty(InitialEnvironmentProvider.STAGE_PROP);
-        Stage stage = InitialEnvironmentProvider.DEFAULT_STAGE;
-        if (stageValue != null) {
-            stage = Stage.valueOf(stageValue);
-        }
-        builder.setStage(stage);
-        builder.set("classloader.type", ClassLoader.getSystemClassLoader().getClass().getName());
-        builder.set("classloader.info", ClassLoader.getSystemClassLoader().toString());
+        data.put("classloader.type", ClassLoader.getSystemClassLoader().getClass().getName());
+        data.put("classloader.info", ClassLoader.getSystemClassLoader().toString());
         Set<Resource> resourceSet = new HashSet<>();
         resourceSet.addAll(propertyResources);
-        builder.set("environment.sources", resourceSet.toString());
-        env = builder.build();
-        this.environments.put("system", env);
-        return env;
+        data.put("environment.system.sources", resourceSet.toString());
+        this.data = Collections.unmodifiableMap(data);
+    }
+    @Override
+    public boolean isActive() {
+        return true;
     }
 
     @Override
-    public Set<String> getEnvironmentContexts() {
-        return this.environments.keySet();
+    public Map<String,String> getEnvironmentData() {
+        return data;
     }
 
 }

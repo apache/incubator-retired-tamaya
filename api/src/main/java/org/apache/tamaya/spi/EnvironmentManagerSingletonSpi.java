@@ -21,10 +21,7 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.Environment;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Service for accessing {@link org.apache.tamaya.Environment}. Environments are used to
@@ -38,76 +35,17 @@ import java.util.Set;
 public interface EnvironmentManagerSingletonSpi{
 
     /**
-     * Get the current environment.
-     *
-     * @return the current environment, never null.
+     * Get the current environment current the given environment type.
+     * @return the corresponding environment, never null.
+     * @throws IllegalArgumentException if not such type is present or active.
      */
-    Environment getEnvironment();
-
-    /**
-     * Get the initial root environment, that typically contains any startup and initial parameters current an VM instance,
-     * machine.
-     *
-     * @return the initial environment, never null.
-     */
-    Environment getRootEnvironment();
-
-    /**
-     * Get a environment current the given environment type and context.
-     * @param environmentType the target type, not null.
-     * @param contextId the target context, not null.
-     * @return the corresponding environment, if available.
-     */
-    public Optional<Environment> getEnvironment(String environmentType, String contextId);
-
-    /**
-     * Get the currently known environment contexts current a given environment type.
-     * @param environmentType the target environment type.
-     * @return the corresponding environment contexts known, never null.
-     */
-    public Set<String> getEnvironmentContexts(String environmentType);
-
-    /**
-     * Access the chain current environment types that may produce an environment. Hereby it is possible
-     * that chain elements can be ommitted in the final environment hierarchy, since the regarding
-     * environment level is not defined or accessible.
-     * @return the ordered list current environment type ids.
-     */
-    List<String> getEnvironmentTypeOrder();
-
-    /**
-     * Evaluate the current type chain current environments.
-     * @return the current type chain current Environments.
-     */
-    default List<String> getEnvironmentHierarchy(){
-        List<String> result = new ArrayList<>();
-        for(Environment env:getEnvironment()){
-            result.add(env.getEnvironmentId()+'('+env.getEnvironmentType()+')');
-        }
-        return result;
-    }
+    Environment getCurrentEnvironment();
 
     /**
      * Get the current environment current the given environment type.
-     * @param environmentType the target type.
-     * @return the corresponding environment
+     * @return the corresponding environment, never null.
      * @throws IllegalArgumentException if not such type is present or active.
      */
-    default Optional<Environment> getEnvironment(String environmentType){
-        for(Environment env:getEnvironment()){
-            if(env.getEnvironmentType().equals(environmentType)){
-                return Optional.of(env);
-            }
-        }
-        return Optional.empty();
-    }
+    Environment getRootEnvironment();
 
-    /**
-     * Allows to check, if the czurrent environment type is one current the current active environment types.
-     * @param environmentType the environment type to be queried.
-     * @return true, if the czurrent environment type is one current the current active environment types.
-     */
-    default boolean isEnvironmentActive(String environmentType){
-        return getEnvironmentHierarchy().contains(environmentType);
-    }
 }

@@ -180,7 +180,7 @@ public final class PropertySourceBuilder {
         String source = b.toString();
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current())
+            mi = MetaInfoBuilder.of("aggregate")
                     .set(MetaInfoBuilder.SOURCE,source).build();
         }
         this.current = PropertySourceFactory.aggregate(mi, this.aggregationPolicy, allProviders);
@@ -215,7 +215,7 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("args").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("args").build();
         }
         PropertySource argProvider = PropertySourceFactory.fromArgs(mi, args);
         return addProviders(argProvider);
@@ -251,9 +251,9 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").set("paths", paths.toString()).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("aggregate").set("paths", paths.toString()).build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("paths", paths.toString()).build();
+            mi = MetaInfoBuilder.of(metaInfo).set("paths", paths.toString()).build();
         }
         return addProviders(PropertySourceFactory.fromPaths(mi, aggregationPolicy, paths));
     }
@@ -285,9 +285,9 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").set("urls", urls.toString()).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("aggregate").set("urls", urls.toString()).build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).set("urls", urls.toString()).build();
+            mi = MetaInfoBuilder.of(metaInfo).set("urls", urls.toString()).build();
         }
 
         return addProviders(PropertySourceFactory.fromURLs(mi, this.aggregationPolicy, urls));
@@ -307,9 +307,9 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("map").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("map").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
         return addProviders(PropertySourceFactory.fromMap(mi, map));
     }
@@ -323,9 +323,9 @@ public final class PropertySourceBuilder {
     public PropertySourceBuilder addEnvironmentProperties() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("environment.properties").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("environment.properties").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
 
         return addProviders(PropertySourceFactory.fromEnvironmentProperties());
@@ -339,9 +339,9 @@ public final class PropertySourceBuilder {
     public PropertySourceBuilder addSystemProperties() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("system.properties").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("system.properties").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
 
         return addProviders(PropertySourceFactory.fromSystemProperties());
@@ -360,9 +360,9 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("aggregate").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
 
         return addProviders(PropertySourceFactory.aggregate(mi, aggregationPolicy, Arrays.asList(providers)));
@@ -382,9 +382,9 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("aggregate").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
 
         return addProviders(PropertySourceFactory.aggregate(mi, aggregationPolicy, providers));
@@ -415,9 +415,9 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("intersect").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("intersect").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
 
         return addProviders(PropertySourceFactory.intersected(mi, aggregationPolicy, Arrays.asList(providers)));
@@ -436,9 +436,9 @@ public final class PropertySourceBuilder {
         }
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("subtract").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("subtract").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
         current = PropertySourceFactory.subtracted(mi, current, Arrays.asList(providers));
         return this;
@@ -454,9 +454,9 @@ public final class PropertySourceBuilder {
     public PropertySourceBuilder filter(Predicate<String> filter) {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("filtered").setEnvironment(Environment.current()).set("filter", filter.toString()).build();
+            mi = MetaInfoBuilder.of("filtered").set("filter", filter.toString()).build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("filter", filter.toString()).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).set("filter", filter.toString()).build();
         }
         current = PropertySourceFactory.filtered(mi, filter, current);
         addProviderChainInfo("filter->" + filter.toString());
@@ -475,9 +475,9 @@ public final class PropertySourceBuilder {
                                                  Supplier<String> isolationKeySupplier) {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("contextual").setEnvironment(Environment.current()).set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).build();
+            mi = MetaInfoBuilder.of("contextual").set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).build();
         }
 
         return addProviders(PropertySourceFactory.contextual(mi, mapSupplier, isolationKeySupplier));
@@ -492,9 +492,9 @@ public final class PropertySourceBuilder {
     public PropertySourceBuilder replace(Map<String, String> replacementMap) {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("replace").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("replace").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).build();
         }
         current = PropertySourceFactory.replacing(mi, current, replacementMap);
         this.metaInfo = null;
@@ -536,9 +536,9 @@ public final class PropertySourceBuilder {
     public PropertySource buildFreezed() {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
-            mi = MetaInfoBuilder.of("freezed").set("freezed", "true").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of("freezed").set("freezed", "true").build();
         } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("freezed", "true").setEnvironment(Environment.current()).build();
+            mi = MetaInfoBuilder.of(metaInfo).set("freezed", "true").build();
         }
 
         PropertySource prov = PropertySourceFactory.freezed(mi, current);

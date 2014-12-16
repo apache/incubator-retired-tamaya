@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -35,23 +34,7 @@ import java.util.Set;
  * <li>serializable
  * </ul>
  */
-public interface Environment extends StageSupplier, Iterable<Environment>{
-
-    /**
-     * Get a unique type (within this VM) for this environment.
-     * Types represent the environment level within the hierarchy
-     * current possible environments, e.g. {@code system, ear, webapp, tenant}.
-     */
-    String getEnvironmentType();
-
-    /**
-     * Get a unique name (in combination with the environment type within this VM)
-     * for this environment instance.
-     * Where a human readable name is available this would be preferable
-     * over a technical key/UUID.
-     * @return a unique id for this environment, when comined with the environment type.
-     */
-    String getEnvironmentId();
+public interface Environment{
 
     /**
      * Access a property.
@@ -68,25 +51,10 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
     boolean containsKey(String key);
 
     /**
-     * Access a property.
-     * @param key the property's key, not null.
-     * @return the property's value.
-     */
-    default String getOrDefault(String key, String defaultValue){
-        return get(key).orElse(defaultValue);
-    }
-
-    /**
      * Access the set current property keys, defined by this provider.
      * @return the key set, never null.
      */
     Set<String> keySet();
-
-    /**
-     * Get the parent context.
-     * @return the parent context, or null.
-     */
-    Environment getParentEnvironment();
 
     /**
      * Access the environment as Map.
@@ -100,60 +68,16 @@ public interface Environment extends StageSupplier, Iterable<Environment>{
      * @return the current Environment, never null.
      */
     public static Environment current(){
-        return EnvironmentManager.getEnvironment();
+        return EnvironmentManager.getCurrentEnvironment();
     }
 
     /**
-     * Get the current root (startup/machine/VM) {@link org.apache.tamaya.Environment}.
-     * @return the current root Environment, never null.
+     * Get the current {@link org.apache.tamaya.Environment}. The environment is used to determine the current runtime state, which
+     * is important for returning the correct configuration.
+     * @return the current Environment, never null.
      */
-    public static Environment getRootEnvironment(){
+    public static Environment root(){
         return EnvironmentManager.getRootEnvironment();
     }
-
-    /**
-     * Evaluate the overall chain current possible environments.
-     * @return the hierarchy chain current possible Environments.
-     */
-    public static List<String> getEnvironmentTypeOrder(){
-        return EnvironmentManager.getEnvironmentTypeOrder();
-    }
-
-    /**
-     * Evaluate the current type chain current environments.
-     * @return the current type chain current Environments.
-     */
-    public static List<String> getEnvironmentHierarchy(){
-        return EnvironmentManager.getEnvironmentHierarchy();
-    }
-
-    /**
-     * Get a environment current the given environment type and context.
-     * @param environmentType the target type, not null.
-     * @param contextId the target context, not null.
-     * @return the corresponding environment, if available.
-     */
-    public static Optional<Environment> getInstance(String environmentType, String contextId){
-        return EnvironmentManager.getEnvironment(environmentType, contextId);
-    }
-
-    /**
-     * Get the currently known environment contexts current a given environment type.
-     * @param environmentType the target environment type.
-     * @return the corresponding environment contexts known, never null.
-     */
-    public static Set<String> getEnvironmentContexts(String environmentType){
-        return EnvironmentManager.getEnvironmentContexts(environmentType);
-    }
-
-    /**
-     * Allows to check, if the czurrent environment type is one current the current active environment types.
-     * @param environmentType the environment type to be queried.
-     * @return true, if the czurrent environment type is one current the current active environment types.
-     */
-    public static boolean isEnvironmentActive(String environmentType){
-        return EnvironmentManager.isEnvironmentActive(environmentType);
-    }
-
 
 }

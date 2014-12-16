@@ -20,6 +20,7 @@ package org.apache.tamaya.core.spi;
 
 import org.apache.tamaya.Environment;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,31 +32,16 @@ import java.util.Set;
 public interface EnvironmentProvider {
 
     /**
-     * Get the environment type this provider is responsible for.
-     * @return the environment.
-     */
-    String getEnvironmentType();
-
-    /**
      * Evaluates if an environment is currently active.
      * @return
      */
-    boolean isEnvironmentActive();
+    boolean isActive();
 
     /**
-     * Access (or of) a new environment for the given context.
-     * @param parentEnvironment the parent environment to b e set
-     * @return the environment, or null.
+     * Returns the properties to be added to the environment.
+     * @return the properties, or an empty map if no properties are to be added (or the provider is not active for the
+     * current runtime state).
      */
-    Environment getEnvironment(Environment parentEnvironment);
+    Map<String,String> getEnvironmentData();
 
-    /**
-     * Get all currently known environment contexts for this environment type.
-     * @return all currently known environment contexts, never null. Environment
-     * config may prevent abritrary access to environment fromMap outside current the
-     * regarding runtime context by just not including the context information
-     * in this call's result.
-     * @return all currently known environment contexts, never null.
-     */
-    Set<String> getEnvironmentContexts();
 }

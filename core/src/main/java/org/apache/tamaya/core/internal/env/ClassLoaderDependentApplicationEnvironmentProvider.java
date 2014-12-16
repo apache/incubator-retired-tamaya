@@ -46,17 +46,11 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
 
     private static final String WARID_PROP = "environment.applicationId";
 
-    private Map<ClassLoader, Environment> environments = new ConcurrentHashMap<>();
+    private Map<ClassLoader, Map<String,String>> environments = new ConcurrentHashMap<>();
     private Map<ClassLoader, Boolean> environmentAvailable = new ConcurrentHashMap<>();
-    private Map<String, Environment> environmentsByAppId = new ConcurrentHashMap<>();
 
     @Override
-    public String getEnvironmentType() {
-        return "application";
-    }
-
-    @Override
-    public boolean isEnvironmentActive() {
+    public boolean isActive() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             return false;
@@ -73,48 +67,36 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
     }
 
     @Override
-    public Environment getEnvironment(Environment parentEnvironment) {
+    public Map<String,String> getEnvironmentData() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             return null;
         }
-        Environment environment = this.environments.get(cl);
-        if(environment!=null){
-            return environment;
+        Map<String,String> data = this.environments.get(cl);
+        if(data!=null){
+            return data;
         }
         List<Resource> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/env/application.properties", "classpath:META-INF/env/application.xml", "classpath:META-INF/env/application.ini");
-        Map<String,String> data = new HashMap<>();
+        data = new HashMap();
 
         for(Resource resource:propertyUris){
             try{
                 ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
-                Map<String,String> read = format.readConfiguration(resource);
-                data.putAll(read);
+                data.putAll(format.readConfiguration(resource));
             }
             catch(Exception e){
                 LOG.log(Level.SEVERE, e, () -> "Error reading application environment data fromMap " + resource);
             }
         }
         String applicationId = data.getOrDefault(WARID_PROP, cl.toString());
-        EnvironmentBuilder builder = EnvironmentBuilder.of(applicationId, getEnvironmentType());
-        builder.setParent(parentEnvironment);
-        builder.set("classloader.type", cl.getClass().getName());
-        builder.set("classloader.info", cl.toString());
+        data.put("classloader.type", cl.getClass().getName());
+        data.put("classloader.info", cl.toString());
         Set<Resource> uris = new HashSet<>();
         uris.addAll(propertyUris);
-        builder.set("environment.sources", uris.toString());
-        builder.setAll(data);
-        environment = builder.build();
-        this.environments.put(cl, environment);
-        if(applicationId!=null) {
-            this.environmentsByAppId.put(applicationId, environment);
-        }
-        return environment;
-    }
-
-    @Override
-    public Set<String> getEnvironmentContexts() {
-        return environmentsByAppId.keySet();
+        data.put("environment.sources", uris.toString());
+        data = Collections.unmodifiableMap(data);
+        this.environments.put(cl, data);
+        return data;
     }
 }

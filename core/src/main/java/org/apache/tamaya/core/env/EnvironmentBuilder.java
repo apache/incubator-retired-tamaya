@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.env;
 
 import org.apache.tamaya.Environment;
-import org.apache.tamaya.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,25 +29,14 @@ import java.util.Objects;
 */
 public final class EnvironmentBuilder{
 
+    public static final String STAGE_PROP = "stage";
     Map<String,String> contextData = new HashMap<>();
-    Environment parent;
-    String id;
-    String type;
-    Stage stage = Stage.DEVELOPMENT;
 
-    private EnvironmentBuilder(String id, String type) {
-        Objects.requireNonNull(id);
-        this.id = id;
-        this.type = type;
+    private EnvironmentBuilder() {
     }
 
-    public static final EnvironmentBuilder of(String id, String type) {
-        return new EnvironmentBuilder(id, type);
-    }
-
-    public EnvironmentBuilder setParent(Environment parent){
-        this.parent = parent;
-        return this;
+    public static final EnvironmentBuilder of() {
+        return new EnvironmentBuilder();
     }
 
     public EnvironmentBuilder set(String key, String value){
@@ -61,9 +49,8 @@ public final class EnvironmentBuilder{
         return this;
     }
 
-    public EnvironmentBuilder setStage(Stage stage){
-        Objects.requireNonNull(stage);
-        this.stage = stage;
+    public EnvironmentBuilder setStage(String stage){
+        this.contextData.put(STAGE_PROP, Objects.requireNonNull(stage));
         return this;
     }
 

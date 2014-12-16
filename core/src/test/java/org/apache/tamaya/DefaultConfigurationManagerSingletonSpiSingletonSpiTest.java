@@ -78,7 +78,7 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
     @Test
     public void testGetRootEnvironment() {
         DefaultConfigurationManagerSingletonSpi s = new DefaultConfigurationManagerSingletonSpi();
-        Environment env = Environment.getRootEnvironment();
+        Environment env = Environment.root();
         assertNotNull(env);
         assertEquals(System.getProperty("java.version"),
                 env.get("java.version").get());

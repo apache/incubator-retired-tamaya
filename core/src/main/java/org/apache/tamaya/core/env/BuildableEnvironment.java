@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.env;
 
 import org.apache.tamaya.Environment;
-import org.apache.tamaya.Stage;
 
 import java.util.*;
 
@@ -28,37 +27,10 @@ class BuildableEnvironment implements Environment {
 
     private static final long serialVersionUID = 707575538680740130L;
     private Map<String,String> context = new TreeMap<>();
-    private Environment parent;
-    private String id;
-    private String type;
-    private Stage stage;
 
     BuildableEnvironment(EnvironmentBuilder builder){
         Objects.requireNonNull(builder);
         context.putAll(builder.contextData);
-        this.id = builder.id;
-        this.type = builder.type;
-        this.stage = builder.stage;
-        this.parent = builder.parent;
-    }
-
-    @Override
-    public String getEnvironmentType() {
-        return type;
-    }
-
-    @Override
-    public String getEnvironmentId() {
-        return id;
-    }
-
-    public String getFullId() {
-        return getEnvironmentId()+'('+getEnvironmentType()+')';
-    }
-
-    @Override
-    public Environment getParentEnvironment(){
-        return parent;
     }
 
     @Override
@@ -67,17 +39,8 @@ class BuildableEnvironment implements Environment {
     }
 
     @Override
-    public Stage getStage(){
-        return stage;
-    }
-
-    @Override
     public Optional<String> get(String key){
-        String value =  context.get(key);
-        if(value==null && parent!=null){
-            return parent.get(key);
-        }
-        return Optional.ofNullable(value);
+        return Optional.ofNullable(context.get(key));
     }
 
     @Override
@@ -91,29 +54,27 @@ class BuildableEnvironment implements Environment {
     }
 
     @Override
-    public Iterator<Environment> iterator() {
-        List<Environment> envList = new ArrayList<>();
-        Environment env = this;
-        while(env.getParentEnvironment()!=null){
-            envList.add(env);
-            env = env.getParentEnvironment();
-        }
-        envList.add(env);
-        return envList.iterator();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BuildableEnvironment that = (BuildableEnvironment) o;
+        return context.equals(that.context);
+    }
+
+    @Override
+    public int hashCode() {
+        return context.hashCode();
     }
 
     /*
-     * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
+         * (non-Javadoc)
+         *
+         * @see java.lang.Object#toString()
+         */
     @Override
     public String toString(){
-        if(parent==null) {
-            return "Environment " + getFullId() + '\n' + getData();
-        }
-        return "Environment " + getFullId() +
-                ",\n"  + getData() + ",\n  parent: " + parent.toString();
+        return "Environment: " + getData();
     }
 
     private String getData() {

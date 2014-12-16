@@ -34,7 +34,7 @@ public class EnvironmentManagerTest{
 
     @Test
     public void testRootEnvironmentNotNull(){
-        Assert.assertNotNull(Environment.getRootEnvironment());
+        Assert.assertNotNull(Environment.root());
     }
 
 }

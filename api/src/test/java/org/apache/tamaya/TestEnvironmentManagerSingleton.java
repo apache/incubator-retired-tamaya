@@ -20,6 +20,7 @@ package org.apache.tamaya;
 
 import org.apache.tamaya.spi.EnvironmentManagerSingletonSpi;
 
+import javax.swing.text.html.Option;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ import java.util.Set;
  */
 public class TestEnvironmentManagerSingleton implements EnvironmentManagerSingletonSpi{
     @Override
-    public Environment getEnvironment(){
+    public Environment getCurrentEnvironment(){
         return null;
     }
 
@@ -39,18 +40,4 @@ public class TestEnvironmentManagerSingleton implements EnvironmentManagerSingle
         return null;
     }
 
-    @Override
-    public Optional<Environment> getEnvironment(String environmentType, String contextId) {
-        return null;
-    }
-
-    @Override
-    public Set<String> getEnvironmentContexts(String environmentType) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public List<String> getEnvironmentTypeOrder() {
-        return Collections.emptyList();
-    }
 }

@@ -24,9 +24,10 @@ import org.apache.tamaya.core.env.EnvironmentBuilder;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.tamaya.Environment;
-import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
 
 /**
@@ -34,59 +35,37 @@ import org.apache.tamaya.core.spi.EnvironmentProvider;
  */
 public final class InitialEnvironmentProvider implements EnvironmentProvider{
 
-	public static final String STAGE_PROP = "org.apache.tamaya.stage";
-    public static final Stage DEFAULT_STAGE = Stage.DEVELOPMENT;
-    private Map<String,Environment> environments = new HashMap<>();
+	private Map<String,String> environmentData = new HashMap<>();
 
 	public InitialEnvironmentProvider() {
-        EnvironmentBuilder builder = EnvironmentBuilder.of(getEnvironmentType(), getEnvironmentType());
         Properties props = System.getProperties();
         if(props instanceof ConfiguredSystemProperties){
             props = ((ConfiguredSystemProperties)props).getInitialProperties();
         }
-        String stageValue =  props.getProperty(STAGE_PROP);
-        Stage stage = DEFAULT_STAGE;
-        if (stageValue != null) {
-            stage = Stage.valueOf(stageValue);
-        }
-        builder.setStage(stage);
-        // Copy system properties....
-        // TODO filter properties
-        for (Entry<Object, Object> en : props.entrySet()) {
-            builder.set(en.getKey().toString(), en.getValue().toString());
-        }
-        builder.set("timezone", TimeZone.getDefault().getID());
-        builder.set("locale", Locale.getDefault().toString());
+        String stageValue =  props.getProperty(EnvironmentBuilder.STAGE_PROP);
+        environmentData.put(EnvironmentBuilder.STAGE_PROP, stageValue);
+        environmentData.put("timezone", TimeZone.getDefault().getID());
+        environmentData.put("locale", Locale.getDefault().toString());
         try {
-            builder.set("host", InetAddress.getLocalHost().toString());
+            environmentData.put("host", InetAddress.getLocalHost().toString());
         } catch (Exception e) {
-// log warning
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, e, () -> "Failed to evaluate hostname.");
         }
         // Copy env properties....
         for (Entry<String, String> en : System.getenv().entrySet()) {
-            builder.set(en.getKey(), en.getValue());
+            environmentData.put(en.getKey(), en.getValue());
         }
-        environments.put("root", builder.build());
+        environmentData = Collections.unmodifiableMap(environmentData);
 	}
 
     @Override
-	public Environment getEnvironment(Environment env) {
-        return environments.get("root");
-	}
-
-    @Override
-    public Set<String> getEnvironmentContexts() {
-        return new HashSet<>(environments.keySet());
-    }
-
-    @Override
-    public String getEnvironmentType() {
-        return "root";
-    }
-
-    @Override
-    public boolean isEnvironmentActive() {
+    public boolean isActive(){
         return true;
     }
+
+    @Override
+	public Map<String,String> getEnvironmentData() {
+        return environmentData;
+	}
 
 }

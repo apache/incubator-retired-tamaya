@@ -29,9 +29,8 @@ under the License.
 
     <artifactId>tamaya-docs</artifactId>
     <name>Apache Tamaya - Documentation</name>
-    <description>The API defines a complete SE based API for reading, creating an dmanaging of configuration and
-        environment data. This module contains the umrella documentations like
-        design and user guides.
+    <description>The Documentation projects keeps together the documentation files in asciidic and other formats
+        for the Apache Tamaya project.
     </description>
     <packaging>jar</packaging>
 

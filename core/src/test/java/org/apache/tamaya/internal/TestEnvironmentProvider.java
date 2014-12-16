@@ -16,18 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya;
+package org.apache.tamaya.internal;
+
+import org.apache.tamaya.core.spi.EnvironmentProvider;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Small functional interface for components that provide a stage.
+ * Environment provider used by some tests.
  */
-@FunctionalInterface
-public interface StageSupplier{
+public class TestEnvironmentProvider implements EnvironmentProvider {
+    private Map<String, String> data = new HashMap<>();
 
-    /**
-     * Get the environment's stage.
-     * @return the current stage, never null.
-     */
-    public Stage getStage();
+    public TestEnvironmentProvider(){
+        data.put("user.country", System.getProperty("user.country"));
+        data.put("java.version", System.getProperty("java.version"));
+        data = Collections.unmodifiableMap(data);
+    }
 
+    @Override
+    public boolean isActive() {
+        return true;
+    }
+
+    @Override
+    public Map<String, String> getEnvironmentData() {
+        return data;
+    }
 }

@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.env;
 
-import org.apache.tamaya.Environment;
-import org.apache.tamaya.Stage;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.env.EnvironmentBuilder;
 import org.apache.tamaya.core.resource.Resource;
@@ -49,17 +47,11 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
 
     private static final String EARID_PROP = "environment.earId";
 
-    private Map<ClassLoader, Environment> environments = new ConcurrentHashMap<>();
+    private Map<ClassLoader, Map<String,String>> environments = new ConcurrentHashMap<>();
     private Map<ClassLoader, Boolean> environmentAvailable = new ConcurrentHashMap<>();
-    private Map<String, Environment> environmentsByEarId = new ConcurrentHashMap<>();
 
     @Override
-    public String getEnvironmentType() {
-        return "ear";
-    }
-
-    @Override
-    public boolean isEnvironmentActive() {
+    public boolean isActive() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             return false;
@@ -76,19 +68,18 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
     }
 
     @Override
-    public Environment getEnvironment(Environment parentEnvironment) {
+    public Map<String,String> getEnvironmentData() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             return null;
         }
-        Environment environment = this.environments.get(cl);
-        if(environment!=null){
-            return environment;
+        Map<String,String> data = this.environments.get(cl);
+        if(data!=null){
+            return data;
         }
         List<Resource> resources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/env/ear.properties", "classpath:META-INF/env/ear.xml", "classpath:META-INF/env/ear.ini");
-        Map<String,String> data = new HashMap<>();
-
+        data = new HashMap<>();
         for(Resource resource:resources){
             try{
                 ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
@@ -100,29 +91,18 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
             }
         }
         String earId = data.getOrDefault(EARID_PROP, cl.toString());
-        EnvironmentBuilder builder = EnvironmentBuilder.of(earId, getEnvironmentType());
-        builder.setParent(parentEnvironment);
-        String stageValue =  data.get(InitialEnvironmentProvider.STAGE_PROP);
+        String stageValue =  data.get(EnvironmentBuilder.STAGE_PROP);
         if (stageValue != null) {
-            Stage stage = Stage.valueOf(stageValue);
-            builder.setStage(stage);
+            data.put(EnvironmentBuilder.STAGE_PROP,stageValue);
         }
-        builder.set("classloader.type", cl.getClass().getName());
-        builder.set("classloader.info", cl.toString());
+        data.put("classloader.type", cl.getClass().getName());
+        data.put("classloader.info", cl.toString());
         Set<Resource> resourceSet = new HashSet<>();
         resourceSet.addAll(resources);
-        builder.set("environment.sources", resourceSet.toString());
-        builder.setAll(data);
-        environment = builder.build();
-        this.environments.put(cl, environment);
-        if(earId!=null) {
-            this.environmentsByEarId.put(earId, environment);
-        }
-        return environment;
+        data.put("environment.sources", resourceSet.toString());
+        data = Collections.unmodifiableMap(data);
+        this.environments.put(cl, data);
+        return data;
     }
 
-    @Override
-    public Set<String> getEnvironmentContexts() {
-        return environmentsByEarId.keySet();
-    }
 }

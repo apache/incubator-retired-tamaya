@@ -21,7 +21,6 @@ package org.apache.tamaya.core.env;
 import org.apache.tamaya.Environment;
 import org.junit.Test;
 
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -37,68 +36,31 @@ public class EnvironmentManagerTest {
         assertNotNull(env);
         Environment env2 = Environment.current();
         assertNotNull(env2);
-        assertTrue("Current Environments requested in same context are not the same!", env==env2);
+        assertFalse("Current Environments requested in same context are not the same!", env==env2);
     }
 
     @Test
     public void testGetRootEnvironment(){
-        Environment env = Environment.getRootEnvironment();
+        Environment env = Environment.root();
         assertNotNull(env);
-        Environment env2 = Environment.getRootEnvironment();
+        Environment env2 = Environment.root();
         assertNotNull(env2);
         assertTrue("Root Environments requested in same context are not the same!", env==env2);
     }
 
     @Test
     public void testRootIsNotCurrentEnvironment(){
-        Environment env1 = Environment.getRootEnvironment();
+        Environment env1 = Environment.root();
         Environment env2 = Environment.current();
         assertNotNull(env1);
         assertNotNull(env2);
-        assertNotSame(env1, env2);
-    }
-
-    @Test
-    public void testEnvironmentTypeOrder(){
-        List<String> envOrder = Environment.getEnvironmentTypeOrder();
-        assertNotNull(envOrder);
-        assertTrue(envOrder.size()>0);
-        assertTrue(envOrder.contains("root"));
-        assertTrue(envOrder.contains("system"));
-        assertTrue(envOrder.contains("ear"));
-        assertTrue(envOrder.contains("application"));
-        assertTrue(envOrder.get(0).equals("root"));
-    }
-
-    @Test
-    public void testEnvironmentHierarchy(){
-        List<String> envOrder = Environment.getEnvironmentHierarchy();
-        assertNotNull(envOrder);
-        assertTrue(envOrder.size()>0);
-        assertTrue(envOrder.contains("root(root)"));
-        assertTrue(envOrder.contains("system(system)"));
-        assertTrue(envOrder.get(1).contains("(ear)"));
-        assertTrue(envOrder.get(0).contains("(application)"));
-        assertTrue(envOrder.get(2).equals("system(system)"));
-        assertTrue(envOrder.get(3).equals("root(root)"));
-    }
-
-    @Test
-    public void testEnvironmentId(){
-        String envId = Environment.current().getEnvironmentId();
-        assertNotNull(envId);
-        assertEquals(envId, "MyApp1");
-        envId = Environment.current().getParentEnvironment().getEnvironmentId();
-        assertEquals(envId, "myEar1");
-        envId = Environment.current().getParentEnvironment().getParentEnvironment().getEnvironmentId();
-        assertEquals(envId, "system");
-        envId = Environment.getRootEnvironment().getEnvironmentId();
-        assertEquals(envId, "root");
+        // within this test environment these are always the same
+        assertEquals(env1, env2);
     }
 
     @Test
     public void testEnvironmentOverride(){
-        assertEquals(Environment.getRootEnvironment().get("user.country").get(),System.getProperty("user.country"));
+        assertEquals(Environment.root().get("user.country").get(),System.getProperty("user.country"));
         assertEquals(Environment.current().get("user.country").get(), System.getProperty("user.country"));
     }
 }
