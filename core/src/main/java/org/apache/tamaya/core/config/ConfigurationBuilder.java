@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
-* Builder for assembling non trivial property providers.
+* Builder for assembling non trivial {@link org.apache.tamaya.Configuration} instances.
 */
 public final class ConfigurationBuilder {
 

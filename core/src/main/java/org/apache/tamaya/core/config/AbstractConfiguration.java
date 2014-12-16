@@ -26,6 +26,10 @@ import org.apache.tamaya.spi.ServiceContext;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * Abstract implementation class for {@link org.apache.tamaya.Configuration}, which supports optimistic
+ * locking and mutability.
+ */
 public abstract class AbstractConfiguration extends AbstractPropertySource implements Configuration{
 
     private static final Logger LOG = Logger.getLogger(AbstractConfiguration.class.getName());

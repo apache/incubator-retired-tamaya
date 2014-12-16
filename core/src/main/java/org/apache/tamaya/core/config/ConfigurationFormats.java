@@ -28,7 +28,6 @@ import java.util.Collection;
 
 /**
  * Singleton accessor for accessing {@link org.apache.tamaya.core.spi.ConfigurationFormat} instances.
- * Created by Anatole on 26.02.14.
  */
 public final class ConfigurationFormats{
 

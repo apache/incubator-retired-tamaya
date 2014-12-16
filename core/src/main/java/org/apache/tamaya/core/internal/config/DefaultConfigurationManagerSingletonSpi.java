@@ -36,6 +36,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 
+/**
+ * Default SPI that implements the behaviour of {@link org.apache.tamaya.spi.ConfigurationManagerSingletonSpi}.
+ */
 public class DefaultConfigurationManagerSingletonSpi implements ConfigurationManagerSingletonSpi {
 
     private static final String DEFAULT_CONFIG_NAME = "default";

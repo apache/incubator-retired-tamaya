@@ -36,6 +36,10 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
     private PropertySource properties;
     private String version;
 
+    /**
+     * Constructor.
+     * @param config The base configuration.
+     */
     private FreezedConfiguration(Configuration config){
         super(MetaInfoBuilder.of(config.getMetaInfo()).set("freezedAt", Instant.now().toString()).build());
         this.properties = PropertySourceBuilder.of(config).buildFreezed();

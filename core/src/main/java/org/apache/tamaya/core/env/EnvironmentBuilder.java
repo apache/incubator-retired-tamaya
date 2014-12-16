@@ -25,39 +25,74 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
-* Created by Anatole on 06.09.2014.
+* Builder to create new {@link org.apache.tamaya.Environment instances.}
 */
 public final class EnvironmentBuilder{
 
+    /** The property name for the stage property. */
     public static final String STAGE_PROP = "stage";
+
+    /** THe environment data. */
     Map<String,String> contextData = new HashMap<>();
 
+    /**
+     * Constructor.
+     */
     private EnvironmentBuilder() {
     }
 
+    /**
+     * Creates a new buildr instance.
+     * @return the new builder instance.
+     */
     public static final EnvironmentBuilder of() {
         return new EnvironmentBuilder();
     }
 
+    /**
+     * Sets a new environment property.
+     * @param key the key, not null.
+     * @param value the value, not null.
+     * @return the builder for chaining
+     */
     public EnvironmentBuilder set(String key, String value){
         this.contextData.put(key, value);
         return this;
     }
 
+    /**
+     * Sets new environment properties.
+     * @param values the key/values, not null.
+     * @return the builder for chaining
+     */
     public EnvironmentBuilder setAll(Map<String,String> values){
         this.contextData.putAll(values);
         return this;
     }
 
+    /**
+     * Sets the stage using the default stage key.
+     * @param stage The stage, not null.
+     * @return the builder for chaining.
+     */
     public EnvironmentBuilder setStage(String stage){
         this.contextData.put(STAGE_PROP, Objects.requireNonNull(stage));
         return this;
     }
 
+    /**
+     * Access a property
+     * @param key the key, not null.
+     * @return the builder for chaining.
+     */
     public String getProperty(String key) {
         return this.contextData.get(key);
     }
 
+    /**
+     * Builds a new Environment.
+     * @return a new Environment, never null.
+     */
     public Environment build() {
         return new BuildableEnvironment(this);
     }

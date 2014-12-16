@@ -22,12 +22,19 @@ import org.apache.tamaya.Environment;
 
 import java.util.*;
 
-
+/**
+ * Environment class that is used by the {@link org.apache.tamaya.core.env.EnvironmentBuilder}.
+ */
 class BuildableEnvironment implements Environment {
 
     private static final long serialVersionUID = 707575538680740130L;
+    /** The environment data. */
     private Map<String,String> context = new TreeMap<>();
 
+    /**
+     * Constructor.
+     * @param builder the builder, not null.
+     */
     BuildableEnvironment(EnvironmentBuilder builder){
         Objects.requireNonNull(builder);
         context.putAll(builder.contextData);
@@ -77,6 +84,10 @@ class BuildableEnvironment implements Environment {
         return "Environment: " + getData();
     }
 
+    /**
+     * Get the delta.
+     * @return
+     */
     private String getData() {
         StringBuilder b = new StringBuilder();
         for(Map.Entry<String,String> en: this.context.entrySet()){
@@ -87,6 +98,11 @@ class BuildableEnvironment implements Environment {
         return b.toString();
     }
 
+    /**
+     * Escapes several characters.
+     * @param value
+     * @return
+     */
     private String escape(String value){
         if(value==null)
             return null;

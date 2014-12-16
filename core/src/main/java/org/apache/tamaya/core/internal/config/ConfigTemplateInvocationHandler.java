@@ -26,11 +26,12 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
- * Created by Anatole on 17.10.2014.
+ * Invocation handler that handles request against a configuration template.
  */
 class ConfigTemplateInvocationHandler implements InvocationHandler {
-
+    /** The underlying configuration. */
     private Configuration config;
+    /** The configured type. */
     private ConfiguredType type;
 
     public ConfigTemplateInvocationHandler(Class<?> type, Configuration config) {

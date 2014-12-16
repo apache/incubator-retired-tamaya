@@ -8,13 +8,19 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
- * Created by Anatole on 07.12.2014.
+ * Configuration implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate areas.
  */
 class MappedConfiguration extends AbstractConfiguration implements Configuration {
-
+    /** The mapping operator. */
     private UnaryOperator<String> keyMapper;
+    /** The base configuration. */
     private Configuration config;
 
+    /**
+     * Creates a new instance.
+     * @param config the base configuration, not null
+     * @param keyMapper The mapping operator, not null
+     */
     public MappedConfiguration(Configuration config, UnaryOperator<String> keyMapper) {
         super(MetaInfoBuilder.of(config.getMetaInfo()).setInfo("Mapped configuration, mapper=" + keyMapper).build());
         this.config = Objects.requireNonNull(config);
