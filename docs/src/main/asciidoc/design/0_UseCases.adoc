@@ -25,55 +25,71 @@ This section describes some, but not all, of the use cases that should be covere
 [[UCSimpleAccess]]
 === Simple Property Access (UC 1)
 
-Tamaya should provide a simple Java API for accessing configuration. Hereby
+Users just want to create a configuration (or configuration template) ad hoc, from given configuration files. The
+files could be locally in the file system, on the classpath or remotely accessible by some URLs.
 
-* Configuration is organized as key/value pairs. This basically can be modeled as +Map<String,String>+
-* Configuration should be as simple as possible. A +Map<String,String>+ instance has methods that may not
-  be used in many use cases and/or are not easy to implement. Currently the following functionality
-  must be supported:
-  ** access a value by key (+get+)
-  ** check if a value is present (+containsKey+)
-  ** get a set of all defined keys (+keySet+)
-  ** a property provider must be convertable to a +Map+, by calling +toMap()+
-  ** a property provider must get access to its meta information.
-* The API must never return null.
-* The API should support undefined values.
-* The API must support passing default values, to be returned if a value is undefined.
-* The API must allow to throw exceptions, when a value is undefined.
-  Customized exceptions hereby should be supported.
-* Properties can be stored in the classpath, on a file.
-* Properties can be stored in properties, xml-properties or ini-format.
-* Properties can also be provided as properties, or as a Map<String,String>
+Tamaya should provide a simple Java API for accessing key/value based configuration. Hereby users want to access
+properties as
+
+* Strings
+* Primitive types
+* Wrapper types
+* All other types
 
 
-[[UCAutoConfig]]
-=== Automatic Configuration
+[[UCConfigInjection]]
+=== Automatic Configuration (Configuration Injection, UC2)
 
-* Tamaya should provide a feature for automatic configuration, where properties can be annotated.
-* Hereby the lifecycle of the instances configured should not be managed by Tamaya.
-* String as well as other types should be supported.
-* It should be possible to define default values to be used, if no valid value is present.
-* It should be possible to define dynamic expressions, at least for default values.
-* The values configured should be reinjected, if the underlying configuration changes.
-* Reinjection should be controllable by an injection policy.
-* It should be possible to evaluate multiple keys, e.g. current keys, and as a backup deprecated keys
-  from former application releases.
-* The type conversion of the properties injected should be configurable.
-* The value evaluated for a property (before type conversion) may be adaptable as well.
-* It should be possible to observe configuration changes.
+Tamaya must provide a feature for automatic configuration, where properties of a class or methods can be annotated.
 
-The most simplest way is using injection, e.g. a POJO can be written as follows:
+* Hereby the lifecycle of the instances configured should not be managed by Tamaya. Also users want to define default
+values to be used in case no configured value is present.
+* Users want to have callbacks so they can listen on configuration changes.
+* Users want to evaluate multiple keys, e.g. current keys, and as a backup, deprecated keys
+from former application releases.
+* Users want to use dynamic placeholders in their value expressions.
+* Users want to have full control about value evaluation and type conversion, if necessary.
+
+To illustrate these points above imagine the following POJO:
 
 [source, java]
 .Configured POJO Example
 ----------------------------------------------------
 public class MyPojo {
   @ConfigProperty("myCurrency")
-  @DefaultValue("CHF")
+  @DefaultValue("CHF")                       // use as default
+  @WithLoadingPolicy(LoadingPolicy.INITIAL)  // load the value only once (no reinjection)
   private String currency;
 
   @ConfigProperty("myCurrencyRate")
   private Long currencyRate;
+
+  @ConfigProperty                            // evaluates to key=<fieldName>="fullRate"
+  @ConfigProperty("fallback.property")
+  @WithConfig("default")
+  @WithConfig("moduleConfig");
+  private BigDecimal fullRate;
+
+  // Configuration method
+  void setStartup(@ConfigProperty boolean startup, @ConfigProperty("componentName") @WithConfig("module1") @DefaultValue("N/A") String compName){
+     ...
+  }
+
+  // Configuration method
+  @ConfigProperty("componentName")
+  @WithConfig("module1")
+  @DefaultValue("N/A")
+  private void setComponentName(String compName){
+     ...
+  }
+
+  // Configuration listener method, defining which properties to listen for
+  @ConfigChanges
+  @ConfigProperty("componentName")
+  private void setComponentName(ConfigChange change){
+     ...
+  }
+
 }
 ----------------------------------------------------
 
@@ -86,33 +102,33 @@ MyPojo instance = new MyPojo();
 Configuration.configure(instance);
 ----------------------------------------------------
 
+This will configure all values according to the load policies (by default +LoadPolicy.INITIAL+). Depending on the
+listeners present and the properties injected Tamaya will keep weak references to the bean and the current environment,
+so it can be determined, when configuration changes must be published into the bean.
+
 [[UCTemplates]]
-=== Configuration Templates
+=== Configuration Templates (UC3)
 
-For type safe configuration clients should be able to define an interface that is implemented by the
-configuration system:
-
-* clients define an interface and annotate it as required
-* the interface methods must not take any arguments
-* the configuration system can be called to return such an interface implementation.
-* the configuration system returns a proxy hereby providing the values required.
-* similar to configured types also templates support multiple values and custom adapters.
-* It is possible to listen on configuration changes for templates, so users of the templates
-  may react on configuration changes.
-
-A template hereby is modelled by annotating an interface with the same annotations as for
-configured classes:
+For type safe configuration clients should be able to define an interface and let it implement by the
+configuration system based on configuration available. Following an example template is shown, which illustrates
+annotating an interface with the same annotations as for configured classes:
 
 [source, java]
 .Type Safe Configuration Template Example
 ----------------------------------------------------
 public interface MyConfig {
+
   @ConfiguredProperty("myCurrency")
   @DefaultValue("CHF")
   String getCurrency();
 
   @ConfiguredProperty("myCurrencyRate")
   Long getCurrencyRate();
+
+  @ConfigChange
+  default configChanged(ConfigChange event){
+     ...
+  }
 
 }
 ----------------------------------------------------
@@ -122,7 +138,7 @@ The configuration system will then provide the interface as follows:
 [source, java]
 .Accessing a type safe Configuration Template
 ----------------------------------------------------
-MyConfig config = Configuration.of(MyConfig.class);
+MyConfig config = Configuration.current(MyConfig.class);
 ----------------------------------------------------
 
 Finally a +Configuration+ itself can be accessed as template as well, which
@@ -131,56 +147,49 @@ provides full access to all features:
 [source, java]
 .Accessing a Configuration
 ----------------------------------------------------
-Configuration config = Configuration.of(Configuration.class);
+Configuration config = Configuration.current(Configuration.class);
 ----------------------------------------------------
 
 
 [[UCSimpleConfiguration]]
-=== Simple Property Based Configuration
+=== Simple Property Based Configuration (UC4)
 
 In this most simple usage scenario an application is configured by some property files contained in the
-Java archive.
+Java archive. Tamaya should provide a reasonable default meta-model, if no meta-model is currently loaded.
 
-* It provides default property files in the formats defined by the JDK within its application archive.
-* It allows to override settings by system properties.
-* It is able to consider command line arguments as well.
+Additionally users want (optionally) to override settings by applying system properties or other command line
+arguments.
 
 
 [[UCAdvancedPropertyBasedConfiguration]]
-=== Advanced Property Based Configuration
+=== Advanced Property Based Configuration (UC5)
 
 Enhancing the previous scenario, we might as well consider the current environment. Saying that our overriding mechanisms
-must be improved, since
-
-* some environment settings should not be overridable
-* some defaults should be overridden by environment or system properties, whereas others may not
-* Additionally the user may have an option, where he is allowed to define an external configuration file that should be used to configure
-  the application. This is especially useful for applications with lots of command line options (under windows even command
-  execution may fail die to exceeding command length).
-* Finally application developers may have their own formats in place, so the system should be able to support these formats.
-
+must be improved, since people do not want all properties to be mutable.
+Dynamic placeholders should be supported for values.
+It is also possible to add environment values to a configuration.
 
 [[UCModularizedConfiguration]]
-=== Modularized Configuration
+=== Modularized Configuration (UC6)
 
-When systems grow they must be modularized to keep control. Whereas that sounds not really fancy, it leads to additional aspects
-to be considered by a configuration system.
+When systems grow they must be modularized to keep control. Whereas that sounds not really fancy, it leads to additional
+aspects to be considered by a configuration system.
 
-* Different code modules want to have their own "module configuration".
+* Different code modules want to have their "own" configuration.
 * Some modules require a certain subset of keys to be read at once into a Map.
 * Products contain multiple modules, which per product are configured separately.
 
 
 [[UCTypeSupport]]
-=== Extended Type Support
+=== Extended Type Support (UC7)
 
 Application configuration must also support non String types such as primitives, wrapper types, math types
 and date/time values. Basically each type that can be created from a String in more standardized way should
 supported. This should be even possible for types not known at build time of possible. Type conversion hereby
-should be flexible.
+should be flexible and extensible.
 
 [[UCDynamicProvisioning]]
-=== Dynamic Provisioning
+=== Dynamic Provisioning (UC8)
 
 In Cloud Computing, especially the PaaS and SaaS areas a typical use case would be that an application (or server)
 is deployed, configured and started dynamically. Typically things are controlled by some "active controller components",
@@ -198,18 +207,9 @@ solution should not try to solve that, but it can provide a significant bunch of
 * allow configuration to be updated remotely.
 * allow client code to listen for configuration changes and react as needed.
 
-Consequently:
-
--> Ensure Configuration can be transferred over the network easily.
-
--> Whereas many people will no think serializability is the solution, it would be much more useful to define
-   a text based format for serialization, e.g. in +XML+ or +JSON+.
-
--> Similarly a management API should be defined, which allows to inspect the configuration in place, e.g. using
-   JMX or REST services.
 
 [[UCJavaEE]]
-=== Java EE
+=== Java EE (UC9)
 
 Considering Java EE different aspects should be considered:
 
@@ -221,34 +221,7 @@ Considering Java EE different aspects should be considered:
 * Configuring administrative resources (e.g. datasources, users, security etc) is typically vendor specific.
 * The environment is inherently multi-threaded.
 
-Given that a couple of additional requirements araise:
-
--> Configuration must be contextual, depending on the current runtime context (e.g. boot level, ear, war, ...).
-
--> Hereby contextual aspects can even exceed the levels described above, e.g. for SaaS scenarios.
-
--> Resources can be unloaded, e.g. wars, ears can be restarted.
-
--> The different contextual levels can also be used for overriding, e.g. application specific configuration
-may override ear or system configuration.
-
--> Configuration may be read from different sources (different classloaders, files, databases, remote locations).
-
--> Configuration may be read in different formats (deployment descriptors, +ServiceLoader+ configuration, alt-DD feature, ...)
-
--> JSF also knows the concept of stages.
-
--> Many SPI's of Java EE require the implementation of some well defined Java interface, so it would be useful if the
-   configuration solution supports easy implementation of such instances.
-
--> In general it would be useful to model the +Environment+ explicitly.
-
--> Configuration used as preferences is writable as well. This requires mutability to be modelled in way, without the
-   need of synchronization.
-
--> JNDI can be used for configuration as well.
-
-[[UCMultiTenancy]]
+[[UCMultiTenancy]] (UC10)
 === Scenario MultiTenancy
 In multi tenancy setups a hierarchical/graph model of contexts for configurations is required. For example there might
 be some kind of layering as follows:
@@ -259,14 +232,8 @@ be some kind of layering as follows:
 * Layer 3: Tenant specific configuration
 * Layer 4: User specific configuration
 
-Configurations made in the tenant or user layer override the default app configuration etc.
 
--> It must be possible to structure Configuration in layers that can override/extend each other.
-
--> The current environment must be capable of mapping tenant, user and other aspects, so a corresponding configuration
-   (or layer) can be derived.
-
-[[UCJavaAPI]]
+[[UCJavaAPI]] (UC11)
 === Accessing Configuration
 
 So far we described much how configuration must be organized and managed, but we got not concrete, how it is accessed.
@@ -280,10 +247,8 @@ to be configured is managed:
   system should leverage the functionality of the container, where possible.
 
 
-
-
 [[UCTesting]]
-=== Testing
+=== Testing (UC12)
 When testing a Java solution, it must be possible to easily control the configuration provided, so isolated
 component tests can be written effectively. Also it should be possible to control/isolate the configuration level for
 each test case.
@@ -293,7 +258,7 @@ each test case.
 -> API for controlling the configuration provided, required for according implementations in the testing frameworks.
 
 [[UCStaging]]
-=== Staging
+=== Staging (UC13)
 Different companies go through different staging levels during the development of software components. Currently only
 rarely the EE frameworks support staging aspects, nevertheless no broader, well modelled staging concept is defined.
 Different companies also have different staging or sub-staging levels in place, which also must be reflected.
@@ -305,7 +270,7 @@ Especially with sub-stages inheritance of stage related configuration is common 
 
 
 [[UCCotsIntegration]]
-=== Custom of the Shelf (COTS) Integration
+=== Custom of the Shelf (COTS) Integration (UC14)
 When buying software from an external software company it is often very cumbersome to integrate, adapt and customize
 third party software to the internal operational requirements. Especially, when software is delivered as ear modules
 portability is often very difficult and time consuming. Configuration should enable COTS providers to define a
@@ -315,5 +280,5 @@ phase the integration and configuration options can explicitly be defined.
 
 -> It must be possible to document configuration aspects supported.
 
--> Configuration must be overridable from external sources (the operations which must operate the COTS solution).
+-> Configuration must be adaptable from external sources (the operations which must operate the COTS solution).
 
