@@ -18,13 +18,12 @@
  */
 package org.apache.tamaya.samples.annotations;
 
-import org.apache.tamaya.Configuration;
-import org.junit.Assume;
-import org.junit.Test;
-
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
+
+import org.apache.tamaya.Configuration;
+import org.junit.Test;
 
 /**
  * Created by Anatole on 08.09.2014.

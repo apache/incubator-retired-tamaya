@@ -40,31 +40,12 @@ public class ConfiguredType {
 
     public ConfiguredType(Class type) {
         this.type = Objects.requireNonNull(type);
-        for (Field f : type.getDeclaredFields()) {
-            ConfiguredProperties propertiesAnnot = f.getAnnotation(ConfiguredProperties.class);
-            if (propertiesAnnot != null) {
-                try {
-                    ConfiguredField configuredField = new ConfiguredField(f);
-                    configuredFields.add(configuredField);
-                } catch (Exception e) {
-                    throw new ConfigException("Failed to initialized configured field: " +
-                            f.getDeclaringClass().getName() + '.' + f.getName(), e);
-                }
-            }
-            else{
-                ConfiguredProperty propertyAnnot = f.getAnnotation(ConfiguredProperty.class);
-                if (propertyAnnot != null) {
-                    try {
-                        ConfiguredField configuredField = new ConfiguredField(f);
-                        configuredFields.add(configuredField);
-                    } catch (Exception e) {
-                        throw new ConfigException("Failed to initialized configured field: " +
-                                f.getDeclaringClass().getName() + '.' + f.getName(), e);
-                    }
-                }
-            }
-        }
-        for (Method m : type.getDeclaredMethods()) {
+        configureFields(type);
+        configureMethod(type);
+    }
+
+	private void configureMethod(Class type) {
+		for (Method m : type.getDeclaredMethods()) {
             ObservesConfigChange mAnnot = m.getAnnotation(ObservesConfigChange.class);
             if(mAnnot!=null) {
                 if (m.getParameterTypes().length != 1) {
@@ -108,7 +89,34 @@ public class ConfiguredType {
                 }
             }
         }
-    }
+	}
+
+	private void configureFields(Class type) {
+		for (Field f : type.getDeclaredFields()) {
+            ConfiguredProperties propertiesAnnot = f.getAnnotation(ConfiguredProperties.class);
+            if (propertiesAnnot != null) {
+                try {
+                    ConfiguredField configuredField = new ConfiguredField(f);
+                    configuredFields.add(configuredField);
+                } catch (Exception e) {
+                    throw new ConfigException("Failed to initialized configured field: " +
+                            f.getDeclaringClass().getName() + '.' + f.getName(), e);
+                }
+            }
+            else{
+                ConfiguredProperty propertyAnnot = f.getAnnotation(ConfiguredProperty.class);
+                if (propertyAnnot != null) {
+                    try {
+                        ConfiguredField configuredField = new ConfiguredField(f);
+                        configuredFields.add(configuredField);
+                    } catch (Exception e) {
+                        throw new ConfigException("Failed to initialized configured field: " +
+                                f.getDeclaringClass().getName() + '.' + f.getName(), e);
+                    }
+                }
+            }
+        }
+	}
 
     public Object getConfiguredValue(Method method, Object[] args) {
         ConfiguredMethod m = this.configuredMethods.get(method);
