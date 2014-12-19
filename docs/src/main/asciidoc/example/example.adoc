@@ -13,7 +13,7 @@ with different examples of Asciidoctors capabilities.
 
 Some facts on the current Asciidoctor environment.
 
-Asciidoctor verision:: {asciidoctor-version}
+Asciidoctor version:: {asciidoctor-version}
 
 
 == Plant UML
