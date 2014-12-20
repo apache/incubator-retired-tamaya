@@ -33,8 +33,6 @@ public final class MetaInfo{
     public static final String SOURCE = "source";
     public static final String SOURCE_EXPRESSION = "source-expression";
 
-//    /** The key used for storing the data owner. */
-//    private static final String OWNER_KEY = "_owner";
     /** The meta information data. */
     private final Map<String, String> metaInfo = new HashMap<>();
 
