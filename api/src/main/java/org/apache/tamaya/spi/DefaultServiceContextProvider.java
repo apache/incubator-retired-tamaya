@@ -27,9 +27,10 @@ import java.util.logging.Logger;
  * This class implements the (default) {@link ServiceContext} interface and hereby uses the JDK
  * {@link java.util.ServiceLoader} to load the services required.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 class DefaultServiceContextProvider implements ServiceContext {
     /** List current services loaded, per class. */
-    private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
     /** Singletons. */
     private final ConcurrentHashMap<Class, Optional<?>> singletons = new ConcurrentHashMap<>();
     /** Comparator for ordering of multiple services found. */
@@ -41,7 +42,7 @@ class DefaultServiceContextProvider implements ServiceContext {
 
     @Override
     public <T> Optional<T> getService(Class<T> serviceType) {
-        Optional<T> cached = (Optional<T>)singletons.get(serviceType);
+		Optional<T> cached = (Optional<T>)singletons.get(serviceType);
         if(cached==null) {
             List<? extends T> services = getServices(serviceType, Collections.emptyList());
             if (services.isEmpty()) {
@@ -68,7 +69,6 @@ class DefaultServiceContextProvider implements ServiceContext {
      */
     @Override
     public <T> List<? extends T> getServices(final Class<T> serviceType, final List<? extends T> defaultList) {
-        @SuppressWarnings("unchecked")
         List<T> found = (List<T>) servicesLoaded.get(serviceType);
         if (found != null) {
             return found;

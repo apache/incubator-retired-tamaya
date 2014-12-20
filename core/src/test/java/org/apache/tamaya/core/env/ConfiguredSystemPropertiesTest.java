@@ -18,12 +18,11 @@
  */
 package org.apache.tamaya.core.env;
 
-import org.apache.tamaya.Configuration;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 /**
  * Created by Anatole on 02.10.2014.
@@ -32,7 +31,7 @@ public class ConfiguredSystemPropertiesTest {
 
     @Test
     public void testInstall(){
-        Configuration config = Configuration.current();
+//        Configuration config = Configuration.current();
         Properties props = System.getProperties();
         assertTrue(props.getClass().getName().equals(Properties.class.getName()));
         System.out.println("Props("+props.getClass().getName()+"): " + props);

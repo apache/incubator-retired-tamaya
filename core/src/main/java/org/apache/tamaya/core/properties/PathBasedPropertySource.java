@@ -32,7 +32,8 @@ import java.util.*;
  */
 final class PathBasedPropertySource extends AbstractPropertySource {
 
-    private List<String> paths = new ArrayList<>();
+	private static final long serialVersionUID = 5147019699905042582L;
+	private List<String> paths = new ArrayList<>();
     private Map<String, String> properties = new HashMap<>();
     private AggregationPolicy aggregationPolicy;
 

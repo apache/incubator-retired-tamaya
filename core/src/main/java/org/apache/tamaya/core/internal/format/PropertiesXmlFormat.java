@@ -44,7 +44,8 @@ public class PropertiesXmlFormat implements ConfigurationFormat{
         return path != null && path.endsWith(".xml");
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public Map<String,String> readConfiguration(Resource resource) {
         if (isAccepted(resource) && resource.exists()) {
             try (InputStream is = resource.getInputStream()) {

@@ -21,8 +21,6 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.Environment;
 
-import java.util.*;
-
 /**
  * Service for accessing {@link org.apache.tamaya.Environment}. Environments are used to
  * access/determine configurations.<br/>

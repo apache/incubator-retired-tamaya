@@ -18,16 +18,17 @@
  */
 package org.apache.tamaya.internal;
 
-import org.apache.tamaya.*;
-import org.apache.tamaya.core.config.AbstractConfiguration;
-import org.apache.tamaya.core.properties.PropertySourceBuilder;
-import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
-
 import java.beans.PropertyChangeEvent;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.MetaInfo;
+import org.apache.tamaya.core.config.AbstractConfiguration;
+import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 /**
  * Simple test provider that creates a mutable instance of a configuration, just using a simple map instance.
@@ -48,7 +49,7 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
         dataMap.put("sons.1", "Robin");
         dataMap.put("sons.2", "Luke");
         dataMap.put("sons.3", "Benjamin");
-        PropertySource provider = PropertySourceBuilder.of(CONFIG_NAME).addMap(dataMap).build();
+//        PropertySource provider = PropertySourceBuilder.of(CONFIG_NAME).addMap(dataMap).build();
         testConfig = new MutableConfiguration(dataMap, MetaInfo.of(CONFIG_NAME));
     }
 
@@ -72,7 +73,8 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
      */
     private final class MutableConfiguration extends AbstractConfiguration{
 
-        private final Map<String,String> data = new ConcurrentHashMap<>();
+		private static final long serialVersionUID = 8811989470609598218L;
+		private final Map<String,String> data = new ConcurrentHashMap<>();
 
         MutableConfiguration(Map<String,String> data, MetaInfo metaInfo){
             super(metaInfo);

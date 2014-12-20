@@ -18,11 +18,18 @@
  */
 package org.apache.tamaya.core.env;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.Environment;
-
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -30,21 +37,24 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.Environment;
+
 /**
  * Properties implementation class that can be applied as current System properties by calling
  * {@link org.apache.tamaya.core.env.ConfiguredSystemProperties#install()}. The system properties will
  * then behave contextually depending on the current runtime configuration active.
  */
 public class ConfiguredSystemProperties extends Properties {
-    private static final Logger LOG = Logger.getLogger(ConfiguredSystemProperties.class.getName());
+
+	private static final long serialVersionUID = 2152870929299226804L;
+
+	private static final Logger LOG = Logger.getLogger(ConfiguredSystemProperties.class.getName());
     private Properties initialProperties;
     private static volatile Map<String, Properties> contextualProperties = new ConcurrentHashMap<>();
     private static volatile Supplier<String> contextProvider = () ->
             Environment.current().get("context.id").orElse("<system>");
 
-    private static Supplier<String> loadContextProvider() {
-        return null;
-    }
 
     private final Object LOCK = new Object();
 
@@ -197,7 +207,8 @@ public class ConfiguredSystemProperties extends Properties {
         getContextualProperties().load(inStream);
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void save(OutputStream out, String comments) {
         super.save(out, comments);
     }

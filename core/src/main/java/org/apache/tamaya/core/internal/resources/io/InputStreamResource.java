@@ -19,7 +19,6 @@ package org.apache.tamaya.core.internal.resources.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * {@link org.apache.tamaya.core.resource.Resource} implementation for a given InputStream. Should only

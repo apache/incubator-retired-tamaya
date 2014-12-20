@@ -18,17 +18,21 @@
  */
 package org.apache.tamaya.core.properties;
 
+import java.net.URL;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
-
-import java.net.URL;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 /**
  * Default implementation current the singleton backing bean for the {@link org.apache.tamaya.core.properties.PropertySourceBuilder}.
@@ -38,7 +42,6 @@ public final class PropertySourceFactory {
     private static final PropertySource EMPTY_PROPERTYSOURCE = fromMap(MetaInfo.of("<empty>"), Collections.emptyMap());
     private static final PropertySource ENV_PROPERTYSOURCE = new EnvironmentPropertySource();
 
-    private static final Logger LOG = Logger.getLogger(PropertySourceFactory.class.getName());
 
     /**
      * Singleton constructor.

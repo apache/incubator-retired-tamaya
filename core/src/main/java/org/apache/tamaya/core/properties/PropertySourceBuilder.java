@@ -18,25 +18,27 @@
 */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.*;
-
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
+
+import org.apache.tamaya.AggregationPolicy;
+import org.apache.tamaya.MetaInfo;
+import org.apache.tamaya.MetaInfoBuilder;
+import org.apache.tamaya.PropertySource;
 
 /**
 * Builder for assembling non trivial property providers.
 */
 public final class PropertySourceBuilder {
-    private static final Supplier<IllegalStateException> noPropertyProviderAvailable =
-        () -> new IllegalStateException("No PropertyProvidersSingletonSpi available.");
+//    private static final Supplier<IllegalStateException> noPropertyProviderAvailable =
+//        () -> new IllegalStateException("No PropertyProvidersSingletonSpi available.");
 
-    /**
-     * THe logger used.
-     */
-    private static final Logger LOG = Logger.getLogger(PropertySourceBuilder.class.getName());
 
     /**
      * The final meta info to be used, or null, if a default should be generated.

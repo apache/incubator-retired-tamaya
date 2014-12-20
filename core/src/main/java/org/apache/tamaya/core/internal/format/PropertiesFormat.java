@@ -43,6 +43,7 @@ public class PropertiesFormat implements ConfigurationFormat{
 		return path != null && path.endsWith(".properties");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String,String> readConfiguration(Resource resource) {
 		if (isAccepted(resource) && resource.exists()) {

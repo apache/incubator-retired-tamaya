@@ -18,11 +18,12 @@
  */
 package org.apache.tamaya.ucs;
 
-import org.apache.tamaya.*;
+import org.apache.tamaya.AggregationPolicy;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.MetaInfo;
+import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
-
-import static junit.framework.TestCase.assertTrue;
 
 /**
  * Configuration is organized as key/keys pairs. This basically can be modeled as {@code Map<String,String>}

@@ -13,7 +13,7 @@ with different examples of Asciidoctors capabilities.
 
 Some facts on the current Asciidoctor environment.
 
-Asciidoctor verision:: {asciidoctor-version}
+Asciidoctor version:: {asciidoctor-version}
 
 
 == Plant UML
@@ -61,3 +61,16 @@ generated with http://ditaa.sourceforge.net/[ditaa].
      +-----------------------------------+
 ....
 
+
+
+== GraphViz
+
+This section contains a diagram
+[graphviz]
+....
+graph {
+    a -- b; b -- c; c -- d; d -- e; e -- f; a -- f; a -- c[color=red];
+    a -- d; a -- e; b -- d; b -- e; b -- f; c -- e; c -- f;
+    d -- f;
+}
+....

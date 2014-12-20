@@ -36,7 +36,8 @@ import java.util.*;
  */
 final class URLBasedPropertySource extends AbstractPropertySource {
 
-    private List<URL> resources = new ArrayList<>();
+	private static final long serialVersionUID = 648272283683183532L;
+	private List<URL> resources = new ArrayList<>();
     private Map<String,String> properties = new HashMap<>();
     private AggregationPolicy aggregationPolicy;
 

@@ -18,16 +18,19 @@
  */
 package org.apache.tamaya.core.internal.env;
 
-import org.apache.tamaya.core.env.ConfiguredSystemProperties;
-import org.apache.tamaya.core.env.EnvironmentBuilder;
-
 import java.net.InetAddress;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.Environment;
+import org.apache.tamaya.core.env.ConfiguredSystemProperties;
+import org.apache.tamaya.core.env.EnvironmentBuilder;
 import org.apache.tamaya.core.spi.EnvironmentProvider;
 
 /**

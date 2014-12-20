@@ -18,19 +18,21 @@
  */
 package org.apache.tamaya.ucs;
 
-import org.apache.tamaya.*;
-import org.apache.tamaya.core.config.ConfigFunctions;
-import org.apache.tamaya.core.properties.PropertySourceBuilder;
-import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.tamaya.AggregationPolicy;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.MetaInfo;
+import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.core.config.ConfigFunctions;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
+import org.junit.Test;
 
 /**
  * Configuration is organized as key/keys pairs. This basically can be modeled as {@code Map<String,String>}
@@ -62,10 +64,10 @@ public class UC1ReadProperties {
     public void example() {
         Configuration config = PropertySourceBuilder.of("test")
                 .addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build().toConfiguration();
-        String name = config.get("name").orElse("Anatole");
-        BigDecimal bigNum = config.get("num.BD", BigDecimal.class).orElseThrow(() -> new IllegalStateException("Sorry"));
-        double anotherNum = config.getDouble("num.Double").getAsDouble();
-        long longNum = config.getLong("num.Long").orElse(288900L);
+//        String name = config.get("name").orElse("Anatole");
+//        BigDecimal bigNum = config.get("num.BD", BigDecimal.class).orElseThrow(() -> new IllegalStateException("Sorry"));
+//        double anotherNum = config.getDouble("num.Double").getAsDouble();
+//        long longNum = config.getLong("num.Long").orElse(288900L);
 
         // or more simpler use area function
         Configuration areaConfig2 = config.with(ConfigFunctions.selectArea("num"));

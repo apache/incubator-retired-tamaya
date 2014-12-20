@@ -27,7 +27,6 @@ import java.util.*;
  */
 class BuildableEnvironment implements Environment {
 
-    private static final long serialVersionUID = 707575538680740130L;
     /** The environment data. */
     private Map<String,String> context = new TreeMap<>();
 

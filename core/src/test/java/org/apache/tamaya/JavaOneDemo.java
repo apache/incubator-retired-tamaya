@@ -18,16 +18,14 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.core.properties.PropertySourceBuilder;
-import org.apache.tamaya.core.spi.ConfigurationFormat;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
+import org.junit.Test;
 
 /**
  * Created by Anatole on 30.09.2014.
@@ -50,7 +48,7 @@ public class JavaOneDemo {
 
     @Test
     public void testProgrammaticConfig() {
-        ConfigurationFormat format = ConfigurationFormats.getPropertiesFormat();
+//        ConfigurationFormat format = ConfigurationFormats.getPropertiesFormat();
         Map<String, String> cfgMap = new HashMap<>();
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole

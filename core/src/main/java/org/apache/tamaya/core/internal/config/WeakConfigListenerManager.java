@@ -35,26 +35,6 @@ public class WeakConfigListenerManager{
     private Map<String,Store<PropertyChangeListener>> changeListeners = new ConcurrentHashMap<>();
 
 
-    private void addPropertyChangeListener(PropertyChangeListener l, String... configIds){
-        for(String configId : configIds){
-            Store<PropertyChangeListener> items = changeListeners.get(configId);
-            if(items != null){
-                synchronized(items){
-                    items.add(l);
-                }
-            }
-        }
-    }
-
-    private void removePropertyChangeListener(PropertyChangeListener l, String... configIds){
-        for(String configId : configIds){
-            Store<PropertyChangeListener> items = changeListeners.get(configId);
-            if(items != null){
-                items.remove(l);
-            }
-        }
-    }
-
     private void publishPropertyChangeEventToGlobalListeners(PropertyChangeEvent evt){
         Store<PropertyChangeListener> items = changeListeners.get("_globalConfigChangeListeners");
         if(items != null){

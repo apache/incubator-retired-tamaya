@@ -45,7 +45,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
 
     private static  final Logger LOG = Logger.getLogger(ClassLoaderDependentEarEnvironmentProvider.class.getName());
 
-    private static final String EARID_PROP = "environment.earId";
+//    private static final String EARID_PROP = "environment.earId";
 
     private Map<ClassLoader, Map<String,String>> environments = new ConcurrentHashMap<>();
     private Map<ClassLoader, Boolean> environmentAvailable = new ConcurrentHashMap<>();
@@ -90,7 +90,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
                 LOG.log(Level.SEVERE, e, () -> "Error reading ear environment data fromMap " + resource);
             }
         }
-        String earId = data.getOrDefault(EARID_PROP, cl.toString());
+//        String earId = data.getOrDefault(EARID_PROP, cl.toString());
         String stageValue =  data.get(EnvironmentBuilder.STAGE_PROP);
         if (stageValue != null) {
             data.put(EnvironmentBuilder.STAGE_PROP,stageValue);

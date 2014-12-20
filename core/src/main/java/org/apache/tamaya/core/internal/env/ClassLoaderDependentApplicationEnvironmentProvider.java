@@ -18,20 +18,22 @@
  */
 package org.apache.tamaya.core.internal.env;
 
-import org.apache.tamaya.Environment;
-import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.core.env.EnvironmentBuilder;
-import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.core.spi.ConfigurationFormat;
-import org.apache.tamaya.core.spi.EnvironmentProvider;
-import org.apache.tamaya.core.resource.ResourceLoader;
-
-
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.tamaya.core.config.ConfigurationFormats;
+import org.apache.tamaya.core.resource.Resource;
+import org.apache.tamaya.core.resource.ResourceLoader;
+import org.apache.tamaya.core.spi.ConfigurationFormat;
+import org.apache.tamaya.core.spi.EnvironmentProvider;
+import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Application environment provider that is dependent on the current context classloader and tries to
@@ -43,8 +45,6 @@ import java.util.logging.Logger;
 public class ClassLoaderDependentApplicationEnvironmentProvider implements EnvironmentProvider {
 
     private static  final Logger LOG = Logger.getLogger(ClassLoaderDependentApplicationEnvironmentProvider.class.getName());
-
-    private static final String WARID_PROP = "environment.applicationId";
 
     private Map<ClassLoader, Map<String,String>> environments = new ConcurrentHashMap<>();
     private Map<ClassLoader, Boolean> environmentAvailable = new ConcurrentHashMap<>();
@@ -78,7 +78,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
         }
         List<Resource> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/env/application.properties", "classpath:META-INF/env/application.xml", "classpath:META-INF/env/application.ini");
-        data = new HashMap();
+        data = new HashMap<>();
 
         for(Resource resource:propertyUris){
             try{
@@ -89,7 +89,6 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Envir
                 LOG.log(Level.SEVERE, e, () -> "Error reading application environment data fromMap " + resource);
             }
         }
-        String applicationId = data.getOrDefault(WARID_PROP, cl.toString());
         data.put("classloader.type", cl.getClass().getName());
         data.put("classloader.info", cl.toString());
         Set<Resource> uris = new HashSet<>();

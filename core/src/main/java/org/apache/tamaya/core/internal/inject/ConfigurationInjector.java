@@ -27,11 +27,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Simple injector singleton that also registers instances configured using weak references.
  */
+@SuppressWarnings("rawtypes")
 public final class ConfigurationInjector {
 
     private static final ConfigurationInjector INSTANCE = new ConfigurationInjector();
 
-    private Map<Class, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
+	private Map<Class, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
     /**
      * Extract the configuration annotation config and registers it per class, for later reuse.
