@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.annotation.WithCodec;
-import org.apache.tamaya.spi.CodecsSingletonSpi;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -32,13 +29,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.tamaya.annotation.WithCodec;
+import org.apache.tamaya.spi.CodecsSingletonSpi;
+
 /**
  * Test implementation current {@link org.apache.tamaya.spi.CodecsSingletonSpi}, which provides codecs
  * for some basic types.
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public final class TestPropertyAdaptersSingletonSpi implements CodecsSingletonSpi {
 
-    private Map<Class, Codec<?>> codecs = new ConcurrentHashMap<>();
+	private Map<Class, Codec<?>> codecs = new ConcurrentHashMap<>();
 
     private TestPropertyAdaptersSingletonSpi(){
         register(char.class, (s) -> s.charAt(0), (ch) -> String.valueOf(ch));
@@ -68,7 +69,7 @@ public final class TestPropertyAdaptersSingletonSpi implements CodecsSingletonSp
     }
 
 
-    @Override
+	@Override
     public <T> Codec<T> register(Class<T> targetType, Codec<T> codec){
         Objects.requireNonNull(targetType);
         Objects.requireNonNull(codec);

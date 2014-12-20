@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.annotation;
 
-import org.apache.tamaya.Codec;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.tamaya.Codec;
 
 /**
  * Annotation to define a type adapter to be used before injecting a configured keys, or for applying changes.
@@ -39,6 +39,7 @@ public @interface WithCodec {
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
      */
-    Class<? extends Codec> value();
+    @SuppressWarnings("rawtypes")
+	Class<? extends Codec> value();
 
 }

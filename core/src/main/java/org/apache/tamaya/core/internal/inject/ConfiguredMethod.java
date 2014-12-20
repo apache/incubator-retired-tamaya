@@ -18,16 +18,14 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.Codec;
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.annotation.*;
-import org.apache.tamaya.core.internal.Utils;
-
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Objects;
+
+import org.apache.tamaya.annotation.ConfiguredProperties;
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultAreas;
+import org.apache.tamaya.core.internal.Utils;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance current
@@ -35,10 +33,8 @@ import java.util.stream.Collectors;
  * final keys by reflection.
  * Created by Anatole on 01.10.2014.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class ConfiguredMethod {
 
-    private static final Logger LOG = Logger.getLogger(ConfiguredMethod.class.getName());
 
     /**
      * The configured field instance.

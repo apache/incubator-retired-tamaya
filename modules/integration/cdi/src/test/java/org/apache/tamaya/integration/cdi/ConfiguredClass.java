@@ -20,14 +20,14 @@
  */
 package org.apache.tamaya.integration.cdi;
 
-import org.apache.tamaya.annotation.ObservesConfigChange;
-import org.apache.tamaya.annotation.ConfiguredProperty;
-import org.apache.tamaya.annotation.DefaultValue;
-import org.apache.tamaya.annotation.WithConfig;
-
-import javax.inject.Singleton;
 import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
+
+import javax.inject.Singleton;
+
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultValue;
+import org.apache.tamaya.annotation.ObservesConfigChange;
 
 /**
  * Created by Anatole on 08.09.2014.
@@ -35,7 +35,7 @@ import java.math.BigDecimal;
 @Singleton
 public class ConfiguredClass{
 
-    @WithConfig("test")
+//    @WithConfig("test")
     @ConfiguredProperty
     private String testProperty;
 
@@ -45,7 +45,7 @@ public class ConfiguredClass{
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    @WithConfig("test")
+//    @WithConfig("test")
     @ConfiguredProperty(keys = "foo")
     @ConfiguredProperty(keys = "a.b.c.key2")
     private String value2;
@@ -62,19 +62,19 @@ public class ConfiguredClass{
     @DefaultValue("5")
     private Integer int1;
 
-    @WithConfig("test")
+//    @WithConfig("test")
     @ConfiguredProperty
     private int int2;
 
-    @WithConfig("test")
+//    @WithConfig("test")
     @ConfiguredProperty
     private boolean booleanT;
 
-    @WithConfig("test")
+//    @WithConfig("test")
     @ConfiguredProperty(keys = "BD")
     private BigDecimal bigNumber;
 
-    @WithConfig("test")
+//    @WithConfig("test")
     @ConfiguredProperty(keys = "double1")
     private double doubleValue;
 
@@ -123,7 +123,8 @@ public class ConfiguredClass{
         return doubleValue;
     }
 
-    public String toString(){
+    @Override
+	public String toString(){
         return super.toString() + ": testProperty="+testProperty+", value1="+value1+", value2="+value2
                 +", int1="+int1+", int2="+int2+", booleanT="+booleanT+", bigNumber="+bigNumber
                 +", runtimeVersion="+runtimeVersion+", javaVersion2="+javaVersion2;

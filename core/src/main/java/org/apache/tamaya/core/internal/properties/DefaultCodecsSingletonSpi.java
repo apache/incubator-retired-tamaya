@@ -18,11 +18,6 @@
  */
 package org.apache.tamaya.core.internal.properties;
 
-import org.apache.tamaya.Codec;
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.annotation.WithCodec;
-import org.apache.tamaya.spi.CodecsSingletonSpi;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -36,6 +31,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
+import org.apache.tamaya.Codec;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.annotation.WithCodec;
+import org.apache.tamaya.spi.CodecsSingletonSpi;
+
 /**
  * Default codecs singleton, which provides default codesc for all kind of classes out of the box, which will be
  * instantiatable from configuration, if one of the following is given:
@@ -44,9 +44,11 @@ import java.util.function.Function;
  *     <li>have constructors taking a single String</li>
  * </ul>
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultCodecsSingletonSpi implements CodecsSingletonSpi {
 
-    private Map<Class,Codec> adapters = new ConcurrentHashMap<>();
+
+	private Map<Class,Codec> adapters = new ConcurrentHashMap<>();
 
     public DefaultCodecsSingletonSpi(){
         // Add default adapters
@@ -76,7 +78,7 @@ public class DefaultCodecsSingletonSpi implements CodecsSingletonSpi {
         register(ZoneId.class, ZoneId::of, ZoneId::getId);
     }
 
-    @Override
+	@Override
     public <T> Codec<T> register(Class<T> targetType, Codec<T> adapter){
         return adapters.put(targetType, adapter);
     }
@@ -125,7 +127,7 @@ public class DefaultCodecsSingletonSpi implements CodecsSingletonSpi {
                 decoder = (s) -> {
                     try{
                         constr.setAccessible(true);
-                        return (T)constr.newInstance(s);
+                        return constr.newInstance(s);
                     }
                     catch (Exception e){
                         throw new ConfigException("Failed to decode '"+s+"'", e);

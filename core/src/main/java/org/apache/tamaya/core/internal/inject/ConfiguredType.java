@@ -18,20 +18,28 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertySource;
-import org.apache.tamaya.annotation.*;
-
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.annotation.ConfiguredProperties;
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultAreas;
+import org.apache.tamaya.annotation.ObservesConfigChange;
 
 /**
  * Structure that contains and manages configuration related things for a configured type registered.
  * Created by Anatole on 03.10.2014.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ConfiguredType {
     /** A list with all annotated instance variables. */
     private List<ConfiguredField> configuredFields = new ArrayList<>();
@@ -40,14 +48,15 @@ public class ConfiguredType {
     /** A list with all callback methods listening to config changes. */
     private List<ConfigChangeCallbackMethod> callbackMethods = new ArrayList<>();
     /** The basic type. */
-    private Class type;
+	private Class type;
 
     /**
      * Creates an instance of this class hereby evaluating the config annotations given for later effective
      * injection (configuration) of instances.
      * @param type the instance type.
      */
-    public ConfiguredType(Class type) {
+
+	public ConfiguredType(Class type) {
         this.type = Objects.requireNonNull(type);
         initFields(type);
         initMethods(type);
@@ -158,7 +167,7 @@ public class ConfiguredType {
         return true;
     }
 
-    public static boolean isConfigured(Class type) {
+	public static boolean isConfigured(Class type) {
         if (type.getAnnotation(DefaultAreas.class) != null) {
             return true;
         }

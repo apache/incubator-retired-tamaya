@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.tamaya.Codec;
 
+@SuppressWarnings("unchecked")
 public interface PropertyAdapterService{
 
 	public default Codec<URL> getURLAdapter(){

@@ -29,7 +29,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
 
 /**

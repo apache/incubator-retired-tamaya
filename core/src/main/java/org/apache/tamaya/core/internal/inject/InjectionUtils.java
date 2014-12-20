@@ -1,20 +1,30 @@
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.Codec;
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.annotation.*;
-import org.apache.tamaya.core.internal.Utils;
-
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.apache.tamaya.Codec;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.annotation.ConfiguredProperties;
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultAreas;
+import org.apache.tamaya.annotation.DefaultValue;
+import org.apache.tamaya.annotation.WithCodec;
+import org.apache.tamaya.annotation.WithLoadPolicy;
+import org.apache.tamaya.core.internal.Utils;
 
 /**
  * Created by Anatole on 19.12.2014.
  */
+@SuppressWarnings("unchecked")
 final class InjectionUtils {
 
     private InjectionUtils(){}
@@ -118,18 +128,20 @@ final class InjectionUtils {
         return null;
     }
 
-    public static <T> T adaptValue(AnnotatedElement element, Class<T> targetType, String configValue){
+
+	@SuppressWarnings("rawtypes")
+	public static <T> T adaptValue(AnnotatedElement element, Class<T> targetType, String configValue){
         try {
             // Check for adapter/filter
-            T adaptedValue = null;
+//            T adaptedValue = null;
             WithCodec codecAnnot = element.getAnnotation(WithCodec.class);
             Class<? extends Codec> codecType;
             if (codecAnnot != null) {
                 codecType = codecAnnot.value();
                 if (!codecType.equals(Codec.class)) {
                     // TODO cache here...
-                    Codec<String> codec = codecType.newInstance();
-                    adaptedValue = (T) codec.deserialize(configValue);
+//                    Codec<String> codec = codecType.newInstance();
+//                    adaptedValue = (T) codec.deserialize(configValue);
                 }
             }
             if (String.class.equals(targetType)) {

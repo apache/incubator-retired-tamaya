@@ -39,16 +39,8 @@ import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
-
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 import org.apache.tamaya.spi.ServiceContext;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Proxy;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 
 /**

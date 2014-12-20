@@ -18,13 +18,13 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
-
-import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
 /**
  * Created by Anatole on 09.09.2014.

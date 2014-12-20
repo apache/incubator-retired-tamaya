@@ -18,26 +18,25 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.Codec;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.annotation.*;
+import org.apache.tamaya.annotation.ConfiguredProperties;
+import org.apache.tamaya.annotation.ConfiguredProperty;
+import org.apache.tamaya.annotation.DefaultAreas;
 import org.apache.tamaya.core.internal.Utils;
-
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance current
  * it (referenced by a weak reference). It also implements all aspects current keys filtering, converting any applying the
  * final keys by reflection.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class ConfiguredField {
 
-    private Logger LOG = Logger.getLogger(ConfiguredField.class.getName());
 
     /**
      * The configured field instance.
