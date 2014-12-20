@@ -28,6 +28,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Currency;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -53,17 +54,19 @@ public class DefaultCodecsSingletonSpi implements CodecsSingletonSpi {
     public DefaultCodecsSingletonSpi(){
         // Add default adapters
         register(char.class, (s) -> s.charAt(0), (ch) -> String.valueOf(ch));
-        register(int.class, Integer::parseInt, Object::toString);
         register(byte.class, Byte::parseByte, Object::toString);
         register(short.class, Short::parseShort, Object::toString);
+        register(int.class, Integer::parseInt, Object::toString);
+        register(long.class, Long::parseLong, Object::toString);
         register(boolean.class, Boolean::parseBoolean, b -> String.valueOf(b));
         register(float.class, Float::parseFloat, f -> String.valueOf(f));
         register(double.class, Double::parseDouble, d -> String.valueOf(d));
 
         register(Character.class, (s) -> s.charAt(0), Object::toString);
-        register(Integer.class, Integer::valueOf, Object::toString);
         register(Byte.class, Byte::valueOf, Object::toString);
         register(Short.class, Short::valueOf, String::valueOf);
+        register(Integer.class, Integer::valueOf, Object::toString);
+        register(Long.class, Long::valueOf, Object::toString);
         register(Boolean.class, Boolean::valueOf, b -> String.valueOf(b));
         register(Float.class, Float::valueOf, f -> String.valueOf(f));
         register(Double.class, Double::valueOf, d -> String.valueOf(d));
@@ -103,6 +106,9 @@ public class DefaultCodecsSingletonSpi implements CodecsSingletonSpi {
         }
         if(codec == null){
             codec = getDefaultCodec(targetType);
+        }
+        if(codec == null){
+            throw new ConfigException("No Codec found for " + targetType.getName());
         }
         return codec;
     }

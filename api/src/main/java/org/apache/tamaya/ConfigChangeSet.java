@@ -30,7 +30,7 @@ import java.util.*;
  */
 public final class ConfigChangeSet {
     /** The base property provider/configuration. */
-    private PropertySource propertyProvider;
+    private PropertySource propertySource;
     /** The base version, usable for optimistic locking. */
     private String baseVersion;
     /** The recorded changes. */
@@ -47,12 +47,12 @@ public final class ConfigChangeSet {
 
     /**
      * Constructor used by {@link ConfigChangeSetBuilder}.
-     * @param propertyProvider The base property provider/configuration, not null.
+     * @param propertySource The base property provider/configuration, not null.
      * @param baseVersion The base version, usable for optimistic locking.
      * @param changes The recorded changes, not null.
      */
-    ConfigChangeSet(PropertySource propertyProvider, String baseVersion, Collection<PropertyChangeEvent> changes) {
-        this.propertyProvider = Objects.requireNonNull(propertyProvider);
+    ConfigChangeSet(PropertySource propertySource, String baseVersion, Collection<PropertyChangeEvent> changes) {
+        this.propertySource = Objects.requireNonNull(propertySource);
         this.baseVersion = baseVersion;
         changes.forEach((c) -> this.changes.put(c.getPropertyName(), c));
     }
@@ -62,7 +62,7 @@ public final class ConfigChangeSet {
      * @return the underlying property provider/configuration, never null.
      */
     public PropertySource getPropertySource(){
-        return this.propertyProvider;
+        return this.propertySource;
     }
 
     /**
@@ -154,26 +154,11 @@ public final class ConfigChangeSet {
         return this.changes.isEmpty();
     }
 
-    /**
-     * Applies all changes to the given map instance.
-     * @param map the target map.never null.
-     */
-    public void applyChangesTo(Map<String, String> map) {
-        for(Map.Entry<String,PropertyChangeEvent> en: this.changes.entrySet()){
-            if(en.getValue().getNewValue() == null){
-                map.remove(en.getKey());
-            }
-            else{
-                map.put(en.getKey(), (String)en.getValue().getNewValue());
-            }
-        }
-    }
-
 
     @Override
     public String toString() {
         return "ConfigChangeSet{" +
-                "properties=" + propertyProvider +
+                "properties=" + propertySource +
                 ", baseVersion=" + baseVersion +
                 ", changes=" + changes +
                 '}';
