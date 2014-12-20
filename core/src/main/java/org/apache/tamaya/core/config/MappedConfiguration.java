@@ -51,8 +51,8 @@ class MappedConfiguration extends AbstractConfiguration implements Configuration
     }
 
     @Override
-    public void apply(ConfigChangeSet change) {
-        this.config.apply(change);
+    public void applyChanges(ConfigChangeSet change) {
+        this.config.applyChanges(change);
     }
 
     @Override
