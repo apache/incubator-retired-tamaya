@@ -34,7 +34,7 @@ public class ConfiguredTest {
 
     @Test
     public void testTemplateOnAllSystems(){
-        ConfigTemplate template = Configuration.current(ConfigTemplate.class);
+        ConfigTemplate template = Configuration.createTemplate(ConfigTemplate.class);
         assertNotNull(template);
         assertEquals(2233, template.int2());
         assertEquals(Integer.valueOf(5), template.int1());
@@ -44,16 +44,14 @@ public class ConfiguredTest {
     @Test
     public void testTemplateWithEnvironmentVariableOnWindows(){
         assumeTrue(OS.contains("win"));
-
-        ConfigTemplate template = Configuration.current(ConfigTemplate.class);
+        ConfigTemplate template = Configuration.createTemplate(ConfigTemplate.class);
         assertNotNull(template.computerName());
     }
 
     @Test
     public void testTemplateWithEnvironmentVariableOnMac(){
         assumeTrue(OS.contains("mac"));
-
-        ConfigTemplate template = Configuration.current(ConfigTemplate.class);
+        ConfigTemplate template = Configuration.createTemplate(ConfigTemplate.class);
         assertNotNull(template.homeDir());
     }
 
@@ -61,7 +59,7 @@ public class ConfiguredTest {
     public void testTemplateWithEnvironmentVariableOnUnixoidSystem(){
         assumeTrue(OS.contains("nix") || OS.contains("nux") || OS.indexOf("aix") > 0);
 
-        ConfigTemplate template = Configuration.current(ConfigTemplate.class);
+        ConfigTemplate template = Configuration.createTemplate(ConfigTemplate.class);
         assertNotNull(template.homeDir());
     }
 

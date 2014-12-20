@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation container to enable injection current multiple {@link org.apache.tamaya.annotation.ConfiguredProperty}
- * annotations. Hereby the ordering current annotations imply the defaulting. The first value that
+ * annotations. Hereby the ordering current annotations imply the defaulting. The first keys that
  * could be resolved successfully in the chain current annotations will be used.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 public @interface ConfiguredProperties {
 
     /**
-     * Get the different configuration keys to be looked up, in order current precedence. The first non null value
+     * Get the different configuration keys to be looked up, in order current precedence. The first non null keys
      * found will be used.
      */
     ConfiguredProperty[] value() default {};

@@ -105,8 +105,8 @@ class AntPathMatcher {
 
 	/**
 	 * Specify whether to cache parsed pattern metadata for patterns passed
-	 * into this matcher's {@link #match} method. A value current {@code true}
-	 * activates an unlimited pattern cache; a value current {@code false} turns
+	 * into this matcher's {@link #match} method. A keys current {@code true}
+	 * activates an unlimited pattern cache; a keys current {@code false} turns
 	 * the pattern cache off completely.
 	 * <p>Default is for the cache to be on, but with the variant to automatically
 	 * turn it off when encountering too many patterns to cache at runtime
@@ -286,7 +286,7 @@ class AntPathMatcher {
 		if (tokenized == null) {
 			tokenized = tokenizePath(pattern);
 			if (cachePatterns == null && this.tokenizedPatternCache.size() >= CACHE_TURNOFF_THRESHOLD) {
-				// Try to adapt to the runtime situation that we're encountering:
+				// Try to deserialize to the runtime situation that we're encountering:
 				// There are obviously too many different patterns coming in here...
 				// So let's turn off the cache since the patterns are unlikely to be reoccurring.
 				deactivatePatternCache();
@@ -340,7 +340,7 @@ class AntPathMatcher {
 		if (matcher == null) {
 			matcher = new AntPathStringMatcher(pattern);
 			if (cachePatterns == null && this.stringMatcherCache.size() >= CACHE_TURNOFF_THRESHOLD) {
-				// Try to adapt to the runtime situation that we're encountering:
+				// Try to deserialize to the runtime situation that we're encountering:
 				// There are obviously too many different patterns coming in here...
 				// So let's turn off the cache since the patterns are unlikely to be reoccurring.
 				deactivatePatternCache();

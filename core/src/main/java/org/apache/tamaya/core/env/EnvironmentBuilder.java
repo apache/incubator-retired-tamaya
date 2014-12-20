@@ -52,7 +52,7 @@ public final class EnvironmentBuilder{
     /**
      * Sets a new environment property.
      * @param key the key, not null.
-     * @param value the value, not null.
+     * @param value the keys, not null.
      * @return the builder for chaining
      */
     public EnvironmentBuilder set(String key, String value){

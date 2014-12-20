@@ -25,8 +25,16 @@ import java.util.*;
  * configuration or some if its entries.
  */
 public final class MetaInfo{
-    /** The key used for storing the data owner. */
-    private static final String OWNER_KEY = "_owner";
+    public static final String TIMESTAMP = "timestamp";
+    public static final String CONTEXT = "context";
+    public static final String NAME = "name";
+    public static final String INFO = "info";
+    public static final String TYPE = "type";
+    public static final String SOURCE = "source";
+    public static final String SOURCE_EXPRESSION = "source-expression";
+
+//    /** The key used for storing the data owner. */
+//    private static final String OWNER_KEY = "_owner";
     /** The meta information data. */
     private final Map<String, String> metaInfo = new HashMap<>();
 
@@ -51,7 +59,7 @@ public final class MetaInfo{
     /**
      * Access a meta data property.
      * @param key the property key, not null.
-     * @return the corresponding property value, or null.
+     * @return the corresponding property keys, or null.
      */
     public String get(String key){
         return this.metaInfo.get(key);
@@ -62,8 +70,56 @@ public final class MetaInfo{
      * Get the information about the data owner.
      * @return the data owner info, or null.
      */
-    public String getOwnerInfo(){
-        return this.metaInfo.get(OWNER_KEY);
+    public String getName(){
+        return this.metaInfo.get(NAME);
+    }
+
+    /**
+     * Get the type of configuration.
+     * @return the type, or null.
+     */
+    public String getType(){
+        return this.metaInfo.get(TYPE);
+    }
+
+    /**
+     * Get the info of configuration.
+     * @return the info, or null.
+     */
+    public String getInfo(){
+        return this.metaInfo.get(INFO);
+    }
+
+    /**
+     * Get the source of configuration.
+     * @return the source, or null.
+     */
+    public String getSource(){
+        return this.metaInfo.get(SOURCE);
+    }
+
+    /**
+     * Get the source expression to load thr  configuration.
+     * @return the info, or null.
+     */
+    public String getSourceExpression(){
+        return this.metaInfo.get(SOURCE_EXPRESSION);
+    }
+
+    /**
+     * Get the context of configuration.
+     * @return the context, or null.
+     */
+    public String getContext(){
+        return this.metaInfo.get(CONTEXT);
+    }
+
+    /**
+     * Get the context of configuration.
+     * @return the context, or null.
+     */
+    public String getTimestamp(){
+        return this.metaInfo.get(TIMESTAMP);
     }
 
     /**
@@ -97,7 +153,7 @@ public final class MetaInfo{
 
     /**
      * Helper method to escape "=\\[]".
-     * @param val the input value, not null.
+     * @param val the input keys, not null.
      * @return the escaped String, not null.
      */
     static String escape(String val){

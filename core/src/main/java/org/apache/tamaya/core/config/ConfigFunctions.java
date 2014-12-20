@@ -132,7 +132,7 @@ public final class ConfigFunctions {
     /**
      * Creates a {@link UnaryOperator} that creates a {@link org.apache.tamaya.Configuration} that maps any keys as
      * defined by the {@code keyMapper} given. If the {@code keyMapper} returns
-     * {@code null} for a value, it is removed from the resulting map.
+     * {@code null} for a keys, it is removed from the resulting map.
      *
      * @param keyMapper the key mapper, not null
      * @return the area configuration, with the areaKey stripped away.

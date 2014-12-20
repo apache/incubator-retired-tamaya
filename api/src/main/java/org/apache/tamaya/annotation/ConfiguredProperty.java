@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  * a configuration template method. Hereby this annotation can be used in multiple ways and combined
  * with other annotations such as {@link org.apache.tamaya.annotation.DefaultValue},
  * {@link org.apache.tamaya.annotation.WithLoadPolicy}, {@link org.apache.tamaya.annotation.WithConfig},
- * {@link org.apache.tamaya.annotation.WithConfigOperator}, {@link org.apache.tamaya.annotation.WithPropertyAdapter}.
+ * {@link org.apache.tamaya.annotation.WithConfigOperator}, {@link WithCodec}.
  *
  * Below the most simple variant current a configured class is given:
  * {@code
@@ -38,31 +38,31 @@ import java.lang.annotation.*;
  * the following is happening:
  * <ul>
  *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.current();}</li>
- *     <li>The current property String value is evaluated by calling {@code cfg.get("aValue");}</li>
+ *     <li>The current property String keys is evaluated by calling {@code cfg.get("aValue");}</li>
  *     <li>if not successful, an error is thrown ({@link org.apache.tamaya.ConfigException}.</li>
- *     <li>On success, since no type conversion is involved, the value is injected.</li>
+ *     <li>On success, since no type conversion is involved, the keys is injected.</li>
  *     <li>The configured bean is registered as a weak change listener in the config system's underlying
  *     configuration, so future config changes can be propagated (controlled by {@link org.apache.tamaya.annotation.WithLoadPolicy}
  *     annotations).</li>
  * </ul>
  *
- * In the next example we explicitly define the property value:
+ * In the next example we explicitly define the property keys:
  * {@code
  * pubic class ConfiguredItem{
  *
  *   @ConfiguredProperty
- *   @ConfiguredProperty("a.b.value")
- *   @configuredProperty("a.b.deprecated.value")
- *   @DefaultValue("${env:java.version}")
+ *   @ConfiguredProperty({"a.b.value", "a.b.deprecated.keys", "${env:java.version}"})
+ *   @ConfiguredProperty(configuration={"a", "b"}
+ *   @ConfiguredProperty(configuration={"a", "b", keys={"a.b.keys", "a.b.deprecated.keys", "${env:java.version}"}}
  *   private String aValue;
  * }
  *
  * Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
  * resolved. Hereby the ordering current the annotations define the ordering current resolution, so in the example above
- * resolution equals to {@code "aValue", "a.b.value", "a.b.deprecated.value"}. If no value could be read
- * fromMap the configuration, it uses the value fromMap the {@code DefaultValue} annotation. Interesting here
- * is that this value is not static, it is evaluated by calling
- * {@link org.apache.tamaya.Configuration#evaluateValue(org.apache.tamaya.Configuration, String)}.
+ * resolution equals to {@code "aValue", "a.b.keys", "a.b.deprecated.keys"}. If no keys could be read
+ * fromMap the configuration, it uses the keys fromMap the {@code DefaultValue} annotation. Interesting here
+ * is that this keys is not static, it is evaluated by calling
+ * {@link org.apache.tamaya.Configuration#evaluateValue(String, org.apache.tamaya.Configuration...)}.
  */
 @Repeatable(ConfiguredProperties.class)
 @Retention(RetentionPolicy.RUNTIME)
@@ -70,10 +70,18 @@ import java.lang.annotation.*;
 public @interface ConfiguredProperty {
 
     /**
-     * Get the property names to be used. Hereby the first non null value evaluated is injected as property value.
+     * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
+     * resolve the required properties. the configured keys is passed to {@code Configuration.current(String)}
+     * to evaluate the required configuration required.
+     * @return the configurations to be looked up for the given keys.
+     */
+    String config() default "";
+
+    /**
+     * Get the property names to be used. Hereby the first non null keys evaluated is injected as property keys.
      *
      * @return the property names, not null. If missing the field or method name being injected is used by default.
      */
-    String value() default "";
+    String[] keys() default {};
 
 }

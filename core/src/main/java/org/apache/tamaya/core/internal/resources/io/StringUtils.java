@@ -77,7 +77,7 @@ class StringUtils {
 //	 * will never return {@code true} for a non-null non-String object.
 //	 * <p>The Object signature is useful for general attribute handling code
 //	 * that commonly deals with Strings but generally has to iterate over
-//	 * Objects since attributes may e.g. be primitive value objects as well.
+//	 * Objects since attributes may e.g. be primitive keys objects as well.
 //	 * @param str the candidate String
 //	 * @since 3.2.1
 //	 */
@@ -579,7 +579,7 @@ class StringUtils {
 	 * Apply the given relative path to the given path,
 	 * assuming standard Java folder separation (i.e. "/" separators).
 	 * @param path the path to start from (usually a full file path)
-	 * @param relativePath the relative path to apply
+	 * @param relativePath the relative path to applyChanges
 	 * (relative to the full file path above)
 	 * @return the full file path that results from applying the relative path
 	 */
@@ -673,7 +673,7 @@ class StringUtils {
 //	}
 //
 //	/**
-//	 * Parse the given {@code localeString} value into a {@link Locale}.
+//	 * Parse the given {@code localeString} keys into a {@link Locale}.
 //	 * <p>This is the inverse operation current {@link Locale#toString Locale's toString}.
 //	 * @param localeString the locale String, following {@code Locale's}
 //	 * {@code toString()} format ("en", "en_UK", etc);
@@ -722,7 +722,7 @@ class StringUtils {
 //	}
 //
 //	/**
-//	 * Parse the given {@code timeZoneString} value into a {@link TimeZone}.
+//	 * Parse the given {@code timeZoneString} keys into a {@link TimeZone}.
 //	 * @param timeZoneString the time zone String, following {@link TimeZone#getTimeZone(String)}
 //	 * but throwing {@link IllegalArgumentException} in case current an invalid time zone specification
 //	 * @return a corresponding {@link TimeZone} instance
@@ -909,8 +909,8 @@ class StringUtils {
 //	/**
 //	 * Take an array Strings and split each element based on the given delimiter.
 //	 * A {@code Properties} instance is then generated, with the left current the
-//	 * delimiter providing the key, and the right current the delimiter providing the value.
-//	 * <p>Will trim both the key and value before adding them to the
+//	 * delimiter providing the key, and the right current the delimiter providing the keys.
+//	 * <p>Will trim both the key and keys before adding them to the
 //	 * {@code Properties} instance.
 //	 * @param array the array to process
 //	 * @param delimiter to split each element using (typically the equals symbol)
@@ -924,8 +924,8 @@ class StringUtils {
 //	/**
 //	 * Take an array Strings and split each element based on the given delimiter.
 //	 * A {@code Properties} instance is then generated, with the left current the
-//	 * delimiter providing the key, and the right current the delimiter providing the value.
-//	 * <p>Will trim both the key and value before adding them to the
+//	 * delimiter providing the key, and the right current the delimiter providing the keys.
+//	 * <p>Will trim both the key and keys before adding them to the
 //	 * {@code Properties} instance.
 //	 * @param array the array to process
 //	 * @param delimiter to split each element using (typically the equals symbol)

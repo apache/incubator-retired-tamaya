@@ -36,21 +36,23 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
 
     public TestConfigServiceSingletonSpi(){
         Map<String,String> config = new HashMap<>();
-        config.put("a.b.c.key1", "value current a.b.c.key1");
-        config.put("a.b.c.key2", "value current a.b.c.key2");
-        config.put("a.b.key3", "value current a.b.key3");
-        config.put("a.b.key4", "value current a.b.key4");
-        config.put("a.key5", "value current a.key5");
-        config.put("a.key6", "value current a.key6");
+        config.put("a.b.c.key1", "keys current a.b.c.key1");
+        config.put("a.b.c.key2", "keys current a.b.c.key2");
+        config.put("a.b.key3", "keys current a.b.key3");
+        config.put("a.b.key4", "keys current a.b.key4");
+        config.put("a.key5", "keys current a.key5");
+        config.put("a.key6", "keys current a.key6");
         config.put("int1", "123456");
         config.put("int2", "111222");
         config.put("booleanT", "true");
         config.put("double1", "1234.5678");
         config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
-        config.put("testProperty", "value current testProperty");
+        config.put("testProperty", "keys current testProperty");
         config.put("runtimeVersion", "${java.version}");
         // configs.put("test", new MapConfiguration(MetaInfoBuilder.current().setName("test").build(), config));
     }
+
+
 
     @Override
     public boolean isConfigurationDefined(String name){
@@ -58,31 +60,30 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
     }
 
     @Override
-    public <T> T getConfiguration(String name, Class<T> type){
-        if(type.equals(Configuration.class)) {
-            Configuration config = configs.get(name);
-            return (T)Optional.ofNullable(config).orElseThrow(() -> new ConfigException("No such config: " + name));
-        }
-        throw new ConfigException("Not such config name="+name+", type="+ type.getName());
-    }
-
-    @Override
-    public <T> T getConfiguration(Class<T> type) {
+    public Configuration getConfiguration(String name) {
         // TODO
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public void configure(Object instance) {
+    public <T> T createTemplate(Class<T> type, Configuration... configurations) {
         // TODO
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public String evaluateValue(Configuration config, String expression){
+    public void configure(Object instance, Configuration... configurations) {
+        // TODO
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public String evaluateValue(String expression, Configuration... configurations) {
         // TODO improve this ugly implementation...
-        for(Map.Entry<String, String> en: config.toMap().entrySet()){
-            expression = expression.replaceAll("\\$\\{"+en.getKey()+"\\}", en.getValue());
+        for (Configuration config : configurations) {
+            for (Map.Entry<String, String> en : config.toMap().entrySet()) {
+                expression = expression.replaceAll("\\$\\{" + en.getKey() + "\\}", en.getValue());
+            }
         }
         return expression;
     }

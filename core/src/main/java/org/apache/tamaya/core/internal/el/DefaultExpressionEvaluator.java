@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.internal.el;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
 import org.apache.tamaya.core.spi.ExpressionResolver;
@@ -27,7 +28,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by Anatole on 28.09.2014.
+ * Default expression evaluator that manages several instances of {@link org.apache.tamaya.core.spi.ExpressionResolver}.
+ * Each resolver is identified by a resolver id. Each expression passed has the form resolverId:resolverExpression, which
+ * has the advantage that different resolvers can be active in parallel.
  */
 public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
 
@@ -61,11 +64,14 @@ public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
      * </ul>
      *
      * @param expression the expression to be evaluated, not null
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}.
+     *                If no such config is passed, the default configurations provided by the current
+     *                registered providers are used.
      * @return the evaluated expression.
      * @throws org.apache.tamaya.ConfigException if resolution fails.
      */
     @Override
-    public String evaluate(String expression) {
+    public String evaluate(String expression, Configuration... configurations) {
         StringTokenizer tokenizer = new StringTokenizer(expression, "${}\\", true);
         boolean escaped = false;
         StringBuilder resolvedValue = new StringBuilder();
@@ -106,7 +112,7 @@ public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
                     if (!"}".equals(tokenizer.nextToken())) {
                         throw new ConfigException("Invalid expression encountered: " + expression);
                     }
-                    // evalute subexpression
+                    // evaluate sub-expression
                     current.append(evaluteInternal(subExpression));
                     break;
                 default:

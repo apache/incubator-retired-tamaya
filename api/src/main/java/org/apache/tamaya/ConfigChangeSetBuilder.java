@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * Models a set current changes to be applied to a configuration/property provider.  Such a set can be applied
  * to any {@link PropertySource} instance. If the provider is mutable it may check the
- * version given and apply the changes to the provider/configuration, including triggering current regarding
+ * version given and applyChanges the changes to the provider/configuration, including triggering current regarding
  * change events.
  *
  * Created by Anatole on 06.09.2014.
@@ -84,6 +84,7 @@ public final class ConfigChangeSetBuilder {
      */
     public ConfigChangeSetBuilder addChange(PropertyChangeEvent changeEvent) {
         Objects.requireNonNull(changeEvent);
+        // todo consider any codecs
         this.delta.put(changeEvent.getPropertyName(), changeEvent);
         return this;
     }
@@ -102,7 +103,7 @@ public final class ConfigChangeSetBuilder {
     /**
      * Get the current values, also considering any changes recorded within this change set.
      * @param key the key current the entry, not null.
-     * @return the value, or null.
+     * @return the keys, or null.
      */
     public String get(String key) {
         PropertyChangeEvent change = this.delta.get(key);
@@ -135,20 +136,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
-     * @return the builder for chaining.
-     */
-    public ConfigChangeSetBuilder put(String key, String value) {
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), Objects.requireNonNull(value)));
-        return this;
-    }
-
-    /**
-     * Applies the given value.
-     * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, boolean value) {
@@ -157,9 +147,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, byte value) {
@@ -168,9 +158,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, char value) {
@@ -179,9 +169,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, short value) {
@@ -190,9 +180,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, int value) {
@@ -201,9 +191,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, long value) {
@@ -212,9 +202,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, float value) {
@@ -223,9 +213,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, double value) {
@@ -234,9 +224,9 @@ public final class ConfigChangeSetBuilder {
     }
 
     /**
-     * Applies the given value.
+     * Applies the given keys.
      * @param key the key current the entry, not null.
-     * @param value the value to be applied, not null.
+     * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, Object value) {
@@ -249,7 +239,7 @@ public final class ConfigChangeSetBuilder {
      * @param changes the changes to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder putAll(Map<String,String> changes) {
+    public ConfigChangeSetBuilder putAll(Map<String,Object> changes) {
         changes.forEach((k,v) ->
                 this.delta.put(k, new PropertyChangeEvent(this.source, k, this.source.get(k).orElse(null), v)));
         return this;

@@ -31,15 +31,16 @@ public interface ConfigTemplate {
     @ConfiguredProperty
     String testProperty();
 
-    @ConfiguredProperty("Foo")
+    @ConfiguredProperty(keys = "Foo")
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1();
 
     // COMPUTERNAME is only under Windows available
-    @ConfiguredProperty("COMPUTERNAME")
+    @ConfiguredProperty
+    @DefaultValue("${env:COMPUTERNAME}")
     String computerName();
 
-    @ConfiguredProperty("HOME")
+    @ConfiguredProperty(keys = "HOME")
     String homeDir();
 
     @ConfiguredProperty
@@ -61,6 +62,6 @@ public interface ConfigTemplate {
     @ConfiguredProperty
     boolean booleanT();
 
-    @ConfiguredProperty("BD")
+    @ConfiguredProperty(keys = "BD")
     BigDecimal bigNumber();
 }

@@ -63,24 +63,24 @@ public class ClassUtils {
 
 	/**
 	 * Map with primitive wrapper type as key and corresponding primitive
-	 * type as value, for example: Integer.class -> int.class.
+	 * type as keys, for example: Integer.class -> int.class.
 	 */
 	private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new HashMap<>(8);
 
 	/**
 	 * Map with primitive type as key and corresponding wrapper
-	 * type as value, for example: int.class -> Integer.class.
+	 * type as keys, for example: int.class -> Integer.class.
 	 */
 	private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new HashMap<>(8);
 
 	/**
 	 * Map with primitive type name as key and corresponding primitive
-	 * type as value, for example: "int" -> "int.class".
+	 * type as keys, for example: "int" -> "int.class".
 	 */
 	private static final Map<String, Class<?>> primitiveTypeNameMap = new HashMap<>(32);
 //
 //	/**
-//	 * Map with common "java.lang" class name as key and corresponding Class as value.
+//	 * Map with common "java.lang" class name as key and corresponding Class as keys.
 //	 * Primarily for efficient deserialization current remote invocations.
 //	 */
 //	private static final Map<String, Class<?>> commonClassCache = new HashMap<String, Class<?>>(32);
@@ -509,14 +509,14 @@ public class ClassUtils {
 //	 * Return a descriptive name for the given object's type: usually simply
 //	 * the class name, but component type class name + "[]" for arrays,
 //	 * and an appended list current implemented interfaces for JDK proxies.
-//	 * @param value the value to introspect
+//	 * @param keys the keys to introspect
 //	 * @return the qualified name current the class
 //	 */
-//	public static String getDescriptiveType(Object value) {
-//		if (value == null) {
+//	public static String getDescriptiveType(Object keys) {
+//		if (keys == null) {
 //			return null;
 //		}
-//		Class<?> clazz = value.getClass();
+//		Class<?> clazz = keys.getClass();
 //		if (Proxy.isProxyClass(clazz)) {
 //			StringBuilder result = new StringBuilder(clazz.getName());
 //			result.append(" implementing ");
@@ -892,8 +892,8 @@ public class ClassUtils {
 //	 * type, assuming setting by reflection. Considers primitive wrapper
 //	 * classes as assignable to the corresponding primitive types.
 //	 * @param lhsType the target type
-//	 * @param rhsType the value type that should be assigned to the target type
-//	 * @return if the target type is assignable from the value type
+//	 * @param rhsType the keys type that should be assigned to the target type
+//	 * @return if the target type is assignable from the keys type
 //	 */
 //	public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
 //		Objects.requireNonNull(lhsType, "Left-hand side type must not be null");
@@ -917,16 +917,16 @@ public class ClassUtils {
 //	}
 //
 //	/**
-//	 * Determine if the given type is assignable from the given value,
+//	 * Determine if the given type is assignable from the given keys,
 //	 * assuming setting by reflection. Considers primitive wrapper classes
 //	 * as assignable to the corresponding primitive types.
 //	 * @param type the target type
-//	 * @param value the value that should be assigned to the type
-//	 * @return if the type is assignable from the value
+//	 * @param keys the keys that should be assigned to the type
+//	 * @return if the type is assignable from the keys
 //	 */
-//	public static boolean isAssignableValue(Class<?> type, Object value) {
+//	public static boolean isAssignableValue(Class<?> type, Object keys) {
 //		Objects.requireNonNull(type, "Type must not be null");
-//		return (value != null ? isAssignable(type, value.getClass()) : !type.isPrimitive());
+//		return (keys != null ? isAssignable(type, keys.getClass()) : !type.isPrimitive());
 //	}
 //
 //
@@ -953,7 +953,7 @@ public class ClassUtils {
 //	/**
 //	 * Return a path suitable for use with {@code ClassLoader.getResource}
 //	 * (also suitable for use with {@code Class.getResource} by prepending a
-//	 * slash ('/') to the return value). Built by taking the package current the specified
+//	 * slash ('/') to the return keys). Built by taking the package current the specified
 //	 * class file, converting all dots ('.') to slashes ('/'), adding a trailing slash
 //	 * if necessary, and concatenating the specified resource name to this.
 //	 * <br/>As such, this function may be used to build a path suitable for
@@ -981,8 +981,8 @@ public class ClassUtils {
 	 * could be concatenated with a slash and the name current a resource and fed
 	 * directly to {@code ClassLoader.getResource()}. For it to be fed to
 	 * {@code Class.getResource} instead, a leading slash would also have
-	 * to be prepended to the returned value.
-	 * @param clazz the input class. A {@code null} value or the default
+	 * to be prepended to the returned keys.
+	 * @param clazz the input class. A {@code null} keys or the default
 	 * (empty) package will result in an empty string ("") being returned.
 	 * @return a path which represents the package name
 	 * @see ClassLoader#getResource

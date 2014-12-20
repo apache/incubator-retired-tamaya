@@ -48,10 +48,10 @@ public abstract class AbstractConfiguration extends AbstractPropertySource imple
     @Override
     public <T> Optional<T> get(String key, Class<T> type){
         AdapterProviderSpi as = ServiceContext.getInstance().getSingleton(AdapterProviderSpi.class);
-        PropertyAdapter<T> adapter = as.getAdapter(type);
+        Codec<T> adapter = as.getAdapter(type);
         if(adapter == null){
             throw new ConfigException(
-                    "Can not adapt config property '" + key + "' to " + type.getName() + ": no such " +
+                    "Can not deserialize config property '" + key + "' to " + type.getName() + ": no such " +
                             "adapter.");
         }
         return getAdapted(key, adapter);

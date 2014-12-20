@@ -25,7 +25,7 @@ import org.apache.tamaya.core.spi.ExpressionResolver;
 import java.util.*;
 
 /**
- * Created by Anatole on 28.09.2014.
+ * Property resolver implementation that interprets the resolver expression as system property name.
  */
 public final class SystemPropertyResolver implements ExpressionResolver{
 
@@ -35,7 +35,7 @@ public final class SystemPropertyResolver implements ExpressionResolver{
     }
 
     @Override
-    public String resolve(String expression){
+    public String resolve(String expression, Configuration... configurations){
         return Optional.ofNullable(System.getProperty(expression)).orElseThrow(
                 () -> new ConfigException("No such system property: " + expression)
         );

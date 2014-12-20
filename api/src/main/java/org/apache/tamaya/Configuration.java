@@ -44,11 +44,11 @@ import java.util.stream.Collectors;
 public interface Configuration extends PropertySource {
 
     /**
-     * Get the property value as {@link Boolean}.
+     * Get the property keys as {@link Boolean}.
      *
      * @param key the property's absolute, or relative path, e.g. {@code
      *            a/b/c/d.myProperty}.
-     * @return the property's value.
+     * @return the property's keys.
      */
 	default Boolean getBoolean(String key) {
 		Optional<Boolean> val = get(key, Boolean.class);
@@ -59,11 +59,11 @@ public interface Configuration extends PropertySource {
 	}
 
     /**
-     * Get the property value as {@link Integer}.
+     * Get the property keys as {@link Integer}.
      *
      * @param key the property's absolute, or relative path, e.g. @code
      *            a/b/c/d.myProperty}.
-     * @return the property's value.
+     * @return the property's keys.
      */
     default OptionalInt getInteger(String key){
         Optional<Integer> val = get(key, Integer.class);
@@ -75,11 +75,11 @@ public interface Configuration extends PropertySource {
 
 
     /**
-     * Get the property value as {@link Long}.
+     * Get the property keys as {@link Long}.
      *
      * @param key the property's absolute, or relative path, e.g. @code
      *            a/b/c/d.myProperty}.
-     * @return the property's value.
+     * @return the property's keys.
      */
     default OptionalLong getLong(String key){
         Optional<Long> val = get(key, Long.class);
@@ -91,11 +91,11 @@ public interface Configuration extends PropertySource {
 
 
     /**
-     * Get the property value as {@link Double}.
+     * Get the property keys as {@link Double}.
      *
      * @param key the property's absolute, or relative path, e.g. @code
      *            a/b/c/d.myProperty}.
-     * @return the property's value.
+     * @return the property's keys.
      * @throws IllegalArgumentException if no such property exists.
      */
     default OptionalDouble getDouble(String key){
@@ -109,7 +109,7 @@ public interface Configuration extends PropertySource {
 
 
     /**
-     * Get the property value as type {@code Class<T>}.
+     * Get the property keys as type {@code Class<T>}.
      * <p>
      * If {@code Class<T>} is not one current
      * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
@@ -121,33 +121,33 @@ public interface Configuration extends PropertySource {
      *                a/b/c/d.myProperty}.
      * @param adapter the PropertyAdapter to perform the conversion fromMap
      *                {@link String} to {@code Class<T>}, not {@code null}.
-     * @return the property's value.
-     * @throws IllegalArgumentException if the value could not be converted to the required target
+     * @return the property's keys.
+     * @throws IllegalArgumentException if the keys could not be converted to the required target
      *                                  type, or no such property exists.
      */
-    default <T> Optional<T> getAdapted(String key, PropertyAdapter<T> adapter){
+    default <T> Optional<T> getAdapted(String key, Codec<T> adapter){
         Optional<String> value = get(key);
         if(value.isPresent()) {
-            return Optional.ofNullable(adapter.adapt(value.get()));
+            return Optional.ofNullable(adapter.deserialize(value.get()));
         }
         return Optional.empty();
     }
 
 
     /**
-     * Get the property value as type T. This will implicitly require a corresponding {@link
-     * PropertyAdapter} to be available that is capable current providing type T
-     * fromMap the given String value.
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * Codec} to be available that is capable current providing type T
+     * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
-     * @return the property's value.
-     * @throws IllegalArgumentException if the value could not be converted to the required target
+     * @return the property's keys.
+     * @throws IllegalArgumentException if the keys could not be converted to the required target
      *                                  type.
      */
     default <T> Optional<T> get(String key, Class<T> type){
-        return getAdapted(key, PropertyAdapters.getAdapter(type));
+        return getAdapted(key, Codecs.getCodec(type));
     }
 
     /**
@@ -245,7 +245,7 @@ public interface Configuration extends PropertySource {
     }
 
     /**
-     * Query some value fromMap a configuration.
+     * Query some keys fromMap a configuration.
      *
      * @param query the query, never {@code null}.
      * @return the result
@@ -255,7 +255,7 @@ public interface Configuration extends PropertySource {
     }
 
     /**
-     * Field that allows property config to be versioned, meaning that each change on a provider requires this value
+     * Field that allows property config to be versioned, meaning that each change on a provider requires this keys
      * to be incremented by one. This can be easily used to implement versioning (and optimistic locking)
      * in distributed (remote) usage scenarios.
      * @return the version current the current instance, or 'N/A'.
@@ -271,19 +271,6 @@ public interface Configuration extends PropertySource {
      */
     public static boolean isDefined(String name){
         return ConfigurationManager.isConfigurationDefined(name);
-    }
-
-    /**
-     * Access a configuration by name.
-     *
-     * @param name the configuration's name, not null, not empty.
-     *             @param template the annotated configuration's
-     *                             template interface, not null.
-     * @return the corresponding Configuration instance, never null.
-     * @throws ConfigException if no such configuration is defined.
-     */
-    public static <T> T current(String name, Class<T> template){
-        return ConfigurationManager.getConfiguration(name, template);
     }
 
 
@@ -313,11 +300,14 @@ public interface Configuration extends PropertySource {
      *
      * @param type the annotated configuration type (could be an interface or
      *             a non abstract class), not null.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
      * @return the corresponding typed Configuration instance, never null.
      * @throws ConfigException if the configuration could not be resolved.
      */
-    public static <T> T current(Class<T> type){
-        return ConfigurationManager.getConfiguration(type);
+    public static <T> T createTemplate(Class<T> type, Configuration... configurations){
+        return ConfigurationManager.createTemplate(type, configurations);
     }
 
     /**
@@ -325,32 +315,27 @@ public interface Configuration extends PropertySource {
      * entries.
      *
      * @param instance the instance with configuration annotations, not null.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
      * @return the corresponding typed Configuration instance, never null.
      * @throws ConfigException if the configuration could not be resolved.
      */
-    public static void configure(Object instance){
-        ConfigurationManager.configure(instance);
+    public static void configure(Object instance, Configuration... configurations){
+        ConfigurationManager.configure(instance, configurations);
     }
 
     /**
      * Evaluate the current expression based on the current configuration valid.
      *
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
      * @param expression the expression, not null.
      * @return the evaluated config expression.
      */
-    public static String evaluateValue(String expression){
-        return ConfigurationManager.evaluateValue(expression);
-    }
-
-    /**
-     * Evaluate the current expression based on the current configuration valid.
-     *
-     * @param config     The configuration to be used for evluating, not null.
-     * @param expression the expression, not null.
-     * @return the evaluated config expression.
-     */
-    public static String evaluateValue(Configuration config, String expression){
-        return ConfigurationManager.evaluateValue(config, expression);
+    public static String evaluateValue(String expression, Configuration... configurations){
+        return ConfigurationManager.evaluateValue(expression, configurations);
     }
 
     /**

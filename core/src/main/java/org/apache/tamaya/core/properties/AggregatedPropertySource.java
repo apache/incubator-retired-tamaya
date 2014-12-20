@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
-import org.apache.tamaya.core.properties.AbstractPropertySource;
 
 import java.util.*;
 
@@ -86,11 +85,11 @@ class AggregatedPropertySource extends AbstractPropertySource {
      * @throws UnsupportedOperationException when the configuration is not writable.
      */
     @Override
-    public void apply(ConfigChangeSet change){
+    public void applyChanges(ConfigChangeSet change){
         if(mutableProvider!=null)
-            mutableProvider.apply(change);
+            mutableProvider.applyChanges(change);
         else
-            super.apply(change);
+            super.applyChanges(change);
     }
 
     @Override

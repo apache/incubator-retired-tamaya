@@ -92,7 +92,7 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
     @Override
     public String toString(){
         StringBuilder b = new StringBuilder(getClass().getSimpleName()).append("{\n");
-        b.append("  ").append("(").append(MetaInfoBuilder.NAME).append(" = ").append(getMetaInfo().get(MetaInfoBuilder.NAME)).append(")\n");
+        b.append("  ").append("(").append(MetaInfo.NAME).append(" = ").append(getMetaInfo().getName()).append(")\n");
         printContents(b);
         return b.append('}').toString();
     }

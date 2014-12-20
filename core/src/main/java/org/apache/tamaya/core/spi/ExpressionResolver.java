@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.core.spi;
 
+import org.apache.tamaya.Configuration;
+
 /**
  * This interface defines a small plugin for resolving current expressions within configuration.
  * Resolver expression always have the form current <code>${resolverId:expression}</code>. The
@@ -42,9 +44,12 @@ public interface ExpressionResolver {
      * as {@code blabla to be interpreted AND executed.} only.
      *
      * @param expression the stripped expression.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}.
+     *                If no such config is passed, the default configurations provided by the current
+     *                registered providers are used.
      * @return the resolved expression.
      * @throws org.apache.tamaya.ConfigException when the expression passed is not resolvable, e.g. due to syntax issues
      *                                        or data not present or valid.
      */
-    String resolve(String expression);
+    String resolve(String expression, Configuration... configurations);
 }

@@ -3,8 +3,6 @@ package org.apache.tamaya.core.config;
 import org.apache.tamaya.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
@@ -46,8 +44,8 @@ class MappedConfiguration extends AbstractConfiguration implements Configuration
     }
 
     @Override
-    public void apply(ConfigChangeSet change) {
-        this.config.apply(change);
+    public void applyChanges(ConfigChangeSet change) {
+        this.config.applyChanges(change);
     }
 
     @Override

@@ -57,7 +57,7 @@ public final class Utils {
         if(containerAnnot!=null){
             Method valueMethod;
             try {
-                valueMethod = annotationContainer.getMethod("value");
+                valueMethod = annotationContainer.getMethod("keys");
                 result.addAll(Arrays.asList((T[])valueMethod.invoke(containerAnnot)));
             } catch (Exception e) {
                 LOG.log(Level.SEVERE, "Failed to evaluate repeatable annotation.", e);
@@ -90,7 +90,7 @@ public final class Utils {
         if(containerAnnot!=null){
             Method valueMethod;
             try {
-                valueMethod = annotationContainer.getMethod("value");
+                valueMethod = annotationContainer.getMethod("keys");
                 result.addAll(Arrays.asList((T[])valueMethod.invoke(containerAnnot)));
             } catch (Exception e) {
                 LOG.log(Level.SEVERE, "Failed to evaluate repeatable annotation.", e);

@@ -19,12 +19,13 @@
 package org.apache.tamaya.core.internal.el;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.spi.ExpressionResolver;
 
 import java.util.Optional;
 
 /**
- * Created by Anatole on 28.09.2014.
+ * Property resolver implementation that interprets the resolver expressions as environment properties.
  */
 public final class EnvironmentPropertyResolver implements ExpressionResolver{
 
@@ -34,7 +35,7 @@ public final class EnvironmentPropertyResolver implements ExpressionResolver{
     }
 
     @Override
-    public String resolve(String expression){
+    public String resolve(String expression, Configuration... configurations){
         return Optional.ofNullable(System.getenv(expression)).orElseThrow(
                 () -> new ConfigException("No such environment property: " + expression)
         );

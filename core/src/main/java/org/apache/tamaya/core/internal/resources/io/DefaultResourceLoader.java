@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * <p>Will return a {@code UrlResource} if the location value is a URL,
+ * <p>Will return a {@code UrlResource} if the location keys is a URL,
  * and a {@code ClassPathResource} if it is a non-URL path or a
  * "classpath:" pseudo-URL.
  *

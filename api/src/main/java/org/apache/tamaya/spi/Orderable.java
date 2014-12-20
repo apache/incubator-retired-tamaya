@@ -27,8 +27,8 @@ package org.apache.tamaya.spi;
 @FunctionalInterface
 public interface Orderable {
     /**
-     * Get the ordinal value for the component, by default 0.
-     * @return the ordinal value
+     * Get the ordinal keys for the component, by default 0.
+     * @return the ordinal keys
      */
     int order();
 }

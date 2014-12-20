@@ -89,7 +89,7 @@ class MapBasedPropertySource extends AbstractPropertySource {
      * @throws UnsupportedOperationException when the configuration is not writable.
      */
     @Override
-    public void apply(ConfigChangeSet change){
+    public void applyChanges(ConfigChangeSet change){
         change.getEvents().forEach(this::applyChange);
     }
 

@@ -25,39 +25,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tamaya.PropertyAdapter;
+import org.apache.tamaya.Codec;
 
 public interface PropertyAdapterService{
 
-	public default PropertyAdapter<URL> getURLAdapter(){
-        return PropertyAdapter.class.cast(getClassAdapter(URL.class));
+	public default Codec<URL> getURLAdapter(){
+        return Codec.class.cast(getClassAdapter(URL.class));
     }
 
-	public default PropertyAdapter<InputStream> getClasspathResourceAdapter(){
-        return PropertyAdapter.class.cast(getClassAdapter(InputStream.class));
+	public default Codec<InputStream> getClasspathResourceAdapter(){
+        return Codec.class.cast(getClassAdapter(InputStream.class));
     }
 
-	public default PropertyAdapter<File> getFileAdapter(){
-        return PropertyAdapter.class.cast(getClassAdapter(File.class));
+	public default Codec<File> getFileAdapter(){
+        return Codec.class.cast(getClassAdapter(File.class));
     }
 
-	public default PropertyAdapter<Set<String>> getSetAdapter(){
-        return PropertyAdapter.class.cast(getClassAdapter(Set.class));
+	public default Codec<Set<String>> getSetAdapter(){
+        return Codec.class.cast(getClassAdapter(Set.class));
     }
 
-	public default PropertyAdapter<Map<String, String>> getMapAdapter(){
-        return PropertyAdapter.class.cast(getClassAdapter(Map.class));
+	public default Codec<Map<String, String>> getMapAdapter(){
+        return Codec.class.cast(getClassAdapter(Map.class));
     }
 
-	public default PropertyAdapter<List<String>> getListAdapter(){
-        return PropertyAdapter.class.cast(getClassAdapter(List.class));
+	public default Codec<List<String>> getListAdapter(){
+        return Codec.class.cast(getClassAdapter(List.class));
     }
 
-    public default <T> PropertyAdapter<Class<? extends T>> getClassAdapter(Class<T> requiredType){
+    public default <T> Codec<Class<? extends T>> getClassAdapter(Class<T> requiredType){
         return getClassAdapter(requiredType, Thread.currentThread().getContextClassLoader());
     }
 
-	public <T> PropertyAdapter<Class<? extends T>> getClassAdapter(Class<T> requiredType,
+	public <T> Codec<Class<? extends T>> getClassAdapter(Class<T> requiredType,
 			ClassLoader... classLoaders);
 
 }

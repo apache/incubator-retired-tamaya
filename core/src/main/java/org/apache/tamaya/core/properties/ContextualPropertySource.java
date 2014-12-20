@@ -125,8 +125,8 @@ class ContextualPropertySource implements PropertySource {
      * @throws UnsupportedOperationException when the configuration is not writable.
      */
     @Override
-    public void apply(ConfigChangeSet change){
-        getContextualMap().apply(change);
+    public void applyChanges(ConfigChangeSet change){
+        getContextualMap().applyChanges(change);
     }
 
     /**

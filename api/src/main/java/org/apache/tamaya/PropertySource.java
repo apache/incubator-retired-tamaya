@@ -75,7 +75,7 @@ public interface PropertySource {
      * Access a property.
      *
      * @param key the property's key, not null.
-     * @return the property's value.
+     * @return the property's keys.
      */
     Optional<String> get(String key);
 
@@ -132,7 +132,7 @@ public interface PropertySource {
      * Allows to evaluate if the provider is mutable.
      *
      * @return true, if the provider is mutable.
-     * @see #apply(ConfigChangeSet)
+     * @see #applyChanges(ConfigChangeSet)
      */
     default boolean isMutable() {
         return false;
@@ -146,7 +146,7 @@ public interface PropertySource {
      * @throws UnsupportedOperationException when the configuration is not writable.
      * @see #isMutable()
      */
-    default void apply(ConfigChangeSet change) {
+    default void applyChanges(ConfigChangeSet change) {
         throw new UnsupportedOperationException("Config/properties not mutable: " + this);
     }
 

@@ -18,10 +18,21 @@
  */
 package org.apache.tamaya.core.spi;
 
+import org.apache.tamaya.Configuration;
+
 /**
- * Created by Anatole on 12.10.2014.
+ * This interfaces provides a model for expression evaluation. This enables transparently plugin expression languages
+ * as needed. In a Java EE context full fledged EL may be used, whereas in ME only simple replacement mechanisms
+ * are better suited to the runtime requirements.
  */
 @FunctionalInterface
 public interface ExpressionEvaluator {
-    String evaluate(String expression);
+    /**
+     * Evaluates the given expression.
+     * @param expression the expression to be evaluated, not null.
+     * @param configurations the configurations to be used for evaluating the values for injection into {@code instance}.
+     *                       If no items are passed, the default configuration is used.
+     * @return the evaluated expression.
+     */
+    String evaluate(String expression, Configuration... configurations);
 }

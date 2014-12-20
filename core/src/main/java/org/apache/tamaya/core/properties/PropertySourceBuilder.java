@@ -124,7 +124,7 @@ public final class PropertySourceBuilder {
 
     /**
      * Sets the aggregation policy to be used, when adding additional property sets. The policy will
-     * be active a slong as the builder is used or it is reset to another value.
+     * be active a slong as the builder is used or it is reset to another keys.
      *
      * @param aggregationPolicy the aggregation policy, not null.
      * @return the builder for chaining.
@@ -181,7 +181,7 @@ public final class PropertySourceBuilder {
         MetaInfo mi = this.metaInfo;
         if (mi == null) {
             mi = MetaInfoBuilder.of("aggregate")
-                    .set(MetaInfoBuilder.SOURCE,source).build();
+                    .setSources(source).build();
         }
         this.current = PropertySourceFactory.aggregate(mi, this.aggregationPolicy, allProviders);
 
@@ -507,7 +507,7 @@ public final class PropertySourceBuilder {
      * created.
      *
      * @param key the key to be added, not null.
-     * @param value the value to be added, not null.
+     * @param value the keys to be added, not null.
      * @return this builder for chaining
      */
     public PropertySourceBuilder setMeta(String key, String value){

@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.config;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.internal.el.DefaultExpressionEvaluator;
+import org.apache.tamaya.core.internal.inject.ConfigTemplateInvocationHandler;
 import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
@@ -64,43 +65,21 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     }
 
     @Override
-    public <T> T getConfiguration(String name, Class<T> type) {
-        ConfigurationProviderSpi provider = configProviders.get(name);
-        if (provider == null) {
-            if (DEFAULT_CONFIG_NAME.equals(name)) {
-                provider = new FallbackSimpleConfigProvider();
-                configProviders.put(DEFAULT_CONFIG_NAME, provider);
-            } else {
-                throw new ConfigException("No such config: " + name);
-            }
-        }
-        Configuration config = provider.getConfiguration();
-        if (config == null) {
-            throw new ConfigException("No such config: " + name);
-        }
-        if (Configuration.class.equals(type)) {
-            return (T) config;
-        }
-        return createAdapterProxy(config, type);
+    public <T> T createTemplate(Class<T> type, Configuration... configurations) {
+        ClassLoader cl = Optional.ofNullable(Thread.currentThread()
+                .getContextClassLoader()).orElse(getClass().getClassLoader());
+        return (T) Proxy.newProxyInstance(cl, new Class[]{type}, new ConfigTemplateInvocationHandler(type, configurations));
     }
 
     /**
-     * Creates a proxy implementing the given target interface.
      *
-     * @param config the configuration to be used for providing values.
-     * @param type   the target interface.
-     * @param <T>    the target interface type.
-     * @return the corresponding implementing proxy, never null.
+     * @param instance the instance with configuration annotations, not null.
+     * @param configurations the configurations to be used for evaluating the values for injection into {@code instance}.
+     *                If no items are passed, the default configuration is used.
      */
-    private <T> T createAdapterProxy(Configuration config, Class<T> type) {
-        ClassLoader cl = Optional.ofNullable(Thread.currentThread()
-                .getContextClassLoader()).orElse(getClass().getClassLoader());
-        return (T) Proxy.newProxyInstance(cl, new Class[]{type}, new ConfigTemplateInvocationHandler(type, config));
-    }
-
     @Override
-    public void configure(Object instance) {
-        ConfigurationInjector.configure(instance);
+    public void configure(Object instance, Configuration... configurations) {
+        ConfigurationInjector.configure(instance, configurations);
     }
 
     private String getConfigId(Annotation... qualifiers) {
@@ -119,8 +98,8 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     }
 
     @Override
-    public String evaluateValue(Configuration config, String expression) {
-        return expressionEvaluator.evaluate(expression);
+    public String evaluateValue(String expression, Configuration... configurations) {
+        return expressionEvaluator.evaluate(expression, configurations);
     }
 
     @Override
@@ -162,9 +141,34 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
         return spi != null;
     }
 
+    @Override
+    public Configuration getConfiguration(String name) {
+        ConfigurationProviderSpi provider = configProviders.get(name);
+        if (provider == null) {
+            if (DEFAULT_CONFIG_NAME.equals(name)) {
+                provider = new FallbackSimpleConfigProvider();
+                configProviders.put(DEFAULT_CONFIG_NAME, provider);
+            } else {
+                throw new ConfigException("No such config: " + name);
+            }
+        }
+        Configuration config = provider.getConfiguration();
+        if (config == null) {
+            throw new ConfigException("No such config: " + name);
+        }
+        return config;
+    }
+
     /**
      * Implementation of a default config provider used as fallback, if no {@link org.apache.tamaya.core.spi.ConfigurationProviderSpi}
-     * instance is registered for providing the {@code default} {@link org.apache.tamaya.Configuration}.
+     * instance is registered for providing the {@code default} {@link org.apache.tamaya.Configuration}. The providers loads the follwing
+     * config resources:
+     * <ul>
+     *     <li>Classpath: META-INF/cfg/default/&#42;&#42;/&#42;.xml, META-INF/cfg/default/&#42;&#42;/&#42;.properties, META-INF/cfg/default/&#42;&#42;/&#42;.ini</li>
+     *     <li>Classpath: META-INF/cfg/config/#42;#42;/#42;.xml, META-INF/cfg/config/#42;#42;/#42;.properties, META-INF/cfg/config/#42;#42;/#42;.ini</li>
+     *     <li>Files: defined by the system property -Dconfig.dir</li>
+     *     <li>system properties</li>
+     * </ul>
      */
     private static final class FallbackSimpleConfigProvider implements ConfigurationProviderSpi {
         /**
@@ -190,19 +194,22 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
 
         @Override
         public void reload() {
-            this.configuration =
+            PropertySourceBuilder builder =
                     PropertySourceBuilder.of(DEFAULT_CONFIG_NAME)
                             .addProviders(PropertySourceBuilder.of("CL default")
                                     .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
-                                    .addPaths("META-INF/cfg/default/**/*.xml", "META-INF/cfg/default/**/*.properties", "META-INF/cfg/default/**/*.ini")
+                                    .addPaths("classpath:META-INF/cfg/default/**/*.xml", "classpath:META-INF/cfg/default/**/*.properties", "classpath:META-INF/cfg/default/**/*.ini")
                                     .build())
                             .addProviders(PropertySourceBuilder.of("CL default")
                                     .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
-                                    .addPaths("META-INF/cfg/config/**/*.xml", "META-INF/cfg/config/**/*.properties", "META-INF/cfg/config/**/*.ini")
-                                    .build())
-                            .addSystemProperties()
-                            .addEnvironmentProperties()
-                            .build().toConfiguration();
+                                    .addPaths("classpath:META-INF/cfg/config/**/*.xml", "classpath:META-INF/cfg/config/**/*.properties", "classpath:META-INF/cfg/config/**/*.ini")
+                                    .build());
+            String configDir = System.getProperty("config.dir");
+            if(configDir!=null && !configDir.trim().isEmpty()){
+                builder.addPaths("file:"+configDir);
+            }
+            builder.addSystemProperties();
+            this.configuration = builder.build().toConfiguration();
         }
     }
 

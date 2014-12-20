@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
+import org.apache.tamaya.Configuration;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +33,11 @@ public final class ConfigurationInjector {
 
     private Map<Class, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
+    /**
+     * Extract the configuration annotation config and registers it per class, for later reuse.
+     * @param type the type to be configured.
+     * @return the configured type registered.
+     */
     public static ConfiguredType registerType(Class<?> type){
         if (!ConfiguredType.isConfigured(type)) {
             return null;
@@ -38,20 +45,22 @@ public final class ConfigurationInjector {
         return INSTANCE.configuredTypes.computeIfAbsent(type, ConfiguredType::new);
     }
 
-    public static void configure(Object instance){
+    /**
+     * Configured the current instance and reigsterd necessary listener to forward config change events as
+     * defined by the current annotations in place.
+     * @param instance the instance to be configured
+     * @param configurations Configuration instances that replace configuration served by services. This allows
+     *                       more easily testing and adaption.
+     */
+    public static void configure(Object instance, Configuration... configurations){
         Class type = Objects.requireNonNull(instance).getClass();
         if (!ConfiguredType.isConfigured(type)) {
             throw new IllegalArgumentException("Not a configured type: " + type.getName());
         }
-        ConfiguredType configType = registerType(type);
-        initializeConfiguredFields(configType, instance);
+        ConfiguredType configuredType = registerType(type);
+        Objects.requireNonNull(configuredType).configure(instance, configurations);
     }
 
-    private static <T> void initializeConfiguredFields(final ConfiguredType configuredType, Object instance) {
-        Objects.requireNonNull(configuredType).configure(instance);
-        ConfiguredInstancesManager.register(configuredType, instance);
-
-    }
 
 
 }

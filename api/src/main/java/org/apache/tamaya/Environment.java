@@ -39,7 +39,7 @@ public interface Environment{
     /**
      * Access a property.
      * @param key the property's key, not null.
-     * @return the property's value.
+     * @return the property's keys.
      */
     Optional<String> get(String key);
 

@@ -90,7 +90,7 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
         }
 
         @Override
-        public void apply(ConfigChangeSet changeSet) {
+        public void applyChanges(ConfigChangeSet changeSet) {
             for(PropertyChangeEvent change: changeSet.getEvents()){
                 if(change.getNewValue()==null){
                     this.data.remove(change.getPropertyName());

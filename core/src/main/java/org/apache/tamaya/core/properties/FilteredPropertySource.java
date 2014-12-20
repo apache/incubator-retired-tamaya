@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
-import org.apache.tamaya.core.properties.AbstractPropertySource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,8 +66,8 @@ class FilteredPropertySource extends AbstractPropertySource {
      * @throws UnsupportedOperationException when the configuration is not writable.
      */
     @Override
-    public void apply(ConfigChangeSet change){
-        this.unit.apply(change);
+    public void applyChanges(ConfigChangeSet change){
+        this.unit.applyChanges(change);
     }
 
 }

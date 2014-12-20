@@ -33,13 +33,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Configuration is organized as key/value pairs. This basically can be modeled as {@code Map<String,String>}
+ * Configuration is organized as key/keys pairs. This basically can be modeled as {@code Map<String,String>}
  * Configuration should be as simple as possible. A {@code Map<String,String>} instance has methods that may not
  * be used in many use cases and/or are not easy to implement. Currently the following functionality
  * must be supported:
  * <ul>
- * <li>access a value by key (+get+)</li>
- * <li>check if a value is present (+containsKey+)</li>
+ * <li>access a keys by key (+get+)</li>
+ * <li>check if a keys is present (+containsKey+)</li>
  * <li>get a set current all defined keys (+keySet+)</li>
  * <li>a property provider must be convertible to a +Map+, by calling +toMap()+</li>
  * <li>a property provider must get access to its meta information.</li>
@@ -48,8 +48,8 @@ import static org.junit.Assert.assertNotNull;
  * <ul>
  * <li>The API must never return null.</li>
  * <li>The API should support undefined values.</li>
- * <li>The API must support passing default values, to be returned if a value is undefined.</li>
- * <li>The API must allow to throw exceptions, when a value is undefined.
+ * <li>The API must support passing default values, to be returned if a keys is undefined.</li>
+ * <li>The API must allow to throw exceptions, when a keys is undefined.
  * Customized exceptions hereby should be supported.</li>
  * <li>Properties can be stored in the classpath, on a file.</li>
  * <li>Properties can be stored as properties, xml-properties or as ini-files.</li>

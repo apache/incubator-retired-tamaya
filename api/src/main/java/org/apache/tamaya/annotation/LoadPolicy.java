@@ -25,22 +25,22 @@ package org.apache.tamaya.annotation;
  */
 public enum LoadPolicy {
     /**
-     * The configuration value is evaluated once, when the owning component is loaded/configured, but never updated later.
+     * The configuration keys is evaluated once, when the owning component is loaded/configured, but never updated later.
      */
     INITIAL,
     /**
-     * The configuration value is evaluated exactly once on its first use lazily, but never updated later.
+     * The configuration keys is evaluated exactly once on its first use lazily, but never updated later.
      * This feature is not applicable on field injection, but only on configuration template methods.
      */
     LAZY,
     /**
-     * The configuration value is evaluated once, when the owning component is loaded/configured.
+     * The configuration keys is evaluated once, when the owning component is loaded/configured.
      * Later changes on this configuration entry will be reinjected/updated and additionally triggered
      * as {@link java.beans.PropertyChangeEvent}.
      */
     MANAGED,
     /**
-     * The configuration value is evaluated once, when the owning component is loaded/configured.
+     * The configuration keys is evaluated once, when the owning component is loaded/configured.
      * Later changes on this configuration entry will be reinjected/updated, but no {@link java.beans.PropertyChangeEvent}
      * will be triggered.
      */

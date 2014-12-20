@@ -52,7 +52,7 @@ public interface Resource extends InputStreamSource {
 	 * e.g. via {@link #getInputStream()} or {@link #getFile()}.
 	 * <p>Will be {@code true} for typical resource descriptors;
 	 * note that actual content reading may still fail when attempted.
-	 * However, a value current {@code false} is a definitive indication
+	 * However, a keys current {@code false} is a definitive indication
 	 * that the resource content cannot be read.
 	 * @see #getInputStream()
 	 */

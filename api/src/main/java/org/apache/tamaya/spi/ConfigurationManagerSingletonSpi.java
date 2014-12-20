@@ -49,9 +49,7 @@ public interface ConfigurationManagerSingletonSpi{
      * @return the corresponding Configuration instance, never null.
      * @throws org.apache.tamaya.ConfigException if no such configuration is defined.
      */
-    default Configuration getConfiguration(String name){
-        return getConfiguration(name, Configuration.class);
-    }
+    Configuration getConfiguration(String name);
 
     /**
      * Access the default configuration.
@@ -59,7 +57,7 @@ public interface ConfigurationManagerSingletonSpi{
      * @throws org.apache.tamaya.ConfigException if no such configuration is defined.
      */
     default Configuration getConfiguration(){
-        return getConfiguration("default", Configuration.class);
+        return getConfiguration("default");
     }
 
     /**
@@ -67,40 +65,33 @@ public interface ConfigurationManagerSingletonSpi{
      * entries.
      *
      * @param instance the instance with configuration annotations, not null.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}.
+     *                If no such config is passed, the default configurationa provided by the current
+     *                registered providers are used.
      * @throws org.apache.tamaya.ConfigException if any required configuration could not be resolved/injected.
      */
-    void configure(Object instance);
+    void configure(Object instance, Configuration... configurations);
 
     /**
      * Access a configuration by name.
      *
-     * @param name the configuration's name, not null, not empty.
-     *             @param template the annotated configuration's
-     *                             template interface, not null.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
      * @return the corresponding Configuration instance, never null.
      * @throws org.apache.tamaya.ConfigException if no such configuration is defined.
      */
-    <T> T getConfiguration(String name, Class<T> template);
-
-    /**
-     * Access a typed configuration.
-     *
-     * @param type the annotated configuration type (could be an interface or
-     *             a non abstract class), not null.
-     * @return the corresponding typed Configuration instance, never null.
-     * @throws org.apache.tamaya.ConfigException if the configuration could not be resolved.
-     */
-    default <T> T getConfiguration(Class<T> type){
-        return getConfiguration("default", type);
-    }
+    <T> T createTemplate(Class<T> template, Configuration... configurations);
 
     /**
      * Evaluate the current expression based on the current configuration valid.
-     * @param config     The configuration to be used for evaluating, using EL, not null.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
      * @param expression the expression, not null.
      * @return the evaluated config expression.
      */
-    String evaluateValue(Configuration config, String expression);
+    String evaluateValue(String expression, Configuration... configurations);
 
     /**
      * Add a ConfigChangeSet listener to the given configuration instance.

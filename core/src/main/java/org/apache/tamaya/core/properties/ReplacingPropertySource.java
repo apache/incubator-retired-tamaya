@@ -101,8 +101,8 @@ class ReplacingPropertySource implements PropertySource {
      * @throws UnsupportedOperationException when the configuration is not writable.
      */
     @Override
-    public void apply(ConfigChangeSet change){
-        this.mainMap.apply(change);
+    public void applyChanges(ConfigChangeSet change){
+        this.mainMap.applyChanges(change);
     }
 
     @Override

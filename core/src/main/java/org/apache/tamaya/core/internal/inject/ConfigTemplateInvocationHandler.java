@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.config;
+package org.apache.tamaya.core.internal.inject;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.internal.inject.ConfiguredType;
+import org.apache.tamaya.core.internal.inject.InjectionUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -28,25 +29,37 @@ import java.util.Objects;
 /**
  * Invocation handler that handles request against a configuration template.
  */
-class ConfigTemplateInvocationHandler implements InvocationHandler {
-    /** The underlying configuration. */
-    private Configuration config;
-    /** The configured type. */
+public final class ConfigTemplateInvocationHandler implements InvocationHandler {
+    /**
+     * Any overriding configurations.
+     */
+    private Configuration[] configurations;
+    /**
+     * The configured type.
+     */
     private ConfiguredType type;
 
-    public ConfigTemplateInvocationHandler(Class<?> type, Configuration config) {
-        this.config = Objects.requireNonNull(config);
+    /**
+     * Creates a new handler instance.
+     * @param type           the target type, not null.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
+     */
+    public ConfigTemplateInvocationHandler(Class<?> type, Configuration... configurations) {
+        this.configurations = Objects.requireNonNull(configurations).clone();
         this.type = new ConfiguredType(Objects.requireNonNull(type));
-        if(!type.isInterface()){
+        if (!type.isInterface()) {
             throw new IllegalArgumentException("Can only proxy interfaces as configuration templates.");
         }
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if("toString".equals(method.getName())){
+        if ("toString".equals(method.getName())) {
             return "Configured Proxy -> " + this.type.getType().getName();
         }
-        return this.type.getConfiguredValue(method, args);
+        String configValue = InjectionUtils.getConfigValue(method, configurations);
+        return InjectionUtils.adaptValue(method, method.getReturnType(), configValue);
     }
 }

@@ -18,24 +18,27 @@
  */
 package org.apache.tamaya.annotation;
 
+import org.apache.tamaya.Codec;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
- * resolve the required properties. the configured value is passed to {@code Configuration.current(String)}
- * to evaluate the required configuration required.
+ * Annotation to define a type adapter to be used before injecting a configured keys, or for applying changes.
+ * This will override any other adapter for performing the type conversion before
+ * injecting the field keys.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })
-public @interface WithConfig {
+@Target(value = { ElementType.FIELD, ElementType.METHOD })
+public @interface WithCodec {
 
     /**
-     * The name current the {@link org.apache.tamaya.Configuration} to be used to
-     * resolve the required properties, not null or empty.
+     * Define a custom adapter or codec that should be used to deserialize the configuration entry injected. This overrides any
+     * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
+     * registered, it is handled as a deployment error.
      */
-    String value();
+    Class<? extends Codec> value();
 
 }

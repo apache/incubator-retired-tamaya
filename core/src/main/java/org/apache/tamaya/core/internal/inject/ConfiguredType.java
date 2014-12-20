@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.inject;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.annotation.*;
 
 import java.beans.PropertyChangeEvent;
@@ -32,41 +33,30 @@ import java.util.*;
  * Created by Anatole on 03.10.2014.
  */
 public class ConfiguredType {
-
+    /** A list with all annotated instance variables. */
     private List<ConfiguredField> configuredFields = new ArrayList<>();
+    /** A list with all annotated methods (templates). */
     private Map<Method, ConfiguredMethod> configuredMethods = new HashMap<>();
+    /** A list with all callback methods listening to config changes. */
     private List<ConfigChangeCallbackMethod> callbackMethods = new ArrayList<>();
+    /** The basic type. */
     private Class type;
 
+    /**
+     * Creates an instance of this class hereby evaluating the config annotations given for later effective
+     * injection (configuration) of instances.
+     * @param type the instance type.
+     */
     public ConfiguredType(Class type) {
         this.type = Objects.requireNonNull(type);
-        for (Field f : type.getDeclaredFields()) {
-            ConfiguredProperties propertiesAnnot = f.getAnnotation(ConfiguredProperties.class);
-            if (propertiesAnnot != null) {
-                try {
-                    ConfiguredField configuredField = new ConfiguredField(f);
-                    configuredFields.add(configuredField);
-                } catch (Exception e) {
-                    throw new ConfigException("Failed to initialized configured field: " +
-                            f.getDeclaringClass().getName() + '.' + f.getName(), e);
-                }
-            }
-            else{
-                ConfiguredProperty propertyAnnot = f.getAnnotation(ConfiguredProperty.class);
-                if (propertyAnnot != null) {
-                    try {
-                        ConfiguredField configuredField = new ConfiguredField(f);
-                        configuredFields.add(configuredField);
-                    } catch (Exception e) {
-                        throw new ConfigException("Failed to initialized configured field: " +
-                                f.getDeclaringClass().getName() + '.' + f.getName(), e);
-                    }
-                }
-            }
-        }
+        initFields(type);
+        initMethods(type);
+    }
+
+    private void initMethods(Class type) {
         for (Method m : type.getDeclaredMethods()) {
             ObservesConfigChange mAnnot = m.getAnnotation(ObservesConfigChange.class);
-            if(mAnnot!=null) {
+            if (mAnnot != null) {
                 if (m.getParameterTypes().length != 1) {
                     continue;
                 }
@@ -82,8 +72,7 @@ public class ConfiguredType {
                     throw new ConfigException("Failed to initialized configured callback method: " +
                             m.getDeclaringClass().getName() + '.' + m.getName(), e);
                 }
-            }
-            else{
+            } else {
                 ConfiguredProperties propertiesAnnot = m.getAnnotation(ConfiguredProperties.class);
                 if (propertiesAnnot != null) {
                     try {
@@ -93,8 +82,7 @@ public class ConfiguredType {
                         throw new ConfigException("Failed to initialized configured method: " +
                                 m.getDeclaringClass().getName() + '.' + m.getName(), e);
                     }
-                }
-                else{
+                } else {
                     ConfiguredProperty propertyAnnot = m.getAnnotation(ConfiguredProperty.class);
                     if (propertyAnnot != null) {
                         try {
@@ -110,23 +98,59 @@ public class ConfiguredType {
         }
     }
 
-    public Object getConfiguredValue(Method method, Object[] args) {
-        ConfiguredMethod m = this.configuredMethods.get(method);
-        return m.getValue(args);
+    private void initFields(Class type) {
+        for (Field f : type.getDeclaredFields()) {
+            ConfiguredProperties propertiesAnnot = f.getAnnotation(ConfiguredProperties.class);
+            if (propertiesAnnot != null) {
+                try {
+                    ConfiguredField configuredField = new ConfiguredField(f);
+                    configuredFields.add(configuredField);
+                } catch (Exception e) {
+                    throw new ConfigException("Failed to initialized configured field: " +
+                            f.getDeclaringClass().getName() + '.' + f.getName(), e);
+                }
+            } else {
+                ConfiguredProperty propertyAnnot = f.getAnnotation(ConfiguredProperty.class);
+                if (propertyAnnot != null) {
+                    try {
+                        ConfiguredField configuredField = new ConfiguredField(f);
+                        configuredFields.add(configuredField);
+                    } catch (Exception e) {
+                        throw new ConfigException("Failed to initialized configured field: " +
+                                f.getDeclaringClass().getName() + '.' + f.getName(), e);
+                    }
+                }
+            }
+        }
     }
 
-    public void configure(Object instance) {
+    /**
+     * Method called to configure an instance.
+     *
+     * @param instance       The instance to be configured.
+     * @param configurations Configuration instances that replace configuration served by services. This allows
+     *                       more easily testing and adaption.
+     */
+    public void configure(Object instance, Configuration... configurations) {
         for (ConfiguredField field : configuredFields) {
             field.applyInitialValue(instance);
         }
     }
 
-    public void triggerConfigUpdate(PropertyChangeEvent configChangeEvent, Object instance) {
+    public void triggerConfigUpdate(PropertyChangeEvent evt, Object instance) {
         // TODO do check for right config ;)
-        configuredFields.stream().filter(field -> field.matchesKey(configChangeEvent.getPropertyName())).forEach(field -> field.applyValue(instance, (String) configChangeEvent.getNewValue(), false));
+        configuredFields.stream().filter(field -> field.matchesKey(getName(evt.getSource()), evt.getPropertyName())).forEach(field -> field.applyValue(instance, (String) evt.getNewValue(), false));
         for (ConfigChangeCallbackMethod callBack : this.callbackMethods) {
-            callBack.call(instance, configChangeEvent);
+            callBack.call(instance, evt);
         }
+    }
+
+    private String getName(Object source){
+        if(source instanceof PropertySource){
+            PropertySource ps = (PropertySource)source;
+            return ps.getMetaInfo().getName();
+        }
+        return "N/A";
     }
 
     public boolean isConfiguredBy(Configuration configuration) {
@@ -135,7 +159,7 @@ public class ConfiguredType {
     }
 
     public static boolean isConfigured(Class type) {
-        if(type.getAnnotation(DefaultAreas.class)!=null){
+        if (type.getAnnotation(DefaultAreas.class) != null) {
             return true;
         }
         // if no class level annotation is there we might have field level annotations only

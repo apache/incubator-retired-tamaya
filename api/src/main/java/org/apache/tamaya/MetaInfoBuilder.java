@@ -28,16 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class MetaInfoBuilder{
 
-    public static final String METAINFO = "_metainfo";
-    public static final String TIMESTAMP = "timestamp";
-    public static final String CONTEXT = "context";
-    public static final String NAME = "name";
-    public static final String INFO = "info";
-    public static final String TYPE = "type";
-    public static final String SOURCE = "source";
-    public static final String ENVIRONMENT = "environment";
-    public static final String SOURCE_EXPRESSION = "source-expression";
-
     Map<String,String> map = new ConcurrentHashMap<>();
 
     private MetaInfoBuilder(MetaInfo metaInfo){
@@ -47,7 +37,7 @@ public final class MetaInfoBuilder{
     }
 
     private MetaInfoBuilder(String name){
-        this.map.put(NAME, Objects.requireNonNull(name));
+        this.map.put(MetaInfo.NAME, Objects.requireNonNull(name));
     }
 
     public static MetaInfoBuilder of(MetaInfo metaInfo){
@@ -62,48 +52,27 @@ public final class MetaInfoBuilder{
         return new MetaInfoBuilder("<noname>");
     }
 
-    public MetaInfoBuilder withName(String name){
-        Objects.requireNonNull(name);
-        map.put(NAME, name);
-        return this;
-    }
-
     public MetaInfoBuilder setName(String name){
         Objects.requireNonNull(name);
-        map.put(NAME, name);
+        map.put(MetaInfo.NAME, name);
         return this;
     }
 
     public MetaInfoBuilder setType(String type){
         Objects.requireNonNull(type);
-        map.put(TYPE, type);
+        map.put(MetaInfo.TYPE, type);
         return this;
     }
 
     public MetaInfoBuilder setInfo(String info){
         Objects.requireNonNull(info);
-        map.put(INFO, info);
+        map.put(MetaInfo.INFO, info);
         return this;
     }
 
     public MetaInfoBuilder setSources(String... sources){
         Objects.requireNonNull(sources);
-        map.put(SOURCE, Arrays.toString(sources));
-        return this;
-    }
-
-    public MetaInfoBuilder setMetaInfo(String key, String metaInfo){
-        Objects.requireNonNull(metaInfo);
-        Objects.requireNonNull(key);
-        map.put(key + '.' + METAINFO, metaInfo);
-        return this;
-    }
-
-    public MetaInfoBuilder setMetaInfo(String metaInfo){
-        if(metaInfo!=null){
-            Objects.requireNonNull(metaInfo);
-            map.put(METAINFO, metaInfo);
-        }
+        map.put(MetaInfo.SOURCE, Arrays.toString(sources));
         return this;
     }
 
@@ -117,18 +86,18 @@ public final class MetaInfoBuilder{
 
     public MetaInfoBuilder setSourceExpressions(String... sourceExpressions){
         Objects.requireNonNull(sourceExpressions);
-        map.put(SOURCE_EXPRESSION, Arrays.toString(sourceExpressions));
+        map.put(MetaInfo.SOURCE_EXPRESSION, Arrays.toString(sourceExpressions));
         return this;
     }
 
     public MetaInfoBuilder setTimestamp(long timestamp){
-        map.put(TIMESTAMP, String.valueOf(timestamp));
+        map.put(MetaInfo.TIMESTAMP, String.valueOf(timestamp));
         return this;
     }
 
     public MetaInfoBuilder setContext(String context){
         Objects.requireNonNull(context);
-        map.put(CONTEXT, context);
+        map.put(MetaInfo.CONTEXT, context);
         return this;
     }
 

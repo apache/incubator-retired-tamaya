@@ -21,7 +21,6 @@ package org.apache.tamaya.samples.annotations;
 import org.apache.tamaya.annotation.ObservesConfigChange;
 import org.apache.tamaya.annotation.ConfiguredProperty;
 import org.apache.tamaya.annotation.DefaultValue;
-import org.apache.tamaya.annotation.WithConfig;
 
 import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
@@ -34,15 +33,14 @@ public class ConfiguredClass{
     @ConfiguredProperty
     private String testProperty;
 
-    @ConfiguredProperty("a.b.c.key1")
-    @ConfiguredProperty("a.b.c.key2")
-    @ConfiguredProperty("a.b.c.key3")
+    @ConfiguredProperty(keys = "a.b.c.key1")
+    @ConfiguredProperty(keys = "a.b.c.key2")
+    @ConfiguredProperty(keys = "a.b.c.key3")
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    @WithConfig("test")
-    @ConfiguredProperty("foo")
-    @ConfiguredProperty("a.b.c.key2")
+    @ConfiguredProperty(config="test", keys = "foo")
+    @ConfiguredProperty(keys = "a.b.c.key2")
     private String value2;
 
     @ConfiguredProperty
@@ -57,16 +55,13 @@ public class ConfiguredClass{
     @DefaultValue("5")
     private Integer int1;
 
-    @WithConfig("test")
-    @ConfiguredProperty
+    @ConfiguredProperty(config = "test")
     private int int2;
 
-    @WithConfig("test")
-    @ConfiguredProperty
+    @ConfiguredProperty(config = "test")
     private boolean booleanT;
 
-    @WithConfig("test")
-    @ConfiguredProperty("BD")
+    @ConfiguredProperty(config="test", keys ="BD")
     private BigDecimal bigNumber;
 
     @ObservesConfigChange

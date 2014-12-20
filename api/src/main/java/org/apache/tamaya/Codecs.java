@@ -18,20 +18,20 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.annotation.WithPropertyAdapter;
+import org.apache.tamaya.annotation.WithCodec;
+import org.apache.tamaya.spi.CodecsSingletonSpi;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
 
 /**
- * Singleton manager that provides {@link PropertyAdapter} instance, usable for converting String
+ * Singleton manager that provides {@link Codec} instance, usable for converting String
  * based configuration entries into any other target types.
  */
-final class PropertyAdapters{
+final class Codecs {
 
     /**
      * Orivate singleton constructor.
      */
-    private PropertyAdapters(){}
+    private Codecs(){}
 
     /**
      * Registers a new PropertyAdapter for the given target type, hereby replacing any existing adapter for
@@ -41,8 +41,8 @@ final class PropertyAdapters{
      * @param <T> The target type
      * @return any adapter replaced with the new adapter, or null.
      */
-    public static <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter){
-        return ServiceContext.getInstance().getSingleton(PropertyAdaptersSingletonSpi.class).register(targetType, adapter);
+    public static <T> Codec<T> register(Class<T> targetType, Codec<T> adapter){
+        return ServiceContext.getInstance().getSingleton(CodecsSingletonSpi.class).register(targetType, adapter);
     }
 
     /**
@@ -51,7 +51,7 @@ final class PropertyAdapters{
      * @return true, if the given target type is supported.
      */
     public static boolean isTargetTypeSupported(Class<?> targetType){
-        return ServiceContext.getInstance().getSingleton(PropertyAdaptersSingletonSpi.class).isTargetTypeSupported(targetType);
+        return ServiceContext.getInstance().getSingleton(CodecsSingletonSpi.class).isTargetTypeSupported(targetType);
     }
 
     /**
@@ -61,22 +61,22 @@ final class PropertyAdapters{
      * @return the corresponding adapter, never null.
      * @throws ConfigException if the target type is not supported.
      */
-    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType){
+    public static  <T> Codec<T> getCodec(Class<T> targetType){
         return getAdapter(targetType, null);
     }
 
     /**
      * Get an adapter converting to the given target type.
      * @param targetType the target type class
-     * @param annotation the {@link org.apache.tamaya.annotation.WithPropertyAdapter} annotation, or null. If the annotation is not null and
+     * @param annotation the {@link org.apache.tamaya.annotation.WithCodec} annotation, or null. If the annotation is not null and
      *                   defines an overriding adapter, this instance is created and returned.
      * @param <T> the target type
      * @return the corresponding adapter, never null.
      * @throws ConfigException if the target type is not supported, or the overriding adapter cannot be
      * instantiated.
      */
-    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType, WithPropertyAdapter annotation){
-        return ServiceContext.getInstance().getSingleton(PropertyAdaptersSingletonSpi.class).getAdapter(targetType, annotation);
+    public static  <T> Codec<T> getAdapter(Class<T> targetType, WithCodec annotation){
+        return ServiceContext.getInstance().getSingleton(CodecsSingletonSpi.class).getCodec(targetType, annotation);
     }
 
 }

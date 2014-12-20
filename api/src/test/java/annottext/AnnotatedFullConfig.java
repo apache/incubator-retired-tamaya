@@ -32,21 +32,21 @@ import org.apache.tamaya.annotation.LoadPolicy;
 @WithLoadPolicy(LoadPolicy.INITIAL)
 public interface AnnotatedFullConfig extends Configuration{
 
-    @ConfiguredProperty("foo.bar.myprop")
-    @ConfiguredProperty("mp")
-    @ConfiguredProperty("common.test.myProperty")
+    @ConfiguredProperty(keys = "foo.bar.myprop")
+    @ConfiguredProperty(keys = "mp")
+    @ConfiguredProperty(keys = "common.test.myProperty")
     @DefaultValue("myValue_$[env.stage]")
     // @ConfigLoadPolicy(listener = MyListener.class)
     String myParameter();
 
-    @ConfiguredProperty("simple_value")
+    @ConfiguredProperty(keys = "simple_value")
     @WithLoadPolicy(LoadPolicy.LAZY)
     String simpleValue();
 
     @ConfiguredProperty
     String simplestValue();
 
-    @ConfiguredProperty("env.host.name")
+    @ConfiguredProperty(keys = "env.host.name")
     String hostName();
 
 }

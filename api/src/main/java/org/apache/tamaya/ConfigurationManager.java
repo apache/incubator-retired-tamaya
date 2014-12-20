@@ -47,19 +47,6 @@ final class ConfigurationManager{
         return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).isConfigurationDefined(name);
     }
 
-    /**
-     * Access a configuration by name.
-     *
-     * @param name the configuration's name, not null, not empty.
-     *             @param template the annotated configuration's
-     *                             template interface, not null.
-     * @return the corresponding Configuration instance, never null.
-     * @throws ConfigException if no such configuration is defined.
-     */
-    public static <T> T getConfiguration(String name, Class<T> template){
-        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).getConfiguration(name, template);
-    }
-
 
     /**
      * Access a configuration by name.
@@ -87,11 +74,14 @@ final class ConfigurationManager{
      *
      * @param type the annotated configuration type (could be an interface or
      *             a non abstract class), not null.
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
      * @return the corresponding typed Configuration instance, never null.
      * @throws ConfigException if the configuration could not be resolved.
      */
-    public static <T> T getConfiguration(Class<T> type){
-        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).getConfiguration(type);
+    public static <T> T createTemplate(Class<T> type, Configuration... configurations){
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).createTemplate(type, configurations);
     }
 
     /**
@@ -99,32 +89,25 @@ final class ConfigurationManager{
      * entries.
      *
      * @param instance the instance with configuration annotations, not null.
-     * @return the corresponding typed Configuration instance, never null.
+     * @param configurations the configurations to be used for evaluating the values for injection into {@code instance}.
+     *                If no items are passed, the default configuration is used.
      * @throws ConfigException if the configuration could not be resolved.
      */
-    public static void configure(Object instance){
-        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).configure(instance);
+    public static void configure(Object instance, Configuration... configurations){
+        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).configure(instance, configurations);
     }
 
     /**
      * Evaluate the current expression based on the current configuration valid.
      *
+     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
+     *                       If no such config is passed, the default configurationa provided by the current
+     *                       registered providers are used.
      * @param expression the expression, not null.
      * @return the evaluated config expression.
      */
-    public static String evaluateValue(String expression){
-        return evaluateValue(getConfiguration(), expression);
-    }
-
-    /**
-     * Evaluate the current expression based on the current configuration valid.
-     *
-     * @param config     The configuration to be used for evluating, not null.
-     * @param expression the expression, not null.
-     * @return the evaluated config expression.
-     */
-    public static String evaluateValue(Configuration config, String expression){
-        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).evaluateValue(config, expression);
+    public static String evaluateValue(String expression, Configuration... configurations){
+        return ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).evaluateValue(expression, configurations);
     }
 
     /**

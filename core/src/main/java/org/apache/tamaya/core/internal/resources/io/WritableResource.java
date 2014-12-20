@@ -36,7 +36,7 @@ public interface WritableResource extends Resource {
 	 * e.g. via {@link #getOutputStream()} or {@link #getFile()}.
 	 * <p>Will be {@code true} for typical resource descriptors;
 	 * note that actual content writing may still fail when attempted.
-	 * However, a value current {@code false} is a definitive indication
+	 * However, a keys current {@code false} is a definitive indication
 	 * that the resource content cannot be modified.
 	 * @see #getOutputStream()
 	 * @see #isReadable()

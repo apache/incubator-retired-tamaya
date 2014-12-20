@@ -24,8 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define a default value to be returned, when no configured value could be
- * determined for a property/template accessor. The value hereby can also contain a
+ * Annotation to define a default keys to be returned, when no configured keys could be
+ * determined for a property/template accessor. The keys hereby can also contain a
  * dynamic expression that is evaluated by the configuration system.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 public @interface DefaultValue {
 
     /**
-     * The default value to be injected, if no such configuration entry was found. If value was found and no default
+     * The default keys to be injected, if no such configuration entry was found. If keys was found and no default
      * is defined, it is handled as a deployment error.
      */
     String value() default "";

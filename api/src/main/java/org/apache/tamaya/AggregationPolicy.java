@@ -28,9 +28,9 @@ public interface AggregationPolicy {
     /**
      * Method which decides how keys/values are aggregated.
      * @param key the key current the entry, must not be {@code null}.
-     * @param currentValue the current value, or {@code null}.
-     * @param newValue the new value, never {@code null}.
-     * @return the target value to be used in the resulting property set, or null, to remove the property.
+     * @param currentValue the current keys, or {@code null}.
+     * @param newValue the new keys, never {@code null}.
+     * @return the target keys to be used in the resulting property set, or null, to remove the property.
      */
     public String aggregate(String key, String currentValue, String newValue);
 
@@ -54,7 +54,7 @@ public interface AggregationPolicy {
     public static final AggregationPolicy EXCEPTION =
         (String key, String value, String newValue) -> {
             if(value!=null && newValue!=null && !value.equals(newValue)){
-                throw new ConfigException("Conflicting values encountered key="+key+", value="+value+", newValue="+newValue);
+                throw new ConfigException("Conflicting values encountered key="+key+", keys="+value+", newValue="+newValue);
             }
             return newValue;
         };
@@ -66,7 +66,7 @@ public interface AggregationPolicy {
             (String key, String value, String newValue) -> {
                 if(value!=null && newValue!=null && !value.equals(newValue)){
                     Logger.getLogger(AggregationPolicy.class.getName())
-                            .severe(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                            .severe(() -> "Conflicting values encountered key=" + key + ", keys=" + value + ", newValue=" + newValue);
                     return value;
                 }
                 return newValue;
@@ -79,7 +79,7 @@ public interface AggregationPolicy {
             (String key, String value, String newValue) -> {
                 if(value!=null && newValue!=null && !value.equals(newValue)){
                     Logger.getLogger(AggregationPolicy.class.getName())
-                            .warning(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                            .warning(() -> "Conflicting values encountered key=" + key + ", keys=" + value + ", newValue=" + newValue);
                     return value;
                 }
                 return newValue;
@@ -92,7 +92,7 @@ public interface AggregationPolicy {
         (String key, String value, String newValue) -> {
             if(value!=null && newValue!=null && !value.equals(newValue)){
                 Logger.getLogger(AggregationPolicy.class.getName())
-                        .info(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                        .info(() -> "Conflicting values encountered key=" + key + ", keys=" + value + ", newValue=" + newValue);
                 return value;
             }
             return newValue;
@@ -105,7 +105,7 @@ public interface AggregationPolicy {
             (String key, String value, String newValue) -> {
                 if(value!=null && newValue!=null && !value.equals(newValue)){
                     Logger.getLogger(AggregationPolicy.class.getName())
-                            .finest(() -> "Conflicting values encountered key=" + key + ", value=" + value + ", newValue=" + newValue);
+                            .finest(() -> "Conflicting values encountered key=" + key + ", keys=" + value + ", newValue=" + newValue);
                     return value;
                 }
                 return newValue;

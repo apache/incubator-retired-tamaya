@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 import java.util.function.UnaryOperator;
 
 /**
- * Annotation to define an configuration operator to be used before accessing a configured value.
+ * Annotation to define an configuration operator to be used before accessing a configured keys.
  * This allows filtering current configuration, e.g. for realizing views or ensuring security
  * constraints.
  */
@@ -36,7 +36,7 @@ import java.util.function.UnaryOperator;
 public @interface WithConfigOperator {
 
     /**
-     * Define a custom adapter that should be used to adapt the configuration entry injected. This overrides any
+     * Define a custom adapter that should be used to deserialize the configuration entry injected. This overrides any
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
      */

@@ -39,15 +39,15 @@ public class ConfiguredClass{
     @ConfiguredProperty
     private String testProperty;
 
-    @ConfiguredProperty("a.b.c.key1")
-    @ConfiguredProperty("a.b.c.key2")
-    @ConfiguredProperty("a.b.c.key3")
+    @ConfiguredProperty(keys = "a.b.c.key1")
+    @ConfiguredProperty(keys = "a.b.c.key2")
+    @ConfiguredProperty(keys = "a.b.c.key3")
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
     @WithConfig("test")
-    @ConfiguredProperty("foo")
-    @ConfiguredProperty("a.b.c.key2")
+    @ConfiguredProperty(keys = "foo")
+    @ConfiguredProperty(keys = "a.b.c.key2")
     private String value2;
 
     @ConfiguredProperty
@@ -71,11 +71,11 @@ public class ConfiguredClass{
     private boolean booleanT;
 
     @WithConfig("test")
-    @ConfiguredProperty("BD")
+    @ConfiguredProperty(keys = "BD")
     private BigDecimal bigNumber;
 
     @WithConfig("test")
-    @ConfiguredProperty("double1")
+    @ConfiguredProperty(keys = "double1")
     private double doubleValue;
 
     @ObservesConfigChange

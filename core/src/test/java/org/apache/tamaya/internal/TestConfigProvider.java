@@ -34,18 +34,18 @@ public class TestConfigProvider implements ConfigurationProviderSpi{
 
     public TestConfigProvider(){
         final Map<String,String> config = new HashMap<>();
-        config.put("a.b.c.key1", "value current a.b.c.key1");
-        config.put("a.b.c.key2", "value current a.b.c.key2");
-        config.put("a.b.key3", "value current a.b.key3");
-        config.put("a.b.key4", "value current a.b.key4");
-        config.put("a.key5", "value current a.key5");
-        config.put("a.key6", "value current a.key6");
+        config.put("a.b.c.key1", "keys current a.b.c.key1");
+        config.put("a.b.c.key2", "keys current a.b.c.key2");
+        config.put("a.b.key3", "keys current a.b.key3");
+        config.put("a.b.key4", "keys current a.b.key4");
+        config.put("a.key5", "keys current a.key5");
+        config.put("a.key6", "keys current a.key6");
         config.put("int1", "123456");
         config.put("int2", "111222");
         config.put("booleanT", "true");
         config.put("double1", "1234.5678");
         config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
-        config.put("testProperty", "value current testProperty");
+        config.put("testProperty", "keys current testProperty");
         config.put("runtimeVersion", "${java.version}");
         testConfig = PropertySourceBuilder.of("test").addMap(
                 config).build().toConfiguration();

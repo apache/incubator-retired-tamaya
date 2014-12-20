@@ -18,13 +18,16 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.PropertyAdapter;
-import org.apache.tamaya.annotation.WithPropertyAdapter;
+import org.apache.tamaya.Codec;
+import org.apache.tamaya.annotation.WithCodec;
+
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
- * SPI that is used by the {@link org.apache.tamaya.PropertyAdapters} singleton as delegation instance.
+ * SPI that is used by the {@link org.apache.tamaya.Codecs} singleton as delegation instance.
  */
-public interface PropertyAdaptersSingletonSpi{
+public interface CodecsSingletonSpi {
 
     /**
      * Registers a new PropertyAdapter for the given target type, hereby replacing any existing adapter for
@@ -34,15 +37,38 @@ public interface PropertyAdaptersSingletonSpi{
      * @param <T> The target type
      * @return any adapter replaced with the new adapter, or null.
      */
-    <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter);
+    <T> Codec<T> register(Class<T> targetType, Codec<T> adapter);
+
+    default <T> Codec<T> register(Class<T> targetType, Function<String,T> decoder, Function<T, String> encoder){
+        Objects.requireNonNull(targetType);
+        Objects.requireNonNull(decoder);
+        Objects.requireNonNull(encoder);
+        return register(targetType, new Codec<T>(){
+
+            @Override
+            public T deserialize(String value) {
+                return decoder.apply(value);
+            }
+
+            @Override
+            public String serialize(T value) {
+                return encoder.apply(value);
+            }
+
+            @Override
+            public String toString(){
+                return "Codec(decoder="+decoder.getClass().getName()+", encoder="+encoder.getClass().getName()+")";
+            }
+        });
+    }
 
     /**
      * Get an adapter converting to the given target type.
      * @param targetType the target type class
      * @return true, if the given target type is supported.
      */
-    default <T> PropertyAdapter<T> getAdapter(Class<T> targetType){
-        return getAdapter(targetType, null);
+    default <T> Codec<T> getAdapter(Class<T> targetType){
+        return getCodec(targetType, null);
     }
 
     /**
@@ -52,7 +78,7 @@ public interface PropertyAdaptersSingletonSpi{
      * @return the corresponding adapter, never null.
      * @throws org.apache.tamaya.ConfigException if the target type is not supported.
      */
-    <T> PropertyAdapter<T> getAdapter(Class<T> targetType, WithPropertyAdapter annotation);
+    <T> Codec<T> getCodec(Class<T> targetType, WithCodec annotation);
 
     /**
      * Checks if the given target type is supported, i.e. a adapter is registered and accessible.
