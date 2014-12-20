@@ -21,12 +21,7 @@ package org.apache.tamaya.core.config;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.ConfigChangeSetBuilder;
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.PropertyAdapter;
+import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.AbstractPropertySource;
 import org.apache.tamaya.core.spi.AdapterProviderSpi;
 import org.apache.tamaya.spi.ServiceContext;

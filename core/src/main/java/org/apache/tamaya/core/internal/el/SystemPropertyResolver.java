@@ -21,6 +21,7 @@ package org.apache.tamaya.core.internal.el;
 import java.util.Optional;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.spi.ExpressionResolver;
 
 /**
