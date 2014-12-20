@@ -28,14 +28,11 @@ import org.apache.tamaya.annotation.DefaultValue;
 import org.apache.tamaya.core.internal.config.DefaultConfigurationManagerSingletonSpi;
 import org.junit.Test;
 
-import java.beans.PropertyChangeListener;
-
 /**
  * Test class for {@link org.apache.tamaya.core.internal.config.DefaultConfigurationManagerSingletonSpi}.
  */
 public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
-    private static final PropertyChangeListener LISTENER = System.out::println;
 
     @Test
     public void testSEConfigurationService() {
@@ -77,7 +74,7 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
     @Test
     public void testGetRootEnvironment() {
-        DefaultConfigurationManagerSingletonSpi s = new DefaultConfigurationManagerSingletonSpi();
+//        DefaultConfigurationManagerSingletonSpi s = new DefaultConfigurationManagerSingletonSpi();
         Environment env = Environment.root();
         assertNotNull(env);
         assertEquals(System.getProperty("java.version"),

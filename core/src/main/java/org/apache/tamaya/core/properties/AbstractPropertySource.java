@@ -18,17 +18,23 @@
  */
 package org.apache.tamaya.core.properties;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
 
-import java.io.Serializable;
-import java.util.*;
-
 /**
  * Abstract base class for implementing a {@link org.apache.tamaya.PropertySource}.
  */
-@SuppressWarnings("NullableProblems")
 public abstract class AbstractPropertySource implements PropertySource, Serializable{
     /**
      * serialVersionUID.
@@ -83,7 +89,6 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
         return Optional.ofNullable(toMap().get(key));
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public Set<String> keySet(){
         return toMap().keySet();

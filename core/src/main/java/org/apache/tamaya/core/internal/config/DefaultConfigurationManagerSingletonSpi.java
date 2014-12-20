@@ -18,27 +18,34 @@
  */
 package org.apache.tamaya.core.internal.config;
 
-import org.apache.tamaya.*;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+import org.apache.tamaya.AggregationPolicy;
+import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.core.internal.el.DefaultExpressionEvaluator;
 import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
-
-import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Proxy;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import org.apache.tamaya.spi.ServiceContext;
 
 
 /**
  * Default SPI that implements the behaviour of {@link org.apache.tamaya.spi.ConfigurationManagerSingletonSpi}.
  */
+@SuppressWarnings("unchecked")
 public class DefaultConfigurationManagerSingletonSpi implements ConfigurationManagerSingletonSpi {
 
     private static final String DEFAULT_CONFIG_NAME = "default";
@@ -63,7 +70,8 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
         }
     }
 
-    @Override
+    
+	@Override
     public <T> T getConfiguration(String name, Class<T> type) {
         ConfigurationProviderSpi provider = configProviders.get(name);
         if (provider == null) {
@@ -103,20 +111,6 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
         ConfigurationInjector.configure(instance);
     }
 
-    private String getConfigId(Annotation... qualifiers) {
-        if (qualifiers == null || qualifiers.length == 0) {
-            return "";
-        }
-        StringBuilder b = new StringBuilder();
-        for (Annotation annot : qualifiers) {
-            b.append('[');
-            b.append(annot.annotationType().getName());
-            b.append(':');
-            b.append(annot.toString());
-            b.append(']');
-        }
-        return b.toString();
-    }
 
     @Override
     public String evaluateValue(Configuration config, String expression) {

@@ -18,12 +18,8 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.EnvironmentManagerSingletonSpi;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import org.apache.tamaya.spi.ServiceContext;
 
 
 /**

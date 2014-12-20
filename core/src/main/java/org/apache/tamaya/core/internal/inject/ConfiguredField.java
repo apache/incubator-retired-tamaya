@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * it (referenced by a weak reference). It also implements all aspects current value filtering, converting any applying the
  * final value by reflection.
  */
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ConfiguredField {
 
     private Logger LOG = Logger.getLogger(ConfiguredField.class.getName());
@@ -119,12 +119,12 @@ public class ConfiguredField {
             }
             // Check for adapter/filter
             WithPropertyAdapter adapterAnnot = this.annotatedField.getAnnotation(WithPropertyAdapter.class);
-            Class<? extends PropertyAdapter> propertyAdapterType;
+			Class<? extends PropertyAdapter> propertyAdapterType;
             if (adapterAnnot != null) {
                 propertyAdapterType = adapterAnnot.value();
                 if (!propertyAdapterType.equals(PropertyAdapter.class)) {
                     // TODO cache here...
-                    PropertyAdapter<String> filter = propertyAdapterType.newInstance();
+					PropertyAdapter<String> filter = propertyAdapterType.newInstance();
                     configValue = filter.adapt(configValue);
                 }
             }

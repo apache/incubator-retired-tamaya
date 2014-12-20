@@ -39,7 +39,7 @@ public final class ConfigurationExtension implements Extension {
         if (!ConfiguredType.isConfigured(at.getJavaClass())) {
             return;
         }
-        final ConfiguredType configuredType = ConfigurationInjector.registerType(at.getJavaClass());
+//        final ConfiguredType configuredType = ConfigurationInjector.registerType(at.getJavaClass());
 
         final InjectionTarget<T> it = pit.getInjectionTarget();
         InjectionTarget<T> wrapped = new InjectionTarget<T>() {

@@ -38,7 +38,6 @@ import java.util.*;
  */
 class DelegatingPropertySource implements PropertySource {
 
-    private static final long serialVersionUID = -1419376385695224799L;
     private PropertySource mainMap;
     private Map<String,String> parentMap;
     private MetaInfo metaInfo;

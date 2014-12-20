@@ -33,6 +33,7 @@ import java.util.logging.Logger;
  * Utility class simplifying some implementation aspects.
  * Created by Anatole on 11.11.2014.
  */
+@SuppressWarnings("unchecked")
 public final class Utils {
 
     private static final Logger LOG = Logger.getLogger(Utils.class.getName());
@@ -48,7 +49,7 @@ public final class Utils {
      * @param <R> the repeatable container annotation type
      * @return a list with the annotations found (could be empty, but never null).
      */
-    public static <T extends Annotation, R extends Annotation> Collection<T>
+	public static <T extends Annotation, R extends Annotation> Collection<T>
             getAnnotations(AnnotatedElement annotated,
                               Class<T> repeatableAnnotation,
                               Class<R> annotationContainer){

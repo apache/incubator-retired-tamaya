@@ -18,10 +18,9 @@
  */
 package org.apache.tamaya.core.spi;
 
-import org.apache.tamaya.Environment;
-
 import java.util.Map;
-import java.util.Set;
+
+import org.apache.tamaya.Environment;
 
 /**
  * SPI for components that define a concrete type current {@link org.apache.tamaya.Environment}.

@@ -30,12 +30,12 @@ import java.util.Objects;
  */
 class ConfigTemplateInvocationHandler implements InvocationHandler {
     /** The underlying configuration. */
-    private Configuration config;
+//    private Configuration config;
     /** The configured type. */
     private ConfiguredType type;
 
     public ConfigTemplateInvocationHandler(Class<?> type, Configuration config) {
-        this.config = Objects.requireNonNull(config);
+//        this.config = Objects.requireNonNull(config);
         this.type = new ConfiguredType(Objects.requireNonNull(type));
         if(!type.isInterface()){
             throw new IllegalArgumentException("Can only proxy interfaces as configuration templates.");

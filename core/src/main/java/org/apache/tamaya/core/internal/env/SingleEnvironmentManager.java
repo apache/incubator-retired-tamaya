@@ -51,7 +51,6 @@ public class SingleEnvironmentManager implements EnvironmentManagerSingletonSpi{
 
     @Override
     public Environment getCurrentEnvironment(){
-        Environment env = null;
         EnvironmentBuilder b = EnvironmentBuilder.of();
         for(EnvironmentProvider prov: environmentProviders){
             if(prov.isActive()){

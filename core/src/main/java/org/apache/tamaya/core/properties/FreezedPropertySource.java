@@ -18,14 +18,18 @@
  */
 package org.apache.tamaya.core.properties;
 
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
-
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.*;
 
 /**
  * This class models a freezed instance current an {@link org.apache.tamaya.PropertySource}.
@@ -34,7 +38,7 @@ import java.util.*;
 final class FreezedPropertySource implements PropertySource, Serializable{
 
     private static final long serialVersionUID = 3365413090311267088L;
-    private Map<String,Map<String,String>> fieldMMetaInfo = new HashMap<>();
+//    private Map<String,Map<String,String>> fieldMMetaInfo = new HashMap<>();
     private MetaInfo metaInfo;
     private Map<String,String> properties = new HashMap<>();
 

@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.spi;
 
 import org.apache.tamaya.PropertyAdapter;
-import java.util.function.Function;
 
 /**
  * This service provides different {@link org.apache.tamaya.PropertyAdapter} instances for types.

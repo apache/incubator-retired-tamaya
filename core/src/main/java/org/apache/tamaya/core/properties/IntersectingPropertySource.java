@@ -30,7 +30,8 @@ import java.util.stream.Collectors;
  */
 class IntersectingPropertySource extends AbstractPropertySource {
 
-    private List<PropertySource> providers;
+	private static final long serialVersionUID = -1492990130201110889L;
+	private List<PropertySource> providers;
     private PropertySource aggregatedDelegate;
 
     public IntersectingPropertySource(MetaInfo metaInfo, AggregationPolicy policy, List<PropertySource> providers) {
@@ -45,10 +46,6 @@ class IntersectingPropertySource extends AbstractPropertySource {
         if (containsKey(key))
             return aggregatedDelegate.get(key);
         return Optional.empty();
-    }
-
-    private boolean filter(Map.Entry<String, String> entry) {
-        return containsKey(entry.getKey());
     }
 
     @Override

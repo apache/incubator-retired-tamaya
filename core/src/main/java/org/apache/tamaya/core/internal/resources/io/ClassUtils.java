@@ -16,13 +16,13 @@
 
 package org.apache.tamaya.core.internal.resources.io;
 
-import java.beans.Introspector;
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
 * Miscellaneous class utility methods.

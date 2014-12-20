@@ -18,13 +18,14 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
-
-import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
 
 /**
  * Created by Anatole on 09.09.2014.
@@ -57,7 +58,8 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
         return configs.containsKey(name);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T getConfiguration(String name, Class<T> type){
         if(type.equals(Configuration.class)) {
             Configuration config = configs.get(name);

@@ -102,7 +102,7 @@ public interface Configuration extends PropertySource {
 
         Optional<Double> val = get(key, Double.class);
         if(val.isPresent()){
-            return OptionalDouble.empty().of(val.get());
+            return OptionalDouble.of(val.get());
         }
         return OptionalDouble.empty();
     }

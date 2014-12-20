@@ -18,24 +18,23 @@
 */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.*;
-import org.apache.tamaya.core.properties.PropertySourceBuilder;
-
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
+
+import org.apache.tamaya.AggregationPolicy;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.MetaInfo;
+import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 /**
 * Builder for assembling non trivial {@link org.apache.tamaya.Configuration} instances.
 */
 public final class ConfigurationBuilder {
-
-    /**
-     * THe logger used.
-     */
-    private static final Logger LOG = Logger.getLogger(ConfigurationBuilder.class.getName());
 
     /**
      * The final meta info to be used, or null, if a default should be generated.

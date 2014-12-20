@@ -37,7 +37,6 @@ public final class ConfiguredInstancesManager implements PropertyChangeListener{
 
     private static final ConfiguredInstancesManager INSTANCE = new ConfiguredInstancesManager();
     private Map<ConfiguredType,List<WeakReference<Object>>> configuredInstances = new ConcurrentHashMap<>();
-    private final Object LOCK = new Object();
 
     private ConfiguredInstancesManager(){
 //        Configuration.addConfigChangeListener(this);

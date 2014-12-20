@@ -20,8 +20,6 @@ package org.apache.tamaya;
 
 
 import org.apache.tamaya.annotation.WithPropertyAdapter;
-import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
-import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Interface for an adapter that converts a configured String into something else.

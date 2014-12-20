@@ -31,12 +31,14 @@ import java.util.*;
  * Structure that contains and manages configuration related things for a configured type registered.
  * Created by Anatole on 03.10.2014.
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ConfiguredType {
 
     private List<ConfiguredField> configuredFields = new ArrayList<>();
     private Map<Method, ConfiguredMethod> configuredMethods = new HashMap<>();
     private List<ConfigChangeCallbackMethod> callbackMethods = new ArrayList<>();
-    private Class type;
+    
+	private Class type;
 
     public ConfiguredType(Class type) {
         this.type = Objects.requireNonNull(type);
@@ -142,7 +144,7 @@ public class ConfiguredType {
         return true;
     }
 
-    public static boolean isConfigured(Class type) {
+	public static boolean isConfigured(Class type) {
         if(type.getAnnotation(DefaultAreas.class)!=null){
             return true;
         }

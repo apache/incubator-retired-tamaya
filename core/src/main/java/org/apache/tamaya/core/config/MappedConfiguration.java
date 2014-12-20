@@ -1,17 +1,22 @@
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.*;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
+
+import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.MetaInfoBuilder;
 
 /**
  * Configuration implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate areas.
  */
 class MappedConfiguration extends AbstractConfiguration implements Configuration {
-    /** The mapping operator. */
+
+	private static final long serialVersionUID = 8690637705511432083L;
+
+	/** The mapping operator. */
     private UnaryOperator<String> keyMapper;
     /** The base configuration. */
     private Configuration config;

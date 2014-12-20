@@ -27,8 +27,10 @@ import java.util.Set;
 
 import org.apache.tamaya.PropertyAdapter;
 
+@SuppressWarnings("unchecked")
 public interface PropertyAdapterService{
 
+	
 	public default PropertyAdapter<URL> getURLAdapter(){
         return PropertyAdapter.class.cast(getClassAdapter(URL.class));
     }

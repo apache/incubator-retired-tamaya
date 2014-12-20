@@ -18,17 +18,16 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.ConfigChangeSetBuilder;
-import org.apache.tamaya.Configuration;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
+import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.ConfigChangeSetBuilder;
+import org.apache.tamaya.Configuration;
+import org.junit.Test;
 
 /**
  * Simple test for a mutable Configuration instance.

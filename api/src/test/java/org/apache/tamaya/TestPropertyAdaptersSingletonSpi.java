@@ -20,6 +20,7 @@ package org.apache.tamaya;
 
 import org.apache.tamaya.annotation.WithPropertyAdapter;
 import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -35,9 +36,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Test implementation current {@link PropertyAdaptersSingletonSpi}, which provides adapters
  * for some basic types.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public final class TestPropertyAdaptersSingletonSpi implements PropertyAdaptersSingletonSpi{
 
-    private Map<Class, PropertyAdapter<?>> adapters = new ConcurrentHashMap<>();
+	private Map<Class, PropertyAdapter<?>> adapters = new ConcurrentHashMap<>();
 
     private TestPropertyAdaptersSingletonSpi(){
         register(char.class, (s) -> s.charAt(0));
@@ -67,7 +69,7 @@ public final class TestPropertyAdaptersSingletonSpi implements PropertyAdaptersS
     }
 
 
-    @Override
+	@Override
     public <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter){
         Objects.requireNonNull(targetType);
         Objects.requireNonNull(adapter);

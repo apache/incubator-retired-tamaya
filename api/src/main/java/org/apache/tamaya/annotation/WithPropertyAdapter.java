@@ -39,6 +39,7 @@ public @interface WithPropertyAdapter {
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
      */
-    Class<? extends PropertyAdapter> value();
+    @SuppressWarnings("rawtypes")
+	Class<? extends PropertyAdapter> value();
 
 }

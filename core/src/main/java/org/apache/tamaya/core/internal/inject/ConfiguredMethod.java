@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
  * final value by reflection.
  * Created by Anatole on 01.10.2014.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class ConfiguredMethod {
 
     private static final Logger LOG = Logger.getLogger(ConfiguredMethod.class.getName());
@@ -155,7 +154,8 @@ public class ConfiguredMethod {
      *
      * @throws org.apache.tamaya.ConfigException if the configuration required could not be resolved or converted.
      */
-    public Object getValue(Object[] args) throws ConfigException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public Object getValue(Object[] args) throws ConfigException {
         // TODO do something with additional args?
         String configValue = getConfigValue();
         try {

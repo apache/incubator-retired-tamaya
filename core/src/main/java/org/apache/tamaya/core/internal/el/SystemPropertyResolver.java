@@ -18,11 +18,10 @@
  */
 package org.apache.tamaya.core.internal.el;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.spi.ExpressionResolver;
+import java.util.Optional;
 
-import java.util.*;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.core.spi.ExpressionResolver;
 
 /**
  * Created by Anatole on 28.09.2014.

@@ -18,15 +18,12 @@
  */
 package org.apache.tamaya.simple;
 
-import org.apache.tamaya.core.config.ConfigurationFormats;
-import org.apache.tamaya.core.properties.PropertySourceBuilder;
-import org.apache.tamaya.core.spi.ConfigurationFormat;
-import org.junit.Test;
-
-import org.apache.tamaya.Configuration;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
+import org.junit.Test;
 
 /**
  * Created by Anatole on 24.02.14.
@@ -45,7 +42,7 @@ public class SimplePropertiesAndCLISample {
 
     @Test
     public void testProgrammaticConfig() {
-        ConfigurationFormat format = ConfigurationFormats.getPropertiesFormat();
+//        ConfigurationFormat format = ConfigurationFormats.getPropertiesFormat();
         Map<String, String> cfgMap = new HashMap<>();
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole

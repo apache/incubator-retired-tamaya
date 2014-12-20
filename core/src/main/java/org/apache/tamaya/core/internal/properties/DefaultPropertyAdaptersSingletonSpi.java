@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.PropertyAdapter;
 import org.apache.tamaya.annotation.WithPropertyAdapter;
 import org.apache.tamaya.spi.PropertyAdaptersSingletonSpi;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -35,9 +36,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Anatole on 30.09.2014.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultPropertyAdaptersSingletonSpi implements PropertyAdaptersSingletonSpi{
 
-    private Map<Class,PropertyAdapter> adapters = new ConcurrentHashMap<>();
+    
+	private Map<Class,PropertyAdapter> adapters = new ConcurrentHashMap<>();
 
     public DefaultPropertyAdaptersSingletonSpi(){
         // Add default adapters
@@ -67,7 +70,7 @@ public class DefaultPropertyAdaptersSingletonSpi implements PropertyAdaptersSing
         register(ZoneId.class, ZoneId::of);
     }
 
-    @Override
+	@Override
     public <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter){
         return adapters.put(targetType, adapter);
     }
