@@ -24,7 +24,8 @@ import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Singleton manager that provides {@link Codec} instance, usable for converting String
- * based configuration entries into any other target types.
+ * based configuration entries into any other target types and vice versa.
+ * @see org.apache.tamaya.Codec
  */
 final class Codecs {
 
@@ -34,7 +35,7 @@ final class Codecs {
     private Codecs(){}
 
     /**
-     * Registers a new PropertyAdapter for the given target type, hereby replacing any existing adapter for
+     * Registers a new {@link Codec} for the given target type, hereby replacing any existing adapter for
      * this type.
      * @param targetType The target class, not null.
      * @param adapter The adapter, not null.
@@ -46,7 +47,7 @@ final class Codecs {
     }
 
     /**
-     * Get an adapter converting to the given target type.
+     * Checks if a {@link Codec} for given target type is available.
      * @param targetType the target type class
      * @return true, if the given target type is supported.
      */
@@ -55,27 +56,27 @@ final class Codecs {
     }
 
     /**
-     * Get an adapter converting to the given target type.
+     * Get an {@link Codec} converting to and from the given target type.
      * @param targetType the target type class
      * @param <T> the target type
-     * @return the corresponding adapter, never null.
+     * @return the corresponding {@link Codec}, never null.
      * @throws ConfigException if the target type is not supported.
      */
     public static  <T> Codec<T> getCodec(Class<T> targetType){
-        return getAdapter(targetType, null);
+        return getCodec(targetType, null);
     }
 
     /**
-     * Get an adapter converting to the given target type.
+     * Get an {@link Codec} converting to the given target type.
      * @param targetType the target type class
      * @param annotation the {@link org.apache.tamaya.annotation.WithCodec} annotation, or null. If the annotation is not null and
      *                   defines an overriding adapter, this instance is created and returned.
      * @param <T> the target type
-     * @return the corresponding adapter, never null.
+     * @return the corresponding {@link Codec}, never null.
      * @throws ConfigException if the target type is not supported, or the overriding adapter cannot be
      * instantiated.
      */
-    public static  <T> Codec<T> getAdapter(Class<T> targetType, WithCodec annotation){
+    public static  <T> Codec<T> getCodec(Class<T> targetType, WithCodec annotation){
         return ServiceContext.getInstance().getSingleton(CodecsSingletonSpi.class).getCodec(targetType, annotation);
     }
 

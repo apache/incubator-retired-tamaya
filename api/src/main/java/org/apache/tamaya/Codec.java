@@ -23,9 +23,11 @@ import org.apache.tamaya.annotation.WithCodec;
 
 /**
  * Interface for an codec that converts a configured String into something else and vice versa.
- * This is typically used for implementing type conversion fromMap String to a certain target
- * type current the configured property, e.g. multivalued types, complex subtypes or subconfigurations
- * abd collection types.
+ * This is used for implementing type conversion from a property (String) to a certain target
+ * type. Hereby the target type can be multivalued (eg eollections), complex or even contain
+ * full subconfigurations, if needed. The operation converting from a type T to a String can be
+ * used by mutable configuration/property sources, when applying a {@link org.apache.tamaya.ConfigChangeSet}
+ * to render the correct String representation of a entry changed.
  */
 public interface Codec<T>{
 
@@ -86,7 +88,7 @@ public interface Codec<T>{
      * instantiated.
      */
     public static  <T> Codec<T> getInstance(Class<T> targetType, WithCodec annotation){
-        return Codecs.getAdapter(targetType, annotation);
+        return Codecs.getCodec(targetType, annotation);
     }
 
 }

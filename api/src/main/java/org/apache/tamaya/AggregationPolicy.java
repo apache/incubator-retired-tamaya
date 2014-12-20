@@ -21,7 +21,23 @@ package org.apache.tamaya;
 import java.util.logging.Logger;
 
 /**
- * Policy that defines how the different aggregates should be combined.
+ * Policy that defines how the different configurations/property sources should be aggregated.
+ * This is done by a mapping function defined as follows:
+ * <pre>
+ *     function f(key, value1, value2) -> result
+ *
+ * whereas
+ *
+ *       key = the fully qualified property key,
+ *       value1 = the value from the first configuration/property source (can be null)
+ *       value2 = the value from the second configuration/property source (can be null)
+ *
+ *       result = the value to be used in the aggregation, or null, which removed the
+ *       key from the result.
+ * </pre>
+ *
+ * Of course, during this evaluation step additional actions can be taken, e.g. refer to #LOG_ERROR, which
+ * ignores duplicate entries, but also logs the conflict on severe/error level.
  */
 public interface AggregationPolicy {
 
