@@ -35,12 +35,16 @@ import static org.junit.Assert.assertFalse;
 public class MutableConfigTest {
 
     @Test
-    public void accessMutableConfig(){
+    public void accessMutableConfig() {
         Configuration config = Configuration.current("mutableTestConfig");
         ConfigChangeSet changeSet = ConfigChangeSetBuilder.of(config).put("testCase", "accessMutableConfig")
                 .put("execTime", System.currentTimeMillis()).put("execution", "once").build();
         List<PropertyChangeEvent> changes = new ArrayList<>();
-        Configuration.addChangeListener(cfg -> cfg == config, change -> changes.addAll(change.getEvents()));
+        Configuration.addChangeListener(change -> {
+            if (change.getPropertySource() == config) {
+                changes.addAll(change.getEvents());
+            }
+        });
         config.applyChanges(changeSet);
         assertFalse(changes.isEmpty());
         System.out.println(changes);

@@ -340,20 +340,18 @@ public interface Configuration extends PropertySource {
 
     /**
      * Add a ConfigChangeListener to the given PropertySource instance.
-     * @param predicate the event filtering predicate
      * @param l the listener, not null.
      */
-    public static void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l){
-        ConfigurationManager.addChangeListener(predicate, l);
+    public static void addChangeListener(Consumer<ConfigChangeSet> l){
+        ConfigurationManager.addChangeListener(l);
     }
 
     /**
      * Removes a ConfigChangeListener from the given PropertySource instance.
-     * @param predicate the event filtering predicate
      * @param l the listener, not null.
      */
-    public static void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l){
-        ConfigurationManager.removeChangeListener(predicate, l);
+    public static void removeChangeListener(Consumer<ConfigChangeSet> l){
+        ConfigurationManager.removeChangeListener(l);
     }
 
     /**

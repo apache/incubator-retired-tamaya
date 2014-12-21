@@ -30,6 +30,17 @@ import java.util.Objects;
  * Invocation handler that handles request against a configuration template.
  */
 public final class ConfigTemplateInvocationHandler implements InvocationHandler {
+
+    /*
+    TODO
+    the given method (in case of a template) can use different caching strategies:
+    1) no caching (always evaluate the values completely) - slow.
+    2) instance caching (a cache per instance).
+    3) classloader caching...
+    4) global shared cache.
+     */
+
+
     /**
      * Any overriding configurations.
      */

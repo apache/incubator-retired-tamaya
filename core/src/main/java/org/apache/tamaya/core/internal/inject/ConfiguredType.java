@@ -21,11 +21,7 @@ package org.apache.tamaya.core.internal.inject;
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
@@ -34,6 +30,7 @@ import org.apache.tamaya.annotation.ConfiguredProperties;
 import org.apache.tamaya.annotation.ConfiguredProperty;
 import org.apache.tamaya.annotation.DefaultAreas;
 import org.apache.tamaya.annotation.ObservesConfigChange;
+import org.apache.tamaya.core.internal.Utils;
 
 /**
  * Structure that contains and manages configuration related things for a configured type registered.
@@ -44,7 +41,7 @@ public class ConfiguredType {
     /** A list with all annotated instance variables. */
     private List<ConfiguredField> configuredFields = new ArrayList<>();
     /** A list with all annotated methods (templates). */
-    private Map<Method, ConfiguredMethod> configuredMethods = new HashMap<>();
+    private List<ConfiguredMethod> configuredMethods = new ArrayList<>();
     /** A list with all callback methods listening to config changes. */
     private List<ConfigChangeCallbackMethod> callbackMethods = new ArrayList<>();
     /** The basic type. */
@@ -82,25 +79,14 @@ public class ConfiguredType {
                             m.getDeclaringClass().getName() + '.' + m.getName(), e);
                 }
             } else {
-                ConfiguredProperties propertiesAnnot = m.getAnnotation(ConfiguredProperties.class);
-                if (propertiesAnnot != null) {
+                Collection<ConfiguredProperty> propertiesAnnots = Utils.getAnnotations(m, ConfiguredProperty.class, ConfiguredProperties.class);
+                if (!propertiesAnnots.isEmpty()) {
                     try {
                         ConfiguredMethod configuredMethod = new ConfiguredMethod(m);
-                        configuredMethods.put(m, configuredMethod);
+                        configuredMethods.add(configuredMethod);
                     } catch (Exception e) {
                         throw new ConfigException("Failed to initialized configured method: " +
                                 m.getDeclaringClass().getName() + '.' + m.getName(), e);
-                    }
-                } else {
-                    ConfiguredProperty propertyAnnot = m.getAnnotation(ConfiguredProperty.class);
-                    if (propertyAnnot != null) {
-                        try {
-                            ConfiguredMethod configuredMethod = new ConfiguredMethod(m);
-                            configuredMethods.put(m, configuredMethod);
-                        } catch (Exception e) {
-                            throw new ConfigException("Failed to initialized configured method: " +
-                                    m.getDeclaringClass().getName() + '.' + m.getName(), e);
-                        }
                     }
                 }
             }
@@ -142,17 +128,19 @@ public class ConfiguredType {
      */
     public void configure(Object instance, Configuration... configurations) {
         for (ConfiguredField field : configuredFields) {
-            field.applyInitialValue(instance);
+            field.applyInitialValue(instance, configurations);
+            // TODO, if reinjection on changes should be done, corresponding callbacks could be registered here
+        }
+        for (ConfiguredMethod method : configuredMethods) {
+            method.applyInitialValue(instance, configurations);
+            // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
+        }
+        // Register callbacks for this intance (weakly)
+        for(ConfigChangeCallbackMethod callback: callbackMethods){
+            WeakConfigListenerManager.of().registerConsumer(instance, callback.createConsumer(instance, configurations));
         }
     }
 
-    public void triggerConfigUpdate(PropertyChangeEvent evt, Object instance) {
-        // TODO do check for right config ;)
-        configuredFields.stream().filter(field -> field.matchesKey(getName(evt.getSource()), evt.getPropertyName())).forEach(field -> field.applyValue(instance, (String) evt.getNewValue(), false));
-        for (ConfigChangeCallbackMethod callBack : this.callbackMethods) {
-            callBack.call(instance, evt);
-        }
-    }
 
     private String getName(Object source){
         if(source instanceof PropertySource){
@@ -161,6 +149,7 @@ public class ConfiguredType {
         }
         return "N/A";
     }
+
 
     public boolean isConfiguredBy(Configuration configuration) {
         // TODO implement this

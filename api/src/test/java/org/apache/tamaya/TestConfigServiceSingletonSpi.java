@@ -89,12 +89,12 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
     }
 
     @Override
-    public void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+    public void addChangeListener(Consumer<ConfigChangeSet> l) {
         // ignore
     }
 
     @Override
-    public void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
+    public void removeChangeListener(Consumer<ConfigChangeSet> l) {
         // ignore
     }
 

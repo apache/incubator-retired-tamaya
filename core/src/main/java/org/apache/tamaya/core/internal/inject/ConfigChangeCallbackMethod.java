@@ -18,10 +18,14 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
+import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.Configuration;
+
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +47,18 @@ public final class ConfigChangeCallbackMethod {
                         m.getParameterTypes()[0].equals(PropertyChangeEvent.class)).get();
     }
 
-    public void call(Object instance, PropertyChangeEvent configChangeEvent) {
+    public Consumer<ConfigChangeSet> createConsumer(Object instance, Configuration... configurations){
+        return event -> {
+            for(Configuration cfg:configurations){
+                if(event.getPropertySource().getMetaInfo().getName().equals(cfg.getMetaInfo().getName())){
+                    return;
+                }
+            }
+            call(instance, event);
+        };
+    }
+
+    public void call(Object instance, ConfigChangeSet configChangeEvent) {
         try {
             callbackMethod.setAccessible(true);
             callbackMethod.invoke(instance, configChangeEvent);

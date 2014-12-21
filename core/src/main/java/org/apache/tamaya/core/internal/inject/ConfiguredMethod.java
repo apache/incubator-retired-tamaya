@@ -22,19 +22,19 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Objects;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.annotation.ConfiguredProperties;
 import org.apache.tamaya.annotation.ConfiguredProperty;
 import org.apache.tamaya.annotation.DefaultAreas;
 import org.apache.tamaya.core.internal.Utils;
 
 /**
- * Small class that contains and manages all information anc access to a configured field and a concrete instance current
- * it (referenced by a weak reference). It also implements all aspects current keys filtering, conversiong any applying the
+ * Small class that contains and manages all information and access to a configured field and a concrete instance current
+ * it (referenced by a weak reference). It also implements all aspects current keys filtering, conversions any applying the
  * final keys by reflection.
- * Created by Anatole on 01.10.2014.
  */
 public class ConfiguredMethod {
-
 
     /**
      * The configured field instance.
@@ -51,7 +51,43 @@ public class ConfiguredMethod {
     }
 
 
+    /**
+     * Evaluate the initial keys fromMap the configuration and applyChanges it to the field.
+     *
+     * @param target the target instance.
+     * @param configurations Configuration instances that replace configuration served by services. This allows
+     *                       more easily testing and adaption.
+     * @throws ConfigException if evaluation or conversion failed.
+     */
+    public void applyInitialValue(Object target, Configuration... configurations) throws ConfigException {
+        String configValue = InjectionUtils.getConfigValue(this.annotatedMethod, configurations);
+        applyValue(target, configValue, false, configurations);
+    }
 
+    /**
+     * This method reapplies a changed configuration keys to the field.
+     *
+     * @param target      the target instance, not null.
+     * @param configValue the new keys to be applied, null will trigger the evaluation current the configured default keys.
+     * @param resolve     set to true, if expression resolution should be applied on the keys passed.
+     * @throws org.apache.tamaya.ConfigException if the configuration required could not be resolved or converted.
+     */
+    public void applyValue(Object target, String configValue, boolean resolve, Configuration... configurations) throws ConfigException {
+        Objects.requireNonNull(target);
+        try {
+            if (resolve && configValue != null) {
+                // net step perform exression resolution, if any
+                configValue = Configuration.evaluateValue(configValue, configurations);
+            }
+            // Check for adapter/filter
+            Object value = InjectionUtils.adaptValue(this.annotatedMethod, this.annotatedMethod.getParameterTypes()[0], configValue);
+            annotatedMethod.setAccessible(true);
+            annotatedMethod.invoke(target, value);
+        } catch (Exception e) {
+            throw new ConfigException("Failed to annotation configured method: " + this.annotatedMethod.getDeclaringClass()
+                    .getName() + '.' + annotatedMethod.getName(), e);
+        }
+    }
 
 
 
@@ -76,14 +112,5 @@ public class ConfiguredMethod {
     }
 
 
-//    /**
-//     * This method reapplies a changed configuration keys to the field.
-//     *
-//     * @throws org.apache.tamaya.ConfigException if the configuration required could not be resolved or converted.
-//     */
-//    public Object getValue(Object[] args, Configuration... configurations) throws ConfigException {
-//        // TODO do something with additional args?
-//        return InjectionUtils.adaptValue(this.annotatedMethod, this.annotatedMethod.getReturnType(), configValue);
-//    }
 
 }

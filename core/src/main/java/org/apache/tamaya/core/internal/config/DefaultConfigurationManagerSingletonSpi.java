@@ -35,6 +35,7 @@ import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.core.internal.el.DefaultExpressionEvaluator;
 import org.apache.tamaya.core.internal.inject.ConfigTemplateInvocationHandler;
 import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
+import org.apache.tamaya.core.internal.inject.WeakConfigListenerManager;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
@@ -50,8 +51,6 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     private static final String DEFAULT_CONFIG_NAME = "default";
 
     private Map<String, ConfigurationProviderSpi> configProviders = new ConcurrentHashMap<>();
-
-    private Map<Consumer<ConfigChangeSet>, List<Predicate<PropertySource>>> listenerMap = new ConcurrentHashMap<>();
 
     private ExpressionEvaluator expressionEvaluator = loadEvaluator();
 
@@ -94,36 +93,18 @@ public class DefaultConfigurationManagerSingletonSpi implements ConfigurationMan
     }
 
     @Override
-    public void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
-        List<Predicate<PropertySource>> predicates = listenerMap.computeIfAbsent(l,
-                cs -> Collections.synchronizedList(new ArrayList<>()));
-        if (predicate == null) {
-            predicates.add(p -> true); // select all events!
-        } else {
-            predicates.add(predicate);
-        }
+    public void addChangeListener(Consumer<ConfigChangeSet> l) {
+        WeakConfigListenerManager.of().registerConsumer(l,l);
     }
 
     @Override
-    public void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
-        List<Predicate<PropertySource>> predicates = listenerMap.get(l);
-        if (predicate == null) {
-            listenerMap.remove(l); // select all events!
-        } else {
-            predicates.add(predicate);
-        }
+    public void removeChangeListener(Consumer<ConfigChangeSet> l) {
+        WeakConfigListenerManager.of().unregisterConsumer(l);
     }
 
     @Override
     public void publishChange(ConfigChangeSet configChangeSet) {
-        listenerMap.entrySet().forEach(
-                (en) -> {
-                    if (en.getValue().stream()
-                            .filter(v -> v.test(configChangeSet.getPropertySource())).findAny().isPresent()) {
-                        en.getKey().accept(configChangeSet);
-                    }
-                }
-        );
+        WeakConfigListenerManager.of().publishChangeEvent(configChangeSet);
     }
 
     @Override

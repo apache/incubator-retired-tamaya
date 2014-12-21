@@ -95,17 +95,15 @@ public interface ConfigurationManagerSingletonSpi{
 
     /**
      * Add a ConfigChangeSet listener to the given configuration instance.
-     * @param predicate the event filtering predicate, or null, for selecting all changes.
      * @@param l the listener, not null.
      */
-    void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l);
+    void addChangeListener(Consumer<ConfigChangeSet> l);
 
     /**
      * Removes a ConfigChangeSet listener from the given configuration instance.
-     * @param predicate the event filtering predicate, or null, for selecting all changes.
      * @param l the listener, not null.
      */
-    void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l);
+    void removeChangeListener(Consumer<ConfigChangeSet> l);
 
     /**
      * Method to publish changes on a {@link org.apache.tamaya.Configuration} to all interested parties.

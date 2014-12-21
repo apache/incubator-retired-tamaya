@@ -112,20 +112,18 @@ final class ConfigurationManager{
 
     /**
      * Add a ConfigChangeSet listener to the given configuration instance.
-     * @param predicate the event filtering predicate, or null, for selecting all changes.
      * @param l the listener, not null.
      */
-    public static void addChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
-        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).addChangeListener(predicate, Objects.requireNonNull(l));
+    public static void addChangeListener(Consumer<ConfigChangeSet> l) {
+        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).addChangeListener(Objects.requireNonNull(l));
     }
 
     /**
      * Removes a ConfigChangeSet listener from the given configuration instance.
-     * @param predicate the event filtering predicate, or null, for selecting all changes.
      * @param l the listener, not null.
      */
-    public static void removeChangeListener(Predicate<PropertySource> predicate, Consumer<ConfigChangeSet> l) {
-        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).removeChangeListener(predicate, Objects.requireNonNull(l));
+    public static void removeChangeListener(Consumer<ConfigChangeSet> l) {
+        ServiceContext.getInstance().getSingleton(ConfigurationManagerSingletonSpi.class).removeChangeListener(Objects.requireNonNull(l));
     }
 
     /**
