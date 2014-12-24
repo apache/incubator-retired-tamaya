@@ -1,0 +1,27 @@
+= Apache Tamaya -- Collection of potential Use Cases
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya
+:revnumber: 0.1-SNAPSHOT
+:revremark: Incubator
+:revdate: November 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: OBF
+:author: Oliver B. Fischer
+:email: <plexus@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
+
+
+
+toc::[]
+
+
+== Use Cases for Java SE Environments
+
+include::se/simple-property-access.adoc[]
