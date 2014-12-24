@@ -19,10 +19,9 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
-import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.core.spi.ConfigurationFormat;
+import org.apache.tamaya.core.config.ConfigurationFormat;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
 import java.util.*;
@@ -37,15 +36,15 @@ final class PathBasedPropertySource extends AbstractPropertySource {
     private Map<String, String> properties = new HashMap<>();
     private AggregationPolicy aggregationPolicy;
 
-    public PathBasedPropertySource(MetaInfo metaInfo, Collection<String> paths, AggregationPolicy aggregationPolicy) {
-        super(metaInfo);
+    public PathBasedPropertySource(String name, Collection<String> paths, AggregationPolicy aggregationPolicy) {
+        super(name);
         this.paths.addAll(Objects.requireNonNull(paths));
         this.aggregationPolicy = Objects.requireNonNull(aggregationPolicy);
         init();
     }
 
     @Override
-    public Map<String, String> toMap() {
+    public Map<String, String> getProperties() {
         return this.properties;
     }
 
@@ -55,7 +54,7 @@ final class PathBasedPropertySource extends AbstractPropertySource {
         paths.forEach((path) -> {
             effectivePaths.add(path);
             for (Resource res : ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(path)) {
-                ConfigurationFormat format = ConfigurationFormats.getFormat(res);
+                ConfigurationFormat format = ConfigurationFormat.from(res);
                 if (format != null) {
                     try {
                         Map<String, String> read = format.readConfiguration(res);
@@ -78,8 +77,8 @@ final class PathBasedPropertySource extends AbstractPropertySource {
                 }
             }
         });
-        metaInfo = MetaInfoBuilder.of(getMetaInfo())
-                .setSourceExpressions(new String[effectivePaths.size()])
-                .set("sources", sources.toString()).build();
+//        metaInfo = MetaInfoBuilder.of(getMetaInfo())
+//                .setSourceExpressions(new String[effectivePaths.size()])
+//                .set("sources", sources.toString()).build();
     }
 }

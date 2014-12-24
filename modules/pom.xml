@@ -54,6 +54,7 @@ under the License.
     <modules>
         <module>metamodels</module>
         <module>integration</module>
+        <module>environment</module>
     </modules>
 
 </project>

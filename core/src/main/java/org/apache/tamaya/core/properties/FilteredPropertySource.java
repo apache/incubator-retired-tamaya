@@ -34,18 +34,16 @@ class FilteredPropertySource extends AbstractPropertySource {
     private PropertySource unit;
     private Predicate<String> filter;
 
-    public FilteredPropertySource(MetaInfo metaInfo, PropertySource configuration, Predicate<String> filter){
-        super(metaInfo==null?MetaInfoBuilder.of(configuration.getMetaInfo()).setType("filtered").set("filter", filter.toString()).build():
-                MetaInfoBuilder.of(metaInfo).setType("filtered").set("filter", filter.toString()).build());
-        Objects.requireNonNull(configuration);
+    public FilteredPropertySource(String name, PropertySource configuration, Predicate<String> filter){
+        super(name==null?Objects.requireNonNull(configuration).getName():name);
         this.unit = configuration;
         this.filter = filter;
     }
 
     @Override
-    public Map<String,String> toMap(){
+    public Map<String,String> getProperties(){
         final Map<String,String> result = new HashMap<>();
-        this.unit.toMap().entrySet().forEach(e -> {
+        this.unit.getProperties().entrySet().forEach(e -> {
             if(filter.test(e.getKey())){
                 result.put(e.getKey(), e.getValue());
             }

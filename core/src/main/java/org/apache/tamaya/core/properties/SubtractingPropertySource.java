@@ -32,9 +32,8 @@ class SubtractingPropertySource extends AbstractPropertySource {
     private PropertySource unit;
     private List<PropertySource> subtrahends;
 
-    public SubtractingPropertySource(MetaInfo metaInfo, PropertySource configuration, List<PropertySource> subtrahends){
-        super(metaInfo==null?MetaInfoBuilder.of(configuration.getMetaInfo()).setType("subtracted").build():
-                MetaInfoBuilder.of(metaInfo).setType("subtracted").build());
+    public SubtractingPropertySource(String name, PropertySource configuration, List<PropertySource> subtrahends){
+        super(name);
         Objects.requireNonNull(configuration);
         this.unit = configuration;
         this.subtrahends = new ArrayList<>(subtrahends);
@@ -42,7 +41,7 @@ class SubtractingPropertySource extends AbstractPropertySource {
 
     private boolean filter(Map.Entry<String,String> entry){
         for(PropertySource prov: subtrahends){
-            if(prov.containsKey(entry.getKey())){
+            if(prov.get(entry.getKey()).isPresent()){
                 return false;
             }
         }
@@ -50,8 +49,8 @@ class SubtractingPropertySource extends AbstractPropertySource {
     }
 
     @Override
-    public Map<String,String> toMap(){
-        return this.unit.toMap().entrySet().stream().filter(this::filter).collect(Collectors.toMap(
+    public Map<String,String> getProperties(){
+        return this.unit.getProperties().entrySet().stream().filter(this::filter).collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue
         ));

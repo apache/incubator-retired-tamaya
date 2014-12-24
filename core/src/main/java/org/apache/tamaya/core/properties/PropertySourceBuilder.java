@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.oracle.webservices.internal.api.message.PropertySet;
 import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.MetaInfoBuilder;
@@ -36,19 +37,16 @@ import org.apache.tamaya.PropertySource;
 * Builder for assembling non trivial property providers.
 */
 public final class PropertySourceBuilder {
-//    private static final Supplier<IllegalStateException> noPropertyProviderAvailable =
-//        () -> new IllegalStateException("No PropertyProvidersSingletonSpi available.");
-
 
     /**
-     * The final meta info to be used, or null, if a default should be generated.
+     * Name used for the final result.
      */
-    private MetaInfoBuilder metaInfoBuilder;
+    private String name;
 
     /**
-     * Meta info used for the next operation.
+     * Name used for the next operation.
      */
-    private MetaInfo metaInfo;
+    private String currentName;
 
     /**
      * the current property provider, or null.
@@ -62,25 +60,28 @@ public final class PropertySourceBuilder {
     /**
      * Private singleton constructor.
      */
-    private PropertySourceBuilder(MetaInfo metaInfo) {
-        this.metaInfoBuilder = MetaInfoBuilder.of(Objects.requireNonNull(metaInfo)).setInfo("Built by PropertyProviderBuilder.");
-    }
-
-    /**
-     * Private singleton constructor.
-     */
     private PropertySourceBuilder(String name) {
-        this.metaInfoBuilder = MetaInfoBuilder.of(name);
+        this.name = Objects.requireNonNull(name);
     }
 
     /**
      * Private singleton constructor.
      */
-    private PropertySourceBuilder(PropertySource provider) {
-        this.metaInfoBuilder = MetaInfoBuilder.of(Objects.requireNonNull(provider).getMetaInfo());
-        this.current = provider;
+    private PropertySourceBuilder(String name, PropertySource propertySource) {
+        this.name = Objects.requireNonNull(name);
+        this.current = propertySource;
     }
 
+    /**
+     * Creates a new builder instance.
+     *
+     * @param name the provider name, not null.
+     * @param provider the base provider to be used, not null.
+     * @return a new builder instance, never null.
+     */
+    public static PropertySourceBuilder of(String name, PropertySource provider) {
+        return new PropertySourceBuilder(name, provider);
+    }
 
     /**
      * Creates a new builder instance.
@@ -89,18 +90,9 @@ public final class PropertySourceBuilder {
      * @return a new builder instance, never null.
      */
     public static PropertySourceBuilder of(PropertySource provider) {
-        return new PropertySourceBuilder(provider);
+        return new PropertySourceBuilder(provider.getName(), provider);
     }
 
-    /**
-     * Creates a new builder instance.
-     *
-     * @param metaInfo the meta information, not null.
-     * @return a new builder instance, never null.
-     */
-    public static PropertySourceBuilder of(MetaInfo metaInfo) {
-        return new PropertySourceBuilder(metaInfo);
-    }
 
     /**
      * Creates a new builder instance.
@@ -137,17 +129,6 @@ public final class PropertySourceBuilder {
     }
 
     /**
-     * Sets the meta info to be used for the next operation.
-     *
-     * @param metaInfo the meta info, not null.
-     * @return the builder for chaining.
-     */
-    public PropertySourceBuilder withMetaInfo(MetaInfo metaInfo) {
-        this.metaInfo = Objects.requireNonNull(metaInfo);
-        return this;
-    }
-
-    /**
      * Adds the given providers with the current active {@link org.apache.tamaya.AggregationPolicy}. By
      * default {@link org.apache.tamaya.AggregationPolicy#OVERRIDE} is used.
      * @see #withAggregationPolicy(AggregationPolicy)
@@ -177,31 +158,16 @@ public final class PropertySourceBuilder {
             allProviders.add(0, this.current);
         }
         StringBuilder b = new StringBuilder();
-        providers.forEach(p -> b.append(p.getMetaInfo().toString()).append(','));
+        providers.forEach(p -> b.append(p.getName()).append(','));
         b.setLength(b.length()-1);
         String source = b.toString();
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate")
-                    .setSources(source).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<aggregate> -> source=" + source;
         }
-        this.current = PropertySourceFactory.aggregate(mi, this.aggregationPolicy, allProviders);
-
-        addProviderChainInfo(source);
-        this.metaInfo = null;
+        this.current = PropertySourceFactory.aggregate(name, this.aggregationPolicy, allProviders);
+        this.currentName = null;
         return this;
-    }
-
-    private void addProviderChainInfo(String info){
-        String providerChain = metaInfoBuilder.get("providerChain");
-
-        if(providerChain == null){
-            providerChain = "\n  " + info;
-        }
-        else{
-            providerChain = providerChain + ",\n  " + info;
-        }
-        metaInfoBuilder.set("providerChain", providerChain);
     }
 
     /**
@@ -215,11 +181,11 @@ public final class PropertySourceBuilder {
         if(args.length==0){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("args").build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<CLI-args>";
         }
-        PropertySource argProvider = PropertySourceFactory.fromArgs(mi, args);
+        PropertySource argProvider = PropertySourceFactory.fromArgs(name, args);
         return addProviders(argProvider);
     }
 
@@ -251,13 +217,11 @@ public final class PropertySourceBuilder {
         if(paths.isEmpty()){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").set("paths", paths.toString()).build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("paths", paths.toString()).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<aggregate> -> paths=" + paths.toString();
         }
-        return addProviders(PropertySourceFactory.fromPaths(mi, aggregationPolicy, paths));
+        return addProviders(PropertySourceFactory.fromPaths(name, aggregationPolicy, paths));
     }
 
     /**
@@ -285,14 +249,11 @@ public final class PropertySourceBuilder {
         if(urls.isEmpty()){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").set("urls", urls.toString()).build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("urls", urls.toString()).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<aggregate> -> urls=" + urls;
         }
-
-        return addProviders(PropertySourceFactory.fromURLs(mi, this.aggregationPolicy, urls));
+        return addProviders(PropertySourceFactory.fromURLs(name, this.aggregationPolicy, urls));
     }
 
 
@@ -307,13 +268,11 @@ public final class PropertySourceBuilder {
         if(map.isEmpty()){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("map").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<Map> -> map=" + map;
         }
-        return addProviders(PropertySourceFactory.fromMap(mi, map));
+        return addProviders(PropertySourceFactory.fromMap(name, map));
     }
 
 
@@ -323,13 +282,10 @@ public final class PropertySourceBuilder {
      * @return the builder for chaining.
      */
     public PropertySourceBuilder addEnvironmentProperties() {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("environment.properties").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<System.getenv()>";
         }
-
         return addProviders(PropertySourceFactory.fromEnvironmentProperties());
     }
 
@@ -339,14 +295,21 @@ public final class PropertySourceBuilder {
      * @return the builder for chaining.
      */
     public PropertySourceBuilder addSystemProperties() {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("system.properties").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<System.getProperties()>";
         }
-
         return addProviders(PropertySourceFactory.fromSystemProperties());
+    }
+
+    /**
+     * Add the name used for the next aggregation/adding operation on this builder.
+     * @param name the name to be used, not null.
+     * @return the builder for chaining.
+     */
+    public PropertySourceBuilder withName(String name) {
+        this. currentName = Objects.requireNonNull(name);
+        return this;
     }
 
     /**
@@ -360,14 +323,11 @@ public final class PropertySourceBuilder {
         if(providers.length==0){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<aggregate> -> " + Arrays.toString(providers);
         }
-
-        return addProviders(PropertySourceFactory.aggregate(mi, aggregationPolicy, Arrays.asList(providers)));
+        return addProviders(PropertySourceFactory.aggregate(name, aggregationPolicy, Arrays.asList(providers)));
     }
 
 
@@ -382,14 +342,11 @@ public final class PropertySourceBuilder {
         if(providers.isEmpty()){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("aggregate").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<aggregate> -> " + providers;
         }
-
-        return addProviders(PropertySourceFactory.aggregate(mi, aggregationPolicy, providers));
+        return addProviders(PropertySourceFactory.aggregate(name, aggregationPolicy, providers));
     }
 
 
@@ -415,14 +372,11 @@ public final class PropertySourceBuilder {
         if(providers.length==0){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("intersect").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<intersection> -> " + Arrays.toString(providers);
         }
-
-        return addProviders(PropertySourceFactory.intersected(mi, aggregationPolicy, Arrays.asList(providers)));
+        return addProviders(PropertySourceFactory.intersected(name, aggregationPolicy, Arrays.asList(providers)));
     }
 
 
@@ -436,13 +390,11 @@ public final class PropertySourceBuilder {
         if(providers.length==0){
             return this;
         }
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("subtract").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<subtraction> -> " + Arrays.toString(providers);
         }
-        current = PropertySourceFactory.subtracted(mi, current, Arrays.asList(providers));
+        current = PropertySourceFactory.subtracted(name, current, Arrays.asList(providers));
         return this;
     }
 
@@ -454,15 +406,12 @@ public final class PropertySourceBuilder {
      * @return the new filtering instance.
      */
     public PropertySourceBuilder filter(Predicate<String> filter) {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("filtered").set("filter", filter.toString()).build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("filter", filter.toString()).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<filtered> -> " + filter;
         }
-        current = PropertySourceFactory.filtered(mi, filter, current);
-        addProviderChainInfo("filter->" + filter.toString());
-        this.metaInfo = null;
+        current = PropertySourceFactory.filtered(name, filter, current);
+        this.currentName = null;
         return this;
     }
 
@@ -475,14 +424,11 @@ public final class PropertySourceBuilder {
      */
     public PropertySourceBuilder addContextual(Supplier<PropertySource> mapSupplier,
                                                  Supplier<String> isolationKeySupplier) {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("contextual").set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("mapSupplier", mapSupplier.toString()).set("isolationKeySupplier", isolationKeySupplier.toString()).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<contextual> -> map="+mapSupplier+",isolationKeySupplier="+isolationKeySupplier;
         }
-
-        return addProviders(PropertySourceFactory.contextual(mi, mapSupplier, isolationKeySupplier));
+        return addProviders(PropertySourceFactory.contextual(name, mapSupplier, isolationKeySupplier));
     }
 
     /**
@@ -492,28 +438,12 @@ public final class PropertySourceBuilder {
      * @return the new delegating instance.
      */
     public PropertySourceBuilder replace(Map<String, String> replacementMap) {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("replace").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<replacement> -> current="+current.getName()+" with ="+replacementMap;
         }
-        current = PropertySourceFactory.replacing(mi, current, replacementMap);
-        this.metaInfo = null;
-        addProviderChainInfo("replace->" + replacementMap.toString());
-        return this;
-    }
-
-    /**
-     * Sets an additional key on the final {@link org.apache.tamaya.MetaInfo} of the provider
-     * created.
-     *
-     * @param key the key to be added, not null.
-     * @param value the keys to be added, not null.
-     * @return this builder for chaining
-     */
-    public PropertySourceBuilder setMeta(String key, String value){
-        this.metaInfoBuilder.set(key, value);
+        current = PropertySourceFactory.replacing(name, current, replacementMap);
+        this.currentName = null;
         return this;
     }
 
@@ -523,10 +453,9 @@ public final class PropertySourceBuilder {
      */
     public PropertySource build(){
         if (current != null) {
-            return PropertySourceFactory.build(metaInfoBuilder.build(), current);
+            return PropertySourceFactory.build(name, current);
         }
-
-        return PropertySourceFactory.empty(metaInfoBuilder.build());
+        return PropertySourceFactory.empty(name);
     }
 
     /**
@@ -536,15 +465,12 @@ public final class PropertySourceBuilder {
      * @return the freezed instance, never null.
      */
     public PropertySource buildFreezed() {
-        MetaInfo mi = this.metaInfo;
-        if (mi == null) {
-            mi = MetaInfoBuilder.of("freezed").set("freezed", "true").build();
-        } else {
-            mi = MetaInfoBuilder.of(metaInfo).set("freezed", "true").build();
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<freezed> -> source="+current.getName();
         }
-
-        PropertySource prov = PropertySourceFactory.freezed(mi, current);
-        this.metaInfo = null;
+        PropertySource prov = PropertySourceFactory.freezed(name, current);
+        this.currentName = null;
         return prov;
     }
 

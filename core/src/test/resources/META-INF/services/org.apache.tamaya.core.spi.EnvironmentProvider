@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.internal.TestEnvironmentProvider
+org.apache.tamaya.metamodel.environment.TestEnvironmentProvider

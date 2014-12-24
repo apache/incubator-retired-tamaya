@@ -40,17 +40,17 @@ public final class ConfigChangeCallbackMethod {
     private Method callbackMethod;
 
     public ConfigChangeCallbackMethod(Method callbackMethod) {
-        Objects.requireNonNull(callbackMethod);
         this.callbackMethod = Optional.of(callbackMethod).filter(
                 (m) -> void.class.equals(m.getReturnType()) &&
                         m.getParameterCount() == 1 &&
-                        m.getParameterTypes()[0].equals(PropertyChangeEvent.class)).get();
+                        m.getParameterTypes()[0].equals(ConfigChangeSet.class)).get();
     }
 
     public Consumer<ConfigChangeSet> createConsumer(Object instance, Configuration... configurations){
+        // TODO consider also environment !
         return event -> {
             for(Configuration cfg:configurations){
-                if(event.getPropertySource().getMetaInfo().getName().equals(cfg.getMetaInfo().getName())){
+                if(event.getPropertySource().getName().equals(cfg.getName())){
                     return;
                 }
             }

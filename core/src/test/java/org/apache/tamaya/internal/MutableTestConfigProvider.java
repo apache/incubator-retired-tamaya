@@ -50,7 +50,7 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
         dataMap.put("sons.2", "Luke");
         dataMap.put("sons.3", "Benjamin");
 //        PropertySource provider = PropertySourceBuilder.of(CONFIG_NAME).addMap(dataMap).build();
-        testConfig = new MutableConfiguration(dataMap, MetaInfo.of(CONFIG_NAME));
+        testConfig = new MutableConfiguration(dataMap, CONFIG_NAME);
     }
 
     @Override
@@ -76,13 +76,13 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
 		private static final long serialVersionUID = 8811989470609598218L;
 		private final Map<String,String> data = new ConcurrentHashMap<>();
 
-        MutableConfiguration(Map<String,String> data, MetaInfo metaInfo){
-            super(metaInfo);
+        MutableConfiguration(Map<String,String> data, String name){
+            super(name);
             this.data.putAll(data);
         }
 
         @Override
-        public Map<String, String> toMap() {
+        public Map<String, String> getProperties() {
             return Collections.unmodifiableMap(data);
         }
 

@@ -40,9 +40,6 @@ public final class ConfigurationInjector {
      * @return the configured type registered.
      */
     public static ConfiguredType registerType(Class<?> type){
-        if (!ConfiguredType.isConfigured(type)) {
-            return null;
-        }
         return INSTANCE.configuredTypes.computeIfAbsent(type, ConfiguredType::new);
     }
 
@@ -55,9 +52,6 @@ public final class ConfigurationInjector {
      */
     public static void configure(Object instance, Configuration... configurations){
         Class type = Objects.requireNonNull(instance).getClass();
-        if (!ConfiguredType.isConfigured(type)) {
-            throw new IllegalArgumentException("Not a configured type: " + type.getName());
-        }
         ConfiguredType configuredType = registerType(type);
         Objects.requireNonNull(configuredType).configure(instance, configurations);
     }

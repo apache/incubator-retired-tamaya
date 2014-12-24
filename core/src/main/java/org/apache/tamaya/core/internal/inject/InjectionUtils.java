@@ -1,5 +1,6 @@
 package org.apache.tamaya.core.internal.inject;
 
+import java.beans.PropertyChangeEvent;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.tamaya.Codec;
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.annotation.ConfiguredProperties;
@@ -75,6 +77,37 @@ final class InjectionUtils {
     }
 
     /**
+     * Evaluates all absolute configuration key based on the member name found.
+     *
+     * @param areasAnnot          the (optional) annotation definining areas to be looked up.
+     * @return the list current keys in order how they should be processed/looked up.
+     */
+    public static List<String> evaluateKeys(Member member, DefaultAreas areasAnnot) {
+        List<String> keys = new ArrayList<>();
+        String name = member.getName();
+        String mainKey;
+        if(name.startsWith("get") || name.startsWith("set")){
+            mainKey = Character.toLowerCase(name.charAt(3)) + name.substring(4);
+        }
+        else{
+            mainKey = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+        }
+        keys.add(mainKey);
+        if (areasAnnot != null) {
+            // Add prefixed entries, including absolute (root) entry for "" area keys.
+            for (String area : areasAnnot.value()) {
+                if(!area.isEmpty()) {
+                    keys.add(area + '.' + mainKey);
+                }
+            }
+        }
+        else{ // add package name
+            keys.add(member.getDeclaringClass().getName()+'.'+mainKey);
+        }
+        return keys;
+    }
+
+    /**
      * Internally evaluated the current valid configuration keys based on the given annotations present.
      *
      * @return the keys to be returned, or null.
@@ -84,6 +117,7 @@ final class InjectionUtils {
         WithLoadPolicy loadPolicy = Utils.getAnnotation(WithLoadPolicy.class, method, method.getDeclaringClass());
         return getConfigValueInternal(method, areasAnnot, loadPolicy, configurations);
     }
+
 
     /**
      * Internally evaluated the current valid configuration keys based on the given annotations present.
@@ -106,30 +140,40 @@ final class InjectionUtils {
                 element, ConfiguredProperty.class, ConfiguredProperties.class);
         DefaultValue defaultAnnot = element.getAnnotation(DefaultValue.class);
         String configValue = null;
-        for(ConfiguredProperty prop: configuredProperties){
-            List<String> keys = InjectionUtils.evaluateKeys((Member)element, areasAnnot, prop);
-            Configuration config = InjectionUtils.getConfiguration(prop, configurations);
-            for (String key : keys) {
-                if (config.containsKey(key)) {
-                    configValue = config.get(key).orElse(null);
-                }
-                if (configValue != null) {
-                    break;
-                }
-            }
-            if (configValue != null) {
-                // net step perform expression resolution, if any
-                return Configuration.evaluateValue(configValue, config);
+        if(configuredProperties.isEmpty()){
+            List<String> keys = InjectionUtils.evaluateKeys((Member)element, areasAnnot);
+            Configuration config = InjectionUtils.getConfiguration("default", configurations);
+            configValue = evaluteConfigValue(configValue, keys, config);
+        }
+        else {
+            for (ConfiguredProperty prop : configuredProperties) {
+                List<String> keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
+                Configuration config = InjectionUtils.getConfiguration(prop, configurations);
+                configValue = evaluteConfigValue(configValue, keys, config);
             }
         }
         if (configValue == null && defaultAnnot != null) {
             return defaultAnnot.value();
         }
-        return null;
+        return configValue;
+    }
+
+    private static String evaluteConfigValue(String configValue, List<String> keys, Configuration config) {
+        for (String key : keys) {
+            configValue = config.get(key).orElse(null);
+            if (configValue != null) {
+                break;
+            }
+        }
+        if (configValue != null) {
+            // net step perform expression resolution, if any
+            configValue =  Configuration.evaluateValue(configValue, config);
+        }
+        return configValue;
     }
 
 
-	@SuppressWarnings("rawtypes")
+    @SuppressWarnings("rawtypes")
 	public static <T> T adaptValue(AnnotatedElement element, Class<T> targetType, String configValue){
         try {
             // Check for adapter/filter
@@ -164,7 +208,7 @@ final class InjectionUtils {
     public static Configuration getConfiguration(String name, Configuration... configurations) {
         if(name!=null) {
             for(Configuration conf: configurations){
-                if(name.equals(conf.getMetaInfo().getName())){
+                if(name.equals(conf.getName())){
                     return conf;
                 }
             }
@@ -172,7 +216,7 @@ final class InjectionUtils {
         }
         else{
             for(Configuration conf: configurations){
-                if("default".equals(conf.getMetaInfo().getName())){
+                if("default".equals(conf.getName())){
                     return conf;
                 }
             }

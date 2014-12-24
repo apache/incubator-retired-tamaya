@@ -18,10 +18,12 @@
  */
 package org.apache.tamaya.core.config;
 
+import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -59,7 +61,7 @@ public final class ConfigFunctions {
         return config -> {
             Map<String, String> area = new HashMap<>();
             area.putAll(
-                    config.toMap().entrySet().stream()
+                    config.getProperties().entrySet().stream()
                             .filter(e -> isKeyInArea(e.getKey(), areaKey))
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
@@ -79,6 +81,98 @@ public final class ConfigFunctions {
         int lastIndex = key.lastIndexOf('.');
         String curAreaKey = lastIndex > 0 ? key.substring(0, lastIndex) : "";
         return curAreaKey.equals(areaKey);
+    }
+
+    /**
+     * Return a query to evaluate the set with all fully qualifies area names. This method should return the areas as accurate as possible,
+     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * does not support key iteration.
+     *
+     * @return s set with all areas, never {@code null}.
+     */
+    public static ConfigQuery<Set<String>> getAreas() {
+        return config -> {
+            final Set<String> areas = new HashSet<>();
+            config.getProperties().keySet().forEach(s -> {
+                int index = s.lastIndexOf('.');
+                if (index > 0) {
+                    areas.add(s.substring(0, index));
+                } else {
+                    areas.add("<root>");
+                }
+            });
+            return areas;
+        };
+    }
+
+    /**
+     * Return a query to evaluate the set with all fully qualified area names, containing the transitive closure also including all
+     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate
+     * as possible, but may not provide a complete set of areas that are finally accessible, especially when the
+     * underlying storage does not support key iteration.
+     *
+     * @return s set with all transitive areas, never {@code null}.
+     */
+    public static ConfigQuery<Set<String>> getTransitiveAreas() {
+        return config -> {
+            final Set<String> transitiveAreas = new HashSet<>();
+            config.query(getAreas()).forEach(s -> {
+                int index = s.lastIndexOf('.');
+                if (index < 0) {
+                    transitiveAreas.add("<root>");
+                } else {
+                    while (index > 0) {
+                        s = s.substring(0, index);
+                        transitiveAreas.add(s);
+                        index = s.lastIndexOf('.');
+                    }
+                }
+            });
+            return transitiveAreas;
+        };
+    }
+
+    /**
+     * Return a query to evaluate the set with all fully qualified area names, containing only the
+     * areas that match the predicate and have properties attached. This method should return the areas as accurate as possible,
+     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * does not support key iteration.
+     *
+     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
+     * @return s set with all areas, never {@code null}.
+     */
+    public static ConfigQuery<Set<String>> getAreas(final Predicate<String> predicate) {
+        return config -> {
+            return config.query(getAreas()).stream().filter(predicate).collect(Collectors.toCollection(TreeSet::new));
+        };
+    }
+
+    /**
+     * Return a query to evaluate the set with all fully qualified area names, containing the transitive closure also including all
+     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate as possible,
+     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * does not support key iteration.
+     *
+     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
+     * @return s set with all transitive areas, never {@code null}.
+     */
+    public static ConfigQuery<Set<String>> getTransitiveAreas(Predicate<String> predicate) {
+        return config -> {
+            return config.query(getTransitiveAreas()).stream().filter(predicate).collect(Collectors.toCollection(TreeSet::new));
+        };
+    }
+
+    /**
+     * Return a query to evaluate to evaluate if an area exists. In case where the underlying storage implementation does not allow
+     * querying the keys available, {@code false} should be returned.
+     *
+     * @param areaKey the configuration area (sub)path.
+     * @return {@code true}, if such a node exists.
+     */
+    public static ConfigQuery<Boolean> containsArea(String areaKey) {
+        return config -> {
+            return config.query(getAreas()).contains(areaKey);
+        };
     }
 
     /**
@@ -106,7 +200,7 @@ public final class ConfigFunctions {
             Map<String, String> area = new HashMap<>();
             String lookupKey = areaKey + '.';
             area.putAll(
-                    config.toMap().entrySet().stream()
+                    config.getProperties().entrySet().stream()
                             .filter(e -> e.getKey().startsWith(lookupKey))
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
@@ -120,13 +214,13 @@ public final class ConfigFunctions {
      * that are contained in the given area (non recursive). Hereby
      * the area key is stripped away fromMap the resulting key.
      *
-     * @param areaKey the area key, not null
+     * @param areaKey       the area key, not null
      * @param mappedAreaKey the target key, not null
      * @return the area configuration, with the areaKey stripped away.
      */
     public static UnaryOperator<Configuration> mapArea(String areaKey, String mappedAreaKey) {
-        return mapKeys(key -> key.startsWith(areaKey + '.')?
-                mappedAreaKey + key.substring(areaKey.length()):key);
+        return mapKeys(key -> key.startsWith(areaKey + '.') ?
+                mappedAreaKey + key.substring(areaKey.length()) : key);
     }
 
     /**

@@ -23,6 +23,7 @@ import org.apache.tamaya.PropertySource;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Created by Anatole on 07.12.2014.
@@ -30,11 +31,11 @@ import java.util.Optional;
 class BuildablePropertySource implements PropertySource
 {
 
-    private MetaInfo metaInfo;
+    private String name;
     private PropertySource baseProvider;
 
-    public BuildablePropertySource(MetaInfo metaInfo, PropertySource baseProvider) {
-        this.metaInfo = Objects.requireNonNull(metaInfo);
+    public BuildablePropertySource(String name, PropertySource baseProvider) {
+        this.name = Objects.requireNonNull(name);
         this.baseProvider = Objects.requireNonNull(baseProvider);
     }
 
@@ -44,23 +45,18 @@ class BuildablePropertySource implements PropertySource
     }
 
     @Override
-    public boolean containsKey(String key) {
-        return this.baseProvider.containsKey(key);
+    public Map<String, String> getProperties() {
+        return this.baseProvider.getProperties();
     }
 
     @Override
-    public Map<String, String> toMap() {
-        return this.baseProvider.toMap();
-    }
-
-    @Override
-    public MetaInfo getMetaInfo() {
-        return this.metaInfo;
+    public String getName() {
+        return this.name;
     }
 
     @Override
     public String toString(){
-        return "BuildablePropertyProvider -> " + getMetaInfo().toString();
+        return "BuildablePropertyProvider -> " + getName();
     }
 
 }

@@ -20,6 +20,8 @@ package org.apache.tamaya;
 
 
 import org.apache.tamaya.annotation.WithCodec;
+import org.apache.tamaya.spi.CodecSpi;
+import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Interface for an codec that converts a configured String into something else and vice versa.
@@ -54,7 +56,7 @@ public interface Codec<T>{
      * @return any adapter replaced with the new adapter, or null.
      */
     public static <T> Codec<T> register(Class<T> targetType, Codec<T> adapter){
-        return Codecs.register(targetType, adapter);
+        return ServiceContext.getInstance().getSingleton(CodecSpi.class).register(targetType, adapter);
     }
 
     /**
@@ -63,7 +65,7 @@ public interface Codec<T>{
      * @return true, if the given target type is supported.
      */
     public static boolean isTargetTypeSupported(Class<?> targetType){
-        return Codecs.isTargetTypeSupported(targetType);
+        return ServiceContext.getInstance().getSingleton(CodecSpi.class).isTargetTypeSupported(targetType);
     }
 
     /**
@@ -74,7 +76,7 @@ public interface Codec<T>{
      * @throws ConfigException if the target type is not supported.
      */
     public static  <T> Codec<T> getInstance(Class<T> targetType){
-        return Codecs.getCodec(targetType);
+        return ServiceContext.getInstance().getSingleton(CodecSpi.class).getCodec(targetType, null);
     }
 
     /**
@@ -88,7 +90,7 @@ public interface Codec<T>{
      * instantiated.
      */
     public static  <T> Codec<T> getInstance(Class<T> targetType, WithCodec annotation){
-        return Codecs.getCodec(targetType, annotation);
+        return ServiceContext.getInstance().getSingleton(CodecSpi.class).getCodec(targetType, annotation);
     }
 
 }

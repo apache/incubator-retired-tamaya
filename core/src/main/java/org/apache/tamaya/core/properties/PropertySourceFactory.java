@@ -20,12 +20,7 @@ package org.apache.tamaya.core.properties;
 
 import java.net.URL;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -39,7 +34,7 @@ import org.apache.tamaya.PropertySource;
  */
 public final class PropertySourceFactory {
 
-    private static final PropertySource EMPTY_PROPERTYSOURCE = fromMap(MetaInfo.of("<empty>"), Collections.emptyMap());
+    private static final PropertySource EMPTY_PROPERTYSOURCE = fromMap("<empty>", Collections.emptyMap());
     private static final PropertySource ENV_PROPERTYSOURCE = new EnvironmentPropertySource();
 
 
@@ -48,9 +43,9 @@ public final class PropertySourceFactory {
      */
     private PropertySourceFactory(){}
 
-    public static PropertySource fromArgs(MetaInfo metaInfo, String... args) {
-        if(metaInfo==null){
-            metaInfo = MetaInfo.of("CLI");
+    public static PropertySource fromArgs(String name, String... args) {
+        if(name==null){
+            name ="<CLI> " + Arrays.toString(args);
         }
         // TODO read the CLI with some better library, e.g. move parsing service to ext. service SPI
         Map<String, String> properties = new HashMap<>();
@@ -91,35 +86,35 @@ public final class PropertySourceFactory {
                 properties.put(argKey, value);
             }
         }
-        return fromMap(metaInfo, properties);
+        return fromMap(name, properties);
     }
 
-    public static PropertySource fromPaths(MetaInfo metaInfo, AggregationPolicy aggregationPolicy, List<String> paths) {
-        if(metaInfo == null){
-            metaInfo = MetaInfoBuilder.of().setInfo("From Paths").set("paths", paths.toString()).build();
+    public static PropertySource fromPaths(String name, AggregationPolicy aggregationPolicy, List<String> paths) {
+        if(name==null){
+            name ="<Paths> " + paths.toString();
         }
-        return new PathBasedPropertySource(metaInfo, paths, aggregationPolicy);
+        return new PathBasedPropertySource(name, paths, aggregationPolicy);
     }
 
-    public static PropertySource fromURLs(MetaInfo metaInfo, AggregationPolicy aggregationPolicy, List<URL> resources) {
-        if(metaInfo == null){
-            metaInfo = MetaInfoBuilder.of().setInfo("From Resources").set("resources", resources.toString()).build();
+    public static PropertySource fromURLs(String name, AggregationPolicy aggregationPolicy, List<URL> urls) {
+        if(name==null){
+            name ="<URLs> " + urls.toString();
         }
-        return new URLBasedPropertySource(metaInfo, resources, aggregationPolicy);
+        return new URLBasedPropertySource(name, urls, aggregationPolicy);
     }
 
-    public static PropertySource fromMap(MetaInfo metaInfo, Map<String, String> map) {
-        if(metaInfo == null){
-            metaInfo = MetaInfoBuilder.of().setInfo("From Map").set("map", map.toString()).build();
+    public static PropertySource fromMap(String name, Map<String, String> map) {
+        if(name==null){
+            name ="<Map> " + map.toString();
         }
-        return new MapBasedPropertySource(metaInfo, map);
+        return new MapBasedPropertySource(name, map);
     }
 
-    public static PropertySource empty(MetaInfo metaInfo) {
-        if(metaInfo==null) {
+    public static PropertySource empty(String name) {
+        if(name==null) {
             return EMPTY_PROPERTYSOURCE;
         }
-        return fromMap(metaInfo, Collections.emptyMap());
+        return fromMap(name, Collections.emptyMap());
     }
 
     /**
@@ -140,20 +135,11 @@ public final class PropertySourceFactory {
         return new SystemPropertiesPropertySource();
     }
 
-    public static PropertySource freezed(MetaInfo metaInfo, PropertySource provider) {
-        if(metaInfo==null){
-            metaInfo = MetaInfoBuilder.of().setType("freezed")
-                    .set("provider", provider.toString())
-                    .set("freezedAt", Date.from(Instant.now()).toString())
-                    .build();
+    public static PropertySource freezed(String name, PropertySource source) {
+        if(name==null){
+            name ="<Freezed> source=" + source.toString()+", at="+Instant.now().toString();
         }
-        else{
-            metaInfo = MetaInfoBuilder.of(metaInfo).setType("freezed")
-                    .set("freezedAt", Date.from(Instant.now()).toString())
-                    .set("provider", provider.toString())
-                    .build();
-        }
-        return FreezedPropertySource.of(metaInfo, provider);
+        return FreezedPropertySource.of(name, source);
     }
 
     /**
@@ -163,14 +149,11 @@ public final class PropertySourceFactory {
      * @param providers the maps to be included, not null.
      * @return the aggregated instance containing all given maps.
      */
-    public static PropertySource aggregate(MetaInfo metaInfo, AggregationPolicy policy, List<PropertySource> providers) {
-        if(metaInfo==null){
-            metaInfo = MetaInfoBuilder.of().setInfo("Aggregated")
-                    .set("AggregationPolicy", policy.toString())
-                    .set("config", providers.toString())
-                    .build();
+    public static PropertySource aggregate(String name, AggregationPolicy policy, List<PropertySource> providers) {
+        if(name==null){
+            name ="<Aggregate> policy=" + policy.toString()+", providers="+providers.toString();
         }
-        return new AggregatedPropertySource(metaInfo, null, policy, providers);
+        return new AggregatedPropertySource(name, null, policy, providers);
     }
 
     /**
@@ -179,17 +162,15 @@ public final class PropertySourceFactory {
      * @param provider the provider to be made mutable, not null.
      * @return the mutable instance.
      */
-    public static PropertySource mutable(MetaInfo metaInfo, PropertySource provider) {
-        if(metaInfo==null){
-            metaInfo = MetaInfoBuilder.of(provider.getMetaInfo())
-                    .set("mutableSince", Date.from(Instant.now()).toString())
-                    .build();
+    public static PropertySource mutable(String name, PropertySource provider) {
+        if(name==null){
+            name ="<Mutable> provider="+provider.getName();
         }
-        PropertySource mutableProvider = fromMap(metaInfo,new HashMap<>());
+        PropertySource mutableProvider = fromMap(name,new HashMap<>());
         List<PropertySource> providers = new ArrayList<>(2);
         providers.add(provider);
         providers.add(mutableProvider);
-        return new AggregatedPropertySource(metaInfo, mutableProvider, AggregationPolicy.OVERRIDE, providers);
+        return new AggregatedPropertySource(name, mutableProvider, AggregationPolicy.OVERRIDE, providers);
     }
 
     /**
@@ -199,8 +180,8 @@ public final class PropertySourceFactory {
      * @param providers the maps to be included, not null.
      * @return the intersecting instance containing all given maps.
      */
-    public static PropertySource intersected(MetaInfo metaInfo, AggregationPolicy aggregationPolicy, List<PropertySource> providers) {
-        return new IntersectingPropertySource(metaInfo, aggregationPolicy, providers);
+    public static PropertySource intersected(String name, AggregationPolicy aggregationPolicy, List<PropertySource> providers) {
+        return new IntersectingPropertySource(name, aggregationPolicy, providers);
     }
 
     /**
@@ -211,8 +192,8 @@ public final class PropertySourceFactory {
      * @param subtrahendSets the maps to be subtracted, not null.
      * @return the intersecting instance containing all given maps.
      */
-    public static PropertySource subtracted(MetaInfo metaInfo, PropertySource target, List<PropertySource> subtrahendSets) {
-        return new SubtractingPropertySource(metaInfo, target,subtrahendSets);
+    public static PropertySource subtracted(String name, PropertySource target, List<PropertySource> subtrahendSets) {
+        return new SubtractingPropertySource(name, target,subtrahendSets);
     }
 
 
@@ -220,12 +201,15 @@ public final class PropertySourceFactory {
      * Creates a filtered {@link org.apache.tamaya.PropertySource} (a view) current a given base {@link }PropertyMap}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
-     * @param propertyMap the base map instance, not null.
+     * @param name the base map instance, not null.
      * @param filter      the filtger to be applied, not null.
      * @return the new filtering instance.
      */
-    public static PropertySource filtered(MetaInfo metaInfo, Predicate<String> filter, PropertySource propertyMap) {
-        return new FilteredPropertySource(metaInfo, propertyMap, filter);
+    public static PropertySource filtered(String name, Predicate<String> filter, PropertySource source) {
+        if(name==null){
+            name ="<Filtered> filter="+filter+", source="+source.getName();
+        }
+        return new FilteredPropertySource(name, source, filter);
     }
 
     /**
@@ -235,9 +219,12 @@ public final class PropertySourceFactory {
      * @param mapSupplier          the supplier creating new provider instances
      * @param isolationKeySupplier the supplier providing contextual keys based on the current environment.
      */
-    public static PropertySource contextual(MetaInfo metaInfo, Supplier<PropertySource> mapSupplier,
+    public static PropertySource contextual(String name, Supplier<PropertySource> mapSupplier,
                                               Supplier<String> isolationKeySupplier) {
-        return new ContextualPropertySource(metaInfo, mapSupplier, isolationKeySupplier);
+        if(name==null){
+            name ="<Contextual> mapSupplier="+mapSupplier+", isolationKeyProvider="+isolationKeySupplier;
+        }
+        return new ContextualPropertySource(name, mapSupplier, isolationKeySupplier);
     }
 
 
@@ -245,12 +232,15 @@ public final class PropertySourceFactory {
      * Creates a filtered {@link org.apache.tamaya.PropertySource} (a view) current a given base {@link }PropertyMap}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
-     * @param mainMap   the main map instance, not null.
+     * @param source   the main map instance, not null.
      * @param parentMap the delegated parent map instance, not null.
      * @return the new delegating instance.
      */
-    public static PropertySource delegating(MetaInfo metaInfo, PropertySource mainMap, Map<String, String> parentMap) {
-        return new DelegatingPropertySource(metaInfo, mainMap, parentMap);
+    public static PropertySource delegating(String name, PropertySource source, Map<String, String> parentMap) {
+        if(name==null){
+            name ="<Delegating> source="+source+", delegates="+parentMap;
+        }
+        return new DelegatingPropertySource(name, source, parentMap);
     }
 
     /**
@@ -266,19 +256,22 @@ public final class PropertySourceFactory {
      * @param replacementMap the map instance, that will replace all corresponding entries in {@code mainMap}, not null.
      * @return the new delegating instance.
      */
-    public static PropertySource replacing(MetaInfo metaInfo, PropertySource mainMap, Map<String, String> replacementMap) {
-        return new ReplacingPropertySource(metaInfo, mainMap, replacementMap);
+    public static PropertySource replacing(String name, PropertySource source, Map<String, String> replacementMap) {
+        if(name==null){
+            name ="<Replacement> source="+source+", replacements="+replacementMap;
+        }
+        return new ReplacingPropertySource(name, source, replacementMap);
     }
 
     /**
      * Creates a new {@link org.apache.tamaya.PropertySource} given an existing one, and an alternate
      * meta-info.
-     * @param metaInfo the new meta-information, not null.
+     * @param name the new meta-information, not null.
      * @param baseProvider the property source, not null.
      * @return the new property source.never null.
      */
-    public static PropertySource build(MetaInfo metaInfo, PropertySource baseProvider) {
-        return new BuildablePropertySource(metaInfo, baseProvider);
+    public static PropertySource build(String name, PropertySource baseProvider) {
+        return new BuildablePropertySource(name, baseProvider);
     }
 
 }

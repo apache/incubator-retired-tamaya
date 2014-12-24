@@ -18,10 +18,6 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.core.env.ConfiguredSystemProperties;
-import org.apache.tamaya.core.properties.AbstractPropertySource;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,16 +28,19 @@ class SystemPropertiesPropertySource extends AbstractPropertySource {
 
     private static final long serialVersionUID = -5935940312707001199L;
 
-    public SystemPropertiesPropertySource(){
-        super(MetaInfoBuilder.of().setType("sys-properties").build());
+    /**
+     * Constructor.
+     */
+    protected SystemPropertiesPropertySource() {
+        super("<System.getProperties()>");
     }
 
     @Override
-    public Map<String,String> toMap(){
+    public Map<String,String> getProperties(){
         Properties sysProps = System.getProperties();
-        if(sysProps instanceof ConfiguredSystemProperties){
-            sysProps = ((ConfiguredSystemProperties)sysProps).getInitialProperties();
-        }
+//        if(sysProps instanceof ConfiguredSystemProperties){
+//            sysProps = ((ConfiguredSystemProperties)sysProps).getInitialProperties();
+//        }
         Map<String,String> props = new HashMap<>();
         for (Map.Entry<Object,Object> en : sysProps.entrySet()) {
             props.put(en.getKey().toString(), en.getValue().toString());

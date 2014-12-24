@@ -30,14 +30,14 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.tamaya.annotation.WithCodec;
-import org.apache.tamaya.spi.CodecsSingletonSpi;
+import org.apache.tamaya.spi.CodecSpi;
 
 /**
- * Test implementation current {@link org.apache.tamaya.spi.CodecsSingletonSpi}, which provides codecs
+ * Test implementation current {@link org.apache.tamaya.spi.CodecSpi}, which provides codecs
  * for some basic types.
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
-public final class TestPropertyAdaptersSingletonSpi implements CodecsSingletonSpi {
+public final class TestPropertyAdaptersSingletonSpi implements CodecSpi {
 
 	private Map<Class, Codec<?>> codecs = new ConcurrentHashMap<>();
 

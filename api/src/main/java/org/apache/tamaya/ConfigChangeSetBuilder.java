@@ -43,10 +43,6 @@ public final class ConfigChangeSetBuilder {
      */
     PropertySource source;
     /**
-     * The base version, if any. Used for optimistic version checking.
-     */
-    String baseVersion;
-    /**
      * Codesc provider, or null.
      */
     Function<String, Codec> codecs;
@@ -55,13 +51,11 @@ public final class ConfigChangeSetBuilder {
      * Constructor.
      *
      * @param source      the underlying configuration/provider, not null.
-     * @param baseVersion the base version, used for optimistic version checking.
      * @param codecs      function to provide customized codecs, when according values are changed, if not set the
      *                    default codecs provided by {@link Codec#getInstance(Class)} are used.
      */
-    private ConfigChangeSetBuilder(PropertySource source, String baseVersion, Function<String, Codec> codecs) {
+    private ConfigChangeSetBuilder(PropertySource source, Function<String, Codec> codecs) {
         this.source = Objects.requireNonNull(source);
-        this.baseVersion = baseVersion;
         this.codecs = codecs;
     }
 
@@ -72,7 +66,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public static ConfigChangeSetBuilder of(PropertySource source) {
-        return new ConfigChangeSetBuilder(source, Instant.now().toString(), null);
+        return new ConfigChangeSetBuilder(source, null);
     }
 
     /**
@@ -84,31 +78,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public static ConfigChangeSetBuilder of(PropertySource source, Function<String, Codec> codecs) {
-        return new ConfigChangeSetBuilder(source, Instant.now().toString(), codecs);
-    }
-
-    /**
-     * Creates a new instance current this builder.
-     *
-     * @param source      the underlying property provider/configuration, not null.
-     * @param baseVersion the base version to be used.
-     * @return the builder for chaining.
-     */
-    public static ConfigChangeSetBuilder of(PropertySource source, String baseVersion) {
-        return new ConfigChangeSetBuilder(source, baseVersion, null);
-    }
-
-    /**
-     * Creates a new instance current this builder.
-     *
-     * @param source      the underlying property provider/configuration, not null.
-     * @param baseVersion the base version to be used.
-     * @param codecs      function to provide customized codecs, when according values are changed, if not set the
-     *                    default codecs provided by {@link Codec#getInstance(Class)} are used.
-     * @return the builder for chaining.
-     */
-    public static ConfigChangeSetBuilder of(PropertySource source, String baseVersion, Function<String, Codec> codecs) {
-        return new ConfigChangeSetBuilder(source, baseVersion, codecs);
+        return new ConfigChangeSetBuilder(source, codecs);
     }
 
     /**
@@ -118,7 +88,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public static ConfigChangeSetBuilder of(Configuration configuration) {
-        return new ConfigChangeSetBuilder(configuration, configuration.getVersion(), null);
+        return new ConfigChangeSetBuilder(configuration, null);
     }
 
     /**
@@ -130,7 +100,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public static ConfigChangeSetBuilder of(Configuration configuration, Function<String, Codec> codecs) {
-        return new ConfigChangeSetBuilder(configuration, configuration.getVersion(), codecs);
+        return new ConfigChangeSetBuilder(configuration, codecs);
     }
 
 
@@ -389,7 +359,7 @@ public final class ConfigChangeSetBuilder {
      */
     public ConfigChangeSetBuilder deleteAll() {
         this.delta.clear();
-        this.source.toMap().forEach((k, v) ->
+        this.source.getProperties().forEach((k, v) ->
                 this.delta.put(k, new PropertyChangeEvent(this.source, k, v, null)));
         return this;
     }
@@ -417,7 +387,7 @@ public final class ConfigChangeSetBuilder {
      * @return the new change set, never null.
      */
     public ConfigChangeSet build() {
-        return new ConfigChangeSet(this.source, baseVersion, Collections.unmodifiableCollection(this.delta.values()));
+        return new ConfigChangeSet(this.source, Collections.unmodifiableCollection(this.delta.values()));
     }
 
     /**
@@ -430,7 +400,7 @@ public final class ConfigChangeSetBuilder {
      */
     public static Collection<PropertyChangeEvent> compare(PropertySource map1, PropertySource map2) {
         List<PropertyChangeEvent> changes = new ArrayList<>();
-        for (Map.Entry<String, String> en : map1.toMap().entrySet()) {
+        for (Map.Entry<String, String> en : map1.getProperties().entrySet()) {
             Optional<String> val = map2.get(en.getKey());
             if (!val.isPresent()) {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
@@ -438,7 +408,7 @@ public final class ConfigChangeSetBuilder {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), val.get(), en.getValue()));
             }
         }
-        for (Map.Entry<String, String> en : map2.toMap().entrySet()) {
+        for (Map.Entry<String, String> en : map2.getProperties().entrySet()) {
             Optional<String> val = map1.get(en.getKey());
             if (!val.isPresent()) {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));

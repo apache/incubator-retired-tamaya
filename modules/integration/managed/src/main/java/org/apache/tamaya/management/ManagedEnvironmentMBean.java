@@ -16,12 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.management;
+package org.apache.tamaya.se;
 
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Managed bean interface for accessing environment data.

@@ -22,14 +22,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
-import org.apache.tamaya.spi.ConfigurationManagerSingletonSpi;
+import org.apache.tamaya.spi.ConfigurationSpi;
 
 /**
  * Created by Anatole on 09.09.2014.
  */
-public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingletonSpi{
+public class TestConfigServiceSingletonSpi implements ConfigurationSpi {
 
 
     private Map<String, Configuration> configs = new ConcurrentHashMap<>();
@@ -55,7 +54,7 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
 
 
     @Override
-    public boolean isConfigurationDefined(String name){
+    public boolean isConfigurationAvailable(String name){
         return configs.containsKey(name);
     }
 
@@ -81,7 +80,7 @@ public class TestConfigServiceSingletonSpi implements ConfigurationManagerSingle
     public String evaluateValue(String expression, Configuration... configurations) {
         // TODO improve this ugly implementation...
         for (Configuration config : configurations) {
-            for (Map.Entry<String, String> en : config.toMap().entrySet()) {
+            for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
                 expression = expression.replaceAll("\\$\\{" + en.getKey() + "\\}", en.getValue());
             }
         }

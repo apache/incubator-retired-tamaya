@@ -62,7 +62,7 @@ public class UC2CombineProperties {
     public void dynamicAggregationTests() {
         PropertySource props1 = PropertySourceBuilder.of().addPaths("classpath:ucs/UC2CombineProperties/props1.properties").build();
         PropertySource props2 = PropertySourceBuilder.of().addPaths("classpath:ucs/UC2CombineProperties/props2.properties").build();
-        PropertySource props = PropertySourceBuilder.of().withAggregationPolicy((k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]").withMetaInfo(MetaInfo.of("dynamicAggregationTests"))
+        PropertySource props = PropertySourceBuilder.of().withAggregationPolicy((k, v1, v2) -> (v1 != null ? v1 : "") + '[' + v2 + "]").withName("dynamicAggregationTests")
                 .aggregate(props1, props2).build();
         System.out.println(props);
     }

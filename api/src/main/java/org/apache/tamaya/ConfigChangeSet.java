@@ -19,6 +19,7 @@
 package org.apache.tamaya;
 
 import java.beans.PropertyChangeEvent;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -28,7 +29,9 @@ import java.util.*;
  *
  * Created by Anatole on 22.10.2014.
  */
-public final class ConfigChangeSet {
+public final class ConfigChangeSet implements Serializable{
+
+    private static final long serialVersionUID = 1l;
     /** The base property provider/configuration. */
     private PropertySource propertySource;
     /** The base version, usable for optimistic locking. */
@@ -41,19 +44,17 @@ public final class ConfigChangeSet {
      * @param propertyProvider The base property provider/configuration, not null.
      * @return an empty ConfigChangeSet instance.
      */
-    public static final ConfigChangeSet emptyChangeSet(PropertySource propertyProvider){
-        return new ConfigChangeSet(propertyProvider, "<empty>", Collections.emptySet());
+    public static ConfigChangeSet emptyChangeSet(PropertySource propertyProvider){
+        return new ConfigChangeSet(propertyProvider, Collections.emptySet());
     }
 
     /**
      * Constructor used by {@link ConfigChangeSetBuilder}.
      * @param propertySource The base property provider/configuration, not null.
-     * @param baseVersion The base version, usable for optimistic locking.
      * @param changes The recorded changes, not null.
      */
-    ConfigChangeSet(PropertySource propertySource, String baseVersion, Collection<PropertyChangeEvent> changes) {
+    ConfigChangeSet(PropertySource propertySource, Collection<PropertyChangeEvent> changes) {
         this.propertySource = Objects.requireNonNull(propertySource);
-        this.baseVersion = baseVersion;
         changes.forEach((c) -> this.changes.put(c.getPropertyName(), c));
     }
 

@@ -44,8 +44,8 @@ class MapBasedPropertySource extends AbstractPropertySource {
      *
      * @param entries the config entries, not null.
      */
-    MapBasedPropertySource(MetaInfo metaInfo, Map<String, String> entries){
-        super(metaInfo);
+    MapBasedPropertySource(String name, Map<String, String> entries){
+        super(name);
         Objects.requireNonNull(entries, "entries required.");
         this.entries.putAll(entries);
     }
@@ -58,21 +58,21 @@ class MapBasedPropertySource extends AbstractPropertySource {
      * @param sources the sources
      * @param errors  the errors
      */
-    MapBasedPropertySource(MetaInfo metaInfo, Map<String, String> entries, Set<String> sources,
+    MapBasedPropertySource(String name, Map<String, String> entries, Set<String> sources,
                            Collection<Throwable> errors){
-        super(metaInfo);
+        super(name);
         Objects.requireNonNull(entries, "entries required.");
         this.entries.putAll(entries);
         addSources(sources);
     }
 
-    MapBasedPropertySource(MetaInfo metaInfo, Set<String> sources){
-        super(metaInfo);
+    MapBasedPropertySource(String name, Set<String> sources){
+        super(name);
         addSources(sources);
     }
 
     @Override
-    public Map<String, String> toMap() {
+    public Map<String, String> getProperties() {
         return new HashMap<>(this.entries);
     }
 

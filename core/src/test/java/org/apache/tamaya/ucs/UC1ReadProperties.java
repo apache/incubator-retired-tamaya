@@ -43,7 +43,7 @@ import org.junit.Test;
  * <li>access a keys by key (+get+)</li>
  * <li>check if a keys is present (+containsKey+)</li>
  * <li>get a set current all defined keys (+keySet+)</li>
- * <li>a property provider must be convertible to a +Map+, by calling +toMap()+</li>
+ * <li>a property provider must be convertible to a +Map+, by calling +getProperties()+</li>
  * <li>a property provider must get access to its meta information.</li>
  * </ul>
  * Additionally there are other requirement important for ease current use:
@@ -74,7 +74,7 @@ public class UC1ReadProperties {
         System.out.println(areaConfig2);
 
         // iterator over an area, using streams only
-        Map<String, String> areaMap = config.toMap().entrySet().stream()
+        Map<String, String> areaMap = config.getProperties().entrySet().stream()
                 .filter((e) -> e.getKey().startsWith("num."))
                 .collect(Collectors.toMap((e) -> e.getKey().substring("num.".length()), Map.Entry::getValue));
         Configuration areaConfig = PropertySourceBuilder.of("Test").addMap(areaMap).build().toConfiguration();
@@ -87,7 +87,7 @@ public class UC1ReadProperties {
         Configuration config = provider.toConfiguration();
         assertNotNull(config);
         assertTrue(config.isEmpty());
-        assertTrue(config.keySet().isEmpty());
+        assertTrue(config.getProperties().isEmpty());
         assertFalse(config.isMutable());
     }
 
@@ -96,7 +96,7 @@ public class UC1ReadProperties {
         PropertySource provider = PropertySourceBuilder.of("Test").addPaths("classpath:barFoo.properties").build();
         assertNotNull(provider);
         assertTrue(provider.isEmpty());
-        assertTrue(provider.keySet().isEmpty());
+        assertTrue(provider.getProperties().isEmpty());
         assertFalse(provider.isMutable());
     }
 
@@ -155,7 +155,7 @@ public class UC1ReadProperties {
         assertEquals(provider.get("a.b.b").get(), "abbValue-fromIni");
         assertEquals(provider.get("a.b.a").get(), "abaValue-fromIni");
         // fromMap properties
-        assertTrue(provider.containsKey("num.BD"));
+        assertTrue(provider.get("num.BD").isPresent());
         // fromMap xml properties
         assertEquals(provider.get("a-xml").get(), "aFromXml");
         assertEquals(provider.get("b-xml").get(), "bFromXml");
@@ -164,8 +164,8 @@ public class UC1ReadProperties {
     @Test
     public void checkForAValue() {
         PropertySource provider = PropertySourceBuilder.of("Test").addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build();
-        assertFalse(provider.containsKey("blabla"));
-        assertTrue(provider.containsKey("num.BD"));
+        assertFalse(provider.get("blabla").isPresent());
+        assertTrue(provider.get("num.BD").isPresent());
         assertFalse(provider.get("blabla").isPresent());
         assertTrue(provider.get("num.BD").isPresent());
     }
@@ -173,18 +173,18 @@ public class UC1ReadProperties {
     @Test
     public void checkKeys() {
         PropertySource provider = PropertySourceBuilder.of("Test").addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build();
-        assertEquals(provider.keySet().size(), 16);
-        assertTrue(provider.keySet().contains("boolean"));
-        assertFalse(provider.keySet().contains("blabla"));
+        assertEquals(provider.getProperties().size(), 16);
+        assertTrue(provider.getProperties().keySet().contains("boolean"));
+        assertFalse(provider.getProperties().keySet().contains("blabla"));
     }
 
     @Test
     public void checkToMap() {
         PropertySource provider = PropertySourceBuilder.of("Test").addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build();
-        Map<String, String> map = provider.toMap();
+        Map<String, String> map = provider.getProperties();
         assertNotNull(map);
         assertEquals(map.size(), 16);
-        assertEquals(provider.keySet(), map.keySet());
+        assertEquals(provider.getProperties().keySet(), map.keySet());
         assertTrue(map.keySet().contains("boolean"));
         assertFalse(map.keySet().contains("blabla"));
     }
@@ -192,8 +192,7 @@ public class UC1ReadProperties {
     @Test
     public void checkMetaInfo() {
         PropertySource provider = PropertySourceBuilder.of("Test").addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build();
-        MetaInfo meta = provider.getMetaInfo();
-        assertNotNull(meta);
+        assertNotNull(provider.getName());
     }
 
     @Test

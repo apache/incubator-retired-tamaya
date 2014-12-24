@@ -18,18 +18,15 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertySource;
-import org.apache.tamaya.annotation.ConfiguredProperties;
-import org.apache.tamaya.annotation.ConfiguredProperty;
-import org.apache.tamaya.annotation.DefaultAreas;
-import org.apache.tamaya.annotation.ObservesConfigChange;
+import org.apache.tamaya.annotation.*;
 import org.apache.tamaya.core.internal.Utils;
 
 /**
@@ -38,86 +35,119 @@ import org.apache.tamaya.core.internal.Utils;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ConfiguredType {
-    /** A list with all annotated instance variables. */
+    /**
+     * A list with all annotated instance variables.
+     */
     private List<ConfiguredField> configuredFields = new ArrayList<>();
-    /** A list with all annotated methods (templates). */
-    private List<ConfiguredMethod> configuredMethods = new ArrayList<>();
-    /** A list with all callback methods listening to config changes. */
+    /**
+     * A list with all annotated methods (templates).
+     */
+    private List<ConfiguredSetterMethod> configuredSetterMethods = new ArrayList<>();
+    /**
+     * A list with all callback methods listening to config changes.
+     */
     private List<ConfigChangeCallbackMethod> callbackMethods = new ArrayList<>();
-    /** The basic type. */
-	private Class type;
+    /**
+     * The basic type.
+     */
+    private Class type;
 
     /**
      * Creates an instance of this class hereby evaluating the config annotations given for later effective
      * injection (configuration) of instances.
+     *
      * @param type the instance type.
      */
 
-	public ConfiguredType(Class type) {
+    public ConfiguredType(Class type) {
         this.type = Objects.requireNonNull(type);
         initFields(type);
         initMethods(type);
     }
 
+    private void initFields(Class type) {
+        for (Field f : type.getDeclaredFields()) {
+            if (f.isAnnotationPresent(NoConfig.class)) {
+                continue;
+            }
+            try {
+                ConfiguredField configuredField = new ConfiguredField(f);
+                configuredFields.add(configuredField);
+            } catch (Exception e) {
+                throw new ConfigException("Failed to initialized configured field: " +
+                        f.getDeclaringClass().getName() + '.' + f.getName(), e);
+            }
+        }
+    }
+
     private void initMethods(Class type) {
+        // TODO revisit this logic here...
         for (Method m : type.getDeclaredMethods()) {
+            if (m.isAnnotationPresent(NoConfig.class)) {
+                continue;
+            }
             ObservesConfigChange mAnnot = m.getAnnotation(ObservesConfigChange.class);
-            if (mAnnot != null) {
-                if (m.getParameterTypes().length != 1) {
-                    continue;
-                }
-                if (!m.getParameterTypes()[0].equals(PropertyChangeEvent.class)) {
-                    continue;
-                }
-                if (!void.class.equals(m.getReturnType())) {
-                    continue;
-                }
-                try {
-                    this.callbackMethods.add(new ConfigChangeCallbackMethod(m));
-                } catch (Exception e) {
-                    throw new ConfigException("Failed to initialized configured callback method: " +
-                            m.getDeclaringClass().getName() + '.' + m.getName(), e);
+            Collection<ConfiguredProperty> propertiesAnnots = Utils.getAnnotations(m, ConfiguredProperty.class, ConfiguredProperties.class);
+            if (type.isInterface()) {
+                // it is a template
+                if (mAnnot != null) {
+                    if (m.isDefault()) {
+                        addObserverMethod(m);
+                    }
+                } else {
+                    if (m.isDefault()) {
+                        addPropertySetter(m, propertiesAnnots);
+                    }
                 }
             } else {
-                Collection<ConfiguredProperty> propertiesAnnots = Utils.getAnnotations(m, ConfiguredProperty.class, ConfiguredProperties.class);
-                if (!propertiesAnnots.isEmpty()) {
-                    try {
-                        ConfiguredMethod configuredMethod = new ConfiguredMethod(m);
-                        configuredMethods.add(configuredMethod);
-                    } catch (Exception e) {
-                        throw new ConfigException("Failed to initialized configured method: " +
-                                m.getDeclaringClass().getName() + '.' + m.getName(), e);
-                    }
+                if (mAnnot != null) {
+                    addObserverMethod(m);
+                } else {
+                    addPropertySetter(m, propertiesAnnots);
                 }
             }
         }
     }
 
-    private void initFields(Class type) {
-        for (Field f : type.getDeclaredFields()) {
-            ConfiguredProperties propertiesAnnot = f.getAnnotation(ConfiguredProperties.class);
-            if (propertiesAnnot != null) {
-                try {
-                    ConfiguredField configuredField = new ConfiguredField(f);
-                    configuredFields.add(configuredField);
-                } catch (Exception e) {
-                    throw new ConfigException("Failed to initialized configured field: " +
-                            f.getDeclaringClass().getName() + '.' + f.getName(), e);
-                }
-            } else {
-                ConfiguredProperty propertyAnnot = f.getAnnotation(ConfiguredProperty.class);
-                if (propertyAnnot != null) {
+    private boolean addPropertySetter(Method m, Collection<ConfiguredProperty> propertiesAnnots) {
+        if (!propertiesAnnots.isEmpty()) {
+            if (m.getParameterTypes().length == 0) {
+                // getter method
+                Class<?> returnType = m.getReturnType();
+                if (!void.class.equals(returnType)) {
                     try {
-                        ConfiguredField configuredField = new ConfiguredField(f);
-                        configuredFields.add(configuredField);
+                        configuredSetterMethods.add(new ConfiguredSetterMethod(m));
+                        return true;
                     } catch (Exception e) {
-                        throw new ConfigException("Failed to initialized configured field: " +
-                                f.getDeclaringClass().getName() + '.' + f.getName(), e);
+                        throw new ConfigException("Failed to initialized configured setter method: " +
+                                m.getDeclaringClass().getName() + '.' + m.getName(), e);
                     }
                 }
             }
         }
+        return false;
     }
+
+
+
+    private void addObserverMethod(Method m) {
+        if (m.getParameterTypes().length != 1) {
+            return;
+        }
+        if (!m.getParameterTypes()[0].equals(ConfigChangeSet.class)) {
+            return;
+        }
+        if (!void.class.equals(m.getReturnType())) {
+            return;
+        }
+        try {
+            this.callbackMethods.add(new ConfigChangeCallbackMethod(m));
+        } catch (Exception e) {
+            throw new ConfigException("Failed to initialized configured callback method: " +
+                    m.getDeclaringClass().getName() + '.' + m.getName(), e);
+        }
+    }
+
 
     /**
      * Method called to configure an instance.
@@ -129,23 +159,23 @@ public class ConfiguredType {
     public void configure(Object instance, Configuration... configurations) {
         for (ConfiguredField field : configuredFields) {
             field.applyInitialValue(instance, configurations);
-            // TODO, if reinjection on changes should be done, corresponding callbacks could be registered here
         }
-        for (ConfiguredMethod method : configuredMethods) {
+        for (ConfiguredSetterMethod method : configuredSetterMethods) {
             method.applyInitialValue(instance, configurations);
             // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
+            WeakConfigListenerManager.of().registerConsumer(instance, method.createConsumer(instance, configurations));
         }
         // Register callbacks for this intance (weakly)
-        for(ConfigChangeCallbackMethod callback: callbackMethods){
+        for (ConfigChangeCallbackMethod callback : callbackMethods) {
             WeakConfigListenerManager.of().registerConsumer(instance, callback.createConsumer(instance, configurations));
         }
     }
 
 
-    private String getName(Object source){
-        if(source instanceof PropertySource){
-            PropertySource ps = (PropertySource)source;
-            return ps.getMetaInfo().getName();
+    private String getName(Object source) {
+        if (source instanceof PropertySource) {
+            PropertySource ps = (PropertySource) source;
+            return ps.getName();
         }
         return "N/A";
     }
@@ -156,7 +186,7 @@ public class ConfiguredType {
         return true;
     }
 
-	public static boolean isConfigured(Class type) {
+    public static boolean isConfigured(Class type) {
         if (type.getAnnotation(DefaultAreas.class) != null) {
             return true;
         }

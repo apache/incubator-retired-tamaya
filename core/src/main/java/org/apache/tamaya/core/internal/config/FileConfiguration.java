@@ -3,6 +3,7 @@ package org.apache.tamaya.core.internal.config;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.MetaInfo;
@@ -27,18 +28,13 @@ class FileConfiguration implements Configuration, FileChangeObserver {
 		return Optional.ofNullable(configurationMap.get(key));
 	}
 
-	@Override
-	public MetaInfo getMetaInfo() {
-		return MetaInfo.of("files.config");
+    @Override
+	public String getName() {
+		return "files.config";
 	}
 
 	@Override
-	public boolean containsKey(String key) {
-		return configurationMap.containsKey(key);
-	}
-
-	@Override
-	public Map<String, String> toMap() {
+	public Map<String, String> getProperties() {
 		return configurationMap;
 	}
 
@@ -66,7 +62,7 @@ class FileConfiguration implements Configuration, FileChangeObserver {
         }
         if(Configuration.class.isInstance(obj)) {
             Configuration other = Configuration.class.cast(obj);
-            return Objects.equals(configurationMap, other.toMap());
+            return Objects.equals(configurationMap, other.getProperties());
         }
 
         return false;

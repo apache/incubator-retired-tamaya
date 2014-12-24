@@ -49,10 +49,9 @@ class AggregatedPropertySource extends AbstractPropertySource {
      * @param propertyMaps
      *            The property sets to be included.
      */
-	public AggregatedPropertySource(MetaInfo metaInfo, PropertySource mutableProvider, AggregationPolicy policy, List<PropertySource> propertyMaps) {
-        super(MetaInfoBuilder.of(metaInfo).setType("aggregated").build());
-        Objects.requireNonNull(policy);
-        this.policy = policy;
+	public AggregatedPropertySource(String name, PropertySource mutableProvider, AggregationPolicy policy, List<PropertySource> propertyMaps) {
+        super(name);
+        this.policy = Objects.requireNonNull(policy);
 		units.addAll(propertyMaps);
         this.mutableProvider = mutableProvider;
 	}
@@ -93,10 +92,10 @@ class AggregatedPropertySource extends AbstractPropertySource {
     }
 
     @Override
-    public Map<String,String> toMap() {
+    public Map<String,String> getProperties() {
 		Map<String, String> value = new HashMap<>();
         for (PropertySource unit : units) {
-            for (Map.Entry<String, String> entry : unit.toMap()
+            for (Map.Entry<String, String> entry : unit.getProperties()
                     .entrySet()) {
                 String valueToAdd = this.policy.aggregate(entry.getKey(), value.get(entry.getKey()), entry.getValue());
                 if(valueToAdd==null){

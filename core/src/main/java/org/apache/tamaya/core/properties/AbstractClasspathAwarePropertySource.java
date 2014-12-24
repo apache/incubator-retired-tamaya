@@ -37,8 +37,8 @@ public abstract class AbstractClasspathAwarePropertySource extends AbstractPrope
 
     public AbstractClasspathAwarePropertySource(ClassLoader classLoader, AbstractClasspathAwarePropertySource parentConfig,
                                                 Set<String> sourceExpressions, long configReadDT, Map<String, String> entries,
-                                                MetaInfo metaInfo, Set<String> sources, List<Throwable> errors){
-        super(metaInfo);
+                                                String name, Set<String> sources, List<Throwable> errors){
+        super(name);
         Objects.requireNonNull(sources, "sources required.");
         Objects.requireNonNull(classLoader, "classLoader required.");
         this.sources = sources;
@@ -48,8 +48,7 @@ public abstract class AbstractClasspathAwarePropertySource extends AbstractPrope
 
     public AbstractClasspathAwarePropertySource(ClassLoader classLoader, AbstractClasspathAwarePropertySource parentConfig,
                                                 String sourceExpression){
-        super(MetaInfoBuilder.of().setSourceExpressions(sourceExpression).set("parentConfig", parentConfig.toString())
-                      .build());
+        super(parentConfig.getName());
         Objects.requireNonNull(sources, "sources required.");
         Objects.requireNonNull(sourceExpression, "sourceExpression required.");
         List<Resource> resources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(classLoader, sourceExpression);
@@ -63,7 +62,7 @@ public abstract class AbstractClasspathAwarePropertySource extends AbstractPrope
     protected abstract void readSource(Map<String,String> targetMap, String source);
 
     @Override
-    public Map<String,String> toMap(){
+    public Map<String,String> getProperties(){
         Map<String,String> result = new HashMap<>();
         for(String source : sources){
             //            if(!isSourceRead(source)){

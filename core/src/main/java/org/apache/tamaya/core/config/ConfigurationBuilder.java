@@ -44,13 +44,6 @@ public final class ConfigurationBuilder {
     /**
      * Private singleton constructor.
      */
-    private ConfigurationBuilder(MetaInfo metaInfo) {
-        this.builderDelegate = PropertySourceBuilder.of(metaInfo);
-    }
-
-    /**
-     * Private singleton constructor.
-     */
     private ConfigurationBuilder(String name) {
         this.builderDelegate = PropertySourceBuilder.of(name);
     }
@@ -58,8 +51,15 @@ public final class ConfigurationBuilder {
     /**
      * Private singleton constructor.
      */
-    private ConfigurationBuilder(PropertySource provider) {
-        this.builderDelegate = PropertySourceBuilder.of(provider);
+    private ConfigurationBuilder(String name, PropertySource source) {
+        this.builderDelegate = PropertySourceBuilder.of(name, source);
+    }
+
+    /**
+     * Private singleton constructor.
+     */
+    private ConfigurationBuilder(PropertySource source) {
+        this.builderDelegate = PropertySourceBuilder.of(source);
     }
 
 
@@ -71,16 +71,6 @@ public final class ConfigurationBuilder {
      */
     public static ConfigurationBuilder of(PropertySource provider) {
         return new ConfigurationBuilder(provider);
-    }
-
-    /**
-     * Creates a new builder instance.
-     *
-     * @param metaInfo the meta information, not null.
-     * @return a new builder instance, never null.
-     */
-    public static ConfigurationBuilder of(MetaInfo metaInfo) {
-        return new ConfigurationBuilder(metaInfo);
     }
 
     /**
@@ -120,11 +110,11 @@ public final class ConfigurationBuilder {
     /**
      * Sets the meta info to be used for the next operation.
      *
-     * @param metaInfo the meta info, not null.
+     * @param name the name, not null.
      * @return the builder for chaining.
      */
-    public ConfigurationBuilder withMetaInfo(MetaInfo metaInfo) {
-        this.builderDelegate.withMetaInfo(metaInfo);
+    public ConfigurationBuilder withName(String name) {
+        this.builderDelegate.withName(name);
         return this;
     }
 
@@ -332,19 +322,6 @@ public final class ConfigurationBuilder {
      */
     public ConfigurationBuilder replace(Map<String, String> replacementMap) {
         this.builderDelegate.replace(replacementMap);
-        return this;
-    }
-
-    /**
-     * Sets an additional key on the final {@link org.apache.tamaya.MetaInfo} of the provider
-     * created.
-     *
-     * @param key the key to be added, not null.
-     * @param value the keys to be added, not null.
-     * @return this builder for chaining
-     */
-    public ConfigurationBuilder setMeta(String key, String value){
-        this.builderDelegate.setMeta(key, value);
         return this;
     }
 

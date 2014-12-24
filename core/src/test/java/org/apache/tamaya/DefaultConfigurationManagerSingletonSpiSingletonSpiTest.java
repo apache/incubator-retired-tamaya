@@ -25,18 +25,18 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.tamaya.annotation.ConfiguredProperty;
 import org.apache.tamaya.annotation.DefaultValue;
-import org.apache.tamaya.core.internal.config.DefaultConfigurationManagerSingletonSpi;
+import org.apache.tamaya.core.internal.config.DefaultConfigurationSpi;
 import org.junit.Test;
 
 /**
- * Test class for {@link org.apache.tamaya.core.internal.config.DefaultConfigurationManagerSingletonSpi}.
+ * Test class for {@link org.apache.tamaya.core.internal.config.DefaultConfigurationSpi}.
  */
 public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
 
     @Test
     public void testSEConfigurationService() {
-        new DefaultConfigurationManagerSingletonSpi();
+        new DefaultConfigurationSpi();
     }
 
     @Test
@@ -44,41 +44,24 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
         Configuration config = Configuration.current("default");
         assertNotNull(config);
         assertTrue(config.toString().contains("default"));
-        assertNotNull(config.getMetaInfo());
-        assertTrue(config.getMetaInfo().toString().contains("default"));
+        assertNotNull(config.getName());
+        assertTrue(config.getName().contains("default"));
         System.out.println("CONFIG: " + config);
         assertEquals(System.getProperty("java.version"),
                 config.get("java.version").get());
 
         config = Configuration.current("system.properties");
         assertNotNull(config);
-        assertNotNull(config.getMetaInfo());
-        assertTrue(config.getMetaInfo().toString().contains("system.properties"));
+        assertNotNull(config.getName());
+        assertTrue(config.getName().contains("system.properties"));
         assertEquals(System.getProperty("java.version"),
                 config.get("java.version").get());
     }
 
     @Test
     public void testIsConfigurationDefined() {
-        assertTrue(Configuration.isDefined("test"));
-        assertFalse(Configuration.isDefined("sdksajdsajdlkasj dlkjaslkd"));
-    }
-
-    @Test
-    public void testGetCurrentEnvironment() {
-        Environment env = Environment.current();
-        assertNotNull(env);
-        assertEquals(System.getProperty("java.version"),
-                env.get("java.version").get());
-    }
-
-    @Test
-    public void testGetRootEnvironment() {
-//        DefaultConfigurationManagerSingletonSpi s = new DefaultConfigurationManagerSingletonSpi();
-        Environment env = Environment.root();
-        assertNotNull(env);
-        assertEquals(System.getProperty("java.version"),
-                env.get("java.version").get());
+        assertTrue(Configuration.isAvailable("test"));
+        assertFalse(Configuration.isAvailable("sdksajdsajdlkasj dlkjaslkd"));
     }
 
     @Test

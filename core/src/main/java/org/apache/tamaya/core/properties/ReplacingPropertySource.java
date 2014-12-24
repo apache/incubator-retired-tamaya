@@ -34,7 +34,7 @@ class ReplacingPropertySource implements PropertySource {
 
     private PropertySource mainMap;
     private Map<String,String> replacingMap;
-    private MetaInfo metaInfo;
+    private String name;
 
     /**
      * Creates a mew instance, with aggregation polilcy
@@ -43,17 +43,10 @@ class ReplacingPropertySource implements PropertySource {
      * @param mainMap      The main ConfigMap.
      * @param replacingMap The replacing ConfigMap.
      */
-    public ReplacingPropertySource(MetaInfo metaInfo, PropertySource mainMap, Map<String, String> replacingMap){
+    public ReplacingPropertySource(String name, PropertySource mainMap, Map<String, String> replacingMap){
         this.replacingMap = Objects.requireNonNull(replacingMap);
         this.mainMap = Objects.requireNonNull(mainMap);
-        if(metaInfo==null) {
-            this.metaInfo = MetaInfoBuilder.of().setType("replacing").set("mainProvider", mainMap.toString())
-                    .set("replacing", replacingMap.toString()).build();
-        }
-        else{
-            this.metaInfo = MetaInfoBuilder.of(metaInfo).setType("replacing").set("mainProvider", mainMap.toString())
-                    .set("replacing", replacingMap.toString()).build();
-        }
+        this.name = Objects.requireNonNull(name);
     }
 
     @Override
@@ -62,21 +55,16 @@ class ReplacingPropertySource implements PropertySource {
     }
 
     @Override
-    public boolean containsKey(String key){
-        return mainMap.containsKey(key);
-    }
-
-    @Override
-    public Map<String,String> toMap(){
+    public Map<String,String> getProperties(){
         Map<String,String> result = new HashMap<>(replacingMap);
-        mainMap.toMap().entrySet().stream().filter(en -> !replacingMap.containsKey(en.getKey())).forEach(en ->
+        mainMap.getProperties().entrySet().stream().filter(en -> !replacingMap.containsKey(en.getKey())).forEach(en ->
                 result.put(en.getKey(), en.getValue()));
         return result;
     }
 
     @Override
-    public MetaInfo getMetaInfo(){
-        return this.metaInfo;
+    public String getName(){
+        return this.name;
     }
 
     @Override
@@ -86,11 +74,6 @@ class ReplacingPropertySource implements PropertySource {
             return mainMap.get(key);
         }
         return Optional.ofNullable(val);
-    }
-
-    @Override
-    public Set<String> keySet(){
-        return mainMap.keySet();
     }
 
     /**

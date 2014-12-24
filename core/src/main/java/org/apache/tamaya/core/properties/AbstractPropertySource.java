@@ -19,14 +19,7 @@
 package org.apache.tamaya.core.properties;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.PropertySource;
@@ -40,7 +33,7 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
      */
     private static final long serialVersionUID = -6553955893879292837L;
 
-    protected MetaInfo metaInfo;
+    protected String name;
 
     /**
      * The underlying sources.
@@ -50,14 +43,13 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
     /**
      * Constructor.
      */
-    protected AbstractPropertySource(MetaInfo metaInfo){
-        Objects.requireNonNull(metaInfo);
-        this.metaInfo = metaInfo;
+    protected AbstractPropertySource(String name){
+        this.name = Objects.requireNonNull(name);
     }
 
     @Override
-    public MetaInfo getMetaInfo(){
-        return metaInfo;
+    public String getName(){
+        return name;
     }
 
 
@@ -79,30 +71,20 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
     }
 
     @Override
-    public boolean containsKey(String key){
-        return toMap().containsKey(key);
-    }
-
-    @Override
     public Optional<String> get(String key){
-        return Optional.ofNullable(toMap().get(key));
-    }
-
-    @Override
-    public Set<String> keySet(){
-        return toMap().keySet();
+        return Optional.ofNullable(getProperties().get(key));
     }
 
     @Override
     public String toString(){
         StringBuilder b = new StringBuilder(getClass().getSimpleName()).append("{\n");
-        b.append("  ").append("(").append(MetaInfo.NAME).append(" = ").append(getMetaInfo().getName()).append(")\n");
+        b.append("  ").append("(").append(MetaInfo.NAME).append(" = ").append(getName()).append(")\n");
         printContents(b);
         return b.append('}').toString();
     }
 
     protected String printContents(StringBuilder b){
-        Map<String,String> sortMap = toMap();
+        Map<String,String> sortMap = getProperties();
         if(!(sortMap instanceof SortedMap)){
             sortMap = new TreeMap<>(sortMap);
         }

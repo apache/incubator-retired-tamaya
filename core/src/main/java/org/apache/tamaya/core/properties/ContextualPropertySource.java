@@ -20,10 +20,7 @@ package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -36,7 +33,8 @@ class ContextualPropertySource implements PropertySource {
 
     private Supplier<PropertySource> mapSupplier;
     private Supplier<String> isolationKeySupplier;
-    private MetaInfo metaInfo;
+    private String name;
+
 
     /**
      * Creates a new contextual PropertyMap. Contextual maps delegate to different instances current PropertyMap depending
@@ -45,15 +43,8 @@ class ContextualPropertySource implements PropertySource {
      * @param mapSupplier
      * @param isolationKeySupplier
      */
-    public ContextualPropertySource(MetaInfo metaInfo, Supplier<PropertySource> mapSupplier, Supplier<String> isolationKeySupplier){
-        if(metaInfo==null){
-            this.metaInfo = MetaInfoBuilder.of().setType("contextual").set("mapSupplier", mapSupplier.toString())
-                    .set("isolationKeySupplier", isolationKeySupplier.toString()).build();
-        }
-        else{
-            this.metaInfo = MetaInfoBuilder.of(metaInfo).setType("contextual").set("mapSupplier", mapSupplier.toString())
-                    .set("isolationKeySupplier", isolationKeySupplier.toString()).build();
-        }
+    public ContextualPropertySource(String name, Supplier<PropertySource> mapSupplier, Supplier<String> isolationKeySupplier){
+        this.name = Optional.ofNullable(name).orElse("<noname>");
         Objects.requireNonNull(mapSupplier);
         Objects.requireNonNull(isolationKeySupplier);
         this.mapSupplier = mapSupplier;
@@ -94,28 +85,18 @@ class ContextualPropertySource implements PropertySource {
     }
 
     @Override
-    public boolean containsKey(String key){
-        return getContextualMap().containsKey(key);
+    public Map<String,String> getProperties(){
+        return getContextualMap().getProperties();
     }
 
     @Override
-    public Map<String,String> toMap(){
-        return getContextualMap().toMap();
-    }
-
-    @Override
-    public MetaInfo getMetaInfo(){
-        return this.metaInfo;
+    public String getName(){
+        return this.name;
     }
 
     @Override
     public Optional<String> get(String key){
         return getContextualMap().get(key);
-    }
-
-    @Override
-    public Set<String> keySet(){
-        return getContextualMap().keySet();
     }
 
     /**

@@ -27,15 +27,15 @@ class MappedConfiguration extends AbstractConfiguration implements Configuration
      * @param keyMapper The mapping operator, not null
      */
     public MappedConfiguration(Configuration config, UnaryOperator<String> keyMapper) {
-        super(MetaInfoBuilder.of(config.getMetaInfo()).setInfo("Mapped configuration, mapper=" + keyMapper).build());
+        super(config.getName());
         this.config = Objects.requireNonNull(config);
         this.keyMapper = Objects.requireNonNull(keyMapper);
     }
 
     @Override
-    public Map<String, String> toMap() {
+    public Map<String, String> getProperties() {
         Map<String, String> result = new HashMap<>();
-        Map<String, String> map = this.config.toMap();
+        Map<String, String> map = this.config.getProperties();
         map.forEach((k,v) -> {
             String targetKey = keyMapper.apply(k);
             if(targetKey!=null){

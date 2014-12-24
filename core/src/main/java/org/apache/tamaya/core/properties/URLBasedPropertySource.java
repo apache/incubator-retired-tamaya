@@ -20,13 +20,9 @@ package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.internal.resources.io.UrlResource;
-import org.apache.tamaya.core.properties.AbstractPropertySource;
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.core.spi.ConfigurationFormat;
+import org.apache.tamaya.core.config.ConfigurationFormat;
 
 import java.net.URL;
 import java.util.*;
@@ -41,8 +37,8 @@ final class URLBasedPropertySource extends AbstractPropertySource {
     private Map<String,String> properties = new HashMap<>();
     private AggregationPolicy aggregationPolicy;
 
-    public URLBasedPropertySource(MetaInfo metaInfo, List<URL> resources, AggregationPolicy aggregationPolicy) {
-        super(metaInfo);
+    public URLBasedPropertySource(String name, List<URL> resources, AggregationPolicy aggregationPolicy) {
+        super(name);
         this.resources.addAll(Objects.requireNonNull(resources));
         this.aggregationPolicy = Objects.requireNonNull(aggregationPolicy);
         init();
@@ -52,7 +48,7 @@ final class URLBasedPropertySource extends AbstractPropertySource {
         List<String> sources = new ArrayList<>();
         for(URL url : resources){
             Resource res = new UrlResource(url);
-            ConfigurationFormat format = ConfigurationFormats.getFormat(res);
+            ConfigurationFormat format = ConfigurationFormat.from(res);
             if(format != null){
                 try{
                     Map<String, String> read = format.readConfiguration(res);
@@ -75,13 +71,13 @@ final class URLBasedPropertySource extends AbstractPropertySource {
                 }
             }
         }
-        MetaInfoBuilder metaInfoBuilder = MetaInfoBuilder.of(getMetaInfo());
-        metaInfo = metaInfoBuilder
-                .setSources(sources.toString()).build();
+//        MetaInfoBuilder metaInfoBuilder = MetaInfoBuilder.of(getMetaInfo());
+//        metaInfo = metaInfoBuilder
+//                .setSources(sources.toString()).build();
     }
 
     @Override
-    public Map<String, String> toMap() {
+    public Map<String, String> getProperties() {
         return properties;
     }
 }

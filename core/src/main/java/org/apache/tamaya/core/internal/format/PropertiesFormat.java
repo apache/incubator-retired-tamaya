@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.core.spi.ConfigurationFormat;
+import org.apache.tamaya.core.config.ConfigurationFormat;
 
 public class PropertiesFormat implements ConfigurationFormat{
 

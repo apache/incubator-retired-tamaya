@@ -18,10 +18,9 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.core.spi.ConfigurationFormat;
+import org.apache.tamaya.core.config.ConfigurationFormat;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
 
@@ -49,7 +48,7 @@ public final class MetaConfig {
                 "classpath:META-INF/config.properties");
         for(Resource res:resources){
             try{
-                ConfigurationFormat format = ConfigurationFormats.getFormat(res);
+                ConfigurationFormat format = ConfigurationFormat.from(res);
                 Map<String,String> read = format.readConfiguration(res);
                 properties.putAll(read);
             }

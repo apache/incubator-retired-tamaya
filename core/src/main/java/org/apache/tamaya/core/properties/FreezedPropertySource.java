@@ -20,11 +20,7 @@ package org.apache.tamaya.core.properties;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.MetaInfo;
@@ -39,26 +35,21 @@ final class FreezedPropertySource implements PropertySource, Serializable{
 
     private static final long serialVersionUID = 3365413090311267088L;
 //    private Map<String,Map<String,String>> fieldMMetaInfo = new HashMap<>();
-    private MetaInfo metaInfo;
+    private String name;
     private Map<String,String> properties = new HashMap<>();
 
-    private FreezedPropertySource(MetaInfo metaInfo, PropertySource propertyMap) {
-        Map<String, String> map = propertyMap.toMap();
+    private FreezedPropertySource(String name, PropertySource propertyMap) {
+        Map<String, String> map = propertyMap.getProperties();
         this.properties.putAll(map);
         this.properties = Collections.unmodifiableMap(this.properties);
-        if (metaInfo == null) {
-            this.metaInfo =
-                    MetaInfoBuilder.of(propertyMap.getMetaInfo()).set("freezedAt", Instant.now().toString()).build();
-        } else {
-            this.metaInfo = metaInfo;
-        }
+        this.name = Optional.ofNullable(name).orElse(propertyMap.getName()+"(freezed)");
     }
 
-    public static PropertySource of(MetaInfo metaInfo, PropertySource propertyProvider){
+    public static PropertySource of(String name, PropertySource propertyProvider){
         if(propertyProvider instanceof FreezedPropertySource){
             return propertyProvider;
         }
-        return new FreezedPropertySource(metaInfo, propertyProvider);
+        return new FreezedPropertySource(name, propertyProvider);
     }
 
     @Override
@@ -75,18 +66,13 @@ final class FreezedPropertySource implements PropertySource, Serializable{
     }
 
     @Override
-    public boolean containsKey(String key){
-        return properties.containsKey(key);
-    }
-
-    @Override
-    public Map<String,String> toMap(){
+    public Map<String,String> getProperties(){
         return Collections.unmodifiableMap(this.properties);
     }
 
     @Override
-    public MetaInfo getMetaInfo(){
-        return this.metaInfo;
+    public String getName(){
+        return this.name;
     }
 
     @Override
@@ -94,9 +80,5 @@ final class FreezedPropertySource implements PropertySource, Serializable{
         return Optional.ofNullable(properties.get(key));
     }
 
-    @Override
-    public Set<String> keySet(){
-        return properties.keySet();
-    }
 
 }

@@ -18,10 +18,7 @@
 */
 package org.apache.tamaya;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This interface models a provider that serves configuration properties. The contained
@@ -48,7 +45,10 @@ public interface PropertySource {
      */
     public static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource() {
 
-        private MetaInfo metaInfo = MetaInfo.of("<empty>");
+        @Override
+        public String getName() {
+            return "<empty>";
+        }
 
         @Override
         public Optional<String> get(String key) {
@@ -56,20 +56,22 @@ public interface PropertySource {
         }
 
         @Override
-        public boolean containsKey(String key) {
-            return false;
-        }
-
-        @Override
-        public Map<String, String> toMap() {
+        public Map<String, String> getProperties() {
             return Collections.emptyMap();
         }
 
         @Override
-        public MetaInfo getMetaInfo() {
-            return metaInfo;
+        public String toString(){
+            return "PropertySource [name=<empty>]";
         }
     };
+
+    /**
+     * Get the name of the property source. The name should be unique for the type of source, whereas the id is used
+     * to ensure unique identity, either locally or remotely.
+     * @return the configuration's name, never null.
+     */
+    String getName();
 
     /**
      * Access a property.
@@ -80,45 +82,33 @@ public interface PropertySource {
     Optional<String> get(String key);
 
     /**
-     * Get the meta-info current a configuration.
+     * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
+     * when the underlying storage does not support iteration of its entries.
      *
-     * @return the configuration's/config map's metaInfo, or null.
+     * @return the a corresponding map, never null.
      */
-    MetaInfo getMetaInfo();
+    Map<String, String> getProperties();
 
     /**
-     * Checks if a property is defined/accessible.
-     * @throws java.lang.UnsupportedOperationException If the underlying storage does not support introspection.
-     * @param key the property's key, not null.
-     * @return true, if the property is existing.
+     * Determines if this config source should be scanned for its list of properties.
+     *
+     * Generally, slow ConfigSources should return false here.
+     *
+     * @return true if this ConfigSource should be scanned for its list of properties,
+     * false if it should not be scanned.
      */
-    boolean containsKey(String key);
+    default boolean isScannable(){
+        return true;
+    }
 
     /**
      * Allows to quickly check, if a provider is empty.
+     *
      * @return true, if the provier is empty.
      */
-    default boolean isEmpty(){
-        return keySet().isEmpty();
+    default boolean isEmpty() {
+        return getProperties().isEmpty();
     }
-
-    /**
-     * Access the set current property keys, defined by this provider. The resulting Set may not return all keys
-     * accessible, e.g. when the underlying storage does not support iteration of its entries.
-     *
-     * @return the key set, never null.
-     */
-    default Set<String> keySet() {
-        return toMap().keySet();
-    }
-
-    /**
-     * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
-     * when the underlying storage does not support iteration of its entries.
-     * @return the a corresponding map, never null.
-     */
-    Map<String, String> toMap();
-
 
     /**
      * Reloads the {@link PropertySource}.
@@ -158,24 +148,48 @@ public interface PropertySource {
     default Configuration toConfiguration() {
         return new Configuration() {
             @Override
+            public String getName() {
+                return PropertySource.this.getName();
+            }
+
+            @Override
+            public boolean isScannable() {
+                return PropertySource.this.isScannable();
+            }
+
+            @Override
+            public boolean isMutable() {
+                return PropertySource.this.isMutable();
+            }
+
+            @Override
+            public void applyChanges(ConfigChangeSet changes) {
+                PropertySource.this.applyChanges(changes);
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return PropertySource.this.isEmpty();
+            }
+
+            @Override
+            public ConfigChangeSet load() {
+                return PropertySource.this.load();
+            }
+
+            @Override
             public Optional<String> get(String key) {
                 return PropertySource.this.get(key);
             }
+
             @Override
-            public boolean containsKey(String key) {
-                return PropertySource.this.containsKey(key);
+            public Map<String, String> getProperties() {
+                return PropertySource.this.getProperties();
             }
-            @Override
-            public Map<String, String> toMap() {
-                return PropertySource.this.toMap();
-            }
-            @Override
-            public MetaInfo getMetaInfo() {
-                return PropertySource.this.getMetaInfo();
-            }
+
             @Override
             public String toString() {
-                return "Configuration [source: PropertySource "+getMetaInfo()+"]";
+                return "Configuration [name: " + getName() + "]";
             }
         };
     }

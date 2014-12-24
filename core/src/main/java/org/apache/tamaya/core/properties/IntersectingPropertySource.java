@@ -34,33 +34,21 @@ class IntersectingPropertySource extends AbstractPropertySource {
 	private List<PropertySource> providers;
     private PropertySource aggregatedDelegate;
 
-    public IntersectingPropertySource(MetaInfo metaInfo, AggregationPolicy policy, List<PropertySource> providers) {
-        super(MetaInfoBuilder.of(metaInfo).setType("intersection").build());
+    public IntersectingPropertySource(String name, AggregationPolicy policy, List<PropertySource> providers) {
+        super(name);
         this.providers = new ArrayList<>(providers);
-        aggregatedDelegate = PropertySourceBuilder.of(getMetaInfo()).withAggregationPolicy(policy)
+        aggregatedDelegate = PropertySourceBuilder.of(name).withAggregationPolicy(policy)
                 .addProviders(this.providers).build();
     }
 
     @Override
     public Optional<String> get(String key) {
-        if (containsKey(key))
-            return aggregatedDelegate.get(key);
-        return Optional.empty();
+        return aggregatedDelegate.get(key);
     }
 
     @Override
-    public boolean containsKey(String key) {
-        for (PropertySource prov : this.providers) {
-            if (!prov.containsKey(key)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public Map<String, String> toMap() {
-        return aggregatedDelegate.toMap().entrySet().stream().filter(en -> containsKey(en.getKey())).collect(
+    public Map<String, String> getProperties() {
+        return aggregatedDelegate.getProperties().entrySet().stream().filter(en -> get(en.getKey()).isPresent()).collect(
                 Collectors.toConcurrentMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 

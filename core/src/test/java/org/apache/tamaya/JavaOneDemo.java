@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.tamaya.core.config.ConfigFunctions;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
 
@@ -56,13 +57,13 @@ public class JavaOneDemo {
                 "classpath:test.properties").addPaths("classpath:cfg/test.xml")
                 .addArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"})
                 .addMap(cfgMap).build().toConfiguration();
-        System.out.println(config.getAreas());
+        System.out.println(config.query(ConfigFunctions.getAreas()));
         System.out.println("---");
-        System.out.println(config.getAreas(s -> s.startsWith("another")));
+        System.out.println(config.query(ConfigFunctions.getAreas(s -> s.startsWith("another"))));
         System.out.println("---");
-        System.out.println(config.getTransitiveAreas());
+        System.out.println(config.query(ConfigFunctions.getTransitiveAreas()));
         System.out.println("---");
-        System.out.println(config.getTransitiveAreas(s -> s.startsWith("another")));
+        System.out.println(config.query(ConfigFunctions.getTransitiveAreas(s -> s.startsWith("another"))));
         System.out.println("---");
         System.out.println(config);
         System.out.print("--- b=");

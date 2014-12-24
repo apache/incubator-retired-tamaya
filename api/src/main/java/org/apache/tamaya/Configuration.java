@@ -18,11 +18,12 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigurationSpi;
+import org.apache.tamaya.spi.ServiceContext;
+
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 /**
  * A configuration models a aggregated set current properties, identified by a unique key, but adds higher level access functions to
@@ -147,90 +148,7 @@ public interface Configuration extends PropertySource {
      *                                  type.
      */
     default <T> Optional<T> get(String key, Class<T> type){
-        return getAdapted(key, Codecs.getCodec(type));
-    }
-
-    /**
-     * Return a set with all fully qualifies area names. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
-     * does not support key iteration.
-     *
-     * @return s set with all areas, never {@code null}.
-     */
-    default Set<String> getAreas(){
-        final Set<String> areas = new HashSet<>();
-        this.keySet().forEach(s -> {
-            int index = s.lastIndexOf('.');
-            if(index > 0){
-                areas.add(s.substring(0, index));
-            }
-            else{
-                areas.add("<root>");
-            }
-        });
-        return areas;
-    }
-
-    /**
-     * Return a set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate
-     * as possible, but may not provide a complete set of areas that are finally accessible, especially when the
-     * underlying storage does not support key iteration.
-     *
-     * @return s set with all transitive areas, never {@code null}.
-     */
-    default Set<String> getTransitiveAreas(){
-        final Set<String> transitiveAreas = new HashSet<>();
-        getAreas().forEach(s -> {
-            int index = s.lastIndexOf('.');
-            if (index < 0) {
-                transitiveAreas.add("<root>");
-            } else {
-                while (index > 0) {
-                    s = s.substring(0, index);
-                    transitiveAreas.add(s);
-                    index = s.lastIndexOf('.');
-                }
-            }
-        });
-        return transitiveAreas;
-    }
-
-    /**
-     * Return a set with all fully qualified area names, containing only the
-     * areas that match the predicate and have properties attached. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
-     * does not support key iteration.
-     *
-     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
-     * @return s set with all areas, never {@code null}.
-     */
-    default Set<String> getAreas(final Predicate<String> predicate){
-        return getAreas().stream().filter(predicate).collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    /**
-     * Return a set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
-     * does not support key iteration.
-     *
-     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
-     * @return s set with all transitive areas, never {@code null}.
-     */
-    default Set<String> getTransitiveAreas(Predicate<String> predicate){
-        return getTransitiveAreas().stream().filter(predicate).collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    /**
-     * Allows to evaluate if an area exists. In case where the underlying storage implementation does not allow
-     * querying the keys available, {@code false} should be returned.
-     *
-     * @param areaKey the configuration area (sub)path.
-     * @return {@code true}, if such a node exists.
-     */
-    default boolean containsArea(String areaKey){
-        return getAreas().contains(areaKey);
+        return getAdapted(key, Codec.getInstance(type));
     }
 
     /**
@@ -254,14 +172,6 @@ public interface Configuration extends PropertySource {
         return query.query(this);
     }
 
-    /**
-     * Field that allows property config to be versioned, meaning that each change on a provider requires this keys
-     * to be incremented by one. This can be easily used to implement versioning (and optimistic locking)
-     * in distributed (remote) usage scenarios.
-     * @return the version current the current instance, or 'N/A'.
-     */
-    default String getVersion(){return "N/A";}
-
 
     /**
      * Allows to check if a configuration with a given name is defined.
@@ -269,10 +179,9 @@ public interface Configuration extends PropertySource {
      * @param name the configuration's name, not null, not empty.
      * @return true, if such a configuration is defined.
      */
-    public static boolean isDefined(String name){
-        return ConfigurationManager.isConfigurationDefined(name);
+    public static boolean isAvailable(String name){
+        return ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).isConfigurationAvailable(name);
     }
-
 
     /**
      * Access a configuration by name.
@@ -282,7 +191,7 @@ public interface Configuration extends PropertySource {
      * @throws ConfigException if no such configuration is defined.
      */
     public static Configuration current(String name){
-        return ConfigurationManager.getConfiguration(name);
+        return ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).getConfiguration(name);
     }
 
     /**
@@ -292,7 +201,7 @@ public interface Configuration extends PropertySource {
      * @throws ConfigException if no such configuration is defined.
      */
     public static Configuration current(){
-        return ConfigurationManager.getConfiguration();
+        return ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).getConfiguration();
     }
 
     /**
@@ -307,7 +216,7 @@ public interface Configuration extends PropertySource {
      * @throws ConfigException if the configuration could not be resolved.
      */
     public static <T> T createTemplate(Class<T> type, Configuration... configurations){
-        return ConfigurationManager.createTemplate(type, configurations);
+        return ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).createTemplate(type, configurations);
     }
 
     /**
@@ -322,7 +231,7 @@ public interface Configuration extends PropertySource {
      * @throws ConfigException if the configuration could not be resolved.
      */
     public static void configure(Object instance, Configuration... configurations){
-        ConfigurationManager.configure(instance, configurations);
+        ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).configure(instance, configurations);
     }
 
     /**
@@ -335,7 +244,7 @@ public interface Configuration extends PropertySource {
      * @return the evaluated config expression.
      */
     public static String evaluateValue(String expression, Configuration... configurations){
-        return ConfigurationManager.evaluateValue(expression, configurations);
+        return ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).evaluateValue(expression, configurations);
     }
 
     /**
@@ -343,7 +252,7 @@ public interface Configuration extends PropertySource {
      * @param l the listener, not null.
      */
     public static void addChangeListener(Consumer<ConfigChangeSet> l){
-        ConfigurationManager.addChangeListener(l);
+        ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).addChangeListener(l);
     }
 
     /**
@@ -351,7 +260,7 @@ public interface Configuration extends PropertySource {
      * @param l the listener, not null.
      */
     public static void removeChangeListener(Consumer<ConfigChangeSet> l){
-        ConfigurationManager.removeChangeListener(l);
+        ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).removeChangeListener(l);
     }
 
     /**
@@ -362,7 +271,7 @@ public interface Configuration extends PropertySource {
      * @param configChange the change to be published, not null.
      */
     public static void publishChange(ConfigChangeSet configChange){
-        ConfigurationManager.publishChange(configChange);
+        ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).publishChange(configChange);
     }
 
 }

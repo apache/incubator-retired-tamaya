@@ -27,12 +27,12 @@ class EnvironmentPropertySource extends AbstractPropertySource {
 
     private static final long serialVersionUID = 4753258482658331010L;
 
-    public Map<String,String> toMap(){
+    public Map<String,String> getProperties(){
         return System.getenv();
     }
 
     public EnvironmentPropertySource(){
-        super(MetaInfoBuilder.of().setType("env-properties").build());
+        super("<System.getenv()>");
     }
 
     @Override

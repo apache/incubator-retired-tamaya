@@ -23,7 +23,7 @@ import java.util.UUID;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.AbstractPropertySource;
-import org.apache.tamaya.core.spi.AdapterProviderSpi;
+import org.apache.tamaya.core.spi.CodecProviderSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
 /**
@@ -36,28 +36,21 @@ public abstract class AbstractConfiguration extends AbstractPropertySource imple
 
     private final Object LOCK = new Object();
 
-    private String version = UUID.randomUUID().toString();
-
-    protected AbstractConfiguration(MetaInfo metaInfo){
-        super(metaInfo);
+    protected AbstractConfiguration(String name){
+        super(name);
     }
 
 
     @Override
     public <T> Optional<T> get(String key, Class<T> type){
-        AdapterProviderSpi as = ServiceContext.getInstance().getSingleton(AdapterProviderSpi.class);
-        Codec<T> adapter = as.getAdapter(type);
+        CodecProviderSpi as = ServiceContext.getInstance().getSingleton(CodecProviderSpi.class);
+        Codec<T> adapter = as.getCodec(type);
         if(adapter == null){
             throw new ConfigException(
                     "Can not deserialize config property '" + key + "' to " + type.getName() + ": no such " +
                             "adapter.");
         }
         return getAdapted(key, adapter);
-    }
-
-    @Override
-    public String getVersion(){
-        return version;
     }
 
     /**
@@ -82,7 +75,6 @@ public abstract class AbstractConfiguration extends AbstractPropertySource imple
         if(changeSet.isEmpty()){
             return ConfigChangeSet.emptyChangeSet(this);
         }
-        this.version = UUID.randomUUID().toString();
         Configuration.publishChange(changeSet);
         return changeSet;
     }

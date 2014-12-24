@@ -34,16 +34,14 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
     private static final long serialVersionUID = -6373137316556444171L;
 
     private PropertySource properties;
-    private String version;
 
     /**
      * Constructor.
      * @param config The base configuration.
      */
     private FreezedConfiguration(Configuration config){
-        super(MetaInfoBuilder.of(config.getMetaInfo()).set("freezedAt", Instant.now().toString()).build());
+        super(config.getName());
         this.properties = PropertySourceBuilder.of(config).buildFreezed();
-        this.version = Objects.requireNonNull(config.getVersion());
     }
 
     public static final Configuration of(Configuration config){
@@ -54,13 +52,8 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
     }
 
     @Override
-    public Map<String,String> toMap(){
-        return properties.toMap();
-    }
-
-    @Override
-    public String getVersion() {
-        return version;
+    public Map<String,String> getProperties(){
+        return properties.getProperties();
     }
 
     @Override
@@ -71,14 +64,12 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
         FreezedConfiguration that = (FreezedConfiguration) o;
 
         if (!properties.equals(that.properties)) return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
         return true;
     }
 
     @Override
     public int hashCode() {
         int result = properties.hashCode();
-        result = 31 * result + (version != null ? version.hashCode() : 0);
         return result;
     }
 
@@ -86,7 +77,7 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
     public String toString() {
         return "FreezedConfiguration{" +
                 "properties=" + properties +
-                ", version=" + version +
+                ", name=" + name +
                 '}';
     }
 }

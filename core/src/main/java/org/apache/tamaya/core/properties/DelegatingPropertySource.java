@@ -40,7 +40,8 @@ class DelegatingPropertySource implements PropertySource {
 
     private PropertySource mainMap;
     private Map<String,String> parentMap;
-    private MetaInfo metaInfo;
+    private String name;
+
 
     /**
      * Creates a mew instance, with aggregation polilcy
@@ -49,17 +50,8 @@ class DelegatingPropertySource implements PropertySource {
      * @param mainMap   The main ConfigMap.
      * @param parentMap The delegated parent ConfigMap.
      */
-    public DelegatingPropertySource(MetaInfo metaInfo, PropertySource mainMap, Map<String, String> parentMap){
-        if(metaInfo==null) {
-            this.metaInfo =
-                    MetaInfoBuilder.of().setType("delegate").set("provider", mainMap.toString()).set("delegate", parentMap.toString())
-                            .build();
-        }
-        else{
-            this.metaInfo =
-                    MetaInfoBuilder.of(metaInfo).setType("delegate").set("provider", mainMap.toString()).set("delegate", parentMap.toString())
-                            .build();
-        }
+    public DelegatingPropertySource(String name, PropertySource mainMap, Map<String, String> parentMap){
+        this.name = Optional.of(name).orElse("<noname>");
         this.parentMap = Objects.requireNonNull(parentMap);
         this.parentMap = Objects.requireNonNull(parentMap);
     }
@@ -70,18 +62,13 @@ class DelegatingPropertySource implements PropertySource {
     }
 
     @Override
-    public boolean containsKey(String key){
-        return keySet().contains(key);
-    }
-
-    @Override
-    public Map<String,String> toMap(){
+    public Map<String,String> getProperties(){
         return null;
     }
 
     @Override
-    public MetaInfo getMetaInfo(){
-        return this.metaInfo;
+    public String getName(){
+        return this.name;
     }
 
     @Override
@@ -91,13 +78,6 @@ class DelegatingPropertySource implements PropertySource {
             return Optional.ofNullable(parentMap.get(key));
         }
         return val;
-    }
-
-    @Override
-    public Set<String> keySet(){
-        Set<String> keys = new HashSet<>(mainMap.keySet());
-        keys.addAll(parentMap.keySet());
-        return keys;
     }
 
     @Override

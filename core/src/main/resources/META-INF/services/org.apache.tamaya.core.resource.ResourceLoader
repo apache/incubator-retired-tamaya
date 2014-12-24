@@ -16,5 +16,5 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.core.internal.resources.DefaultPathResourceLoader
+org.apache.tamaya.core.internal.resources.DefaultResourceLoader
 
