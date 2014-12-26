@@ -28,7 +28,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * A accessor for a single configured value. This can be used to support values that may be reinjected, reconfigured.
+ * A accessor for a single configured value. This can be used to support values that may be reinjected, reconfigured or
+ * final.
  * <h3>Implementation Requirements</h3>
  * Instances of this class must be
  * <ul>
@@ -82,12 +83,6 @@ public interface ConfiguredValue<T> {
      * @param l the listner to be removed, not null
      */
     void removeListener(Consumer<PropertyChangeEvent> l);
-
-    /**
-     * Get some descriptive meta info on the current value.
-     * @return the meta info, not null.
-     */
-    String getMetaInfo();
 
     /**
      * Evaluate if the item value has been updated since the last access.
