@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -21,40 +21,51 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
+        <groupId>org.apache.tamaya.integration</groupId>
+        <artifactId>tamaya-integration-all</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-ext-all</artifactId>
-    <groupId>org.apache.tamaya.ext</groupId>
-    <name>Apache Tamaya Modules</name>
-    <packaging>pom</packaging>
+    <artifactId>tamaya-integration-se</artifactId>
+    <name>Apache Tamaya Modules Integration - Java SE</name>
+    <packaging>jar</packaging>
 
     <properties>
-        <github.global.server>github</github.global.server>
-        <jdkVersion>1.8</jdkVersion>
-        <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
-        <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>mbean-annotation-api</artifactId>
-            <version>4.7.1</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tamaya-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
-
-    <modules>
-        <module>metamodels</module>
-        <module>integration</module>
-        <!-- <module>environment</module> -->
-    </modules>
 
 </project>
