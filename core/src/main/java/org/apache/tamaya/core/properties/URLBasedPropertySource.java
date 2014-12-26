@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.internal.resources.io.UrlResource;
 import org.apache.tamaya.core.resource.Resource;

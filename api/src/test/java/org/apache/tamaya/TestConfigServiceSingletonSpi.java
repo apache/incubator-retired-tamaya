@@ -87,19 +87,4 @@ public class TestConfigServiceSingletonSpi implements ConfigurationSpi {
         return expression;
     }
 
-    @Override
-    public void addChangeListener(Consumer<ConfigChangeSet> l) {
-        // ignore
-    }
-
-    @Override
-    public void removeChangeListener(Consumer<ConfigChangeSet> l) {
-        // ignore
-    }
-
-    @Override
-    public void publishChange(ConfigChangeSet configChangeSet) {
-        // ignore
-    }
-
 }

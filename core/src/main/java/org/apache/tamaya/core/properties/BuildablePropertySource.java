@@ -17,13 +17,11 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.PropertySource;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Created by Anatole on 07.12.2014.

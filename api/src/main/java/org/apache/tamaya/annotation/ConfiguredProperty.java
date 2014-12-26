@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  * a configuration template method. Hereby this annotation can be used in multiple ways and combined
  * with other annotations such as {@link org.apache.tamaya.annotation.DefaultValue},
  * {@link org.apache.tamaya.annotation.WithLoadPolicy}, {@link org.apache.tamaya.annotation.WithConfig},
- * {@link org.apache.tamaya.annotation.WithConfigOperator}, {@link WithCodec}.
+ * {@link org.apache.tamaya.annotation.WithConfigOperator}, {@link WithPropertyAdapter}.
  *
  * Below the most simple variant current a configured class is given:
  * {@code

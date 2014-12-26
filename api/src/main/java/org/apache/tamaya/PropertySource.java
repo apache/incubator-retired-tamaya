@@ -111,36 +111,6 @@ public interface PropertySource {
     }
 
     /**
-     * Reloads the {@link PropertySource}.
-     */
-    default ConfigChangeSet load() {
-        // by default do nothing
-        return ConfigChangeSet.emptyChangeSet(this);
-    }
-
-    /**
-     * Allows to evaluate if the provider is mutable.
-     *
-     * @return true, if the provider is mutable.
-     * @see #applyChanges(ConfigChangeSet)
-     */
-    default boolean isMutable() {
-        return false;
-    }
-
-    /**
-     * Apply a config change to this item. Hereby the change must be related to the same instance.
-     *
-     * @param change the config change
-     * @throws ConfigException               if an unrelated change was passed.
-     * @throws UnsupportedOperationException when the configuration is not writable.
-     * @see #isMutable()
-     */
-    default void applyChanges(ConfigChangeSet change) {
-        throw new UnsupportedOperationException("Config/properties not mutable: " + this);
-    }
-
-    /**
      * Convert the this PropertyProvider instance to a {@link org.apache.tamaya.Configuration}.
      *
      * @return the configuration, never null.
@@ -158,23 +128,8 @@ public interface PropertySource {
             }
 
             @Override
-            public boolean isMutable() {
-                return PropertySource.this.isMutable();
-            }
-
-            @Override
-            public void applyChanges(ConfigChangeSet changes) {
-                PropertySource.this.applyChanges(changes);
-            }
-
-            @Override
             public boolean isEmpty() {
                 return PropertySource.this.isEmpty();
-            }
-
-            @Override
-            public ConfigChangeSet load() {
-                return PropertySource.this.load();
             }
 
             @Override

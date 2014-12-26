@@ -22,7 +22,6 @@ import org.apache.tamaya.spi.ConfigurationSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 /**
@@ -126,10 +125,10 @@ public interface Configuration extends PropertySource {
      * @throws IllegalArgumentException if the keys could not be converted to the required target
      *                                  type, or no such property exists.
      */
-    default <T> Optional<T> getAdapted(String key, Codec<T> adapter){
+    default <T> Optional<T> getAdapted(String key, PropertyAdapter<T> adapter){
         Optional<String> value = get(key);
         if(value.isPresent()) {
-            return Optional.ofNullable(adapter.deserialize(value.get()));
+            return Optional.ofNullable(adapter.adapt(value.get()));
         }
         return Optional.empty();
     }
@@ -137,7 +136,7 @@ public interface Configuration extends PropertySource {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * Codec} to be available that is capable current providing type T
+     * PropertyAdapter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
@@ -148,7 +147,7 @@ public interface Configuration extends PropertySource {
      *                                  type.
      */
     default <T> Optional<T> get(String key, Class<T> type){
-        return getAdapted(key, Codec.getInstance(type));
+        return getAdapted(key, PropertyAdapter.getInstance(type));
     }
 
     /**
@@ -227,7 +226,6 @@ public interface Configuration extends PropertySource {
      * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
      *                       If no such config is passed, the default configurationa provided by the current
      *                       registered providers are used.
-     * @return the corresponding typed Configuration instance, never null.
      * @throws ConfigException if the configuration could not be resolved.
      */
     public static void configure(Object instance, Configuration... configurations){
@@ -245,33 +243,6 @@ public interface Configuration extends PropertySource {
      */
     public static String evaluateValue(String expression, Configuration... configurations){
         return ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).evaluateValue(expression, configurations);
-    }
-
-    /**
-     * Add a ConfigChangeListener to the given PropertySource instance.
-     * @param l the listener, not null.
-     */
-    public static void addChangeListener(Consumer<ConfigChangeSet> l){
-        ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).addChangeListener(l);
-    }
-
-    /**
-     * Removes a ConfigChangeListener from the given PropertySource instance.
-     * @param l the listener, not null.
-     */
-    public static void removeChangeListener(Consumer<ConfigChangeSet> l){
-        ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).removeChangeListener(l);
-    }
-
-    /**
-     * Method to publish changes on a {@link org.apache.tamaya.PropertySource} to all interested parties.
-     * Basically this method gives an abstraction on the effective event bus design fo listeners. In a CDI context
-     * the CDI enterprise event bus should be used internally to do the work, whereas in a SE only environment
-     * a more puristic approach would be useful.
-     * @param configChange the change to be published, not null.
-     */
-    public static void publishChange(ConfigChangeSet configChange){
-        ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).publishChange(configChange);
     }
 
 }

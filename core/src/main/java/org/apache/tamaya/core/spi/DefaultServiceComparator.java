@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya.core.spi;
 
 import java.util.*;
 
 /**
- * Simple comparator based on a Collection of {@link org.apache.tamaya.spi.OrdinalProvider} instances.
+ * Simple comparator based on a Collection of {@link OrdinalProvider} instances.
  */
 final class DefaultServiceComparator implements Comparator<Object>{
 

@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.annotation;
 
+import org.apache.tamaya.PropertyAdapter;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.apache.tamaya.Codec;
 
 /**
  * Annotation to define a type adapter to be used before injecting a configured keys, or for applying changes.
@@ -32,14 +32,14 @@ import org.apache.tamaya.Codec;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })
-public @interface WithCodec {
+public @interface WithPropertyAdapter {
 
     /**
-     * Define a custom adapter or codec that should be used to deserialize the configuration entry injected. This overrides any
+     * Define a custom adapter or codec that should be used to adapt the configuration entry injected. This overrides any
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
      */
     @SuppressWarnings("rawtypes")
-	Class<? extends Codec> value();
+	Class<? extends PropertyAdapter> value();
 
 }

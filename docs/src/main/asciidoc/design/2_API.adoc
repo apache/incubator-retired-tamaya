@@ -1,0 +1,469 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+<<<
+[[API]]
+== The Tamaya API
+=== Overview
+Though Tamaya is a very powerful and flexible solution there are basically only a few simple core concepts required that build
+the base of all the other mechanisms:
+
+The API provides these artifacts, which are:
+
+* A simple but complete SE API for accessing key/value based _Configuration_.
+* _Configuration_ hereby models configuration and as well provides the static entry point to access configuration.
+  _ Configuration_ provides
+     ** access to literal key/value pairs.
+     ** +PropertyAdapter+ support to convert String values to arbitrary non-String types for type safe configuration access.
+     ** functional extension points (+with,query+) based un +UnaryOperator<Configuration>+ (operator) and +Function<Configuration,T>+ (query).
+     ** provides static access to the current +Configuration+ (default configuration)
+     ** provides static access to the additional named +Configuration+ instances
+     ** a service to inject configuration into beans, including listener and callback support
+     ** a service for creating onfiguration _templates_ based on interfaces.
+* +PropertyAdapter+ defines a functional interface for converting String values into any required target types. It also
+  provides static access to the adapters registered to implement transparent type conversion as needed, if possible.
+* _PropertySource:_ is the the SPI for a source that provides configuration data. A +PropertySource+
+     hereby
+     ** is designed as a minimalistic data interface to be implemented by any kind of data providers (local or remote)
+     ** provides data key/value pairs in raw format as String key/values only
+     ** can optionally support scanning of its provided values
+
+* _Annotations_ a set of annotations allows to configure configuration injection on classes or interface (aka config templates).
+
+The SPI contains the following core concepts/artifacts:
+
+* _ServiceContext_ is the delegate singleton that is used by the framework to resolve components. The effective component
+  loading can be accessed by implementing and registering an instance of +ServiceContextProvider+ using +java.util.ServiceLoader+.
+* All the singleton used explicitly (+Configuration, PropertyAdapter+) are backed up corresponding API interfaces
+  (+ConfigurationSpi, PropertyAdapterSpi+).
+  To override a singleton's behaviour the corresponding SPI has to be implemented and registered, so it can be loaded
+  by the current +ServiceContext+ setup (by default ServiceLoader based).
+
+This is also reflected in the main parts of the API, which is quite small:
+
+* +org.apache.tamaya+ contains the main abstractions +Configuration, ConfigQuery, PropertyAdapter,
+  PropertySource+ and +ConfigException+
+* +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +ServiceContextManager+
+  mechanism (+ConfigurationSpi, PropertyAdapterSpi, ServiceContext+).
++ +org.apache.tamaya.annot+ contains the annotations defined to control configuration injection.
+
+So basically an implementation has to implement the SPIs provided. The +ServiceContext+ only has to be overridden, when
+a default SE +java.util.ServiceLoader+ mechanism is not sufficient.
+
+[[APIKeyValues]]
+=== Key/Value Pairs
+
+Basically configuration is a very generic concept. Therefore it should be modelled in a generic way. The most simple
+and most commonly used approach are simple literal key/value pairs. So the core building block of {name} are key/value pairs.
+You can think of a common +.properties+ file, e.g.
+
+[source,properties]
+.A simple properties file
+--------------------------------------------
+a.b.c=cVal
+a.b.c.1=cVal1
+a.b.c.2=cVal2
+a=aVal
+a.b=abVal
+a.b2=abVal
+--------------------------------------------
+
+Now you can use +java.util.Properties+ to read this file and access the corresponding properties, e.g.
+
+[source,properties]
+.Accessing some properties
+--------------------------------------------
+Properties props = new Properties();
+props.readProperties(...);
+String val = props.getProperty("a.b.c");
+val = props.getProperty("a.b.c.1");
+...
+--------------------------------------------
+
+This looks familiar to most of you. Nevertheless when looking closer to the above key/value pairs,
+there are more things in place: looking at the keys +a.b.c+, +a.b.c.1+, +a.b.c.2+, +a+, +a.b+ we
+see that the key names build up a flattened tree structure. So we can define the following:
+
+Given a key +p1.p2.p3.k=value+:
+
+* +p1.p2.p3.k+ is called the _qualified key_
+* +p1.p2.p3+ is the key's _area_
+* the child areas +p1.p2", "p1+ are called _areas_ as well
+* +k+ is the _(unqualified) key_
+
+This terminology is used also later ta some locations. Nevertheless given that you can perform some very useful actions:
+
+* you can filter the keys with an area. E.g. in the example before you can query for all keys within the area +a.b.c+
+  and map them to new property set.
+* you can access all child keys of an area
+* you can evaluate the areas present.
+* ...and more.
+
+All this kind of actions (and more) must not be included in the API, because they can be modelled as +ConfigQuery+ instances and
+implemented/provided by implementation code.
+
+
+==== Why Using Strings Only
+
+There are good reason to keep of non String-values as core storage representation of configuration. Mostly
+there are several huge advantages:
+
+* Strings are simple to understand
+* Strings are human readable and therefore easy to prove for correctness
+* Strings can easily be used within different language, different VMs, files or network communications.
+* Strings can easily be compared and manipulated
+* Strings can easily be searched, indexed and cached
+* It is very easy to provide Strings as configuration, which gives much flexibility for providing configuration in
+  production as well in testing.
+* and more...
+
+On the other side there are also disadvantages:
+
+* Strings are inherently not type safe, they do not provide validation out of the box for special types, such as
+numbers, dates etc.
+* In many cases you want to access configuration in a typesafe way avoiding conversion to the target types explicitly
+  throughout your code.
+* Strings are neither hierarchical nor multi-valued, so mapping hierarchical and collection structures requires some
+  extra efforts.
+
+Nevertheless most of these advantages can be mitigated easily, hereby still keeping all the benefits from above:
+
+* Adding type safe adapters on top of String allow to add any type easily, that can be directly mapped out of Strings.
+  This includes all common base types such as numbers, dates, time, but also timezones, formatting patterns and more.
+* Also multi-valued, complex and collection types can be defined as a corresponding +PropertyAdapter+ knows how to
+  parse and create the target instance required.
+* String s also can be used as references pointing to other locations and formats, where configuration is
+  accessible.
+
+
+[API PropertySource]
+=== PropertySource
+==== Basic Model
+
+We have seen that constraining configuration aspects to simple literal key/value pairs provides us with an easy to
+understand, generic, flexible, yet expendable mechanism. Looking at the Java language features a +java.util.Map<String,
+String>+ and +java.util.Properties+ basically model these aspects out of the box.
+
+Though there are advantages in using these types as a model, there are some severe drawbacks, mostly implementation
+of these types is far not trivial or the basic model has sever drawbacks, because of backward compatibility with
+the original collection API.
+
+To make implementation of a custom property source as convinient as possible only the following methods were
+identified to be necessary:
+
+[source,java]
+.Interface PropertySource
+--------------------------------------------
+public interface PropertySource{
+
+      Optional<String> get(String key);
+      boolean isBrowseable();
+      Map<String, String> getProperties();
+
+}
+--------------------------------------------
+
+Hereby
+
+* +get+ looks similar to the methods on +Map+, though +get+ uses the +Optional+ type introduced
+  with Java 8. This avoids returning +null+ or throwing exceptions in case no such entry is available and also
+  reduces the API's footprint, since default values can be easily implemented by calling +Optional.orElse+ and
+  similar methods.
+* +getProperties+ allows to extract mapped data to a +Map+. Other methods like +containsKey, keySet+ as well as
+  streaming operations then can be applied on the returned +Map+ instance.
+* But not in all scenarios a property source may be browseable. This can be evaluated by calling +isBrowseable()+.
+
+This interface can be implemented by any kind of logic. It could be a simple in memory map, a distributed configuration
+provided by a data grid, a database, the JNDI tree or other resources. Or it can be a combination of multiple
+property sources with additional combination/aggregation rules in place.
+
+==== Meta Information
+
+Meta information is not explicitly modelled, since it can be easily added by some key naming schemes. E.g. look at
+the example below, which return a map of all metadata keys for +a.b.c+.:
+
+[source,java]
+.Modelling Meta Data
+--------------------------------------------
+PropertySource src = ...;
+Map<String, String> metaData = src.getArea("a.b.c[meta]");
+--------------------------------------------
+
+The API does not provide any explicit support for meta-data, whereas implementations may provide metadata editors
+or readers.
+
+==== Mutability
+
+In general Property sources can be modeled as mutable. Nevertheless the API does not support out of the box mutability,
+due to the following reasons:
+
+* Mutability is rather complex
+* Mutability is only rarely required
+* Mutability can be implemented in various ways
+
+As a consequence mutability mechanisms may be provided by implementations as needed, but are not part of the API.
+
+
+[[API Configuration]]
+=== Configuration
+==== Basic Model: Extending PropertySource
+
++Configuration+ inherits all basic features from +PropertySource+, but additionally adds functionality for
+type safety and external features of any interacting with configuration:
+
+[source,java]
+.Interface Configuration
+--------------------------------------------
+public interface Configuration extends PropertySource{
+    // type support
+    default Optional<Boolean> getBoolean(String key);
+    default OptionalInt getInteger(String key);
+    default OptionalLong getLong(String key);
+    default OptionalDouble getDouble(String key);
+    default <T> Optional<T> getAdapted(String key, PropertyAdapter<T> adapter);
+    <T> Optional<T> get(String key, Class<T> type);
+
+    // extension points
+    default Configuration with(UnaryOperator<Configuration> operator);
+    default <T> T query(ConfigQuery<T> query);
+}
+--------------------------------------------
+
+Hereby
+
+* +XXX getXXX(String)+ provide type safe accessors for all basic wrapper types of the JDK. Basically all this
+  methods delegate to the +getAdapted+ method, additionally passing the required +PropertyAdapter+.
+* +getAdapted+ allow accessing any type, hereby also passing a +PropertyAdapter+ that converts
+  the configured literal value to the type required.
+* +with, query+ provide the extension points for adding additional functionality.
+
+Additionally +Configuration+ provides several access methods:
+
+[source,java]
+.Interface Configuration
+--------------------------------------------
+public interface Configuration extends PropertySource{
+   ...
+
+    // accessors for configuration
+    public static Configuration current();
+    public static Configuration current(String name);
+    public static boolean isAvailable(String name);
+    // accessors for template and injection
+    public static <T> T createTemplate(Class<T> template, Configuration... configurations);
+    public static void configure(Object instance, Configuration... configurations);
+}
+--------------------------------------------
+
+Hereby
+* +current()+ returns the _default_ +Configuration+
+* +current(String name)+ returns a named +Configuration+ (there may be arbitrary additional +Configuration+ instance
+  additionally to the default +Configuration+ instance.
+* +isAvailable(String name)+ allows to determine if a named +Configuration+ is available.
+* +createTemplate(Class<T> template, Configuration... configurations)+ allows to create a new template instance based
+  on a (optionally) annotated interface. The according getter methods are backed up and implemented by Tamaya based
+  on the configuration values available. The +configurations+ parameter allows parts of +Configuration+ instances to be
+  passed that override any instances available through +current(name), current()+.
+* +configure+ performs injection of configured values on a (optionally) annotated non abstract type.
+  The +configurations+ parameter allows parts of +Configuration+ instances to be
+  passed that override any instances available through +current(name), current()+.
+
+
+[[TypeConversion]]
+==== Type Conversion
+
+Configuration extend +PropertySource+ and adds additional support for non String types. This is achieved
+with the help of +PropertyAdapter+ instances:
+
+[source,java]
+.PropertyAdapter
+--------------------------------------------
+@FunctionalInterface
+public interface PropertyAdapter<T>{
+    T adapt(String value);
+}
+--------------------------------------------
+
++PropertyAdapter+ instances can be implemented manually or registered and accessed from the
++PropertyAdaper+ using static methods. Hereby the exact mechanism is determined by the implementation
+of +PropertyAdapterSpi+ backing up the static methods.
+By default corresponding +PropertyAdapter+ instances can be registered using the Java +ServiceLoader+
+mechanism, or programmatically ba calling the +register(Class, PropertyAdapter)+.
+
+[source,java]
+.PropertyAdapter
+--------------------------------------------
+@FunctionalInterface
+public interface PropertyAdapter<T>{
+    T adapt(String value);
+
+    public static <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter);
+    public static boolean isTargetTypeSupported(Class<?> targetType);
+    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType);
+    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType, WithPropertyAdapter annotation);
+}
+--------------------------------------------
+
+The now a typed instance of a +Configuration+ is required, by default the +Configuration+ implementation acquires
+a matching +PropertyAdapter+. If one is found it can easily pass the String value from its String property store
+for converting it to the required target type. In the normal case for the mostly needed types this is completely
+transparent to the user.
+But basically this mechanism can also be used for adaptive filtering of values accessed. As an example lets assume
+we want to decode an encryped password on the fly, so we can achieve this with as less code as follows:
+
+[source,java]
+.Simple Filtering Adapter Use Case
+--------------------------------------------
+Configuration config = Configuration.cuirrent();
+String decryptedPassword = config.getAdapted(String.class, "user.password", p -> PKI.decrypt(p));
+--------------------------------------------
+
+[[Injection]]
+=== Inversion of Control
+==== Overview
+
+Inversion of Control (aka IoC/the Hollywood Principle) has proven to be very handy and effective in avoiding boilerplate
+code. In Java there are different frameworks available that all provide IoC mechanisms. Unfortunately IoC is not a
+built-in language feature. So for a portable solution OOTB that works also in Java SE Tamaya itself has to provide the
+according injection services. As an example refer to the following example:
+
+[source,java]
+.Annotated Example Class
+--------------------------------------------
+public class ConfiguredClass{
+
+    // resolved by default, using property name, class and package name
+    private String testProperty;
+
+    @ConfiguredProperty(config="pluginConfig", keys={"a.b.c.key1","a.b.legacyKey"})
+    @ConfiguredProperty(config="productConfig", keys="area1.key2")
+    @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    String value1;
+
+    @ConfiguredProperty(keys="a.b.c.key2")
+    private int value2;
+
+    // resolved by default
+    @DefaultValue("http://127.0.0.1:8080/res/api/v1/info.json")
+    private URL accessUrl;
+
+    // Config injection disabled for this property
+    @NoConfig
+    private Integer int1;
+
+    @ConfiguredProperty("BD")
+    @WithAdapter(MyBigDecimalRoundingAdapter.class)
+    private BigDecimal bigNumber;
+
+    ...
+}
+--------------------------------------------
+
+The class does not show all (but most all) the possibilities that are provided. Configuring an instance of the
+class using Tamaya is very simple:
+
+[source,java]
+.Configuring the +ConfiguredClass+ Instance
+--------------------------------------------
+ConfiguredClass classInstance = new ConfiguredClass();
+Configuration.configure(configuredClass);
+--------------------------------------------
+
+==== The Annotations in detail
+
+tbd
+
+The +Configuration+ interface provides static methods that allow to any kind of instances be configured
+ny just passing the instances calling +Configuration.configure(instance);+. The classes passed hereby must
+be annotated with +@ConfiguredProperty+ to define the configured properties. Hereby this annotation can be
+used in multiple ways and combined with other annotations such as +@DefaultValue+,
++@WithLoadPolicy+, +@WithConfig+, +@WithConfigOperator+, +@WithPropertyAdapter+.
+
+To illustrate the mechanism below the most simple variant of a configured class is given:
+
+[source,java]
+.Most simple configured class
+--------------------------------------------
+pubic class ConfiguredItem{
+  @ConfiguredProperty
+  private String aValue;
+}
+--------------------------------------------
+
+When this class is configured, e.g. by passing it to +Configuration.configure(Object)+,
+the following is happening:
+
+* The current valid +Configuration+ is evaluated by calling +Configuration cfg = Configuration.of();+
+* The current property value (String) is evaluated by calling +cfg.get("aValue");+
+* if not successful, an error is thrown (+ConfigException+)
+* On success, since no type conversion is involved, the value is injected.
+* The configured bean is registered as a weak change listener in the config system's underlying
+  configuration, so future config changes can be propagated (controllable by applying the
+  +@WithLoadPolicy+ annotation).
+
+In the next example we explicitly define the property value:
+[source,java]
+--------------------------------------------
+pubic class ConfiguredItem{
+
+  @ConfiguredProperty
+  @ConfiguredProperty("a.b.value")
+  @configuredProperty("a.b.deprecated.value")
+  @DefaultValue("${env:java.version}")
+  private String aValue;
+}
+--------------------------------------------
+
+Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
+resolved. Hereby the ordering of the annotations define the ordering of resolution, so in the example above
+resolution equals to +"aValue", "a.b.value", "a.b.deprecated.value"+. If no value could be read
+from the configuration, it uses the value from the +@DefaultValue+ annotation. Interesting here
+is that this value is not static, it is evaluated by calling +Configuration.evaluateValue(Configuration, String)+.
+
+
+=== Extension Points
+
+We are well aware of the fact that this library will not be able to cover all kinds of use cases. Therefore
+we have added functional extension mechanisms to +Configuration+ that were used in other areas of the Java eco-system as well:
+
+* +with(UnaryOperator<Configuration> operator)+ allows to pass arbitrary functions that take adn return instances of +Configuration+.
+  They can be used to cover use cases such as filtering, configuration views, security interception and more.
+* +query(Function<Configuration,T> query)+ ConfigQuery+ defines a function returning any kind of result based on a
+  configuration instance. Queries are used for accessing/deriving any kind of data of a +Configuration+ instance,
+  e.g. accessing a +Set<String>+ of area keys present.
+
+Both interfaces hereby are functional interfaces, defined in +java.util.function+ and can be applied using Lambdas or
+method references:
+
+[source,java]
+.Applying a Configuration Query
+--------------------------------------------
+ConfigSecurity securityContext = Configuration.current().query(ConfigSecurity::targetSecurityContext);
+--------------------------------------------
+
+NOTE: +ConfigSecurity+ is an arbitrary class.
+
+Or an operator calls looks as follows:
+
+[source,java]
+.Applying a Configuration Operators
+--------------------------------------------
+Configuration secured = Configuration.current().with(ConfigSecurity::secure);
+--------------------------------------------
+
+
+== SPI
+

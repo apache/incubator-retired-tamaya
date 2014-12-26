@@ -16,19 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya.core.spi;
+
+import java.util.OptionalInt;
 
 /**
- * Interface that can be optionally implemented by SPI components to be loaded into
- * the Tamaya's ServiceContext. The ordinal provided will be used to determine
- * priority and precedence, when multiple components implement the same
- * service interface.
+ * The ordinal provider is an optional component that provides an abstraction for ordering/prioritizing
+ * services loaded. This can be used to determine, which SPI should be used, if multiple instances are
+ * available, or for ordering chain of services.
+ * @see org.apache.tamaya.spi.ServiceContext
  */
-@FunctionalInterface
-public interface Orderable {
+public interface OrdinalProvider {
     /**
-     * Get the ordinal keys for the component, by default 0.
-     * @return the ordinal keys
+     * Evaluate the ordinal number for the given type.
+     * @param type the target type, not null.
+     * @return the ordinal, if not defined, 0 should be returned.
      */
-    int order();
+     OptionalInt getOrdinal(Class<?> type);
+
 }

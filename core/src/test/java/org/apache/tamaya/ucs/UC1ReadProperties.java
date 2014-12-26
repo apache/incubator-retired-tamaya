@@ -26,11 +26,10 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.core.config.ConfigFunctions;
+import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
 
@@ -88,7 +87,6 @@ public class UC1ReadProperties {
         assertNotNull(config);
         assertTrue(config.isEmpty());
         assertTrue(config.getProperties().isEmpty());
-        assertFalse(config.isMutable());
     }
 
     @Test
@@ -97,7 +95,6 @@ public class UC1ReadProperties {
         assertNotNull(provider);
         assertTrue(provider.isEmpty());
         assertTrue(provider.getProperties().isEmpty());
-        assertFalse(provider.isMutable());
     }
 
     @Test

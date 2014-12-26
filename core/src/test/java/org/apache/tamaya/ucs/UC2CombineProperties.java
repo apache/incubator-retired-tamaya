@@ -18,10 +18,9 @@
  */
 package org.apache.tamaya.ucs;
 
-import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
 
@@ -34,7 +33,7 @@ import org.junit.Test;
 public class UC2CombineProperties {
 
     /**
-     * The most common use cases is aggregating two property config to new provider, hereby {@link org.apache.tamaya.AggregationPolicy}
+     * The most common use cases is aggregating two property config to new provider, hereby {@link org.apache.tamaya.core.properties.AggregationPolicy}
      * defines the current variants supported.
      */
     @Test

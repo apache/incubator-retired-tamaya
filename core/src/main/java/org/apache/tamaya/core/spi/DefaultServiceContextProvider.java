@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya.core.spi;
+
+import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class implements the (default) {@link ServiceContext} interface and hereby uses the JDK
+ * This class implements the (default) {@link org.apache.tamaya.spi.ServiceContext} interface and hereby uses the JDK
  * {@link java.util.ServiceLoader} to load the services required.
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -33,6 +35,12 @@ class DefaultServiceContextProvider implements ServiceContext {
 	private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
     /** Singletons. */
     private final ConcurrentHashMap<Class, Optional<?>> singletons = new ConcurrentHashMap<>();
+    /** Comparator for ordering of multiple services found. */
+    private DefaultServiceComparator serviceComparator;
+
+    public DefaultServiceContextProvider(){
+        serviceComparator = new DefaultServiceComparator(getServices(OrdinalProvider.class, Collections.emptyList()));
+    }
 
     @Override
     public <T> Optional<T> getService(Class<T> serviceType) {
@@ -87,6 +95,9 @@ class DefaultServiceContextProvider implements ServiceContext {
             }
             if(services.isEmpty()){
                 services.addAll(defaultList);
+            }
+            if(!serviceType.equals(OrdinalProvider.class)) {
+                services.sort(serviceComparator);
             }
             services = Collections.unmodifiableList(services);
             final List<T> previousServices = (List<T>) servicesLoaded.putIfAbsent(serviceType, (List<Object>)services);

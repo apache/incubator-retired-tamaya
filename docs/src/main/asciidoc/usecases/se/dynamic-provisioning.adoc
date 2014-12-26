@@ -1,0 +1,17 @@
+=== Dynamic Provisioning (UC8)
+
+In Cloud Computing, especially the PaaS and SaaS areas a typical use case would be that an application (or server)
+is deployed, configured and started dynamically. Typically things are controlled by some "active controller components",
+which are capable of
+* creating new nodes (using IaaS services)
+* deploying and starting the required runtime platform , e.g. as part of a PaaS solution.
+* deploying and starting the application modules.
+
+All these steps require some kind of configuration. As of today required files are often created on the target node
+before the systems are started, using proprietary formats and mechanism. Similarly accessing the configuration in place
+may require examining the file system or using again proprietary management functions. Of course, a configuration
+solution should not try to solve that, but it can provide a significant bunch of functionality useful in such scenarios:
+
+* provide remote capabilities for configuration
+* allow configuration to be updated remotely.
+* allow client code to listen for configuration changes and react as needed.

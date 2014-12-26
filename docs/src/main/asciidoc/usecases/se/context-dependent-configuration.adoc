@@ -1,0 +1,7 @@
+=== Context Dependent Configuration
+
+In multi tenancy setups or complex systems a hierarchical/graph model of contexts for configurations is required, or different runtime contexts are executed in parallel
+within the same VN. What sounds normal for EE also may be the case for pure SE environments:
+
+* Users want to be able to model different layers of runtime context
+* Users want to identiofy the current layer, so configuration used may be adapted.

@@ -22,9 +22,7 @@ import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Configuration implementation that stores all current values current a given (possibly dynamic, contextual and non remote
@@ -41,7 +39,7 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
      */
     private FreezedConfiguration(Configuration config){
         super(config.getName());
-        this.properties = PropertySourceBuilder.of(config).buildFreezed();
+        this.properties = PropertySourceBuilder.of(config).buildFrozen();
     }
 
     public static final Configuration of(Configuration config){

@@ -1,0 +1,7 @@
+=== MX/ReST Management
+
+Users want to be have comprehensive management support, which should allow
+
+* to change configuration
+* to remove configuration
+* to view configuration and its provider details

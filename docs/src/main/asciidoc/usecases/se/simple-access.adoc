@@ -1,0 +1,18 @@
+=== Simple Access
+
+Users want to be able to access configuration in a unified way both in SE and EE. EE may provide additional
+mechanism, such as injection, but the SE mechanisms should work as well, so any code written in SE is fully
+portable to EE as well.
+This can only be achieved by providing a static accessor, e.g.
+
+Configuration config = Configuration.current();
+
+The call above should work exactly the same in EE. To enable this the static call must be delegated in the
+internals of the singleton, depending on the runtime. In EE the executing component can behave contextually,
+or even be loaded within the CDI environment (at least for post loading, application runtime aspects, but not earlier).
+
+Additionally in EE it should also be possible to inject Configuration, which gives you the same results as the call
+above:
+
+@Inject
+private Configuration cfg;

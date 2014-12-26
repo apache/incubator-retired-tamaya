@@ -3,10 +3,8 @@ package org.apache.tamaya.core.internal.config;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfo;
 
 /**
  * Implementation of Configuration which the information is from xml or properties files.

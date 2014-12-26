@@ -1,2 +1,9 @@
 === Simple Lookup of Properties
 
+Users just want to create a configuration ad hoc, from given property files. The
+files could be locally in the file system, on the classpath.
+
+Tamaya should provide a simple Java API for accessing key/value based configuration. Hereby users want to access
+properties as simple String values.
+
+Hereby returning Java 8 Optional values must be considered as well, instead of returning +null+.

@@ -1,7 +1,7 @@
 package org.apache.tamaya.core.internal.config;
 
-import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 

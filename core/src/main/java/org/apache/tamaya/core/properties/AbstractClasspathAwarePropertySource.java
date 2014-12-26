@@ -22,9 +22,6 @@ import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
-
 import java.util.*;
 
 public abstract class AbstractClasspathAwarePropertySource extends AbstractPropertySource {

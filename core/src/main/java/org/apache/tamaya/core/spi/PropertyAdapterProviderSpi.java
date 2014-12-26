@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.core.spi;
 
-import org.apache.tamaya.Codec;
+import org.apache.tamaya.PropertyAdapter;
 
 /**
- * This service provides different {@link org.apache.tamaya.Codec} instances for types.
+ * This service provides different {@link org.apache.tamaya.PropertyAdapter} instances for types.
  */
-public interface CodecProviderSpi {
+public interface PropertyAdapterProviderSpi {
 
 	/**
 	 * Called, when a given {@link org.apache.tamaya.Configuration} has to be evaluated.
@@ -31,6 +31,6 @@ public interface CodecProviderSpi {
 	 * @return the corresponding {@link java.util.function.Function<String, T>}, or {@code null}, if
 	 *         not available for the given target type.
 	 */
-	<T> Codec<T> getCodec(Class<T> type);
+	<T> PropertyAdapter<T> getPropertyAdapter(Class<T> type);
 
 }

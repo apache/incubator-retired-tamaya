@@ -18,16 +18,22 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.Codec;
-import org.apache.tamaya.annotation.WithCodec;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertyAdapter;
+import org.apache.tamaya.annotation.WithPropertyAdapter;
 
-import java.util.Objects;
-import java.util.function.Function;
 
 /**
- * SPI that is used by the {@link org.apache.tamaya.Codecs} singleton as delegation instance.
+ * Manager for {@link org.apache.tamaya.Configuration} instances. Implementations must register an instance
+ * using the {@link org.apache.tamaya.spi.ServiceContextManager} mechanism in place (by default this is based on the {@link java.util.ServiceLoader}.
+ * The {@link org.apache.tamaya.Configuration} Singleton in the API delegates its corresponding calls to the
+ * instance returned by the current bootstrap service in place.
+ *
+ * @see org.apache.tamaya.Configuration
+ * @see org.apache.tamaya.spi.ServiceContextManager
  */
-public interface CodecSpi {
+public interface PropertyAdapterSpi {
+
 
     /**
      * Registers a new PropertyAdapter for the given target type, hereby replacing any existing adapter for
@@ -37,38 +43,15 @@ public interface CodecSpi {
      * @param <T> The target type
      * @return any adapter replaced with the new adapter, or null.
      */
-    <T> Codec<T> register(Class<T> targetType, Codec<T> adapter);
-
-    default <T> Codec<T> register(Class<T> targetType, Function<String,T> decoder, Function<T, String> encoder){
-        Objects.requireNonNull(targetType);
-        Objects.requireNonNull(decoder);
-        Objects.requireNonNull(encoder);
-        return register(targetType, new Codec<T>(){
-
-            @Override
-            public T deserialize(String value) {
-                return decoder.apply(value);
-            }
-
-            @Override
-            public String serialize(T value) {
-                return encoder.apply(value);
-            }
-
-            @Override
-            public String toString(){
-                return "Codec(decoder="+decoder.getClass().getName()+", encoder="+encoder.getClass().getName()+")";
-            }
-        });
-    }
+    <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter);
 
     /**
      * Get an adapter converting to the given target type.
      * @param targetType the target type class
      * @return true, if the given target type is supported.
      */
-    default <T> Codec<T> getAdapter(Class<T> targetType){
-        return getCodec(targetType, null);
+    default <T> PropertyAdapter<T> getAdapter(Class<T> targetType){
+        return getPropertyAdapter(targetType, null);
     }
 
     /**
@@ -78,7 +61,7 @@ public interface CodecSpi {
      * @return the corresponding adapter, never null.
      * @throws org.apache.tamaya.ConfigException if the target type is not supported.
      */
-    <T> Codec<T> getCodec(Class<T> targetType, WithCodec annotation);
+    <T> PropertyAdapter<T> getPropertyAdapter(Class<T> targetType, WithPropertyAdapter annotation);
 
     /**
      * Checks if the given target type is supported, i.e. a adapter is registered and accessible.

@@ -1,0 +1,6 @@
+=== Minimal Property Source SPI
+
+Users expect that implementing an additional configuration property source is as easy as possible.
+So there should be an SPI defined that allows any kind of data source to be used for providing configuration data.
+The interface to be implemented is expected to be minimal to reduce the implementation burden. Default
+methods should be used where possible, so only a few methods are expected to be required to implement.

@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.MetaInfoBuilder;
-import org.apache.tamaya.core.properties.AbstractPropertySource;
-
 import java.util.Map;
 
 class EnvironmentPropertySource extends AbstractPropertySource {

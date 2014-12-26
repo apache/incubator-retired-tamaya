@@ -29,71 +29,71 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.tamaya.annotation.WithCodec;
-import org.apache.tamaya.spi.CodecSpi;
+import org.apache.tamaya.annotation.WithPropertyAdapter;
+import org.apache.tamaya.spi.PropertyAdapterSpi;
 
 /**
- * Test implementation current {@link org.apache.tamaya.spi.CodecSpi}, which provides codecs
+ * Test implementation current {@link org.apache.tamaya.spi.PropertyAdapterSpi}, which provides propertyAdapters
  * for some basic types.
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
-public final class TestPropertyAdaptersSingletonSpi implements CodecSpi {
+public final class TestPropertyAdaptersSingletonSpi implements PropertyAdapterSpi {
 
-	private Map<Class, Codec<?>> codecs = new ConcurrentHashMap<>();
+	private Map<Class, PropertyAdapter<?>> propertyAdapters = new ConcurrentHashMap<>();
 
     private TestPropertyAdaptersSingletonSpi(){
-        register(char.class, (s) -> s.charAt(0), (ch) -> String.valueOf(ch));
-        register(int.class, Integer::parseInt, Object::toString);
-        register(byte.class, Byte::parseByte, Object::toString);
-        register(short.class, Short::parseShort, Object::toString);
-        register(boolean.class, Boolean::parseBoolean, b -> String.valueOf(b));
-        register(float.class, Float::parseFloat, f -> String.valueOf(f));
-        register(double.class, Double::parseDouble, d -> String.valueOf(d));
+        register(char.class, (s) -> s.charAt(0));
+        register(int.class, Integer::parseInt);
+        register(byte.class, Byte::parseByte);
+        register(short.class, Short::parseShort);
+        register(boolean.class, Boolean::parseBoolean);
+        register(float.class, Float::parseFloat);
+        register(double.class, Double::parseDouble);
 
-        register(Character.class, (s) -> s.charAt(0), Object::toString);
-        register(Integer.class, Integer::valueOf, Object::toString);
-        register(Byte.class, Byte::valueOf, Object::toString);
-        register(Short.class, Short::valueOf, String::valueOf);
-        register(Boolean.class, Boolean::valueOf, String::valueOf);
-        register(Float.class, Float::valueOf, String::valueOf);
-        register(Double.class, Double::valueOf, String::valueOf);
-        register(BigDecimal.class, BigDecimal::new, String::valueOf);
-        register(BigInteger.class, BigInteger::new, String::valueOf);
+        register(Character.class, (s) -> s.charAt(0));
+        register(Integer.class, Integer::valueOf);
+        register(Byte.class, Byte::valueOf);
+        register(Short.class, Short::valueOf);
+        register(Boolean.class, Boolean::valueOf);
+        register(Float.class, Float::valueOf);
+        register(Double.class, Double::valueOf);
+        register(BigDecimal.class, BigDecimal::new);
+        register(BigInteger.class, BigInteger::new);
 
-        register(Currency.class, Currency::getInstance, Object::toString);
+        register(Currency.class, Currency::getInstance);
 
-        register(LocalDate.class, LocalDate::parse, Object::toString);
-        register(LocalTime.class, LocalTime::parse, Object::toString);
-        register(LocalDateTime.class, LocalDateTime::parse, Object::toString);
-        register(ZoneId.class, ZoneId::of, ZoneId::getId);
+        register(LocalDate.class, LocalDate::parse);
+        register(LocalTime.class, LocalTime::parse);
+        register(LocalDateTime.class, LocalDateTime::parse);
+        register(ZoneId.class, ZoneId::of);
     }
 
 
 	@Override
-    public <T> Codec<T> register(Class<T> targetType, Codec<T> codec){
+    public <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> codec){
         Objects.requireNonNull(targetType);
         Objects.requireNonNull(codec);
-        return (Codec<T>) codecs.put(targetType, codec);
+        return (PropertyAdapter<T>) propertyAdapters.put(targetType, codec);
     }
 
     @Override
-    public <T> Codec<T> getCodec(Class<T> targetType, WithCodec annotation){
+    public <T> PropertyAdapter<T> getPropertyAdapter(Class<T> targetType, WithPropertyAdapter annotation){
         if(annotation!=null){
             Class<?> adapterType = annotation.value();
-            if(!adapterType.equals(Codec.class)){
+            if(!adapterType.equals(PropertyAdapter.class)){
                 try{
-                    return (Codec<T>)adapterType.newInstance();
+                    return (PropertyAdapter<T>)adapterType.newInstance();
                 }
                 catch(Exception e){
                     throw new ConfigException("Failed to load PropertyAdapter: " + adapterType, e);
                 }
             }
         }
-        return (Codec<T>) codecs.get(targetType);
+        return (PropertyAdapter<T>) propertyAdapters.get(targetType);
     }
 
     @Override
     public boolean isTargetTypeSupported(Class<?> targetType){
-        return codecs.containsKey(targetType);
+        return propertyAdapters.containsKey(targetType);
     }
 }

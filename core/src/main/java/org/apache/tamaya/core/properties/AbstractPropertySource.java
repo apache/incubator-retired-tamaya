@@ -21,7 +21,6 @@ package org.apache.tamaya.core.properties;
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.PropertySource;
 
 /**
@@ -78,7 +77,7 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
     @Override
     public String toString(){
         StringBuilder b = new StringBuilder(getClass().getSimpleName()).append("{\n");
-        b.append("  ").append("(").append(MetaInfo.NAME).append(" = ").append(getName()).append(")\n");
+        b.append("  ").append("(").append(getName()).append(" = ").append(getName()).append(")\n");
         printContents(b);
         return b.append('}').toString();
     }

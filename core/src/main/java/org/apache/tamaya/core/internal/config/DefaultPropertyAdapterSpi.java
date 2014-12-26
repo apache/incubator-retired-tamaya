@@ -29,12 +29,11 @@ import java.time.ZoneId;
 import java.util.Currency;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
-import org.apache.tamaya.Codec;
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.annotation.WithCodec;
-import org.apache.tamaya.spi.CodecSpi;
+import org.apache.tamaya.PropertyAdapter;
+import org.apache.tamaya.annotation.WithPropertyAdapter;
+import org.apache.tamaya.spi.PropertyAdapterSpi;
 
 /**
  * Default codecs singleton, which provides default codesc for all kind of classes out of the box, which will be
@@ -45,53 +44,53 @@ import org.apache.tamaya.spi.CodecSpi;
  * </ul>
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class DefaultCodecSpi implements CodecSpi {
+public class DefaultPropertyAdapterSpi implements PropertyAdapterSpi {
 
 
-	private Map<Class,Codec> adapters = new ConcurrentHashMap<>();
+	private Map<Class,PropertyAdapter> adapters = new ConcurrentHashMap<>();
 
-    public DefaultCodecSpi(){
+    public DefaultPropertyAdapterSpi(){
         // Add default adapters
-        register(char.class, (s) -> s.charAt(0), (ch) -> String.valueOf(ch));
-        register(byte.class, Byte::parseByte, Object::toString);
-        register(short.class, Short::parseShort, Object::toString);
-        register(int.class, Integer::parseInt, Object::toString);
-        register(long.class, Long::parseLong, Object::toString);
-        register(boolean.class, Boolean::parseBoolean, b -> String.valueOf(b));
-        register(float.class, Float::parseFloat, f -> String.valueOf(f));
-        register(double.class, Double::parseDouble, d -> String.valueOf(d));
+        register(char.class, (s) -> s.charAt(0));
+        register(byte.class, Byte::parseByte);
+        register(short.class, Short::parseShort);
+        register(int.class, Integer::parseInt);
+        register(long.class, Long::parseLong);
+        register(boolean.class, Boolean::parseBoolean);
+        register(float.class, Float::parseFloat);
+        register(double.class, Double::parseDouble);
 
-        register(Character.class, (s) -> s.charAt(0), Object::toString);
-        register(Byte.class, Byte::valueOf, Object::toString);
-        register(Short.class, Short::valueOf, String::valueOf);
-        register(Integer.class, Integer::valueOf, Object::toString);
-        register(Long.class, Long::valueOf, Object::toString);
-        register(Boolean.class, Boolean::valueOf, b -> String.valueOf(b));
-        register(Float.class, Float::valueOf, f -> String.valueOf(f));
-        register(Double.class, Double::valueOf, d -> String.valueOf(d));
-        register(BigDecimal.class, BigDecimal::new, String::valueOf);
-        register(BigInteger.class, BigInteger::new, String::valueOf);
+        register(Character.class, (s) -> s.charAt(0));
+        register(Byte.class, Byte::valueOf);
+        register(Short.class, Short::valueOf);
+        register(Integer.class, Integer::valueOf);
+        register(Long.class, Long::valueOf);
+        register(Boolean.class, Boolean::valueOf);
+        register(Float.class, Float::valueOf);
+        register(Double.class, Double::valueOf);
+        register(BigDecimal.class, BigDecimal::new);
+        register(BigInteger.class, BigInteger::new);
 
-        register(Currency.class, Currency::getInstance, Object::toString);
+        register(Currency.class, Currency::getInstance);
 
-        register(LocalDate.class, LocalDate::parse, Object::toString);
-        register(LocalTime.class, LocalTime::parse, Object::toString);
-        register(LocalDateTime.class, LocalDateTime::parse, Object::toString);
-        register(ZoneId.class, ZoneId::of, ZoneId::getId);
+        register(LocalDate.class, LocalDate::parse);
+        register(LocalTime.class, LocalTime::parse);
+        register(LocalDateTime.class, LocalDateTime::parse);
+        register(ZoneId.class, ZoneId::of);
     }
 
 	@Override
-    public <T> Codec<T> register(Class<T> targetType, Codec<T> adapter){
+    public <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter){
         return adapters.put(targetType, adapter);
     }
 
     @Override
-    public <T> Codec<T> getCodec(Class<T> targetType, WithCodec adapterAnnot){
-        Codec codec = null;
-        Class<? extends Codec> configuredCodec = null;
+    public <T> PropertyAdapter<T> getPropertyAdapter(Class<T> targetType, WithPropertyAdapter adapterAnnot){
+        PropertyAdapter codec = null;
+        Class<? extends PropertyAdapter> configuredCodec = null;
         if(adapterAnnot != null){
             configuredCodec = adapterAnnot.value();
-            if(!configuredCodec.equals(Codec.class)){
+            if(!configuredCodec.equals(PropertyAdapter.class)){
                 try{
                     codec = configuredCodec.newInstance();
                 }
@@ -104,7 +103,7 @@ public class DefaultCodecSpi implements CodecSpi {
             codec = adapters.get(targetType);
         }
         if(codec == null){
-            codec = getDefaultCodec(targetType);
+            codec = getDefaultPropertyAdapter(targetType);
         }
         if(codec == null){
             throw new ConfigException("No Codec found for " + targetType.getName());
@@ -112,8 +111,8 @@ public class DefaultCodecSpi implements CodecSpi {
         return codec;
     }
 
-    private <T> Codec getDefaultCodec(Class<T> targetType) {
-        Function<String, T> decoder = null;
+    private <T> PropertyAdapter getDefaultPropertyAdapter(Class<T> targetType) {
+        PropertyAdapter<T> decoder = null;
         Method factoryMethod = getFactoryMethod(targetType, "of", "valueOf", "instanceOf", "getInstance", "from", "parse");
         if(factoryMethod!=null){
             decoder = (s) -> {
@@ -143,7 +142,7 @@ public class DefaultCodecSpi implements CodecSpi {
             }
         }
         if(decoder!=null) {
-            return register(targetType, decoder, String::valueOf);
+            return register(targetType, decoder);
         }
         return null;
     }
