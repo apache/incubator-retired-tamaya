@@ -4,6 +4,10 @@ import org.apache.tamaya.ConfiguredValue;
 import org.apache.tamaya.annotation.LoadPolicy;
 
 import java.beans.PropertyChangeEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -15,7 +19,7 @@ import java.util.function.Supplier;
 /**
  * Implementation of a configured value (in progress).
  */
-public class DefaultConfiguredValue<T> implements ConfiguredValue<T>{
+public class DefaultConfiguredValue<T> implements ConfiguredValue<T>, Serializable{
 
     private LoadPolicy loadPolicy = LoadPolicy.INITIAL;
     private AtomicLong lastUpdate;
@@ -154,5 +158,25 @@ public class DefaultConfiguredValue<T> implements ConfiguredValue<T>{
 
     public Optional<T> toOptional(){
         return value;
+    }
+
+    private void writeObject(ObjectOutputStream oos)throws IOException{
+        oos.writeLong(this.lastAccess.get());
+        oos.writeLong(this.lastUpdate.get());
+        if(isPresent()) {
+            oos.writeObject(this.value.get());
+        }
+        else{
+            oos.writeObject(null);
+        }
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.lastAccess.set(ois.readLong());
+        this.lastUpdate.set(ois.readLong());
+        if(isPresent()) {
+            this.value = Optional.of((T)ois.readObject());
+        }
+
     }
 }
