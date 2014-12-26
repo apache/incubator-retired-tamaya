@@ -17,8 +17,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache</groupId>
@@ -26,31 +26,31 @@ under the License.
         <version>16</version>
     </parent>
     <groupId>org.apache.tamaya</groupId>
-	<artifactId>tamaya-all</artifactId>
-	<version>0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>Apache Tamaya</name>
-	<description>Apache Tamaya - Java Configuration</description>
+    <artifactId>tamaya-all</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Apache Tamaya</name>
+    <description>Apache Tamaya - Java Configuration</description>
     <url>http://tamaya.incubator.apache.org</url>
     <inceptionYear>2014</inceptionYear>
-	<organization>
-		<name>Apache Software Foundation</name>
-		<url>http://apache.org</url>
-	</organization>
+    <organization>
+        <name>Apache Software Foundation</name>
+        <url>http://apache.org</url>
+    </organization>
 
-	
-	<properties>
+
+    <properties>
         <findbugs.skip>true</findbugs.skip>
-		<jdkVersion>1.8</jdkVersion>
-		<maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
-		<maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
+        <jdkVersion>1.8</jdkVersion>
+        <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
+        <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <rat.skip>false</rat.skip>
-		<junit.version>4.12</junit.version>
+        <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
         <asciidoctor.version>1.5.0</asciidoctor.version>
@@ -64,7 +64,7 @@ under the License.
         <jruby.version>1.7.16.1</jruby.version>
         <findbugs.version>3.0.0</findbugs.version>
         <rat.version>0.11</rat.version>
-	</properties>
+    </properties>
 
     <licenses>
         <license>
@@ -193,19 +193,19 @@ under the License.
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.7.2.201409121644</version>
                 </plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.1</version>
-					<configuration>
-						<debug>true</debug>
-						<optimize>${maven.compile.optimize}</optimize>
-						<source>${maven.compile.sourceLevel}</source>
-						<target>${maven.compile.targetLevel}</target>
-						<encoding>${project.build.sourceEncoding}</encoding>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.1</version>
+                    <configuration>
+                        <debug>true</debug>
+                        <optimize>${maven.compile.optimize}</optimize>
+                        <source>${maven.compile.sourceLevel}</source>
+                        <target>${maven.compile.targetLevel}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                         <showDeprecation>${maven.compile.deprecation}</showDeprecation>
-					</configuration>
-				</plugin>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -306,8 +306,8 @@ under the License.
                     <version>3.3</version>
                     <inherited>true</inherited>
                 </plugin>
-			</plugins>
-		</pluginManagement>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -363,7 +363,7 @@ under the License.
                 <artifactId>apache-rat-plugin</artifactId>
             </plugin>
         </plugins>
-	</build>
+    </build>
 
     <dependencyManagement>
         <dependencies>
