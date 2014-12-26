@@ -21,8 +21,8 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya.integration</groupId>
-        <artifactId>tamaya-integration-all</artifactId>
+        <artifactId>tamaya-ext-all</artifactId>
+        <groupId>org.apache.tamaya.ext</groupId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
