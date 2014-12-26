@@ -24,9 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.core.config.AbstractConfiguration;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
@@ -84,24 +83,6 @@ public class MutableTestConfigProvider implements ConfigurationProviderSpi{
         @Override
         public Map<String, String> getProperties() {
             return Collections.unmodifiableMap(data);
-        }
-
-        @Override
-        public boolean isMutable() {
-            return true;
-        }
-
-        @Override
-        public void applyChanges(ConfigChangeSet changeSet) {
-            for(PropertyChangeEvent change: changeSet.getEvents()){
-                if(change.getNewValue()==null){
-                    this.data.remove(change.getPropertyName());
-                }
-                else{
-                    this.data.put(change.getPropertyName(), (String) change.getNewValue());
-                }
-            }
-            Configuration.publishChange(changeSet);
         }
 
         @Override

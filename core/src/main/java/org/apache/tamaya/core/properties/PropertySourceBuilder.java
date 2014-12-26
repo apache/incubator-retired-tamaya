@@ -24,13 +24,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.oracle.webservices.internal.api.message.PropertySet;
-import org.apache.tamaya.AggregationPolicy;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
 
 /**
@@ -129,8 +126,8 @@ public final class PropertySourceBuilder {
     }
 
     /**
-     * Adds the given providers with the current active {@link org.apache.tamaya.AggregationPolicy}. By
-     * default {@link org.apache.tamaya.AggregationPolicy#OVERRIDE} is used.
+     * Adds the given providers with the current active {@link AggregationPolicy}. By
+     * default {@link AggregationPolicy#OVERRIDE} is used.
      * @see #withAggregationPolicy(AggregationPolicy)
      * @param providers providers to be added, not null.
      * @return the builder for chaining.
@@ -143,8 +140,8 @@ public final class PropertySourceBuilder {
     }
 
     /**
-     * Adds the given providers with the current active {@link org.apache.tamaya.AggregationPolicy}. By
-     * default {@link org.apache.tamaya.AggregationPolicy#OVERRIDE} is used.
+     * Adds the given providers with the current active {@link AggregationPolicy}. By
+     * default {@link AggregationPolicy#OVERRIDE} is used.
      * @see #withAggregationPolicy(AggregationPolicy)
      * @param providers providers to be added, not null.
      * @return the builder for chaining.
@@ -277,7 +274,7 @@ public final class PropertySourceBuilder {
 
 
     /**
-     * Add the current environment properties. Aggregation is based on the current {@link org.apache.tamaya.AggregationPolicy} acvtive.
+     * Add the current environment properties. Aggregation is based on the current {@link AggregationPolicy} acvtive.
      *
      * @return the builder for chaining.
      */
@@ -290,7 +287,7 @@ public final class PropertySourceBuilder {
     }
 
     /**
-     * Add the current system properties. Aggregation is based on the current {@link org.apache.tamaya.AggregationPolicy} acvtive.
+     * Add the current system properties. Aggregation is based on the current {@link AggregationPolicy} acvtive.
      *
      * @return the builder for chaining.
      */
@@ -313,7 +310,7 @@ public final class PropertySourceBuilder {
     }
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
@@ -332,7 +329,7 @@ public final class PropertySourceBuilder {
 
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
@@ -351,14 +348,17 @@ public final class PropertySourceBuilder {
 
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertySource} that is mutable by adding a map based instance that overrides
-     * values fromMap the original map.
-     *
-     * @param provider the provider to be made mutable, not null.
-     * @return the mutable instance.
+     * Filters the current {@link org.apache.tamaya.PropertySource} with the given valueFilter.
+     * @param valueFilter the value filter, not null.
+     * @return the (dynamically) filtered source instance, never null.
      */
-    public static PropertySource mutable(PropertySource provider) {
-        return PropertySourceFactory.mutable(null, provider);
+    public PropertySourceBuilder filterValues(BiFunction<String, String, String> valueFilter){
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<filteredValues> -> " + valueFilter;
+        }
+        this.current = PropertySourceFactory.filterValues(name, valueFilter, this.current);
+        return this;
     }
 
 
@@ -464,7 +464,7 @@ public final class PropertySourceBuilder {
      *
      * @return the freezed instance, never null.
      */
-    public PropertySource buildFreezed() {
+    public PropertySource buildFrozen() {
         String name = this.currentName;
         if (currentName == null) {
             name = "<freezed> -> source="+current.getName();

@@ -21,12 +21,10 @@ package org.apache.tamaya.core.properties;
 import java.net.URL;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.apache.tamaya.AggregationPolicy;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
 
 /**
@@ -216,6 +214,7 @@ public final class PropertySourceFactory {
      * Creates a new contextual {@link org.apache.tamaya.PropertySource}. Contextual maps delegate to different instances current PropertyMap depending
      * on the keys returned fromMap the isolationP
      *
+     * @param name the base name instance, not null.
      * @param mapSupplier          the supplier creating new provider instances
      * @param isolationKeySupplier the supplier providing contextual keys based on the current environment.
      */
@@ -232,6 +231,7 @@ public final class PropertySourceFactory {
      * Creates a filtered {@link org.apache.tamaya.PropertySource} (a view) current a given base {@link }PropertyMap}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
+     * @param name the base name instance, not null.
      * @param source   the main map instance, not null.
      * @param parentMap the delegated parent map instance, not null.
      * @return the new delegating instance.
@@ -250,7 +250,8 @@ public final class PropertySourceFactory {
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      * Keys not existing in the {@code mainMap}, but present in {@code replacementMao} will be hidden.
      *
-     * @param mainMap        the main map instance, which keys, present in {@code replacementMap} will be replaced
+     * @param name the base name instance, not null.
+     * @param source the main source instance, which keys, present in {@code replacementMap} will be replaced
      *                       with the ones
      *                       in {@code replacementMap}, not null.
      * @param replacementMap the map instance, that will replace all corresponding entries in {@code mainMap}, not null.
@@ -274,4 +275,13 @@ public final class PropertySourceFactory {
         return new BuildablePropertySource(name, baseProvider);
     }
 
+    /**
+     * Creates a new filtered {@link org.apache.tamaya.PropertySource} using the given filter.
+     * @param name the base name instance, not null.
+     * @param valueFilter the value filter function, null result will remove the given entries.
+     * @param current the source to be filtered
+     */
+    public static PropertySource filterValues(String name, BiFunction<String, String, String> valueFilter, PropertySource current) {
+        return new ValueFilteredPropertySource(name, valueFilter, current);
+    }
 }

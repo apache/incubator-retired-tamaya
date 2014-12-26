@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 
 import java.util.*;
 
@@ -77,20 +78,6 @@ class AggregatedPropertySource extends AbstractPropertySource {
 		return Collections.unmodifiableList(units);
 	}
 
-    /**
-     * Apply a config change to this item. Hereby the change must be related to the same instance.
-     * @param change the config change
-     * @throws org.apache.tamaya.ConfigException if an unrelated change was passed.
-     * @throws UnsupportedOperationException when the configuration is not writable.
-     */
-    @Override
-    public void applyChanges(ConfigChangeSet change){
-        if(mutableProvider!=null)
-            mutableProvider.applyChanges(change);
-        else
-            super.applyChanges(change);
-    }
-
     @Override
     public Map<String,String> getProperties() {
 		Map<String, String> value = new HashMap<>();
@@ -107,12 +94,6 @@ class AggregatedPropertySource extends AbstractPropertySource {
             }
         }
         return value;
-	}
-
-    @Override
-	public ConfigChangeSet load() {
-        units.forEach(org.apache.tamaya.PropertySource::load);
-        return super.load();
 	}
 
 }

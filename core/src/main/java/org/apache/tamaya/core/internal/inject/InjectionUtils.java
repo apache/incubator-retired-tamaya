@@ -1,6 +1,5 @@
 package org.apache.tamaya.core.internal.inject;
 
-import java.beans.PropertyChangeEvent;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
@@ -11,17 +10,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.tamaya.Codec;
-import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.annotation.ConfiguredProperties;
-import org.apache.tamaya.annotation.ConfiguredProperty;
-import org.apache.tamaya.annotation.DefaultAreas;
-import org.apache.tamaya.annotation.DefaultValue;
-import org.apache.tamaya.annotation.WithCodec;
-import org.apache.tamaya.annotation.WithLoadPolicy;
+import org.apache.tamaya.PropertyAdapter;
+import org.apache.tamaya.annotation.*;
+import org.apache.tamaya.annotation.WithPropertyAdapter;
 import org.apache.tamaya.core.internal.Utils;
+import org.apache.tamaya.spi.PropertyAdapterSpi;
 
 /**
  * Created by Anatole on 19.12.2014.
@@ -178,21 +173,21 @@ final class InjectionUtils {
         try {
             // Check for adapter/filter
 //            T adaptedValue = null;
-            WithCodec codecAnnot = element.getAnnotation(WithCodec.class);
-            Class<? extends Codec> codecType;
+            WithPropertyAdapter codecAnnot = element.getAnnotation(WithPropertyAdapter.class);
+            Class<? extends PropertyAdapter> codecType;
             if (codecAnnot != null) {
                 codecType = codecAnnot.value();
-                if (!codecType.equals(Codec.class)) {
+                if (!codecType.equals(PropertyAdapter.class)) {
                     // TODO cache here...
 //                    Codec<String> codec = codecType.newInstance();
-//                    adaptedValue = (T) codec.deserialize(configValue);
+//                    adaptedValue = (T) codec.adapt(configValue);
                 }
             }
             if (String.class.equals(targetType)) {
                  return (T)configValue;
             } else {
-                 Codec<?> adapter = Codec.getInstance(targetType);
-                 return (T)adapter.deserialize(configValue);
+                PropertyAdapter<?> adapter = PropertyAdapter.getInstance(targetType);
+                 return (T)adapter.adapt(configValue);
             }
         } catch (Exception e) {
             throw new ConfigException("Failed to annotate configured member: " + element, e);

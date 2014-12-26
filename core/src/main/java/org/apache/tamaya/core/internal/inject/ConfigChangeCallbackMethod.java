@@ -18,12 +18,10 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 import org.apache.tamaya.Configuration;
 
-import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;

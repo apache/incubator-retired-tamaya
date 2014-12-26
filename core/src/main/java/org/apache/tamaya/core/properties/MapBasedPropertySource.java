@@ -18,10 +18,6 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.MetaInfo;
-
-import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -74,33 +70,6 @@ class MapBasedPropertySource extends AbstractPropertySource {
     @Override
     public Map<String, String> getProperties() {
         return new HashMap<>(this.entries);
-    }
-
-    @Override
-    public ConfigChangeSet load(){
-        // Can not reload...
-        return ConfigChangeSet.emptyChangeSet(this);
-    }
-
-    /**
-     * Apply a config change to this item. Hereby the change must be related to the same instance.
-     * @param change the config change
-     * @throws org.apache.tamaya.ConfigException if an unrelated change was passed.
-     * @throws UnsupportedOperationException when the configuration is not writable.
-     */
-    @Override
-    public void applyChanges(ConfigChangeSet change){
-        change.getEvents().forEach(this::applyChange);
-    }
-
-    private void applyChange(PropertyChangeEvent propertyChangeEvent) {
-        LOG.finest(() -> "Applying change to map provider: " + propertyChangeEvent);
-        if(propertyChangeEvent.getNewValue()==null){
-            this.entries.remove(propertyChangeEvent.getPropertyName());
-        }
-        else{
-            this.entries.put(propertyChangeEvent.getPropertyName(), propertyChangeEvent.getNewValue().toString());
-        }
     }
 
 }

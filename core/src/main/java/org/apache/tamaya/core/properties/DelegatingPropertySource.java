@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 import org.apache.tamaya.PropertySource;
 
 import java.util.*;
@@ -54,11 +52,6 @@ class DelegatingPropertySource implements PropertySource {
         this.name = Optional.of(name).orElse("<noname>");
         this.parentMap = Objects.requireNonNull(parentMap);
         this.parentMap = Objects.requireNonNull(parentMap);
-    }
-
-    @Override
-    public ConfigChangeSet load(){
-        return mainMap.load();
     }
 
     @Override

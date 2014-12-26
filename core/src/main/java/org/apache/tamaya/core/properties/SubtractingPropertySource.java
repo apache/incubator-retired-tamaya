@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
 
 import java.util.*;
@@ -54,23 +51,6 @@ class SubtractingPropertySource extends AbstractPropertySource {
                 Map.Entry::getKey,
                 Map.Entry::getValue
         ));
-    }
-
-    @Override
-    public ConfigChangeSet load(){
-        unit.load();
-        return super.load();
-    }
-
-    /**
-     * Apply a config change to this item. Hereby the change must be related to the same instance.
-     * @param change the config change
-     * @throws org.apache.tamaya.ConfigException if an unrelated change was passed.
-     * @throws UnsupportedOperationException when the configuration is not writable.
-     */
-    @Override
-    public void applyChanges(ConfigChangeSet change){
-        this.unit.applyChanges(change);
     }
 
 }

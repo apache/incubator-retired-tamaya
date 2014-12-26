@@ -18,20 +18,18 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.PropertyAdapter;
+import org.apache.tamaya.annotation.WithPropertyAdapter;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Manager for {@link org.apache.tamaya.Configuration} instances. Implementations must register an instance
  * using the {@link ServiceContextManager} mechanism in place (by default this is based on the {@link java.util.ServiceLoader}.
- * The {@link org.apache.tamaya.ConfigurationManager} Singleton in the API delegates its corresponding calls to the
+ * The {@link org.apache.tamaya.Configuration} Singleton in the API delegates its corresponding calls to the
  * instance returned by the current bootstrap service in place.
  *
- * @see org.apache.tamaya.ConfigurationManager
+ * @see org.apache.tamaya.Configuration
  * @see ServiceContextManager
  */
 public interface ConfigurationSpi {
@@ -93,24 +91,4 @@ public interface ConfigurationSpi {
      */
     String evaluateValue(String expression, Configuration... configurations);
 
-    /**
-     * Add a ConfigChangeSet listener to the given configuration instance.
-     * @@param l the listener, not null.
-     */
-    void addChangeListener(Consumer<ConfigChangeSet> l);
-
-    /**
-     * Removes a ConfigChangeSet listener from the given configuration instance.
-     * @param l the listener, not null.
-     */
-    void removeChangeListener(Consumer<ConfigChangeSet> l);
-
-    /**
-     * Method to publish changes on a {@link org.apache.tamaya.Configuration} to all interested parties.
-     * Basically this method gives an abstraction on the effective event bus design fo listeners. In a CDI context
-     * the CDI enterprise event bus should be used internally to do the work, whereas in a SE only environment
-     * a more puristic approach would be useful.
-     * @param configChangeSet the change to be published, not null.
-     */
-    void publishChange(ConfigChangeSet configChangeSet);
 }

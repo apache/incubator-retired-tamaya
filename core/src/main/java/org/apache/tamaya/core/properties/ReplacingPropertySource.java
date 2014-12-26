@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 import org.apache.tamaya.PropertySource;
 
 import java.util.*;
@@ -50,11 +48,6 @@ class ReplacingPropertySource implements PropertySource {
     }
 
     @Override
-    public ConfigChangeSet load(){
-        return mainMap.load();
-    }
-
-    @Override
     public Map<String,String> getProperties(){
         Map<String,String> result = new HashMap<>(replacingMap);
         mainMap.getProperties().entrySet().stream().filter(en -> !replacingMap.containsKey(en.getKey())).forEach(en ->
@@ -74,17 +67,6 @@ class ReplacingPropertySource implements PropertySource {
             return mainMap.get(key);
         }
         return Optional.ofNullable(val);
-    }
-
-    /**
-     * Apply a config change to this item. Hereby the change must be related to the same instance.
-     * @param change the config change
-     * @throws org.apache.tamaya.ConfigException if an unrelated change was passed.
-     * @throws UnsupportedOperationException when the configuration is not writable.
-     */
-    @Override
-    public void applyChanges(ConfigChangeSet change){
-        this.mainMap.applyChanges(change);
     }
 
     @Override

@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;

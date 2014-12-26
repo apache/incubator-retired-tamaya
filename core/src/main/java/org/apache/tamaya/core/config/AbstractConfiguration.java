@@ -19,11 +19,10 @@
 package org.apache.tamaya.core.config;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.AbstractPropertySource;
-import org.apache.tamaya.core.spi.CodecProviderSpi;
+import org.apache.tamaya.core.spi.PropertyAdapterProviderSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
 /**
@@ -43,40 +42,14 @@ public abstract class AbstractConfiguration extends AbstractPropertySource imple
 
     @Override
     public <T> Optional<T> get(String key, Class<T> type){
-        CodecProviderSpi as = ServiceContext.getInstance().getSingleton(CodecProviderSpi.class);
-        Codec<T> adapter = as.getCodec(type);
+        PropertyAdapterProviderSpi as = ServiceContext.getInstance().getSingleton(PropertyAdapterProviderSpi.class);
+        PropertyAdapter<T> adapter = as.getPropertyAdapter(type);
         if(adapter == null){
             throw new ConfigException(
-                    "Can not deserialize config property '" + key + "' to " + type.getName() + ": no such " +
+                    "Can not adapt config property '" + key + "' to " + type.getName() + ": no such " +
                             "adapter.");
         }
         return getAdapted(key, adapter);
-    }
-
-    /**
-     * This method reloads the content current this PropertyMap by reloading the contents delegate.
-     */
-    protected ConfigChangeSet reload(){ return ConfigChangeSet.emptyChangeSet(this);}
-
-    /**
-     * This method reloads the content current this PropertyMap by reloading the contents delegate.
-     */
-    @Override
-    public ConfigChangeSet load(){
-        Configuration oldState;
-        Configuration newState;
-        ConfigChangeSet changeSet = null;
-        synchronized(LOCK) {
-            oldState = FreezedConfiguration.of(this);
-            reload();
-            newState = FreezedConfiguration.of(this);
-            changeSet = ConfigChangeSetBuilder.of(oldState).addChanges(newState).build();
-        }
-        if(changeSet.isEmpty()){
-            return ConfigChangeSet.emptyChangeSet(this);
-        }
-        Configuration.publishChange(changeSet);
-        return changeSet;
     }
 
 }

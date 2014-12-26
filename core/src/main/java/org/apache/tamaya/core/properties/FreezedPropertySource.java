@@ -19,12 +19,8 @@
 package org.apache.tamaya.core.properties;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.*;
 
-import org.apache.tamaya.ConfigChangeSet;
-import org.apache.tamaya.MetaInfo;
-import org.apache.tamaya.MetaInfoBuilder;
 import org.apache.tamaya.PropertySource;
 
 /**
@@ -34,7 +30,6 @@ import org.apache.tamaya.PropertySource;
 final class FreezedPropertySource implements PropertySource, Serializable{
 
     private static final long serialVersionUID = 3365413090311267088L;
-//    private Map<String,Map<String,String>> fieldMMetaInfo = new HashMap<>();
     private String name;
     private Map<String,String> properties = new HashMap<>();
 
@@ -50,11 +45,6 @@ final class FreezedPropertySource implements PropertySource, Serializable{
             return propertyProvider;
         }
         return new FreezedPropertySource(name, propertyProvider);
-    }
-
-    @Override
-    public ConfigChangeSet load(){
-        return ConfigChangeSet.emptyChangeSet(this);
     }
 
     public int size(){

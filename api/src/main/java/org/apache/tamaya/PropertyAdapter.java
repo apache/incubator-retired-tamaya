@@ -19,33 +19,26 @@
 package org.apache.tamaya;
 
 
-import org.apache.tamaya.annotation.WithCodec;
-import org.apache.tamaya.spi.CodecSpi;
+import org.apache.tamaya.annotation.WithPropertyAdapter;
+import org.apache.tamaya.spi.PropertyAdapterSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
 /**
- * Interface for an codec that converts a configured String into something else and vice versa.
+ * Interface for an property that converts a configured String into something else.
  * This is used for implementing type conversion from a property (String) to a certain target
  * type. Hereby the target type can be multivalued (eg eollections), complex or even contain
- * full subconfigurations, if needed. The operation converting from a type T to a String can be
- * used by mutable configuration/property sources, when applying a {@link org.apache.tamaya.ConfigChangeSet}
- * to render the correct String representation of a entry changed.
+ * full subconfigurations, if needed.
  */
-public interface Codec<T>{
+@FunctionalInterface
+public interface PropertyAdapter<T>{
 
     /**
      * Adapt the given configuration keys to the required target type.
      * @param value the configuration keys
      * @return adapted keys
      */
-    T deserialize(String value);
+    T adapt(String value);
 
-    /**
-     * Adapt the given configuration keys to the required target type.
-     * @param value the configuration keys
-     * @return adapted keys
-     */
-    String serialize(T value);
 
     /**
      * Registers a new PropertyAdapter for the given target type, hereby replacing any existing adapter for
@@ -55,8 +48,8 @@ public interface Codec<T>{
      * @param <T> The target type
      * @return any adapter replaced with the new adapter, or null.
      */
-    public static <T> Codec<T> register(Class<T> targetType, Codec<T> adapter){
-        return ServiceContext.getInstance().getSingleton(CodecSpi.class).register(targetType, adapter);
+    public static <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter){
+        return ServiceContext.getInstance().getSingleton(PropertyAdapterSpi.class).register(targetType, adapter);
     }
 
     /**
@@ -65,7 +58,7 @@ public interface Codec<T>{
      * @return true, if the given target type is supported.
      */
     public static boolean isTargetTypeSupported(Class<?> targetType){
-        return ServiceContext.getInstance().getSingleton(CodecSpi.class).isTargetTypeSupported(targetType);
+        return ServiceContext.getInstance().getSingleton(PropertyAdapterSpi.class).isTargetTypeSupported(targetType);
     }
 
     /**
@@ -73,24 +66,24 @@ public interface Codec<T>{
      * @param targetType the target type class
      * @param <T> the target type
      * @return the corresponding adapter, never null.
-     * @throws ConfigException if the target type is not supported.
+     * @throws org.apache.tamaya.ConfigException if the target type is not supported.
      */
-    public static  <T> Codec<T> getInstance(Class<T> targetType){
-        return ServiceContext.getInstance().getSingleton(CodecSpi.class).getCodec(targetType, null);
+    public static  <T> PropertyAdapter<T> getInstance(Class<T> targetType){
+        return ServiceContext.getInstance().getSingleton(PropertyAdapterSpi.class).getPropertyAdapter(targetType, null);
     }
 
     /**
      * Get an adapter converting to the given target type.
      * @param targetType the target type class
-     * @param annotation the {@link org.apache.tamaya.annotation.WithCodec} annotation, or null. If the annotation is not null and
+     * @param annotation the {@link org.apache.tamaya.annotation.WithPropertyAdapter} annotation, or null. If the annotation is not null and
      *                   defines an overriding adapter, this instance is created and returned.
      * @param <T> the target type
      * @return the corresponding adapter, never null.
-     * @throws ConfigException if the target type is not supported, or the overriding adapter cannot be
+     * @throws org.apache.tamaya.ConfigException if the target type is not supported, or the overriding adapter cannot be
      * instantiated.
      */
-    public static  <T> Codec<T> getInstance(Class<T> targetType, WithCodec annotation){
-        return ServiceContext.getInstance().getSingleton(CodecSpi.class).getCodec(targetType, annotation);
+    public static  <T> PropertyAdapter<T> getInstance(Class<T> targetType, WithPropertyAdapter annotation){
+        return ServiceContext.getInstance().getSingleton(PropertyAdapterSpi.class).getPropertyAdapter(targetType, annotation);
     }
 
 }

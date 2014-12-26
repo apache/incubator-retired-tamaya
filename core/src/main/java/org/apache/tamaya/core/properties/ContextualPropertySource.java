@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,11 +81,6 @@ class ContextualPropertySource implements PropertySource {
     }
 
     @Override
-    public ConfigChangeSet load(){
-        return getContextualMap().load();
-    }
-
-    @Override
     public Map<String,String> getProperties(){
         return getContextualMap().getProperties();
     }
@@ -97,17 +93,6 @@ class ContextualPropertySource implements PropertySource {
     @Override
     public Optional<String> get(String key){
         return getContextualMap().get(key);
-    }
-
-    /**
-     * Apply a config change to this item. Hereby the change must be related to the same instance.
-     * @param change the config change
-     * @throws org.apache.tamaya.ConfigException if an unrelated change was passed.
-     * @throws UnsupportedOperationException when the configuration is not writable.
-     */
-    @Override
-    public void applyChanges(ConfigChangeSet change){
-        getContextualMap().applyChanges(change);
     }
 
     /**

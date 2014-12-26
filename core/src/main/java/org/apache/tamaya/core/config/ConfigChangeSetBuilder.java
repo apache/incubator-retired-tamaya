@@ -16,16 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya;
+package org.apache.tamaya.core.config;
+
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertySource;
 
 import java.beans.PropertyChangeEvent;
-import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
 /**
  * Models a set current changes to be applied to a configuration/property provider.  Such a set can be applied
- * to any {@link PropertySource} instance. If the provider is mutable it may check the
+ * to any {@link org.apache.tamaya.PropertySource} instance. If the provider is mutable it may check the
  * version given and applyChanges the changes to the provider/configuration, including triggering current regarding
  * change events.
  * <p>
@@ -42,21 +44,14 @@ public final class ConfigChangeSetBuilder {
      * The underlying configuration/provider.
      */
     PropertySource source;
-    /**
-     * Codesc provider, or null.
-     */
-    Function<String, Codec> codecs;
 
     /**
      * Constructor.
      *
      * @param source      the underlying configuration/provider, not null.
-     * @param codecs      function to provide customized codecs, when according values are changed, if not set the
-     *                    default codecs provided by {@link Codec#getInstance(Class)} are used.
      */
-    private ConfigChangeSetBuilder(PropertySource source, Function<String, Codec> codecs) {
+    private ConfigChangeSetBuilder(PropertySource source) {
         this.source = Objects.requireNonNull(source);
-        this.codecs = codecs;
     }
 
     /**
@@ -66,20 +61,9 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public static ConfigChangeSetBuilder of(PropertySource source) {
-        return new ConfigChangeSetBuilder(source, null);
+        return new ConfigChangeSetBuilder(source);
     }
 
-    /**
-     * Creates a new instance current this builder.
-     *
-     * @param source the underlying property provider/configuration, not null.
-     * @param codecs function to provide customized codecs, when according values are changed, if not set the
-     *               default codecs provided by {@link Codec#getInstance(Class)} are used.
-     * @return the builder for chaining.
-     */
-    public static ConfigChangeSetBuilder of(PropertySource source, Function<String, Codec> codecs) {
-        return new ConfigChangeSetBuilder(source, codecs);
-    }
 
     /**
      * Creates a new instance current this builder.
@@ -88,21 +72,8 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public static ConfigChangeSetBuilder of(Configuration configuration) {
-        return new ConfigChangeSetBuilder(configuration, null);
+        return new ConfigChangeSetBuilder(configuration);
     }
-
-    /**
-     * Creates a new instance current this builder.
-     *
-     * @param configuration the base configuration, not null.
-     * @param codecs        function to provide customized codecs, when according values are changed, if not set the
-     *                      default codecs provided by {@link Codec#getInstance(Class)} are used.
-     * @return the builder for chaining.
-     */
-    public static ConfigChangeSetBuilder of(Configuration configuration, Function<String, Codec> codecs) {
-        return new ConfigChangeSetBuilder(configuration, codecs);
-    }
-
 
     /**
      * This method records all changes to be applied to the base property provider/configuration to
@@ -161,23 +132,19 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, boolean value) {
-        Codec<Boolean> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Boolean.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
     /**
-     * Applies the given keys.
+     s* Applies the given keys.
      *
      * @param key   the key current the entry, not null.
      * @param value the keys to be applied, not null.
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, byte value) {
-        Codec<Byte> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Byte.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -189,9 +156,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, char value) {
-        Codec<Character> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Character.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -203,9 +168,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, short value) {
-        Codec<Short> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Short.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -217,9 +180,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, int value) {
-        Codec<Integer> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Integer.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -231,9 +192,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, long value) {
-        Codec<Long> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Long.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -245,9 +204,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, float value) {
-        Codec<Float> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Float.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -259,9 +216,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, double value) {
-        Codec<Double> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        if (codec == null) codec = Codec.getInstance(Double.class);
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec.serialize(value)));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -274,8 +229,7 @@ public final class ConfigChangeSetBuilder {
      * @return the builder for chaining.
      */
     public ConfigChangeSetBuilder put(String key, String value) {
-        Codec<String> codec = this.codecs != null ? this.codecs.apply(key) : null;
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), codec != null?codec.serialize(value):value));
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), String.valueOf(value)));
         return this;
     }
 
@@ -285,7 +239,7 @@ public final class ConfigChangeSetBuilder {
      * @param key   the key current the entry, not null.
      * @param value the keys to be applied, not null.
      * @return the builder for chaining.
-     * @throws ConfigException if no matching Codec could be found.
+     * @throws org.apache.tamaya.ConfigException if no matching Codec could be found.
      */
     public <T> ConfigChangeSetBuilder put(String key, Class<T> type, T value) {
         put(key, type, value, null);
@@ -297,22 +251,16 @@ public final class ConfigChangeSetBuilder {
      *
      * @param key   the key current the entry, not null.
      * @param value the keys to be applied, not null.
-     * @param codec the codec to be used, if set overrides any other codecs that may apply. If null an appropriate
+     * @param adapter the codec to be used, if set overrides any other codecs that may apply. If null an appropriate
      *              codec is tried to be evaluated as needed.
      * @return the builder for chaining.
-     * @throws ConfigException if no matching Codec could be found.
+     * @throws org.apache.tamaya.ConfigException if no matching Codec could be found.
      */
-    public <T> ConfigChangeSetBuilder put(String key, Class<T> type, T value, Codec codec) {
-        Codec<T> targetCodec = codec;
-        if(targetCodec==null){
-            targetCodec = this.codecs != null ? this.codecs.apply(key) : null;
-        }
-        if (targetCodec == null){
-            targetCodec = Codec.getInstance(type);
-        }
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), targetCodec.serialize(Objects.requireNonNull(value))));
+    public <T> ConfigChangeSetBuilder put(String key, Class<T> type, T value, Function<T,String> adapter) {
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key).orElse(null), adapter.apply(Objects.requireNonNull(value))));
         return this;
     }
+
 
     /**
      * Apply all the given values to the base configuration/properties.
@@ -326,29 +274,8 @@ public final class ConfigChangeSetBuilder {
      * @param changes the changes to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigChangeSetBuilder putAll(Map<String, ?> changes) {
-        changes.forEach((k, v) ->
-                put(k, (Class) v.getClass(), v));
-        return this;
-    }
-
-    /**
-     * Apply all the given values to the base configuration/properties.
-     * Note that all values passed must be convertible to String, either
-     * <ul>
-     * <li>the registered codecs provider provides codecs for the corresponding keys, or </li>
-     * <li>default codecs are present for the given type, or</li>
-     * <li>the value is an instanceof String</li>
-     * </ul>
-     *
-     * @param changes the changes to be applied, not null.
-     * @param codecs      function to provide customized overriding codecs, when according values are changed,
-     *                    if not set the default codecs are used.
-     * @return the builder for chaining.
-     */
-    public ConfigChangeSetBuilder putAll(Map<String, ?> changes, Function<String, Codec<?>> codecs) {
-        changes.forEach((k, v) ->
-                put(k, (Class) v.getClass(), v, codecs.apply(k)));
+    public ConfigChangeSetBuilder putAll(Map<String, String> changes) {
+        changes.putAll(changes);
         return this;
     }
 

@@ -22,13 +22,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.apache.tamaya.AggregationPolicy;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.MetaInfo;
 import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 /**
@@ -119,9 +119,9 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Adds the given providers with the current active {@link org.apache.tamaya.AggregationPolicy}. By
-     * default {@link org.apache.tamaya.AggregationPolicy#OVERRIDE} is used.
-     * @see #withAggregationPolicy(org.apache.tamaya.AggregationPolicy)
+     * Adds the given providers with the current active {@link AggregationPolicy}. By
+     * default {@link AggregationPolicy#OVERRIDE} is used.
+     * @see #withAggregationPolicy(AggregationPolicy)
      * @param providers providers to be added, not null.
      * @return the builder for chaining.
      */
@@ -131,9 +131,9 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Adds the given providers with the current active {@link org.apache.tamaya.AggregationPolicy}. By
-     * default {@link org.apache.tamaya.AggregationPolicy#OVERRIDE} is used.
-     * @see #withAggregationPolicy(org.apache.tamaya.AggregationPolicy)
+     * Adds the given providers with the current active {@link AggregationPolicy}. By
+     * default {@link AggregationPolicy#OVERRIDE} is used.
+     * @see #withAggregationPolicy(AggregationPolicy)
      * @param providers providers to be added, not null.
      * @return the builder for chaining.
      */
@@ -221,7 +221,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Add the current environment properties. Aggregation is based on the current {@link org.apache.tamaya.AggregationPolicy} acvtive.
+     * Add the current environment properties. Aggregation is based on the current {@link AggregationPolicy} acvtive.
      *
      * @return the builder for chaining.
      */
@@ -231,7 +231,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Add the current system properties. Aggregation is based on the current {@link org.apache.tamaya.AggregationPolicy} acvtive.
+     * Add the current system properties. Aggregation is based on the current {@link AggregationPolicy} acvtive.
      *
      * @return the builder for chaining.
      */
@@ -241,7 +241,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
@@ -254,7 +254,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link org.apache.tamaya.AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
@@ -298,6 +298,16 @@ public final class ConfigurationBuilder {
      */
     public ConfigurationBuilder filter(Predicate<String> filter) {
         this.builderDelegate.filter(filter);
+        return this;
+    }
+
+    /**
+     * Filters the current {@link org.apache.tamaya.Configuration} with the given valueFilter.
+     * @param valueFilter the value filter, not null.
+     * @return the (dynamically) filtered source instance, never null.
+     */
+    public ConfigurationBuilder filterValues(BiFunction<String, String, String> valueFilter){
+        this.builderDelegate.filterValues(valueFilter);
         return this;
     }
 
@@ -348,7 +358,7 @@ public final class ConfigurationBuilder {
      * @return the freezed instance, never null.
      */
     public PropertySource buildFreezedPropertySource() {
-        return this.builderDelegate.buildFreezed();
+        return this.builderDelegate.buildFrozen();
     }
 
     /**

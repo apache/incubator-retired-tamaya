@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import org.apache.tamaya.ConfigChangeSet;
+import org.apache.tamaya.core.config.ConfigChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.internal.el.DefaultExpressionEvaluator;
@@ -86,21 +86,6 @@ public class DefaultConfigurationSpi implements ConfigurationSpi {
     @Override
     public String evaluateValue(String expression, Configuration... configurations) {
         return expressionEvaluator.evaluate(expression, configurations);
-    }
-
-    @Override
-    public void addChangeListener(Consumer<ConfigChangeSet> l) {
-        WeakConfigListenerManager.of().registerConsumer(l,l);
-    }
-
-    @Override
-    public void removeChangeListener(Consumer<ConfigChangeSet> l) {
-        WeakConfigListenerManager.of().unregisterConsumer(l);
-    }
-
-    @Override
-    public void publishChange(ConfigChangeSet configChangeSet) {
-        WeakConfigListenerManager.of().publishChangeEvent(configChangeSet);
     }
 
     @Override

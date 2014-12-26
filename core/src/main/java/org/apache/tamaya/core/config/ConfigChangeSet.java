@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya;
+package org.apache.tamaya.core.config;
+
+import org.apache.tamaya.PropertySource;
 
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
