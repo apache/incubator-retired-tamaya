@@ -150,6 +150,40 @@ under the License.
             </roles>
             <timezone/>
         </developer>
+
+        <developer>
+            <id>struberg</id>
+            <name>Mark Struberg</name>
+            <email>struberg at apache.org</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+
+        <developer>
+            <id>gpetracek</id>
+            <name>Gerhard Petracek</name>
+            <email>gpetracek at apache.org</email>
+            <organization>IRIAN.at, Austria</organization>
+            <organizationUrl>http://www.irian.at/</organizationUrl>
+            <roles>
+                <role>PMC</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+
+        <developer>
+            <id>johndament</id>
+            <name>John D. Ament</name>
+            <email>johndament at apache.org</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+
+
     </developers>
 
     <modules>
