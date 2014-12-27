@@ -49,7 +49,7 @@ under the License.
         <maven.javadoc.skip>true</maven.javadoc.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <rat.skip>true</rat.skip>
+        <rat.skip>false</rat.skip>
 		<junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
@@ -217,7 +217,9 @@ under the License.
                     <version>${rat.version}</version>
                     <configuration>
                         <excludes>
-                            <exclude>**/target/**/*</exclude>
+                            <exclude>**/target</exclude>
+                            <exclude>*.iml</exclude>
+                            <exclude>**/.idea/**</exclude>
                         </excludes>
                     </configuration>
                     <executions>
