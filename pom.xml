@@ -27,12 +27,14 @@ under the License.
     </parent>
     <groupId>org.apache.tamaya</groupId>
     <artifactId>tamaya-all</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <name>Apache Tamaya</name>
     <description>Apache Tamaya - Java Configuration</description>
     <url>http://tamaya.incubator.apache.org</url>
     <inceptionYear>2014</inceptionYear>
+
     <organization>
         <name>Apache Software Foundation</name>
         <url>http://apache.org</url>
@@ -49,7 +51,6 @@ under the License.
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <rat.skip>false</rat.skip>
         <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
@@ -63,7 +64,6 @@ under the License.
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.16.1</jruby.version>
         <findbugs.version>3.0.0</findbugs.version>
-        <rat.version>0.11</rat.version>
     </properties>
 
     <licenses>
@@ -73,6 +73,7 @@ under the License.
             <distribution>repo</distribution>
         </license>
     </licenses>
+
     <scm>
         <connection>
             scm:git://git.apache.org/incubator-tamaya.git
@@ -84,10 +85,12 @@ under the License.
             https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
         </url>
     </scm>
+
     <issueManagement>
         <system>jira</system>
         <url>http://issues.apache.org/jira/browse/TAMAYA</url>
     </issueManagement>
+
     <mailingLists>
         <mailingList>
             <name>Tamaya Development List</name>
@@ -111,6 +114,7 @@ under the License.
             <archive>http://mail-archives.apache.org/mod_mbox/tamaya-private/</archive>
         </mailingList>
     </mailingLists>
+
     <distributionManagement>
         <repository>
             <id>apache.releases.https</id>
@@ -130,21 +134,29 @@ under the License.
             <url>scpexe://people.apache.org/www/incubator.apache.org/tamaya</url>
         </site>
     </distributionManagement>
+
     <ciManagement>
         <system>Jenkins</system>
         <url>https://builds.apache.org/job/tamaya</url>
     </ciManagement>
+
     <developers>
         <developer>
             <name>Anatole Tresch</name>
             <id>atsticks</id>
             <email>atsticks -at- apache.org</email>
             <roles>
-                <role>Project Lead</role>
+                <role>PMC</role>
             </roles>
             <timezone/>
         </developer>
     </developers>
+
+    <modules>
+        <module>api</module>
+        <module>core</module>
+    </modules>
+
 
     <build>
         <pluginManagement>
@@ -154,6 +166,7 @@ under the License.
                     <artifactId>gem-maven-plugin</artifactId>
                     <version>${gem.plugin}</version>
                 </plugin>
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
@@ -173,8 +186,8 @@ under the License.
                         <threshold>Low</threshold>
                         <failOnError>true</failOnError>
                     </configuration>
-
                 </plugin>
+
                 <plugin>
                     <groupId>org.asciidoctor</groupId>
                     <artifactId>asciidoctor-maven-plugin</artifactId>
@@ -188,15 +201,11 @@ under the License.
                         </dependency>
                     </dependencies>
                 </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.2.201409121644</version>
-                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.1</version>
+                    <version>3.1</version>
                     <configuration>
                         <debug>true</debug>
                         <optimize>${maven.compile.optimize}</optimize>
@@ -206,54 +215,13 @@ under the License.
                         <showDeprecation>${maven.compile.deprecation}</showDeprecation>
                     </configuration>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <inherited>true</inherited>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.rat</groupId>
-                    <artifactId>apache-rat-plugin</artifactId>
-                    <version>${rat.version}</version>
-                    <configuration>
-                        <excludes>
-                            <exclude>**/target</exclude>
-                            <exclude>*.iml</exclude>
-                            <exclude>**/.idea/**</exclude>
-                        </excludes>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>surefire-report-maven-plugin</artifactId>
-                    <inherited>true</inherited>
-                    <version>2.0-beta-1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.0</version>
-                    <executions>
-                        <execution>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>create</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <doCheck>false</doCheck>
-                        <doUpdate>false</doUpdate>
-                    </configuration>
-                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -265,32 +233,11 @@ under the License.
                                 <Specification-Version>${project.version}</Specification-Version>
                                 <Specification-Vendor>The Apache Software Foundation</Specification-Vendor>
                                 <Implementation-Title>${project.name}</Implementation-Title>
-                                <Implementation-Version>${project.version} ${buildNumber} - ${user.name}</Implementation-Version>
+                                <Implementation-Version>${project.version} ${buildNumber}</Implementation-Version>
                                 <Implementation-Vendor>The Apache Software Foundation</Implementation-Vendor>
                                 <SCM-Revision>${buildNumber}</SCM-Revision>
                                 <SCM-url>${project.scm.url}</SCM-url>
                             </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4</version>
-                    <configuration>
-                        <finalName>apache-tamaya-${project.version}</finalName>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            </manifest>
                         </archive>
                     </configuration>
                 </plugin>
@@ -308,11 +255,14 @@ under the License.
                 </plugin>
             </plugins>
         </pluginManagement>
+
+
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -336,6 +286,7 @@ under the License.
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -358,10 +309,198 @@ under the License.
                     <verbose>false</verbose>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.12</version>
+                <executions>
+                    <execution>
+                        <id>verify-style</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <checkstyleRules>
+                        <module name="Checker">
+                            <module name="SuppressionCommentFilter" />
+
+                            <!-- Checks for Size Violations.                    -->
+                            <!-- See http://checkstyle.sf.net/config_sizes.html -->
+                            <module name="FileLength">
+                                <property name="max" value="3500" />
+                                <property name="fileExtensions" value="java" />
+                            </module>
+
+                            <!-- Checks for whitespace                               -->
+                            <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+                            <module name="FileTabCharacter" />
+
+
+                            <module name="TreeWalker">
+                                <!-- needed for the SuppressionCommentFilter -->
+                                <module name="FileContentsHolder" />
+
+                                <!-- Checks for Javadoc comments.                     -->
+                                <!-- See http://checkstyle.sf.net/config_javadoc.html -->
+                                <!-- module name="JavadocMethod"/ -->
+                                <!-- module name="JavadocType"/ -->
+                                <!-- module name="JavadocVariable"/ -->
+
+
+                                <!-- Checks for Naming Conventions.                  -->
+                                <!-- See http://checkstyle.sf.net/config_naming.html -->
+                                <!--
+                                        <module name="MemberName">
+                                          <property name="format" value="^_[a-z][a-zA-Z0-9]*$" />
+                                        </module>
+                                -->
+
+                                <module name="ConstantName">
+                                    <!-- Normal rules, except that:
+                                       -  * any name can start with an underscore.
+                                       -  * "log" is allowed; this is a traditional name for log objects
+                                       -  * names ending with "ThreadLocal" are allowed so that threadlocal vars don't have to be
+                                       -    all-caps. They are static final, but are not really constants. Yes, type prefixes
+                                       -    on variable names sucks ("hungarian notation") but checkstyle doesn't allow
+                                       -    name rules to vary by the type of the constant, and no other alternative seems
+                                       -    any better.
+                                       -->
+                                    <property name="format" value="^_?((log)|(logger)|([a-z][a-zA-Z]*ThreadLocal)|([A-Z][A-Z0-9]*(_[A-Z0-9]+)*))$" />
+                                </module>
+
+                                <module name="LocalVariableName" />
+                                <module name="MethodName">
+                                    <property name="format" value="^_?[a-z][a-zA-Z0-9]*$" />
+                                </module>
+                                <module name="PackageName" />
+                                <module name="LocalFinalVariableName" />
+                                <module name="ParameterName" />
+                                <module name="StaticVariableName" />
+                                <module name="TypeName">
+                                    <property name="format" value="^_?[A-Z][a-zA-Z0-9]*$" />
+                                </module>
+
+                                <!-- Checks for imports                              -->
+                                <!-- See http://checkstyle.sf.net/config_import.html -->
+                                <module name="AvoidStarImport">
+                                    <property name="excludes" value="java.io,java.net,java.util" />
+                                </module>
+                                <module name="IllegalImport" />
+                                <module name="RedundantImport" />
+                                <module name="UnusedImports" />
+
+
+                                <module name="LineLength">
+                                    <property name="max" value="180" />
+                                    <property name="ignorePattern" value="@version|@see" />
+                                </module>
+                                <module name="MethodLength">
+                                    <property name="max" value="250" />
+                                </module>
+                                <module name="ParameterNumber">
+                                    <property name="max" value="10" />
+                                </module>
+
+                                <!-- Checks for blocks. You know, those {}'s         -->
+                                <!-- See http://checkstyle.sf.net/config_blocks.html -->
+                                <module name="EmptyBlock">
+                                    <property name="option" value="text" />
+                                </module>
+
+                                <module name="NeedBraces" />
+                                <module name="LeftCurly">
+                                    <property name="option" value="EOL" />
+                                </module>
+                                <module name="RightCurly">
+                                    <property name="option" value="SAME" />
+                                </module>
+
+                                <!-- Checks for common coding problems               -->
+                                <!-- See http://checkstyle.sf.net/config_coding.html -->
+                                <module name="EmptyStatement" />
+                                <module name="EqualsHashCode" />
+                                <module name="DefaultComesLast" />
+                                <module name="MissingSwitchDefault" />
+                                <module name="FallThrough" />
+                                <module name="MultipleVariableDeclarations" />
+
+                                <!-- Checks for class design                         -->
+                                <!-- See http://checkstyle.sf.net/config_design.html -->
+                                <!-- module name="DesignForExtension"/ -->
+                                <module name="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck">
+                                    <property name="severity" value="ignore" />
+                                </module>
+
+                                <!-- module name="FinalClass"/ -->
+
+                                <module name="HideUtilityClassConstructor" />
+
+                                <!-- module name="InterfaceIsType"/ -->
+                                <!-- module name="VisibilityModifier"/ -->
+
+                                <module name="com.puppycrawl.tools.checkstyle.checks.design.VisibilityModifierCheck">
+                                    <property name="packageAllowed" value="false" />
+                                    <property name="protectedAllowed" value="true" />
+                                    <property name="publicMemberPattern" value="^serialVersionUID" />
+                                    <property name="severity" value="warning" />
+                                </module>
+
+
+                                <!-- Miscellaneous other checks.                   -->
+                                <!-- See http://checkstyle.sf.net/config_misc.html -->
+                                <!-- module name="ArrayTypeStyle"/ -->
+                                <!-- module name="FinalParameters"/ -->
+                                <!-- Line with Trailing Spaces (disabled as it's to noisy)
+                                <module name="GenericIllegalRegexp">
+                                    <property name="format" value="\s+$" />
+                                    <property name="message" value="Line has trailing spaces." />
+                                </module>
+                                  -->
+                                <module name="UpperEll" />
+
+                            </module>
+
+                        </module>
+                    </checkstyleRules>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
+                <version>0.11</version>
+                <configuration>
+                    <includes>
+                        <include>src/**/*</include>
+                        <include>pom.xml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*/MANIFEST.MF</exclude>
+                        <exclude>.git</exclude>
+                        <exclude>.gitignore</exclude>
+                        <exclude>derby.log</exclude>
+                        <exclude>**/META-INF/services/*</exclude>
+                        <exclude>**/bootstrap-*</exclude>
+                        <exclude>**/js/jquery-*</exclude>
+                        <exclude>**/*.json</exclude>
+                        <!-- json can't get comments -->
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
     </build>
 
@@ -580,12 +719,5 @@ under the License.
             </releases>
         </repository>
     </repositories>
-
-    <modules>
-        <module>buildtools</module>
-        <module>api</module>
-        <module>core</module>
-        <module>modules</module>
-    </modules>
 
 </project>
