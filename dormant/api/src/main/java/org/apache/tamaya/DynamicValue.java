@@ -32,13 +32,14 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * A accessor for a single configured value. This can be used to support values that may be reinjected, reconfigured or
- * final.
- * <h3>Implementation Requirements</h3>
- * Instances of this class must be
+ * A accessor for a single configured value. This can be used to support values that may change during runtime, reconfigured or
+ * final. Hereby external code (could be Tamaya configuration listners or client code), can set a new value. Depending on the
+ * {@link org.apache.tamaya.DynamicValue.UpdatePolicy} the new value is immedeately active or it requires an active commit
+ * by client code. Similarly an instance also can ignore all later changes to the value.
+ * <h3>Implementation Details</h3>
+ * This class is
  * <ul>
- *     <li>Serializable</li>
- *     <li>Immutable</li>
+ *     <li>Serializable, when also the item stored is serializable</li>
  *     <li>Thread safe</li>
  * </ul>
  */
@@ -50,8 +51,8 @@ public final class DynamicValue<T> implements Serializable{
     enum UpdatePolicy{
         /** New values are applied immedately and registered listeners are informed about the change. */
         IMMEDIATE,
-        /** New values or not applied, but stored in the newValue property. Explcit call to #update
-         of #updateAndGet are required to accept the change and inform the listeners about the change.
+        /** New values or not applied, but stored in the newValue property. Explcit call to #commit
+         of #commitAndGet are required to accept the change and inform the listeners about the change.
          */
         EXPLCIT,
         /**
@@ -65,16 +66,18 @@ public final class DynamicValue<T> implements Serializable{
     }
 
 
+    /** The property name of the entry. */
+    private String propertyName;
     /**
-     * Converts this value to an {@link java.util.Optional} instance.
-     * @return an {@link java.util.Optional} instance, never null.
+     * Policy that defines how new values are applied, be default it is applied initially once, but never updated anymore.
      */
     private UpdatePolicy updatePolicy = UpdatePolicy.NEVER;
+    /** The current value, never null. */
     private transient Optional<T> value;
-    private transient PropertyChangeEvent newValue;
+    /** The new value, or null. */
+    private transient Optional<T> newValue;
+    /** List of listeners that listen for changes. */
     private transient WeakList<Consumer<PropertyChangeEvent>> listeners;
-
-    public static final DynamicValue EMPTY = new DynamicValue(null);
 
     /**
      * Returns an empty {@code Optional} instance.  No value is present for this
@@ -88,25 +91,45 @@ public final class DynamicValue<T> implements Serializable{
      * @param <T> Type of the non-existent value
      * @return an empty {@code Optional}
      */
-    public static <T> DynamicValue<T> empty() {
-        DynamicValue v = (DynamicValue<T>) EMPTY;
+    public static <T> DynamicValue<T> empty(String propertyName) {
+        DynamicValue v = new DynamicValue<T>(propertyName, null);
         return v;
     }
 
-    private DynamicValue(Optional<T> item){
+    /**
+     * Constructor.
+     * @param propertyName the name of the value in the format {@code <configName>:<propertyName>}.</config>
+     * @param item the initial value.
+     */
+    private DynamicValue(String propertyName, Optional<T> item){
+        this.propertyName = Objects.requireNonNull(propertyName);
         this.value = item;
     }
 
-    public static <T> DynamicValue<T> of(T instance){
-        return new DynamicValue(Optional.of(instance));
-    }
-
-    public static <T> DynamicValue<T> ofNullable(T value){
-        return value == null ? empty() : of(value);
+    /**
+     * Creates a new instance.
+     * @param propertyName the name of the value in the format {@code <configName>:<propertyName>}.</config>
+     * @param value the initial value, not null.
+     * @param <T> the type
+     * @return a new instance, never null
+     */
+    public static <T> DynamicValue<T> of(String propertyName, T value){
+        return new DynamicValue(propertyName, Optional.of(value));
     }
 
     /**
-     * Performs an update, if necessary and returns the current value.
+     * Creates a new instance.
+     * @param propertyName the name of the value in the format {@code <configName>:<propertyName>}.</config>
+     * @param value the initial value
+     * @param <T> the target type.
+     * @return a new instance, never null
+     */
+    public static <T> DynamicValue<T> ofNullable(String propertyName, T value){
+        return value == null ? empty(propertyName) : of(propertyName, value);
+    }
+
+    /**
+     * Performs a commit, if necessary and returns the current value.
      * otherwise throws {@code ConfigException}.
      *
      * @return the non-null value held by this {@code Optional}
@@ -114,19 +137,19 @@ public final class DynamicValue<T> implements Serializable{
      *
      * @see DynamicValue#isPresent()
      */
-    public T updateAndGet(){
-        update();
+    public T commitAndGet(){
+        commit();
         return get();
     }
 
     /**
-     * Accepts a new value based on the instance's settings. On change any registered listeners will be triggered.
+     * Commits a new value that has not been committed yet, make it the new value of the instance. On change any registered listeners will be triggered.
      */
-    public void update(){
+    public void commit(){
         synchronized (value){
             if(newValue!=null){
-                value = Optional.ofNullable((T)newValue.getNewValue());
-                PropertyChangeEvent evt = newValue;
+                PropertyChangeEvent evt = new PropertyChangeEvent(this, propertyName, value.orElse(null), newValue.orElse(null));
+                value = newValue;
                 newValue = null;
                 for(Consumer<PropertyChangeEvent> consumer: listeners.get()){
                     consumer.accept(evt);
@@ -138,7 +161,7 @@ public final class DynamicValue<T> implements Serializable{
     /**
      * Discards a new value that was published. No listeners will be informed.
      */
-    public void discardChange(){
+    public void discard(){
         newValue = null;
     }
 
@@ -146,14 +169,14 @@ public final class DynamicValue<T> implements Serializable{
 
     /**
      * Access the {@link UpdatePolicy} used for updating this value.
-     * @return the load policy, never null.
+     * @return the update policy, never null.
      */
     public UpdatePolicy getUpdatePolicy() {
         return updatePolicy;
     }
 
     /**
-     * Add a listener to be called, when this value is changed.
+     * Add a listener to be called as weak reference, when this value has been changed.
      * @param l the listner, not null
      */
     public void addListener(Consumer<PropertyChangeEvent> l) {
@@ -164,7 +187,7 @@ public final class DynamicValue<T> implements Serializable{
     }
 
     /**
-     * Removes a listener to be called, when this value is changed.
+     * Removes a listener to be called, when this value has been changed.
      * @param l the listner to be removed, not null
      */
     public void removeListener(Consumer<PropertyChangeEvent> l) {
@@ -191,14 +214,14 @@ public final class DynamicValue<T> implements Serializable{
      * the value is immediately or deferred visible (or it may even be ignored completely).
      * @param newValue the new value, may also be null.
      */
-    public void setNewValue(String propertyName, T newValue){
+    public void setNewValue(T newValue){
         switch(this.updatePolicy){
             case IMMEDIATE:
-                this.newValue = new PropertyChangeEvent(this, propertyName, value.orElse(null), newValue);
-                update();
+                this.newValue = Optional.ofNullable(newValue);
+                commit();
                 break;
             case EXPLCIT:
-                this.newValue = new PropertyChangeEvent(this, propertyName, value.orElse(null), newValue);
+                this.newValue = Optional.ofNullable(newValue);
                 break;
             case LOG_AND_DISCARD:
                 Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue="+newValue);
@@ -209,6 +232,26 @@ public final class DynamicValue<T> implements Serializable{
                 break;
         }
 
+    }
+
+    /**
+     * Sets a new {@link org.apache.tamaya.DynamicValue.UpdatePolicy}.
+     * @param updatePolicy the new policy, not null.
+     */
+    public void setUpdatePolicy(UpdatePolicy updatePolicy){
+        this.updatePolicy = Objects.requireNonNull(updatePolicy);
+    }
+
+    /**
+     * Access a new value that has not yet been committed.
+     * @return the uncommitted new value, or null.
+     */
+    public T getNewValue(){
+        Optional<T> nv = newValue;
+        if(nv!=null){
+            return nv.orElse(null);
+        }
+        return null;
     }
 
     /**
@@ -248,7 +291,7 @@ public final class DynamicValue<T> implements Serializable{
         if (!isPresent())
             return this;
         else
-            return predicate.test(value.get()) ? this : empty();
+            return predicate.test(value.get()) ? this : empty(propertyName);
     }
 
     /**
@@ -283,9 +326,9 @@ public final class DynamicValue<T> implements Serializable{
     public <U> DynamicValue<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent())
-            return empty();
+            return empty(propertyName);
         else {
-            return DynamicValue.ofNullable(mapper.apply(value.get()));
+            return DynamicValue.ofNullable(propertyName, mapper.apply(value.get()));
         }
     }
 
@@ -309,7 +352,7 @@ public final class DynamicValue<T> implements Serializable{
     public <U> DynamicValue<U> flatMap(Function<? super T, DynamicValue<U>> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent())
-            return empty();
+            return empty(propertyName);
         else {
             return Objects.requireNonNull(mapper.apply(value.get()));
         }
@@ -360,10 +403,19 @@ public final class DynamicValue<T> implements Serializable{
         return value.orElseThrow(exceptionSupplier);
     }
 
+    /**
+     * Converts the instance to an {@link java.util.Optional} instance.
+     * @return the corresponding Optional value.
+     */
     public Optional<T> toOptional(){
         return value;
     }
 
+    /**
+     * Serialization implementation that strips away the non serializable Optional part.
+     * @param oos the output stream
+     * @throws IOException if serialization fails.
+     */
     private void writeObject(ObjectOutputStream oos)throws IOException {
         oos.writeObject(updatePolicy);
         if(isPresent()) {
@@ -374,6 +426,12 @@ public final class DynamicValue<T> implements Serializable{
         }
     }
 
+    /**
+     * Reads an instance from the input stream.
+     * @param ois the object input stream
+     * @throws IOException if deserialization fails.
+     * @throws ClassNotFoundException
+     */
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         this.updatePolicy = (UpdatePolicy)ois.readObject();
         if(isPresent()) {
@@ -383,13 +441,26 @@ public final class DynamicValue<T> implements Serializable{
     }
 
 
+    /**
+     * Simple helper that allows keeping the listeners registered as weak references, hereby avoiding any
+     * memory leaks.
+     * @param <T> the type
+     */
     private class WeakList<T>{
         List<WeakReference<T>> refs = new LinkedList<>();
 
+        /**
+         * Adds a new instance.
+         * @param t the new instance, not null.
+         */
         void add(T t){
             refs.add(new WeakReference(t));
         }
 
+        /**
+         * Removes a instance.
+         * @param t the instance to be removed.
+         */
         void remove(T t){
             synchronized (refs){
                 for(Iterator<WeakReference<T>> iterator = refs.iterator();iterator.hasNext();){
@@ -404,6 +475,10 @@ public final class DynamicValue<T> implements Serializable{
         }
 
 
+        /**
+         * Access a list (copy) of the current instances that were not discarded by the GC.
+         * @return the list of accessible items.
+         */
         public List<T> get() {
             synchronized (refs) {
                 List<T> res = new ArrayList<>();
