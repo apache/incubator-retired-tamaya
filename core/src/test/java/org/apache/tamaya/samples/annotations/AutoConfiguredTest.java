@@ -20,7 +20,7 @@ package org.apache.tamaya.samples.annotations;
 
 import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.config.ConfigurationBuilder;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +36,7 @@ public class AutoConfiguredTest {
     @Test
     public void testTemplateWithEnvironmentVariableOnUnixoidSystem(){
         AutoConfiguredClass config = new AutoConfiguredClass();
-        Configuration.configure(config, ConfigurationBuilder.of("default").addPaths("classpath:cfg/autoloaded.xml").build());
+        Configuration.configure(config, Configuration.from(PropertySourceBuilder.of("default").addPaths("classpath:cfg/autoloaded.xml").build()));
         System.out.println(config);
     }
 

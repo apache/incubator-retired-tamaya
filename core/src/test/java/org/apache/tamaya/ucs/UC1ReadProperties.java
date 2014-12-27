@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertySource;
-import org.apache.tamaya.core.config.ConfigFunctions;
+import org.apache.tamaya.core.ConfigurationFunctions;
 import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
@@ -61,29 +61,29 @@ public class UC1ReadProperties {
 
     @Test
     public void example() {
-        Configuration config = PropertySourceBuilder.of("test")
-                .addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build().toConfiguration();
+        Configuration config = Configuration.from(PropertySourceBuilder.of("test")
+                .addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build());
 //        String name = config.get("name").orElse("Anatole");
 //        BigDecimal bigNum = config.get("num.BD", BigDecimal.class).orElseThrow(() -> new IllegalStateException("Sorry"));
 //        double anotherNum = config.getDouble("num.Double").getAsDouble();
 //        long longNum = config.getLong("num.Long").orElse(288900L);
 
         // or more simpler use area function
-        Configuration areaConfig2 = config.with(ConfigFunctions.selectArea("num"));
+        Configuration areaConfig2 = config.with(ConfigurationFunctions.selectArea("num"));
         System.out.println(areaConfig2);
 
         // iterator over an area, using streams only
         Map<String, String> areaMap = config.getProperties().entrySet().stream()
                 .filter((e) -> e.getKey().startsWith("num."))
                 .collect(Collectors.toMap((e) -> e.getKey().substring("num.".length()), Map.Entry::getValue));
-        Configuration areaConfig = PropertySourceBuilder.of("Test").addMap(areaMap).build().toConfiguration();
+        Configuration areaConfig = Configuration.from(PropertySourceBuilder.of("Test").addMap(areaMap).build());
         System.out.println(areaConfig);
     }
 
     @Test
     public void getConfigurationTest() {
         PropertySource provider = PropertySourceBuilder.of("Test").addPaths("classpath:barFoo.properties").build();
-        Configuration config = provider.toConfiguration();
+        Configuration config = Configuration.from(provider);
         assertNotNull(config);
         assertTrue(config.isEmpty());
         assertTrue(config.getProperties().isEmpty());

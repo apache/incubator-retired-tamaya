@@ -46,7 +46,7 @@ public interface ResourceLoader{
      *
      * @param expressions the expressions to be resolved, not empty.
      * @return the corresponding collection current {@link java.net.URI}s defining the
-     * concrete resources to be read by a {@link org.apache.tamaya.core.config.ConfigurationFormat}
+     * concrete resources to be read by a {@link org.apache.tamaya.core.properties.ConfigurationFormat}
      * .
      */
     List<Resource> getResources(String... expressions);
@@ -56,7 +56,7 @@ public interface ResourceLoader{
      *
      * @param expressions the expressions to be resolved, not empty.
      * @return the corresponding collection current {@link java.net.URI}s defining the
-     * concrete resources to be read by a {@link org.apache.tamaya.core.config.ConfigurationFormat}
+     * concrete resources to be read by a {@link org.apache.tamaya.core.properties.ConfigurationFormat}
      * .
      */
     List<Resource> getResources(Collection<String> expressions);
@@ -66,7 +66,7 @@ public interface ResourceLoader{
      *
      * @param expressions the expressions to be resolved, not empty.
      * @return the corresponding collection current {@link java.net.URI}s defining the
-     * concrete resources to be read by a {@link org.apache.tamaya.core.config.ConfigurationFormat}
+     * concrete resources to be read by a {@link org.apache.tamaya.core.properties.ConfigurationFormat}
      * .
      */
     List<Resource> getResources(ClassLoader classLoader, String... expressions);
@@ -76,7 +76,7 @@ public interface ResourceLoader{
      *
      * @param expressions the expressions to be resolved, not empty.
      * @return the corresponding collection current {@link java.net.URI}s defining the
-     * concrete resources to be read by a {@link org.apache.tamaya.core.config.ConfigurationFormat}
+     * concrete resources to be read by a {@link org.apache.tamaya.core.properties.ConfigurationFormat}
      * .
      */
     List<Resource> getResources(ClassLoader classLoader, Collection<String> expressions);

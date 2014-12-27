@@ -19,8 +19,7 @@
 package org.apache.tamaya.ucs.deltaspike;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.config.ConfigFunctions;
-import org.apache.tamaya.core.config.ConfigurationBuilder;
+import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 import java.net.URL;
 
@@ -52,7 +51,7 @@ public class ConfigFiltering {
         String pwd = Configuration.current().get("endPointURL.password").get();
 
         // In the SPI
-        ConfigurationBuilder.of().addPaths("...").filterValues((k,v) -> k.equals("endPointURL.password")?MyPKI.decrypt(v):v).build();
+        PropertySourceBuilder.of().addPaths("...").filterValues((k,v) -> k.equals("endPointURL.password")?MyPKI.decrypt(v):v).build();
     }
 
     private static class MyPKI{

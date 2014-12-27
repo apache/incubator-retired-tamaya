@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.resource.ResourceLoader;
-import org.apache.tamaya.core.config.ConfigurationFormat;
+import org.apache.tamaya.core.properties.ConfigurationFormat;
 import org.apache.tamaya.metamodel.environment.spi.EnvironmentProvider;
 import org.apache.tamaya.spi.ServiceContext;
 

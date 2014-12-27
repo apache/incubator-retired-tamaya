@@ -17,4 +17,3 @@
 # under the License.
 #
 org.apache.tamaya.internal.TestConfigProvider
-org.apache.tamaya.internal.MutableTestConfigProvider

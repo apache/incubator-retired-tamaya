@@ -20,11 +20,11 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 /**
- * Class that has the responsibility to watch the folder and then update the {@link ConfigurationProviderSpi}
- * to update the Configuration from the properties or xml files, another ones will be ignored.
+ * Class that has the responsibility to watch the folder and then commit the {@link ConfigurationProviderSpi}
+ * to commit the Configuration from the properties or xml files, another ones will be ignored.
  * @see FilesPropertiesConfigProvider
  * This listener will wait to events and wait to one second to watch again.
- * <p>If new file was created or modified will update from this file.</p>
+ * <p>If new file was created or modified will commit from this file.</p>
  * <p>If a file was removed then the listener will load using all files left.</p>
  * @author otaviojava
  */

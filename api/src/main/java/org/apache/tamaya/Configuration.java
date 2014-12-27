@@ -18,10 +18,12 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigurationFactorySpi;
 import org.apache.tamaya.spi.ConfigurationSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
@@ -41,7 +43,69 @@ import java.util.function.UnaryOperator;
  * simplifying the development current this interface, e.g. for being backed up by systems and stores that are not part current
  * this library at all.
  */
-public interface Configuration extends PropertySource {
+public interface Configuration extends PropertyMapSupplier {
+
+    /**
+     * An empty and immutable Configuration instance.
+     */
+    public static final Configuration EMPTY_CONFIGURATION = new Configuration() {
+
+        @Override
+        public String getName() {
+            return "<empty>";
+        }
+
+        @Override
+        public Optional<String> get(String key) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public String toString(){
+            return "PropertySource [name=<empty>]";
+        }
+    };
+
+    /**
+     * Get the name of the property source. The name should be unique for the type of source, whereas the id is used
+     * to ensure unique identity, either locally or remotely.
+     * @return the configuration's name, never null.
+     */
+    String getName();
+
+    /**
+     * Access a property.
+     *
+     * @param key the property's key, not null.
+     * @return the property's keys.
+     */
+    Optional<String> get(String key);
+
+    /**
+     * Determines if this config source should be scanned for its list of properties.
+     *
+     * Generally, slow ConfigSources should return false here.
+     *
+     * @return true if this ConfigSource should be scanned for its list of properties,
+     * false if it should not be scanned.
+     */
+    default boolean isScannable(){
+        return true;
+    }
+
+    /**
+     * Allows to quickly check, if a provider is empty.
+     *
+     * @return true, if the provier is empty.
+     */
+    default boolean isEmpty() {
+        return getProperties().isEmpty();
+    }
 
     /**
      * Get the property keys as {@link Boolean}.
@@ -49,6 +113,7 @@ public interface Configuration extends PropertySource {
      * @param key the property's absolute, or relative path, e.g. {@code
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
+     * @throws ConfigException if the configured value could not be converted to the target type.
      */
 	default Boolean getBoolean(String key) {
 		Optional<Boolean> val = get(key, Boolean.class);
@@ -64,6 +129,7 @@ public interface Configuration extends PropertySource {
      * @param key the property's absolute, or relative path, e.g. @code
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
+     * @throws ConfigException if the configured value could not be converted to the target type.
      */
     default OptionalInt getInteger(String key){
         Optional<Integer> val = get(key, Integer.class);
@@ -80,6 +146,7 @@ public interface Configuration extends PropertySource {
      * @param key the property's absolute, or relative path, e.g. @code
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
+     * @throws ConfigException if the configured value could not be converted to the target type.
      */
     default OptionalLong getLong(String key){
         Optional<Long> val = get(key, Long.class);
@@ -96,7 +163,7 @@ public interface Configuration extends PropertySource {
      * @param key the property's absolute, or relative path, e.g. @code
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
-     * @throws IllegalArgumentException if no such property exists.
+     * @throws ConfigException if the configured value could not be converted to the target type.
      */
     default OptionalDouble getDouble(String key){
 
@@ -122,7 +189,7 @@ public interface Configuration extends PropertySource {
      * @param adapter the PropertyAdapter to perform the conversion fromMap
      *                {@link String} to {@code Class<T>}, not {@code null}.
      * @return the property's keys.
-     * @throws IllegalArgumentException if the keys could not be converted to the required target
+     * @throws ConfigException if the keys could not be converted to the required target
      *                                  type, or no such property exists.
      */
     default <T> Optional<T> getAdapted(String key, PropertyAdapter<T> adapter){
@@ -133,6 +200,31 @@ public interface Configuration extends PropertySource {
         return Optional.empty();
     }
 
+//    /**
+//     * Get the property with the given key as type {@code Class<T>}.
+//     * <p>
+//     * If {@code Class<T>} is not one current
+//     * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
+//     * BigDecimal, String} , an according adapter must be
+//     * available to perform the conversion from {@link String} to
+//     * {@code Class<T>}.
+//     *
+//     * @param key     the property's absolute, or relative path, e.g. {@code
+//     *                a/b/c/d.myProperty}.
+//     * @param adapter the PropertyAdapter to perform the conversion from
+//     *                {@link String} to {@code Class<T>}, not {@code null}.
+//     * @return the property value, never null.
+//     * @throws ConfigException if the keys could not be converted to the required target
+//     *                                  type, or no such property exists.
+//     */
+//    default <T> DynamicValue<T> getAdaptedDynamicValue(String key, PropertyAdapter<T> adapter){
+//        Optional<String> value = get(key);
+//        if(value.isPresent()) {
+//            return DynamicValue.ofNullable(getName()+':' + key, adapter.adapt(value.get()));
+//        }
+//        return DynamicValue.empty(getName()+':' + key);
+//    }
+
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -142,13 +234,28 @@ public interface Configuration extends PropertySource {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
-     * @return the property's keys.
-     * @throws IllegalArgumentException if the keys could not be converted to the required target
+     * @return the property value, never null..
+     * @throws ConfigException if the keys could not be converted to the required target
      *                                  type.
      */
     default <T> Optional<T> get(String key, Class<T> type){
         return getAdapted(key, PropertyAdapter.getInstance(type));
     }
+
+//    /**
+//     * Get the property value as {@link org.apache.tamaya.DynamicValue}. This will implicitly require a corresponding {@link
+//     * PropertyAdapter} that is capable of converting the String value to the current required type T.
+//     *
+//     * @param key          the property's absolute, or relative path, e.g. {@code
+//     *                     a/b/c/d.myProperty}.
+//     * @param type         The target type required, not null.
+//     * @return the dynamic value instance, never null.
+//     * @throws ConfigException if the keys could not be converted to the required target
+//     *                                  type.
+//     */
+//    default <T> DynamicValue<T> getDynamicValue(String key, Class<T> type){
+//        return getAdaptedDynamicValue(key, PropertyAdapter.getInstance(type));
+//    }
 
     /**
      * Extension point for adjusting configuration.
@@ -161,14 +268,15 @@ public interface Configuration extends PropertySource {
         return operator.apply(this);
     }
 
+
     /**
-     * Query some keys fromMap a configuration.
+     * Query a configuration.
      *
      * @param query the query, never {@code null}.
      * @return the result
      */
-    default <T> T query(ConfigQuery<T> query){
-        return query.query(this);
+    default <T> T query(Function<Configuration,T> query){
+        return query.apply(this);
     }
 
 
@@ -180,6 +288,16 @@ public interface Configuration extends PropertySource {
      */
     public static boolean isAvailable(String name){
         return ServiceContext.getInstance().getSingleton(ConfigurationSpi.class).isConfigurationAvailable(name);
+    }
+
+    /**
+     * Creates a configuration from a {@link org.apache.tamaya.PropertySource}.
+     *
+     * @param propertySource the property source
+     * @return the corresponding Configuration instance, never null.
+     */
+    public static Configuration from(PropertySource propertySource){
+        return ServiceContext.getInstance().getSingleton(ConfigurationFactorySpi.class, () -> new ConfigurationFactorySpi(){}).from(propertySource);
     }
 
     /**

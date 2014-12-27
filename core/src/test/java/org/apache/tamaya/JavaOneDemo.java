@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tamaya.core.config.ConfigFunctions;
+import org.apache.tamaya.core.ConfigurationFunctions;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;
 
@@ -53,22 +53,22 @@ public class JavaOneDemo {
         Map<String, String> cfgMap = new HashMap<>();
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole
-        Configuration config = PropertySourceBuilder.of("myTestConfig").addPaths(
+        Configuration config = Configuration.from(PropertySourceBuilder.of("myTestConfig").addPaths(
                 "classpath:test.properties").addPaths("classpath:cfg/test.xml")
                 .addArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"})
-                .addMap(cfgMap).build().toConfiguration();
-        System.out.println(config.query(ConfigFunctions.getAreas()));
+                .addMap(cfgMap).build());
+        System.out.println(config.query(ConfigurationFunctions.getAreas()));
         System.out.println("---");
-        System.out.println(config.query(ConfigFunctions.getAreas(s -> s.startsWith("another"))));
+        System.out.println(config.query(ConfigurationFunctions.getAreas(s -> s.startsWith("another"))));
         System.out.println("---");
-        System.out.println(config.query(ConfigFunctions.getTransitiveAreas()));
+        System.out.println(config.query(ConfigurationFunctions.getTransitiveAreas()));
         System.out.println("---");
-        System.out.println(config.query(ConfigFunctions.getTransitiveAreas(s -> s.startsWith("another"))));
+        System.out.println(config.query(ConfigurationFunctions.getTransitiveAreas(s -> s.startsWith("another"))));
         System.out.println("---");
         System.out.println(config);
         System.out.print("--- b=");
         System.out.println(config.get("b"));
-        System.out.println("--- only a,b,c)");
-        System.out.println(PropertySourceBuilder.of(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
+//        System.out.println("--- only a,b,c)");
+//        System.out.println(PropertySourceBuilder.of(config).filter((f) -> f.equals("a") || f.equals("b") || f.equals("c")).build());
     }
 }

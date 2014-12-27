@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.core.config.ConfigChangeSet;
 import org.apache.tamaya.PropertySource;
 
 import java.util.HashMap;

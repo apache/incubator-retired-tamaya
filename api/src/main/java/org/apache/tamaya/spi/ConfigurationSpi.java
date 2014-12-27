@@ -20,7 +20,11 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyAdapter;
+import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.annotation.WithPropertyAdapter;
+
+import java.util.Map;
+import java.util.Optional;
 
 
 /**

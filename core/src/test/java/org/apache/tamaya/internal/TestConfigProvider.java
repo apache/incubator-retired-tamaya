@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.internal;
 
+import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
@@ -47,8 +48,8 @@ public class TestConfigProvider implements ConfigurationProviderSpi{
         config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
         config.put("testProperty", "keys current testProperty");
         config.put("runtimeVersion", "${java.version}");
-        testConfig = PropertySourceBuilder.of("test").addMap(
-                config).build().toConfiguration();
+        testConfig = Configuration.from(PropertySourceBuilder.of("test").addMap(
+                config).build());
     }
 
     @Override

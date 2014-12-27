@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.config;
+package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.core.spi.ConfigurationFormatSpi;

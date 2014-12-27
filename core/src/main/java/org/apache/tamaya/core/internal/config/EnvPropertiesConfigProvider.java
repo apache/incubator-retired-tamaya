@@ -34,7 +34,7 @@ public class EnvPropertiesConfigProvider implements ConfigurationProviderSpi{
     private Configuration envConfig;
 
     public EnvPropertiesConfigProvider(){
-        envConfig = PropertySourceBuilder.of("environment.properties").addEnvironmentProperties().build().toConfiguration();
+        envConfig = Configuration.from(PropertySourceBuilder.of("environment.properties").addEnvironmentProperties().build());
     }
 
     @Override

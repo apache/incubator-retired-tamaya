@@ -21,7 +21,6 @@ package org.apache.tamaya.core.properties;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.internal.resources.io.UrlResource;
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.core.config.ConfigurationFormat;
 
 import java.net.URL;
 import java.util.*;

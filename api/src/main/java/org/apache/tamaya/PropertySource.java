@@ -19,6 +19,8 @@
 package org.apache.tamaya;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * This interface models a provider that serves configuration properties. The contained
@@ -38,7 +40,7 @@ import java.util.*;
  * </ul>
  * </p>
  */
-public interface PropertySource {
+public interface PropertySource extends PropertyMapSupplier {
 
     /**
      * An empty and immutable PropertyProvider instance.
@@ -82,14 +84,6 @@ public interface PropertySource {
     Optional<String> get(String key);
 
     /**
-     * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
-     * when the underlying storage does not support iteration of its entries.
-     *
-     * @return the a corresponding map, never null.
-     */
-    Map<String, String> getProperties();
-
-    /**
      * Determines if this config source should be scanned for its list of properties.
      *
      * Generally, slow ConfigSources should return false here.
@@ -111,42 +105,25 @@ public interface PropertySource {
     }
 
     /**
-     * Convert the this PropertyProvider instance to a {@link org.apache.tamaya.Configuration}.
+     * Extension point for adjusting property sources.
      *
-     * @return the configuration, never null.
+     * @param operator A property source operator, e.g. a filter, or an adjuster
+     *                 combining property sources.
+     * @return the new adjusted property source, never {@code null}.
      */
-    default Configuration toConfiguration() {
-        return new Configuration() {
-            @Override
-            public String getName() {
-                return PropertySource.this.getName();
-            }
-
-            @Override
-            public boolean isScannable() {
-                return PropertySource.this.isScannable();
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return PropertySource.this.isEmpty();
-            }
-
-            @Override
-            public Optional<String> get(String key) {
-                return PropertySource.this.get(key);
-            }
-
-            @Override
-            public Map<String, String> getProperties() {
-                return PropertySource.this.getProperties();
-            }
-
-            @Override
-            public String toString() {
-                return "Configuration [name: " + getName() + "]";
-            }
-        };
+    default PropertySource with(UnaryOperator<PropertySource> operator){
+        return operator.apply(this);
     }
+
+    /**
+     * Query something from a property source.
+     *
+     * @param query the query, never {@code null}.
+     * @return the result
+     */
+    default <T> T query(Function<PropertySource, T> query){
+        return query.apply(this);
+    }
+
 
 }

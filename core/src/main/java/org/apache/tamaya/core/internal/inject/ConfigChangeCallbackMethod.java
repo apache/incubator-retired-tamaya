@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.core.config.ConfigChangeSet;
+import org.apache.tamaya.core.properties.PropertyChangeSet;
 import org.apache.tamaya.Configuration;
 
 import java.lang.reflect.Method;
@@ -41,10 +41,10 @@ public final class ConfigChangeCallbackMethod {
         this.callbackMethod = Optional.of(callbackMethod).filter(
                 (m) -> void.class.equals(m.getReturnType()) &&
                         m.getParameterCount() == 1 &&
-                        m.getParameterTypes()[0].equals(ConfigChangeSet.class)).get();
+                        m.getParameterTypes()[0].equals(PropertyChangeSet.class)).get();
     }
 
-    public Consumer<ConfigChangeSet> createConsumer(Object instance, Configuration... configurations){
+    public Consumer<PropertyChangeSet> createConsumer(Object instance, Configuration... configurations){
         // TODO consider also environment !
         return event -> {
             for(Configuration cfg:configurations){
@@ -56,7 +56,7 @@ public final class ConfigChangeCallbackMethod {
         };
     }
 
-    public void call(Object instance, ConfigChangeSet configChangeEvent) {
+    public void call(Object instance, PropertyChangeSet configChangeEvent) {
         try {
             callbackMethod.setAccessible(true);
             callbackMethod.invoke(instance, configChangeEvent);

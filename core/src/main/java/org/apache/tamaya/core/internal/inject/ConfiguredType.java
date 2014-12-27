@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import org.apache.tamaya.core.config.ConfigChangeSet;
+import org.apache.tamaya.core.properties.PropertyChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertySource;
@@ -134,7 +134,7 @@ public class ConfiguredType {
         if (m.getParameterTypes().length != 1) {
             return;
         }
-        if (!m.getParameterTypes()[0].equals(ConfigChangeSet.class)) {
+        if (!m.getParameterTypes()[0].equals(PropertyChangeSet.class)) {
             return;
         }
         if (!void.class.equals(m.getReturnType())) {

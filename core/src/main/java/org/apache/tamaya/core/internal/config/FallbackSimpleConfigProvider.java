@@ -43,7 +43,7 @@ public class FallbackSimpleConfigProvider implements ConfigurationProviderSpi {
 
     @Override
     public void reload() {
-        this.configuration =
+        this.configuration = Configuration.from(
                 PropertySourceBuilder.of(DEFAULT_CONFIG_NAME)
                         .addProviders(PropertySourceBuilder.of("CL default")
                                 .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
@@ -55,6 +55,6 @@ public class FallbackSimpleConfigProvider implements ConfigurationProviderSpi {
                                 .build())
                         .addSystemProperties()
                         .addEnvironmentProperties()
-                        .build().toConfiguration();
+                        .build());
     }
 }

@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
-import org.apache.tamaya.core.config.ConfigChangeSet;
 
 import java.util.*;
 

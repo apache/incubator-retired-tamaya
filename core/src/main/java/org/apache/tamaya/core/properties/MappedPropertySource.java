@@ -1,4 +1,4 @@
-package org.apache.tamaya.core.config;
+package org.apache.tamaya.core.properties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,25 +6,27 @@ import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.core.properties.AbstractPropertySource;
 
 /**
- * Configuration implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate areas.
+ * PropertySource implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate areas.
  */
-class MappedConfiguration extends AbstractConfiguration implements Configuration {
+class MappedPropertySource extends AbstractPropertySource {
 
 	private static final long serialVersionUID = 8690637705511432083L;
 
 	/** The mapping operator. */
     private UnaryOperator<String> keyMapper;
     /** The base configuration. */
-    private Configuration config;
+    private PropertySource config;
 
     /**
      * Creates a new instance.
      * @param config the base configuration, not null
      * @param keyMapper The mapping operator, not null
      */
-    public MappedConfiguration(Configuration config, UnaryOperator<String> keyMapper) {
+    public MappedPropertySource(PropertySource config, UnaryOperator<String> keyMapper) {
         super(config.getName());
         this.config = Objects.requireNonNull(config);
         this.keyMapper = Objects.requireNonNull(keyMapper);
@@ -46,11 +48,6 @@ class MappedConfiguration extends AbstractConfiguration implements Configuration
     @Override
     public boolean isEmpty() {
         return this.config.isEmpty();
-    }
-
-    @Override
-    public Configuration toConfiguration() {
-        return this;
     }
 
 }

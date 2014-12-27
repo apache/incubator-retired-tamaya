@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import org.apache.tamaya.core.config.ConfigChangeSet;
+import org.apache.tamaya.core.properties.PropertyChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.annotation.*;
@@ -53,7 +53,7 @@ public class ConfiguredSetterMethod {
                         m.getParameterCount() == 1).get();
     }
 
-    public Consumer<ConfigChangeSet> createConsumer(Object instance, Configuration... configurations){
+    public Consumer<PropertyChangeSet> createConsumer(Object instance, Configuration... configurations){
         // TODO consider environment as well
         return event -> {
             for(Configuration cfg:configurations){

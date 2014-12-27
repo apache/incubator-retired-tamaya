@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.config;
+package org.apache.tamaya.core.properties;
 
 import org.apache.tamaya.*;
-import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -28,7 +27,7 @@ import java.util.Map;
  * Configuration implementation that stores all current values current a given (possibly dynamic, contextual and non remote
  * capable instance) and is fully serializable.
  */
-final class FreezedConfiguration extends AbstractConfiguration implements Serializable{
+final class FrozenPropertySource extends AbstractPropertySource implements Serializable{
     private static final long serialVersionUID = -6373137316556444171L;
 
     private PropertySource properties;
@@ -37,16 +36,16 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
      * Constructor.
      * @param config The base configuration.
      */
-    private FreezedConfiguration(Configuration config){
+    private FrozenPropertySource(PropertySource config){
         super(config.getName());
         this.properties = PropertySourceBuilder.of(config).buildFrozen();
     }
 
-    public static final Configuration of(Configuration config){
-        if(config instanceof FreezedConfiguration){
+    public static final PropertySource of(PropertySource config){
+        if(config instanceof FrozenPropertySource){
             return config;
         }
-        return new FreezedConfiguration(config);
+        return new FrozenPropertySource(config);
     }
 
     @Override
@@ -59,7 +58,7 @@ final class FreezedConfiguration extends AbstractConfiguration implements Serial
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FreezedConfiguration that = (FreezedConfiguration) o;
+        FrozenPropertySource that = (FrozenPropertySource) o;
 
         if (!properties.equals(that.properties)) return false;
         return true;

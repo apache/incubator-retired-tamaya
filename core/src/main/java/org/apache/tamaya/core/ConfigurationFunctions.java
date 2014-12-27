@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.config;
+package org.apache.tamaya.core;
 
-import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -30,11 +30,11 @@ import java.util.stream.Collectors;
 /**
  * Accessor that provides useful functions along with configuration.
  */
-public final class ConfigFunctions {
+public final class ConfigurationFunctions {
     /**
      * Private singleton constructor.
      */
-    private ConfigFunctions() {
+    private ConfigurationFunctions() {
     }
 
     /**
@@ -66,7 +66,7 @@ public final class ConfigFunctions {
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
                                     Map.Entry::getValue)));
-            return PropertySourceBuilder.of("area: " + areaKey).addMap(area).build().toConfiguration();
+            return Configuration.from(PropertySourceBuilder.of("area: " + areaKey).addMap(area).build());
         };
     }
 
@@ -90,7 +90,7 @@ public final class ConfigFunctions {
      *
      * @return s set with all areas, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> getAreas() {
+    public static Function<Configuration,Set<String>> getAreas() {
         return config -> {
             final Set<String> areas = new HashSet<>();
             config.getProperties().keySet().forEach(s -> {
@@ -113,7 +113,7 @@ public final class ConfigFunctions {
      *
      * @return s set with all transitive areas, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> getTransitiveAreas() {
+    public static Function<Configuration,Set<String>> getTransitiveAreas() {
         return config -> {
             final Set<String> transitiveAreas = new HashSet<>();
             config.query(getAreas()).forEach(s -> {
@@ -141,7 +141,7 @@ public final class ConfigFunctions {
      * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
      * @return s set with all areas, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> getAreas(final Predicate<String> predicate) {
+    public static Function<Configuration,Set<String>> getAreas(final Predicate<String> predicate) {
         return config -> {
             return config.query(getAreas()).stream().filter(predicate).collect(Collectors.toCollection(TreeSet::new));
         };
@@ -156,7 +156,7 @@ public final class ConfigFunctions {
      * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
      * @return s set with all transitive areas, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> getTransitiveAreas(Predicate<String> predicate) {
+    public static Function<Configuration,Set<String>> getTransitiveAreas(Predicate<String> predicate) {
         return config -> {
             return config.query(getTransitiveAreas()).stream().filter(predicate).collect(Collectors.toCollection(TreeSet::new));
         };
@@ -169,7 +169,7 @@ public final class ConfigFunctions {
      * @param areaKey the configuration area (sub)path.
      * @return {@code true}, if such a node exists.
      */
-    public static ConfigQuery<Boolean> containsArea(String areaKey) {
+    public static Function<Configuration,Boolean> containsArea(String areaKey) {
         return config -> {
             return config.query(getAreas()).contains(areaKey);
         };
@@ -205,34 +205,9 @@ public final class ConfigFunctions {
                             .collect(Collectors.toMap(
                                     e -> stripKeys ? e.getKey().substring(areaKey.length() + 1) : e.getKey(),
                                     Map.Entry::getValue)));
-            return PropertySourceBuilder.of("area (recursive): " + areaKey).addMap(area).build().toConfiguration();
+            return Configuration.from(PropertySourceBuilder.of("area (recursive): " + areaKey).addMap(area).build());
         };
     }
 
-    /**
-     * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (non recursive). Hereby
-     * the area key is stripped away fromMap the resulting key.
-     *
-     * @param areaKey       the area key, not null
-     * @param mappedAreaKey the target key, not null
-     * @return the area configuration, with the areaKey stripped away.
-     */
-    public static UnaryOperator<Configuration> mapArea(String areaKey, String mappedAreaKey) {
-        return mapKeys(key -> key.startsWith(areaKey + '.') ?
-                mappedAreaKey + key.substring(areaKey.length()) : key);
-    }
-
-    /**
-     * Creates a {@link UnaryOperator} that creates a {@link org.apache.tamaya.Configuration} that maps any keys as
-     * defined by the {@code keyMapper} given. If the {@code keyMapper} returns
-     * {@code null} for a keys, it is removed from the resulting map.
-     *
-     * @param keyMapper the key mapper, not null
-     * @return the area configuration, with the areaKey stripped away.
-     */
-    public static UnaryOperator<Configuration> mapKeys(UnaryOperator<String> keyMapper) {
-        return (c) -> new MappedConfiguration(c, keyMapper);
-    }
 
 }

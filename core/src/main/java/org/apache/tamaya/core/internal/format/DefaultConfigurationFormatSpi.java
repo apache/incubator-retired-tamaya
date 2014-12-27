@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.internal.format;
 
 import org.apache.tamaya.core.resource.Resource;
-import org.apache.tamaya.core.config.ConfigurationFormat;
+import org.apache.tamaya.core.properties.ConfigurationFormat;
 import org.apache.tamaya.core.spi.ConfigurationFormatSpi;
 
 import java.util.*;

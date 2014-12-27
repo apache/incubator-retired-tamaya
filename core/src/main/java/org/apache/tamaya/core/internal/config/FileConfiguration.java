@@ -8,7 +8,7 @@ import org.apache.tamaya.Configuration;
 
 /**
  * Implementation of Configuration which the information is from xml or properties files.
- * Once the File modified, it will update automatically by provider.
+ * Once the File modified, it will commit automatically by provider.
  * @see FilesPropertiesConfigProvider
  * @see FileChangeObserver
  * @author otaviojava

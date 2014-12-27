@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * This class models the component that is managing the lifecycle current the
@@ -40,6 +41,19 @@ public interface ServiceContext {
         return getService(serviceType)
                 .orElseThrow(() -> new IllegalStateException("Singleton missing: " + serviceType.getName()));
     }
+
+    /**
+     * Delegate method for {@link ServiceContext#getService(Class)}.
+     *
+     * @param serviceType the service type.
+     * @return the service found, never {@code null}.
+     * @see ServiceContext#getService(Class)
+     */
+    default <T> T getSingleton(Class<T> serviceType, Supplier<T> defaultSupplier) {
+        return getService(serviceType)
+                .orElse((defaultSupplier.get()));
+    }
+
     /**
      * Access a singleton, given its type.
      *

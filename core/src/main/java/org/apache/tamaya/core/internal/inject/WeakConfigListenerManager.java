@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.internal.inject;
 
-import org.apache.tamaya.core.config.ConfigChangeSet;
+import org.apache.tamaya.core.properties.PropertyChangeSet;
+
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
@@ -36,7 +37,7 @@ public final class WeakConfigListenerManager{
 
     private static final Logger LOG = Logger.getLogger(WeakConfigListenerManager.class.getName());
     private StampedLock lock = new StampedLock();
-    private Map<Object,Consumer<ConfigChangeSet>> listenerReferences = new WeakHashMap<>();
+    private Map<Object,Consumer<PropertyChangeSet>> listenerReferences = new WeakHashMap<>();
 
     /** Private singleton constructor. */
     private WeakConfigListenerManager(){}
@@ -51,11 +52,11 @@ public final class WeakConfigListenerManager{
      * @param instance the instance, not null.
      * @param listener the consumer.
      */
-    public void registerConsumer(Object instance, Consumer<ConfigChangeSet> listener){
+    public void registerConsumer(Object instance, Consumer<PropertyChangeSet> listener){
         Lock writeLock = lock.asWriteLock();
         try {
             writeLock.lock();
-            Consumer<ConfigChangeSet> l = listenerReferences.get(instance);
+            Consumer<PropertyChangeSet> l = listenerReferences.get(instance);
             if (l == null) {
                 listenerReferences.put(instance, listener);
             } else {
@@ -86,7 +87,7 @@ public final class WeakConfigListenerManager{
      * Publishes a change event to all consumers registered.
      * @param change the change event, not null.
      */
-    public void publishChangeEvent(ConfigChangeSet change){
+    public void publishChangeEvent(PropertyChangeSet change){
         Lock readLock = lock.asReadLock();
         try{
             readLock.lock();

@@ -23,15 +23,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
-import org.apache.tamaya.core.config.ConfigChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.internal.el.DefaultExpressionEvaluator;
 import org.apache.tamaya.core.internal.inject.ConfigTemplateInvocationHandler;
 import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
-import org.apache.tamaya.core.internal.inject.WeakConfigListenerManager;
 import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.core.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.ConfigurationSpi;
@@ -59,8 +56,10 @@ public class DefaultConfigurationSpi implements ConfigurationSpi {
     }
 
     public DefaultConfigurationSpi() {
-        for (ConfigurationProviderSpi spi : ServiceContext.getInstance().getServices(ConfigurationProviderSpi.class, Collections.emptyList())) {
-            configProviders.put(spi.getConfigName(), spi);
+        if(configProviders.isEmpty()) {
+            for (ConfigurationProviderSpi spi : ServiceContext.getInstance().getServices(ConfigurationProviderSpi.class, Collections.emptyList())) {
+                configProviders.put(spi.getConfigName(), spi);
+            }
         }
     }
 

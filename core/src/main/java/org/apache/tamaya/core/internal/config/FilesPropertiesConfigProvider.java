@@ -19,7 +19,7 @@ import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
 
 /**
  *  This implementation run in a folder and once found xml and properties files
- *  will create the Configuration, when one file is created, deleted or modified the configuration will update
+ *  will create the Configuration, when one file is created, deleted or modified the configuration will commit
  *  automatically.
  * The default folder is META-INF/configuration, but you can change using the absolute path in
  * "-Dtamaya.configbase" parameter.

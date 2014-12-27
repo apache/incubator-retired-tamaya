@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.spi;
 
-import org.apache.tamaya.core.config.ConfigurationFormat;
+import org.apache.tamaya.core.properties.ConfigurationFormat;
 import org.apache.tamaya.core.resource.Resource;
 
 import java.util.Collection;
@@ -28,16 +28,16 @@ import java.util.Collection;
  */
 public interface ConfigurationFormatSpi {
     /**
-     * Access a {@link org.apache.tamaya.core.config.ConfigurationFormat}.
+     * Access a {@link org.apache.tamaya.core.properties.ConfigurationFormat}.
      *
      * @param formatName the format name
-     * @return the corresponding {@link org.apache.tamaya.core.config.ConfigurationFormat}, or {@code null}, if
+     * @return the corresponding {@link org.apache.tamaya.core.properties.ConfigurationFormat}, or {@code null}, if
      * not available for the given environment.
      */
     ConfigurationFormat getFormat(String formatName);
 
     /**
-     * Get a collection current the keys current the registered {@link org.apache.tamaya.core.config.ConfigurationFormat} instances.
+     * Get a collection current the keys current the registered {@link org.apache.tamaya.core.properties.ConfigurationFormat} instances.
      *
      * @return a collection current the keys current the registered {@link ConfigurationFormat} instances.
      */
