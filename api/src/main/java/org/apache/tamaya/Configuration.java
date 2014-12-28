@@ -43,7 +43,7 @@ import java.util.function.UnaryOperator;
  * simplifying the development current this interface, e.g. for being backed up by systems and stores that are not part current
  * this library at all.
  */
-public interface Configuration extends PropertyMapSupplier {
+public interface Configuration extends PropertyMapSupplier,PropertySource {
 
     /**
      * An empty and immutable Configuration instance.
@@ -264,7 +264,7 @@ public interface Configuration extends PropertyMapSupplier {
      *                 combining configurations.
      * @return the new adjusted configuration, never {@code null}.
      */
-    default Configuration with(UnaryOperator<Configuration> operator){
+    default PropertySource with(UnaryOperator<PropertySource> operator){
         return operator.apply(this);
     }
 
@@ -275,7 +275,7 @@ public interface Configuration extends PropertyMapSupplier {
      * @param query the query, never {@code null}.
      * @return the result
      */
-    default <T> T query(Function<Configuration,T> query){
+    default <T> T query(Function<PropertySource,T> query){
         return query.apply(this);
     }
 

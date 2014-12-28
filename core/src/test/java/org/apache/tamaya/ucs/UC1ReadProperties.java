@@ -69,7 +69,7 @@ public class UC1ReadProperties {
 //        long longNum = config.getLong("num.Long").orElse(288900L);
 
         // or more simpler use area function
-        Configuration areaConfig2 = config.with(ConfigurationFunctions.selectArea("num"));
+        PropertySource areaConfig2 = config.with(ConfigurationFunctions.selectArea("num"));
         System.out.println(areaConfig2);
 
         // iterator over an area, using streams only
