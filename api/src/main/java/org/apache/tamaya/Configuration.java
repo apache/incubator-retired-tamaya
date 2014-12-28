@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigChangeSetCallback;
 import org.apache.tamaya.spi.ConfigurationFactorySpi;
 import org.apache.tamaya.spi.ConfigurationSpi;
 import org.apache.tamaya.spi.ServiceContext;
@@ -61,13 +62,28 @@ public interface Configuration extends PropertyMapSupplier,PropertySource {
         }
 
         @Override
+        public void update(ConfigChangeSet changeSet) {
+
+        }
+
+        @Override
+        public void registerForUpdate(ConfigChangeSetCallback callback) {
+
+        }
+
+        @Override
+        public void removeForUpdate(ConfigChangeSetCallback callback) {
+
+        }
+
+        @Override
         public Map<String, String> getProperties() {
             return Collections.emptyMap();
         }
 
         @Override
         public String toString(){
-            return "PropertySource [name=<empty>]";
+            return "Configuration [name=<empty>]";
         }
     };
 

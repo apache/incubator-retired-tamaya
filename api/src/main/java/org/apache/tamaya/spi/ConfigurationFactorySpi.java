@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertySource;
 
@@ -44,6 +45,21 @@ public interface ConfigurationFactorySpi {
             @Override
             public Optional<String> get(String key) {
                 return propertySource.get(key);
+            }
+
+            @Override
+            public void update(ConfigChangeSet changeSet) {
+                propertySource.update(changeSet);
+            }
+
+            @Override
+            public void registerForUpdate(ConfigChangeSetCallback callback) {
+                propertySource.registerForUpdate(callback);
+            }
+
+            @Override
+            public void removeForUpdate(ConfigChangeSetCallback callback) {
+                propertySource.removeForUpdate(callback);
             }
 
             @Override

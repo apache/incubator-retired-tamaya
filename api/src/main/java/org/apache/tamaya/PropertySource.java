@@ -18,7 +18,10 @@
 */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigChangeSetCallback;
+
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -55,6 +58,21 @@ public interface PropertySource extends PropertyMapSupplier {
         @Override
         public Optional<String> get(String key) {
             return Optional.empty();
+        }
+
+        @Override
+        public void update(ConfigChangeSet changeSet) {
+
+        }
+
+        @Override
+        public void registerForUpdate(ConfigChangeSetCallback callback) {
+
+        }
+
+        @Override
+        public void removeForUpdate(ConfigChangeSetCallback callback) {
+
         }
 
         @Override
@@ -124,6 +142,26 @@ public interface PropertySource extends PropertyMapSupplier {
     default <T> T query(Function<PropertySource, T> query){
         return query.apply(this);
     }
+
+    /**
+     * Upon receiving a ConfigChangeSet, the PropertySource will be updated to include
+     * any of the listed changes within
+     *
+     * @param changeSet the changes to be invoked
+     */
+    void update(ConfigChangeSet changeSet);
+
+    /**
+     * Whenever this PropertySource is updated, any registered callables will be invoked
+     * @param callback
+     */
+    void registerForUpdate(ConfigChangeSetCallback callback);
+
+    /**
+     * Removes a callback to be invoked.
+     * @param callback
+     */
+    void removeForUpdate(ConfigChangeSetCallback callback);
 
 
 }

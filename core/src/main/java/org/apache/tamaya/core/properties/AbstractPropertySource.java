@@ -21,7 +21,9 @@ package org.apache.tamaya.core.properties;
 import java.io.Serializable;
 import java.util.*;
 
+import org.apache.tamaya.ConfigChangeSet;
 import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.ConfigChangeSetCallback;
 
 /**
  * Abstract base class for implementing a {@link org.apache.tamaya.PropertySource}.
@@ -38,6 +40,8 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
      * The underlying sources.
      */
     private volatile Set<String> sources = new HashSet<>();
+
+    private volatile Set<ConfigChangeSetCallback> callbacks = new LinkedHashSet<>();
 
     /**
      * Constructor.
@@ -80,6 +84,22 @@ public abstract class AbstractPropertySource implements PropertySource, Serializ
         b.append("  ").append("(").append(getName()).append(" = ").append(getName()).append(")\n");
         printContents(b);
         return b.append('}').toString();
+    }
+
+    @Override
+    public void update(ConfigChangeSet changeSet) {
+        //TODO how do we want to update this guy?
+        this.callbacks.parallelStream().forEach((c) -> c.onChange(changeSet));
+    }
+
+    @Override
+    public void registerForUpdate(ConfigChangeSetCallback callback) {
+        this.callbacks.add(callback);
+    }
+
+    @Override
+    public void removeForUpdate(ConfigChangeSetCallback callback) {
+        this.callbacks.remove(callback);
     }
 
     protected String printContents(StringBuilder b){
