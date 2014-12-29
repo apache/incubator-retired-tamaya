@@ -22,6 +22,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.ConfigException;
+
+
 /**
  * This singleton provides access to the services available in the current {@link ServiceContext}. The
  * behaviour can be adapted, by calling {@link ServiceContextManager#set(ServiceContext)} before accessing any
@@ -32,10 +35,6 @@ final class ServiceContextManager {
      * The ServiceProvider used.
      */
     private static volatile ServiceContext serviceContextProviderDelegate;
-    /**
-     * The shared lock instance user.
-     */
-    private static final Object LOCK = new Object();
 
     /**
      * Private singletons constructor.
@@ -50,13 +49,18 @@ final class ServiceContextManager {
      */
     private static ServiceContext loadDefaultServiceProvider() {
         try {
-            for (ServiceContext sp : ServiceLoader.load(ServiceContext.class)) {
-                return sp;
+            int highestOrdinal = 0;
+            ServiceContext highestServiceContext = null;
+            for (ServiceContext serviceContext : ServiceLoader.load(ServiceContext.class)) {
+                if (serviceContext.ordinal() > highestOrdinal) {
+                    highestServiceContext = serviceContext;
+                }
             }
+
+            return highestServiceContext;
         } catch (Exception e) {
-            Logger.getLogger(ServiceContextManager.class.getName()).log(Level.INFO, "Using default ServiceProvider.");
+            throw new ConfigException("No ServiceContext found");
         }
-        return new DefaultServiceContextProvider();
     }
 
     /**
@@ -67,14 +71,16 @@ final class ServiceContextManager {
     public static ServiceContext set(ServiceContext serviceContextProvider) {
         ServiceContext currentContext = ServiceContextManager.serviceContextProviderDelegate;
         Objects.requireNonNull(serviceContextProvider);
-        synchronized (LOCK) {
+        synchronized (ServiceContextManager.class) {
             if (ServiceContextManager.serviceContextProviderDelegate == null) {
                 ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
                 Logger.getLogger(ServiceContextManager.class.getName())
                         .log(Level.INFO, "Using ServiceProvider: " + serviceContextProvider.getClass().getName());
             } else {
                 Logger.getLogger(ServiceContextManager.class.getName())
-                        .log(Level.WARNING, "Replacing ServiceProvider " + ServiceContextManager.serviceContextProviderDelegate.getClass().getName() + " with: " + serviceContextProvider.getClass().getName());
+                        .log(Level.WARNING, "Replacing ServiceProvider " +
+                                ServiceContextManager.serviceContextProviderDelegate.getClass().getName() +
+                                " with: " + serviceContextProvider.getClass().getName());
                 ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
             }
         }
@@ -88,7 +94,7 @@ final class ServiceContextManager {
      */
     public static ServiceContext getServiceContext() {
         if (serviceContextProviderDelegate == null) {
-            synchronized (LOCK) {
+            synchronized (ServiceContextManager.class) {
                 if (serviceContextProviderDelegate == null) {
                     serviceContextProviderDelegate = loadDefaultServiceProvider();
                 }

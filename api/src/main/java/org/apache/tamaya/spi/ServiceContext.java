@@ -31,6 +31,11 @@ import java.util.function.Supplier;
 public interface ServiceContext {
 
     /**
+     * @return ordinal of the ServiceContext. The one with the highest ordinal will be taken.
+     */
+    int ordinal();
+
+    /**
      * Delegate method for {@link ServiceContext#getService(Class)}.
      *
      * @param serviceType the service type.
@@ -63,17 +68,17 @@ public interface ServiceContext {
      */
     <T> Optional<T> getService(Class<T> serviceType);
 
-	/**
-	 * Access a list current services, given its type. The bootstrap mechanism should
-	 * order the instance for precedence, hereby the most significant should be
-	 * first in order.
-	 * 
-	 * @param serviceType
-	 *            the service type.
-	 * @param defaultList
-	 *            the lis returned, if no services could be found.
-	 * @return The instance to be used, never {@code null}
-	 */
+    /**
+     * Access a list current services, given its type. The bootstrap mechanism should
+     * order the instance for precedence, hereby the most significant should be
+     * first in order.
+     *
+     * @param serviceType
+     *            the service type.
+     * @param defaultList
+     *            the lis returned, if no services could be found.
+     * @return The instance to be used, never {@code null}
+     */
     <T> List<? extends T> getServices(Class<T> serviceType, List<? extends T> defaultList);
 
     /**
