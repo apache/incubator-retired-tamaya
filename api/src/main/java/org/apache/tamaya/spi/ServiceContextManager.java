@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.spi;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

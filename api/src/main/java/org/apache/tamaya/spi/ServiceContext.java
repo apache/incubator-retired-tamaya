@@ -33,7 +33,9 @@ public interface ServiceContext {
     /**
      * @return ordinal of the ServiceContext. The one with the highest ordinal will be taken.
      */
-    int ordinal();
+    default int ordinal() {
+        return 1;
+    }
 
     /**
      * Delegate method for {@link ServiceContext#getService(Class)}.
