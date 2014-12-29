@@ -43,6 +43,7 @@ public interface ServiceContext {
      * @param serviceType the service type.
      * @return the service found, never {@code null}.
      * @see ServiceContext#getService(Class)
+     * @throws java.lang.IllegalStateException if no such service is available.
      */
     default <T> T getSingleton(Class<T> serviceType) {
         return getService(serviceType)
@@ -67,6 +68,7 @@ public interface ServiceContext {
      * @param serviceType
      *            the service type.
      * @return The instance to be used, never {@code null}
+     * @throws java.lang.IllegalStateException if no such service is available.
      */
     <T> Optional<T> getService(Class<T> serviceType);
 
@@ -77,11 +79,11 @@ public interface ServiceContext {
      *
      * @param serviceType
      *            the service type.
-     * @param defaultList
-     *            the lis returned, if no services could be found.
+     * @param defaultListSupplier
+     *            supplier for the list to be returned, if no services could be found.
      * @return The instance to be used, never {@code null}
      */
-    <T> List<? extends T> getServices(Class<T> serviceType, List<? extends T> defaultList);
+    <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> defaultListSupplier);
 
     /**
      * Access a list current services, given its type. The bootstrap mechanism should
@@ -92,8 +94,8 @@ public interface ServiceContext {
      *            the service type.
      * @return The instance to be used, never {@code null}
      */
-    default <T> List<? extends T> getServices(Class<T> serviceType){
-        return getServices(serviceType, Collections.emptyList());
+    default <T> List<T> getServices(Class<T> serviceType){
+        return getServices(serviceType, () -> Collections.emptyList());
     }
 
     /**

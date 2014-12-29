@@ -32,4 +32,12 @@ under the License.
         The API defines a complete SE based API for reading of configuration data.
     </description>
 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>

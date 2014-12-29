@@ -49,19 +49,21 @@ final class ServiceContextManager {
      * @return {@link ServiceContext} to be used for loading the services.
      */
     private static ServiceContext loadDefaultServiceProvider() {
+        ServiceContext highestServiceContext = null;
         try {
             int highestOrdinal = 0;
-            ServiceContext highestServiceContext = null;
             for (ServiceContext serviceContext : ServiceLoader.load(ServiceContext.class)) {
                 if (serviceContext.ordinal() > highestOrdinal) {
                     highestServiceContext = serviceContext;
                 }
             }
-
-            return highestServiceContext;
         } catch (Exception e) {
+            throw new ConfigException("ServiceContext not loadable", e);
+        }
+        if(highestServiceContext==null){
             throw new ConfigException("No ServiceContext found");
         }
+        return highestServiceContext;
     }
 
     /**
