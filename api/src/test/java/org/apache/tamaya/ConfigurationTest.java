@@ -27,14 +27,14 @@ import static org.junit.Assert.*;
 public class ConfigurationTest {
 
     @org.junit.Test
-    public void testGetAdapted() throws Exception {
-        assertEquals(Boolean.TRUE, Configuration.current().getAdapted("booleanTrue", (s) -> Boolean.valueOf(s)).get());
-        assertEquals(Boolean.FALSE, Configuration.current().getAdapted("booleanFalse", (s) -> Boolean.valueOf(s)).get());
-        assertEquals((int)Byte.MAX_VALUE, (int)Configuration.current().getAdapted("byte", (s) -> Byte.valueOf(s)).get());
-        assertEquals((int)Integer.MAX_VALUE, (int)Configuration.current().getAdapted("int", (s) -> Integer.valueOf(s)).get());
-        assertEquals((long)Long.MAX_VALUE, (long)Configuration.current().getAdapted("long", (s) -> Long.valueOf(s)).get());
-        assertEquals((double)Float.MAX_VALUE, (double)Configuration.current().getAdapted("float", (s) -> Float.valueOf(s)).get(), 0.0d);
-        assertEquals((double)Double.MAX_VALUE, (double)Configuration.current().getAdapted("double", (s) -> Double.valueOf(s)).get(), 0.0d);
+    public void testget() throws Exception {
+        assertEquals(Boolean.TRUE, Configuration.current().get("booleanTrue", (s) -> Boolean.valueOf(s)).get());
+        assertEquals(Boolean.FALSE, Configuration.current().get("booleanFalse", (s) -> Boolean.valueOf(s)).get());
+        assertEquals((int)Byte.MAX_VALUE, (int)Configuration.current().get("byte", (s) -> Byte.valueOf(s)).get());
+        assertEquals((int)Integer.MAX_VALUE, (int)Configuration.current().get("int", (s) -> Integer.valueOf(s)).get());
+        assertEquals((long)Long.MAX_VALUE, (long)Configuration.current().get("long", (s) -> Long.valueOf(s)).get());
+        assertEquals((double)Float.MAX_VALUE, (double)Configuration.current().get("float", (s) -> Float.valueOf(s)).get(), 0.0d);
+        assertEquals((double)Double.MAX_VALUE, (double)Configuration.current().get("double", (s) -> Double.valueOf(s)).get(), 0.0d);
     }
 
     @org.junit.Test

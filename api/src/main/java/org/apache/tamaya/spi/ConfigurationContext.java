@@ -20,19 +20,19 @@ package org.apache.tamaya.spi;
 
 
 /**
- * Interface for an property that converts a configured String into something else.
- * This is used for implementing type conversion from a property (String) to a certain target
- * type. Hereby the target type can be multivalued (eg eollections), complex or even contain
- * full subconfigurations, if needed.
+ * Central SPI for programmatically dealing with the setup of the configuration system.
+ * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
+ * managing {@link org.apache.tamaya.spi.PropertyConverter}s, ConfigFilters, etc.
  */
-@FunctionalInterface
-public interface PropertyAdapter<T>{
+public interface ConfigurationContext {
 
     /**
-     * Adapt the given configuration keys to the required target type.
-     * @param value the configuration keys
-     * @return adapted keys
+     * This method can be used for programmatically adding {@link PropertySource}s.
+     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
+     *
+     * @param propertySourcesToAdd the PropertySources to add
      */
-    T adapt(String value);
+    void addPropertySources(PropertySource... propertySourcesToAdd);
+
 
 }

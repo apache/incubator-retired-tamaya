@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.PropertyAdapter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
@@ -55,7 +55,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyAdapter} to be available that is capable current providing type T
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
@@ -72,22 +72,22 @@ public interface Configuration {
      * <p>
      * If {@code Class<T>} is not one current
      * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
-     * BigDecimal, String} , an according adapter must be
+     * BigDecimal, String} , an according converter must be
      * available to perform the conversion fromMap {@link String} to
      * {@code Class<T>}.
      *
      * @param key     the property's absolute, or relative path, e.g. @code
      *                a/b/c/d.myProperty}.
-     * @param adapter the PropertyAdapter to perform the conversion fromMap
+     * @param converter the PropertyConverter to perform the conversion fromMap
      *                {@link String} to {@code Class<T>}, not {@code null}.
      * @return the property's keys.
      * @throws ConfigException if the keys could not be converted to the required target
      *                                  type, or no such property exists.
      */
-    default <T> Optional<T> getAdapted(String key, PropertyAdapter<T> adapter) {
+    default <T> Optional<T> get(String key, PropertyConverter<T> converter) {
         Optional<String> value = get(key);
         if (value.isPresent()) {
-            return Optional.ofNullable(adapter.adapt(value.get()));
+            return Optional.ofNullable(converter.convert(value.get()));
         }
         return Optional.empty();
     }
@@ -191,7 +191,7 @@ public interface Configuration {
      * @throws ConfigException if no such configuration is defined.
      */
     public static Configuration current(){
-        return ServiceContext.getInstance().getSingleton(Configuration.class);
+        return ServiceContext.getInstance().getService(Configuration.class).get();
     }
 
 }

@@ -43,13 +43,13 @@ public class ServiceContextTest {
         }
 
         @Override
-        public <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> defaultList) {
+        public <T> List<T> getServices(Class<T> serviceType) {
             if(String.class.equals(serviceType)){
                 List<String> list = new ArrayList<>();
                 list.add("ServiceContextTest");
                 return List.class.cast(list);
             }
-            return defaultList.get();
+            return Collections.EMPTY_LIST;
         }
     };
 
@@ -59,21 +59,9 @@ public class ServiceContextTest {
     }
 
     @Test
-    public void testGetSingleton() throws Exception {
-        assertEquals("ServiceContextTest", serviceContext.getSingleton(String.class));
-        try{
-            serviceContext.getSingleton(Integer.class);
-            fail("ServiceContext should throw IllegalStateException");
-        }
-        catch(IllegalStateException e){
-            // OK, as expected
-        }
-    }
-
-    @Test
-    public void testGetSingleton_WithDefault() throws Exception {
-        assertEquals("ServiceContextTest", serviceContext.getSingleton(String.class, () -> "blabla"));
-        assertEquals(Integer.valueOf(4), serviceContext.getSingleton(Integer.class, () -> Integer.valueOf(4)));
+    public void testgetService() throws Exception {
+        assertEquals("ServiceContextTest", serviceContext.getService(String.class).get());
+        assertFalse(serviceContext.getService(Integer.class).isPresent());
     }
 
     @Test
@@ -99,32 +87,8 @@ public class ServiceContextTest {
     }
 
     @Test
-    public void testGetServices_WithSupplier() throws Exception {
-        Collection<String> services = serviceContext.getServices(String.class, () -> Collections.emptyList());
-        assertNotNull(services);
-        assertFalse(services.isEmpty());
-        assertEquals("ServiceContextTest", services.iterator().next());
-        List<Integer> list = new ArrayList<>();
-        list.add(Integer.valueOf(4));
-        Collection<Integer> intServices = serviceContext.getServices(Integer.class, () -> list);
-        assertNotNull(intServices);
-        assertFalse(intServices.isEmpty());
-    }
-
-    @Test
     public void testGetInstance() throws Exception {
         assertNotNull(ServiceContext.getInstance());
     }
 
-    @Test
-    public void testSet() throws Exception {
-        ServiceContext prevContext = ServiceContext.set(serviceContext);
-        assertNotNull(ServiceContext.getInstance());
-        assertTrue(ServiceContext.getInstance() == serviceContext);
-        if(prevContext!=null) {
-            ServiceContext.set(prevContext);
-            assertNotNull(ServiceContext.getInstance());
-            assertTrue(ServiceContext.getInstance() == prevContext);
-        }
-    }
 }

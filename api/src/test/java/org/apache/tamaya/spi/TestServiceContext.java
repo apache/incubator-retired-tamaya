@@ -35,15 +35,15 @@ import java.util.logging.Logger;
  */
 public final class TestServiceContext implements ServiceContext {
     /** List current services loaded, per class. */
-	private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
     /** Singletons. */
     private final Map<Class, Optional<?>> singletons = new ConcurrentHashMap<>();
 
     @Override
     public <T> Optional<T> getService(Class<T> serviceType) {
-		Optional<T> cached = Optional.class.cast(singletons.get(serviceType));
+        Optional<T> cached = Optional.class.cast(singletons.get(serviceType));
         if(cached==null) {
-            List<? extends T> services = getServices(serviceType, () -> Collections.emptyList());
+            List<? extends T> services = getServices(serviceType);
             if (services.isEmpty()) {
                 cached = Optional.empty();
             }
@@ -58,40 +58,17 @@ public final class TestServiceContext implements ServiceContext {
     /**
      * Loads and registers services.
      *
-     * @param serviceType
-     *            The service type.
-     * @param <T>
-     *            the concrete type.
-     * @param defaultList
-     *            the list current items returned, if no services were found.
-     * @return the items found, never {@code null}.
-     */
-    @Override
-    public <T> List<T> getServices(final Class<T> serviceType, final Supplier<List<T>> defaultList) {
-        List<T> found = List.class.cast(servicesLoaded.get(serviceType));
-        if (found != null) {
-            return found;
-        }
-        return loadServices(serviceType, defaultList);
-    }
-
-    /**
-     * Loads and registers services.
-     *
      * @param   serviceType  The service type.
      * @param   <T>          the concrete type.
-     * @param   defaultList  the list current items returned, if no services were found.
      *
      * @return  the items found, never {@code null}.
      */
-    private <T> List<T> loadServices(final Class<T> serviceType, final Supplier<List<T>> defaultList) {
+    @Override
+    public <T> List<T> getServices(Class<T> serviceType) {
         try {
             List<T> services = new ArrayList<>();
             for (T t : ServiceLoader.load(serviceType)) {
                 services.add(t);
-            }
-            if(services.isEmpty()){
-                services.addAll(defaultList.get());
             }
             services = Collections.unmodifiableList(services);
             final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>)services));
@@ -99,7 +76,7 @@ public final class TestServiceContext implements ServiceContext {
         } catch (Exception e) {
             Logger.getLogger(TestServiceContext.class.getName()).log(Level.WARNING,
                                       "Error loading services current type " + serviceType, e);
-            return defaultList.get();
+            return Collections.EMPTY_LIST;
         }
     }
 
