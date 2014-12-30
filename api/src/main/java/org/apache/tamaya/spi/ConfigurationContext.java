@@ -90,4 +90,6 @@ public interface ConfigurationContext {
      */
     Map<Class<?>, List<PropertyConverter<?>>> getPropertyConverters();
 
+
+    //X TODO add a way to manage and use PropertyFilters
 }
