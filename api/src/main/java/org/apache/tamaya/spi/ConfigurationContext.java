@@ -20,6 +20,7 @@ package org.apache.tamaya.spi;
 
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
@@ -47,5 +48,46 @@ public interface ConfigurationContext {
      * @return sorted list of registered PropertySources
      */
     List<PropertySource> getPropertySources();
+
+
+    /**
+     * This method can be used for programmatically adding {@link PropertyConverter}s.
+     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
+     *
+     * @param typeToConvert the type which the converter is for
+     * @param propertyConverter the PropertyConverters to add for this type
+     */
+    <T> void addPropertyConverter(Class<T> typeToConvert, PropertyConverter<T> propertyConverter);
+
+    /**
+     * <p>
+     * This method returns the Map of registered PropertyConverters
+     * per type.
+     * The List for each type is ordered via their {@link javax.annotation.Priority}.
+     * </p>
+     *
+     * <p>
+     * PropertyConverters with a lower Priority come first. The PropertyConverter with the
+     * highest Priority comes last.
+     * If two PropertyConverter have the same ordinal number they will get sorted
+     * using their class name just to ensure the user at least gets the same ordering
+     * after a JVM restart.
+     * </p>
+     *
+     * <p>
+     * The scenario could be like:
+     * <pre>
+     *  {
+     *      Date.class -> {StandardDateConverter, TimezoneDateConverter, MyCustomDateConverter }
+     *      Boolean.class -> {StandardBooleanConverter, FrenchBooleanConverter}
+     *  }
+     * </pre>
+     * </p>
+     *
+     * TODO: we need to define in which order the converters will be used later!
+     *
+     * @return map with sorted list of registered PropertySources per type.
+     */
+    Map<Class<?>, List<PropertyConverter<?>>> getPropertyConverters();
 
 }
