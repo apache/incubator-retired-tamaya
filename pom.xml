@@ -64,6 +64,7 @@ under the License.
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.16.1</jruby.version>
         <findbugs.version>3.0.0</findbugs.version>
+        <rat.version>0.11</rat.version>
     </properties>
 
     <licenses>
@@ -560,7 +561,7 @@ under the License.
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.11</version>
+                <version>${rat.version}</version>
                 <configuration>
                     <includes>
                         <include>src/**/*</include>
