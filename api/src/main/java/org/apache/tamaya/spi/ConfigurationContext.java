@@ -19,6 +19,8 @@
 package org.apache.tamaya.spi;
 
 
+import java.util.List;
+
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
  * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
@@ -34,5 +36,16 @@ public interface ConfigurationContext {
      */
     void addPropertySources(PropertySource... propertySourcesToAdd);
 
+    /**
+     * This method returns the list of registered PropertySources ordered via their ordinal.
+     * PropertySources with a lower ordinal come first. The PropertySource with the
+     * highest ordinal comes last.
+     * If two PropertySources have the same ordinal number they will get sorted
+     * using their class name just to ensure the user at least gets the same ordering
+     * after a JVM restart.
+     *
+     * @return sorted list of registered PropertySources
+     */
+    List<PropertySource> getPropertySources();
 
 }
