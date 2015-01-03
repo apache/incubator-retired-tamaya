@@ -48,6 +48,12 @@ import java.util.Optional;
 public interface PropertySource {
 
     /**
+     * property name to override default tamaya ordinals
+     */
+    static final String TAMAYA_ORDINAL = "tamaya.ordinal";
+
+
+    /**
      * Lookup order:
      * TODO rethink whole default PropertySources and ordering:
      * TODO introduce default values or constants for ordinals
@@ -88,6 +94,7 @@ public interface PropertySource {
     /**
      * Access a property.
      *
+     * //X TODO discuss if the key can be null
      * @param key the property's key, not null.
      * @return the property's keys.
      */
