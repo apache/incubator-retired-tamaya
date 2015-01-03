@@ -56,16 +56,15 @@ public class PathBasedPropertySourceProvider implements PropertySourceProvider {
     }
 
     @Override
-    public Collection<PropertySource> getPropertySources(){
+    public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
         paths.forEach((path) -> {
             for (Resource res : ServiceContext.getInstance().getService(ResourceLoader.class).get().getResources(path)) {
-                try{
-                    for(ConfigurationFormat format:configFormats){
+                try {
+                    for (ConfigurationFormat format : configFormats) {
                         propertySources.addAll(format.readConfiguration(res));
                     }
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     LOG.log(Level.WARNING, "Failed to add resource based config: " + res.getDisplayName(), e);
                 }
             }

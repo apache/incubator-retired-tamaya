@@ -48,9 +48,9 @@ import java.util.stream.Collectors;
  * internal Ant-style regular expressions (matched using Spring's
  * {@code org.springframework.util.AntPathMatcher} utility).
  * Both current the latter are effectively wildcards.
- *
+ * <p>
  * <p><b>No Wildcards:</b>
- *
+ * <p>
  * <p>In the simple case, if the specified location path does not start with the
  * {@code "classpath*:}" prefix, and does not contain a PathMatcher pattern,
  * this resolver will simply return a single resource via a
@@ -60,9 +60,9 @@ import java.util.stream.Collectors;
  * such as "{@code /WEB-INF/context.xml}". The latter will resolve in a
  * fashion specific to the underlying {@code ResourceLoader} (e.g.
  * {@code ServletContextResource} for a {@code WebApplicationContext}).
- *
+ * <p>
  * <p><b>Ant-style Patterns:</b>
- *
+ * <p>
  * <p>When the path location contains an Ant-style pattern, e.g.:
  * <pre class="code">
  * /WEB-INF/*-context.xml
@@ -79,13 +79,13 @@ import java.util.stream.Collectors;
  * either gets a {@code java.net.JarURLConnection} from it, or manually parses
  * the jar URL, and then traverses the contents current the jar file, to resolve the
  * wildcards.
- *
+ * <p>
  * <p><b>Implications on portability:</b>
- *
+ * <p>
  * <p>If the specified path is already a file URL (either explicitly, or
  * implicitly because the base {@code ResourceLoader} is a filesystem one,
  * then wildcarding is guaranteed to work in a completely portable fashion.
- *
+ * <p>
  * <p>If the specified path is a classpath location, then the resolver must
  * obtain the last non-wildcard path segment URL via a
  * {@code Classloader.getResource()} call. Since this is just a
@@ -95,7 +95,7 @@ import java.util.stream.Collectors;
  * the directory, where the classpath resource resolves to a filesystem
  * location, or a jar URL current some sort, where the classpath resource resolves
  * to a jar location. Still, there is a portability concern on this operation.
- *
+ * <p>
  * <p>If a jar URL is obtained for the last non-wildcard segment, the resolver
  * must be able to get a {@code java.net.JarURLConnection} from it, or
  * manually parse the jar URL, to be able to walk the contents current the jar,
@@ -103,9 +103,9 @@ import java.util.stream.Collectors;
  * fail in others, and it is strongly recommended that the wildcard
  * resolution current resources coming from jars be thoroughly tested in your
  * specific environment before you rely on it.
- *
+ * <p>
  * <p><b>{@code classpath*:} Prefix:</b>
- *
+ * <p>
  * <p>There is special support for retrieving multiple class path resources with
  * the same name, via the "{@code classpath*:}" prefix. For example,
  * "{@code classpath*:META-INF/beans.xml}" will find all "beans.xml"
@@ -113,7 +113,7 @@ import java.util.stream.Collectors;
  * This is particularly useful for autodetecting config files current the same name
  * at the same location within each jar file. Internally, this happens via a
  * {@code ClassLoader.getResources()} call, and is completely portable.
- *
+ * <p>
  * <p>The "classpath*:" prefix can also be combined with a PathMatcher pattern in
  * the rest current the location path, for example "classpath*:META-INF/*-beans.xml".
  * In this case, the resolution strategy is fairly simple: a
@@ -121,9 +121,9 @@ import java.util.stream.Collectors;
  * path segment to get all the matching resources in the class loader hierarchy,
  * and then off each resource the same PathMatcher resolution strategy described
  * above is used for the wildcard subpath.
- *
+ * <p>
  * <p><b>Other notes:</b>
- *
+ * <p>
  * <p><b>WARNING:</b> Note that "{@code classpath*:}" when combined with
  * Ant-style patterns will only work reliably with at least one root directory
  * before the pattern starts, unless the actual target files reside in the file
@@ -132,16 +132,16 @@ import java.util.stream.Collectors;
  * root current expanded directories. This originates from a limitation in the JDK's
  * {@code ClassLoader.getResources()} method which only returns file system
  * locations for a passed-in empty String (indicating potential roots to search).
- *
+ * <p>
  * <p><b>WARNING:</b> Ant-style patterns with "classpath:" resources are not
  * guaranteed to find matching resources if the root package to search is available
  * in multiple class path locations. This is because a resource such as
  * <pre class="code">
- *     com/mycompany/package1/service-context.xml
+ * com/mycompany/package1/service-context.xml
  * </pre>
  * may be in only one location, but when a path such as
  * <pre class="code">
- *     classpath:com/mycompany/**&#47;service-context.xml
+ * classpath:com/mycompany/**&#47;service-context.xml
  * </pre>
  * is used to try to resolve it, the resolver will work off the (first) URL
  * returned by {@code getResource("com/mycompany");}. If this base package
@@ -154,10 +154,10 @@ import java.util.stream.Collectors;
  * @author Colin Sampaleanu
  * @author Marius Bogoevici
  * @author Costin Leau
- * @since 1.0.2
  * @see ClassLoader#getResources(String)
+ * @since 1.0.2
  */
-public final class PathMatchingResourcePatternResolver{
+public final class PathMatchingResourcePatternResolver {
 
     private static final Logger logger = Logger.getLogger(PathMatchingResourcePatternResolver.class.getName());
     private static final java.lang.String CLASSPATH_ALL_URL_PREFIX = "classpath:";
@@ -171,8 +171,7 @@ public final class PathMatchingResourcePatternResolver{
                     PathMatchingResourcePatternResolver.class.getClassLoader());
             equinoxResolveMethod = fileLocatorClass.getMethod("resolve", URL.class);
             logger.finest("Found Equinox FileLocator for OSGi bundle URL resolution");
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             equinoxResolveMethod = null;
         }
     }
@@ -184,7 +183,7 @@ public final class PathMatchingResourcePatternResolver{
 
     private static Map<ClassLoader, PathMatchingResourcePatternResolver> resolvers = new ConcurrentHashMap<>();
 
-    public static PathMatchingResourcePatternResolver of(ClassLoader loader){
+    public static PathMatchingResourcePatternResolver of(ClassLoader loader) {
         return resolvers.computeIfAbsent(loader, PathMatchingResourcePatternResolver::new);
     }
 
@@ -198,9 +197,10 @@ public final class PathMatchingResourcePatternResolver{
 
     /**
      * Create a new PathMatchingResourcePatternResolver with a DefaultResourceLoader.
+     *
      * @param classLoader the ClassLoader to load classpath resources with,
-     * or {@code null} for using the thread context class loader
-     * at the time current actual resource access
+     *                    or {@code null} for using the thread context class loader
+     *                    at the time current actual resource access
      * @see PathMatchingDefaultResourceLoader
      */
     public PathMatchingResourcePatternResolver(ClassLoader classLoader) {
@@ -229,23 +229,20 @@ public final class PathMatchingResourcePatternResolver{
             if (getPathMatcher().isPattern(locationPattern.substring(CLASSPATH_ALL_URL_PREFIX.length()))) {
                 // a class path resource pattern
                 return findPathMatchingResources(locationPattern);
-            }
-            else {
+            } else {
                 // all class path resources with the given name
                 return findAllClassPathResources(locationPattern.substring(CLASSPATH_ALL_URL_PREFIX.length()));
             }
-        }
-        else {
+        } else {
             // Only look for a pattern after a prefix here
             // (to not get fooled by a pattern symbol in a strange prefix).
             int prefixEnd = locationPattern.indexOf(':') + 1;
             if (getPathMatcher().isPattern(locationPattern.substring(prefixEnd))) {
                 // a file pattern
                 return findPathMatchingResources(locationPattern);
-            }
-            else {
+            } else {
                 // a single resource with the given name
-                return new Resource[] {this.resourceLoader.getResource(locationPattern)};
+                return new Resource[]{this.resourceLoader.getResource(locationPattern)};
             }
         }
     }
@@ -253,6 +250,7 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Find all class location resources with the given location via the ClassLoader.
      * Delegates to {@link #doFindAllClassPathResources(String)}.
+     *
      * @param location the absolute path within the classpath
      * @return the result as Resource array
      * @throws IOException in case current I/O errors
@@ -271,6 +269,7 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Find all class location resources with the given path via the ClassLoader.
      * Called by {@link #findAllClassPathResources(String)}.
+     *
      * @param path the absolute path within the classpath (never a leading slash)
      * @return a mutable Set current matching Resource instances
      */
@@ -293,6 +292,7 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Convert the given URL as returned from the ClassLoader into a {@link Resource}.
      * <p>The default implementation simply creates a {@link UrlResource} instance.
+     *
      * @param url a URL as returned from the ClassLoader
      * @return the corresponding Resource object
      * @see java.lang.ClassLoader#getResources
@@ -305,8 +305,9 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Search all {@link URLClassLoader} URLs for jar file references and add them to the
      * given set current resources in the form current pointers to the root current the jar file content.
+     *
      * @param classLoader the ClassLoader to search (including its ancestors)
-     * @param result the set current resources to add jar roots to
+     * @param result      the set current resources to add jar roots to
      */
     protected void addAllClassLoaderJarRoots(ClassLoader classLoader, Set<Resource> result) {
         if (classLoader instanceof URLClassLoader) {
@@ -319,15 +320,13 @@ public final class PathMatchingResourcePatternResolver{
                             if (jarResource.exists()) {
                                 result.add(jarResource);
                             }
-                        }
-                        catch (MalformedURLException ex) {
+                        } catch (MalformedURLException ex) {
                             logger.finest(() -> "Cannot search for matching files underneath [" + url +
                                     "] because it cannot be converted to a valid 'jar:' URL: " + ex.getMessage());
                         }
                     }
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 logger.finest(() -> "Cannot introspect jar files since ClassLoader [" + classLoader +
                         "] does not support 'getURLs()': " + ex);
             }
@@ -335,8 +334,7 @@ public final class PathMatchingResourcePatternResolver{
         if (classLoader != null) {
             try {
                 addAllClassLoaderJarRoots(classLoader.getParent(), result);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 logger.finest(() -> "Cannot introspect jar files in parent ClassLoader since [" + classLoader +
                         "] does not support 'getParent()': " + ex);
             }
@@ -347,6 +345,7 @@ public final class PathMatchingResourcePatternResolver{
      * Find all resources that match the given location pattern via the
      * Ant-style PathMatcher. Supports resources in jar files and zip files
      * and in the file system.
+     *
      * @param locationPattern the location pattern to match
      * @return the result as Resource array
      * @throws IOException in case current I/O errors
@@ -362,11 +361,9 @@ public final class PathMatchingResourcePatternResolver{
             rootDirResource = resolveRootDirResource(rootDirResource);
             if (rootDirResource.toURL().getProtocol().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
                 result.addAll(VfsResourceMatchingDelegate.findMatchingResources(rootDirResource, subPattern, getPathMatcher()));
-            }
-            else if (isJarResource(rootDirResource)) {
+            } else if (isJarResource(rootDirResource)) {
                 result.addAll(doFindPathMatchingJarResources(rootDirResource, subPattern));
-            }
-            else {
+            } else {
                 result.addAll(doFindPathMatchingFileResources(rootDirResource, subPattern));
             }
         }
@@ -382,6 +379,7 @@ public final class PathMatchingResourcePatternResolver{
      * remainder current the location as pattern.
      * <p>Will return "/WEB-INF/" for the pattern "/WEB-INF/*.xml",
      * for example.
+     *
      * @param location the location to check
      * @return the part current the location that denotes the root directory
      * @see #retrieveMatchingFiles
@@ -403,6 +401,7 @@ public final class PathMatchingResourcePatternResolver{
      * <p>The default implementation detects an Equinox OSGi "bundleresource:"
      * / "bundleentry:" URL and resolves it into a standard jar file URL that
      * can be traversed using Spring's standard jar file traversal algorithm.
+     *
      * @param original the resource to resolve
      * @return the resolved resource (may be identical to the passed-in resource)
      * @throws IOException in case current resolution failure
@@ -427,8 +426,9 @@ public final class PathMatchingResourcePatternResolver{
      * <p>The default implementation checks against the URL protocols
      * "jar", "zip" and "wsjar" (the latter are used by BEA WebLogic Server
      * and IBM WebSphere, respectively, but can be treated like jar files).
+     *
      * @param resource the resource handle to check
-     * (usually the root directory to start path matching from)
+     *                 (usually the root directory to start path matching from)
      * @see #doFindPathMatchingJarResources
      * @see ResourceUtils#isJarURL
      */
@@ -439,8 +439,9 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Find all resources in jar files that match the given location pattern
      * via the Ant-style PathMatcher.
+     *
      * @param rootDirResource the root directory as Resource
-     * @param subPattern the sub pattern to match (below the root directory)
+     * @param subPattern      the sub pattern to match (below the root directory)
      * @return a mutable Set current matching Resource instances
      * @throws IOException in case current I/O errors
      * @see java.net.JarURLConnection
@@ -462,8 +463,7 @@ public final class PathMatchingResourcePatternResolver{
             jarFileUrl = jarCon.getJarFileURL().toExternalForm();
             JarEntry jarEntry = jarCon.getJarEntry();
             rootEntryPath = (jarEntry != null ? jarEntry.getName() : "");
-        }
-        else {
+        } else {
             // No JarURLConnection -> need to resort to URL file parsing.
             // We'll assume URLs current the format "jar:path!/entry", with the protocol
             // being arbitrary as long as following the entry format.
@@ -474,8 +474,7 @@ public final class PathMatchingResourcePatternResolver{
                 jarFileUrl = urlFile.substring(0, separatorIndex);
                 rootEntryPath = urlFile.substring(separatorIndex + ResourceUtils.JAR_URL_SEPARATOR.length());
                 jarFile = getJarFile(jarFileUrl);
-            }
-            else {
+            } else {
                 jarFile = new JarFile(urlFile);
                 jarFileUrl = urlFile;
                 rootEntryPath = "";
@@ -491,7 +490,7 @@ public final class PathMatchingResourcePatternResolver{
                 rootEntryPath = rootEntryPath + "/";
             }
             Set<Resource> result = new LinkedHashSet<>(8);
-            for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
+            for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements(); ) {
                 JarEntry entry = entries.nextElement();
                 String entryPath = entry.getName();
                 if (entryPath.startsWith(rootEntryPath)) {
@@ -502,8 +501,7 @@ public final class PathMatchingResourcePatternResolver{
                 }
             }
             return result;
-        }
-        finally {
+        } finally {
             // Close jar file, but only if freshly obtained -
             // not from JarURLConnection, which might cache the file reference.
             if (newJarFile) {
@@ -519,13 +517,11 @@ public final class PathMatchingResourcePatternResolver{
         if (jarFileUrl.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
             try {
                 return new JarFile(ResourceUtils.toURI(jarFileUrl).getSchemeSpecificPart());
-            }
-            catch (URISyntaxException ex) {
+            } catch (URISyntaxException ex) {
                 // Fallback for URLs that are not valid URIs (should hardly ever happen).
                 return new JarFile(jarFileUrl.substring(ResourceUtils.FILE_URL_PREFIX.length()));
             }
-        }
-        else {
+        } else {
             return new JarFile(jarFileUrl);
         }
     }
@@ -533,8 +529,9 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Find all resources in the file system that match the given location pattern
      * via the Ant-style PathMatcher.
+     *
      * @param rootDirResource the root directory as Resource
-     * @param subPattern the sub pattern to match (below the root directory)
+     * @param subPattern      the sub pattern to match (below the root directory)
      * @return a mutable Set current matching Resource instances
      * @throws IOException in case current I/O errors
      * @see #retrieveMatchingFiles
@@ -545,10 +542,9 @@ public final class PathMatchingResourcePatternResolver{
         File rootDir;
         try {
             rootDir = rootDirResource.toFile().getAbsoluteFile();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             logger.log(Level.WARNING, ex, () -> "Cannot search for matching files underneath " + rootDirResource +
-                        " because it does not correspond to a directory in the file system");
+                    " because it does not correspond to a directory in the file system");
             return Collections.emptySet();
         }
         return doFindMatchingFileSystemResources(rootDir, subPattern);
@@ -557,7 +553,8 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Find all resources in the file system that match the given location pattern
      * via the Ant-style PathMatcher.
-     * @param rootDir the root directory in the file system
+     *
+     * @param rootDir    the root directory in the file system
      * @param subPattern the sub pattern to match (below the root directory)
      * @return a mutable Set current matching Resource instances
      * @throws IOException in case current I/O errors
@@ -574,9 +571,10 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Retrieve files that match the given path pattern,
      * checking the given directory and its subdirectories.
+     *
      * @param rootDir the directory to start from
      * @param pattern the pattern to match against,
-     * relative to the root directory
+     *                relative to the root directory
      * @return a mutable Set current matching Resource instances
      * @throws IOException if directory contents could not be retrieved
      */
@@ -609,10 +607,11 @@ public final class PathMatchingResourcePatternResolver{
     /**
      * Recursively retrieve files that match the given pattern,
      * adding them to the given result list.
+     *
      * @param fullPattern the pattern to match against,
-     * with prepended root directory path
-     * @param dir the current directory
-     * @param result the Set current matching File instances to add to
+     *                    with prepended root directory path
+     * @param dir         the current directory
+     * @param result      the Set current matching File instances to add to
      * @throws IOException if directory contents could not be retrieved
      */
     protected void doRetrieveMatchingFiles(String fullPattern, File dir, Set<File> result) throws IOException {
@@ -627,10 +626,9 @@ public final class PathMatchingResourcePatternResolver{
             String currPath = StringUtils.replace(content.getAbsolutePath(), File.separator, "/");
             if (content.isDirectory() && getPathMatcher().matchStart(fullPattern, currPath + "/")) {
                 if (!content.canRead()) {
-                   logger.finest(() -> "Skipping subdirectory [" + dir.getAbsolutePath() +
-                                "] because the application is not allowed to read the directory");
-                }
-                else {
+                    logger.finest(() -> "Skipping subdirectory [" + dir.getAbsolutePath() +
+                            "] because the application is not allowed to read the directory");
+                } else {
                     doRetrieveMatchingFiles(fullPattern, content, result);
                 }
             }
@@ -684,19 +682,15 @@ public final class PathMatchingResourcePatternResolver{
                 if (methodName.equals("equals")) {
                     // Only consider equal when proxies are identical.
                     return (proxy == args[0]);
-                }
-                else if (methodName.equals("hashCode")) {
+                } else if (methodName.equals("hashCode")) {
                     return System.identityHashCode(proxy);
                 }
-            }
-            else if ("getAttributes".equals(methodName)) {
+            } else if ("getAttributes".equals(methodName)) {
                 return getAttributes();
-            }
-            else if ("visit".equals(methodName)) {
+            } else if ("visit".equals(methodName)) {
                 visit(args[0]);
                 return null;
-            }
-            else if ("toString".equals(methodName)) {
+            } else if ("toString".equals(methodName)) {
                 return toString();
             }
 

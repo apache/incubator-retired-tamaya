@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,20 +35,23 @@ import java.util.logging.Logger;
  * {@link java.util.ServiceLoader} to load the services required.
  */
 public final class DefaultServiceContext implements ServiceContext {
-    /** List current services loaded, per class. */
-	private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
-    /** Singletons. */
+    /**
+     * List current services loaded, per class.
+     */
+    private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+    /**
+     * Singletons.
+     */
     private final Map<Class, Optional<?>> singletons = new ConcurrentHashMap<>();
 
     @Override
     public <T> Optional<T> getService(Class<T> serviceType) {
-		Optional<T> cached = Optional.class.cast(singletons.get(serviceType));
-        if(cached==null) {
+        Optional<T> cached = Optional.class.cast(singletons.get(serviceType));
+        if (cached == null) {
             List<? extends T> services = getServices(serviceType);
             if (services.isEmpty()) {
                 cached = Optional.empty();
-            }
-            else{
+            } else {
                 cached = Optional.of(services.get(0));
             }
             singletons.put(serviceType, cached);
@@ -60,10 +62,8 @@ public final class DefaultServiceContext implements ServiceContext {
     /**
      * Loads and registers services.
      *
-     * @param serviceType
-     *            The service type.
-     * @param <T>
-     *            the concrete type.
+     * @param serviceType The service type.
+     * @param <T>         the concrete type.
      * @return the items found, never {@code null}.
      */
     @Override
@@ -82,7 +82,7 @@ public final class DefaultServiceContext implements ServiceContext {
             Logger.getLogger(DefaultServiceContext.class.getName()).log(Level.WARNING,
                     "Error loading services current type " + serviceType, e);
         }
-        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>)services));
+        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
         return previousServices != null ? previousServices : services;
     }
 

@@ -33,107 +33,110 @@ import java.util.Objects;
  */
 class PathMatchingDefaultResourceLoader {
 
-    /** Pseudo URL prefix for loading from the class path: "classpath:" */
+    /**
+     * Pseudo URL prefix for loading from the class path: "classpath:"
+     */
     public static final String CLASSPATH_URL_PREFIX = "classpath:";
 
-	private ClassLoader classLoader;
+    private ClassLoader classLoader;
 
 
-	/**
-	 * Create a new DefaultResourceLoader.
-	 * <p>ClassLoader access will happen using the thread context class loader
-	 * at the time current this ResourceLoader's initialization.
-	 * @see java.lang.Thread#getContextClassLoader()
-	 */
-	public PathMatchingDefaultResourceLoader() {
-		this.classLoader = ClassUtils.getDefaultClassLoader();
-	}
+    /**
+     * Create a new DefaultResourceLoader.
+     * <p>ClassLoader access will happen using the thread context class loader
+     * at the time current this ResourceLoader's initialization.
+     *
+     * @see java.lang.Thread#getContextClassLoader()
+     */
+    public PathMatchingDefaultResourceLoader() {
+        this.classLoader = ClassUtils.getDefaultClassLoader();
+    }
 
-	/**
-	 * Create a new DefaultResourceLoader.
-	 * @param classLoader the ClassLoader to load class path resources with, or {@code null}
-	 * for using the thread context class loader at the time current actual resource access
-	 */
-	public PathMatchingDefaultResourceLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
-
-
-	/**
-	 * Specify the ClassLoader to load class path resources with, or {@code null}
-	 * for using the thread context class loader at the time current actual resource access.
-	 * <p>The default is that ClassLoader access will happen using the thread context
-	 * class loader at the time current this ResourceLoader's initialization.
-	 */
-	void setClassLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
-
-	/**
-	 * Return the ClassLoader to load class path resources with.
-	 * <p>Will get passed to ClassPathResource's constructor for all
-	 * ClassPathResource objects created by this resource loader.
-	 * @see ClassPathResource
-	 */
-	public ClassLoader getClassLoader() {
-		return (this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader());
-	}
+    /**
+     * Create a new DefaultResourceLoader.
+     *
+     * @param classLoader the ClassLoader to load class path resources with, or {@code null}
+     *                    for using the thread context class loader at the time current actual resource access
+     */
+    public PathMatchingDefaultResourceLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
 
-	public Resource getResource(String location) {
-		Objects.requireNonNull(location, "Location must not be null");
-		if (location.startsWith("/")) {
-			return getResourceByPath(location);
-		}
-		else if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-			return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
-		}
-		else {
-			try {
-				// Try to parse the location as a URL...
-				URL url = new URL(location);
-				return new UrlResource(url);
-			}
-			catch (MalformedURLException ex) {
-				// No URL -> resolve as resource path.
-				return getResourceByPath(location);
-			}
-		}
-	}
+    /**
+     * Specify the ClassLoader to load class path resources with, or {@code null}
+     * for using the thread context class loader at the time current actual resource access.
+     * <p>The default is that ClassLoader access will happen using the thread context
+     * class loader at the time current this ResourceLoader's initialization.
+     */
+    void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
-	/**
-	 * Return a Resource handle for the resource at the given path.
-	 * <p>The default implementation supports class path locations. This should
-	 * be appropriate for standalone implementations but can be overridden,
-	 * e.g. for implementations targeted at a Servlet container.
-	 * @param path the path to the resource
-	 * @return the corresponding Resource handle
-	 * @see ClassPathResource
-	 */
-	protected Resource getResourceByPath(String path) {
-		return new ClassPathContextResource(path, getClassLoader());
-	}
+    /**
+     * Return the ClassLoader to load class path resources with.
+     * <p>Will get passed to ClassPathResource's constructor for all
+     * ClassPathResource objects created by this resource loader.
+     *
+     * @see ClassPathResource
+     */
+    public ClassLoader getClassLoader() {
+        return (this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader());
+    }
 
 
-	/**
-	 * ClassPathResource that explicitly expresses a context-relative path
-	 * through implementing the ContextResource interface.
-	 */
-	protected static class ClassPathContextResource extends ClassPathResource {
+    public Resource getResource(String location) {
+        Objects.requireNonNull(location, "Location must not be null");
+        if (location.startsWith("/")) {
+            return getResourceByPath(location);
+        } else if (location.startsWith(CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
+        } else {
+            try {
+                // Try to parse the location as a URL...
+                URL url = new URL(location);
+                return new UrlResource(url);
+            } catch (MalformedURLException ex) {
+                // No URL -> resolve as resource path.
+                return getResourceByPath(location);
+            }
+        }
+    }
 
-		public ClassPathContextResource(String path, ClassLoader classLoader) {
-			super(path, classLoader);
-		}
+    /**
+     * Return a Resource handle for the resource at the given path.
+     * <p>The default implementation supports class path locations. This should
+     * be appropriate for standalone implementations but can be overridden,
+     * e.g. for implementations targeted at a Servlet container.
+     *
+     * @param path the path to the resource
+     * @return the corresponding Resource handle
+     * @see ClassPathResource
+     */
+    protected Resource getResourceByPath(String path) {
+        return new ClassPathContextResource(path, getClassLoader());
+    }
 
-		public String getPathWithinContext() {
-			return getPath();
-		}
 
-		@Override
-		public Resource createRelative(String relativePath) {
-			String pathToUse = StringUtils.applyRelativePath(getPath(), relativePath);
-			return new ClassPathContextResource(pathToUse, getClassLoader());
-		}
-	}
+    /**
+     * ClassPathResource that explicitly expresses a context-relative path
+     * through implementing the ContextResource interface.
+     */
+    protected static class ClassPathContextResource extends ClassPathResource {
+
+        public ClassPathContextResource(String path, ClassLoader classLoader) {
+            super(path, classLoader);
+        }
+
+        public String getPathWithinContext() {
+            return getPath();
+        }
+
+        @Override
+        public Resource createRelative(String relativePath) {
+            String pathToUse = StringUtils.applyRelativePath(getPath(), relativePath);
+            return new ClassPathContextResource(pathToUse, getClassLoader());
+        }
+    }
 
 }

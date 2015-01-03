@@ -31,14 +31,14 @@ import java.util.Optional;
 /**
  * Implementation of the Configuration API.
  */
-public class DefaultConfiguration implements Configuration{
+public class DefaultConfiguration implements Configuration {
 
     @Override
     public Optional<String> get(String key) {
         List<PropertySource> propertySources = ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources();
-        for(PropertySource propertySource:propertySources){
+        for (PropertySource propertySource : propertySources) {
             Optional<String> value = propertySource.get(key);
-            if(value.isPresent()){
+            if (value.isPresent()) {
                 return value;
             }
         }
@@ -48,16 +48,15 @@ public class DefaultConfiguration implements Configuration{
     @Override
     public <T> Optional<T> get(String key, Class<T> type) {
         Optional<String> value = get(key);
-        if(value.isPresent()){
+        if (value.isPresent()) {
             List<PropertyConverter<T>> converters = ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyConverters(type);
-            for(PropertyConverter<T> converter:converters){
-                try{
+            for (PropertyConverter<T> converter : converters) {
+                try {
                     T t = converter.convert(value.get());
-                    if(t!=null){
+                    if (t != null) {
                         return Optional.of(t);
                     }
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     // TODO LOG
                 }
             }

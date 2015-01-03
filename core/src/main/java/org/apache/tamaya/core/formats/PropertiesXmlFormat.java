@@ -51,7 +51,7 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
         this.ordinal = ordinal;
     }
 
-    public static PropertiesXmlFormat of(int ordinal){
+    public static PropertiesXmlFormat of(int ordinal) {
         // TODO caching...
         return new PropertiesXmlFormat(ordinal);
     }

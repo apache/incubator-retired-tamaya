@@ -33,14 +33,15 @@ import java.util.Collection;
  * {@link PropertySource} instance.
  */
 @FunctionalInterface
-public interface ConfigurationFormat{
+public interface ConfigurationFormat {
 
     /**
      * Reads a list {@link org.apache.tamaya.spi.PropertySource} instances from a resource, using this format.
      * Hereby the ordinal given is used as a base ordinal
-     * @param resource    the configuration resource, not null
+     *
+     * @param resource the configuration resource, not null
      * @return the corresponding {@link java.util.Map}, never {@code null}.
      */
-    Collection<PropertySource> readConfiguration(Resource resource)throws IOException;
+    Collection<PropertySource> readConfiguration(Resource resource) throws IOException;
 
 }

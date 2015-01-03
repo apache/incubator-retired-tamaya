@@ -35,43 +35,47 @@ import java.util.logging.Logger;
 /**
  * Implementation of a configuration format for -properties files.
  */
-public class PropertiesFormat implements ConfigurationFormat{
+public class PropertiesFormat implements ConfigurationFormat {
 
     private final static Logger LOG = Logger.getLogger(PropertiesFormat.class.getName());
 
-    /** The target ordinal. */
+    /**
+     * The target ordinal.
+     */
     private int ordinal;
 
     /**
      * Creates a new ordinal.
+     *
      * @param ordinal the target ordinal.
      */
-    private PropertiesFormat(int ordinal){
+    private PropertiesFormat(int ordinal) {
         this.ordinal = ordinal;
     }
 
-    public static PropertiesFormat of(int ordinal){
+    public static PropertiesFormat of(int ordinal) {
         // TODO caching...
         return new PropertiesFormat(ordinal);
     }
 
     /**
      * Get the target ordinal, produced by this format.
+     *
      * @return the target ordinal
      */
-    public int getOrdinal(){
+    public int getOrdinal() {
         return ordinal;
     }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Collection<PropertySource> readConfiguration(Resource resource) {
-		if (resource.exists()) {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Collection<PropertySource> readConfiguration(Resource resource) {
+        if (resource.exists()) {
             List<PropertySource> propertySources = new ArrayList<>();
-			try (InputStream is = resource.getInputStream()) {
-				final Properties p = new Properties();
-				p.load(is);
-                propertySources.add(new PropertySource(){
+            try (InputStream is = resource.getInputStream()) {
+                final Properties p = new Properties();
+                p.load(is);
+                propertySources.add(new PropertySource() {
                     @Override
                     public int getOrdinal() {
                         return ordinal;
@@ -92,13 +96,13 @@ public class PropertiesFormat implements ConfigurationFormat{
                         return Map.class.cast(p);
                     }
                 });
-				return propertySources;
-			} catch (Exception e) {
+                return propertySources;
+            } catch (Exception e) {
                 LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + resource);
-			}
-		}
-		return Collections.emptyList();
-	}
+            }
+        }
+        return Collections.emptyList();
+    }
 
     @Override
     public String toString() {

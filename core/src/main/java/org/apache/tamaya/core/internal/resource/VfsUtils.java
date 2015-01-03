@@ -18,17 +18,21 @@ package org.apache.tamaya.core.internal.resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URL;
 
 /**
  * Utility for detecting and accessing JBoss VFS in the classpath.
- *
+ * <p>
  * <p>As current Spring 4.0, this class supports VFS 3.x on JBoss AS 6+ (package
  * {@code org.jboss.vfs}) and is in particular compatible with JBoss AS 7 and
  * WildFly 8.
- *
+ * <p>
  * <p>Thanks go to Marius Bogoevici for the initial patch.
  * <b>Note:</b> This is an internal class and should not be used outside the framework.
  *
@@ -38,172 +42,165 @@ import java.net.URL;
  */
 class VfsUtils {
 
-	private static final String VFS3_PKG = "org.jboss.vfs.";
-	private static final String VFS_NAME = "VFS";
+    private static final String VFS3_PACKAGE = "org.jboss.vfs.";
+    private static final String VFS_NAME = "VFS";
 
-	private static Method VFS_METHOD_GET_ROOT_URL = null;
-	private static Method VFS_METHOD_GET_ROOT_URI = null;
+    private static Method vfsMethodGetRootUrl = null;
+    private static Method vfsMethodGetRootUri = null;
 
-	private static Method VIRTUAL_FILE_METHOD_EXISTS = null;
-	private static Method VIRTUAL_FILE_METHOD_GET_INPUT_STREAM;
-	private static Method VIRTUAL_FILE_METHOD_GET_SIZE;
-	private static Method VIRTUAL_FILE_METHOD_GET_LAST_MODIFIED;
-	private static Method VIRTUAL_FILE_METHOD_TO_URL;
-	private static Method VIRTUAL_FILE_METHOD_TO_URI;
-	private static Method VIRTUAL_FILE_METHOD_GET_NAME;
-	private static Method VIRTUAL_FILE_METHOD_GET_PATH_NAME;
-	private static Method VIRTUAL_FILE_METHOD_GET_CHILD;
+    private static Method virtualFileMethodExists = null;
+    private static Method virtualFileMethodGetInputStream;
+    private static Method virtualFileMethodGetSize;
+    private static Method virtualFileMethodGetLastModified;
+    private static Method virtualFileMethodToUrl;
+    private static Method virtualFileMethodToUri;
+    private static Method virtualFileMethodGetName;
+    private static Method virtualFileMethodGetPathName;
+    private static Method virtualFileMethodGetChild;
 
-	protected static Class<?> VIRTUAL_FILE_VISITOR_INTERFACE;
-	protected static Method VIRTUAL_FILE_METHOD_VISIT;
+    protected static Class<?> virtualFileVisitorInterface;
+    protected static Method virtualFileMethodVisit;
 
-	private static Field VISITOR_ATTRIBUTES_FIELD_RECURSE = null;
-	private static Method GET_PHYSICAL_FILE = null;
+    private static Field visitorAttributesFieldRecurse = null;
+    private static Method getPhysicalFile = null;
 
-	static {
-		ClassLoader loader = VfsUtils.class.getClassLoader();
-		try {
-			Class<?> vfsClass = loader.loadClass(VFS3_PKG + VFS_NAME);
-			VFS_METHOD_GET_ROOT_URL = ReflectionUtils.findMethod(vfsClass, "getChild", URL.class);
-			VFS_METHOD_GET_ROOT_URI = ReflectionUtils.findMethod(vfsClass, "getChild", URI.class);
+    static {
+        ClassLoader loader = VfsUtils.class.getClassLoader();
+        try {
+            Class<?> vfsClass = loader.loadClass(VFS3_PACKAGE + VFS_NAME);
+            vfsMethodGetRootUrl = ReflectionUtils.findMethod(vfsClass, "getChild", URL.class);
+            vfsMethodGetRootUri = ReflectionUtils.findMethod(vfsClass, "getChild", URI.class);
 
-			Class<?> virtualFile = loader.loadClass(VFS3_PKG + "VirtualFile");
-			VIRTUAL_FILE_METHOD_EXISTS = ReflectionUtils.findMethod(virtualFile, "exists");
-			VIRTUAL_FILE_METHOD_GET_INPUT_STREAM = ReflectionUtils.findMethod(virtualFile, "openStream");
-			VIRTUAL_FILE_METHOD_GET_SIZE = ReflectionUtils.findMethod(virtualFile, "getSize");
-			VIRTUAL_FILE_METHOD_GET_LAST_MODIFIED = ReflectionUtils.findMethod(virtualFile, "getLastModified");
-			VIRTUAL_FILE_METHOD_TO_URI = ReflectionUtils.findMethod(virtualFile, "toURI");
-			VIRTUAL_FILE_METHOD_TO_URL = ReflectionUtils.findMethod(virtualFile, "toURL");
-			VIRTUAL_FILE_METHOD_GET_NAME = ReflectionUtils.findMethod(virtualFile, "getName");
-			VIRTUAL_FILE_METHOD_GET_PATH_NAME = ReflectionUtils.findMethod(virtualFile, "getPathName");
-			GET_PHYSICAL_FILE = ReflectionUtils.findMethod(virtualFile, "getPhysicalFile");
-			VIRTUAL_FILE_METHOD_GET_CHILD = ReflectionUtils.findMethod(virtualFile, "getChild", String.class);
+            Class<?> virtualFile = loader.loadClass(VFS3_PACKAGE + "VirtualFile");
+            virtualFileMethodExists = ReflectionUtils.findMethod(virtualFile, "exists");
+            virtualFileMethodGetInputStream = ReflectionUtils.findMethod(virtualFile, "openStream");
+            virtualFileMethodGetSize = ReflectionUtils.findMethod(virtualFile, "getSize");
+            virtualFileMethodGetLastModified = ReflectionUtils.findMethod(virtualFile, "getLastModified");
+            virtualFileMethodToUri = ReflectionUtils.findMethod(virtualFile, "toURI");
+            virtualFileMethodToUrl = ReflectionUtils.findMethod(virtualFile, "toURL");
+            virtualFileMethodGetName = ReflectionUtils.findMethod(virtualFile, "getName");
+            virtualFileMethodGetPathName = ReflectionUtils.findMethod(virtualFile, "getPathName");
+            getPhysicalFile = ReflectionUtils.findMethod(virtualFile, "getPhysicalFile");
+            virtualFileMethodGetChild = ReflectionUtils.findMethod(virtualFile, "getChild", String.class);
 
-			VIRTUAL_FILE_VISITOR_INTERFACE = loader.loadClass(VFS3_PKG + "VirtualFileVisitor");
-			VIRTUAL_FILE_METHOD_VISIT = ReflectionUtils.findMethod(virtualFile, "visit", VIRTUAL_FILE_VISITOR_INTERFACE);
+            virtualFileVisitorInterface = loader.loadClass(VFS3_PACKAGE + "VirtualFileVisitor");
+            virtualFileMethodVisit = ReflectionUtils.findMethod(virtualFile, "visit", virtualFileVisitorInterface);
 
-			Class<?> visitorAttributesClass = loader.loadClass(VFS3_PKG + "VisitorAttributes");
-			VISITOR_ATTRIBUTES_FIELD_RECURSE = ReflectionUtils.findField(visitorAttributesClass, "RECURSE");
-		}
-		catch (ClassNotFoundException ex) {
-			throw new IllegalStateException("Could not detect JBoss VFS infrastructure", ex);
-		}
-	}
+            Class<?> visitorAttributesClass = loader.loadClass(VFS3_PACKAGE + "VisitorAttributes");
+            visitorAttributesFieldRecurse = ReflectionUtils.findField(visitorAttributesClass, "RECURSE");
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalStateException("Could not detect JBoss VFS infrastructure", ex);
+        }
+    }
 
-    private VfsUtils(){}
+    private VfsUtils() {
+    }
 
     static void visit(Object resource, InvocationHandler visitor) throws IOException {
         Object visitorProxy = Proxy.newProxyInstance(
-                VIRTUAL_FILE_VISITOR_INTERFACE.getClassLoader(),
-                new Class<?>[]{VIRTUAL_FILE_VISITOR_INTERFACE}, visitor);
-        invokeVfsMethod(VIRTUAL_FILE_METHOD_VISIT, resource, visitorProxy);
+                virtualFileVisitorInterface.getClassLoader(),
+                new Class<?>[]{virtualFileVisitorInterface}, visitor);
+        invokeVfsMethod(virtualFileMethodVisit, resource, visitorProxy);
     }
 
-	protected static Object invokeVfsMethod(Method method, Object target, Object... args) throws IOException {
-		try {
-			return method.invoke(target, args);
-		}
-		catch (InvocationTargetException ex) {
-			Throwable targetEx = ex.getTargetException();
-			if (targetEx instanceof IOException) {
-				throw (IOException) targetEx;
-			}
-			ReflectionUtils.handleInvocationTargetException(ex);
-		}
-		catch (Exception ex) {
-			ReflectionUtils.handleReflectionException(ex);
-		}
-
-		throw new IllegalStateException("Invalid code path reached");
-	}
-
-	static boolean exists(Object vfsResource) {
-		try {
-			return (Boolean) invokeVfsMethod(VIRTUAL_FILE_METHOD_EXISTS, vfsResource);
-		}
-		catch (IOException ex) {
-			return false;
-		}
-	}
-
-	static boolean isReadable(Object vfsResource) {
-		try {
-			return ((Long) invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_SIZE, vfsResource) > 0);
-		}
-		catch (IOException ex) {
-			return false;
-		}
-	}
-
-	static long getSize(Object vfsResource) throws IOException {
-		return (Long) invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_SIZE, vfsResource);
-	}
-
-	static long getLastModified(Object vfsResource) throws IOException {
-		return (Long) invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_LAST_MODIFIED, vfsResource);
-	}
-
-	static InputStream getInputStream(Object vfsResource) throws IOException {
-		return (InputStream) invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_INPUT_STREAM, vfsResource);
-	}
-
-	static URL getURL(Object vfsResource) throws IOException {
-		return (URL) invokeVfsMethod(VIRTUAL_FILE_METHOD_TO_URL, vfsResource);
-	}
-
-	static URI getURI(Object vfsResource) throws IOException {
-		return (URI) invokeVfsMethod(VIRTUAL_FILE_METHOD_TO_URI, vfsResource);
-	}
-
-	static String getName(Object vfsResource) {
-		try {
-			return (String) invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_NAME, vfsResource);
-		}
-		catch (IOException ex) {
-			throw new IllegalStateException("Cannot get resource name", ex);
-		}
-	}
-
-	static Object getRelative(URL url) throws IOException {
-		return invokeVfsMethod(VFS_METHOD_GET_ROOT_URL, null, url);
-	}
-
-	static Object getChild(Object vfsResource, String path) throws IOException {
-		return invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_CHILD, vfsResource, path);
-	}
-
-	static File getFile(Object vfsResource) throws IOException {
-		return (File) invokeVfsMethod(GET_PHYSICAL_FILE, vfsResource);
-	}
-
-	static Object getRoot(URI url) throws IOException {
-		return invokeVfsMethod(VFS_METHOD_GET_ROOT_URI, null, url);
-	}
-
-	// protected methods used by the support sub-package
-
-	protected static Object getRoot(URL url) throws IOException {
-		return invokeVfsMethod(VFS_METHOD_GET_ROOT_URL, null, url);
-	}
-
-	protected static Object getVisitorAttribute() {
-		try{
-            return VISITOR_ATTRIBUTES_FIELD_RECURSE.get(null);
+    protected static Object invokeVfsMethod(Method method, Object target, Object... args) throws IOException {
+        try {
+            return method.invoke(target, args);
+        } catch (InvocationTargetException ex) {
+            Throwable targetEx = ex.getTargetException();
+            if (targetEx instanceof IOException) {
+                throw (IOException) targetEx;
+            }
+            ReflectionUtils.handleInvocationTargetException(ex);
+        } catch (Exception ex) {
+            ReflectionUtils.handleReflectionException(ex);
         }
-        catch(Exception e){
+
+        throw new IllegalStateException("Invalid code path reached");
+    }
+
+    static boolean exists(Object vfsResource) {
+        try {
+            return (Boolean) invokeVfsMethod(virtualFileMethodExists, vfsResource);
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    static boolean isReadable(Object vfsResource) {
+        try {
+            return ((Long) invokeVfsMethod(virtualFileMethodGetSize, vfsResource) > 0);
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    static long getSize(Object vfsResource) throws IOException {
+        return (Long) invokeVfsMethod(virtualFileMethodGetSize, vfsResource);
+    }
+
+    static long getLastModified(Object vfsResource) throws IOException {
+        return (Long) invokeVfsMethod(virtualFileMethodGetLastModified, vfsResource);
+    }
+
+    static InputStream getInputStream(Object vfsResource) throws IOException {
+        return (InputStream) invokeVfsMethod(virtualFileMethodGetInputStream, vfsResource);
+    }
+
+    static URL getURL(Object vfsResource) throws IOException {
+        return (URL) invokeVfsMethod(virtualFileMethodToUrl, vfsResource);
+    }
+
+    static URI getURI(Object vfsResource) throws IOException {
+        return (URI) invokeVfsMethod(virtualFileMethodToUri, vfsResource);
+    }
+
+    static String getName(Object vfsResource) {
+        try {
+            return (String) invokeVfsMethod(virtualFileMethodGetName, vfsResource);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Cannot get resource name", ex);
+        }
+    }
+
+    static Object getRelative(URL url) throws IOException {
+        return invokeVfsMethod(vfsMethodGetRootUrl, null, url);
+    }
+
+    static Object getChild(Object vfsResource, String path) throws IOException {
+        return invokeVfsMethod(virtualFileMethodGetChild, vfsResource, path);
+    }
+
+    static File getFile(Object vfsResource) throws IOException {
+        return (File) invokeVfsMethod(getPhysicalFile, vfsResource);
+    }
+
+    static Object getRoot(URI url) throws IOException {
+        return invokeVfsMethod(vfsMethodGetRootUri, null, url);
+    }
+
+    // protected methods used by the support sub-package
+
+    protected static Object getRoot(URL url) throws IOException {
+        return invokeVfsMethod(vfsMethodGetRootUrl, null, url);
+    }
+
+    protected static Object getVisitorAttribute() {
+        try {
+            return visitorAttributesFieldRecurse.get(null);
+        } catch (Exception e) {
             ReflectionUtils.handleReflectionException(e);
             return null; // never called
         }
-	}
+    }
 
-	protected static String getPath(Object resource) {
-		try{
-            return (String) VIRTUAL_FILE_METHOD_GET_PATH_NAME.invoke(resource);
-        }
-        catch(Exception e){
+    protected static String getPath(Object resource) {
+        try {
+            return (String) virtualFileMethodGetPathName.invoke(resource);
+        } catch (Exception e) {
             ReflectionUtils.handleReflectionException(e);
             return null; // never called
         }
-	}
+    }
 
 }

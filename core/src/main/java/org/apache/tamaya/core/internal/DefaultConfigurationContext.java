@@ -33,12 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
-import java.util.stream.Stream;
 
 /**
  * Default Implementation of a simple ConfigurationContext.
  */
-public class DefaultConfigurationContext implements ConfigurationContext{
+public class DefaultConfigurationContext implements ConfigurationContext {
 
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
@@ -53,59 +52,55 @@ public class DefaultConfigurationContext implements ConfigurationContext{
     @Override
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
         Lock writeLock = propertySourceLock.asWriteLock();
-        try{
+        try {
             writeLock.lock();
             List<PropertySource> newPropertySources = new ArrayList<>(this.propertySources);
             newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
             Collections.sort(newPropertySources, this::comparePropertySources);
             this.propertySources = newPropertySources;
-        }
-        finally{
+        } finally {
             writeLock.unlock();
         }
     }
 
     /**
      * Order property source reversely, the most important come first.
+     *
      * @param source1
      * @param source2
      * @return
      */
-    private int comparePropertySources(PropertySource source1, PropertySource source2){
-        if(source1.getOrdinal() < source2.getOrdinal()){
+    private int comparePropertySources(PropertySource source1, PropertySource source2) {
+        if (source1.getOrdinal() < source2.getOrdinal()) {
             return 1;
-        }
-        else if(source1.getOrdinal()>source2.getOrdinal()){
+        } else if (source1.getOrdinal() > source2.getOrdinal()) {
             return -1;
-        }
-        else{
+        } else {
             return source2.getClass().getName().compareTo(source1.getClass().getName());
         }
     }
 
-    private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2){
+    private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
         Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
         Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
-        int ord1 = prio1!=null?prio1.value():0;
-        int ord2 = prio2!=null?prio2.value():0;
-        if(ord1 < ord2){
+        int ord1 = prio1 != null ? prio1.value() : 0;
+        int ord2 = prio2 != null ? prio2.value() : 0;
+        if (ord1 < ord2) {
             return -1;
-        }
-        else if(ord1>ord2){
+        } else if (ord1 > ord2) {
             return 1;
-        }
-        else{
+        } else {
             return filter1.getClass().getName().compareTo(filter2.getClass().getName());
         }
     }
 
     @Override
     public List<PropertySource> getPropertySources() {
-        if(!loaded){
+        if (!loaded) {
             Lock writeLock = propertySourceLock.asWriteLock();
-            try{
+            try {
                 writeLock.lock();
-                if(!loaded) {
+                if (!loaded) {
                     this.propertySources.addAll(ServiceContext.getInstance().getServices(PropertySource.class));
                     this.propertySourceProviders.addAll(ServiceContext.getInstance().getServices(PropertySourceProvider.class));
                     for (PropertySourceProvider prov : this.propertySourceProviders) {
@@ -120,17 +115,15 @@ public class DefaultConfigurationContext implements ConfigurationContext{
                     Collections.sort(this.propertyFilters, this::comparePropertyFilters);
                     loaded = true;
                 }
-            }
-            finally{
+            } finally {
                 writeLock.unlock();
             }
         }
         Lock readLock = propertySourceLock.asReadLock();
-        try{
+        try {
             readLock.lock();
             return Collections.unmodifiableList(propertySources);
-        }
-        finally{
+        } finally {
             readLock.unlock();
         }
     }

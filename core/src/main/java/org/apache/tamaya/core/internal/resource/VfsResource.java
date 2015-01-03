@@ -26,7 +26,7 @@ import java.util.Objects;
 
 /**
  * JBoss VFS based {@link Resource} implementation.
- *
+ * <p>
  * <p>As current Spring 4.0, this class supports VFS 3.x on JBoss AS 6+ (package
  * {@code org.jboss.vfs}) and is in particular compatible with JBoss AS 7 and
  * WildFly 8.
@@ -38,97 +38,94 @@ import java.util.Objects;
  */
 public class VfsResource implements Resource {
 
-	private final Object resource;
+    private final Object resource;
 
 
-	public VfsResource(Object resource) {
-		Objects.requireNonNull(resource, "VirtualFile must not be null");
-		this.resource = resource;
-	}
+    public VfsResource(Object resource) {
+        Objects.requireNonNull(resource, "VirtualFile must not be null");
+        this.resource = resource;
+    }
 
 
-	@Override
-	public InputStream getInputStream()throws IOException {
+    @Override
+    public InputStream getInputStream() throws IOException {
         return VfsUtils.getInputStream(this.resource);
     }
 
-	@Override
-	public boolean exists() {
-		return VfsUtils.exists(this.resource);
-	}
+    @Override
+    public boolean exists() {
+        return VfsUtils.exists(this.resource);
+    }
 
-	@Override
-	public boolean isReadable() {
-		return VfsUtils.isReadable(this.resource);
-	}
+    @Override
+    public boolean isReadable() {
+        return VfsUtils.isReadable(this.resource);
+    }
 
-	@Override
-	public URL toURL() throws IOException {
-		try {
-			return VfsUtils.getURL(this.resource);
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("Failed to obtain URL for file " + this.resource, ex);
-		}
-	}
+    @Override
+    public URL toURL() throws IOException {
+        try {
+            return VfsUtils.getURL(this.resource);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to obtain URL for file " + this.resource, ex);
+        }
+    }
 
-	@Override
-	public URI getURI() throws IOException {
-		try {
-			return VfsUtils.getURI(this.resource);
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("Failed to obtain URI for " + this.resource, ex);
-		}
-	}
+    @Override
+    public URI getURI() throws IOException {
+        try {
+            return VfsUtils.getURI(this.resource);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to obtain URI for " + this.resource, ex);
+        }
+    }
 
-	@Override
-	public File toFile() throws IOException {
-		return VfsUtils.getFile(this.resource);
-	}
+    @Override
+    public File toFile() throws IOException {
+        return VfsUtils.getFile(this.resource);
+    }
 
-	@Override
-	public long contentLength() throws IOException {
-		return VfsUtils.getSize(this.resource);
-	}
+    @Override
+    public long contentLength() throws IOException {
+        return VfsUtils.getSize(this.resource);
+    }
 
-	@Override
-	public long lastModified() throws IOException {
-		return VfsUtils.getLastModified(this.resource);
-	}
+    @Override
+    public long lastModified() throws IOException {
+        return VfsUtils.getLastModified(this.resource);
+    }
 
-	@Override
-	public Resource createRelative(String relativePath) throws IOException {
-		if (!relativePath.startsWith(".") && relativePath.contains("/")) {
-			try {
-				return new VfsResource(VfsUtils.getChild(this.resource, relativePath));
-			}
-			catch (IOException ex) {
-				// fall back to getRelative
-			}
-		}
+    @Override
+    public Resource createRelative(String relativePath) throws IOException {
+        if (!relativePath.startsWith(".") && relativePath.contains("/")) {
+            try {
+                return new VfsResource(VfsUtils.getChild(this.resource, relativePath));
+            } catch (IOException ex) {
+                // fall back to getRelative
+            }
+        }
 
-		return new VfsResource(VfsUtils.getRelative(new URL(toURL(), relativePath)));
-	}
+        return new VfsResource(VfsUtils.getRelative(new URL(toURL(), relativePath)));
+    }
 
-	@Override
-	public String getDisplayName() {
-		return VfsUtils.getName(this.resource);
-	}
+    @Override
+    public String getDisplayName() {
+        return VfsUtils.getName(this.resource);
+    }
 
-	@Override
-	public String toString() {
-		return this.resource.toString();
-	}
+    @Override
+    public String toString() {
+        return this.resource.toString();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return (obj == this || (obj instanceof VfsResource && this.resource.equals(((VfsResource) obj).resource)));
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return (obj == this || (obj instanceof VfsResource && this.resource.equals(((VfsResource) obj).resource)));
+    }
 
-	@Override
-	public int hashCode() {
-		return this.resource.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return this.resource.hashCode();
+    }
 
 }

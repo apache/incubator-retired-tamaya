@@ -21,7 +21,6 @@ package org.apache.tamaya.spi;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.UnaryOperator;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.

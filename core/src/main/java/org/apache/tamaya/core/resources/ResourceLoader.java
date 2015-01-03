@@ -31,7 +31,7 @@ import java.util.List;
  * interprets this expression and evaluates the concrete resources to be read,
  * e.g. {@code cfg/global/default.xml, cfg/global/myApp.xml}.
  */
-public interface ResourceLoader{
+public interface ResourceLoader {
 
     /**
      * Called, when a given expression has to be resolved.
@@ -56,7 +56,7 @@ public interface ResourceLoader{
      */
     default List<Resource> getResources(Collection<String> expressions) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if(cl==null){
+        if (cl == null) {
             cl = getClass().getClassLoader();
         }
         return getResources(cl, expressions);
