@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,36 +27,23 @@ import java.util.Optional;
  */
 public class TestConfiguration implements Configuration{
 
+    private static final Map<String, String> VALUES;
+    static {
+        VALUES = new HashMap<String, String>();
+        VALUES.put("long", String.valueOf(Long.MAX_VALUE));
+        VALUES.put("int", String.valueOf(Integer.MAX_VALUE));
+        VALUES.put("double", String.valueOf(Double.MAX_VALUE));
+        VALUES.put("float", String.valueOf(Float.MAX_VALUE));
+        VALUES.put("short", String.valueOf(Short.MAX_VALUE));
+        VALUES.put("byte", String.valueOf(Byte.MAX_VALUE));
+        VALUES.put("booleanTrue", "true");
+        VALUES.put("booleanFalse", "false");
+        VALUES.put("String", "aStringValue");
+    }
+
     @Override
     public Optional<String> get(String key) {
-        if("long".equals(key)){
-            return Optional.ofNullable(String.valueOf(Long.MAX_VALUE));
-        }
-        else if("int".equals(key)){
-            return Optional.ofNullable(String.valueOf(Integer.MAX_VALUE));
-        }
-        else if("double".equals(key)){
-            return Optional.ofNullable(String.valueOf(Double.MAX_VALUE));
-        }
-        else if("float".equals(key)){
-            return Optional.ofNullable(String.valueOf(Float.MAX_VALUE));
-        }
-        else if("short".equals(key)){
-            return Optional.ofNullable(String.valueOf(Short.MAX_VALUE));
-        }
-        else if("byte".equals(key)){
-            return Optional.ofNullable(String.valueOf(Byte.MAX_VALUE));
-        }
-        else if("booleanTrue".equals(key)){
-            return Optional.ofNullable("true");
-        }
-        else if("booleanFalse".equals(key)){
-            return Optional.ofNullable("false");
-        }
-        else if("String".equals(key)){
-            return Optional.ofNullable("aStringValue");
-        }
-        return Optional.ofNullable("noValue");
+        return Optional.ofNullable(VALUES.get(key));
     }
 
     @Override
@@ -91,4 +80,8 @@ public class TestConfiguration implements Configuration{
         throw new ConfigException("No such property: " + key);
     }
 
+    @Override
+    public Map<String, String> getProperties() {
+        return null;
+    }
 }
