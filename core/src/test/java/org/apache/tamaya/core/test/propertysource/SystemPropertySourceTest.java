@@ -27,7 +27,6 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 
 public class SystemPropertySourceTest {
 

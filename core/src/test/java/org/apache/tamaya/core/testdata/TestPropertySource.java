@@ -21,9 +21,7 @@ package org.apache.tamaya.core.testdata;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.propertysource.BasePropertySource;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test provider reading properties from classpath:cfg/final/**.properties.
