@@ -21,7 +21,7 @@ package org.apache.tamaya;
 import java.util.Optional;
 
 /**
- * Test Configuration class, that is used to test the default methods provided by the API.
+ * Test Configuration class, that is used to testdata the default methods provided by the API.
  */
 public class TestConfiguration implements Configuration{
 

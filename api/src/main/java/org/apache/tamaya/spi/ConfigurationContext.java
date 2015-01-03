@@ -40,11 +40,11 @@ public interface ConfigurationContext {
 
     /**
      * This method returns the current list of registered PropertySources ordered via their ordinal.
-     * PropertySources with a lower ordinal come first. The PropertySource with the
-     * highest ordinal comes last.
+     * PropertySources with a lower ordinal come last. The PropertySource with the
+     * highest ordinal comes first.
      * If two PropertySources have the same ordinal number they will get sorted
      * using their class name just to ensure the user at least gets the same ordering
-     * after a JVM restart.
+     * after a JVM restart, hereby names before are added last.
      * PropertySources are loaded when this method is called the first time, which basically is
      * when the first time configuration is accessed.
      *
