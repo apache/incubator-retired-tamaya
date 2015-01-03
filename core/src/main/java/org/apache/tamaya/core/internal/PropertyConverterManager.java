@@ -36,16 +36,21 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
+import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertyConverter;
 
 /**
  * Manager that deals with {@link org.apache.tamaya.spi.PropertyConverter} instances.
+ * This class is thread-safe.
  */
 public class PropertyConverterManager {
-
+    /** The logger used. */
+    private static final Logger LOG = Logger.getLogger(PropertyConverterManager.class.getName());
+    /** The registered converters. */
     private Map<Class<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
+    /** The lock used. */
     private StampedLock lock = new StampedLock();
 
     /**
@@ -210,7 +215,7 @@ public class PropertyConverterManager {
                     }
                 };
             } catch (Exception e) {
-                //X ignore, TODO log finest
+                LOG.finest(() -> "Failed to construct instance of type: " + targetType.getName()+": " + e);
             }
         }
         return converter;
@@ -230,7 +235,7 @@ public class PropertyConverterManager {
                 m = type.getDeclaredMethod(name, String.class);
                 return m;
             } catch (Exception e) {
-                //X ignore, TODO log finest
+                LOG.finest(() -> "No such factory method found on type: " + type.getName()+", methodName: " + name);
             }
         }
         return null;

@@ -32,23 +32,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of a PropertySourceProvider that reads configuration from some given resource paths
- * and using the goven formats.
+ * Implementation of a {@link PropertySourceProvider} that reads configuration from some given resource paths
+ * and using the given formats.
  */
 public class PathBasedPropertySourceProvider implements PropertySourceProvider {
-
+    /** The lohgger. */
     private static final Logger LOG = Logger.getLogger(PathBasedPropertySourceProvider.class.getName());
 
     private String baseName;
+    /** The config formats tried. */
     private List<ConfigurationFormat> configFormats = new ArrayList<>();
+    /** The paths tpo be evaluated. */
     private List<String> paths = new ArrayList<>();
 
+    /**
+     * Creates a new instance.
+     * @param baseName the base name of the configuration, used for creating PropertySource child names.
+     * @param formats the formats to be used, not null, not empty.
+     * @param paths the paths to be resolved, not null, not empty.
+     */
     public PathBasedPropertySourceProvider(String baseName, List<ConfigurationFormat> formats, String... paths) {
         this.baseName = Objects.requireNonNull(baseName);
         this.configFormats.addAll(Objects.requireNonNull(formats));
         this.paths.addAll(Arrays.asList(Objects.requireNonNull(paths)));
     }
 
+    /**
+     * Creates a new instance.
+     * @param baseName the base name of the configuration, used for creating PropertySource child names.
+     * @param format the format to be used.
+     * @param paths the paths to be resolved, not null, not empty.
+     */
     public PathBasedPropertySourceProvider(String baseName, ConfigurationFormat format, String... paths) {
         this.baseName = Objects.requireNonNull(baseName);
         this.configFormats.add(Objects.requireNonNull(format));

@@ -33,10 +33,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of a configuration format for -properties files.
+ * Implementation of a {@link org.apache.tamaya.core.formats.ConfigurationFormat} for -properties files.
+ *
+ * @see java.util.Properties#load(java.io.InputStream)
  */
 public class PropertiesFormat implements ConfigurationFormat {
-
+    /**
+     * The logger.
+     */
     private final static Logger LOG = Logger.getLogger(PropertiesFormat.class.getName());
 
     /**

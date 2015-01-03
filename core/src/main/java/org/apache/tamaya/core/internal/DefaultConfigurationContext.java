@@ -33,20 +33,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Default Implementation of a simple ConfigurationContext.
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
-
+    /** The logger. */
+    private static final Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
+    /**
+     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
+     */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
-
+    /**
+     * The current list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+     */
     private List<PropertySource> propertySources = new ArrayList<>();
+    /**
+     * The current list of loaded {@link org.apache.tamaya.spi.PropertySourceProvider} instances.
+     */
     private List<PropertySourceProvider> propertySourceProviders = new ArrayList<>();
+    /**
+     * The current list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
+     */
     private List<PropertyFilter> propertyFilters = new ArrayList<>();
-    private boolean loaded = false;
-
+    /**
+     * Lock for internal synchronization.
+     */
     private StampedLock propertySourceLock = new StampedLock();
+    /**
+     * Loaded flag.
+     * TODO replace flag with check on sources load size.
+     */
+    private boolean loaded = false;
 
 
     @Override
@@ -66,9 +86,9 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /**
      * Order property source reversely, the most important come first.
      *
-     * @param source1
-     * @param source2
-     * @return
+     * @param source1 the first PropertySource
+     * @param source2 the second PropertySource
+     * @return the comparison result.
      */
     private int comparePropertySources(PropertySource source1, PropertySource source2) {
         if (source1.getOrdinal() < source2.getOrdinal()) {
@@ -80,6 +100,13 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         }
     }
 
+    /**
+     * Compare 2 filters for ordering the filter chain.
+     *
+     * @param filter1 the first filter
+     * @param filter2 the second filter
+     * @return the comparison result
+     */
     private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
         Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
         Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
@@ -107,13 +134,12 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                         try {
                             this.propertySources.addAll(prov.getPropertySources());
                         } catch (Exception e) {
-                            //X TODO Log!
+                            LOG.log(Level.SEVERE, "Failed to load PropertySources from Provider: " + prov, e);
                         }
                     }
                     Collections.sort(this.propertySources, this::comparePropertySources);
                     this.propertyFilters.addAll(ServiceContext.getInstance().getServices(PropertyFilter.class));
                     Collections.sort(this.propertyFilters, this::comparePropertyFilters);
-                    loaded = true;
                 }
             } finally {
                 writeLock.unlock();

@@ -32,9 +32,16 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * Implementation of a {@link org.apache.tamaya.core.formats.ConfigurationFormat} for xml property
+ * files.
+ *
+ * @see java.util.Properties#loadFromXML(java.io.InputStream)
+ */
 public class PropertiesXmlFormat implements ConfigurationFormat {
-
+    /**
+     * The logger.
+     */
     private final static Logger LOG = Logger.getLogger(PropertiesXmlFormat.class.getName());
 
     /**

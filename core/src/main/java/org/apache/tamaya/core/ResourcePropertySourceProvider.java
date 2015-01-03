@@ -30,6 +30,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+/**
+ * Implementation of a {@link org.apache.tamaya.spi.PropertySourceProvider} that is based on a single resource
+ * and a number of formats.
+ */
 public class ResourcePropertySourceProvider implements PropertySourceProvider {
 
     private static final Logger LOG = Logger.getLogger(ResourcePropertySourceProvider.class.getName());
