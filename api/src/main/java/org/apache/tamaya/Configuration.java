@@ -52,6 +52,13 @@ public interface Configuration {
      */
     Optional<String> get(String key);
 
+    /**
+     * Access all current known Configuration properties as a full {@code Map<String,String>}.
+     * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
+     * instances may not be contained in the result, but nevertheless be accessible calling one of the
+     * {@code get(...)} methods.
+     */
+    Map<String,String> getProperties();
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link

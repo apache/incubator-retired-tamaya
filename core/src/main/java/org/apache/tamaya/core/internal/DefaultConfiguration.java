@@ -25,14 +25,34 @@ import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContext;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Implementation of the Configuration API.
+ * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
+ * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
+ * instance to evaluate the current Configuration.
  */
 public class DefaultConfiguration implements Configuration {
 
+    private static final Logger LOG = Logger.getLogger(DefaultConfiguration.class.getName());
+
+    /**
+     * This method evaluates the given configuration key. Hereby if goes down the chain or PropertySource instances
+     * provided by the current {@link org.apache.tamaya.spi.ConfigurationContext}. The first non-null-value returned
+     * is taken as an intermediate value. Finally the value is filtered through the
+     * {@link org.apache.tamaya.spi.PropertyFilter} instances installed, before it is returned as the final result of
+     * this method.
+     *
+     * @param key the property's key, not null.
+     * @return the optional configuration value, never null.
+     */
     @Override
     public Optional<String> get(String key) {
         List<PropertySource> propertySources = ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources();
@@ -46,6 +66,38 @@ public class DefaultConfiguration implements Configuration {
     }
 
     @Override
+    public Map<String, String> getProperties() {
+        List<PropertySource> propertySources = new ArrayList<>(
+                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources());
+        Collections.reverse(propertySources);
+        Map<String, String> result = new HashMap<>();
+        for (PropertySource propertySource : propertySources) {
+            try {
+                int origSize = result.size();
+                Map<String, String> otherMap = propertySource.getProperties();
+                LOG.log(Level.FINEST, null, () -> "Overriding with properties from " + propertySource.getName());
+                result.putAll(otherMap);
+                LOG.log(Level.FINEST, null, () -> "Handled properties from " + propertySource.getName() + "(new: " +
+                        (result.size() - origSize) + ", overrides: " + origSize + ", total: " + result.size());
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Error adding properties from PropertySource: " + propertySource +", ignoring PropertySource.", e);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Accesses the current String value for the given key (see {@link #get(String)}) and tries to convert it
+     * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext}.
+     *
+     * @param key  the property's absolute, or relative path, e.g. @code
+     *             a/b/c/d.myProperty}.
+     * @param type The target type required, not null.
+     * @param <T> the value type
+     * @return the converted value, never null.
+     */
+    @Override
     public <T> Optional<T> get(String key, Class<T> type) {
         Optional<String> value = get(key);
         if (value.isPresent()) {
@@ -57,7 +109,8 @@ public class DefaultConfiguration implements Configuration {
                         return Optional.of(t);
                     }
                 } catch (Exception e) {
-                    // TODO LOG
+                    LOG.log(Level.FINEST, e, () -> "PropertyConverter: " + converter +
+                            " failed to convert value: " + value.get());
                 }
             }
             throw new ConfigException("Unparseable config value for type: " + type.getName() + ": " + key);
