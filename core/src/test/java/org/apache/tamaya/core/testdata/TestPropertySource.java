@@ -18,15 +18,40 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.core.PathBasedPropertySourceProvider;
-import org.apache.tamaya.core.formats.PropertiesFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.core.propertysource.BasePropertySource;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test provider reading properties from classpath:cfg/final/**.properties.
  */
-public class TestPropertySourceProvider extends PathBasedPropertySourceProvider{
+public class TestPropertySource extends BasePropertySource {
 
-    public TestPropertySourceProvider() {
-        super("final-testdata-properties", PropertiesFormat.of(200), "classpath:cfg/final/**/*.properties");
+    private static final Map<String, String> VALUES;
+    static {
+        VALUES = new HashMap<String, String>();
+        VALUES.put("name", "Robin");
+        VALUES.put("name2", "Sabine");
+        VALUES.put("name3", "Lukas");
+        VALUES.put("name4", "Sereina");
+        VALUES.put("name5", "Benjamin");
+    }
+
+
+    public TestPropertySource() {
+        initialzeOrdinal(100);
+    }
+
+    @Override
+    public String getName() {
+        return "TestPropertySource";
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return VALUES;
     }
 }
