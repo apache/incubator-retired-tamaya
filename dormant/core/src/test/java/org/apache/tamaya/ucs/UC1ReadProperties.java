@@ -61,7 +61,7 @@ public class UC1ReadProperties {
 
     @Test
     public void example() {
-        Configuration config = Configuration.from(PropertySourceBuilder.of("test")
+        Configuration config = Configuration.from(PropertySourceBuilder.of("testdata")
                 .addPaths("classpath:ucs/UC1ReadProperties/UC1ReadPropertiesTest.properties").build());
 //        String name = config.get("name").orElse("Anatole");
 //        BigDecimal bigNum = config.get("num.BD", BigDecimal.class).orElseThrow(() -> new IllegalStateException("Sorry"));

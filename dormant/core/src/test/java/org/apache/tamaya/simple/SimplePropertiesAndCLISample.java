@@ -38,7 +38,7 @@ public class SimplePropertiesAndCLISample {
 
     @Test
     public void testProgrammatixPropertySet() {
-        System.out.println(PropertySourceBuilder.of("test").addPaths("test", "classpath:test.properties").build());
+        System.out.println(PropertySourceBuilder.of("testdata").addPaths("testdata", "classpath:testdata.properties").build());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class SimplePropertiesAndCLISample {
         cfgMap.put("param1", "value1");
         cfgMap.put("a", "Adrian"); // overrides Anatole
         Configuration config = Configuration.from(PropertySourceBuilder.of("myTestConfig").addPaths(
-                "classpath:test.properties").addPaths("classpath:cfg/test.xml")
+                "classpath:testdata.properties").addPaths("classpath:cfg/testdata.xml")
                 .addArgs(new String[]{"-arg1", "--fullarg", "fullValue", "-myflag"}).addMap(cfgMap)
                 .build());
         System.out.println(config.query(ConfigurationFunctions.getAreas()));

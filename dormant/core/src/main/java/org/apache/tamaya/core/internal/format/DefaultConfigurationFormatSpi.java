@@ -32,47 +32,7 @@ import org.apache.tamaya.spi.ServiceContext;
  */
 public final class DefaultConfigurationFormatSpi implements ConfigurationFormatSpi {
 
-    public ConfigurationFormat getFormat(String formatName){
-        Objects.requireNonNull(formatName);
-        try {
-            for (ConfigurationFormat configFormat : ServiceContext.getInstance().getServices(ConfigurationFormat.class)) {
-                if(formatName.equals(configFormat.getFormatName())){
-                    return configFormat;
-                }
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
-        return null;
-    }
 
-    public Collection<String> getFormatNames(){
-        Set<String> result = new HashSet<>();
-        try {
-            result.addAll(ServiceContext.getInstance().getServices(ConfigurationFormat.class).stream().map(ConfigurationFormat::getFormatName)
-                    .collect(Collectors.toList()));
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-	public ConfigurationFormat getFormat(Resource resource) {
-        Objects.requireNonNull(resource);
-        try {
-            for (ConfigurationFormat configFormat : ServiceContext.getInstance().getServices(ConfigurationFormat.class)) {
-                if(configFormat.isAccepted(resource)){
-                    return configFormat;
-                }
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
-        return null;
-	}
 
 
 }

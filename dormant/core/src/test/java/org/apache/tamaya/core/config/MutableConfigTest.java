@@ -28,7 +28,7 @@
 //import static org.junit.Assert.assertFalse;
 //
 ///**
-// * Simple test for a mutable Configuration instance.
+// * Simple testdata for a mutable Configuration instance.
 // */
 //public class MutableConfigTest {
 //

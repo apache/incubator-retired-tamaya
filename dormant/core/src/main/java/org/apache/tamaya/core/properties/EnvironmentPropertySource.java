@@ -20,21 +20,29 @@ package org.apache.tamaya.core.properties;
 
 import java.util.Map;
 
-class EnvironmentPropertySource extends AbstractPropertySource {
+public class EnvironmentPropertySource implements PropertySource {
 
     private static final long serialVersionUID = 4753258482658331010L;
+
+    private int ordinal;
 
     public Map<String,String> getProperties(){
         return System.getenv();
     }
 
-    public EnvironmentPropertySource(){
-        super("<System.getenv()>");
+    @Override
+    public int getOrdinal(){
+        return ordinal;
+    }
+
+    @Override
+    public String getName(){
+        return "<System.getenv()>";
     }
 
     @Override
     public String toString(){
-        return "EnvironmentPropertyProvider[" + System.getenv().size() + " environment properties]";
+        return "PropertySource(System Environment)";
     }
 
 }

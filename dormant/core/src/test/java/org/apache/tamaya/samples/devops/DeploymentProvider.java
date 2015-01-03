@@ -28,8 +28,8 @@ public class DeploymentProvider {
 		// System.out.println(service.getCurrentContext());
 		// // Access default configuration for current environment
 		// DefaultEnvironment myTarget = new DefaultEnvironment();
-		// myTarget.setAttribute("domain", "com.test.mydom:domain1:1.0.1");
-		// myTarget.setAttribute("application", "com.test.mydom:app1:1.0.1");
+		// myTarget.setAttribute("domain", "com.testdata.mydom:domain1:1.0.1");
+		// myTarget.setAttribute("application", "com.testdata.mydom:app1:1.0.1");
 		// myTarget.setAttribute("env", "localTest");
 		// myTarget.setStage(Stage.UnitTest);
 		// Configuration deploymentConfig =

@@ -18,9 +18,9 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.core.properties.ConfigurationFormat;
 import org.apache.tamaya.core.resource.Resource;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.core.properties.ConfigurationFormat;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
 
@@ -44,16 +44,18 @@ public final class MetaConfig {
     private Map<String,String> properties = new HashMap<>();
 
     private MetaConfig(){
-        List<Resource> resources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(MetaConfig.class.getClassLoader(),
+        List<Resource> resources = ServiceContext.getInstance().getService(ResourceLoader.class).get().getResources(MetaConfig.class.getClassLoader(),
                 "classpath:META-INF/config.properties");
         for(Resource res:resources){
-            try{
-                ConfigurationFormat format = ConfigurationFormat.from(res);
-                Map<String,String> read = format.readConfiguration(res);
-                properties.putAll(read);
-            }
-            catch(Exception e){
-                LOG.log(Level.SEVERE, e, () -> "Error reading meta configuration fromMap " + res);
+            List<ConfigurationFormat> formats = ConfigurationFormat.getFormats(res);
+            for(ConfigurationFormat format:formats) {
+                try {
+
+                    Map<String, String> read = format.readConfiguration(res);
+                    properties.putAll(read);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, e, () -> "Error reading meta configuration fromMap " + res);
+                }
             }
         }
     }

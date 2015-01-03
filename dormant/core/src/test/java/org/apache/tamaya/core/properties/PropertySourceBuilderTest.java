@@ -33,7 +33,7 @@ public class PropertySourceBuilderTest {
 
     @Test
     public void testFromEnvironmentProperties(){
-        PropertySource prov = PropertySourceBuilder.of("test").addEnvironmentProperties().build();
+        PropertySource prov = PropertySourceBuilder.of("testdata").addEnvironmentProperties().build();
         assertNotNull(prov);
         for(Map.Entry<String,String> en:System.getenv().entrySet()){
             assertEquals(en.getValue(), prov.get(en.getKey()).get());
@@ -42,7 +42,7 @@ public class PropertySourceBuilderTest {
 
     @Test
     public void testFromSystemProperties(){
-        PropertySource prov = PropertySourceBuilder.of("test").addSystemProperties().build();
+        PropertySource prov = PropertySourceBuilder.of("testdata").addSystemProperties().build();
         assertNotNull(prov);
         for(Map.Entry<Object,Object> en:System.getProperties().entrySet()){
             assertEquals(en.getValue(), prov.get(en.getKey().toString()).get());

@@ -3,10 +3,11 @@ package org.apache.tamaya.core.internal.config;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
-import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
+import old.ConfigurationProviderSpi;
+import org.apache.tamaya.core.properties.PropertySourcesBuilder;
 
 /**
- * Implementation of a default config provider used as fallback, if no {@link org.apache.tamaya.core.spi.ConfigurationProviderSpi}
+ * Implementation of a default config provider used as fallback, if no {@link old.ConfigurationProviderSpi}
  * instance is registered for providing the {@code default} {@link org.apache.tamaya.Configuration}. The providers loads the follwing
  * config resources:
  * <ul>
@@ -44,12 +45,10 @@ public class FallbackSimpleConfigProvider implements ConfigurationProviderSpi {
     @Override
     public void reload() {
         this.configuration = Configuration.from(
-                PropertySourceBuilder.of(DEFAULT_CONFIG_NAME)
-                        .addProviders(PropertySourceBuilder.of("CL default")
-                                .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
+                PropertySourcesBuilder.of()
                                 .addPaths("META-INF/cfg/default/**/*.xml", "META-INF/cfg/default/**/*.properties", "META-INF/cfg/default/**/*.ini")
                                 .build())
-                        .addProviders(PropertySourceBuilder.of("CL default")
+                        .addProviders(PropertySourcesBuilder.of("CL default")
                                 .withAggregationPolicy(AggregationPolicy.LOG_ERROR)
                                 .addPaths("META-INF/cfg/config/**/*.xml", "META-INF/cfg/config/**/*.properties", "META-INF/cfg/config/**/*.ini")
                                 .build())

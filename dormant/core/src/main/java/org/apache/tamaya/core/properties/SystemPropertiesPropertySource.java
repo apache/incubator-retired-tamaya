@@ -21,36 +21,35 @@ package org.apache.tamaya.core.properties;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
-class SystemPropertiesPropertySource extends AbstractPropertySource {
+public class SystemPropertiesPropertySource implements PropertySource {
 
 
     private static final long serialVersionUID = -5935940312707001199L;
 
+    private int ordinal;
+
+    private String name;
+
     /**
      * Constructor.
      */
-    protected SystemPropertiesPropertySource() {
-        super("<System.getProperties()>");
+    public SystemPropertiesPropertySource(int ordinal, String name) {
+        this.ordinal = ordinal;
+        this.name = Objects.requireNonNull(name);
+
     }
 
     @Override
     public Map<String,String> getProperties(){
-        Properties sysProps = System.getProperties();
-//        if(sysProps instanceof ConfiguredSystemProperties){
-//            sysProps = ((ConfiguredSystemProperties)sysProps).getInitialProperties();
-//        }
-        Map<String,String> props = new HashMap<>();
-        for (Map.Entry<Object,Object> en : sysProps.entrySet()) {
-            props.put(en.getKey().toString(), en.getValue().toString());
-        }
-        return Collections.unmodifiableMap(props);
+        return Collections.unmodifiableMap(System.getProperties());
     }
 
     @Override
     public String toString(){
-        return "SystemPropertiesPropertyProvider[" + System.getProperties().size() + " system properties]";
+        return "PropertySource[System Properties]";
     }
 
 }

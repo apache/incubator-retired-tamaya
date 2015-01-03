@@ -35,7 +35,7 @@ import org.apache.tamaya.annotation.ObservesConfigChange;
 @Singleton
 public class ConfiguredClass{
 
-//    @WithConfig("test")
+//    @WithConfig("testdata")
     @ConfiguredProperty
     private String testProperty;
 
@@ -45,7 +45,7 @@ public class ConfiguredClass{
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-//    @WithConfig("test")
+//    @WithConfig("testdata")
     @ConfiguredProperty(keys = "foo")
     @ConfiguredProperty(keys = "a.b.c.key2")
     private String value2;
@@ -62,19 +62,19 @@ public class ConfiguredClass{
     @DefaultValue("5")
     private Integer int1;
 
-//    @WithConfig("test")
+//    @WithConfig("testdata")
     @ConfiguredProperty
     private int int2;
 
-//    @WithConfig("test")
+//    @WithConfig("testdata")
     @ConfiguredProperty
     private boolean booleanT;
 
-//    @WithConfig("test")
+//    @WithConfig("testdata")
     @ConfiguredProperty(keys = "BD")
     private BigDecimal bigNumber;
 
-//    @WithConfig("test")
+//    @WithConfig("testdata")
     @ConfiguredProperty(keys = "double1")
     private double doubleValue;
 

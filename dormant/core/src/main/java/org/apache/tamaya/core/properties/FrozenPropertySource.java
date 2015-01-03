@@ -21,36 +21,41 @@ package org.apache.tamaya.core.properties;
 import org.apache.tamaya.*;
 
 import java.io.Serializable;
+import java.lang.Override;
+import java.util.Collections;
 import java.util.Map;
 
 /**
  * Configuration implementation that stores all current values current a given (possibly dynamic, contextual and non remote
  * capable instance) and is fully serializable.
  */
-final class FrozenPropertySource extends AbstractPropertySource implements Serializable{
+public final class FrozenPropertySource implements PropertySource, Serializable{
     private static final long serialVersionUID = -6373137316556444171L;
 
-    private PropertySource properties;
+    private int ordinal;
+    private String name;
+    private Map<String,String> properties;
 
     /**
      * Constructor.
-     * @param config The base configuration.
+     * @param propertySource The base configuration.
      */
-    private FrozenPropertySource(PropertySource config){
-        super(config.getName());
-        this.properties = PropertySourceBuilder.of(config).buildFrozen();
+    private FrozenPropertySource(PropertySource propertySource){
+        this.name = propertySource.getName();
+        this.ordinal = propertySource.ordinal();
+        this.properties = Collections.unmodifiableMap(new HashMap<>(propertySource.getProperties()));
     }
 
-    public static final PropertySource of(PropertySource config){
-        if(config instanceof FrozenPropertySource){
-            return config;
+    public static final FrozenPropertySource of(PropertySource propertySource){
+        if(propertySource instanceof FrozenPropertySource){
+            return propertySource;
         }
-        return new FrozenPropertySource(config);
+        return new FrozenPropertySource(propertySource);
     }
 
     @Override
     public Map<String,String> getProperties(){
-        return properties.getProperties();
+        return properties;
     }
 
     @Override
@@ -60,20 +65,22 @@ final class FrozenPropertySource extends AbstractPropertySource implements Seria
 
         FrozenPropertySource that = (FrozenPropertySource) o;
 
+        if (!name.equals(that.name)) return false;
         if (!properties.equals(that.properties)) return false;
+
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = properties.hashCode();
+        int result = name.hashCode();
+        result = 31 * result + properties.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "FreezedConfiguration{" +
-                "properties=" + properties +
+        return "FrozenPropertySource{" +
                 ", name=" + name +
                 '}';
     }

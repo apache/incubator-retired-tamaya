@@ -54,7 +54,7 @@ public class EnvironmentManagerTest {
         Environment env2 = Environment.current();
         assertNotNull(env1);
         assertNotNull(env2);
-        // within this test environment these are always the same
+        // within this testdata environment these are always the same
         assertEquals(env1, env2);
     }
 

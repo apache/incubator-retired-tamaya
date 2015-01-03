@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
+import old.ConfigurationProviderSpi;
 
 /**
  *  This implementation run in a folder and once found xml and properties files

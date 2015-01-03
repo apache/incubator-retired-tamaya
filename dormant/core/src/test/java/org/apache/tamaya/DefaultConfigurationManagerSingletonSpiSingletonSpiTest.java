@@ -25,11 +25,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.tamaya.annotation.ConfiguredProperty;
 import org.apache.tamaya.annotation.DefaultValue;
-import org.apache.tamaya.core.internal.config.DefaultConfigurationSpi;
+import old.DefaultConfigurationSpi;
 import org.junit.Test;
 
 /**
- * Test class for {@link org.apache.tamaya.core.internal.config.DefaultConfigurationSpi}.
+ * Test class for {@link old.DefaultConfigurationSpi}.
  */
 public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
@@ -60,7 +60,7 @@ public class DefaultConfigurationManagerSingletonSpiSingletonSpiTest {
 
     @Test
     public void testIsConfigurationDefined() {
-        assertTrue(Configuration.isAvailable("test"));
+        assertTrue(Configuration.isAvailable("testdata"));
         assertFalse(Configuration.isAvailable("sdksajdsajdlkasj dlkjaslkd"));
     }
 

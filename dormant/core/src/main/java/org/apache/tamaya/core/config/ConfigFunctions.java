@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.config;
 
+import old.MappedConfiguration;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;

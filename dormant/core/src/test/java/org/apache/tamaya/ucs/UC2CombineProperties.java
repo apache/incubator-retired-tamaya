@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * Configuration is organized as key/keys pairs. This basically can be modeled as {@code Map<String,String>}
  * Configuration should be as simple as possible. Advanced use cases can often easily implemented by combining
- * multiple property maps and applying hereby some combination policy. This test class demonstrates the different
+ * multiple property maps and applying hereby some combination policy. This testdata class demonstrates the different
  * options Tamaya is providing and the according mechanisms.
  */
 public class UC2CombineProperties {

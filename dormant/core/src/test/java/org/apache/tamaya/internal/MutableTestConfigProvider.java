@@ -24,10 +24,10 @@
 //import java.util.concurrent.ConcurrentHashMap;
 //
 //import org.apache.tamaya.Configuration;
-//import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
+//import old.ConfigurationProviderSpi;
 //
 ///**
-// * Simple test provider that creates a mutable instance of a configuration, just using a simple map instance.
+// * Simple testdata provider that creates a mutable instance of a configuration, just using a simple map instance.
 // */
 //public class MutableTestConfigProvider implements ConfigurationProviderSpi{
 //    /** The config name. */

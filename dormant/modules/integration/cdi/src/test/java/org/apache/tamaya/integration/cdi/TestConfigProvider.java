@@ -20,7 +20,7 @@ package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
-import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
+import old.ConfigurationProviderSpi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,12 +49,12 @@ public class TestConfigProvider implements ConfigurationProviderSpi
         config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
         config.put("testProperty", "keys current testProperty");
         config.put("runtimeVersion", "${java.version}");
-        testConfig = PropertySourceBuilder.of("test").addMap(config).build().toConfiguration();
+        testConfig = PropertySourceBuilder.of("testdata").addMap(config).build().toConfiguration();
     }
 
     @Override
     public String getConfigName(){
-        return "test";
+        return "testdata";
     }
 
     @Override

@@ -62,4 +62,57 @@ public final class PropertySourceFunctions {
         return (c) -> new MappedPropertySource(c, keyMapper);
     }
 
+
+
+    /**
+     * Intersetcs the current properties with the given {@link org.apache.tamaya.PropertySource} instance.
+     *
+     * @param providers the maps to be intersected, not null.
+     * @return the builder for chaining.
+     */
+    public UnaryOperator<PropertySource> intersect(PropertySource... providers) {
+        if (providers.length == 0) {
+            return this;
+        }
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<intersection> -> " + Arrays.toString(providers);
+        }
+        return addPropertySources(PropertySourceFactory.intersected(name, aggregationPolicy, Arrays.asList(providers)));
+    }
+
+
+    /**
+     * Filters the current properties based on the given predicate..
+     *
+     * @param filter the filter to be applied, not null.
+     * @return the new filtering instance.
+     */
+    public UnaryOperator<PropertySource> filter(Predicate<String> filter) {
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<filtered> -> " + filter;
+        }
+        current = PropertySourceFactory.filtered(name, filter, current);
+        this.currentName = null;
+        return this;
+    }
+
+
+    /**
+     * Replaces all keys in the current provider by the given map.
+     *
+     * @param replacementMap the map instance, that will replace all corresponding entries in {@code mainMap}, not null.
+     * @return the new delegating instance.
+     */
+    public PropertySourceBuilder replace(Map<String, String> replacementMap) {
+        String name = this.currentName;
+        if (currentName == null) {
+            name = "<replacement> -> current=" + current.getName() + " with =" + replacementMap;
+        }
+        current = PropertySourceFactory.replacing(name, current, replacementMap);
+        this.currentName = null;
+        return this;
+    }
+
 }

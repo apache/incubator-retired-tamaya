@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
+import old.ConfigurationProviderSpi;
 import org.junit.Before;
 import org.junit.Test;
 

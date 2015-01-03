@@ -39,7 +39,7 @@ public interface ManagedEnvironmentMBean {
      * Get the common environment information in JSON format, which has the following form:
      * <pre>
      * Environment {
-     *     id: "system:VM,domain:test",
+     *     id: "system:VM,domain:testdata",
      *     metaInfo {
      *         a: "aValue",
      *         b: "bValue"
@@ -74,7 +74,7 @@ public interface ManagedEnvironmentMBean {
      *         typeHierarchy: {"system", "domain", "ear", "war", "saas-scope", "tenant"}
      *         environments {
      *             Environment {
-     *                 id: "system:VM,domain:test",
+     *                 id: "system:VM,domain:testdata",
      *                 ...
      *             },
      *             ...

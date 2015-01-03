@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.AbstractPropertySource;
-import org.apache.tamaya.core.spi.PropertyAdapterProviderSpi;
+import old.PropertyAdapterProviderSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
 /**

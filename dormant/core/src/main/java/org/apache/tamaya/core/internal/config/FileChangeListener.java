@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import org.apache.log4j.Logger;
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.spi.ConfigurationProviderSpi;
+import old.ConfigurationProviderSpi;
 
 /**
  * Class that has the responsibility to watch the folder and then commit the {@link ConfigurationProviderSpi}

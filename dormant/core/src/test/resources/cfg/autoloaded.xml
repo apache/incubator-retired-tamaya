@@ -23,7 +23,7 @@ under the License.
     <entry key="b">Bill</entry>
     <entry key="a.compound.area.entry">myCompundAreaVlaueFromXml</entry>
     <entry key="an.area.entry">myCompundAreaVlaueFromXml2</entry>
-    <!-- DirectMapping test -->
+    <!-- DirectMapping testdata -->
     <entry key="org.apache.tamaya.samples.annotations.AutoConfiguredClass.value1">This \${JAVA_HOME} is cool!</entry>
     <entry key="org.apache.tamaya.samples.annotations.AutoConfiguredClass.value2">Should not be set because @NoConfig !</entry>
     <entry key="org.apache.tamaya.samples.annotations.AutoConfiguredClass.testProperty">a test property value</entry>
