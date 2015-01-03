@@ -653,18 +653,20 @@ under the License.
             </modules>
         </profile>
 
+        <!-- Do a fast build by skipping all code analysis tools -->
         <profile>
-            <id>runFindbugs</id>
+            <id>fast</id>
             <activation>
                 <property>
-                    <name>runFindbugs</name>
+                    <name>fast</name>
                 </property>
             </activation>
 
             <properties>
-                <findbugs.skip>false</findbugs.skip>
+                <checkstyle.skip>true</checkstyle.skip>
+                <findbugs.skip>true</findbugs.skip>
+                <rat.skip>true</rat.skip>
             </properties>
-
         </profile>
 
         <profile>
@@ -679,6 +681,7 @@ under the License.
             </properties>
         </profile>
     </profiles>
+
     <reporting>
         <plugins>
             <plugin>
@@ -763,6 +766,7 @@ under the License.
             </plugin>
         </plugins>
     </reporting>
+
     <repositories>
         <repository>
             <id>org.apache.people</id>
