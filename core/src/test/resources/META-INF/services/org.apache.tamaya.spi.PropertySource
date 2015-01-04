@@ -16,5 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-name=Anatole
-name2=Sabine
+org.apache.tamaya.core.testdata.TestPropertyDefaultSource

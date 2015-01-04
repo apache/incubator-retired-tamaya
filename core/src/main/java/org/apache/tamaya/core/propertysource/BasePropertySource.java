@@ -26,7 +26,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Base class for {@link PropertySource}s
+ * A base class for {@link PropertySource}s. It provides a {@link #initializeOrdinal(int)} method that
+ * reads the ordinal from the config source itself, allowing the ordinal to be "self-configured" by
+ * the configuration read.
  */
 public abstract class BasePropertySource implements PropertySource {
 
@@ -57,7 +59,7 @@ public abstract class BasePropertySource implements PropertySource {
      *
      * @param defaultOrdinal of the {@link PropertySource}
      */
-    protected void initialzeOrdinal(final int defaultOrdinal) {
+    protected void initializeOrdinal(final int defaultOrdinal) {
         this.ordinal = defaultOrdinal;
 
         Optional<String> ordinal = get(PropertySource.TAMAYA_ORDINAL);

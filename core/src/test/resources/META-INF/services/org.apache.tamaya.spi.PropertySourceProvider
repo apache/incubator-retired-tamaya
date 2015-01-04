@@ -16,5 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.core.testdata.TestPropertyDefaultSourceProvider
 org.apache.tamaya.core.testdata.TestPropertySourceProvider

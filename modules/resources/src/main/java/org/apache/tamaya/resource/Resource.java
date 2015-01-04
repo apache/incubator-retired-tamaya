@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.resources;
+package org.apache.tamaya.resource;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.Objects;
 
 /**
  * Interface for an abstract resource. The effective resource implementation can be completely arbitrary.
- * By default files, classpath resources and URLs are supported, but alternate implementations are possible.
+ * By default files, classpath format and URLs are supported, but alternate implementations are possible.
  *
  * @see #getInputStream()
  * @see #toURI()

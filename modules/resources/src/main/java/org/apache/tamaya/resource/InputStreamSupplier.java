@@ -16,17 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.testdata;
+package org.apache.tamaya.resource;
 
-import org.apache.tamaya.core.PathBasedPropertySourceProvider;
-import org.apache.tamaya.core.formats.PropertiesFormat;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Test provider reading properties from classpath:cfg/defaults/**.properties.
+ * Simple interface for a component that provides data based on an InputStream.
  */
-public class TestPropertyDefaultSourceProvider extends PathBasedPropertySourceProvider{
+@FunctionalInterface
+public interface InputStreamSupplier {
 
-    public TestPropertyDefaultSourceProvider() {
-        super("default-testdata-properties", new PropertiesFormat(100), "cfg/defaults/test1.properties");
-    }
+    /**
+     * Access the input stream.
+     * @return the input stream for use.
+     * @throws IOException i the input stream could not be obtained.
+     */
+    InputStream getInputStream() throws IOException;
+
 }

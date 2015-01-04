@@ -16,24 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.resources;
+package org.apache.tamaya.resource;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * Interface to be implemented by modules. By default only direct file/resource resolution is supported, whereas
- * extension modules may add functionality to perform ant styled pattern resolution of resources.
+ * extension modules may add functionality to perform ant styled pattern resolution of format.
  */
 public interface ResourceLoader {
 
     /**
-     * Resolves resource expressions to a list of {@link org.apache.tamaya.core.resources.Resource}s. Hereby
-     * the ordering of resources matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of resources located within a classloader.
+     * Resolves resource expressions to a list of {@link Resource}s. Hereby
+     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
+     * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link org.apache.tamaya.core.resources.Resource}s found, never
+     * @return the corresponding collection of current {@link Resource}s found, never
      * null.
      * .
      */
@@ -46,12 +46,12 @@ public interface ResourceLoader {
     }
 
     /**
-     * Resolves resource expressions to a list of {@link org.apache.tamaya.core.resources.Resource}s. Hereby
-     * the ordering of resources matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of resources located within a classloader.
+     * Resolves resource expressions to a list of {@link Resource}s. Hereby
+     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
+     * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link org.apache.tamaya.core.resources.Resource}s found, never
+     * @return the corresponding collection of current {@link Resource}s found, never
      * null.
      * .
      */
@@ -60,13 +60,13 @@ public interface ResourceLoader {
     }
 
     /**
-     * Resolves resource expressions to a list of {@link org.apache.tamaya.core.resources.Resource}s, considerubg
-     * the given classloader for classloader dependent resources. Hereby
-     * the ordering of resources matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of resources located within a classloader.
+     * Resolves resource expressions to a list of {@link Resource}s, considerubg
+     * the given classloader for classloader dependent format. Hereby
+     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
+     * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link org.apache.tamaya.core.resources.Resource}s found, never
+     * @return the corresponding collection of current {@link Resource}s found, never
      * null.
      * .
      */
@@ -75,13 +75,13 @@ public interface ResourceLoader {
     }
 
     /**
-     * Resolves resource expressions to a list of {@link org.apache.tamaya.core.resources.Resource}s, considerubg
-     * the given classloader for classloader dependent resources. Hereby
-     * the ordering of resources matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of resources located within a classloader.
+     * Resolves resource expressions to a list of {@link Resource}s, considerubg
+     * the given classloader for classloader dependent format. Hereby
+     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
+     * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link org.apache.tamaya.core.resources.Resource}s found, never
+     * @return the corresponding collection of current {@link Resource}s found, never
      * null.
      * .
      */

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.formats;
+package org.apache.tamaya.format;
 
 import org.apache.tamaya.core.resources.Resource;
 import org.apache.tamaya.spi.PropertySource;
@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of a {@link org.apache.tamaya.core.formats.ConfigurationFormat} for -properties files.
+ * Implementation of a {@link ConfigurationFormat} for -properties files.
  *
  * @see java.util.Properties#load(java.io.InputStream)
  */

@@ -29,7 +29,7 @@ import java.util.Map;
 public class EnvironmentPropertySource extends BasePropertySource {
 
     public EnvironmentPropertySource() {
-        initialzeOrdinal(DefaultOrdinal.ENVIRONMENT_PROPERTIES);
+        initializeOrdinal(DefaultOrdinal.ENVIRONMENT_PROPERTIES);
     }
 
 

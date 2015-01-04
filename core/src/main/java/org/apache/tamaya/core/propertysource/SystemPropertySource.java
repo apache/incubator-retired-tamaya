@@ -28,10 +28,6 @@ import java.util.Properties;
  */
 public class SystemPropertySource extends BasePropertySource {
 
-
-    //X TODO disuss default ordinal of SystemProperties
-
-
     /**
      * cashed System.getProperties() filled in our Map
      */
@@ -45,7 +41,7 @@ public class SystemPropertySource extends BasePropertySource {
 
 
     public SystemPropertySource() {
-        initialzeOrdinal(DefaultOrdinal.SYSTEM_PROPERTIES);
+        initializeOrdinal(DefaultOrdinal.SYSTEM_PROPERTIES);
     }
 
 

@@ -18,15 +18,56 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.core.PathBasedPropertySourceProvider;
-import org.apache.tamaya.core.formats.PropertiesFormat;
+import org.apache.tamaya.core.propertysource.BasePropertySource;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertySourceProvider;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test provider reading properties from classpath:cfg/final/**.properties.
  */
-public class TestPropertySourceProvider extends PathBasedPropertySourceProvider{
+public class TestPropertySourceProvider implements PropertySourceProvider {
 
-    public TestPropertySourceProvider() {
-        super("final-testdata-properties", new PropertiesFormat(200), "cfg/final/anotherTestFile.properties");
+    private List<PropertySource> list = new ArrayList<>();
+
+    public TestPropertySourceProvider(){
+        list.add(new MyPropertySource());
+        list = Collections.unmodifiableList(list);
     }
+
+    @Override
+    public Collection<PropertySource> getPropertySources() {
+        return list;
+    }
+
+    private static class MyPropertySource extends BasePropertySource {
+
+        private Map<String, String> properties = new HashMap<>();
+
+        public MyPropertySource() {
+            initializeOrdinal(200);
+            properties.put("name", "Robin");
+            properties.put("name3", "Lukas");
+            properties.put("name4", "Sereina");
+            properties.put("name5", "Benjamin");
+            properties = Collections.unmodifiableMap(properties);
+        }
+
+        @Override
+        public String getName() {
+            return "final-testdata-properties";
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return properties;
+        }
+    }
+
 }

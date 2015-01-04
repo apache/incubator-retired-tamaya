@@ -16,22 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.resources;
+package org.apache.tamaya.core.testdata;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.tamaya.core.propertysource.BasePropertySource;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Simple interface for a component that provides data based on an InputStream.
+ * Test provider reading properties from classpath:cfg/defaults/**.properties.
  */
-@FunctionalInterface
-public interface InputStreamSupplier {
+public class TestPropertyDefaultSource extends BasePropertySource{
 
-    /**
-     * Access the input stream.
-     * @return the input stream for use.
-     * @throws IOException i the input stream could not be obtained.
-     */
-    InputStream getInputStream() throws IOException;
+    private Map<String,String> properties = new HashMap<>();
+
+    public TestPropertyDefaultSource() {
+        initializeOrdinal(100);
+        properties.put("name","Anatole");
+        properties.put("name2","Sabine");
+        properties = Collections.unmodifiableMap(properties);
+    }
+
+    @Override
+    public String getName() {
+        return "default-testdata-properties";
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 
 }

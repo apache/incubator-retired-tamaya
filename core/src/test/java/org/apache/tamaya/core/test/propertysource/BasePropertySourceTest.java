@@ -67,7 +67,7 @@ public class BasePropertySourceTest {
     private static class OverriddenOrdinalPropertySource extends BasePropertySource {
 
         private OverriddenOrdinalPropertySource() {
-            initialzeOrdinal(250);
+            initializeOrdinal(250);
         }
 
         @Override
@@ -86,7 +86,7 @@ public class BasePropertySourceTest {
     private static class OverriddenInvalidOrdinalPropertySource extends BasePropertySource {
 
         private OverriddenInvalidOrdinalPropertySource() {
-            initialzeOrdinal(1);
+            initializeOrdinal(1);
         }
 
         @Override

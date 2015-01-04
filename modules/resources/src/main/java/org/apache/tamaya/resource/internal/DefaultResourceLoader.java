@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.resource;
+package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.core.resources.Resource;
 import org.apache.tamaya.core.resources.ResourceLoader;

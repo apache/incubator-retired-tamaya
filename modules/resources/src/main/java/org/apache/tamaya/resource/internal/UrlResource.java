@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.resource;
+package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.core.resources.Resource;
 
@@ -123,7 +123,7 @@ public class UrlResource implements Resource {
     /**
      * Set the {@link URLConnection#setUseCaches "useCaches"} flag on the
      * given connection, preferring {@code false} but leaving the
-     * flag at {@code true} for JNLP based resources.
+     * flag at {@code true} for JNLP based format.
      *
      * @param con the URLConnection to set the flag on
      */
