@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContext;
 
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
@@ -56,13 +58,21 @@ public class DefaultConfiguration implements Configuration {
     @Override
     public Optional<String> get(String key) {
         List<PropertySource> propertySources = ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources();
+        String unfilteredValue = null;
         for (PropertySource propertySource : propertySources) {
             Optional<String> value = propertySource.get(key);
             if (value.isPresent()) {
-                return value;
+                unfilteredValue = value.get();
+                break;
             }
         }
-        return Optional.empty();
+        // Apply filters to values, prevent values filtered to null!
+        for(PropertyFilter filter:
+                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyFilters()){
+            unfilteredValue = filter.filterProperty(key, unfilteredValue,
+                    (String k) -> key.equals(k)?null:get(k).orElse(null));
+        }
+        return Optional.ofNullable(unfilteredValue);
     }
 
     @Override
@@ -83,7 +93,15 @@ public class DefaultConfiguration implements Configuration {
                 LOG.log(Level.SEVERE, "Error adding properties from PropertySource: " + propertySource +", ignoring PropertySource.", e);
             }
         }
-        return result;
+        // Apply filters to values, prevent values filtered to null!
+        for(PropertyFilter filter:
+                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyFilters()){
+            result.replaceAll((k,v) -> filter.filterProperty(k, v,
+                    (String k2) -> k2.equals(k)?null:get(k2).orElse(null)));
+        }
+        // Remove null values
+        return result.entrySet().parallelStream().filter((e) -> e.getValue()!=null).collect(
+                Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue()));
     }
 
     /**
@@ -101,7 +119,8 @@ public class DefaultConfiguration implements Configuration {
     public <T> Optional<T> get(String key, Class<T> type) {
         Optional<String> value = get(key);
         if (value.isPresent()) {
-            List<PropertyConverter<T>> converters = ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyConverters(type);
+            List<PropertyConverter<T>> converters = ServiceContext.getInstance().getService(ConfigurationContext.class)
+                    .get().getPropertyConverters(type);
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value.get());

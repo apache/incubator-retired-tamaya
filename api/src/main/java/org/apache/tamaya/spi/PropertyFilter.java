@@ -19,7 +19,7 @@
 package org.apache.tamaya.spi;
 
 
-import java.util.Map;
+import java.util.function.Function;
 
 /**
  * <p>Interface for filtering the current map of properties during the evaluation of the chain of PropertySources.
@@ -27,7 +27,7 @@ import java.util.Map;
  * hereby is defined by the corresponding {@code @Priority} annotation.</p>
  * <p>Filters </p>
  */
-public interface PropertyFilter<T>{
+public interface PropertyFilter{
 
     /**
      * <p>Maps the current {@code valueToBeFiltered} value to a new value. The resulting value will be used as the result
@@ -44,10 +44,10 @@ public interface PropertyFilter<T>{
      *
      * @param key the key accessed, not null.
      * @param valueToBeFiltered the value to be filtered, not null.
-     * @param currentMap the current input property map, not null. Can be used for resolution of the filtered value
-     *                   or as datasource for additional meta-information, such as categories, sensitivity etc.
+     * @param propertyValueProvider accessor for reading additional (eg metadata) properties to perform correct
+     *                              filtering, never null.
      * @return the filtered map, never null.
      */
-    String filterProperty(String key, String valueToBeFiltered, Map<String,String> currentMap);
+    String filterProperty(String key, String valueToBeFiltered, Function<String,String> propertyValueProvider);
 
 }

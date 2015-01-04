@@ -41,6 +41,12 @@ public class ConfigurationTest {
         assertEquals("Lukas", Configuration.current().get("name3").get());  // oderridden default
         assertEquals("Sereina", Configuration.current().get("name4").get()); // final only
         assertEquals("Benjamin", Configuration.current().get("name5").get()); // final only
+
+        System.out.println("name : " + Configuration.current().get("name").get());
+        System.out.println("name2: " + Configuration.current().get("name2").get());
+        System.out.println("name3: " + Configuration.current().get("name3").get());
+        System.out.println("name4: " + Configuration.current().get("name4").get());
+        System.out.println("name5: " + Configuration.current().get("name5").get());
     }
 
 
