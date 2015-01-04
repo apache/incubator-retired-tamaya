@@ -17,3 +17,5 @@
 # under the License.
 #
 org.apache.tamaya.core.testdata.TestPropertyDefaultSource
+org.apache.tamaya.core.propertysource.SystemPropertySource
+org.apache.tamaya.core.propertysource.EnvironmentPropertySource

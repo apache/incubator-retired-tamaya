@@ -48,6 +48,10 @@ public class ConfigurationTest {
         System.out.println("name3: " + Configuration.current().get("name3").get());
         System.out.println("name4: " + Configuration.current().get("name4").get());
         System.out.println("name5: " + Configuration.current().get("name5").orElse(null));
+
+        System.out.println("ALL :");
+        Configuration.current().getProperties().entrySet().forEach(e ->
+                System.out.println("   " + e.getKey()+" = " + e.getValue()));
     }
 
 
