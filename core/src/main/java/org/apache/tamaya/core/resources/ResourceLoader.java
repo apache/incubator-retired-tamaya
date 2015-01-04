@@ -20,7 +20,6 @@ package org.apache.tamaya.core.resources;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Interface to be implemented by modules. By default only direct file/resource resolution is supported, whereas
