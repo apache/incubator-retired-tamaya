@@ -16,22 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.resource;
+package org.apache.tamaya.core.testdata;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.tamaya.spi.PropertyFilter;
+
+import javax.annotation.Priority;
+import java.util.function.Function;
 
 /**
- * Simple interface for a component that provides data based on an InputStream.
+ * Simple PropertyFilter that filters exact one value, registered using ServiceLoader.
  */
-@FunctionalInterface
-public interface InputStreamSupplier {
-
-    /**
-     * Access the input stream.
-     * @return the input stream for use.
-     * @throws IOException i the input stream could not be obtained.
-     */
-    InputStream getInputStream() throws IOException;
-
+@Priority(100)
+public class TestPropertyFilter implements PropertyFilter{
+    @Override
+    public String filterProperty(String key, String valueToBeFiltered, Function<String, String> propertyValueProvider) {
+        if("name4".equals(key)){
+            return valueToBeFiltered + "(filtered)";
+        }
+        return valueToBeFiltered;
+    }
 }

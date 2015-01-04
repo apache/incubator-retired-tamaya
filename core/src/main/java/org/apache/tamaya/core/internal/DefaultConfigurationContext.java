@@ -140,6 +140,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                     Collections.sort(this.propertySources, this::comparePropertySources);
                     this.propertyFilters.addAll(ServiceContext.getInstance().getServices(PropertyFilter.class));
                     Collections.sort(this.propertyFilters, this::comparePropertyFilters);
+                    loaded = true;
                 }
             } finally {
                 writeLock.unlock();

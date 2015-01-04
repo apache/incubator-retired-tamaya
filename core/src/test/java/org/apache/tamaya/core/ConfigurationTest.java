@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * This tests checks if the combination of 2 prioritized PropertySource return valid results on the final Configuration.
@@ -38,15 +39,15 @@ public class ConfigurationTest {
     public void testContent(){
         assertEquals("Robin", Configuration.current().get("name").get());
         assertEquals("Sabine", Configuration.current().get("name2").get()); // from default
-        assertEquals("Lukas", Configuration.current().get("name3").get());  // oderridden default
-        assertEquals("Sereina", Configuration.current().get("name4").get()); // final only
-        assertEquals("Benjamin", Configuration.current().get("name5").get()); // final only
+        assertEquals("Mapped to name: Robin", Configuration.current().get("name3").get());  // oderridden default, mapped by filter to name property
+        assertEquals("Sereina(filtered)", Configuration.current().get("name4").get()); // final only
+        assertNull(Configuration.current().get("name5").orElse(null)); // final only, but removed from filter
 
         System.out.println("name : " + Configuration.current().get("name").get());
         System.out.println("name2: " + Configuration.current().get("name2").get());
         System.out.println("name3: " + Configuration.current().get("name3").get());
         System.out.println("name4: " + Configuration.current().get("name4").get());
-        System.out.println("name5: " + Configuration.current().get("name5").get());
+        System.out.println("name5: " + Configuration.current().get("name5").orElse(null));
     }
 
 
