@@ -16,38 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.spi;
+package org.apache.tamaya.resolver.spi;
 
 import org.apache.tamaya.Configuration;
 
+import java.util.function.Function;
+
 /**
- * This interface defines a small plugin for resolving current expressions within configuration.
- * Resolver expression always have the form current <code>${resolverId:expression}</code>. The
- * {@code resolverId} hereby references the resolver to be used to replace the according
- * {@code expression}. Also it is well possible to mix different resolvers, e.g. using
- * an expression like <code>${ref1:expression1} bla bla ${ref2:expression2}</code>.
- * Finally when no resolver id is passed, the default resolver should be used.
+ * This interfaces provides a model for expression evaluation. This enables transparently plugin expression languages
+ * as needed. In a Java EE context full fledged EL may be used, whereas in ME only simple replacement mechanisms
+ * are better suited to the runtime requirements.
  */
 public interface ExpressionResolver {
 
     /**
-     * Get a (unique) resolver id used as a prefix for qualifying the resolver to be used for
-     * resolving an expression.
+     * Get the unique resolver prefix. This allows to address a resolver explicitly, in case of conflicts. By
+     * default all registered resolvers are called in order as defined by the {@link javax.annotation.Priority}
+     * annotation.
      *
-     * @return the (unique) resolver id, never null, not empty.
+     * @return the prefix that identifies this resolver instance, e.g. 'config:'.
      */
-    String getResolverId();
+    public String getResolverPrefix();
 
     /**
-     * Resolve the expression. The expression should be stripped fromMap any surrounding parts.
-     * E.g. <code>${myresolver:blabla to be interpreted AND executed.}</code> should be passed
-     * as {@code blabla to be interpreted AND executed.} only.
+     * Evaluates the given expression.
      *
-     * @param expression the stripped expression.
-     * @param configuration the configuration for which the value must be resolved.
-     * @return the resolved expression.
-     * @throws org.apache.tamaya.ConfigException when the expression passed is not resolvable, e.g. due to syntax issues
-     *                                        or data not present or valid.
+     * @param expression       the expression to be evaluated, not null. If a resolver was addressed explicitly,
+     *                         the prefix is removed prior to calling this method.
+     * @param propertyResolver a functional instance to resolve additional properties as needed, e.g. reading
+     *                         additional system, environment properties, or meta-properties. This abstraction
+     *                         gives the evaluator access to the contextual configuration instance which
+     *                         contains expressions.
+     * @return the evaluated expression, or null, if the evaluator is not able to resolve the expression.
      */
-    String resolve(String expression, Configuration configuration);
+    String evaluate(String expression, Function<String, String> propertyResolver);
 }

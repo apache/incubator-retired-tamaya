@@ -16,40 +16,79 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.el;
+package org.apache.tamaya.resolver.internal;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.core.spi.ExpressionEvaluator;
-import org.apache.tamaya.core.spi.ExpressionResolver;
+import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
+import javax.annotation.Priority;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Default expression evaluator that manages several instances of {@link org.apache.tamaya.core.spi.ExpressionResolver}.
+ * Default expression evaluator that manages several instances of {@link org.apache.tamaya.resolver.spi.ExpressionResolver}.
  * Each resolver is identified by a resolver id. Each expression passed has the form resolverId:resolverExpression, which
  * has the advantage that different resolvers can be active in parallel.
  */
-public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
+@Priority(10000)
+public class DefaultExpressionEvaluator implements PropertyFilter {
 
-    private Map<String, ExpressionResolver> resolvers = new ConcurrentHashMap<>();
+    private static final Logger LOG = Logger.getLogger(DefaultExpressionEvaluator.class.getName());
 
-    private ExpressionResolver defaultResolver;
+    private List<ExpressionResolver> resolvers = new ArrayList<>();
 
     public DefaultExpressionEvaluator() {
         for(ExpressionResolver resolver: ServiceContext.getInstance().getServices(ExpressionResolver.class)){
-            resolvers.put(resolver.getResolverId(), resolver);
+            resolvers.add(resolver);
         }
-        defaultResolver = ServiceContext.getInstance().getSingleton(ExpressionResolver.class);
+        Collections.sort(resolvers, this::compareExpressionResolver);
     }
 
     /**
-     * Resolves an expression in the form current <code>${resolverId:expression}</code>. The expression can be
-     * part current any type current literal text. Also multiple expression, with different resolver ids are supported.
-     * All control characters (${}\) can be escaped.<br>
+     * Order ExpressionResolver reversely, the most important come first.
+     *
+     * @param res1 the first ExpressionResolver
+     * @param res2 the second ExpressionResolver
+     * @return the comparison result.
+     */
+    private int compareExpressionResolver(ExpressionResolver res1, ExpressionResolver res2) {
+        Priority prio1 = res1.getClass().getAnnotation(Priority.class);
+        Priority prio2 = res2.getClass().getAnnotation(Priority.class);
+        int ord1 = prio1 != null ? prio1.value() : 0;
+        int ord2 = prio2 != null ? prio2.value() : 0;
+        if (ord1 < ord2) {
+            return -1;
+        } else if (ord1 > ord2) {
+            return 1;
+        } else {
+            return res1.getClass().getName().compareTo(res2.getClass().getName());
+        }
+    }
+
+    /**
+     * Resolves an expression in the form current <code>${resolverId:expression}</code> or
+     * <code>${<prefix>expression}</code>. The expression can be
+     * part current any type current literal text. Also multiple expressions with mixed matching resolvers are
+     * supported.
+     * All control characters (${}\) can be escaped using '\'.<br>
      * So all the following are valid expressions:
+     * <ul>
+     * <li><code>${expression}</code></li>
+     * <li><code>bla bla ${expression}</code></li>
+     * <li><code>${expression} bla bla</code></li>
+     * <li><code>bla bla ${expression} bla bla</code></li>
+     * <li><code>${expression}${resolverId2:expression2}</code></li>
+     * <li><code>foo ${expression}${resolverId2:expression2}</code></li>
+     * <li><code>foo ${expression} bar ${resolverId2:expression2}</code></li>
+     * <li><code>${expression}foo${resolverId2:expression2}bar</code></li>
+     * <li><code>foor${expression}bar${resolverId2:expression2}more</code></li>
+     * <li><code>\${expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
+     * </ul>
+     * Given {@code resolverId:} is a valid prefix targeting a {@link java.beans.Expression} explicitly, also the
+     * following expressions are valid:
      * <ul>
      * <li><code>${resolverId:expression}</code></li>
      * <li><code>bla bla ${resolverId:expression}</code></li>
@@ -63,16 +102,13 @@ public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
      * <li><code>\${resolverId:expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
      * </ul>
      *
-     * @param expression the expression to be evaluated, not null
-     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}.
-     *                If no such config is passed, the default configurations provided by the current
-     *                registered providers are used.
-     * @return the evaluated expression.
-     * @throws org.apache.tamaya.ConfigException if resolution fails.
+     * @param key the key to be filtered
+     * @param valueToBeFiltered value to be analyzed for expressions
+     * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public String evaluate(String expression, Configuration... configurations) {
-        StringTokenizer tokenizer = new StringTokenizer(expression, "${}\\", true);
+    public String filterProperty(String key, String valueToBeFiltered, Function<String,String> propertyValueProvider){
+        StringTokenizer tokenizer = new StringTokenizer(valueToBeFiltered, "${}\\", true);
         boolean escaped = false;
         StringBuilder resolvedValue = new StringBuilder();
         StringBuilder current = new StringBuilder();
@@ -106,14 +142,16 @@ public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
                         current.setLength(0);
                     }
                     if (!"{".equals(tokenizer.nextToken())) {
-                        throw new ConfigException("Invalid expression encountered: " + expression);
+                        LOG.warning("Invalid expression syntax in: " + valueToBeFiltered);
+                        return valueToBeFiltered;
                     }
                     String subExpression = tokenizer.nextToken();
                     if (!"}".equals(tokenizer.nextToken())) {
-                        throw new ConfigException("Invalid expression encountered: " + expression);
+                        LOG.warning("Invalid expression syntax in: " + valueToBeFiltered);
+                        return valueToBeFiltered;
                     }
                     // evaluate sub-expression
-                    current.append(evaluteInternal(subExpression));
+                    current.append(evaluteInternal(subExpression, propertyValueProvider));
                     break;
                 default:
                     current.append(token);
@@ -125,19 +163,32 @@ public final class DefaultExpressionEvaluator implements ExpressionEvaluator{
         return resolvedValue.toString();
     }
 
-    private String evaluteInternal(String subExpression) {
-        int sepPos = subExpression.indexOf(':');
-        if (sepPos > 0) {
-            String refID = subExpression.substring(0, sepPos);
-            String expression = subExpression.substring(sepPos + 1);
-            return Optional.ofNullable(this.resolvers.get(refID)).orElseThrow(
-                    () -> new ConfigException("Resolver not found: " + refID + " in " + subExpression)
-            ).resolve(expression);
-        } else {
-            return Optional.ofNullable(this.defaultResolver).orElseThrow(
-                    () -> new ConfigException("No default Resolver set, but required by " + subExpression)
-            ).resolve(subExpression);
+    private String evaluteInternal(String subExpression, Function<String,String> propertyValueProvider) {
+        String value = null;
+        // 1 check for explicit prefix
+        for(ExpressionResolver resolver:resolvers){
+            if(subExpression.startsWith(resolver.getResolverPrefix())){
+                value = resolver.evaluate(subExpression.substring(resolver.getResolverPrefix().length()), propertyValueProvider);
+                break;
+            }
         }
+        if(value==null){
+            for(ExpressionResolver resolver:resolvers){
+                try{
+                    value = resolver.evaluate(subExpression, propertyValueProvider);
+                    if(value!=null){
+                        return value;
+                    }
+                }catch(Exception e){
+                    LOG.log(Level.WARNING, "Error during expression resolution from " + resolver, e);
+                }
+            }
+        }
+        if(value==null){
+            LOG.log(Level.WARNING, "Unresolvable expression encountered " + subExpression);
+            value = '[' + subExpression + ']';
+        }
+        return value;
     }
 
 

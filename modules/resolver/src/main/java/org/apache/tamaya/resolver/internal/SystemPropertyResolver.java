@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.el;
+package org.apache.tamaya.resolver.internal;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.spi.ExpressionResolver;
+import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 /**
  * Property resolver implementation that interprets the resolver expression as system property name.
@@ -30,15 +30,13 @@ import org.apache.tamaya.core.spi.ExpressionResolver;
 public final class SystemPropertyResolver implements ExpressionResolver{
 
     @Override
-    public String getResolverId() {
-        return "sys";
+    public String getResolverPrefix() {
+        return "sys:";
     }
 
     @Override
-    public String resolve(String expression, Configuration... configurations){
-        return Optional.ofNullable(System.getProperty(expression)).orElseThrow(
-                () -> new ConfigException("No such system property: " + expression)
-        );
+    public String evaluate(String expression, Function<String, String> propertyResolver){
+        return Optional.ofNullable(System.getProperty(expression)).orElse(null);
     }
 
 }

@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.el;
+package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.spi.ExpressionResolver;
+import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Property resolver implementation that interprets the resolver expressions as environment properties.
@@ -30,15 +31,13 @@ import java.util.Optional;
 public final class EnvironmentPropertyResolver implements ExpressionResolver{
 
     @Override
-    public String getResolverId() {
-        return "env";
+    public String getResolverPrefix() {
+        return "env:";
     }
 
     @Override
-    public String resolve(String expression, Configuration... configurations){
-        return Optional.ofNullable(System.getenv(expression)).orElseThrow(
-                () -> new ConfigException("No such environment property: " + expression)
-        );
+    public String evaluate(String expression, Function<String, String> propertyResolver){
+        return Optional.ofNullable(System.getenv(expression)).orElse(null);
     }
 
 }
