@@ -25,22 +25,25 @@ package org.apache.tamaya.core.propertysource;
  *
  * DefaultOrdinals can be overwritten via {@link org.apache.tamaya.spi.PropertySource#TAMAYA_ORDINAL}
  */
-public interface DefaultOrdinal {
+public final class DefaultOrdinal {
+
+    /** Private constructor. */
+    private DefaultOrdinal(){}
 
     /**
      * default ordinal for {@link org.apache.tamaya.core.propertysource.BasePropertySource} if
      * not overriden in each class
      */
-    static final int PROPERTY_SOURCE = 1000;
+    public static final int PROPERTY_SOURCE = 1000;
 
     /**
      * default ordinal for {@link org.apache.tamaya.core.propertysource.SystemPropertySource}
      */
-    static final int SYSTEM_PROPERTIES = 400;
+    public static final int SYSTEM_PROPERTIES = 400;
 
     /**
      * default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
      */
-    static final int ENVIRONMENT_PROPERTIES = 300;
+    public static final int ENVIRONMENT_PROPERTIES = 300;
 
 }
