@@ -27,6 +27,6 @@ import org.apache.tamaya.core.formats.PropertiesFormat;
 public class TestPropertySourceProvider extends PathBasedPropertySourceProvider{
 
     public TestPropertySourceProvider() {
-        super("final-testdata-properties", new PropertiesFormat(200), "classpath:cfg/final/**/*.properties");
+        super("final-testdata-properties", new PropertiesFormat(200), "cfg/final/anotherTestFile.properties");
     }
 }
