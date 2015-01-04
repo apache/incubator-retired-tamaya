@@ -56,7 +56,7 @@ public class DefaultResourceLoader implements ResourceLoader {
             Enumeration<URL> urls = classLoader.getResources(expression);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
-                resources.add(new URLResource(url));
+                resources.add(new UrlResource(url));
             }
             return !resources.isEmpty();
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class DefaultResourceLoader implements ResourceLoader {
     private boolean tryURL(String expression, List<Resource> resources) {
         try {
             URL url = new URL(expression);
-            resources.add(new URLResource(url));
+            resources.add(new UrlResource(url));
             return true;
         } catch (Exception e) {
             LOG.finest(() -> "Failed to load resource from file: " + expression);
