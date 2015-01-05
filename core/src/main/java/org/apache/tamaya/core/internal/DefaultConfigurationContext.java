@@ -28,56 +28,92 @@ import org.apache.tamaya.spi.ServiceContext;
 import javax.annotation.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Default Implementation of a simple ConfigurationContext.
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
-    /** The logger. */
+
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
     /**
      * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
+
     /**
-     * The current list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
      */
-    private List<PropertySource> propertySources = new ArrayList<>();
+    private List<PropertySource> immutablePropertySources;
+
     /**
-     * The current list of loaded {@link org.apache.tamaya.spi.PropertySourceProvider} instances.
+     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
      */
-    private List<PropertySourceProvider> propertySourceProviders = new ArrayList<>();
-    /**
-     * The current list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
-     */
-    private List<PropertyFilter> propertyFilters = new ArrayList<>();
+    private List<PropertyFilter> immutablePropertyFilters;
+
     /**
      * Lock for internal synchronization.
      */
     private StampedLock propertySourceLock = new StampedLock();
-    /**
-     * Loaded flag.
-     * TODO replace flag with check on sources load size.
-     */
-    private boolean loaded = false;
 
+
+    /**
+     * The first time the Configuration system gets invoked we do initialize
+     * all our {@link org.apache.tamaya.spi.PropertySource}s and
+     * {@link org.apache.tamaya.spi.PropertyFilter}s which are known at startup.
+     */
+    public DefaultConfigurationContext() {
+        List<PropertySource> propertySources = new ArrayList<>();
+
+        // first we load all PropertySources which got registered via java.util.ServiceLoader
+        propertySources.addAll(ServiceContext.getInstance().getServices(PropertySource.class));
+
+        // after that we add all PropertySources which get dynamically registered via their PropertySourceProviders
+        propertySources.addAll(evaluatePropertySourcesFromProviders());
+
+        // now sort them according to their ordinal values
+        Collections.sort(propertySources, this::comparePropertySources);
+
+        immutablePropertySources = Collections.unmodifiableList(propertySources);
+
+        // as next step we pick up the PropertyFilters pretty much the same way
+        List<PropertyFilter> propertyFilters = new ArrayList<>();
+        propertyFilters.addAll(ServiceContext.getInstance().getServices(PropertyFilter.class));
+        Collections.sort(propertyFilters, this::comparePropertyFilters);
+
+        immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
+    }
+
+    /**
+     * Pick up all {@link org.apache.tamaya.spi.PropertySourceProvider}s and return all the
+     * {@link org.apache.tamaya.spi.PropertySource}s they like to register.
+     */
+    private Collection<? extends PropertySource> evaluatePropertySourcesFromProviders() {
+        List<PropertySource> propertySources = new ArrayList<>();
+        List<PropertySourceProvider> propertySourceProviders = ServiceContext.getInstance().getServices(PropertySourceProvider.class);
+        for (PropertySourceProvider propertySourceProvider : propertySourceProviders) {
+                propertySources.addAll(propertySourceProvider.getPropertySources());
+        }
+
+        return propertySources;
+    }
 
     @Override
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
         Lock writeLock = propertySourceLock.asWriteLock();
         try {
             writeLock.lock();
-            List<PropertySource> newPropertySources = new ArrayList<>(this.propertySources);
+            List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
             newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
             Collections.sort(newPropertySources, this::comparePropertySources);
-            this.propertySources = newPropertySources;
+
+            this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
         } finally {
             writeLock.unlock();
         }
@@ -112,6 +148,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
         int ord1 = prio1 != null ? prio1.value() : 0;
         int ord2 = prio2 != null ? prio2.value() : 0;
+
         if (ord1 < ord2) {
             return -1;
         } else if (ord1 > ord2) {
@@ -123,36 +160,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     @Override
     public List<PropertySource> getPropertySources() {
-        if (!loaded) {
-            Lock writeLock = propertySourceLock.asWriteLock();
-            try {
-                writeLock.lock();
-                if (!loaded) {
-                    this.propertySources.addAll(ServiceContext.getInstance().getServices(PropertySource.class));
-                    this.propertySourceProviders.addAll(ServiceContext.getInstance().getServices(PropertySourceProvider.class));
-                    for (PropertySourceProvider prov : this.propertySourceProviders) {
-                        try {
-                            this.propertySources.addAll(prov.getPropertySources());
-                        } catch (Exception e) {
-                            LOG.log(Level.SEVERE, "Failed to load PropertySources from Provider: " + prov, e);
-                        }
-                    }
-                    Collections.sort(this.propertySources, this::comparePropertySources);
-                    this.propertyFilters.addAll(ServiceContext.getInstance().getServices(PropertyFilter.class));
-                    Collections.sort(this.propertyFilters, this::comparePropertyFilters);
-                    loaded = true;
-                }
-            } finally {
-                writeLock.unlock();
-            }
-        }
-        Lock readLock = propertySourceLock.asReadLock();
-        try {
-            readLock.lock();
-            return Collections.unmodifiableList(propertySources);
-        } finally {
-            readLock.unlock();
-        }
+        return immutablePropertySources;
     }
 
     @Override
@@ -172,7 +180,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     @Override
     public List<PropertyFilter> getPropertyFilters() {
-        return Collections.unmodifiableList(this.propertyFilters);
+        return immutablePropertyFilters;
     }
 
 }
