@@ -36,8 +36,6 @@ public final class DefaultOrdinal {
      */
     public static final int PROPERTY_SOURCE = 1000;
 
-    //X TODO disuss default ordinal of SystemProperties
-
     /**
      * default ordinal for {@link org.apache.tamaya.core.propertysource.SystemPropertySource}
      */
@@ -47,5 +45,10 @@ public final class DefaultOrdinal {
      * default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
      */
     public static final int ENVIRONMENT_PROPERTIES = 300;
+
+    /**
+     * default ordinal for {@link org.apache.tamaya.core.propertysource.PropertiesFilePropertySource}
+     */
+    public static final int FILE_PROPERTIES = 100;
 
 }

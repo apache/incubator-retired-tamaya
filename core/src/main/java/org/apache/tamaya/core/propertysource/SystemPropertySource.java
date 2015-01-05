@@ -26,12 +26,7 @@ import java.util.Properties;
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties.
  */
-public class SystemPropertySource extends BasePropertySource {
-
-    /**
-     * cached System.getProperties() filled in our Map
-     */
-    private Map<String, String> properties;
+public class SystemPropertySource extends PropertiesPropertySource {
 
     /**
      * previous System.getProperties().hashCode()
@@ -41,6 +36,8 @@ public class SystemPropertySource extends BasePropertySource {
 
 
     public SystemPropertySource() {
+        super(System.getProperties());
+        previousHash = System.getProperties().hashCode();
         initializeOrdinal(DefaultOrdinal.SYSTEM_PROPERTIES);
     }
 
@@ -54,11 +51,11 @@ public class SystemPropertySource extends BasePropertySource {
     public Map<String, String> getProperties() {
 
         // only need to reload and fill our map if something has changed
-        if (properties == null || previousHash != System.getProperties().hashCode()) {
+        if (previousHash != System.getProperties().hashCode()) {
 
             synchronized (this) {
 
-                if (properties == null || previousHash != System.getProperties().hashCode()) {
+                if (previousHash != System.getProperties().hashCode()) {
 
                     Properties systemProperties = System.getProperties();
                     Map<String, String> properties = new HashMap<>();
@@ -73,6 +70,6 @@ public class SystemPropertySource extends BasePropertySource {
             }
         }
 
-        return properties;
+        return super.getProperties();
     }
 }
