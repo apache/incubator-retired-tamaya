@@ -41,6 +41,6 @@ public @interface WithPropertyConverter {
      * registered, it is handled as a deployment error.
      */
     @SuppressWarnings("rawtypes")
-	Class<? extends PropertyConverter> value();
+	Class<? extends PropertyConverter<?>> value();
 
 }

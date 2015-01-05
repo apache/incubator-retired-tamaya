@@ -68,7 +68,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
         if ("toString".equals(method.getName())) {
             return "Configured Proxy -> " + this.type.getType().getName();
         }
-        String configValue = InjectionUtils.getConfigValue(method, configurations);
+        String configValue = InjectionUtils.getConfigValue(method);
         return InjectionUtils.adaptValue(method, method.getReturnType(), configValue);
     }
 }

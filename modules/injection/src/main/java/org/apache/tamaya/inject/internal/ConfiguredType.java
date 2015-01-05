@@ -22,12 +22,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import org.apache.tamaya.core.properties.PropertyChangeSet;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertySource;
-import org.apache.tamaya.annotation.*;
-import org.apache.tamaya.core.internal.Utils;
+import org.apache.tamaya.inject.ConfiguredProperties;
+import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.DefaultAreas;
+import org.apache.tamaya.inject.NoConfig;
+import org.apache.tamaya.inject.ObservesConfigChange;
+import org.apache.tamaya.inject.PropertyChangeSet;
+import org.apache.tamaya.spi.PropertySource;
 
 /**
  * Structure that contains and manages configuration related things for a configured type registered.
@@ -153,21 +156,19 @@ public class ConfiguredType {
      * Method called to configure an instance.
      *
      * @param instance       The instance to be configured.
-     * @param configurations Configuration instances that replace configuration served by services. This allows
-     *                       more easily testing and adaption.
      */
-    public void configure(Object instance, Configuration... configurations) {
+    public void configure(Object instance) {
         for (ConfiguredField field : configuredFields) {
-            field.applyInitialValue(instance, configurations);
+            field.applyInitialValue(instance);
         }
         for (ConfiguredSetterMethod method : configuredSetterMethods) {
-            method.applyInitialValue(instance, configurations);
+            method.applyInitialValue(instance);
             // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
-            WeakConfigListenerManager.of().registerConsumer(instance, method.createConsumer(instance, configurations));
+            WeakConfigListenerManager.of().registerConsumer(instance, method.createConsumer(instance));
         }
         // Register callbacks for this intance (weakly)
         for (ConfigChangeCallbackMethod callback : callbackMethods) {
-            WeakConfigListenerManager.of().registerConsumer(instance, callback.createConsumer(instance, configurations));
+            WeakConfigListenerManager.of().registerConsumer(instance, callback.createConsumer(instance));
         }
     }
 

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.inject.internal;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;

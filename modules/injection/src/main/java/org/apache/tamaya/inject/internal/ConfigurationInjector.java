@@ -47,13 +47,11 @@ public final class ConfigurationInjector {
      * Configured the current instance and reigsterd necessary listener to forward config change events as
      * defined by the current annotations in place.
      * @param instance the instance to be configured
-     * @param configurations Configuration instances that replace configuration served by services. This allows
-     *                       more easily testing and adaption.
      */
-    public static void configure(Object instance, Configuration... configurations){
+    public static void configure(Object instance){
         Class type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerType(type);
-        Objects.requireNonNull(configuredType).configure(instance, configurations);
+        Objects.requireNonNull(configuredType).configure(instance);
     }
 
 

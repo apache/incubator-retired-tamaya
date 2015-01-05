@@ -30,6 +30,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.ConfiguredProperties;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultAreas;
+import org.apache.tamaya.inject.PropertyChangeSet;
 //import org.apache.tamaya.core.internal.Utils;
 
 /**
@@ -55,19 +56,13 @@ public class ConfiguredSetterMethod {
                         m.getParameterCount() == 1).get();
     }
 
-//    public Consumer<PropertyChangeSet> createConsumer(Object instance, Configuration... configurations){
-//        // TODO consider environment as well
-//        return event -> {
-//            for(Configuration cfg:configurations){
-//                if(event.getPropertySource().getName().equals(cfg.getName())){
-//                    // ignore these changes, since this config is overridden.
-//                    return;
-//                }
-//            }
-//            String configValue = InjectionUtils.getConfigValue(setterMethod, configurations);
-//            applyValue(instance,configValue, false, configurations);
-//        };
-//    }
+    public Consumer<PropertyChangeSet> createConsumer(Object instance){
+        // TODO consider environment as well
+        return event -> {
+            String configValue = InjectionUtils.getConfigValue(setterMethod);
+            applyValue(instance,configValue, false);
+        };
+    }
 
 
     /**

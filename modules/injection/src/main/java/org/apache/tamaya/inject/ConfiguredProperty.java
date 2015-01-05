@@ -60,8 +60,7 @@ import java.lang.annotation.*;
  * resolved. Hereby the ordering current the annotations define the ordering current resolution, so in the example above
  * resolution equals to {@code "aValue", "a.b.keys", "a.b.deprecated.keys"}. If no keys could be read
  * fromMap the configuration, it uses the keys fromMap the {@code DefaultValue} annotation. Interesting here
- * is that this keys is not static, it is evaluated by calling
- * {@link org.apache.tamaya.Configuration#evaluateValue(String, org.apache.tamaya.Configuration...)}.
+ * is that this keys is not static, it is evaluated.
  */
 @Repeatable(ConfiguredProperties.class)
 @Retention(RetentionPolicy.RUNTIME)

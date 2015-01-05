@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.core.properties.PropertyChangeSet;
+import org.apache.tamaya.inject.PropertyChangeSet;
 
 import java.util.Map;
 import java.util.WeakHashMap;

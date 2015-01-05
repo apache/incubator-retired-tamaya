@@ -19,10 +19,10 @@
 package annottext;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.annotation.ConfiguredProperty;
-import org.apache.tamaya.annotation.WithLoadPolicy;
-import org.apache.tamaya.annotation.DefaultValue;
-import org.apache.tamaya.annotation.LoadPolicy;
+import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.DefaultValue;
+import org.apache.tamaya.inject.LoadPolicy;
+import org.apache.tamaya.inject.WithLoadPolicy;
 
 /**
  * An example showing some basic annotations, using an interface to be proxied by the
