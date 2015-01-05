@@ -29,7 +29,7 @@ import java.util.Properties;
 public class SystemPropertySource extends BasePropertySource {
 
     /**
-     * cashed System.getProperties() filled in our Map
+     * cached System.getProperties() filled in our Map
      */
     private Map<String, String> properties;
 

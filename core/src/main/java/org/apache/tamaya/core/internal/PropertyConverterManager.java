@@ -65,25 +65,25 @@ public class PropertyConverterManager {
      */
     protected void initDefaultConverters() {
         // Add default converters
-        register(char.class, (s) -> s.charAt(0));
+        register(char.class, (s) -> s != null ? s.charAt(0) : null);
         register(byte.class, Byte::parseByte);
         register(short.class, Short::parseShort);
         register(int.class, Integer::parseInt);
         register(long.class, Long::parseLong);
         register(boolean.class, Boolean::parseBoolean);
-        register(float.class, Float::parseFloat);
-        register(double.class, Double::parseDouble);
+        register(float.class, Float::parseFloat); //X TODO not good enough as this is Locale dependent!
+        register(double.class, Double::parseDouble); //X TODO not good enough as this is Locale dependent!
 
-        register(Character.class, (s) -> s.charAt(0));
+        register(Character.class, (s) -> s != null ? s.charAt(0) : null );
         register(Byte.class, Byte::valueOf);
         register(Short.class, Short::valueOf);
         register(Integer.class, Integer::valueOf);
         register(Long.class, Long::valueOf);
         register(Boolean.class, Boolean::valueOf);
-        register(Float.class, Float::valueOf);
-        register(Double.class, Double::valueOf);
-        register(BigDecimal.class, BigDecimal::new);
-        register(BigInteger.class, BigInteger::new);
+        register(Float.class, Float::valueOf); //X TODO not good enough as this is Locale dependent!
+        register(Double.class, Double::valueOf); //X TODO not good enough as this is Locale dependent!
+        register(BigDecimal.class, BigDecimal::new); //X TODO not good enough as this is Locale dependent!
+        register(BigInteger.class, BigInteger::new); //X TODO not good enough as this is Locale dependent!
 
         register(Currency.class, Currency::getInstance);
 
