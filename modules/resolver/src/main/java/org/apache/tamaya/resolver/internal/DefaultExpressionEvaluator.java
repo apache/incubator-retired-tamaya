@@ -19,12 +19,14 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 import javax.annotation.Priority;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
