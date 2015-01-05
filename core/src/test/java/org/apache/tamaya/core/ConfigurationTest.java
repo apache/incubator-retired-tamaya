@@ -40,7 +40,7 @@ public class ConfigurationTest {
         assertEquals("Robin", Configuration.current().get("name").get());
         assertEquals("Sabine", Configuration.current().get("name2").get()); // from default
         assertEquals("Mapped to name: Robin", Configuration.current().get("name3").get());  // oderridden default, mapped by filter to name property
-        assertEquals("Sereina(filtered)", Configuration.current().get("name4").get()); // final only
+        assertEquals("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)", Configuration.current().get("name4").get()); // final only
         assertNull(Configuration.current().get("name5").orElse(null)); // final only, but removed from filter
 
         System.out.println("name : " + Configuration.current().get("name").get());

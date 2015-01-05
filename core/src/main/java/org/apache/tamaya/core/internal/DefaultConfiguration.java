@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -42,8 +43,15 @@ import java.util.stream.Collectors;
  * instance to evaluate the current Configuration.
  */
 public class DefaultConfiguration implements Configuration {
-
+    /** The logger. */
     private static final Logger LOG = Logger.getLogger(DefaultConfiguration.class.getName());
+    /** The maximal number of filter cycles performed before aborting. */
+    private static final int MAX_FILTER_LOOPS = 10;
+
+    /**
+     * The current {@link org.apache.tamaya.spi.ConfigurationContext} of the current instance.
+     */
+    private ConfigurationContext configurationContext = ServiceContext.getInstance().getService(ConfigurationContext.class).get();
 
     /**
      * This method evaluates the given configuration key. Hereby if goes down the chain or PropertySource instances
@@ -57,7 +65,7 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public Optional<String> get(String key) {
-        List<PropertySource> propertySources = ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources();
+        List<PropertySource> propertySources = configurationContext.getPropertySources();
         String unfilteredValue = null;
         for (PropertySource propertySource : propertySources) {
             Optional<String> value = propertySource.get(key);
@@ -66,19 +74,51 @@ public class DefaultConfiguration implements Configuration {
                 break;
             }
         }
+        return Optional.ofNullable(applyFilter(key, unfilteredValue));
+    }
+
+    private String applyFilter(String key, String unfilteredValue) {
         // Apply filters to values, prevent values filtered to null!
-        for(PropertyFilter filter:
-                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyFilters()){
-            unfilteredValue = filter.filterProperty(key, unfilteredValue,
-                    (String k) -> key.equals(k)?null:get(k).orElse(null));
+        for(int i=0; i<MAX_FILTER_LOOPS;i++) {
+            boolean changed = false;
+            // Apply filters to values, prevent values filtered to null!
+            for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
+                String newValue = filter.filterProperty(key, unfilteredValue,
+                        (String k) -> key.equals(k) ? null : get(k).orElse(null));
+                if (newValue != null && !newValue.equals(unfilteredValue)) {
+                    changed = true;
+                    if(LOG.isLoggable(Level.FINEST)) {
+                        LOG.finest("Filter - " + key + ": " + unfilteredValue + " -> " + newValue + " by " + filter);
+                    }
+                } else if (unfilteredValue != null && !unfilteredValue.equals(newValue)) {
+                    changed = true;
+                    if(LOG.isLoggable(Level.FINEST)) {
+                        LOG.finest("Filter - " + key + ": " + unfilteredValue + " -> " + newValue + " by " + filter);
+                    }
+                }
+                unfilteredValue = newValue;
+            }
+            if (!changed) {
+                LOG.finest(() -> "Finishing filter loop, no changes detected.");
+                break;
+            }
+            else{
+                if(i==(MAX_FILTER_LOOPS-1)) {
+                    if(LOG.isLoggable(Level.WARNING)) {
+                        LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
+                    }
+                }
+                else{
+                    LOG.finest(() -> "Repeating filter loop, changes detected.");
+                }
+            }
         }
-        return Optional.ofNullable(unfilteredValue);
+        return unfilteredValue;
     }
 
     @Override
     public Map<String, String> getProperties() {
-        List<PropertySource> propertySources = new ArrayList<>(
-                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources());
+        List<PropertySource> propertySources = new ArrayList<>(configurationContext.getPropertySources());
         Collections.reverse(propertySources);
         Map<String, String> result = new HashMap<>();
         for (PropertySource propertySource : propertySources) {
@@ -90,17 +130,48 @@ public class DefaultConfiguration implements Configuration {
                 LOG.log(Level.FINEST, null, () -> "Handled properties from " + propertySource.getName() + "(new: " +
                         (result.size() - origSize) + ", overrides: " + origSize + ", total: " + result.size());
             } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Error adding properties from PropertySource: " + propertySource +", ignoring PropertySource.", e);
+                LOG.log(Level.SEVERE, "Error adding properties from PropertySource: " + propertySource + ", ignoring PropertySource.", e);
             }
         }
+        return applyFilters(result);
+    }
+
+    private Map<String, String> applyFilters(Map<String, String> result) {
         // Apply filters to values, prevent values filtered to null!
-        for(PropertyFilter filter:
-                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyFilters()){
-            result.replaceAll((k,v) -> filter.filterProperty(k, v,
-                    (String k2) -> k2.equals(k)?null:get(k2).orElse(null)));
+        for(int i=0; i<MAX_FILTER_LOOPS;i++) {
+            AtomicInteger changes = new AtomicInteger();
+            for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
+                result.replaceAll((k, v) -> {
+                    String newValue = filter.filterProperty(k, v,
+                            (String k2) -> k2.equals(k) ? v : get(k2).orElse(null));
+                    if (newValue != null && !newValue.equals(v)) {
+                        changes.incrementAndGet();
+                        LOG.finest(() -> "Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);
+                    } else if (v != null && !v.equals(newValue)) {
+                        changes.incrementAndGet();
+                        LOG.finest(() -> "Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);
+                    }
+                    return newValue;
+                });
+            }
+            if(changes.get()==0){
+                LOG.finest(() -> "Finishing filter loop, no changes detected.");
+                break;
+            }
+            else{
+                if(i==(MAX_FILTER_LOOPS-1)) {
+                    if(LOG.isLoggable(Level.WARNING)){
+                        LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
+                    }
+                }
+                else{
+                    LOG.finest(() -> "Repeating filter loop, changes detected: " + changes.get());
+                }
+                changes.set(0);
+            }
         }
         // Remove null values
-        return result.entrySet().parallelStream().filter((e) -> e.getValue()!=null).collect(
+        return result.entrySet().parallelStream().filter((e) -> e.getValue() != null).collect(
                 Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue()));
     }
 
@@ -112,15 +183,14 @@ public class DefaultConfiguration implements Configuration {
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
-     * @param <T> the value type
+     * @param <T>  the value type
      * @return the converted value, never null.
      */
     @Override
     public <T> Optional<T> get(String key, Class<T> type) {
         Optional<String> value = get(key);
         if (value.isPresent()) {
-            List<PropertyConverter<T>> converters = ServiceContext.getInstance().getService(ConfigurationContext.class)
-                    .get().getPropertyConverters(type);
+            List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value.get());
