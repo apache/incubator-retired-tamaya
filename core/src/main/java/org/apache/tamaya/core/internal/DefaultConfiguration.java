@@ -45,6 +45,9 @@ public class DefaultConfiguration implements Configuration {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfiguration.class.getName());
 
+    private final ConfigurationContext configurationContext = ServiceContext.getInstance().getService(ConfigurationContext.class).get();
+
+
     /**
      * This method evaluates the given configuration key. Hereby if goes down the chain or PropertySource instances
      * provided by the current {@link org.apache.tamaya.spi.ConfigurationContext}. The first non-null-value returned
@@ -57,7 +60,7 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public Optional<String> get(String key) {
-        List<PropertySource> propertySources = ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources();
+        List<PropertySource> propertySources = configurationContext.getPropertySources();
         String unfilteredValue = null;
         for (PropertySource propertySource : propertySources) {
             Optional<String> value = propertySource.get(key);
@@ -67,8 +70,7 @@ public class DefaultConfiguration implements Configuration {
             }
         }
         // Apply filters to values, prevent values filtered to null!
-        for(PropertyFilter filter:
-                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyFilters()){
+        for(PropertyFilter filter: configurationContext.getPropertyFilters()){
             unfilteredValue = filter.filterProperty(key, unfilteredValue,
                     (String k) -> key.equals(k)?null:get(k).orElse(null));
         }
@@ -77,8 +79,7 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public Map<String, String> getProperties() {
-        List<PropertySource> propertySources = new ArrayList<>(
-                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertySources());
+        List<PropertySource> propertySources = new ArrayList<>(configurationContext.getPropertySources());
         Collections.reverse(propertySources);
         Map<String, String> result = new HashMap<>();
         for (PropertySource propertySource : propertySources) {
@@ -95,7 +96,7 @@ public class DefaultConfiguration implements Configuration {
         }
         // Apply filters to values, prevent values filtered to null!
         for(PropertyFilter filter:
-                ServiceContext.getInstance().getService(ConfigurationContext.class).get().getPropertyFilters()){
+                configurationContext.getPropertyFilters()){
             result.replaceAll((k,v) -> filter.filterProperty(k, v,
                     (String k2) -> k2.equals(k)?null:get(k2).orElse(null)));
         }
@@ -119,8 +120,7 @@ public class DefaultConfiguration implements Configuration {
     public <T> Optional<T> get(String key, Class<T> type) {
         Optional<String> value = get(key);
         if (value.isPresent()) {
-            List<PropertyConverter<T>> converters = ServiceContext.getInstance().getService(ConfigurationContext.class)
-                    .get().getPropertyConverters(type);
+            List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value.get());
