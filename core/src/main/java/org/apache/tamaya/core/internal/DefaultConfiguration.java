@@ -77,6 +77,12 @@ public class DefaultConfiguration implements Configuration {
         return Optional.ofNullable(applyFilter(key, unfilteredValue));
     }
 
+    /**
+     * Apply filters to a single property value.
+     * @param key the key, used for logging, not null.
+     * @param unfilteredValue the unfiltered property value.
+     * @return the filtered value, or null.
+     */
     private String applyFilter(String key, String unfilteredValue) {
         // Apply filters to values, prevent values filtered to null!
         for(int i=0; i<MAX_FILTER_LOOPS;i++) {
@@ -116,6 +122,11 @@ public class DefaultConfiguration implements Configuration {
         return unfilteredValue;
     }
 
+    /**
+     * Get the current properties, composed by the loaded {@link org.apache.tamaya.spi.PropertySource} and filtered
+     * by registered {@link org.apache.tamaya.spi.PropertyFilter}.
+     * @return the final properties.
+     */
     @Override
     public Map<String, String> getProperties() {
         List<PropertySource> propertySources = new ArrayList<>(configurationContext.getPropertySources());
@@ -136,12 +147,17 @@ public class DefaultConfiguration implements Configuration {
         return applyFilters(result);
     }
 
-    private Map<String, String> applyFilters(Map<String, String> result) {
+    /**
+     * Filter a full configuration property map.
+     * @param inputMap the unfiltered map
+     * @return the filtered map.
+     */
+    private Map<String, String> applyFilters(Map<String, String> inputMap) {
         // Apply filters to values, prevent values filtered to null!
         for(int i=0; i<MAX_FILTER_LOOPS;i++) {
             AtomicInteger changes = new AtomicInteger();
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                result.replaceAll((k, v) -> {
+                inputMap.replaceAll((k, v) -> {
                     String newValue = filter.filterProperty(k, v,
                             (String k2) -> k2.equals(k) ? v : get(k2).orElse(null));
                     if (newValue != null && !newValue.equals(v)) {
@@ -171,7 +187,7 @@ public class DefaultConfiguration implements Configuration {
             }
         }
         // Remove null values
-        return result.entrySet().parallelStream().filter((e) -> e.getValue() != null).collect(
+        return inputMap.entrySet().parallelStream().filter((e) -> e.getValue() != null).collect(
                 Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue()));
     }
 
