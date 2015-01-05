@@ -192,7 +192,7 @@ public class PropertyConverterManager {
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(Class<T> targetType) {
         PropertyConverter<T> converter = null;
-        Method factoryMethod = getFactoryMethod(targetType, "of", "valueOf", "instanceOf", "getInstance", "from", "parse");
+        Method factoryMethod = getFactoryMethod(targetType, "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
             converter = (s) -> {
                 try {
