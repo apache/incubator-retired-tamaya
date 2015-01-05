@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to control injection and resolution current a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link org.apache.tamaya.annotation.ConfiguredProperty}
+ * to be resolved are basically determined by the {@link ConfiguredProperty}
  * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
  * to define a configuration area that is prefixed to all relative configuration keys within the
  * corresponding class/template interface.

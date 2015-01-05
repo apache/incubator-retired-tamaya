@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.inject;
 
 /**
  * Available policies that describe how changes affecting configured values are published/reinjected.

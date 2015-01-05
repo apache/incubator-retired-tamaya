@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya;
+package org.apache.tamaya.inject;
 
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
  * A accessor for a single configured value. This can be used to support values that may change during runtime, reconfigured or
  * final. Hereby external code (could be Tamaya configuration listners or client code), can set a new value. Depending on the
- * {@link org.apache.tamaya.DynamicValue.UpdatePolicy} the new value is immedeately active or it requires an active commit
+ * {@link UpdatePolicy} the new value is immedeately active or it requires an active commit
  * by client code. Similarly an instance also can ignore all later changes to the value.
  * <h3>Implementation Details</h3>
  * This class is
@@ -210,7 +210,7 @@ public final class DynamicValue<T> implements Serializable{
     }
 
     /**
-     * Method to apply a new value. Depending on the {@link  org.apache.tamaya.DynamicValue.UpdatePolicy}
+     * Method to apply a new value. Depending on the {@link  UpdatePolicy}
      * the value is immediately or deferred visible (or it may even be ignored completely).
      * @param newValue the new value, may also be null.
      */
@@ -235,7 +235,7 @@ public final class DynamicValue<T> implements Serializable{
     }
 
     /**
-     * Sets a new {@link org.apache.tamaya.DynamicValue.UpdatePolicy}.
+     * Sets a new {@link UpdatePolicy}.
      * @param updatePolicy the new policy, not null.
      */
     public void setUpdatePolicy(UpdatePolicy updatePolicy){

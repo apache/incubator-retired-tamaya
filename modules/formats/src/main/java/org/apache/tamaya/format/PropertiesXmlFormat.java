@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.core.resources.Resource;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.io.InputStream;
@@ -27,8 +26,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +54,7 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
      * Creates a new format instance, producing entries for the given ordinal, if not overridden by a
      * config entry itself.
      * TODO document and implement override feature
+     *
      * @param ordinal the target ordinal.
      */
     public PropertiesXmlFormat(int ordinal) {
@@ -70,11 +72,11 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<PropertySource> readConfiguration(String baseName, Resource resource) {
-        if (resource.exists()) {
-            final String sourceName = (baseName==null?"Properties:":baseName) + resource.getName();
-            List<PropertySource> propertySources = new ArrayList<>();
-            try (InputStream is = resource.getInputStream()) {
+    public Collection<PropertySource> readConfiguration(String source, Supplier<InputStream> streamSupplier) {
+        final String name = "XML-Properties:" + Objects.requireNonNull(source) + ')';
+        List<PropertySource> propertySources = new ArrayList<>();
+        try (InputStream is = streamSupplier.get()) {
+            if (is != null) {
                 final Properties p = new Properties();
                 p.loadFromXML(is);
                 propertySources.add(new PropertySource() {
@@ -85,7 +87,7 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
 
                     @Override
                     public String getName() {
-                        return sourceName;
+                        return name;
                     }
 
                     @Override
@@ -99,9 +101,9 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
                     }
                 });
                 return propertySources;
-            } catch (Exception e) {
-                LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + resource);
             }
+        } catch (Exception e) {
+            LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + source);
         }
         return Collections.emptyList();
     }

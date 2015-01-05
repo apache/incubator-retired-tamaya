@@ -23,15 +23,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Interface for an abstract resource. The effective resource implementation can be completely arbitrary.
  * By default files, classpath format and URLs are supported, but alternate implementations are possible.
  *
- * @see #getInputStream()
+ * @see #get()
  * @see #toURI()
  */
-public interface Resource extends InputStreamSupplier {
+public interface Resource extends Supplier<InputStream> {
 
     /**
      * Return whether this resource actually exists. Depending on the resource this can delegate to
@@ -44,7 +45,7 @@ public interface Resource extends InputStreamSupplier {
         } catch (IOException ex) {
             // Fallback
             try {
-                InputStream is = getInputStream();
+                InputStream is = get();
                 is.close();
                 return true;
             } catch (Exception e) {
@@ -55,10 +56,10 @@ public interface Resource extends InputStreamSupplier {
     }
 
     /**
-     * Checks whether the resource is accessible, meaning {@link #getInputStream()} should return a InputStream for reading the
+     * Checks whether the resource is accessible, meaning {@link #get()} should return a InputStream for reading the
      * resource's content.
      *
-     * @see #getInputStream()
+     * @see #get()
      */
     default boolean isAccessible() {
         return true;
@@ -77,7 +78,7 @@ public interface Resource extends InputStreamSupplier {
      * @throws IOException if the resource is not readable.
      */
     default long length() throws IOException {
-        try(InputStream is = this.getInputStream();) {
+        try(InputStream is = this.get();) {
             Objects.requireNonNull(is, "resource not available");
             long length = 0;
             byte[] buf = new byte[256];

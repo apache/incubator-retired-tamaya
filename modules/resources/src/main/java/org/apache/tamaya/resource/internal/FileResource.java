@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.core.resources.Resource;
+import org.apache.tamaya.resource.Resource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,12 +26,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Implementation of {@link org.apache.tamaya.core.resources.Resource} to be loaded from a file.
+ * Implementation of {@link Resource} to be loaded from a file.
+ *
  * @see java.io.File
  */
 public class FileResource implements Resource {
+
+    private static final Logger LOG = Logger.getLogger(FileResource.class.getName());
 
     private final File file;
 
@@ -91,8 +96,13 @@ public class FileResource implements Resource {
      * @see java.io.FileInputStream
      */
     @Override
-    public InputStream getInputStream() throws IOException {
-        return new FileInputStream(this.file);
+    public InputStream get() {
+        try {
+            return new FileInputStream(this.file);
+        } catch (Exception e) {
+            LOG.log(Level.INFO, "Failed to open file: " + file.getAbsolutePath(), e);
+            return null;
+        }
     }
 
     /**

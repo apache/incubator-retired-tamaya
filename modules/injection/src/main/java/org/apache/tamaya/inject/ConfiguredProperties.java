@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation container to enable injection current multiple {@link org.apache.tamaya.annotation.ConfiguredProperty}
+ * Annotation container to enable injection current multiple {@link ConfiguredProperty}
  * annotations. Hereby the ordering current annotations imply the defaulting. The first keys that
  * could be resolved successfully in the chain current annotations will be used.
  */

@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.core.resources.Resource;
+import org.apache.tamaya.resource.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,7 +81,7 @@ public class InputStreamResource implements Resource {
      * Accesses the input stream. Hereby the input stream can only accessed once.
      */
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream get() {
         if (this.read) {
             throw new IllegalStateException("InputStream can only be read once!");
         }

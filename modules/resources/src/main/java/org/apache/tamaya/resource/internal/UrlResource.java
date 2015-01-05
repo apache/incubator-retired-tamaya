@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.core.resources.Resource;
+import org.apache.tamaya.resource.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,11 +29,15 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation of a resource based on a {@code java.net.URL}.
  */
 public class UrlResource implements Resource {
+
+    private static final Logger LOG = Logger.getLogger(UrlResource.class.getName());
 
     /**
      * Original URL, used for actual access.
@@ -70,7 +74,7 @@ public class UrlResource implements Resource {
      * @see java.net.URLConnection#getInputStream()
      */
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream get() {
         URLConnection con = null;
         try {
             con = this.url.openConnection();
@@ -80,7 +84,8 @@ public class UrlResource implements Resource {
             if (con instanceof HttpURLConnection) {
                 ((HttpURLConnection) con).disconnect();
             }
-            throw e;
+            LOG.log(Level.INFO, "Failed to open URL: " + url, e);
+            return null;
         }
     }
 

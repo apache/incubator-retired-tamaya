@@ -206,7 +206,7 @@ public final class PropertySourcesBuilder {
     }
 
     /**
-     * Creates a new read-only {@link PropertySource} by reading the according path resources. The effective resources read
+     * Creates a new read-only {@link PropertySource} by reading the according path format. The effective format read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
      * Properties read are aggregated using the current aggregation policy active.
      *
@@ -222,7 +222,7 @@ public final class PropertySourcesBuilder {
 
 
     /**
-     * Creates a new read-only {@link PropertySource} by reading the according path resources. The effective resources read
+     * Creates a new read-only {@link PropertySource} by reading the according path format. The effective format read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
      * Properties read are aggregated using the current aggregation policy active.
      *
@@ -241,7 +241,7 @@ public final class PropertySourcesBuilder {
     }
 
     /**
-     * Creates a new read-only {@link PropertySource} by reading the according URL resources.
+     * Creates a new read-only {@link PropertySource} by reading the according URL format.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param urls the urls to be read, not null.
@@ -255,7 +255,7 @@ public final class PropertySourcesBuilder {
     }
 
     /**
-     * Creates a new read-only {@link PropertySource} by reading the according URL resources.
+     * Creates a new read-only {@link PropertySource} by reading the according URL format.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param urls the urls to be read, not null.

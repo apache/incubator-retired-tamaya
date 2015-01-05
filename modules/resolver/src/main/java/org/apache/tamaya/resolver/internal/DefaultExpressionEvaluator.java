@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.resolver.internal;
 
+import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
  * has the advantage that different resolvers can be active in parallel.
  */
 @Priority(10000)
-public class DefaultExpressionEvaluator implements PropertyFilter {
+public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     private static final Logger LOG = Logger.getLogger(DefaultExpressionEvaluator.class.getName());
 
@@ -151,7 +152,7 @@ public class DefaultExpressionEvaluator implements PropertyFilter {
                         return valueToBeFiltered;
                     }
                     // evaluate sub-expression
-                    current.append(evaluteInternal(subExpression, propertyValueProvider));
+                    current.append(evaluateInternal(subExpression, propertyValueProvider));
                     break;
                 default:
                     current.append(token);
@@ -163,7 +164,7 @@ public class DefaultExpressionEvaluator implements PropertyFilter {
         return resolvedValue.toString();
     }
 
-    private String evaluteInternal(String subExpression, Function<String,String> propertyValueProvider) {
+    private String evaluateInternal(String subExpression, Function<String,String> propertyValueProvider) {
         String value = null;
         // 1 check for explicit prefix
         for(ExpressionResolver resolver:resolvers){

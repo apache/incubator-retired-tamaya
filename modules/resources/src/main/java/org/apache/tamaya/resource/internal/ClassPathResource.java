@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.core.resources.Resource;
+import org.apache.tamaya.resource.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,11 +26,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation of {@link Resource} to be loaded from the classpath.
  */
 public class ClassPathResource implements Resource {
+
+    private static final Logger LOG = Logger.getLogger(ClassPathResource.class.getName());
 
     private final String path;
 
@@ -61,10 +65,10 @@ public class ClassPathResource implements Resource {
             path = path.substring(1);
         }
         this.path = path.trim();
-        if(classLoader==null){
+        if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();
         }
-        if(classLoader==null){
+        if (classLoader == null) {
             classLoader = getClass().getClassLoader();
         }
         this.classLoader = classLoader;
@@ -111,12 +115,17 @@ public class ClassPathResource implements Resource {
      * @see java.lang.Class#getResourceAsStream(String)
      */
     @Override
-    public InputStream getInputStream() throws IOException {
-        InputStream is = this.classLoader.getResourceAsStream(this.path);
-        if (is == null) {
-            throw new IOException(getName() + " does not exist");
+    public InputStream get() {
+        try {
+            InputStream is = this.classLoader.getResourceAsStream(this.path);
+            if (is == null) {
+                throw new IOException(getName() + " does not exist");
+            }
+            return is;
+        } catch (IOException e) {
+            LOG.log(Level.INFO, "Failed to open classpath resource: " + path, e);
+            return null;
         }
-        return is;
     }
 
     @Override
@@ -139,7 +148,7 @@ public class ClassPathResource implements Resource {
      */
     @Override
     public String getName() {
-        return "classpath:"+path;
+        return "classpath:" + path;
     }
 
     /**

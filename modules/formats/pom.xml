@@ -21,24 +21,20 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
+        <groupId>org.apache.tamaya.ext</groupId>
+        <artifactId>tamaya-extensions</artifactId>
         <version>0.2-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-extensions</artifactId>
-    <groupId>org.apache.tamaya.ext</groupId>
-    <name>Apache Tamaya Extension Modules</name>
-    <description>This project contains the several extensions that can be used with Tamaya.</description>
-    <packaging>pom</packaging>
+    <artifactId>tamaya-formats</artifactId>
+    <name>Apache Tamaya Format Services</name>
+    <packaging>jar</packaging>
 
-    <modules>
-        <!-- module>injection</module -->
-        <module>formats</module>
-        <module>resolver</module>
-        <module>resources</module>
-        <!-- module>metamodels</module -->
-        <!-- module>integration</module -->
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

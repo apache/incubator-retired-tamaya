@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.resolver.spi;
 
-import org.apache.tamaya.Configuration;
-
 import java.util.function.Function;
 
 /**

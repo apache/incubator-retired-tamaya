@@ -18,11 +18,12 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.core.resources.Resource;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 /**
  * Implementations current this class encapsulate the mechanism how to read a
@@ -45,9 +46,10 @@ public interface ConfigurationFormat {
      *
      * @param sourceName name to be used for constructing a useful name for the created
      *                   {@link org.apache.tamaya.spi.PropertySource} instances.
-     * @param resource   the configuration resource, not null
+     * @param streamSupplier   the resource represented by a supplier of InputStream, not null
      * @return the corresponding {@link org.apache.tamaya.spi.PropertySource} instances, never {@code null}.
      */
-    Collection<PropertySource> readConfiguration(String sourceName, Resource resource) throws IOException;
+    Collection<PropertySource> readConfiguration(String sourceName, Supplier<InputStream> streamSupplier)
+            throws IOException;
 
 }

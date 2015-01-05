@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.inject;
+package org.apache.tamaya.inject.internal;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -25,10 +25,9 @@ import java.util.Objects;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.annotation.ConfiguredProperties;
-import org.apache.tamaya.annotation.ConfiguredProperty;
-import org.apache.tamaya.annotation.DefaultAreas;
-import org.apache.tamaya.core.internal.Utils;
+import org.apache.tamaya.inject.ConfiguredProperties;
+import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.DefaultAreas;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance current
@@ -57,13 +56,11 @@ public class ConfiguredField {
      * Evaluate the initial keys fromMap the configuration and applyChanges it to the field.
      *
      * @param target the target instance.
-     * @param configurations Configuration instances that replace configuration served by services. This allows
-     *                       more easily testing and adaption.
      * @throws ConfigException if evaluation or conversion failed.
      */
-    public void applyInitialValue(Object target, Configuration... configurations) throws ConfigException {
-        String configValue = InjectionUtils.getConfigValue(this.annotatedField, configurations);
-        applyValue(target, configValue, false, configurations);
+    public void applyInitialValue(Object target) throws ConfigException {
+        String configValue = InjectionUtils.getConfigValue(this.annotatedField);
+        applyValue(target, configValue, false);
     }
 
 
@@ -75,12 +72,12 @@ public class ConfiguredField {
      * @param resolve     set to true, if expression resolution should be applied on the keys passed.
      * @throws ConfigException if the configuration required could not be resolved or converted.
      */
-    public void applyValue(Object target, String configValue, boolean resolve, Configuration... configurations) throws ConfigException {
+    public void applyValue(Object target, String configValue, boolean resolve) throws ConfigException {
         Objects.requireNonNull(target);
         try {
             if (resolve && configValue != null) {
                 // net step perform exression resolution, if any
-                configValue = Configuration.evaluateValue(configValue, configurations);
+                configValue = InjectionUtils.evaluateValue(configValue);
             }
             // Check for adapter/filter
             Object value = InjectionUtils.adaptValue(this.annotatedField, this.annotatedField.getType(), configValue);

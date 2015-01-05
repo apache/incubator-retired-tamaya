@@ -9,7 +9,7 @@ import org.apache.tamaya.core.properties.PropertySourcesBuilder;
 /**
  * Implementation of a default config provider used as fallback, if no {@link old.ConfigurationProviderSpi}
  * instance is registered for providing the {@code default} {@link org.apache.tamaya.Configuration}. The providers loads the follwing
- * config resources:
+ * config format:
  * <ul>
  *     <li>Classpath: META-INF/cfg/default/&#42;&#42;/&#42;.xml, META-INF/cfg/default/&#42;&#42;/&#42;.properties, META-INF/cfg/default/&#42;&#42;/&#42;.ini</li>
  *     <li>Classpath: META-INF/cfg/config/#42;#42;/#42;.xml, META-INF/cfg/config/#42;#42;/#42;.properties, META-INF/cfg/config/#42;#42;/#42;.ini</li>

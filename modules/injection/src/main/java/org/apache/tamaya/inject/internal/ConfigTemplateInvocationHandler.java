@@ -16,11 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.inject;
+package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.internal.inject.ConfiguredType;
-import org.apache.tamaya.core.internal.inject.InjectionUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

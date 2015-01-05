@@ -68,4 +68,11 @@ public class ConfigurationTest {
     public void testQuery() throws Exception {
         assertEquals("myFooResult", Configuration.current().query(c -> "myFooResult"));
     }
+
+    @org.junit.Test
+    public void testGetAdapted() throws Exception {
+        assertEquals("yes", Configuration.current().get("booleanTrue", (v) -> Boolean.parseBoolean(v)?"yes":"no").get());
+        assertEquals("no", Configuration.current().get("booleanFalse", (v) -> Boolean.parseBoolean(v)?"yes":"no").get());
+    }
+
 }

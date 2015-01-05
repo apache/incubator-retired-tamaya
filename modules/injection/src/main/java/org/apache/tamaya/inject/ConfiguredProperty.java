@@ -16,16 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.inject;
 
 import java.lang.annotation.*;
 
 /**
  * Annotation to enable injection current a configured property or define the returned data for
  * a configuration template method. Hereby this annotation can be used in multiple ways and combined
- * with other annotations such as {@link org.apache.tamaya.annotation.DefaultValue},
- * {@link org.apache.tamaya.annotation.WithLoadPolicy}, {@link org.apache.tamaya.annotation.WithConfig},
- * {@link org.apache.tamaya.annotation.WithConfigOperator}, {@link WithPropertyAdapter}.
+ * with other annotations such as {@link DefaultValue},
+ * {@link WithLoadPolicy},  {@link WithConfigOperator}, {@link WithPropertyConverter}.
  *
  * Below the most simple variant current a configured class is given:
  * {@code
@@ -42,7 +41,7 @@ import java.lang.annotation.*;
  *     <li>if not successful, an error is thrown ({@link org.apache.tamaya.ConfigException}.</li>
  *     <li>On success, since no type conversion is involved, the keys is injected.</li>
  *     <li>The configured bean is registered as a weak change listener in the config system's underlying
- *     configuration, so future config changes can be propagated (controlled by {@link org.apache.tamaya.annotation.WithLoadPolicy}
+ *     configuration, so future config changes can be propagated (controlled by {@link WithLoadPolicy}
  *     annotations).</li>
  * </ul>
  *

@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.core.formats.ConfigurationFormat;
-import org.apache.tamaya.core.resources.Resource;
-import org.apache.tamaya.core.resources.ResourceLoader;
+import org.apache.tamaya.format.ConfigurationFormat;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.ServiceContext;
@@ -36,11 +34,11 @@ import java.util.logging.Logger;
 /**
  * Implementation of a {@link PropertySourceProvider} that reads configuration from some given resource paths
  * and using the given formats. The resource path are resolved using the current
- * {@link org.apache.tamaya.core.resources.ResourceLoader} active.
+ * {@link org.apache.tamaya.resource.ResourceResolver} active.
  */
-public class PathBasedPropertySourceProvider implements PropertySourceProvider {
+public abstract class AbstractPathBasedPropertySourceProvider implements PropertySourceProvider {
     /** The logger used. */
-    private static final Logger LOG = Logger.getLogger(PathBasedPropertySourceProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractPathBasedPropertySourceProvider.class.getName());
     /** The property source base name, will be used for creating a useful name of the
      * {@link org.apache.tamaya.spi.PropertySource} created. */
     private String sourceName;
@@ -55,7 +53,7 @@ public class PathBasedPropertySourceProvider implements PropertySourceProvider {
      * @param formats the formats to be used, not null, not empty.
      * @param paths the paths to be resolved, not null, not empty.
      */
-    public PathBasedPropertySourceProvider(String sourceName, List<ConfigurationFormat> formats, String... paths) {
+    public AbstractPathBasedPropertySourceProvider(String sourceName, List<ConfigurationFormat> formats, String... paths) {
         this.sourceName = Objects.requireNonNull(sourceName);
         this.configFormats.addAll(Objects.requireNonNull(formats));
         this.paths.addAll(Arrays.asList(Objects.requireNonNull(paths)));
@@ -67,7 +65,7 @@ public class PathBasedPropertySourceProvider implements PropertySourceProvider {
      * @param format the format to be used.
      * @param paths the paths to be resolved, not null, not empty.
      */
-    public PathBasedPropertySourceProvider(String sourceName, ConfigurationFormat format, String... paths) {
+    public AbstractPathBasedPropertySourceProvider(String sourceName, ConfigurationFormat format, String... paths) {
         this.sourceName = Objects.requireNonNull(sourceName);
         this.configFormats.add(Objects.requireNonNull(format));
         this.paths.addAll(Arrays.asList(Objects.requireNonNull(paths)));
@@ -77,7 +75,7 @@ public class PathBasedPropertySourceProvider implements PropertySourceProvider {
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
         paths.forEach((path) -> {
-            for (Resource res : ServiceContext.getInstance().getService(ResourceLoader.class).get().getResources(path)) {
+            for (Resource res : ServiceContext.getInstance().getService(ResourceResolver.class).get().getResources(path)) {
                 try {
                     for (ConfigurationFormat format : configFormats) {
                         propertySources.addAll(format.readConfiguration(sourceName, res));

@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 import java.util.Optional;

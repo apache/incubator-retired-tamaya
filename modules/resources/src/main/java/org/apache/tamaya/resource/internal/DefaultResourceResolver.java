@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.core.resources.Resource;
-import org.apache.tamaya.core.resources.ResourceLoader;
+import org.apache.tamaya.resource.Resource;
+import org.apache.tamaya.resource.ResourceResolver;
 
 import javax.annotation.Priority;
 import java.io.File;
@@ -34,9 +34,9 @@ import java.util.logging.Logger;
  * Simple default implementation of the resource loader, which does only support direct references to files.
  */
 @Priority(0)
-public class DefaultResourceLoader implements ResourceLoader {
+public class DefaultResourceResolver implements ResourceResolver {
 
-    private static final Logger LOG = Logger.getLogger(DefaultResourceLoader.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultResourceResolver.class.getName());
 
     @Override
     public List<Resource> getResources(ClassLoader classLoader, Collection<String> expressions) {

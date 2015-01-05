@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.inject;
 
-import org.apache.tamaya.PropertyAdapter;
+
+import org.apache.tamaya.spi.PropertyConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -32,7 +33,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })
-public @interface WithPropertyAdapter {
+public @interface WithPropertyConverter {
 
     /**
      * Define a custom adapter or codec that should be used to adapt the configuration entry injected. This overrides any
@@ -40,6 +41,6 @@ public @interface WithPropertyAdapter {
      * registered, it is handled as a deployment error.
      */
     @SuppressWarnings("rawtypes")
-	Class<? extends PropertyAdapter> value();
+	Class<? extends PropertyConverter> value();
 
 }

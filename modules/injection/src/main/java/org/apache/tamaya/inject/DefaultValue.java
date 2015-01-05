@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.annotation;
+package org.apache.tamaya.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
 /**
  * Annotation to annotate a method on a class to be informed on config changes.
  * The exact behaviour, when configuration change events are sent can be configured
- * on each configured property/method by adding the {@link org.apache.tamaya.annotation.WithLoadPolicy}
+ * on each configured property/method by adding the {@link WithLoadPolicy}
  * annotation. By default listeners are informed on all changes of configurations that were used as
- * input configurations for configuring a class/instance. Additionally {@link org.apache.tamaya.annotation.ConfiguredProperty}
+ * input configurations for configuring a class/instance. Additionally {@link ConfiguredProperty}
  * annotations can be added that allows to constrain changes to some limited properties.
  */
 @Retention(RetentionPolicy.RUNTIME)

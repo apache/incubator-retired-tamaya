@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.core.formats.ConfigurationFormat;
-import org.apache.tamaya.core.resources.Resource;
+import org.apache.tamaya.format.ConfigurationFormat;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
@@ -34,9 +33,9 @@ import java.util.logging.Logger;
  * Implementation of a {@link org.apache.tamaya.spi.PropertySourceProvider} that is based on a single resource
  * and a number of formats.
  */
-public class ResourcePropertySourceProvider implements PropertySourceProvider {
+public abstract class AbstractResourcePropertySourceProvider implements PropertySourceProvider {
     /** The logger used. */
-    private static final Logger LOG = Logger.getLogger(ResourcePropertySourceProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractResourcePropertySourceProvider.class.getName());
     /** The supported formats. */
     private List<ConfigurationFormat> formats = new ArrayList<>();
     /** The resource. */
@@ -46,19 +45,19 @@ public class ResourcePropertySourceProvider implements PropertySourceProvider {
 
     /**
      * Creates a new instance.
-     * @param resource the {@link org.apache.tamaya.core.resources.Resource}, not null.
+     * @param resource the {@link Resource}, not null.
      * @param formats the supported formats, not empty.
      */
-    public ResourcePropertySourceProvider(String sourceName, Resource resource, ConfigurationFormat... formats) {
+    public AbstractResourcePropertySourceProvider(String sourceName, Resource resource, ConfigurationFormat... formats) {
         this(sourceName, resource, Arrays.asList(formats));
     }
 
     /**
      * Creates a new instance.
-     * @param resource the {@link org.apache.tamaya.core.resources.Resource}, not null.
+     * @param resource the {@link Resource}, not null.
      * @param formats the supported formats, not empty.
      */
-    public ResourcePropertySourceProvider(String sourceName, Resource resource, List<ConfigurationFormat> formats) {
+    public AbstractResourcePropertySourceProvider(String sourceName, Resource resource, List<ConfigurationFormat> formats) {
         this.resource = Objects.requireNonNull(resource);
         this.sourceName = Objects.requireNonNull(sourceName);
         if(formats.size()==0){

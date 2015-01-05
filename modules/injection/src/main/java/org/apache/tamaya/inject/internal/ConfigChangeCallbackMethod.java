@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.inject;
+package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.core.properties.PropertyChangeSet;
 import org.apache.tamaya.Configuration;
@@ -38,10 +38,10 @@ public final class ConfigChangeCallbackMethod {
     private Method callbackMethod;
 
     public ConfigChangeCallbackMethod(Method callbackMethod) {
-        this.callbackMethod = Optional.of(callbackMethod).filter(
-                (m) -> void.class.equals(m.getReturnType()) &&
-                        m.getParameterCount() == 1 &&
-                        m.getParameterTypes()[0].equals(PropertyChangeSet.class)).get();
+//        this.callbackMethod = Optional.of(callbackMethod).filter(
+//                (m) -> void.class.equals(m.getReturnType()) &&
+//                        m.getParameterCount() == 1 &&
+//                        m.getParameterTypes()[0].equals(PropertyChangeSet.class)).get();
     }
 
     public Consumer<PropertyChangeSet> createConsumer(Object instance, Configuration... configurations){

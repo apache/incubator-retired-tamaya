@@ -1,4 +1,22 @@
-package org.apache.tamaya.core.internal.inject;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.tamaya.inject.internal;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -12,11 +30,14 @@ import java.util.ListIterator;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyAdapter;
-import org.apache.tamaya.annotation.*;
-import org.apache.tamaya.annotation.WithPropertyAdapter;
-import org.apache.tamaya.core.internal.Utils;
-import org.apache.tamaya.spi.PropertyAdapterSpi;
+import org.apache.tamaya.inject.ConfiguredProperties;
+import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.DefaultAreas;
+import org.apache.tamaya.inject.DefaultValue;
+import org.apache.tamaya.inject.WithLoadPolicy;
+import org.apache.tamaya.inject.WithPropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Created by Anatole on 19.12.2014.
@@ -24,20 +45,19 @@ import org.apache.tamaya.spi.PropertyAdapterSpi;
 @SuppressWarnings("unchecked")
 final class InjectionUtils {
 
-    private InjectionUtils(){}
+    private static final boolean resolutionModuleLoaded = checkResolutionModuleLoaded();
 
-    /**
-     * This method evaluates the {@link org.apache.tamaya.Configuration} that currently is valid for the given target field/method.
-     *
-     * @return the {@link org.apache.tamaya.Configuration} instance to be used, never null.
-     */
-    public static Configuration getConfiguration(ConfiguredProperty prop, Configuration... configuration) {
-        String name = prop.config();
-        if (name != null && !name.trim().isEmpty()) {
-            return Configuration.current(name.trim());
+    private static boolean checkResolutionModuleLoaded() {
+        try{
+            Class.forName("org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator");
+            return true;
         }
-        return Configuration.current();
+        catch(ClassNotFoundException e){
+            return false;
+        }
     }
+
+    private InjectionUtils(){}
 
     /**
      * Evaluates all absolute configuration key based on the annotations found on a class.
@@ -173,11 +193,11 @@ final class InjectionUtils {
         try {
             // Check for adapter/filter
 //            T adaptedValue = null;
-            WithPropertyAdapter codecAnnot = element.getAnnotation(WithPropertyAdapter.class);
-            Class<? extends PropertyAdapter> codecType;
+            WithPropertyConverter codecAnnot = element.getAnnotation(WithPropertyConverter.class);
+            Class<? extends WithPropertyConverter> codecType;
             if (codecAnnot != null) {
                 codecType = codecAnnot.value();
-                if (!codecType.equals(PropertyAdapter.class)) {
+                if (!codecType.equals(WithPropertyConverter.class)) {
                     // TODO cache here...
 //                    Codec<String> codec = codecType.newInstance();
 //                    adaptedValue = (T) codec.adapt(configValue);
@@ -186,8 +206,8 @@ final class InjectionUtils {
             if (String.class.equals(targetType)) {
                  return (T)configValue;
             } else {
-                PropertyAdapter<?> adapter = PropertyAdapter.getInstance(targetType);
-                 return (T)adapter.adapt(configValue);
+                PropertyConverter<?> adapter = PropertyConverter.getInstance(targetType);
+                 return (T)adapter.convert(configValue);
             }
         } catch (Exception e) {
             throw new ConfigException("Failed to annotate configured member: " + element, e);
@@ -217,5 +237,20 @@ final class InjectionUtils {
             }
         }
         return Configuration.current();
+    }
+
+    public static boolean isResolutionModuleLoaded(){
+        return resolutionModuleLoaded;
+    }
+
+    public static String evaluateValue(String value){
+        if(!resolutionModuleLoaded){
+            return value;
+        }
+        ExpressionEvaluator evaluator = ServiceContext.getInstance().getService(ExpressionEvaluator.class).orElse(null);
+        if(evaluator!=null){
+            return evaluator.filterProperty("<injection>", value, (k) -> Configuration.current().get(k)){
+        }
+        return value;
     }
 }

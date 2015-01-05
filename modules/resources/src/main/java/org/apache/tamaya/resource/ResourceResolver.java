@@ -25,7 +25,7 @@ import java.util.Collection;
  * Interface to be implemented by modules. By default only direct file/resource resolution is supported, whereas
  * extension modules may add functionality to perform ant styled pattern resolution of format.
  */
-public interface ResourceLoader {
+public interface ResourceResolver {
 
     /**
      * Resolves resource expressions to a list of {@link Resource}s. Hereby
