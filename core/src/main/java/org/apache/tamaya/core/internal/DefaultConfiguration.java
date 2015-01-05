@@ -43,9 +43,13 @@ import java.util.stream.Collectors;
  * instance to evaluate the current Configuration.
  */
 public class DefaultConfiguration implements Configuration {
-    /** The logger. */
+    /**
+     * The logger.
+     */
     private static final Logger LOG = Logger.getLogger(DefaultConfiguration.class.getName());
-    /** The maximal number of filter cycles performed before aborting. */
+    /**
+     * The maximal number of filter cycles performed before aborting.
+     */
     private static final int MAX_FILTER_LOOPS = 10;
 
     /**
@@ -79,13 +83,14 @@ public class DefaultConfiguration implements Configuration {
 
     /**
      * Apply filters to a single property value.
-     * @param key the key, used for logging, not null.
+     *
+     * @param key             the key, used for logging, not null.
      * @param unfilteredValue the unfiltered property value.
      * @return the filtered value, or null.
      */
     private String applyFilter(String key, String unfilteredValue) {
         // Apply filters to values, prevent values filtered to null!
-        for(int i=0; i<MAX_FILTER_LOOPS;i++) {
+        for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             boolean changed = false;
             // Apply filters to values, prevent values filtered to null!
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
@@ -93,12 +98,12 @@ public class DefaultConfiguration implements Configuration {
                         (String k) -> key.equals(k) ? null : get(k).orElse(null));
                 if (newValue != null && !newValue.equals(unfilteredValue)) {
                     changed = true;
-                    if(LOG.isLoggable(Level.FINEST)) {
+                    if (LOG.isLoggable(Level.FINEST)) {
                         LOG.finest("Filter - " + key + ": " + unfilteredValue + " -> " + newValue + " by " + filter);
                     }
                 } else if (unfilteredValue != null && !unfilteredValue.equals(newValue)) {
                     changed = true;
-                    if(LOG.isLoggable(Level.FINEST)) {
+                    if (LOG.isLoggable(Level.FINEST)) {
                         LOG.finest("Filter - " + key + ": " + unfilteredValue + " -> " + newValue + " by " + filter);
                     }
                 }
@@ -107,14 +112,12 @@ public class DefaultConfiguration implements Configuration {
             if (!changed) {
                 LOG.finest(() -> "Finishing filter loop, no changes detected.");
                 break;
-            }
-            else{
-                if(i==(MAX_FILTER_LOOPS-1)) {
-                    if(LOG.isLoggable(Level.WARNING)) {
+            } else {
+                if (i == (MAX_FILTER_LOOPS - 1)) {
+                    if (LOG.isLoggable(Level.WARNING)) {
                         LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
                     }
-                }
-                else{
+                } else {
                     LOG.finest(() -> "Repeating filter loop, changes detected.");
                 }
             }
@@ -125,6 +128,7 @@ public class DefaultConfiguration implements Configuration {
     /**
      * Get the current properties, composed by the loaded {@link org.apache.tamaya.spi.PropertySource} and filtered
      * by registered {@link org.apache.tamaya.spi.PropertyFilter}.
+     *
      * @return the final properties.
      */
     @Override
@@ -149,12 +153,13 @@ public class DefaultConfiguration implements Configuration {
 
     /**
      * Filter a full configuration property map.
+     *
      * @param inputMap the unfiltered map
      * @return the filtered map.
      */
     private Map<String, String> applyFilters(Map<String, String> inputMap) {
         // Apply filters to values, prevent values filtered to null!
-        for(int i=0; i<MAX_FILTER_LOOPS;i++) {
+        for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             AtomicInteger changes = new AtomicInteger();
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
                 inputMap.replaceAll((k, v) -> {
@@ -170,17 +175,15 @@ public class DefaultConfiguration implements Configuration {
                     return newValue;
                 });
             }
-            if(changes.get()==0){
+            if (changes.get() == 0) {
                 LOG.finest(() -> "Finishing filter loop, no changes detected.");
                 break;
-            }
-            else{
-                if(i==(MAX_FILTER_LOOPS-1)) {
-                    if(LOG.isLoggable(Level.WARNING)){
+            } else {
+                if (i == (MAX_FILTER_LOOPS - 1)) {
+                    if (LOG.isLoggable(Level.WARNING)) {
                         LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
                     }
-                }
-                else{
+                } else {
                     LOG.finest(() -> "Repeating filter loop, changes detected: " + changes.get());
                 }
                 changes.set(0);
