@@ -55,7 +55,7 @@ public class DefaultConfiguration implements Configuration {
     /**
      * The current {@link org.apache.tamaya.spi.ConfigurationContext} of the current instance.
      */
-    private ConfigurationContext configurationContext = ServiceContext.getInstance().getService(ConfigurationContext.class).get();
+    private final ConfigurationContext configurationContext = ServiceContext.getInstance().getService(ConfigurationContext.class).get();
 
     /**
      * This method evaluates the given configuration key. Hereby if goes down the chain or PropertySource instances
