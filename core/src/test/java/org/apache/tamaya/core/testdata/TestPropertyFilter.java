@@ -29,7 +29,7 @@ import java.util.function.Function;
 @Priority(100)
 public class TestPropertyFilter implements PropertyFilter{
     @Override
-    public String filterProperty(String key, String valueToBeFiltered, Function<String, String> propertyValueProvider) {
+    public String filterProperty(String key, String valueToBeFiltered) {
         if("name4".equals(key)){
             return valueToBeFiltered + "(filtered)";
         }

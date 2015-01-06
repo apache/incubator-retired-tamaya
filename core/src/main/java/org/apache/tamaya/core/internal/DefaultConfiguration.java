@@ -94,8 +94,7 @@ public class DefaultConfiguration implements Configuration {
             boolean changed = false;
             // Apply filters to values, prevent values filtered to null!
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                String newValue = filter.filterProperty(key, unfilteredValue,
-                        (String k) -> key.equals(k) ? null : get(k).orElse(null));
+                String newValue = filter.filterProperty(key, unfilteredValue);
                 if (newValue != null && !newValue.equals(unfilteredValue)) {
                     changed = true;
                     if (LOG.isLoggable(Level.FINEST)) {
@@ -163,8 +162,7 @@ public class DefaultConfiguration implements Configuration {
             AtomicInteger changes = new AtomicInteger();
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
                 inputMap.replaceAll((k, v) -> {
-                    String newValue = filter.filterProperty(k, v,
-                            (String k2) -> k2.equals(k) ? v : get(k2).orElse(null));
+                    String newValue = filter.filterProperty(k, v);
                     if (newValue != null && !newValue.equals(v)) {
                         changes.incrementAndGet();
                         LOG.finest(() -> "Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);
