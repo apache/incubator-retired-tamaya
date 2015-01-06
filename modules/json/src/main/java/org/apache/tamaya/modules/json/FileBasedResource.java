@@ -16,12 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.extras.json;
+package org.apache.tamaya.modules.json;
 
+import org.apache.tamaya.ConfigException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
-public interface InputResource {
-    InputStream getInputStream();
+public class FileBasedResource implements InputResource {
+    private final File sourceFile;
 
-    CharSequence getDescription();
+    public FileBasedResource(File file) {
+        sourceFile = file;
+    }
+
+
+    @Override
+    public InputStream getInputStream() {
+        try {
+            return new FileInputStream(sourceFile);
+        } catch (IOException ioe) {
+            String msg = String.format("Failed to open file %s", getDescription());
+            throw new ConfigException(msg, ioe);
+        }
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return sourceFile.toURI().toString();
+    }
 }

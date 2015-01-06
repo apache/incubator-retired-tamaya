@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.extras.json;
+package org.apache.tamaya.modules.json;
 
 import org.apache.tamaya.ConfigException;
 import org.hamcrest.CoreMatchers;
