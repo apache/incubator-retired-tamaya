@@ -25,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 
 public class SystemPropertySourceTest {
@@ -56,10 +55,10 @@ public class SystemPropertySourceTest {
     public void testGet() throws Exception {
         String propertyKeyToCheck = System.getProperties().stringPropertyNames().iterator().next();
 
-        Optional<String> property = testPropertySource.get(propertyKeyToCheck);
+        String property = testPropertySource.get(propertyKeyToCheck);
         Assert.assertTrue("Property '" + propertyKeyToCheck + "' is not present in " + SystemPropertySource.class.getSimpleName(),
-                          property.isPresent());
-        Assert.assertEquals(System.getProperty(propertyKeyToCheck), property.get());
+                          property != null);
+        Assert.assertEquals(System.getProperty(propertyKeyToCheck), property);
 
 
     }

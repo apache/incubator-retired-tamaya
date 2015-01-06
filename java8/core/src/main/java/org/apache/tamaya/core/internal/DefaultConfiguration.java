@@ -68,13 +68,13 @@ public class DefaultConfiguration implements Configuration {
      * @return the optional configuration value, never null.
      */
     @Override
-    public Optional<String> get(String key) {
+    public Optional<String> getOptional(String key) {
         List<PropertySource> propertySources = configurationContext.getPropertySources();
         String unfilteredValue = null;
         for (PropertySource propertySource : propertySources) {
-            Optional<String> value = propertySource.get(key);
-            if (value.isPresent()) {
-                unfilteredValue = value.get();
+            String value = propertySource.get(key);
+            if (value != null) {
+                unfilteredValue = value.length() > 0 ? value : null;
                 break;
             }
         }
@@ -193,7 +193,7 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Accesses the current String value for the given key (see {@link #get(String)}) and tries to convert it
+     * Accesses the current String value for the given key (see {@link #getOptional(String)}) and tries to convert it
      * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
@@ -204,8 +204,8 @@ public class DefaultConfiguration implements Configuration {
      * @return the converted value, never null.
      */
     @Override
-    public <T> Optional<T> get(String key, Class<T> type) {
-        Optional<String> value = get(key);
+    public <T> Optional<T> getOptional(String key, Class<T> type) {
+        Optional<String> value = getOptional(key);
         if (value.isPresent()) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
             for (PropertyConverter<T> converter : converters) {

@@ -27,7 +27,6 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class BasePropertySourceTest {
 
@@ -42,8 +41,8 @@ public class BasePropertySourceTest {
             }
 
             @Override
-            public Optional<String> get(String key) {
-                return Optional.ofNullable(null);
+            public String get(String key) {
+                return null;
             }
 
             @Override
@@ -61,7 +60,7 @@ public class BasePropertySourceTest {
 
     @Test
     public void testGet() {
-        Assert.assertEquals("1000", new OverriddenOrdinalPropertySource().get(PropertySource.TAMAYA_ORDINAL).get());
+        Assert.assertEquals("1000", new OverriddenOrdinalPropertySource().get(PropertySource.TAMAYA_ORDINAL));
     }
 
     private static class OverriddenOrdinalPropertySource extends BasePropertySource {

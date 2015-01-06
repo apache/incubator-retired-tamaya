@@ -25,14 +25,14 @@ package org.apache.tamaya.spi;
  * hereby is defined by the corresponding {@code @Priority} annotation.</p>
  * <p>Filters </p>
  */
-public interface PropertyFilter{
+public interface PropertyFilter {
 
     /**
      * <p>Maps the current {@code valueToBeFiltered} value to a new value. The resulting value will be used as the result
      * passed to the user.</p>
      * <p>If a filter is currently not available, it should just pass the input map to the method's
      * output.</p>
-     * <p>Returning {@code null} will remove the entry and Optional.empty() will be returned to the user.</p>
+     * <p>Returning {@code null} will remove the entry.</p>
      * <h3>Implementation specification</h3>
      * Implementations of this class must be
      * <ul>

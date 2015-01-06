@@ -16,26 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.testdata;
-
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spi.PropertyFilter;
-
-import javax.annotation.Priority;
+package org.apache.tamaya;
 
 /**
- * Simple PropertyFilter that filters exact one value, registered using ServiceLoader.
+ * Exception class (runtime exception) for configuration issues.
  */
-@Priority(200)
-public class TestPropertyFilterRemoving implements PropertyFilter{
-    @Override
-    public String filterProperty(String key, String valueToBeFiltered) {
-        if("name5".equals(key)){
-            return null;
-        }
-        else if("name3".equals(key)){
-            return "Mapped to name: " + Configuration.current().getOptional("name").orElse("NoName found!");
-        }
-        return valueToBeFiltered;
+public class ConfigException extends RuntimeException{
+
+    private static final long serialVersionUID = -5886094818057522680L;
+
+    /**
+     * Creates a new configuration exception.
+     * @param message the exception message, not null.
+     */
+    public ConfigException(String message){
+        super(message);
+    }
+
+    /**
+     * Creates a new configuration exception.
+     * @param message the exception message, not null.
+     * @param t the throwable.
+     */
+    public ConfigException(String message, Throwable t){
+        super(message, t);
     }
 }

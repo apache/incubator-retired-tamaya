@@ -21,7 +21,6 @@ package org.apache.tamaya.core.propertysource;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,9 +44,9 @@ public abstract class BasePropertySource implements PropertySource {
 
 
     @Override
-    public Optional<String> get(String key) {
+    public String get(String key) {
         Objects.requireNonNull(key, "key must not be null");
-        return Optional.ofNullable(getProperties().get(key));
+        return getProperties().get(key);
     }
 
 
@@ -62,15 +61,15 @@ public abstract class BasePropertySource implements PropertySource {
     protected void initializeOrdinal(final int defaultOrdinal) {
         this.ordinal = defaultOrdinal;
 
-        Optional<String> ordinal = get(PropertySource.TAMAYA_ORDINAL);
-        if (ordinal.isPresent()) {
+        String ordinal = get(PropertySource.TAMAYA_ORDINAL);
+        if (ordinal != null) {
 
             try {
-                this.ordinal = Integer.valueOf(ordinal.get());
+                this.ordinal = Integer.valueOf(ordinal);
             } catch (NumberFormatException e) {
                 LOG.log(Level.WARNING,
                         "Specified {0} is not a valid Integer value: {1} - using defaultOrdinal {2}",
-                        new Object[]{PropertySource.TAMAYA_ORDINAL, ordinal.get(), defaultOrdinal});
+                        new Object[]{PropertySource.TAMAYA_ORDINAL, ordinal, defaultOrdinal});
             }
         }
     }

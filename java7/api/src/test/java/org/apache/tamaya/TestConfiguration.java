@@ -20,12 +20,11 @@ package org.apache.tamaya;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Test Configuration class, that is used to testdata the default methods provided by the API.
  */
-public class TestConfiguration implements Configuration {
+public class TestConfiguration implements Configuration{
 
     private static final Map<String, String> VALUES;
     static {
@@ -42,40 +41,40 @@ public class TestConfiguration implements Configuration {
     }
 
     @Override
-    public Optional<String> getOptional(String key) {
-        return Optional.ofNullable(VALUES.get(key));
+    public String get(String key) {
+        return VALUES.get(key);
     }
 
     @Override
-    public <T> Optional<T> getOptional(String key, Class<T> type) {
+    public <T> T get(String key, Class<T> type) {
         if(type.equals(Long.class)){
-            return Optional.class.cast(Optional.ofNullable(Long.MAX_VALUE));
+            return (T)(Object)Long.MAX_VALUE;
         }
         else if(type.equals(Integer.class)){
-            return Optional.class.cast(Optional.ofNullable(Integer.MAX_VALUE));
+            return (T)(Object) Integer.MAX_VALUE;
         }
         else if(type.equals(Double.class)){
-            return Optional.class.cast(Optional.ofNullable(Double.MAX_VALUE));
+            return (T)(Object) Double.MAX_VALUE;
         }
         else if(type.equals(Float.class)){
-            return Optional.class.cast(Optional.ofNullable(Float.MAX_VALUE));
+            return (T)(Object) Float.MAX_VALUE;
         }
         else if(type.equals(Short.class)){
-            return Optional.class.cast(Optional.ofNullable(Short.MAX_VALUE));
+            return (T)(Object) Short.MAX_VALUE;
         }
         else if(type.equals(Byte.class)){
-            return Optional.class.cast(Optional.ofNullable(Byte.MAX_VALUE));
+            return (T)(Object) Byte.MAX_VALUE;
         }
         else if(type.equals(Boolean.class)){
             if("booleanTrue".equals(key)) {
-                return Optional.class.cast(Optional.ofNullable(Boolean.TRUE));
+                return (T)(Object) Boolean.TRUE;
             }
             else{
-                return Optional.class.cast(Optional.ofNullable(Boolean.FALSE));
+                return (T)(Object) Boolean.FALSE;
             }
         }
         else if(type.equals(String.class)){
-            return Optional.class.cast(Optional.ofNullable("aStringValue"));
+            return (T)(Object) "aStringValue";
         }
         throw new ConfigException("No such property: " + key);
     }

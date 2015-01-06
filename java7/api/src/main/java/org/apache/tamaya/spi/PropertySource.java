@@ -95,7 +95,7 @@ public interface PropertySource {
      *
      * //X TODO discuss if the key can be null
      * @param key the property's key, not null.
-     * @return the value assigned to the property or {@code null}. An empty String will kind of 'erase' previous values.
+     * @return the property's keys.
      */
     String get(String key);
 
@@ -120,8 +120,6 @@ public interface PropertySource {
      * @return {@code true} if this PropertySource could be scanned for its list of properties,
      *         {@code false} if it should not be scanned.
      */
-    default boolean isScannable(){
-        return true;
-    }
+    boolean isScannable();
 
 }

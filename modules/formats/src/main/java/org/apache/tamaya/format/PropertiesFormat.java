@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -90,8 +89,8 @@ public class PropertiesFormat implements ConfigurationFormat {
                     }
 
                     @Override
-                    public Optional<String> get(String key) {
-                        return Optional.ofNullable(p.getProperty(key));
+                    public String get(String key) {
+                        return p.getProperty(key);
                     }
 
                     @Override

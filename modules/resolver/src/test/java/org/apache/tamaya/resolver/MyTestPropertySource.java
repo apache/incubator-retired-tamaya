@@ -22,7 +22,6 @@ import org.apache.tamaya.spi.PropertySource;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by Anatole on 04.01.2015.
@@ -52,8 +51,8 @@ public class MyTestPropertySource implements PropertySource{
     }
 
     @Override
-    public Optional<String> get(String key) {
-        return Optional.ofNullable(properties.get(key));
+    public String get(String key) {
+        return properties.get(key);
     }
 
     @Override

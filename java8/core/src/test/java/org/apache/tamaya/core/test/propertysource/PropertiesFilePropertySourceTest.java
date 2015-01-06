@@ -46,15 +46,15 @@ public class PropertiesFilePropertySourceTest {
     @Test
     public void testGetOrdinal() {
         Assert.assertEquals(DefaultOrdinal.FILE_PROPERTIES, testfilePropertySource.getOrdinal());
-        Assert.assertEquals(Integer.parseInt(overrideOrdinalPropertySource.get(PropertySource.TAMAYA_ORDINAL).get()), overrideOrdinalPropertySource.getOrdinal());
+        Assert.assertEquals(Integer.parseInt(overrideOrdinalPropertySource.get(PropertySource.TAMAYA_ORDINAL)), overrideOrdinalPropertySource.getOrdinal());
     }
 
 
     @Test
     public void testGet() {
-        Assert.assertEquals("val3", testfilePropertySource.get("key3").get());
-        Assert.assertEquals("myval5", overrideOrdinalPropertySource.get("mykey5").get());
-        Assert.assertFalse(testfilePropertySource.get("nonpresentkey").isPresent());
+        Assert.assertEquals("val3", testfilePropertySource.get("key3"));
+        Assert.assertEquals("myval5", overrideOrdinalPropertySource.get("mykey5"));
+        Assert.assertNull(testfilePropertySource.get("nonpresentkey"));
     }
 
 

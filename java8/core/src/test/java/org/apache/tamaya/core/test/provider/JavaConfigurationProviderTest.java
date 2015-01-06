@@ -41,11 +41,11 @@ public class JavaConfigurationProviderTest {
             String key = "confkey" + i;
             String value = "javaconf-value" + i;
 
-            Assert.assertEquals(value, propertySource.get(key).get());
+            Assert.assertEquals(value, propertySource.get(key));
 
             // check if we had our key in configuration.current
             Assert.assertTrue(Configuration.current().getProperties().containsKey(key));
-            Assert.assertEquals(value, Configuration.current().get(key).get());
+            Assert.assertEquals(value, Configuration.current().getOptional(key).get());
         }
 
     }
