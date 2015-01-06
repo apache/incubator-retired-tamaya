@@ -50,9 +50,7 @@ public interface Configuration {
      * @param key the property's key, not null.
      * @return the property's value or {@code null}.
      */
-    default String get(String key) {
-        return getOptional(key).orElse(null);
-    }
+    String get(String key);
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -65,9 +63,7 @@ public interface Configuration {
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
-    default <T> T get(String key, Class<T> type) {
-        return getOptional(key, type).orElse(null);
-    }
+    <T> T get(String key, Class<T> type);
 
     /**
      * Access a property.
@@ -75,7 +71,9 @@ public interface Configuration {
      * @param key the property's key, not null.
      * @return the property's keys.
      */
-    Optional<String> getOptional(String key);
+    default Optional<String> getOptional(String key) {
+        return Optional.ofNullable(get(key));
+    }
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -88,7 +86,9 @@ public interface Configuration {
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
-    <T> Optional<T> getOptional(String key, Class<T> type);
+    default <T> Optional<T> getOptional(String key, Class<T> type) {
+        return Optional.ofNullable(get(key, type));
+    }
 
     /**
      * Access all current known Configuration properties as a full {@code Map<String,String>}.

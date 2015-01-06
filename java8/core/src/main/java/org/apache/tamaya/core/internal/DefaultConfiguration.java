@@ -68,7 +68,7 @@ public class DefaultConfiguration implements Configuration {
      * @return the optional configuration value, never null.
      */
     @Override
-    public Optional<String> getOptional(String key) {
+    public String get(String key) {
         List<PropertySource> propertySources = configurationContext.getPropertySources();
         String unfilteredValue = null;
         for (PropertySource propertySource : propertySources) {
@@ -78,7 +78,7 @@ public class DefaultConfiguration implements Configuration {
                 break;
             }
         }
-        return Optional.ofNullable(applyFilter(key, unfilteredValue));
+        return applyFilter(key, unfilteredValue);
     }
 
     /**
@@ -204,7 +204,7 @@ public class DefaultConfiguration implements Configuration {
      * @return the converted value, never null.
      */
     @Override
-    public <T> Optional<T> getOptional(String key, Class<T> type) {
+    public <T> T get(String key, Class<T> type) {
         Optional<String> value = getOptional(key);
         if (value.isPresent()) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
@@ -212,7 +212,7 @@ public class DefaultConfiguration implements Configuration {
                 try {
                     T t = converter.convert(value.get());
                     if (t != null) {
-                        return Optional.of(t);
+                        return t;
                     }
                 } catch (Exception e) {
                     LOG.log(Level.FINEST, e, () -> "PropertyConverter: " + converter +
@@ -221,6 +221,7 @@ public class DefaultConfiguration implements Configuration {
             }
             throw new ConfigException("Unparseable config value for type: " + type.getName() + ": " + key);
         }
-        return Optional.empty();
+
+        return null;
     }
 }
