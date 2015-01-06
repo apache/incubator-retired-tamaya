@@ -137,4 +137,9 @@ public interface ConfigurationContext {
      * @return the list of registered PropertyFilters, never null.
      */
     List<PropertyFilter> getPropertyFilters();
+
+    public static ConfigurationContext current(){
+        return ServiceContext.getInstance().getService(ConfigurationContext.class).get();
+    }
+
 }
