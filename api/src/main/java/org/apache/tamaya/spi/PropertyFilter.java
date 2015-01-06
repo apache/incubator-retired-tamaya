@@ -44,10 +44,8 @@ public interface PropertyFilter{
      *
      * @param key the key accessed, not null.
      * @param valueToBeFiltered the value to be filtered, not null.
-     * @param propertyValueProvider accessor for reading additional (eg metadata) properties to perform correct
-     *                              filtering, never null.
      * @return the filtered map, never null.
      */
-    String filterProperty(String key, String valueToBeFiltered, Function<String,String> propertyValueProvider);
+    String filterProperty(String key, String valueToBeFiltered);
 
 }
