@@ -25,7 +25,7 @@ under the License.
     <parent>
         <artifactId>tamaya-extensions</artifactId>
         <groupId>org.apache.tamaya.ext</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2-incubating-SNAPSHOT</version>
     </parent>
 
     <artifactId>json</artifactId>

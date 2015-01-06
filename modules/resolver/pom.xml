@@ -23,7 +23,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-extensions</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-resolver</artifactId>
