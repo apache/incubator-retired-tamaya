@@ -91,7 +91,7 @@ public class JSONPropertySource
             this.values = values;
         }
         catch (Throwable t) {
-            throw new ConfigException(format("Failed to read properties from %s", source.getDescription()));
+            throw new ConfigException(format("Failed to read properties from %s", source.getDescription()), t);
         }
 
     }

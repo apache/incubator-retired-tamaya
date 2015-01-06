@@ -35,31 +35,48 @@ public class JSONVisitor {
     }
 
     public void run() {
-        Queue<VisitingContext> stack = new ArrayDeque<>();
+        Deque<VisitingContext> stack = new ArrayDeque<>();
 
         stack.add(new VisitingContext(rootNode));
+        boolean goOn = stack.peek().hasNext();
 
-        while(!stack.peek().completed()) {
-            Map.Entry<String, JsonNode> current = stack.peek().nextElement();
+        if (goOn) {
+            do {
+                Map.Entry<String, JsonNode> current = stack.peek().nextElement();
 
-            if (current.getValue() instanceof ValueNode) {
-                System.out.println("I:" + current.getValue().asText());
-            } else {
-                // @todo
-                throw new ConfigException("");
-            }
+                if (current.getValue() instanceof ValueNode) {
+                    String key = stack.peek().getNSPrefix() + current.getKey();
+                    String value = current.getValue().asText();
+                    targetStore.put(key, value);
+                } else if (current.getValue() instanceof ObjectNode) {
+                    String key = stack.peek().getNSPrefix() + current.getKey();
+                    ObjectNode node = (ObjectNode) current.getValue();
+                    stack.push(new VisitingContext(node, key));
+                } else {
+                    throw new ConfigException("Internal failure while processing JSON document.");
+                }
 
-            System.out.println(current);
+                goOn = stack.peek().hasNext();
+
+                while (!goOn && stack.size() > 0) {
+                    stack.remove();
+                    goOn = stack.size() > 0 ? stack.peek().hasNext() : false;
+                }
+            } while (goOn);
         }
-
-
     }
 
     private class VisitingContext {
+        private String namespace;
         private final ObjectNode node;
         private final Iterator<Map.Entry<String, JsonNode>> elements;
 
-        public VisitingContext(ObjectNode rootNode) {
+        public VisitingContext(ObjectNode node) {
+            this(node, "");
+        }
+
+        public VisitingContext(ObjectNode rootNode, String currentNamespace) {
+            namespace = currentNamespace;
             node = rootNode;
             elements = node.fields();
         }
@@ -69,8 +86,13 @@ public class JSONVisitor {
         }
 
 
-        public boolean completed() {
-            return elements.hasNext() == false;
+        public boolean hasNext() {
+            boolean hasNext = elements.hasNext();
+            return hasNext;
+        }
+
+        public String getNSPrefix() {
+            return namespace.isEmpty() ? namespace : namespace + ".";
         }
     }
 }
