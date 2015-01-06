@@ -19,8 +19,6 @@
 package org.apache.tamaya.spi;
 
 
-import java.util.function.Function;
-
 /**
  * <p>Interface for filtering the current map of properties during the evaluation of the chain of PropertySources.
  * Filters can be registered using the {@link org.apache.tamaya.spi.ServiceContext}. The ordinal

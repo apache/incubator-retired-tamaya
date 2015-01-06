@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**

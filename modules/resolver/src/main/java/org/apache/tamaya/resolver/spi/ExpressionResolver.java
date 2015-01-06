@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.resolver.spi;
 
-import java.util.function.Function;
 
 /**
  * This interfaces provides a model for expression evaluation. This enables transparently plugin expression languages

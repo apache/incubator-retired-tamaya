@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.resolver.spi;
 
-import java.util.function.Function;
 
 /**
  * Created by Anatole on 05.01.2015.
