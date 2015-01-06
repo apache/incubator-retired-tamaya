@@ -23,8 +23,8 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>extras</artifactId>
+        <artifactId>tamaya-extensions</artifactId>
+        <groupId>org.apache.tamaya.ext</groupId>
         <version>0.2-SNAPSHOT</version>
     </parent>
 

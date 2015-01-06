@@ -34,8 +34,5 @@ under the License.
     <packaging>pom</packaging>
     <inceptionYear>2015</inceptionYear>
 
-    <modules>
-        <module>json</module>
-    </modules>
-    
+
 </project>
