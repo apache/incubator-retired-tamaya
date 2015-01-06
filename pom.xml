@@ -189,8 +189,7 @@ under the License.
     </developers>
 
     <modules>
-        <module>api</module>
-        <module>core</module>
+        <module>java8</module>
         <module>modules</module>
     </modules>
 

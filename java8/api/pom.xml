@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -22,24 +22,21 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
+        <artifactId>tamaya-java8</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>tamaya-core</artifactId>
-
+    <artifactId>tamaya-api</artifactId>
+    <description>
+        The API defines a complete SE based API for reading of configuration data.
+    </description>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
