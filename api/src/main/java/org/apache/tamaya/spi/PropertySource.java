@@ -112,7 +112,11 @@ public interface PropertySource {
     /**
      * Determines if this config source could be scanned for its list of properties.
      *
-     * Generally, slow PropertySources should return {@code false} here.
+     * <p>
+     * PropertySources which are not scannable might not be able to find all the
+     * configured values to provide via {@link #getProperties()}. This can e.g. happen
+     * if the underlying storage doesn't support listing.
+     * </p>
      *
      * @return {@code true} if this PropertySource could be scanned for its list of properties,
      *         {@code false} if it should not be scanned.
