@@ -138,7 +138,7 @@ public interface ConfigurationContext {
      */
     List<PropertyFilter> getPropertyFilters();
 
-    public static ConfigurationContext current(){
+    public static ConfigurationContext context(){
         return ServiceContext.getInstance().getService(ConfigurationContext.class).get();
     }
 

@@ -43,7 +43,7 @@ public class JSONPropertySourceConfigurationTest {
 
         assertThat(source.getProperties().keySet(), hasSize(3));
 
-        ConfigurationContext context = ConfigurationContext.current();
+        ConfigurationContext context = ConfigurationContext.context();
 
         context.addPropertySources(source);
 
