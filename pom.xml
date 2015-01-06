@@ -192,7 +192,6 @@ under the License.
         <module>api</module>
         <module>core</module>
         <module>modules</module>
-        <module>extras</module>
     </modules>
 
     <dependencyManagement>
