@@ -22,15 +22,16 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.propertysource.DefaultOrdinal;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.fail;
@@ -75,16 +76,16 @@ public class JSONPropertySourceTest {
 
         assertThat(source.getProperties().keySet(), hasSize(3));
 
-        Optional<String> keyA = source.get("a");
-        Optional<String> keyB = source.get("b");
-        Optional<String> keyC = source.get("c");
+        String keyA = source.get("a");
+        String keyB = source.get("b");
+        String keyC = source.get("c");
 
-        assertThat(keyA.isPresent(), is(true));
-        assertThat(keyA.get(), equalTo("A"));
-        assertThat(keyB.isPresent(), is(true));
-        assertThat(keyB.get(), is("B"));
-        assertThat(keyC.isPresent(), is(true));
-        assertThat(keyC.get(), is("C"));
+        assertThat(keyA, notNullValue());
+        assertThat(keyA, equalTo("A"));
+        assertThat(keyB, notNullValue());
+        assertThat(keyB, is("B"));
+        assertThat(keyC, notNullValue());
+        assertThat(keyC, is("C"));
     }
 
     @Test
@@ -99,16 +100,16 @@ public class JSONPropertySourceTest {
 
         assertThat(source.getProperties().keySet(), hasSize(5));
 
-        Optional<String> keyb = source.get("b");
-        Optional<String> keyDO = source.get("d.o");
-        Optional<String> keyDP = source.get("d.p");
+        String keyb = source.get("b");
+        String keyDO = source.get("d.o");
+        String keyDP = source.get("d.p");
 
-        assertThat(keyb.isPresent(), is(true));
-        assertThat(keyb.get(), equalTo("B"));
-        assertThat(keyDO.isPresent(), is(true));
-        assertThat(keyDO.get(), equalTo("O"));
-        assertThat(keyDP.isPresent(), is(true));
-        assertThat(keyDP.get(), is("P"));
+        assertThat(keyb, notNullValue());
+        assertThat(keyb, equalTo("B"));
+        assertThat(keyDO, notNullValue());
+        assertThat(keyDO, equalTo("O"));
+        assertThat(keyDP, Matchers.notNullValue());
+        assertThat(keyDP, is("P"));
     }
 
     @Test
@@ -124,19 +125,19 @@ public class JSONPropertySourceTest {
 
         assertThat(source.getProperties().keySet(), hasSize(4));
 
-        Optional<String> keyA = source.get("a");
-        Optional<String> keyDO = source.get("b.o");
-        Optional<String> keyDP = source.get("b.p");
-        Optional<String> keyC = source.get("c");
+        String keyA = source.get("a");
+        String keyDO = source.get("b.o");
+        String keyDP = source.get("b.p");
+        String keyC = source.get("c");
 
-        assertThat(keyA.isPresent(), is(true));
-        assertThat(keyA.get(), is("A"));
-        assertThat(keyC.isPresent(), is(true));
-        assertThat(keyC.get(), equalTo("C"));
-        assertThat(keyDO.isPresent(), is(true));
-        assertThat(keyDO.get(), equalTo("O"));
-        assertThat(keyDP.isPresent(), is(true));
-        assertThat(keyDP.get(), is("P"));
+        assertThat(keyA, notNullValue());
+        assertThat(keyA, is("A"));
+        assertThat(keyC, notNullValue());
+        assertThat(keyC, equalTo("C"));
+        assertThat(keyDO, notNullValue());
+        assertThat(keyDO, equalTo("O"));
+        assertThat(keyDP, notNullValue());
+        assertThat(keyDP, is("P"));
     }
 
     @Test
