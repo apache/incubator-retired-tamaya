@@ -52,7 +52,7 @@ public class PropertyConverterManager {
     private Map<Class<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /** The lock used. */
     private StampedLock lock = new StampedLock();
-
+    private static final String CHAR_NULL_ERROR = "Cannot convert null property";
     /**
      * Constructor.
      */
@@ -60,12 +60,15 @@ public class PropertyConverterManager {
         initDefaultConverters();
     }
 
+    private static final PropertyConverter<Character> CHAR_CONVERTER =
+            (s) -> Objects.requireNonNull(s,CHAR_NULL_ERROR).charAt(0);
+
     /**
      * Registers the default converters provided out of the box.
      */
     protected void initDefaultConverters() {
         // Add default converters
-        register(char.class, (s) -> s != null ? s.charAt(0) : null);
+        register(char.class, CHAR_CONVERTER);
         register(byte.class, Byte::parseByte);
         register(short.class, Short::parseShort);
         register(int.class, Integer::parseInt);
@@ -74,7 +77,7 @@ public class PropertyConverterManager {
         register(float.class, Float::parseFloat); //X TODO not good enough as this is Locale dependent!
         register(double.class, Double::parseDouble); //X TODO not good enough as this is Locale dependent!
 
-        register(Character.class, (s) -> s != null ? s.charAt(0) : null );
+        register(Character.class, CHAR_CONVERTER);
         register(Byte.class, Byte::valueOf);
         register(Short.class, Short::valueOf);
         register(Integer.class, Integer::valueOf);

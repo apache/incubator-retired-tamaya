@@ -47,7 +47,7 @@ public interface ConfigurationContext {
      * PropertySources are loaded when this method is called the first time, which basically is
      * when the first time configuration is accessed.
      *
-     * @return sorted list of registered PropertySources
+     * @return a sorted list of registered PropertySources.  The returned list need not be modifiable
      */
     List<PropertySource> getPropertySources();
 
