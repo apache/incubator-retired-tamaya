@@ -110,12 +110,12 @@ public interface PropertySource {
     Map<String,String> getProperties();
 
     /**
-     * Determines if this config source should be scanned for its list of properties.
+     * Determines if this config source could be scanned for its list of properties.
      *
-     * Generally, slow PropertySources should return false here.
+     * Generally, slow PropertySources should return {@code false} here.
      *
-     * @return true if this PropertySource should be scanned for its list of properties,
-     * false if it should not be scanned.
+     * @return {@code true} if this PropertySource could be scanned for its list of properties,
+     *         {@code false} if it should not be scanned.
      */
     default boolean isScannable(){
         return true;
