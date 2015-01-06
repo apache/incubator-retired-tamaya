@@ -34,14 +34,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
-import java.util.logging.Logger;
 
 /**
  * Default Implementation of a simple ConfigurationContext.
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
-
-    private static final Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
     /**
      * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
      */

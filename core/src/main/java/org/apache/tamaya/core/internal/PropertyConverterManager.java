@@ -52,7 +52,7 @@ public class PropertyConverterManager {
     private Map<Class<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /** The lock used. */
     private StampedLock lock = new StampedLock();
-
+    private static final String CHAR_NULL_ERROR = "Cannot convert null property";
     /**
      * Constructor.
      */
@@ -60,30 +60,33 @@ public class PropertyConverterManager {
         initDefaultConverters();
     }
 
+    private static final PropertyConverter<Character> CHAR_CONVERTER =
+            (s) -> Objects.requireNonNull(s,CHAR_NULL_ERROR).charAt(0);
+
     /**
      * Registers the default converters provided out of the box.
      */
     protected void initDefaultConverters() {
         // Add default converters
-        register(char.class, (s) -> s.charAt(0));
+        register(char.class, CHAR_CONVERTER);
         register(byte.class, Byte::parseByte);
         register(short.class, Short::parseShort);
         register(int.class, Integer::parseInt);
         register(long.class, Long::parseLong);
         register(boolean.class, Boolean::parseBoolean);
-        register(float.class, Float::parseFloat);
-        register(double.class, Double::parseDouble);
+        register(float.class, Float::parseFloat); //X TODO not good enough as this is Locale dependent!
+        register(double.class, Double::parseDouble); //X TODO not good enough as this is Locale dependent!
 
-        register(Character.class, (s) -> s.charAt(0));
+        register(Character.class, CHAR_CONVERTER);
         register(Byte.class, Byte::valueOf);
         register(Short.class, Short::valueOf);
         register(Integer.class, Integer::valueOf);
         register(Long.class, Long::valueOf);
         register(Boolean.class, Boolean::valueOf);
-        register(Float.class, Float::valueOf);
-        register(Double.class, Double::valueOf);
-        register(BigDecimal.class, BigDecimal::new);
-        register(BigInteger.class, BigInteger::new);
+        register(Float.class, Float::valueOf); //X TODO not good enough as this is Locale dependent!
+        register(Double.class, Double::valueOf); //X TODO not good enough as this is Locale dependent!
+        register(BigDecimal.class, BigDecimal::new); //X TODO not good enough as this is Locale dependent!
+        register(BigInteger.class, BigInteger::new); //X TODO not good enough as this is Locale dependent!
 
         register(Currency.class, Currency::getInstance);
 
