@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,7 +109,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public String filterProperty(String key, String valueToBeFiltered, Function<String,String> propertyValueProvider){
+    public String filterProperty(String key, String valueToBeFiltered){
         StringTokenizer tokenizer = new StringTokenizer(valueToBeFiltered, "${}\\", true);
         boolean escaped = false;
         StringBuilder resolvedValue = new StringBuilder();
@@ -154,7 +153,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                         return valueToBeFiltered;
                     }
                     // evaluate sub-expression
-                    current.append(evaluateInternal(subExpression, propertyValueProvider));
+                    current.append(evaluateInternal(subExpression));
                     break;
                 default:
                     current.append(token);
@@ -166,19 +165,19 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
         return resolvedValue.toString();
     }
 
-    private String evaluateInternal(String subExpression, Function<String,String> propertyValueProvider) {
+    private String evaluateInternal(String subExpression) {
         String value = null;
         // 1 check for explicit prefix
         for(ExpressionResolver resolver:resolvers){
             if(subExpression.startsWith(resolver.getResolverPrefix())){
-                value = resolver.evaluate(subExpression.substring(resolver.getResolverPrefix().length()), propertyValueProvider);
+                value = resolver.evaluate(subExpression.substring(resolver.getResolverPrefix().length()));
                 break;
             }
         }
         if(value==null){
             for(ExpressionResolver resolver:resolvers){
                 try{
-                    value = resolver.evaluate(subExpression, propertyValueProvider);
+                    value = resolver.evaluate(subExpression);
                     if(value!=null){
                         return value;
                     }

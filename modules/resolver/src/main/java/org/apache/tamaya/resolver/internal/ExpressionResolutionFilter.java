@@ -77,8 +77,8 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public String filterProperty(String key, String valueToBeFiltered, Function<String,String> propertyValueProvider){
-        return evaluator.filterProperty(key, valueToBeFiltered, propertyValueProvider);
+    public String filterProperty(String key, String valueToBeFiltered){
+        return evaluator.filterProperty(key, valueToBeFiltered);
     }
 
 

@@ -19,7 +19,6 @@
 package org.apache.tamaya.resolver.internal;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
@@ -34,7 +33,7 @@ public final class SystemPropertyResolver implements ExpressionResolver{
     }
 
     @Override
-    public String evaluate(String expression, Function<String, String> propertyResolver){
+    public String evaluate(String expression){
         return Optional.ofNullable(System.getProperty(expression)).orElse(null);
     }
 

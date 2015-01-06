@@ -41,11 +41,7 @@ public interface ExpressionResolver {
      *
      * @param expression       the expression to be evaluated, not null. If a resolver was addressed explicitly,
      *                         the prefix is removed prior to calling this method.
-     * @param propertyResolver a functional instance to resolve additional properties as needed, e.g. reading
-     *                         additional system, environment properties, or meta-properties. This abstraction
-     *                         gives the evaluator access to the contextual configuration instance which
-     *                         contains expressions.
      * @return the evaluated expression, or null, if the evaluator is not able to resolve the expression.
      */
-    String evaluate(String expression, Function<String, String> propertyResolver);
+    String evaluate(String expression);
 }
