@@ -32,6 +32,7 @@ import java.net.URL;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.fail;
@@ -150,7 +151,7 @@ public class JSONPropertySourceTest {
 
         JSONPropertySource source = new JSONPropertySource(configFile, 10);
 
-        assertThat(source.get(PropertySource.TAMAYA_ORDINAL).isPresent(), is(false));
+        assertThat(source.get(PropertySource.TAMAYA_ORDINAL), nullValue());
     }
 
     @Test
