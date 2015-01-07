@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.ServiceContext;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -75,13 +76,13 @@ public abstract class AbstractPathBasedPropertySourceProvider implements Propert
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
         paths.forEach((path) -> {
-            for (Resource res : ServiceContext.getInstance().getService(ResourceResolver.class).get().getResources(path)) {
+            for (URL res : ServiceContext.getInstance().getService(ResourceResolver.class).get().getResources(path)) {
                 try {
                     for (ConfigurationFormat format : configFormats) {
-                        propertySources.addAll(format.readConfiguration(sourceName, res));
+                        propertySources.addAll(format.readConfiguration(res));
                     }
                 } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Failed to add resource based config: " + res.getName(), e);
+                    LOG.log(Level.WARNING, "Failed to add resource based config: " + res, e);
                 }
             }
         });

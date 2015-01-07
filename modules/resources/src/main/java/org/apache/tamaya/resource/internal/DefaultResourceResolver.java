@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.resource.Resource;
 import org.apache.tamaya.resource.ResourceResolver;
 
 import javax.annotation.Priority;
@@ -39,10 +38,10 @@ public class DefaultResourceResolver implements ResourceResolver {
     private static final Logger LOG = Logger.getLogger(DefaultResourceResolver.class.getName());
 
     @Override
-    public List<Resource> getResources(ClassLoader classLoader, Collection<String> expressions) {
-        List<Resource> resources = new ArrayList<>();
+    public List<URL> getResources(ClassLoader classLoader, Collection<String> expressions) {
+        List<URL> resources = new ArrayList<>();
         for (String expression : expressions) {
-            if (tryClassPath(classLoader, expression, resources) || tryFile(expression, resources) ||
+            if (tryPath(classLoader, expression, resources) || tryClassPath(classLoader, expression, resources) || tryFile(expression, resources) ||
                     tryURL(expression, resources)) {
                 continue;
             }
@@ -51,12 +50,41 @@ public class DefaultResourceResolver implements ResourceResolver {
         return resources;
     }
 
-    private boolean tryClassPath(ClassLoader classLoader, String expression, List<Resource> resources) {
+    /**
+     * Tries to evaluate the location passed by Ant path matching.
+     * @param classLoader the class loader to use
+     * @param expression the path expression
+     * @param resources the resources for adding the results
+     * @return true, if the expression could be resolved.
+     */
+    private boolean tryPath(ClassLoader classLoader, String expression, List<URL> resources) {
+        try {
+            // 1: try file path
+            Collection<URL> found = FileCollector.collectFiles(expression);
+            if (found.isEmpty()) {
+                found = new ClasspathCollector(classLoader).collectFiles(expression);
+            }
+            resources.addAll(found);
+            return !found.isEmpty();
+        } catch (Exception e) {
+            LOG.finest(() -> "Failed to load resource from CP: " + expression);
+        }
+        return false;
+    }
+
+    /**
+     * Tries to evaluate the location passed by loading from the classloader.
+     * @param classLoader the class loader to use
+     * @param expression the path expression
+     * @param resources the resources for adding the results
+     * @return true, if the expression could be resolved.
+     */
+    private boolean tryClassPath(ClassLoader classLoader, String expression, List<URL> resources) {
         try {
             Enumeration<URL> urls = classLoader.getResources(expression);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
-                resources.add(new UrlResource(url));
+                resources.add(url);
             }
             return !resources.isEmpty();
         } catch (Exception e) {
@@ -65,11 +93,17 @@ public class DefaultResourceResolver implements ResourceResolver {
         return false;
     }
 
-    private boolean tryFile(String expression, List<Resource> resources) {
+    /**
+     * Tries to evaluate the location passed by lokking up a file.
+     * @param expression the path expression
+     * @param resources the resources for adding the results
+     * @return true, if the expression could be resolved.
+     */
+    private boolean tryFile(String expression, List<URL> resources) {
         try {
             File file = new File(expression);
             if (file.exists()) {
-                resources.add(new FileResource(file));
+                resources.add(file.toURI().toURL());
                 return true;
             }
         } catch (Exception e) {
@@ -78,16 +112,21 @@ public class DefaultResourceResolver implements ResourceResolver {
         return false;
     }
 
-    private boolean tryURL(String expression, List<Resource> resources) {
+    /**
+     * Tries to interpret the expression as URL.
+     * @param expression the path expression
+     * @param resources the resources for adding the results
+     * @return true, if the expression could be resolved.
+     */
+    private boolean tryURL(String expression, List<URL> resources) {
         try {
             URL url = new URL(expression);
-            resources.add(new UrlResource(url));
+            resources.add(url);
             return true;
         } catch (Exception e) {
             LOG.finest(() -> "Failed to load resource from file: " + expression);
         }
         return false;
-
     }
 
 }

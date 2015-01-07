@@ -21,6 +21,7 @@ package org.apache.tamaya.format;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,10 +71,15 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<PropertySource> readConfiguration(String source, Supplier<InputStream> streamSupplier) {
-        final String name = "XML-Properties:" + Objects.requireNonNull(source) + ')';
+    public Collection<PropertySource> readConfiguration(URL url) {
+        final String name;
+        if (Objects.requireNonNull(url).getQuery() == null) {
+            name = "XML-Properties(" + Objects.requireNonNull(url).toString() + ')';
+        } else {
+            name = Objects.requireNonNull(url).getQuery();
+        }
         List<PropertySource> propertySources = new ArrayList<>();
-        try (InputStream is = streamSupplier.get()) {
+        try (InputStream is = url.openStream()) {
             if (is != null) {
                 final Properties p = new Properties();
                 p.loadFromXML(is);
@@ -102,7 +107,7 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
                 return propertySources;
             }
         } catch (Exception e) {
-            LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + source);
+            LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + url);
         }
         return Collections.emptyList();
     }

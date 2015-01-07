@@ -21,9 +21,8 @@ package org.apache.tamaya.format;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
-import java.util.function.Supplier;
 
 /**
  * Implementations current this class encapsulate the mechanism how to read a
@@ -44,12 +43,11 @@ public interface ConfigurationFormat {
      * ladder case multiple PropertySources can be returned, each one with its own ordinal and the corresponding
      * entries.
      *
-     * @param sourceName name to be used for constructing a useful name for the created
-     *                   {@link org.apache.tamaya.spi.PropertySource} instances.
-     * @param streamSupplier   the resource represented by a supplier of InputStream, not null
+     * @param url the url to read the configuration data from (could be a file, a remote location, a classpath
+     *            resource or something else.
      * @return the corresponding {@link org.apache.tamaya.spi.PropertySource} instances, never {@code null}.
      */
-    Collection<PropertySource> readConfiguration(String sourceName, Supplier<InputStream> streamSupplier)
+    Collection<PropertySource> readConfiguration(URL url)
             throws IOException;
 
 }

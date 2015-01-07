@@ -22,6 +22,7 @@ import org.apache.tamaya.format.ConfigurationFormat;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,25 +40,25 @@ public abstract class AbstractResourcePropertySourceProvider implements Property
     /** The supported formats. */
     private List<ConfigurationFormat> formats = new ArrayList<>();
     /** The resource. */
-    private Resource resource;
+    private URL resource;
     /** The source name used for creating the PropertySource names. */
     private String sourceName;
 
     /**
      * Creates a new instance.
-     * @param resource the {@link Resource}, not null.
+     * @param resource the {@link URL}, not null.
      * @param formats the supported formats, not empty.
      */
-    public AbstractResourcePropertySourceProvider(String sourceName, Resource resource, ConfigurationFormat... formats) {
+    public AbstractResourcePropertySourceProvider(String sourceName, URL resource, ConfigurationFormat... formats) {
         this(sourceName, resource, Arrays.asList(formats));
     }
 
     /**
      * Creates a new instance.
-     * @param resource the {@link Resource}, not null.
+     * @param resource the {@link URL}, not null.
      * @param formats the supported formats, not empty.
      */
-    public AbstractResourcePropertySourceProvider(String sourceName, Resource resource, List<ConfigurationFormat> formats) {
+    public AbstractResourcePropertySourceProvider(String sourceName, URL resource, List<ConfigurationFormat> formats) {
         this.resource = Objects.requireNonNull(resource);
         this.sourceName = Objects.requireNonNull(sourceName);
         if(formats.size()==0){
@@ -72,7 +73,7 @@ public abstract class AbstractResourcePropertySourceProvider implements Property
      *
      * @return the underlying resource, never null.
      */
-    public Resource getResource() {
+    public URL getResource() {
         return this.resource;
     }
 
@@ -90,9 +91,9 @@ public abstract class AbstractResourcePropertySourceProvider implements Property
         List<PropertySource> propertySources = new ArrayList<>();
         for (ConfigurationFormat format : formats) {
             try {
-                propertySources.addAll(format.readConfiguration(sourceName, resource));
+                propertySources.addAll(format.readConfiguration(resource));
             } catch (Exception e) {
-                LOG.info(() -> "Format was not matching: " + format + " for resource: " + resource.getName());
+                LOG.info(() -> "Format was not matching: " + format + " for resource: " + resource);
             }
         }
         return propertySources;

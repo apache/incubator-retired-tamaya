@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.resource;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -28,16 +29,16 @@ import java.util.Collection;
 public interface ResourceResolver {
 
     /**
-     * Resolves resource expressions to a list of {@link Resource}s. Hereby
+     * Resolves resource expressions to a list of {@link URL}s. Hereby
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link Resource}s found, never
+     * @return the corresponding collection of current {@link URL}s found, never
      * null.
      * .
      */
-    default Collection<Resource> getResources(Collection<String> expressions) {
+    default Collection<URL> getResources(Collection<String> expressions) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (cl == null) {
             cl = getClass().getClassLoader();
@@ -46,45 +47,45 @@ public interface ResourceResolver {
     }
 
     /**
-     * Resolves resource expressions to a list of {@link Resource}s. Hereby
+     * Resolves resource expressions to a list of {@link URL}s. Hereby
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link Resource}s found, never
+     * @return the corresponding collection of current {@link URL}s found, never
      * null.
      * .
      */
-    default Collection<Resource> getResources(String... expressions) {
+    default Collection<URL> getResources(String... expressions) {
         return getResources(Arrays.asList(expressions));
     }
 
     /**
-     * Resolves resource expressions to a list of {@link Resource}s, considerubg
+     * Resolves resource expressions to a list of {@link URL}s, considerubg
      * the given classloader for classloader dependent format. Hereby
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link Resource}s found, never
+     * @return the corresponding collection of current {@link URL}s found, never
      * null.
      * .
      */
-    default Collection<Resource> getResources(ClassLoader classLoader, String... expressions){
+    default Collection<URL> getResources(ClassLoader classLoader, String... expressions){
         return getResources(classLoader, Arrays.asList(expressions));
     }
 
     /**
-     * Resolves resource expressions to a list of {@link Resource}s, considerubg
+     * Resolves resource expressions to a list of {@link URL}s, considerubg
      * the given classloader for classloader dependent format. Hereby
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link Resource}s found, never
+     * @return the corresponding collection of current {@link URL}s found, never
      * null.
      * .
      */
-    Collection<Resource> getResources(ClassLoader classLoader, Collection<String> expressions);
+    Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
 
 }
