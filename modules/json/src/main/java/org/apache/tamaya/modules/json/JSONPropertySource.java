@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.core.propertysource.DefaultOrdinal;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.io.File;
@@ -36,9 +37,20 @@ import static java.lang.String.format;
 
 public class JSONPropertySource
     implements PropertySource {
-    private int priority = 0;
+
+    /**
+     * Constant for the key which could be used to specify the priority
+     * of a property source in the JSON object directly.
+     */
+    public final static CharSequence TAMAYA_ORDINAL = "tamaya.ordinal";
+
+    private int priority = DefaultOrdinal.FILE_PROPERTIES;
     private InputResource source;
     private HashMap<String, String> values;
+
+    public JSONPropertySource(File file) {
+        this(file, 0);
+    }
 
     public JSONPropertySource(File file, int priority) {
         this.priority = priority;
@@ -47,13 +59,18 @@ public class JSONPropertySource
 
     @Override
     public int getOrdinal() {
+        synchronized (this) {
+            if (values == null) {
+                readSource();
+            }
+        }
+
         return priority;
     }
 
     @Override
     public String getName() {
-        // @todo Implement me
-        throw new RuntimeException("Not implemented yet.");
+        return "json-properties";
     }
 
     @Override
@@ -89,6 +106,12 @@ public class JSONPropertySource
             visitor.run();
 
             this.values = values;
+
+            if (this.values.containsKey(TAMAYA_ORDINAL)) {
+                int newPriority = Integer.valueOf(this.values.get(TAMAYA_ORDINAL)).intValue();
+                priority = newPriority;
+                this.values.remove(TAMAYA_ORDINAL);
+            }
         }
         catch (Throwable t) {
             throw new ConfigException(format("Failed to read properties from %s", source.getDescription()), t);
@@ -98,7 +121,6 @@ public class JSONPropertySource
 
     @Override
     public boolean isScannable() {
-        // @todo Implement me
-        throw new RuntimeException("Not implemented yet.");
+        return true;
     }
 }

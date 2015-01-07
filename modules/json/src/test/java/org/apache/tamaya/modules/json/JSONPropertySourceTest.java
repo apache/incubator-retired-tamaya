@@ -19,10 +19,13 @@
 package org.apache.tamaya.modules.json;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.core.propertysource.DefaultOrdinal;
+import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 
@@ -30,6 +33,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.fail;
 
 public class JSONPropertySourceTest {
 
@@ -133,5 +137,45 @@ public class JSONPropertySourceTest {
         assertThat(keyDO.get(), equalTo("O"));
         assertThat(keyDP.isPresent(), is(true));
         assertThat(keyDP.get(), is("P"));
+    }
+
+    @Test
+    public void tamayaOrdinalKeywordIsNotPropagatedAsNormalProperty() throws Exception {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        File configFile = new File(configURL.toURI());
+
+        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+
+        assertThat(source.get(PropertySource.TAMAYA_ORDINAL).isPresent(), is(false));
+    }
+
+    @Test
+    public void priorityInConfigFileOverwriteExplicitlyGivenPriority() throws URISyntaxException {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        File configFile = new File(configURL.toURI());
+
+        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+
+        assertThat(source.getOrdinal(), is(16784));
+    }
+
+    @Test
+    public void priorityInConfigFileIsReturnedPriority() throws URISyntaxException {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        File configFile = new File(configURL.toURI());
+
+        JSONPropertySource source = new JSONPropertySource(configFile);
+
+        assertThat(source.getOrdinal(), is(16784));
+
     }
 }
