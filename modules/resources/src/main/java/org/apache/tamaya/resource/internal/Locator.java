@@ -21,6 +21,7 @@ package org.apache.tamaya.resource.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
@@ -59,19 +60,15 @@ final class Locator {
      * @return the root path, never null.
      */
     public String getRootPath() {
-        StringBuilder builder = new StringBuilder();
-        for (String token : tokens) {
+        StringJoiner sj = new StringJoiner("/");
+        for (String token : getSubPathTokens()) {
             if (containsPlaceholder(token)) {
                 break;
             } else {
-                builder.append(token);
-                builder.append('/');
+                sj.add(token);
             }
         }
-        if (builder.length() > 0) {
-            builder.setLength(builder.length() - 1);
-        }
-        return builder.toString();
+        return sj.toString();
     }
 
     /**
@@ -81,15 +78,11 @@ final class Locator {
      * @return the sub expression part, never null.
      */
     public String getSubPath() {
-        StringBuilder builder = new StringBuilder();
+        StringJoiner sj = new StringJoiner("/");
         for (String token : getSubPathTokens()) {
-            builder.append(token);
-            builder.append('/');
+            sj.add(token);
         }
-        if (builder.length() > 0) {
-            builder.setLength(builder.length() - 1);
-        }
-        return builder.toString();
+        return sj.toString();
     }
 
     /**
@@ -100,10 +93,12 @@ final class Locator {
      */
     public List<String> getSubPathTokens() {
         List<String> subTokens = new ArrayList<>();
+        boolean subTokensStarted = false;
         for (String token : tokens) {
-            if (!containsPlaceholder(token)) {
-                continue;
-            } else {
+            if(subTokensStarted){
+                subTokens.add(token);
+            } else if (containsPlaceholder(token)) {
+                subTokensStarted = true;
                 subTokens.add(token);
             }
         }
@@ -116,15 +111,11 @@ final class Locator {
      * @return the full expression path, never null.
      */
     public String getPath() {
-        StringBuilder builder = new StringBuilder();
+        StringJoiner sj = new StringJoiner("/");
         for (String token : tokens) {
-            builder.append(token);
-            builder.append('/');
+            sj.add(token);
         }
-        if (builder.length() > 0) {
-            builder.setLength(builder.length() - 1);
-        }
-        return builder.toString();
+        return sj.toString();
     }
 
     /**

@@ -23,8 +23,24 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Interface to be implemented by modules. By default only direct file/resource resolution is supported, whereas
- * extension modules may add functionality to perform ant styled pattern resolution of format.
+ * Interface to be implemented by modules. It supports loading of files or classpath resources either directly or by
+ * defining a Ant-styled resource pattern:
+ * <ul>
+ *     <li>'*' is a placeholder for any character (0..n)</li>
+ *     <li>'**' is a placeholder for any number of subdirectories going down a directory structure recursively.</li>
+ *     <li>'?' is a placeholder for exact one character</li>
+ * </ul>
+ * Given that the following expressions are valid expressions:
+ * <pre>
+ *     classpath:javax/annotations/*
+ *     javax?/annotations&#47;**&#47;*.class
+ *     org/apache/tamaya&#47;**&#47;tamayaconfig.properties
+ *     file:C:/temp/*.txt
+ *     file:C:\**\*.ini
+ *     C:\Programs\**&#47;*.ini
+ *     /user/home/A*b101_?.pid
+ *     /var/logs&#47;**&#47;*.log
+ * </pre>
  */
 public interface ResourceResolver {
 
