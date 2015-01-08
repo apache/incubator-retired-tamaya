@@ -36,5 +36,10 @@ under the License.
             <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-resources</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

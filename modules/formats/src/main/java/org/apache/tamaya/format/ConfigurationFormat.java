@@ -23,6 +23,8 @@ import org.apache.tamaya.spi.PropertySource;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementations current this class encapsulate the mechanism how to read a
@@ -32,8 +34,33 @@ import java.util.Collection;
  * of different priorities. In this cases, each ordinal type found must be returned as a separate
  * {@link PropertySource} instance.
  */
-@FunctionalInterface
 public interface ConfigurationFormat {
+
+    /**
+     * The default entry type returned if a format implementation does not support any explicit entry types.
+     */
+    public static final String DEFAULT_ENTRY_TYPE = "default";
+
+    /**
+     * Access the different entry types a format supports. Entries of the same entry type hereby share the same
+     * configuration priority. The reason for this concept is that a configuration format can produce different
+     * types of properties, e.g. default properties, named properties, overriding ones as illustrated below:
+     * <pre>
+     *     [defaults]
+     *     a.b.c=alphabet
+     *     foo.bar=any
+     *
+     *     [staged:development]
+     *     a.b.myEntry=1234
+     *
+     *     [management-overrides]
+     *     a.b.d=Alphabet
+     * </pre>
+     * If just using ordinary property files, of course, only one entry type is returned, called 'default'.
+     * #see DEFAULT_ENTRY_TYPE
+     * @return the set of supported entry types, never null and never empty.
+     */
+    public Set<String> getEntryTypes();
 
     /**
      * Reads a list {@link org.apache.tamaya.spi.PropertySource} instances from a resource, using this format.
@@ -45,9 +72,10 @@ public interface ConfigurationFormat {
      *
      * @param url the url to read the configuration data from (could be a file, a remote location, a classpath
      *            resource or something else.
-     * @return the corresponding {@link org.apache.tamaya.spi.PropertySource} instances, never {@code null}.
+     * @return the corresponding {@link java.util.Map} instances of properties read, never {@code null}. Each
+     * {@link java.util.Map} instance hereby is provided using a type key.
      */
-    Collection<PropertySource> readConfiguration(URL url)
+    Map<String, Map<String,String>> readConfiguration(URL url)
             throws IOException;
 
 }
