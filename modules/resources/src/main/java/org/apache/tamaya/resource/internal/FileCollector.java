@@ -38,14 +38,23 @@ import java.util.logging.Logger;
  * </pre>
  */
 public class FileCollector {
-
+    /** The prefix used to explicitly select this collector. */
     public static final String FILE_PREFIX = "file:";
 
+    /** The logger instance. */
+    private static final Logger LOG = Logger.getLogger(FileCollector.class.getName());
+
+    /**
+     * private constructor.
+     */
     private FileCollector() {
     }
 
-    private static final Logger LOG = Logger.getLogger(FileCollector.class.getName());
-
+    /**
+     * Collects the files given the expression.
+     * @param expression the expression in Ant-styled format, not null.
+     * @return the URLs found.
+     */
     public static Collection<URL> collectFiles(String expression) {
         expression = expression.replace("\\", "/");
         Locator locator = Locator.of(expression);
@@ -62,6 +71,14 @@ public class FileCollector {
         return result;
     }
 
+    /**
+     * Internal method to traverse the file system down, hereby comparing the new path elements with the
+     * elements given by {@code subTokens}, starting at the given {@code tokenIndex}.
+     * @param dir the directory to start
+     * @param subTokens the overall subtoken to be analyzed
+     * @param tokenIndex the index where in the token list to start comparing
+     * @return the URLs matching the tokens
+     */
     static Collection<URL> traverseAndSelectFromChildren(File dir, List<String> subTokens, int tokenIndex) {
         if (tokenIndex >= subTokens.size() || dir.isFile()) {
             return Collections.emptyList();
@@ -92,11 +109,17 @@ public class FileCollector {
         return result;
     }
 
-    static Collection<URL> traverseAndSelectFromChildren(File file, String subExpression) {
+    /**
+     * Internal method to traverse the file system and comparing all child file names with the given expression.
+     * @param file the root directory
+     * @param expression the regular expression to match
+     * @return the URLs matching the expression
+     */
+    static Collection<URL> traverseAndSelectFromChildren(File file, String expression) {
         List<URL> result = new ArrayList<>();
         for (File childFile : file.listFiles()) {
             if (childFile.isFile()) {
-                if (childFile.getName().matches(subExpression)) {
+                if (childFile.getName().matches(expression)) {
                     try {
                         result.add(getURL(childFile));
                     } catch (Exception e) {
@@ -104,19 +127,26 @@ public class FileCollector {
                     }
                 }
             } else if (childFile.isDirectory()) {
-                result.addAll(traverseAndSelectFromChildren(childFile, subExpression));
+                result.addAll(traverseAndSelectFromChildren(childFile, expression));
             }
         }
         return result;
     }
 
+    /**
+     * Simple matcher method for a single token.
+     * @param childFile the file to match
+     * @param subTokens the subtoken list
+     * @param tokenIndex the index where to start
+     * @return true if the file matches and should be selected.
+     */
     private static boolean matchesFile(File childFile, List<String> subTokens, int tokenIndex) {
         if (tokenIndex < (subTokens.size() - 1)) {
             // not all tokens consumed, so no match!
             return false;
         }
         String tokenToMatch = subTokens.get(tokenIndex);
-        tokenToMatch = tokenToMatch.replace("*", ".*");
+        tokenToMatch = tokenToMatch.replace("*", ".*").replace("?", ".?");
         return childFile.getName().matches(tokenToMatch);
     }
 

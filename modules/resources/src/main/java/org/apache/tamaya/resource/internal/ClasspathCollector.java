@@ -48,37 +48,42 @@ public class ClasspathCollector {
     /**
      * JAR protocol.
      */
-    public static final String PROTOCOL_JAR = "jar";
+    private static final String PROTOCOL_JAR = "jar";
 
     /**
      * Separator between JAR file URL and the internal jar file path.
      */
-    public static final String JAR_URL_SEPARATOR = "!/";
+    private static final String JAR_URL_SEPARATOR = "!/";
 
     /**
      * ZIP protocol.
      */
-    public static final String PROTOCOL_ZIP = "zip";
+    private static final String PROTOCOL_ZIP = "zip";
 
     /**
      * ZIP protocol for a JBoss jar file entry: "vfszip".
      */
-    public static final String PROTOCOL_VFSZIP = "vfszip";
+    private static final String PROTOCOL_VFSZIP = "vfszip";
 
     /**
      * URL protocol for an WebSphere jar file: "wsjar".
      */
-    public static final String PROTOCOL_WSJAR = "wsjar";
+    private static final String PROTOCOL_WSJAR = "wsjar";
 
     /**
      * URL protocol for an entry from an OC4J jar.
      */
-    public static final String PROTOCOL_CODE_SOURCE = "code-source";
+    private static final String PROTOCOL_CODE_SOURCE = "code-source";
 
     /**
      * The logger used.
      */
     private static final Logger LOG = Logger.getLogger(ClasspathCollector.class.getName());
+    
+    /**
+     * Prefix used for explicitly selecting this collector.
+     */
+    public static final String CLASSPATH_PREFIX = "classpath:";
 
     /**
      * The classloader used to load the resources.
@@ -101,25 +106,24 @@ public class ClasspathCollector {
      * @return the resources found.
      */
     public Collection<URL> collectFiles(String expression) {
-        if (expression.startsWith("classpath:")) {
-            expression = expression.substring("classpath:".length());
+        if (expression.startsWith(CLASSPATH_PREFIX)) {
+            expression = expression.substring(CLASSPATH_PREFIX.length());
         }
         if (expression.startsWith("/")) {
             expression = expression.substring(1);
         }
         Locator locator = Locator.of(expression);
         List<URL> result = new ArrayList<>();
-        String rootPath = locator.getRootPath();
         try {
-            Enumeration<URL> rootResources = this.classLoader.getResources(rootPath);
+            Enumeration<URL> rootResources = this.classLoader.getResources(locator.getRootPath());
             while (rootResources.hasMoreElements()) {
                 URL resource = rootResources.nextElement();
                 try {
                     if (isJarFile(resource)) {
                         result.addAll(doFindPathMatchingJarResources(resource, locator.getSubPath()));
                     } else {
-                        File file = getFile(resource);
-                        result.addAll(FileCollector.traverseAndSelectFromChildren(file, locator.getSubPathTokens(), 0));
+                        result.addAll(FileCollector.traverseAndSelectFromChildren(getFile(resource),
+                                locator.getSubPathTokens(), 0));
                     }
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Error locating resources for: " + expression, e);
@@ -152,7 +156,6 @@ public class ClasspathCollector {
         String rootEntryPath;
 
         if (con instanceof JarURLConnection) {
-            // Should usually be the case for traditional JAR files.
             JarURLConnection jarCon = (JarURLConnection) con;
             jarCon.setUseCaches(false);
             jarFile = jarCon.getJarFile();
