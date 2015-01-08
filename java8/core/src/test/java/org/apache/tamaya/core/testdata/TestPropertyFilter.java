@@ -21,7 +21,6 @@ package org.apache.tamaya.core.testdata;
 import org.apache.tamaya.spi.PropertyFilter;
 
 import javax.annotation.Priority;
-import java.util.function.Function;
 
 /**
  * Simple PropertyFilter that filters exact one value, registered using ServiceLoader.

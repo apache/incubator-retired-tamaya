@@ -19,7 +19,6 @@
 package org.apache.tamaya.modules.json;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.propertysource.DefaultOrdinal;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -35,7 +34,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.fail;
 
 public class JSONPropertySourceTest {
 
