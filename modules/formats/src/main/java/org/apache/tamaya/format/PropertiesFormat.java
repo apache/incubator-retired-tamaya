@@ -18,17 +18,14 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.spi.PropertySource;
-
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,77 +41,37 @@ public class PropertiesFormat implements ConfigurationFormat {
     private final static Logger LOG = Logger.getLogger(PropertiesFormat.class.getName());
 
     /**
-     * The target ordinal.
+     * Creates a new format instance.
      */
-    private int ordinal;
-
-    /**
-     * Creates a new format instance, hereby producing entries with the given ordinal, if not overridden by the
-     * configuration itself.
-     * TODO document and implement override feature
-     *
-     * @param ordinal the target ordinal.
-     */
-    public PropertiesFormat(int ordinal) {
-        this.ordinal = ordinal;
+    public PropertiesFormat() {
     }
 
-    /**
-     * Get the target ordinal, produced by this format.
-     *
-     * @return the target ordinal
-     */
-    public int getOrdinal() {
-        return ordinal;
+    @Override
+    public Set<String> getEntryTypes() {
+        Set<String> set = new HashSet<>();
+        set.add(ConfigurationFormat.DEFAULT_ENTRY_TYPE);
+        return set;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<PropertySource> readConfiguration(URL url) {
+    public Map<String, Map<String, String>> readConfiguration(URL url) {
         final String name;
         if (Objects.requireNonNull(url).getQuery() == null) {
             name = "Properties(" + Objects.requireNonNull(url).toString() + ')';
         } else {
             name = Objects.requireNonNull(url).getQuery();
         }
-        List<PropertySource> propertySources = new ArrayList<>();
+        Map<String, Map<String, String>> result = new HashMap<>();
         try (InputStream is = url.openStream()) {
             if (is != null) {
                 final Properties p = new Properties();
                 p.load(is);
-                propertySources.add(new PropertySource() {
-                    @Override
-                    public int getOrdinal() {
-                        return ordinal;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return name;
-                    }
-
-                    @Override
-                    public String get(String key) {
-                        return p.getProperty(key);
-                    }
-
-                    @Override
-                    public Map<String, String> getProperties() {
-                        return Map.class.cast(p);
-                    }
-                });
-                return propertySources;
+                result.put(ConfigurationFormat.DEFAULT_ENTRY_TYPE, Map.class.cast(p));
             }
         } catch (Exception e) {
             LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + url);
         }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public String toString() {
-        return "PropertiesFormat{" +
-                "ordinal=" + ordinal +
-                '}';
+        return result;
     }
 }

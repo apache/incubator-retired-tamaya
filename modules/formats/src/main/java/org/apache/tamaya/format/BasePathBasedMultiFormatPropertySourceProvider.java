@@ -62,8 +62,8 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
     /**
      * Creates a new instance.
      *
-     * @param formats    the formats to be used, not null, not empty.
-     * @param paths      the paths to be resolved, not null, not empty.
+     * @param formats the formats to be used, not null, not empty.
+     * @param paths   the paths to be resolved, not null, not empty.
      */
     public BasePathBasedMultiFormatPropertySourceProvider(
             List<ConfigurationFormat> formats,
@@ -75,8 +75,8 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
     /**
      * Creates a new instance.
      *
-     * @param formats    the formats to be used, not null, not empty.
-     * @param paths      the paths to be resolved, not null, not empty.
+     * @param formats the formats to be used, not null, not empty.
+     * @param paths   the paths to be resolved, not null, not empty.
      */
     public BasePathBasedMultiFormatPropertySourceProvider(
             ClassLoader classLoader,
@@ -88,14 +88,15 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
 
     /**
      * Method to create a {@link org.apache.tamaya.spi.PropertySource} based on the given entries read.
+     *
      * @param entryTypeName the entry type of the entries read, not null.
-     * @param entries the entries read by the {@link org.apache.tamaya.format.ConfigurationFormat}
-     * @param formatUsed the format instance used to read the entries.
+     * @param entries       the entries read by the {@link org.apache.tamaya.format.ConfigurationFormat}
+     * @param formatUsed    the format instance used to read the entries.
      * @return the {@link org.apache.tamaya.spi.PropertySource} instance ready to be registered.
      * @see org.apache.tamaya.format.ConfigurationFormat#getEntryTypes()
      */
-    protected abstract PropertySource getPropertySource(String entryTypeName, Map<String,String> entries,
-                                     ConfigurationFormat formatUsed);
+    protected abstract PropertySource getPropertySource(String entryTypeName, Map<String, String> entries,
+                                                        ConfigurationFormat formatUsed);
 
     /**
      * This method does dynamically resolve the paths using the current ClassLoader set. If no ClassLoader was
@@ -114,14 +115,13 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
                 try {
                     for (ConfigurationFormat format : configFormats) {
                         Map<String, Map<String, String>> entries = format.readConfiguration(res);
-                        for(Map.Entry<String, Map<String, String>> en:entries.entrySet()) {
+                        for (Map.Entry<String, Map<String, String>> en : entries.entrySet()) {
                             PropertySource ps = getPropertySource(en.getKey(), en.getValue(), format);
-                            if(ps!=null) {
+                            if (ps != null) {
                                 propertySources.add(ps);
-                            }
-                            else{
-                                LOG.info(() -> "Config Entries read ignored by PropertySourceFactory: format="+format+
-                                        ", entryType="+en.getKey());
+                            } else {
+                                LOG.info(() -> "Config Entries read ignored by PropertySourceFactory: format=" + format +
+                                        ", entryType=" + en.getKey());
                             }
                         }
                     }

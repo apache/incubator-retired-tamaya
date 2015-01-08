@@ -18,11 +18,8 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.spi.PropertySource;
-
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,9 +27,9 @@ import java.util.Set;
  * Implementations current this class encapsulate the mechanism how to read a
  * resource including interpreting the format correctly (e.g. xml vs.
  * properties). In most cases file only contains entries of the same priority, which would then
- * result in only one {@link PropertySource}. Complex file formats, hoiwever, may contain entries
+ * result in only one {@link org.apache.tamaya.spi.PropertySource}. Complex file formats, hoiwever, may contain entries
  * of different priorities. In this cases, each ordinal type found must be returned as a separate
- * {@link PropertySource} instance.
+ * {@link org.apache.tamaya.spi.PropertySource} instance.
  */
 public interface ConfigurationFormat {
 
