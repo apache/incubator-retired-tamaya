@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
 
+import javax.annotation.Priority;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +55,7 @@ public final class DefaultServiceContext implements ServiceContext {
             if (services.isEmpty()) {
                 cached = Optional.empty();
             } else {
-                cached = Optional.of(services.get(0));
+                cached = Optional.of(getServiceWithHighestPriority(services, serviceType));
             }
             singletons.put(serviceType, cached);
         }
@@ -84,6 +87,52 @@ public final class DefaultServiceContext implements ServiceContext {
         }
         final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
         return previousServices != null ? previousServices : services;
+    }
+
+
+    /**
+     * @param services to scan
+     * @param <T>      type of the service
+     *
+     * @return the service with the highest {@link javax.annotation.Priority#value()}
+     *
+     * @throws ConfigException if there are multiple service implementations with the maximum priority
+     */
+    private <T> T getServiceWithHighestPriority(List<? extends T> services, Class<T> serviceType) {
+
+        // we do not need the priority stuff if the list contains only one element
+        if (services.size() == 1) {
+            return services.get(0);
+        }
+
+        Integer highestPriority = null;
+        int highestPriorityServiceCount = 0;
+        T highestService = null;
+
+        for (T service : services) {
+            int prio = 1; //X TODO discuss default priority
+            Priority priority = service.getClass().getAnnotation(Priority.class);
+            if (priority != null) {
+                prio = priority.value();
+            }
+
+            if (highestPriority == null || highestPriority < prio) {
+                highestService = service;
+                highestPriorityServiceCount = 1;
+                highestPriority = prio;
+            } else if (highestPriority == prio) {
+                highestPriorityServiceCount++;
+            }
+        }
+
+        if (highestPriorityServiceCount > 1) {
+            throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}",
+                                                           highestPriorityServiceCount,
+                                                           serviceType.getName(),
+                                                           highestPriority));
+        }
+
+        return highestService;
     }
 
 }
