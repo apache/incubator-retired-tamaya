@@ -37,12 +37,6 @@ import static java.lang.String.format;
 public class JSONPropertySource
     implements PropertySource {
 
-    /**
-     * Constant for the key which could be used to specify the priority
-     * of a property source in the JSON object directly.
-     */
-    public final static CharSequence TAMAYA_ORDINAL = "tamaya.ordinal";
-
     private int priority = DefaultOrdinal.FILE_PROPERTIES;
     private InputResource source;
     private HashMap<String, String> values;
