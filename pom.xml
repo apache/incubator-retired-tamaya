@@ -20,6 +20,7 @@ under the License.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
@@ -360,9 +361,6 @@ under the License.
                                 <requireMavenVersion>
                                     <version>3.0.5</version>
                                 </requireMavenVersion>
-                                <requireJavaVersion>
-                                    <version>1.8.0</version>
-                                </requireJavaVersion>
                             </rules>
                         </configuration>
                     </execution>
