@@ -26,6 +26,7 @@ under the License.
         <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
+
     <artifactId>tamaya-extensions</artifactId>
     <groupId>org.apache.tamaya.ext</groupId>
     <name>Apache Tamaya Extension Modules</name>
@@ -41,5 +42,30 @@ under the License.
         <!-- module>metamodels</module -->
         <!-- module>integration</module -->
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[1.8,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 
 </project>

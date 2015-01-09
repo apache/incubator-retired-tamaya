@@ -67,6 +67,7 @@ under the License.
         <jruby.version>1.7.16.1</jruby.version>
         <findbugs.version>3.0.0</findbugs.version>
         <rat.version>0.11</rat.version>
+        <toolchains.plugin>1.1</toolchains.plugin>
     </properties>
 
     <licenses>
@@ -258,6 +259,12 @@ under the License.
                     <groupId>de.saumya.mojo</groupId>
                     <artifactId>gem-maven-plugin</artifactId>
                     <version>${gem.plugin}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>${toolchains.plugin}</version>
                 </plugin>
 
                 <plugin>
