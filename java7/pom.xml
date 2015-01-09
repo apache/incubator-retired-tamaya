@@ -29,6 +29,7 @@ under the License.
 
     <artifactId>tamaya-java7</artifactId>
     <packaging>pom</packaging>
+    <name>Apache Tamaya Java 7 Parent</name>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>

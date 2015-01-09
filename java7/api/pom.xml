@@ -28,6 +28,8 @@ under the License.
     </parent>
 
     <artifactId>tamaya-java7-api</artifactId>
+    <name>Apache Tamaya Java 7 API</name>
+
     <description>
         The API defines a complete Java7 based API for reading of configuration data.
     </description>

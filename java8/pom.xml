@@ -28,6 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-java8</artifactId>
+    <name>Apache Tamaya Java 8 Parent</name>
     <packaging>pom</packaging>
 
     <modules>

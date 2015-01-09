@@ -28,6 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-api</artifactId>
+    <name>Apache Tamaya Java 8 API</name>
     <description>
         The API defines a complete SE based API for reading of configuration data.
     </description>

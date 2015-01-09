@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-core</artifactId>
-
+    <name>Apache Tamaya Java 8 Core</name>
 
     <dependencies>
         <dependency>
