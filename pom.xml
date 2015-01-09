@@ -186,6 +186,16 @@ under the License.
             <timezone>-5</timezone>
         </developer>
 
+        <developer>
+            <id>plexus</id>
+            <name>Oliver B. Fischer</name>
+            <roles>
+                <role>PMC</role>
+            </roles>
+            <email>plexus@apache.org</email>
+            <timezone>-1</timezone>
+        </developer>
+
 
     </developers>
 
