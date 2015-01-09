@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.provider;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.internal.PropertiesFileLoader;
 import org.apache.tamaya.core.propertysource.PropertiesFilePropertySource;
 import org.apache.tamaya.spi.PropertySource;
@@ -52,7 +53,7 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
 
 
         } catch (IOException e) {
-            throw new IllegalStateException("error loading javaconfiguration.properties", e);
+            throw new ConfigException("Error while loading javaconfiguration.properties", e);
         }
 
         return Collections.unmodifiableList(propertySources);

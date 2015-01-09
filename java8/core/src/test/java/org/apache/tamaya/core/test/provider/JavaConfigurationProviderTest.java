@@ -26,6 +26,10 @@ import org.junit.Test;
 
 import java.util.Collection;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+
 public class JavaConfigurationProviderTest {
 
     @Test
@@ -33,10 +37,13 @@ public class JavaConfigurationProviderTest {
 
         Collection<PropertySource> propertySources = new JavaConfigurationProvider().getPropertySources();
 
-        Assert.assertNotNull(propertySources);
-        Assert.assertEquals(1, propertySources.size());
+        assertThat(propertySources, notNullValue());
+        assertThat(propertySources, hasSize(1));
 
         PropertySource propertySource = propertySources.iterator().next();
+
+        assertThat(propertySource.getProperties().keySet(), hasSize(5));
+
         for (int i = 1; i < 6; i++) {
             String key = "confkey" + i;
             String value = "javaconf-value" + i;
