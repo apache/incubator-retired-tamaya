@@ -183,8 +183,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                 case "\\":
                     if(!escaped) {
                         escaped = true;
-                    }
-                    else {
+                    } else {
                         expression.append(token);
                         continue;
                     }
@@ -204,8 +203,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                 case "}":
                     if(escaped) {
                         expression.append(token);
-                    }
-                    else{
+                    } else{
                         return expression.toString();
                     }
                     break;
