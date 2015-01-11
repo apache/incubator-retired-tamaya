@@ -52,8 +52,8 @@ public class MyTestPropertySource implements PropertySource{
     }
 
     private String getFileRefAsString() {
-        URL res = getClass().getResource("/TestResource2.txt");
         try {
+            URL res = getClass().getClassLoader().getResource("TestResource2.txt");
             return new File(res.toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {
             return "Failed to evaluate file: TestResource2.txt";
