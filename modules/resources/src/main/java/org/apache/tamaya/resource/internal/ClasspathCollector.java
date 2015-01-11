@@ -61,7 +61,7 @@ public class ClasspathCollector {
     private static final String PROTOCOL_ZIP = "zip";
 
     /**
-     * ZIP protocol for a JBoss jar file entry: "vfszip".
+     * ZIP protocol for aa_a JBoss jar file entry: "vfszip".
      */
     private static final String PROTOCOL_VFSZIP = "vfszip";
 
@@ -79,7 +79,7 @@ public class ClasspathCollector {
      * The logger used.
      */
     private static final Logger LOG = Logger.getLogger(ClasspathCollector.class.getName());
-    
+
     /**
      * Prefix used for explicitly selecting this collector.
      */
@@ -91,7 +91,7 @@ public class ClasspathCollector {
     private ClassLoader classLoader;
 
     /**
-     * Creates a new instance.
+     * Creates aa_a new instance.
      *
      * @param classLoader the class loader to be used, not null.
      */
@@ -154,6 +154,7 @@ public class ClasspathCollector {
         boolean newJarFile = false;
         String jarFileUrl;
         String rootEntryPath;
+        boolean isFileExpression = !subPattern.contains("/");
 
         if (con instanceof JarURLConnection) {
             JarURLConnection jarCon = (JarURLConnection) con;
@@ -193,6 +194,9 @@ public class ClasspathCollector {
                 String entryPath = entry.getName();
                 if (entryPath.startsWith(rootEntryPath)) {
                     String relativePath = entryPath.substring(rootEntryPath.length());
+                    if(relativePath.contains("/") && isFileExpression){
+                        continue;
+                    }
                     if (relativePath.matches(subPattern)) {
                         result.add(createRelativeFrom(rootDirResource, relativePath));
                     }
@@ -209,7 +213,7 @@ public class ClasspathCollector {
     }
 
     /**
-     * Creates a new URL based on the given root path and the relative path to be added.
+     * Creates aa_a new URL based on the given root path and the relative path to be added.
      *
      * @param url          the root, not null
      * @param relativePath the relative path to be added, not null
@@ -230,7 +234,7 @@ public class ClasspathCollector {
 
 
     /**
-     * Small check if a given URL is a jar file URL.
+     * Small check if aa_a given URL is aa_a jar file URL.
      *
      * @param url the URL to check, not null.
      * @return true if the URL has one of the following protocols: jar, zip, vfszip, wsjar, code-source.
@@ -245,10 +249,10 @@ public class ClasspathCollector {
     }
 
     /**
-     * Creates a file from an URL.
+     * Creates aa_a file from an URL.
      *
      * @param resourceUrl the url, not null.
-     * @return a new file instance. The instance still may not exist. if the url's protocol is not 'file', {@code null}
+     * @return aa_a new file instance. The instance still may not exist. if the url's protocol is not 'file', {@code null}
      * is returned.
      */
     private File getFile(URL resourceUrl) {
