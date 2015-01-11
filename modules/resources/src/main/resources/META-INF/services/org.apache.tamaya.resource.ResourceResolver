@@ -16,9 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.resolver.internal.SystemPropertyResolver
-org.apache.tamaya.resolver.internal.EnvironmentPropertyResolver
-org.apache.tamaya.resolver.internal.ResourceResolver
-org.apache.tamaya.resolver.internal.ConfigResolver
-org.apache.tamaya.resolver.internal.FileResolver
-org.apache.tamaya.resolver.internal.URLResolver
+org.apache.tamaya.resource.internal.DefaultResourceResolver

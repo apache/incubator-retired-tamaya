@@ -33,8 +33,8 @@ import static org.junit.Assert.assertEquals;
 public class FileCollectorTest {
 
     private String getResourceDir() throws URISyntaxException {
-        URL res = getClass().getResource("/resources_testroot/");
-        return new File(res.toURI()).getParentFile().getAbsolutePath();
+        URL res = getClass().getClassLoader().getResource("resources_testroot/");
+        return new File(res.toURI()).getAbsolutePath();
     }
 
     @Test
@@ -49,18 +49,18 @@ public class FileCollectorTest {
     @Test
     public void testCollectResourcesFromLocalFSPath_WithFolderPlaceholder() throws Exception {
         String resDir = getResourceDir();
-        Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/resources_testroot/aa?a/*.file");
+        Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/aa?a/*.file");
         assertEquals(5, found.size());
-        Collection<URL> found2 = FileCollector.collectFiles(resDir + "/resources_testroot/aa?a/*.file");
+        Collection<URL> found2 = FileCollector.collectFiles(resDir + "/aa?a/*.file");
         assertEquals(found, found2);
     }
 
     @Test
     public void testCollectResourcesFromLocalFSPath_WithFolderAny() throws Exception {
         String resDir = getResourceDir();
-        Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/resources_testroot/b*/b?/*.file");
+        Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/b*/b?/*.file");
         assertEquals(1, found.size());
-        Collection<URL> found2 = FileCollector.collectFiles(resDir + "/resources_testroot/b*/b?/*.file");
+        Collection<URL> found2 = FileCollector.collectFiles(resDir + "/b*/b?/*.file");
         assertEquals(found, found2);
     }
 

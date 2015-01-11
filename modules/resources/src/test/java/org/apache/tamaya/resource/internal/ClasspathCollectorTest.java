@@ -77,9 +77,9 @@ public class ClasspathCollectorTest {
     @org.junit.Test
     public void testCollectResourcesFromLocalFSPath() throws Exception {
         ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
-        Collection<URL> found = cpc.collectFiles("classpath:resources_testRoot/**/*.file");
+        Collection<URL> found = cpc.collectFiles("classpath:resources_testroot/**/*.file");
         assertEquals(7, found.size());
-        Collection<URL> found2 = cpc.collectFiles("resources_testRoot/**/*.file");
+        Collection<URL> found2 = cpc.collectFiles("resources_testroot/**/*.file");
         assertEquals(found, found2);
     }
 }

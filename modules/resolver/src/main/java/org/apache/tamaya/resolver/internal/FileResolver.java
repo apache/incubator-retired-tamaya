@@ -65,7 +65,7 @@ public final class FileResolver implements ExpressionResolver {
 
     @Override
     public String getResolverPrefix() {
-        return "resource:";
+        return "file:";
     }
 
     @Override

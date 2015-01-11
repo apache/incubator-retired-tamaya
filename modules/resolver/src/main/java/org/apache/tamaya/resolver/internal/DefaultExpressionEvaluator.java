@@ -110,6 +110,9 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      */
     @Override
     public String filterProperty(String key, String valueToBeFiltered){
+        if(valueToBeFiltered==null){
+            return null;
+        }
         StringTokenizer tokenizer = new StringTokenizer(valueToBeFiltered, "${}\\", true);
         boolean escaped = false;
         StringBuilder resolvedValue = new StringBuilder();
@@ -136,7 +139,11 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
             }
             switch (token) {
                 case "\\":
-                    escaped = true;
+                    if(!escaped) {
+                        escaped = true;
+                        continue;
+                    }
+                    current.append(token);
                     break;
                 case "$":
                     if (current.length() > 0) {
@@ -147,22 +154,69 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                         LOG.warning("Invalid expression syntax in: " + valueToBeFiltered);
                         return valueToBeFiltered;
                     }
-                    String subExpression = tokenizer.nextToken();
-                    if (!"}".equals(tokenizer.nextToken())) {
-                        LOG.warning("Invalid expression syntax in: " + valueToBeFiltered);
-                        return valueToBeFiltered;
-                    }
-                    // evaluate sub-expression
+                    String subExpression = parseSubExpression(tokenizer, valueToBeFiltered);
                     current.append(evaluateInternal(subExpression));
                     break;
                 default:
                     current.append(token);
             }
+            escaped = false;
         }
         if (current.length() > 0) {
             resolvedValue.append(current);
         }
         return resolvedValue.toString();
+    }
+
+    /**
+     * Parses subexpression from tokenizer, hereby counting all open and closed brackets, but ignoring any
+     * meta characters.
+     * @param tokenizer the current tokniezer instance
+     * @return the parsed sub expression
+     */
+    private String parseSubExpression(StringTokenizer tokenizer, String valueToBeFiltered) {
+        StringBuilder expression = new StringBuilder();
+        boolean escaped = false;
+        while(tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken();
+            switch (token) {
+                case "\\":
+                    if(!escaped) {
+                        escaped = true;
+                    }
+                    else {
+                        expression.append(token);
+                        continue;
+                    }
+                    break;
+                case "{":
+                    if(!escaped) {
+                        LOG.warning("Ignoring not escaped '{' in : " + valueToBeFiltered);
+                    }
+                    expression.append(token);
+                    break;
+                case "$":
+                    if(!escaped) {
+                        LOG.warning("Ignoring not escaped '$' in : " + valueToBeFiltered);
+                    }
+                    expression.append(token);
+                    break;
+                case "}":
+                    if(escaped) {
+                        expression.append(token);
+                    }
+                    else{
+                        return expression.toString();
+                    }
+                    break;
+                default:
+                    expression.append(token);
+                    break;
+            }
+            escaped = false;
+        }
+        LOG.warning("Invalid expression syntax in: " + valueToBeFiltered + ", expression does not close!");
+            return valueToBeFiltered;
     }
 
     /**

@@ -19,7 +19,6 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
-import org.apache.tamaya.resource.ResourceResolver;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
@@ -40,11 +39,11 @@ import java.util.logging.Logger;
  * If the {@code Resources} module is available this module is used for resolving the expression.
  */
 @Priority(300)
-public final class ClasspathResolver implements ExpressionResolver {
+public final class ResourceResolver implements ExpressionResolver {
     /**
      * The looger used.
      */
-    private final Logger LOG = Logger.getLogger(ClasspathResolver.class.getName());
+    private final Logger LOG = Logger.getLogger(ResourceResolver.class.getName());
 
     /**
      * Flag that controls if the Tamaya Resource loader is available.
@@ -58,7 +57,7 @@ public final class ClasspathResolver implements ExpressionResolver {
      */
     private static boolean checkResourceModule() {
         try {
-            Class.forName("org.apache.tamaya.resource.ResourceResolver.", false, ClasspathResolver.class.getClassLoader());
+            Class.forName("org.apache.tamaya.resource.ResourceResolver", false, ResourceResolver.class.getClassLoader());
             return true;
         } catch (Exception e) {
             return false;
@@ -102,7 +101,7 @@ public final class ClasspathResolver implements ExpressionResolver {
 
     private URL getUrl(String expression, List<ClassLoader> classLoaders) {
         if (IS_RESOURCE_MODULE_AVAILABLE) {
-            ResourceResolver resolver = ServiceContext.getInstance().getService(ResourceResolver.class).get();
+            org.apache.tamaya.resource.ResourceResolver resolver = ServiceContext.getInstance().getService(org.apache.tamaya.resource.ResourceResolver.class).get();
             for (ClassLoader cl : classLoaders) {
                 Collection<URL> resources = resolver.getResources(cl, expression);
                 if (!resources.isEmpty()) {
@@ -133,6 +132,10 @@ public final class ClasspathResolver implements ExpressionResolver {
                     }
                     return resources.get(0);
                 }
+            }
+            if(expression.contains("*") || expression.contains("?")){
+                LOG.warning(() -> "Rouse not found: " + expression + "(Hint: expression contains expression" +
+                        " placeholders, but resource module is not loaded.");
             }
         }
         return null; // no such resource found
