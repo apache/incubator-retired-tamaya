@@ -38,9 +38,9 @@ public class DefaultResourceResolverTest {
 
     @Test
     public void testGetResources_CP() throws Exception {
-        Collection<URL> found = resolver.getResources("classpath:resources_testRoot/**/*.file");
+        Collection<URL> found = resolver.getResources("classpath:resources_testroot/**/*.file");
         assertEquals(7, found.size());
-        Collection<URL> found2 = resolver.getResources("resources_testRoot/**/*.file");
+        Collection<URL> found2 = resolver.getResources("resources_testroot/**/*.file");
         assertEquals(found, found2);
     }
 
