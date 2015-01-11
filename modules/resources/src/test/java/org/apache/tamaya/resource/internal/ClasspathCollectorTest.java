@@ -34,7 +34,6 @@ public class ClasspathCollectorTest {
         ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/*.class");
         assertEquals(8, found.size()); // 7 ordinary, 1 inner class.
-        System.out.println("classpath:javax/annotation/*.class: " + found);
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/*.class");
         assertEquals(found, found2);
     }
@@ -44,7 +43,6 @@ public class ClasspathCollectorTest {
         ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/**/sql/*.class");
         assertEquals(2, found.size());
-        System.out.println("classpath:javax/**/sql/*.class: " + found);
         Collection<URL> found2 = cpc.collectFiles("javax/**/sql/*.class");
         assertEquals(found, found2);
     }
@@ -54,7 +52,6 @@ public class ClasspathCollectorTest {
         ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/**/R*.class");
         assertEquals(2, found.size());
-        System.out.println("classpath:javax/annotation/**/A*.class: " + found);
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/**/R*.class");
         assertEquals(found, found2);
     }
@@ -64,7 +61,6 @@ public class ClasspathCollectorTest {
         ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/R?so*.class");
         assertEquals(3, found.size());
-        System.out.println("classpath:javax/annotation/R?so*.class: " + found);
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/R?so*.class");
         assertEquals(found, found2);
     }
@@ -74,7 +70,6 @@ public class ClasspathCollectorTest {
         ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:META-INF/maven/org.apache.geronimo.specs/**/*");
         assertEquals(3, found.size());
-        System.out.println("classpath:META-INF/maven/org.apache.geronimo.specs/**/*: " + found);
         Collection<URL> found2 = cpc.collectFiles("META-INF/maven/org.apache.geronimo.specs/**/*");
         assertEquals(found, found2);
     }
@@ -84,7 +79,6 @@ public class ClasspathCollectorTest {
         ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:resources_testRoot/**/*.file");
         assertEquals(7, found.size());
-        System.out.println("classpath:resources_testRoot/**/*.file: " + found);
         Collection<URL> found2 = cpc.collectFiles("resources_testRoot/**/*.file");
         assertEquals(found, found2);
     }

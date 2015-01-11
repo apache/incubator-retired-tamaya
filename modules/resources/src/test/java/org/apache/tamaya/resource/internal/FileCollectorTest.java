@@ -42,7 +42,6 @@ public class FileCollectorTest {
         String resDir = getResourceDir();
         Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/**/*.file");
         assertEquals(7, found.size());
-        System.out.println("file:" + resDir + "/**/*.file: " + found);
         Collection<URL> found2 = FileCollector.collectFiles(resDir + "/**/*.file");
         assertEquals(found, found2);
     }
@@ -52,7 +51,6 @@ public class FileCollectorTest {
         String resDir = getResourceDir();
         Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/resources_testroot/aa?a/*.file");
         assertEquals(5, found.size());
-        System.out.println("file:" + resDir + "/resources_testroot/aa?a/*.file: " + found);
         Collection<URL> found2 = FileCollector.collectFiles(resDir + "/resources_testroot/aa?a/*.file");
         assertEquals(found, found2);
     }
@@ -62,7 +60,6 @@ public class FileCollectorTest {
         String resDir = getResourceDir();
         Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/resources_testroot/b*/b?/*.file");
         assertEquals(1, found.size());
-        System.out.println("file:" + resDir + "/resources_testroot/b*/b?/*.file: " + found);
         Collection<URL> found2 = FileCollector.collectFiles(resDir + "/resources_testroot/b*/b?/*.file");
         assertEquals(found, found2);
     }

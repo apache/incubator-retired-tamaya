@@ -40,7 +40,6 @@ public class DefaultResourceResolverTest {
     public void testGetResources_CP() throws Exception {
         Collection<URL> found = resolver.getResources("classpath:resources_testRoot/**/*.file");
         assertEquals(7, found.size());
-        System.out.println("classpath:resources_testRoot/**/*.file: " + found);
         Collection<URL> found2 = resolver.getResources("resources_testRoot/**/*.file");
         assertEquals(found, found2);
     }
@@ -50,7 +49,6 @@ public class DefaultResourceResolverTest {
         String resDir = getResourceDir();
         Collection<URL> found = resolver.getResources("file:" + resDir + "/resources_testroot/aa?a/*.file");
         assertEquals(5, found.size());
-        System.out.println("file:" + resDir + "/resources_testroot/aa?a/*.file: " + found);
         Collection<URL> found2 = resolver.getResources(resDir + "/resources_testroot/aa?a/*.file");
         assertEquals(found, found2);
     }
