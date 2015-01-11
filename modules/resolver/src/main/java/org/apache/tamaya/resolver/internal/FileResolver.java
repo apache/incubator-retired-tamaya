@@ -35,7 +35,8 @@ import java.util.logging.Logger;
 /**
  * Property resolver implementation that tries to load the given resource from the current file system.
  * <br/>
- * If the {@code Resources} module is available this module is used for resolving the expression.
+ * If the {@code Resources} module is available this module is used for resolving the expression. It can be
+ * explicitly addressed by prefixing {@code file:}, e.g. {@code ${file:c:/temp/mytext.txt}}.
  */
 @Priority(400)
 public final class FileResolver implements ExpressionResolver {

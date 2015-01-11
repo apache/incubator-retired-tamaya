@@ -31,7 +31,9 @@ public interface ExpressionResolver {
      * default all registered resolvers are called in order as defined by the {@link javax.annotation.Priority}
      * annotation.
      *
-     * @return the prefix that identifies this resolver instance, e.g. 'config:'.
+     * @return the prefix that identifies this resolver instance, e.g. 'config:'. The ':' hereby is not required as a
+     * separator, but it is recommended to use it, because it fits well, with the other existing resolvers and
+     * is easy to read.
      */
     public String getResolverPrefix();
 

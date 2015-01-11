@@ -24,7 +24,8 @@ import javax.annotation.Priority;
 import java.util.Optional;
 
 /**
- * Property resolver implementation that interprets the resolver expressions as environment properties.
+ * Property resolver implementation that interprets the resolver expressions as environment properties. It can be
+ * explicitly addressed by prefixing {@code env:}, e.g. {@code ${env:MACHINE_NAME}}.
  */
 @Priority(0)
 public final class EnvironmentPropertyResolver implements ExpressionResolver{

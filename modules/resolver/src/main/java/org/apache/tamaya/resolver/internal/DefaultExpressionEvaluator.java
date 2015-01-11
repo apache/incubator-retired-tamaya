@@ -105,62 +105,45 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * </ul>
      *
      * @param key the key to be filtered
-     * @param valueToBeFiltered value to be analyzed for expressions
+     * @param value value to be analyzed for expressions
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public String filterProperty(String key, String valueToBeFiltered){
-        if(valueToBeFiltered==null){
+    public String evaluateExpression(String key, String value){
+        if(value ==null){
             return null;
         }
-        StringTokenizer tokenizer = new StringTokenizer(valueToBeFiltered, "${}\\", true);
+        StringTokenizer tokenizer = new StringTokenizer(value, "${}\\", true);
         boolean escaped = false;
         StringBuilder resolvedValue = new StringBuilder();
         StringBuilder current = new StringBuilder();
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             if (escaped) {
+                current.append(token);
+                escaped = false;
+            } else {
                 switch (token) {
-                    case "n":
-                        current.append("\n");
+                    case "\\":
+                        escaped = true;
+                        current.append("\\");
                         break;
-                    case "r":
-                        current.append("\r");
-                        break;
-                    case "t":
-                        current.append("\t");
+                    case "$":
+                        if (current.length() > 0) {
+                            resolvedValue.append(current);
+                            current.setLength(0);
+                        }
+                        if (!"{".equals(tokenizer.nextToken())) {
+                            LOG.warning("Invalid expression syntax in: " + value);
+                            return value;
+                        }
+                        String subExpression = parseSubExpression(tokenizer, value);
+                        current.append(evaluateInternal(subExpression));
                         break;
                     default:
                         current.append(token);
-                        break;
                 }
-                escaped = false;
-                continue;
             }
-            switch (token) {
-                case "\\":
-                    if(!escaped) {
-                        escaped = true;
-                        continue;
-                    }
-                    current.append(token);
-                    break;
-                case "$":
-                    if (current.length() > 0) {
-                        resolvedValue.append(current);
-                        current.setLength(0);
-                    }
-                    if (!"{".equals(tokenizer.nextToken())) {
-                        LOG.warning("Invalid expression syntax in: " + valueToBeFiltered);
-                        return valueToBeFiltered;
-                    }
-                    String subExpression = parseSubExpression(tokenizer, valueToBeFiltered);
-                    current.append(evaluateInternal(subExpression));
-                    break;
-                default:
-                    current.append(token);
-            }
-            escaped = false;
         }
         if (current.length() > 0) {
             resolvedValue.append(current);
@@ -183,9 +166,10 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                 case "\\":
                     if(!escaped) {
                         escaped = true;
+
                     } else {
                         expression.append(token);
-                        continue;
+                        escaped = false;
                     }
                     break;
                 case "{":
@@ -193,25 +177,28 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                         LOG.warning("Ignoring not escaped '{' in : " + valueToBeFiltered);
                     }
                     expression.append(token);
+                    escaped = false;
                     break;
                 case "$":
                     if(!escaped) {
                         LOG.warning("Ignoring not escaped '$' in : " + valueToBeFiltered);
                     }
                     expression.append(token);
+                    escaped = false;
                     break;
                 case "}":
                     if(escaped) {
                         expression.append(token);
+                        escaped = false;
                     } else{
                         return expression.toString();
                     }
                     break;
                 default:
                     expression.append(token);
+                    escaped = false;
                     break;
             }
-            escaped = false;
         }
         LOG.warning("Invalid expression syntax in: " + valueToBeFiltered + ", expression does not close!");
             return valueToBeFiltered;

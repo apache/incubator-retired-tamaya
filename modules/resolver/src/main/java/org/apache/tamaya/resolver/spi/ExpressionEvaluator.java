@@ -20,14 +20,36 @@ package org.apache.tamaya.resolver.spi;
 
 
 /**
- * Created by Anatole on 05.01.2015.
+ * Interface that provides an SPI that can be accessed from the current {@link org.apache.tamaya.spi.ServiceContext},
+ * which allows to pass expression that contain placeholders and variable expressions. Expressions passed hereby
+ * use UNIX styled variable syntax as follows:
+ * <pre>
+ *     ${expression}
+ *     My name is ${expression}.
+ *     Also multiple expressions are support, e.g. ${expression1}, ${expression2}.
+ * </pre>
+ *
+ * By default all registered instances of {@link org.apache.tamaya.resolver.spi.ExpressionResolver} are called to
+ * evaluate an expression, depending on the annotatated {@link javax.annotation.Priority} on the resolver classes.
+ * Nevertheless with {@link ExpressionResolver#getResolverPrefix()} each resolver instance defines a unique id, by
+ * which a resolver can be explicitly addressed as follows:
+ * <pre>
+ *     ${env:MACHINE_NAME}
+ *     My name is ${sys:instance.name}.
+ *     Also multiple expressions are supported, e.g. ${resource:META-INF/version.conf}, ${file:C:/temp/version.txt},
+ *     ${url:http://configserver/name}.
+ * </pre>
+ * Basically this service is consumed by an instance of {@link org.apache.tamaya.spi.PropertyFilter}, which
+ * takes the configuration values found and passes them to this evaluator, when expressions are detected. This
+ * also done iteratively, so also multi-stepped references (references, which themselves must be evaluated as well)
+ * are supported.
  */
 public interface ExpressionEvaluator {
     /**
      * Evaluates the current expression.
      * @param key the key, not null.
-     * @param valueToBeFiltered the value to be filtered/evaluated.
+     * @param value the value to be filtered/evaluated.
      * @return the filtered/evaluated value, including null.
      */
-    String filterProperty(String key, String valueToBeFiltered);
+    String evaluateExpression(String key, String value);
 }

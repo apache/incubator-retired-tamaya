@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 /**
  * Property resolver implementation that tries to load the given resource from the current classpath using the
  * Thread Context classloader, and as fallback from the classloader that loaded this module and system classloader.
+ * It can be explicitly addressed by prefixing {@code resource:}, e.g. {@code ${resource:META-INF/VERSION}}.
  * <br/>
  * If the {@code Resources} module is available this module is used for resolving the expression.
  */
@@ -133,7 +134,7 @@ public final class ResourceResolver implements ExpressionResolver {
                     return resources.get(0);
                 }
             }
-            if(expression.contains("*") || expression.contains("?")){
+            if (expression.contains("*") || expression.contains("?")) {
                 LOG.warning(() -> "Rouse not found: " + expression + "(Hint: expression contains expression" +
                         " placeholders, but resource module is not loaded.");
             }

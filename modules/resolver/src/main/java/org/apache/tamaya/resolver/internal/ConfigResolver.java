@@ -25,7 +25,7 @@ import javax.annotation.Priority;
 
 /**
  * Property resolver implementation that interprets the resolver expression as a reference to another configuration
- * entry.
+ * entry. It can be explicitly addressed by prefixing {@code conf:}, e.g. {@code ${conf:my.other.config.value}}.
  */
 @Priority(200)
 public final class ConfigResolver implements ExpressionResolver{

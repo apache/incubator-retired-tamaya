@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 /**
  * Property resolver implementation that interprets the resolver expression as an URL to be resolved.
+ * It can be explicitly addressed by prefixing {@code url:}, e.g. {@code ${url:http//www.oracle.com}}.
  */
 @Priority(500)
 public final class URLResolver implements ExpressionResolver {
@@ -42,7 +43,7 @@ public final class URLResolver implements ExpressionResolver {
 
     @Override
     public String evaluate(String expression) {
-        BufferedReader in = null;
+        BufferedReader in;
         try {
             URL url = new URL(expression);
             in = new BufferedReader(

@@ -49,6 +49,9 @@ public class MyTestPropertySource implements PropertySource{
         properties.put("config-ref", "Expression Only -> ${conf:Expression Only}");
         properties.put("config-ref2", "Config Ref 2 -> Ref 1: ${conf:config-ref}");
         properties.put("config-ref3", "Config Ref 3 -> Ref 2: ${conf:config-ref2}");
+
+        properties.put("escaped", "Config Ref 3 -> Ref 2: \\${conf:config-ref2 will not be evaluated and will not contain\\t tabs \\n " +
+                "newlines or \\r returns...YEP!");
     }
 
     private String getFileRefAsString() {

@@ -77,7 +77,8 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      */
     @Override
     public String filterProperty(String key, String valueToBeFiltered){
-        return evaluator.filterProperty(key, valueToBeFiltered);
+        LOG.finest(() -> "Resolving " + valueToBeFiltered + "(key="+key+")");
+        return evaluator.evaluateExpression(key, valueToBeFiltered);
     }
 
 

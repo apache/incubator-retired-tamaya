@@ -26,6 +26,7 @@ import javax.annotation.Priority;
 
 /**
  * Property resolver implementation that interprets the resolver expression as system property name.
+ * It can be explicitly addressed by prefixing {@code sys:}, e.g. {@code ${sys:mySystemProperty}}.
  */
 @Priority(100)
 public final class SystemPropertyResolver implements ExpressionResolver{
