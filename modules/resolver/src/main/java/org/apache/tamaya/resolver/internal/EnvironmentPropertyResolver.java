@@ -20,11 +20,13 @@ package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
+import javax.annotation.Priority;
 import java.util.Optional;
 
 /**
  * Property resolver implementation that interprets the resolver expressions as environment properties.
  */
+@Priority(0)
 public final class EnvironmentPropertyResolver implements ExpressionResolver{
 
     @Override

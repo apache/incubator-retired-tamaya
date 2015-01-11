@@ -20,6 +20,9 @@ package org.apache.tamaya.resolver;
 
 import org.apache.tamaya.spi.PropertySource;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +41,23 @@ public class MyTestPropertySource implements PropertySource{
         properties.put("Before and After Text", "My Java version is ${java.version}.");
         properties.put("Before and After Text (prefixed)", "My Java version is ${sys:java.version}.");
         properties.put("Multi-expression", "Java version ${sys:java.version} and line.separator ${line.separator}.");
+
+        properties.put("cp-ref", "${classpath:TestResource.txt}");
+        properties.put("file-ref", "${file:"+getFileRefAsString()+"}");
+        properties.put("res-ref", "${resource:Test?es*ce.txt}");
+        properties.put("url-ref", "${url:http://www.google.com}");
+        properties.put("config-ref", "Expression Only -> ${config:Expression Only}");
+        properties.put("config-ref2", "Config Ref 2 -> Ref 1: ${config:config-ref}");
+        properties.put("config-ref3", "Config Ref 3 -> Ref 2: ${config:config-ref2}");
+    }
+
+    private String getFileRefAsString() {
+        URL res = getClass().getResource("/TestResource2.txt");
+        try {
+            return new File(res.toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            return "Failed to evaluate file: TestResource2.txt";
+        }
     }
 
     @Override

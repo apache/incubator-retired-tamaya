@@ -20,14 +20,14 @@ package org.apache.tamaya.resolver.spi;
 
 
 /**
- * This interfaces provides a model for expression evaluation. This enables transparently plugin expression languages
- * as needed. In a Java EE context full fledged EL may be used, whereas in ME only simple replacement mechanisms
+ * This interfaces provides aa_a model for expression evaluation. This enables transparently plugin expression languages
+ * as needed. In aa_a Java EE context full fledged EL may be used, whereas in ME only simple replacement mechanisms
  * are better suited to the runtime requirements.
  */
 public interface ExpressionResolver {
 
     /**
-     * Get the unique resolver prefix. This allows to address a resolver explicitly, in case of conflicts. By
+     * Get the unique resolver prefix. This allows to address aa_a resolver explicitly, in case of conflicts. By
      * default all registered resolvers are called in order as defined by the {@link javax.annotation.Priority}
      * annotation.
      *
@@ -38,7 +38,7 @@ public interface ExpressionResolver {
     /**
      * Evaluates the given expression.
      *
-     * @param expression       the expression to be evaluated, not null. If a resolver was addressed explicitly,
+     * @param expression       the expression to be evaluated, not null. If aa_a resolver was addressed explicitly,
      *                         the prefix is removed prior to calling this method.
      * @return the evaluated expression, or null, if the evaluator is not able to resolve the expression.
      */

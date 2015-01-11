@@ -18,26 +18,26 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import java.util.Optional;
-
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 import javax.annotation.Priority;
 
 /**
- * Property resolver implementation that interprets the resolver expression as system property name.
+ * Property resolver implementation that interprets the resolver expression as a reference to another configuration
+ * entry.
  */
-@Priority(100)
-public final class SystemPropertyResolver implements ExpressionResolver{
+@Priority(200)
+public final class ConfigResolver implements ExpressionResolver{
 
     @Override
     public String getResolverPrefix() {
-        return "sys:";
+        return "conf:";
     }
 
     @Override
     public String evaluate(String expression){
-        return Optional.ofNullable(System.getProperty(expression)).orElse(null);
+        return Configuration.current().get(expression);
     }
 
 }

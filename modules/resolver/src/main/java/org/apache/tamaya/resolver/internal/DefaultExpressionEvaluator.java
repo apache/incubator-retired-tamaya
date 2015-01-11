@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 
 /**
  * Default expression evaluator that manages several instances of {@link org.apache.tamaya.resolver.spi.ExpressionResolver}.
- * Each resolver is identified by a resolver id. Each expression passed has the form resolverId:resolverExpression, which
+ * Each resolver is identified by aa_a resolver id. Each expression passed has the form resolverId:resolverExpression, which
  * has the advantage that different resolvers can be active in parallel.
  */
 @Priority(10000)
@@ -89,7 +89,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * <li><code>foor${expression}bar${resolverId2:expression2}more</code></li>
      * <li><code>\${expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
      * </ul>
-     * Given {@code resolverId:} is a valid prefix targeting a {@link java.beans.Expression} explicitly, also the
+     * Given {@code resolverId:} is aa_a valid prefix targeting aa_a {@link java.beans.Expression} explicitly, also the
      * following expressions are valid:
      * <ul>
      * <li><code>${resolverId:expression}</code></li>
@@ -165,19 +165,25 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
         return resolvedValue.toString();
     }
 
-    private String evaluateInternal(String subExpression) {
+    /**
+     * Evalutes the expression parsed, hereby checking for prefixes and trying otherwise all available resolvers,
+     * based on priority.
+     * @param unresolvedExpression the parsed, but unresolved expression
+     * @return the resolved expression, or null.
+     */
+    private String evaluateInternal(String unresolvedExpression) {
         String value = null;
         // 1 check for explicit prefix
         for(ExpressionResolver resolver:resolvers){
-            if(subExpression.startsWith(resolver.getResolverPrefix())){
-                value = resolver.evaluate(subExpression.substring(resolver.getResolverPrefix().length()));
+            if(unresolvedExpression.startsWith(resolver.getResolverPrefix())){
+                value = resolver.evaluate(unresolvedExpression.substring(resolver.getResolverPrefix().length()));
                 break;
             }
         }
         if(value==null){
             for(ExpressionResolver resolver:resolvers){
                 try{
-                    value = resolver.evaluate(subExpression);
+                    value = resolver.evaluate(unresolvedExpression);
                     if(value!=null){
                         return value;
                     }
@@ -187,8 +193,8 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
             }
         }
         if(value==null){
-            LOG.log(Level.WARNING, "Unresolvable expression encountered " + subExpression);
-            value = '[' + subExpression + ']';
+            LOG.log(Level.WARNING, "Unresolvable expression encountered " + unresolvedExpression);
+            value = "?{" + unresolvedExpression + '}';
         }
         return value;
     }
