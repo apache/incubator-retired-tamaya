@@ -49,7 +49,7 @@ final class Locator {
      * @return the tokenized instance.
      */
     public static Locator of(String expression) {
-        return new Locator(Arrays.asList(expression.split("/")).stream().filter((s) -> !s.isEmpty()).collect(Collectors.toList()));
+        return new Locator(Arrays.asList(expression.split("/")).stream().collect(Collectors.toList()));
     }
 
     /**

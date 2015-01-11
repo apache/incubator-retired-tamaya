@@ -55,6 +55,7 @@ public class FileCollectorTest {
         assertEquals(found, found2);
     }
 
+
     @Test
     public void testCollectResourcesFromLocalFSPath_WithFolderAny() throws Exception {
         String resDir = getResourceDir();
