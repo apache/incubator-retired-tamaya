@@ -61,7 +61,7 @@ public class ClasspathCollector {
     private static final String PROTOCOL_ZIP = "zip";
 
     /**
-     * ZIP protocol for aa_a JBoss jar file entry: "vfszip".
+     * ZIP protocol for a JBoss jar file entry: "vfszip".
      */
     private static final String PROTOCOL_VFSZIP = "vfszip";
 
@@ -91,7 +91,7 @@ public class ClasspathCollector {
     private ClassLoader classLoader;
 
     /**
-     * Creates aa_a new instance.
+     * Creates a new instance.
      *
      * @param classLoader the class loader to be used, not null.
      */
@@ -213,7 +213,7 @@ public class ClasspathCollector {
     }
 
     /**
-     * Creates aa_a new URL based on the given root path and the relative path to be added.
+     * Creates a new URL based on the given root path and the relative path to be added.
      *
      * @param url          the root, not null
      * @param relativePath the relative path to be added, not null
@@ -234,7 +234,7 @@ public class ClasspathCollector {
 
 
     /**
-     * Small check if aa_a given URL is aa_a jar file URL.
+     * Small check if a given URL is a jar file URL.
      *
      * @param url the URL to check, not null.
      * @return true if the URL has one of the following protocols: jar, zip, vfszip, wsjar, code-source.
@@ -249,10 +249,10 @@ public class ClasspathCollector {
     }
 
     /**
-     * Creates aa_a file from an URL.
+     * Creates a file from an URL.
      *
      * @param resourceUrl the url, not null.
-     * @return aa_a new file instance. The instance still may not exist. if the url's protocol is not 'file', {@code null}
+     * @return a new file instance. The instance still may not exist. if the url's protocol is not 'file', {@code null}
      * is returned.
      */
     private File getFile(URL resourceUrl) {

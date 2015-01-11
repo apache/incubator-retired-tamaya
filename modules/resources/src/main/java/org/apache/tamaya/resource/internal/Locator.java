@@ -25,7 +25,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
- * Small helper class that manages the path parts of aa_a location expression.
+ * Small helper class that manages the path parts of a location expression.
  */
 final class Locator {
     /**
@@ -34,7 +34,7 @@ final class Locator {
     private List<String> tokens;
 
     /**
-     * Creates aa_a new instances based on the tokenized expression.
+     * Creates a new instances based on the tokenized expression.
      *
      * @param tokens the tokenized expression, not null.
      */
@@ -43,7 +43,7 @@ final class Locator {
     }
 
     /**
-     * Creates aa_a new instance of the corresponding expression.
+     * Creates a new instance of the corresponding expression.
      *
      * @param expression the location expression, not null.
      * @return the tokenized instance.
@@ -72,7 +72,7 @@ final class Locator {
     }
 
     /**
-     * Return the sub expression path, which contains the second part of the expression, starting with aa_a placeholder
+     * Return the sub expression path, which contains the second part of the expression, starting with a placeholder
      * or wildcard token.
      *
      * @return the sub expression part, never null.

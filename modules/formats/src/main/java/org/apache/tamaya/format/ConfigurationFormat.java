@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.format;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,14 @@ public interface ConfigurationFormat {
      * The default entry type returned if a format implementation does not support any explicit entry types.
      */
     public static final String DEFAULT_ENTRY_TYPE = "default";
+    public static final Set<String> DEFAULT_ENTRY_TYPE_SET = initDefaultSet();
+    public static final String DYNAMIC_ENTRY_TYPE = "<dynamic>";
+
+    static Set<String> initDefaultSet(){
+            Set<String> set = new HashSet<>();
+            set.add(DEFAULT_ENTRY_TYPE);
+            return Collections.unmodifiableSet(set);
+    };
 
     /**
      * Access the different entry types a format supports. Entries of the same entry type hereby share the same
@@ -71,8 +80,8 @@ public interface ConfigurationFormat {
      *            resource or something else.
      * @return the corresponding {@link java.util.Map} instances of properties read, never {@code null}. Each
      * {@link java.util.Map} instance hereby is provided using a type key.
+     * @throws org.apache.tamaya.ConfigException if parsing of the input fails.
      */
-    Map<String, Map<String,String>> readConfiguration(URL url)
-            throws IOException;
+    Map<String, Map<String,String>> readConfiguration(URL url);
 
 }

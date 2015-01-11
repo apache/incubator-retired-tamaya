@@ -94,7 +94,7 @@ public class DefaultResourceResolver implements ResourceResolver {
     }
 
     /**
-     * Tries to evaluate the location passed by lokking up aa_a file.
+     * Tries to evaluate the location passed by lokking up a file.
      * @param expression the path expression
      * @param resources the resources for adding the results
      * @return true, if the expression could be resolved.

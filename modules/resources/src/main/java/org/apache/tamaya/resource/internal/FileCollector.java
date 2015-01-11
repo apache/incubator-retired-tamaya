@@ -134,7 +134,7 @@ public class FileCollector {
     }
 
     /**
-     * Simple matcher method for aa_a single token.
+     * Simple matcher method for a single token.
      * @param childFile the file to match
      * @param subTokens the subtoken list
      * @param tokenIndex the index where to start
@@ -151,7 +151,7 @@ public class FileCollector {
     }
 
     /**
-     * Get an URL from aa_a file.
+     * Get an URL from a file.
      *
      * @param file the file, not null.
      * @return the URL, never null.
@@ -167,7 +167,7 @@ public class FileCollector {
     }
 
     /**
-     * Constructs aa_a sub expression, using the tokens from {@code subTokens} starting at index {@code startIndex}.
+     * Constructs a sub expression, using the tokens from {@code subTokens} starting at index {@code startIndex}.
      *
      * @param subTokens  the token list, not null
      * @param startIndex the start index from where tokens should be taken to produce the path.

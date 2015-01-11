@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 
 /**
  * Default expression evaluator that manages several instances of {@link org.apache.tamaya.resolver.spi.ExpressionResolver}.
- * Each resolver is identified by aa_a resolver id. Each expression passed has the form resolverId:resolverExpression, which
+ * Each resolver is identified by a resolver id. Each expression passed has the form resolverId:resolverExpression, which
  * has the advantage that different resolvers can be active in parallel.
  */
 @Priority(10000)
@@ -89,7 +89,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * <li><code>foor${expression}bar${resolverId2:expression2}more</code></li>
      * <li><code>\${expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
      * </ul>
-     * Given {@code resolverId:} is aa_a valid prefix targeting aa_a {@link java.beans.Expression} explicitly, also the
+     * Given {@code resolverId:} is a valid prefix targeting a {@link java.beans.Expression} explicitly, also the
      * following expressions are valid:
      * <ul>
      * <li><code>${resolverId:expression}</code></li>
