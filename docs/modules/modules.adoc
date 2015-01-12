@@ -1,0 +1,20 @@
+= Apache Tamaya -- Extension Mdoules
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya Extension Modules
+:revnumber: 0.1-SNAPSHOT
+:revremark: Incubator
+:revdate: November 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
+
+toc::[]

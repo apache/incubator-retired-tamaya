@@ -1,0 +1,139 @@
+Apache Tamaya -- Injection Module
+=================================
+:name: Tamaya
+:rootpackage: org.apache.tamaya.inject
+:title: Apache Tamaya Injection
+:revnumber: 0.1-SNAPSHOT
+:revremark: Incubator
+:revdate: November 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:iconsdir: {imagesdir}/icons
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
+
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+<<<
+[[Injection]]
+== The Tamaya Injection API
+=== Overview
+
+Inversion of Control (aka IoC/the Hollywood Principle) has proven to be very handy and effective in avoiding boilerplate
+code. In Java there are different frameworks available that all provide IoC mechanisms. Unfortunately IoC is not a
+built-in language feature. So for a portable solution OOTB that works also in Java SE Tamaya itself has to provide the
+according injection services. As an example refer to the following example:
+
+[source,java]
+.Annotated Example Class
+--------------------------------------------
+public class ConfiguredClass{
+
+    // resolved by default, using property name, class and package name
+    private String testProperty;
+
+    @ConfiguredProperty(config="pluginConfig", keys={"a.b.c.key1","a.b.legacyKey"})
+    @ConfiguredProperty(config="productConfig", keys="area1.key2")
+    @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    String value1;
+
+    @ConfiguredProperty(keys="a.b.c.key2")
+    private int value2;
+
+    // resolved by default
+    @DefaultValue("http://127.0.0.1:8080/res/api/v1/info.json")
+    private URL accessUrl;
+
+    // Config injection disabled for this property
+    @NoConfig
+    private Integer int1;
+
+    @ConfiguredProperty("BD")
+    @WithAdapter(MyBigDecimalRoundingAdapter.class)
+    private BigDecimal bigNumber;
+
+    ...
+}
+--------------------------------------------
+
+The class does not show all (but most all) the possibilities that are provided. Configuring an instance of the
+class using Tamaya is very simple:
+
+[source,java]
+.Configuring the +ConfiguredClass+ Instance
+--------------------------------------------
+ConfiguredClass classInstance = new ConfiguredClass();
+Configuration.configure(configuredClass);
+--------------------------------------------
+
+==== The Annotations in detail
+
+tbd
+
+The +Configuration+ interface provides static methods that allow to any kind of instances be configured
+ny just passing the instances calling +Configuration.configure(instance);+. The classes passed hereby must
+be annotated with +@ConfiguredProperty+ to define the configured properties. Hereby this annotation can be
+used in multiple ways and combined with other annotations such as +@DefaultValue+,
++@WithLoadPolicy+, +@WithConfig+, +@WithConfigOperator+, +@WithPropertyAdapter+.
+
+To illustrate the mechanism below the most simple variant of a configured class is given:
+
+[source,java]
+.Most simple configured class
+--------------------------------------------
+pubic class ConfiguredItem{
+  @ConfiguredProperty
+  private String aValue;
+}
+--------------------------------------------
+
+When this class is configured, e.g. by passing it to +Configuration.configure(Object)+,
+the following is happening:
+
+* The current valid +Configuration+ is evaluated by calling +Configuration cfg = Configuration.of();+
+* The current property value (String) is evaluated by calling +cfg.get("aValue");+
+* if not successful, an error is thrown (+ConfigException+)
+* On success, since no type conversion is involved, the value is injected.
+* The configured bean is registered as a weak change listener in the config system's underlying
+  configuration, so future config changes can be propagated (controllable by applying the
+  +@WithLoadPolicy+ annotation).
+
+In the next example we explicitly define the property value:
+[source,java]
+--------------------------------------------
+pubic class ConfiguredItem{
+
+  @ConfiguredProperty
+  @ConfiguredProperty("a.b.value")
+  @configuredProperty("a.b.deprecated.value")
+  @DefaultValue("${env:java.version}")
+  private String aValue;
+}
+--------------------------------------------
+
+Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
+resolved. Hereby the ordering of the annotations define the ordering of resolution, so in the example above
+resolution equals to +"aValue", "a.b.value", "a.b.deprecated.value"+. If no value could be read
+from the configuration, it uses the value from the +@DefaultValue+ annotation. Interesting here
+is that this value is not static, it is evaluated by calling +Configuration.evaluateValue(Configuration, String)+.
