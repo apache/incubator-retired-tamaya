@@ -62,7 +62,7 @@ The API provides these artifacts, which are:
      _Configuration_ provides
      *** access to literal key/value pairs.
      *** functional extension points (+with,query+) based un +UnaryOperator<Configuration>+ (operator) and +Function<Configuration,T>+ (query).
-     *** provides static access to the current +Configuration+ (default configuration)
+  ** +ConfigProvider+ provides static access to the current +Configuration+ (default configuration)
   ** +ConfigException+ defines a runtime exception for usage by the configuration system.
 
 * Additionally the *SPI* provides:
@@ -71,11 +71,13 @@ The API provides these artifacts, which are:
      *** is designed as a minimalistic data interface to be implemented by any kind of data providers (local or remote)
      *** provides data key/value pairs in raw format as String key/values only
      *** can optionally support scanning of its provided values
+  ** _PropertySourceProvider:_ allows to add property sources dynamically.
   ** +PropertyConverter+, which defines conversion of String values into any required target types.
   ** +PropertyFilter+, which allows filtering of property values prior getting returned to the caller.
   ** +ConfigurationContext+, which provides the container that contains the property sources and filters that form a
      configuration.
   ** +ServiceContext+, which provides access to the components loaded, depending on the current runtime stack.
+  ** +ServiceContextManager+ provides static access to the +ServiceContext+ loaded..
 
 This is also reflected in the main parts of the API, which is quite small:
 
@@ -83,8 +85,10 @@ This is also reflected in the main parts of the API, which is quite small:
 * +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +ServiceContext+
   mechanism.
 
-So basically an implementation has to implement the SPIs provided. The +ServiceContext+ only has to be overridden, when
-a default SE +java.util.ServiceLoader+ mechanism is not sufficient.
+=== Compatibility
+
+The Tamaya API basically is compatible with Java 7 and Java 8. Java 8 additionally introduces additional methods
+hereby leveraging the newly added Java 8 +Optional+ features and _default_ methods.
 
 [[APIKeyValues]]
 === Key/Value Pairs
@@ -154,21 +158,60 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 +Configuration+ inherits all basic features from +PropertySource+, but additionally adds functionality for
 type safety and external features of any interacting with configuration:
 
+==== Configuration (Java 7)
+
+The minimal API defined for Java version earlier than Java 8 looks as follows:
+
+[source,java]
+.Interface Configuration
+--------------------------------------------
+public interface Configuration{
+    String get(String key);
+    <T> T get(String key, Class<T> type);
+    Map<String,String> getProperties();
+
+    // extension points
+    default Configuration with(ConfigOperator operator);
+    default <T> T query(ConfigQuery<T> query);
+}
+--------------------------------------------
+
+Hereby
+
+* +<T> T get(String, Class<T>)+ provides type safe accessors for all basic wrapper types of the JDK. Basically all this
+  methods delegate to the +get(String, PropertyConverter)+ method, additionally passing the required +PropertyConverter+.
+* +get(String, PropertyConverter)+ allow accessing any type, hereby also passing a +PropertyConverter+ explicitly
+  that converts  the configured literal value to the type required.
+* +with, query+ provide the extension points for adding additional functionality.
+* +getProperties()+ provides access to all key/values.
+
+
+==== Configuration (Java 8)
+
+The API for Java 8 adds additional support for optionals:
+
 [source,java]
 .Interface Configuration
 --------------------------------------------
 public interface Configuration extends PropertySource{
-    // type support
+    // java 7 inherited methods
+    String get(String key);
+    <T> T get(String key, Class<T> type);
+    Map<String,String> getProperties();
+
+    // extension points
+    default Configuration with(ConfigOperator operator);
+    default <T> T query(ConfigQuery<T> query);
+
+    // new java 8 optional support
     default Optional<Boolean> getBoolean(String key);
     default OptionalInt getInteger(String key);
     default OptionalLong getLong(String key);
     default OptionalDouble getDouble(String key);
-    default <T> Optional<T> getAdapted(String key, PropertyAdapter<T> adapter);
-    <T> Optional<T> get(String key, Class<T> type);
+    default <T> Optional<T> getOptional(String key, PropertyConverter<T> adapter);
+    <T> Optional<T> getOptional(String key, Class<T> type);
 
-    // extension points
-    default Configuration with(UnaryOperator<Configuration> operator);
-    default <T> T query(ConfigQuery<T> query);
+    public static Configuration current();
 }
 --------------------------------------------
 
@@ -176,90 +219,65 @@ Hereby
 
 * +XXX getXXX(String)+ provide type safe accessors for all basic wrapper types of the JDK. Basically all this
   methods delegate to the +getAdapted+ method, additionally passing the required +PropertyAdapter+.
-* +getAdapted+ allow accessing any type, hereby also passing a +PropertyAdapter+ that converts
+* +get(String, PropertyConverter)+ allow accessing any type, hereby also passing a +PropertyConverter+ that converts
   the configured literal value to the type required.
 * +with, query+ provide the extension points for adding additional functionality.
-
-Additionally +Configuration+ provides several access methods:
-
-[source,java]
-.Interface Configuration
---------------------------------------------
-public interface Configuration extends PropertySource{
-   ...
-
-    // accessors for configuration
-    public static Configuration current();
-    public static Configuration current(String name);
-    public static boolean isAvailable(String name);
-    // accessors for template and injection
-    public static <T> T createTemplate(Class<T> template, Configuration... configurations);
-    public static void configure(Object instance, Configuration... configurations);
-}
---------------------------------------------
-
-Hereby
 * +current()+ returns the _default_ +Configuration+
-* +current(String name)+ returns a named +Configuration+ (there may be arbitrary additional +Configuration+ instance
-  additionally to the default +Configuration+ instance.
-* +isAvailable(String name)+ allows to determine if a named +Configuration+ is available.
-* +createTemplate(Class<T> template, Configuration... configurations)+ allows to create a new template instance based
-  on a (optionally) annotated interface. The according getter methods are backed up and implemented by Tamaya based
-  on the configuration values available. The +configurations+ parameter allows parts of +Configuration+ instances to be
-  passed that override any instances available through +current(name), current()+.
-* +configure+ performs injection of configured values on a (optionally) annotated non abstract type.
-  The +configurations+ parameter allows parts of +Configuration+ instances to be
-  passed that override any instances available through +current(name), current()+.
 
 
 [[TypeConversion]]
-==== Type Conversion
+==== Type Conversion (PropertyConverter)
 
 Configuration extend +PropertySource+ and adds additional support for non String types. This is achieved
-with the help of +PropertyAdapter+ instances:
+with the help of +PropertyConverter+ instances:
 
 [source,java]
-.PropertyAdapter
+.PropertyConverter
 --------------------------------------------
-@FunctionalInterface
-public interface PropertyAdapter<T>{
-    T adapt(String value);
+// @FunctionalInterface
+public interface PropertyConverter<T>{
+    T convert(String value);
 }
 --------------------------------------------
 
-+PropertyAdapter+ instances can be implemented manually or registered and accessed from the
-+PropertyAdaper+ using static methods. Hereby the exact mechanism is determined by the implementation
-of +PropertyAdapterSpi+ backing up the static methods.
-By default corresponding +PropertyAdapter+ instances can be registered using the Java +ServiceLoader+
-mechanism, or programmatically ba calling the +register(Class, PropertyAdapter)+.
++PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+.
+Access to converters is given by the +ConfigurationContext+.
+
+[[PropertySourceProvider]]
+==== Property Source Provider
+
+Instances of this type can be used to register a multiple collection of +PropertySource+ instances at one
+dynamically.
 
 [source,java]
-.PropertyAdapter
+.PropertySourceProvider
 --------------------------------------------
-@FunctionalInterface
-public interface PropertyAdapter<T>{
-    T adapt(String value);
-
-    public static <T> PropertyAdapter<T> register(Class<T> targetType, PropertyAdapter<T> adapter);
-    public static boolean isTargetTypeSupported(Class<?> targetType);
-    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType);
-    public static  <T> PropertyAdapter<T> getAdapter(Class<T> targetType, WithPropertyAdapter annotation);
+// @FunctionalInterface
+public interface PropertySourceProvider{
+    Collection<PropertySource> getPropertySources();
 }
 --------------------------------------------
 
-The now a typed instance of a +Configuration+ is required, by default the +Configuration+ implementation acquires
-a matching +PropertyAdapter+. If one is found it can easily pass the String value from its String property store
-for converting it to the required target type. In the normal case for the mostly needed types this is completely
-transparent to the user.
-But basically this mechanism can also be used for adaptive filtering of values accessed. As an example lets assume
-we want to decode an encryped password on the fly, so we can achieve this with as less code as follows:
+This allows to evaluate the property sources to be read dynamically, when the system is loading.
+
+[[PropertyFilters]]
+==== Property Value Filtering
+
+Also filters can be registered (by default) using the +ServiceLoader+. Filters allow to replace or remove values
+provided by the underlying property sources. A filter is defined as follows:
 
 [source,java]
-.Simple Filtering Adapter Use Case
+.PropertyFilter
 --------------------------------------------
-Configuration config = Configuration.cuirrent();
-String decryptedPassword = config.getAdapted(String.class, "user.password", p -> PKI.decrypt(p));
+// @FunctionalInterface
+public interface PropertyConverter{
+    String filterProperty(String key, String valueToBeFiltered);
+}
 --------------------------------------------
+
+This method is called each time a single entry is accessed, and for each property in a full properties result.
+For enabling multiple resolution steps, filtering is done multiple times, until no further value change could
+be registered.
 
 === Extension Points
 
