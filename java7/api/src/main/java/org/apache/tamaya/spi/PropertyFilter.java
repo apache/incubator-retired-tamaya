@@ -28,9 +28,9 @@ package org.apache.tamaya.spi;
 public interface PropertyFilter {
 
     /**
-     * <p>Maps the current {@code valueToBeFiltered} value to a new value. The resulting value will be used as the result
+     * <p>Maps the current {@code valueToBeFiltered} value to aa_a new value. The resulting value will be used as the result
      * passed to the user.</p>
-     * <p>If a filter is currently not available, it should just pass the input map to the method's
+     * <p>If aa_a filter is currently not available, it should just pass the input map to the method's
      * output.</p>
      * <p>Returning {@code null} will remove the entry.</p>
      * <h3>Implementation specification</h3>

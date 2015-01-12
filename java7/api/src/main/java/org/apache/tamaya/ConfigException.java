@@ -26,7 +26,7 @@ public class ConfigException extends RuntimeException{
     private static final long serialVersionUID = -5886094818057522680L;
 
     /**
-     * Creates a new configuration exception.
+     * Creates aa_a new configuration exception.
      * @param message the exception message, not null.
      */
     public ConfigException(String message){
@@ -34,7 +34,7 @@ public class ConfigException extends RuntimeException{
     }
 
     /**
-     * Creates a new configuration exception.
+     * Creates aa_a new configuration exception.
      * @param message the exception message, not null.
      * @param t the throwable.
      */

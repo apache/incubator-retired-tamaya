@@ -33,7 +33,7 @@ public interface ServiceContext {
     int ordinal();
 
     /**
-     * Access a service singleton via its type.
+     * Access aa_a service singleton via its type.
      * If multiple implementations for the very serviceType exist then
      * the one with the highest {@link javax.annotation.Priority} will be used.
      *
@@ -44,7 +44,7 @@ public interface ServiceContext {
     <T> T getService(Class<T> serviceType);
 
     /**
-     * Access a list current services, given its type. The bootstrap mechanism should
+     * Access aa_a list current services, given its type. The bootstrap mechanism should
      * order the instance for precedence, hereby the most significant should be
      * first in order.
      *

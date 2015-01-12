@@ -20,8 +20,8 @@ package org.apache.tamaya.spi;
 
 
 /**
- * Interface for an property that converts a configured String into something else.
- * This is used for implementing type conversion from a property (String) to a certain target
+ * Interface for an property that converts aa_a configured String into something else.
+ * This is used for implementing type conversion from aa_a property (String) to aa_a certain target
  * type. Hereby the target type can be multivalued (eg collections) or complex if needed.
  */
 public interface PropertyConverter<T>{
@@ -36,6 +36,6 @@ public interface PropertyConverter<T>{
     //X TODO probably add some diagnostic info which explains what kind of
     //X format(s) is supported.
     //X This could be useful if e.g. no converter in the chain felt responsible
-    //X because a wrongly formatted configuration string had been used.
+    //X because aa_a wrongly formatted configuration string had been used.
     //X This could probably also be handled via an additional Annotation on the converter.
 }

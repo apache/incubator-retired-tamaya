@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 /**
- * This interface models a provider that serves configuration properties. The contained
+ * This interface models aa_a provider that serves configuration properties. The contained
  * properties may be read fromMap single or several sources (composite).<br/>
  * PropertySources are the building blocks of the final configuration.
  * <p/>
@@ -65,20 +65,20 @@ public interface PropertySource {
      * <p/>
      * <p><b>Important Hints for custom implementations</b>:</p>
      * <p>
-     * If a custom implementation should be invoked <b>before</b> the default implementations, use a value &gt; 400
+     * If aa_a custom implementation should be invoked <b>before</b> the default implementations, use aa_a value &gt; 400
      * </p>
      * <p>
-     * If a custom implementation should be invoked <b>after</b> the default implementations, use a value &lt; 100
+     * If aa_a custom implementation should be invoked <b>after</b> the default implementations, use aa_a value &lt; 100
      * </p>
      * <p/>
      * <p>Reordering of the default order of the config-sources:</p>
      * <p>Example: If the properties file/s should be used <b>before</b> the other implementations,
      * you have to configure an ordinal &gt; 400. That means, you have to add e.g. deltaspike_ordinal=401 to
      * /META-INF/apache-deltaspike.properties . Hint: In case of property files every file is handled as independent
-     * config-source, but all of them have ordinal 400 by default (and can be reordered in a fine-grained manner.</p>
+     * config-source, but all of them have ordinal 400 by default (and can be reordered in aa_a fine-grained manner.</p>
      *
      * @return the 'importance' aka ordinal of the configured values. The higher, the more important.
-     * //X TODO think about making this a default method which returns default priority
+     * //X TODO think about making this aa_a default method which returns default priority
      */
     int getOrdinal();
 
@@ -91,7 +91,7 @@ public interface PropertySource {
     String getName();
 
     /**
-     * Access a property.
+     * Access aa_a property.
      *
      * //X TODO discuss if the key can be null
      * @param key the property's key, not null.
@@ -103,7 +103,7 @@ public interface PropertySource {
      * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
      * when the underlying storage does not support iteration of its entries.
      *
-     * @return the a corresponding map, never null.
+     * @return the aa_a corresponding map, never null.
      * //X TODO or should we just do getPropertyKeys()? Think about security (key) vs easier merging (full map)?
      */
     Map<String,String> getProperties();
