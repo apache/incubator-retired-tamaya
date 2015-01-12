@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.PropertyChangeSet;
 
 import java.lang.reflect.Method;
@@ -55,7 +54,8 @@ public final class ConfigChangeCallbackMethod {
             callbackMethod.setAccessible(true);
             callbackMethod.invoke(instance, configChangeEvent);
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, e, () -> "Error calling ConfigChange callback method " + callbackMethod.getDeclaringClass().getName() + '.' + callbackMethod.getName() + " on " + instance);
+            LOG.log(Level.SEVERE, e, () -> "Error calling ConfigChange callback method " +
+                    callbackMethod.getDeclaringClass().getName() + '.' + callbackMethod.getName() + " on " + instance);
         }
     }
 }

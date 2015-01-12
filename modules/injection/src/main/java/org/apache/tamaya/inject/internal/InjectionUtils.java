@@ -24,7 +24,6 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
@@ -32,7 +31,6 @@ import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.inject.ConfiguredProperties;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultAreas;
 import org.apache.tamaya.inject.DefaultValue;
@@ -52,7 +50,7 @@ final class InjectionUtils {
 
     private static final Logger LOG = Logger.getLogger(InjectionUtils.class.getName());
 
-    private static final boolean resolutionModuleLoaded = checkResolutionModuleLoaded();
+    private static final boolean RESOLUTION_MODULE_LOADED = checkResolutionModuleLoaded();
 
     private static boolean checkResolutionModuleLoaded() {
         try {
@@ -76,8 +74,7 @@ final class InjectionUtils {
      */
     public static List<String> evaluateKeys(Member member, DefaultAreas areasAnnot, ConfiguredProperty propertyAnnotation) {
         List<String> keys = new ArrayList<>(Arrays.asList(propertyAnnotation.keys()));
-        if (keys.isEmpty()) //noinspection UnusedAssignment
-        {
+        if (keys.isEmpty()) {
             keys.add(member.getName());
         }
         ListIterator<String> iterator = keys.listIterator();
@@ -158,18 +155,15 @@ final class InjectionUtils {
      * @return the keys to be returned, or null.
      */
     private static String getConfigValueInternal(AnnotatedElement element, DefaultAreas areasAnnot, WithLoadPolicy loadPolicy) {
-        Collection<ConfiguredProperty> configuredProperties = Utils.getAnnotations(
-                element, ConfiguredProperty.class, ConfiguredProperties.class);
+        ConfiguredProperty prop = element.getAnnotation(ConfiguredProperty.class);
         DefaultValue defaultAnnot = element.getAnnotation(DefaultValue.class);
         String configValue = null;
-        if (configuredProperties.isEmpty()) {
+        if (prop == null) {
             List<String> keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
-            configValue = evaluteConfigValue(configValue, keys);
+            configValue = evaluteConfigValue(keys);
         } else {
-            for (ConfiguredProperty prop : configuredProperties) {
-                List<String> keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
-                configValue = evaluteConfigValue(configValue, keys);
-            }
+            List<String> keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
+            configValue = evaluteConfigValue(keys);
         }
         if (configValue == null && defaultAnnot != null) {
             return defaultAnnot.value();
@@ -177,9 +171,10 @@ final class InjectionUtils {
         return configValue;
     }
 
-    private static String evaluteConfigValue(String configValue, List<String> keys) {
+    private static String evaluteConfigValue(List<String> keys) {
+        String configValue = null;
         for (String key : keys) {
-            configValue = Configuration.current().get(key).orElse(null);
+            configValue = Configuration.current().get(key);
             if (configValue != null) {
                 break;
             }
@@ -225,16 +220,16 @@ final class InjectionUtils {
     }
 
     public static boolean isResolutionModuleLoaded() {
-        return resolutionModuleLoaded;
+        return RESOLUTION_MODULE_LOADED;
     }
 
     public static String evaluateValue(String value) {
-        if (!resolutionModuleLoaded) {
+        if (!RESOLUTION_MODULE_LOADED) {
             return value;
         }
         ExpressionEvaluator evaluator = ServiceContext.getInstance().getService(ExpressionEvaluator.class).orElse(null);
         if (evaluator != null) {
-            return evaluator.filterProperty("<injection>", value, (k) -> Configuration.current().get(k).orElse(null));
+            return evaluator.evaluateExpression("<injection>", value);
         }
         return value;
     }

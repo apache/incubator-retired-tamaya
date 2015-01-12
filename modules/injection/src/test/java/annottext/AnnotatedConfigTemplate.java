@@ -29,12 +29,10 @@ import org.apache.tamaya.inject.WithLoadPolicy;
  * Created by Anatole on 15.02.14.
  */
 @WithLoadPolicy(LoadPolicy.INITIAL)
-public interface AnnotatedConfig {
+public interface AnnotatedConfigTemplate {
 
-    @ConfiguredProperty(keys = "foo.bar.myprop")
-    @ConfiguredProperty(keys = "mp")
-    @ConfiguredProperty(keys = "common.testdata.myProperty")
-    @DefaultValue("myValue_$[env.stage]")
+    @ConfiguredProperty(keys = {"foo.bar.myprop", "mp","common.testdata.myProperty"})
+    @DefaultValue("myValue_${env.stage}")
     // @ConfigLoadPolicy(listener = MyListener.class)
     String myParameter();
 
@@ -45,7 +43,7 @@ public interface AnnotatedConfig {
     @ConfiguredProperty
     String simplestValue();
 
-    @ConfiguredProperty(keys = "env.host.name")
+    @ConfiguredProperty(keys = "host.name")
     String hostName();
 
 }

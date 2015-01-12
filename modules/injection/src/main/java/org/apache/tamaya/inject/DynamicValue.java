@@ -24,7 +24,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -32,9 +37,9 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * A accessor for a single configured value. This can be used to support values that may change during runtime, reconfigured or
- * final. Hereby external code (could be Tamaya configuration listners or client code), can set a new value. Depending on the
- * {@link UpdatePolicy} the new value is immedeately active or it requires an active commit
+ * A accessor for a single configured value. This can be used to support values that may change during runtime,
+ * reconfigured or final. Hereby external code (could be Tamaya configuration listners or client code), can set a
+ * new value. Depending on the {@link UpdatePolicy} the new value is immedeately active or it requires an active commit
  * by client code. Similarly an instance also can ignore all later changes to the value.
  * <h3>Implementation Details</h3>
  * This class is
@@ -69,7 +74,8 @@ public final class DynamicValue<T> implements Serializable{
     /** The property name of the entry. */
     private String propertyName;
     /**
-     * Policy that defines how new values are applied, be default it is applied initially once, but never updated anymore.
+     * Policy that defines how new values are applied, be default it is applied initially once, but never updated
+     * anymore.
      */
     private UpdatePolicy updatePolicy = UpdatePolicy.NEVER;
     /** The current value, never null. */
@@ -80,25 +86,24 @@ public final class DynamicValue<T> implements Serializable{
     private transient WeakList<Consumer<PropertyChangeEvent>> listeners;
 
     /**
-     * Returns an empty {@code Optional} instance.  No value is present for this
-     * Optional.
+     * Returns an empty {@code DynamicValue} instance.  No value is present for this
+     * DynamicValue.
      *
-     * @apiNote Though it may be tempting to do so, avoid testing if an object
+     * NOTE: Though it may be tempting to do so, avoid testing if an object
      * is empty by comparing with {@code ==} against instances returned by
      * {@code Option.empty()}. There is no guarantee that it is a singleton.
      * Instead, use {@link #isPresent()}.
      *
      * @param <T> Type of the non-existent value
-     * @return an empty {@code Optional}
+     * @return an empty {@code DynamicValue}
      */
     public static <T> DynamicValue<T> empty(String propertyName) {
-        DynamicValue v = new DynamicValue<T>(propertyName, null);
-        return v;
+        return new DynamicValue<T>(propertyName, null);
     }
 
     /**
      * Constructor.
-     * @param propertyName the name of the value in the format {@code <configName>:<propertyName>}.</config>
+     * @param propertyName the key of the property, not null.
      * @param item the initial value.
      */
     private DynamicValue(String propertyName, Optional<T> item){
@@ -108,18 +113,18 @@ public final class DynamicValue<T> implements Serializable{
 
     /**
      * Creates a new instance.
-     * @param propertyName the name of the value in the format {@code <configName>:<propertyName>}.</config>
+     * @param propertyName the key of the property, not null.
      * @param value the initial value, not null.
      * @param <T> the type
      * @return a new instance, never null
      */
     public static <T> DynamicValue<T> of(String propertyName, T value){
-        return new DynamicValue(propertyName, Optional.of(value));
+        return new DynamicValue<T>(propertyName, Optional.of(value));
     }
 
     /**
      * Creates a new instance.
-     * @param propertyName the name of the value in the format {@code <configName>:<propertyName>}.</config>
+     * @param propertyName the key of the property, not null.
      * @param value the initial value
      * @param <T> the target type.
      * @return a new instance, never null
@@ -129,10 +134,9 @@ public final class DynamicValue<T> implements Serializable{
     }
 
     /**
-     * Performs a commit, if necessary and returns the current value.
-     * otherwise throws {@code ConfigException}.
+     * Performs a commit, if necessary, and returns the current value.
      *
-     * @return the non-null value held by this {@code Optional}
+     * @return the non-null value held by this {@code DynamicValue}
      * @throws org.apache.tamaya.ConfigException if there is no value present
      *
      * @see DynamicValue#isPresent()
@@ -143,12 +147,14 @@ public final class DynamicValue<T> implements Serializable{
     }
 
     /**
-     * Commits a new value that has not been committed yet, make it the new value of the instance. On change any registered listeners will be triggered.
+     * Commits a new value that has not been committed yet, make it the new value of the instance. On change any
+     * registered listeners will be triggered.
      */
     public void commit(){
-        synchronized (value){
+        synchronized (this){
             if(newValue!=null){
-                PropertyChangeEvent evt = new PropertyChangeEvent(this, propertyName, value.orElse(null), newValue.orElse(null));
+                PropertyChangeEvent evt = new PropertyChangeEvent(this, propertyName, value.orElse(null),
+                        newValue.orElse(null));
                 value = newValue;
                 newValue = null;
                 for(Consumer<PropertyChangeEvent> consumer: listeners.get()){
@@ -177,7 +183,7 @@ public final class DynamicValue<T> implements Serializable{
 
     /**
      * Add a listener to be called as weak reference, when this value has been changed.
-     * @param l the listner, not null
+     * @param l the listener, not null
      */
     public void addListener(Consumer<PropertyChangeEvent> l) {
         if(listeners==null){
@@ -197,7 +203,7 @@ public final class DynamicValue<T> implements Serializable{
     }
 
     /**
-     * If a value is present in this {@code ConfiguredValue}, returns the value,
+     * If a value is present in this {@code DynamicValue}, returns the value,
      * otherwise throws {@code ConfigException}.
      *
      * @return the non-null value held by this {@code Optional}
@@ -220,15 +226,16 @@ public final class DynamicValue<T> implements Serializable{
                 this.newValue = Optional.ofNullable(newValue);
                 commit();
                 break;
-            case EXPLCIT:
-                this.newValue = Optional.ofNullable(newValue);
-                break;
             case LOG_AND_DISCARD:
                 Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue="+newValue);
                 this.newValue = null;
                 break;
             case NEVER:
                 this.newValue = null;
+                break;
+            case EXPLCIT:
+            default:
+                this.newValue = Optional.ofNullable(newValue);
                 break;
         }
 
@@ -288,10 +295,10 @@ public final class DynamicValue<T> implements Serializable{
      */
     public DynamicValue<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        if (!isPresent())
+        if (!isPresent()) {
             return this;
-        else
-            return predicate.test(value.get()) ? this : empty(propertyName);
+        }
+        return predicate.test(value.get()) ? this : empty(propertyName);
     }
 
     /**
@@ -299,7 +306,7 @@ public final class DynamicValue<T> implements Serializable{
      * and if the result is non-null, return an {@code Optional} describing the
      * result.  Otherwise return an empty {@code Optional}.
      *
-     * @apiNote This method supports post-processing on optional values, without
+     * NOTE This method supports post-processing on optional values, without
      * the need to explicitly check for a return status.  For example, the
      * following code traverses a stream of file names, selects one that has
      * not yet been processed, and then opens that file, returning an
@@ -325,11 +332,10 @@ public final class DynamicValue<T> implements Serializable{
      */
     public <U> DynamicValue<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
-        if (!isPresent())
+        if (!isPresent()) {
             return empty(propertyName);
-        else {
-            return DynamicValue.ofNullable(propertyName, mapper.apply(value.get()));
         }
+        return DynamicValue.ofNullable(propertyName, mapper.apply(value.get()));
     }
 
     /**
@@ -351,11 +357,10 @@ public final class DynamicValue<T> implements Serializable{
      */
     public <U> DynamicValue<U> flatMap(Function<? super T, DynamicValue<U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (!isPresent())
+        if (!isPresent()) {
             return empty(propertyName);
-        else {
-            return Objects.requireNonNull(mapper.apply(value.get()));
         }
+        return Objects.requireNonNull(mapper.apply(value.get()));
     }
 
     /**
@@ -387,7 +392,7 @@ public final class DynamicValue<T> implements Serializable{
      * Return the contained value, if present, otherwise throw an exception
      * to be created by the provided supplier.
      *
-     * @apiNote A method reference to the exception constructor with an empty
+     * NOTE A method reference to the exception constructor with an empty
      * argument list can be used as the supplier. For example,
      * {@code IllegalStateException::new}
      *
@@ -420,8 +425,7 @@ public final class DynamicValue<T> implements Serializable{
         oos.writeObject(updatePolicy);
         if(isPresent()) {
             oos.writeObject(this.value.get());
-        }
-        else{
+        }  else{
             oos.writeObject(null);
         }
     }
@@ -444,28 +448,28 @@ public final class DynamicValue<T> implements Serializable{
     /**
      * Simple helper that allows keeping the listeners registered as weak references, hereby avoiding any
      * memory leaks.
-     * @param <T> the type
+     * @param <I> the type
      */
-    private class WeakList<T>{
-        List<WeakReference<T>> refs = new LinkedList<>();
+    private class WeakList<I>{
+        final List<WeakReference<I>> refs = new LinkedList<>();
 
         /**
          * Adds a new instance.
          * @param t the new instance, not null.
          */
-        void add(T t){
-            refs.add(new WeakReference(t));
+        void add(I t){
+            refs.add(new WeakReference<I>(t));
         }
 
         /**
          * Removes a instance.
          * @param t the instance to be removed.
          */
-        void remove(T t){
+        void remove(I t){
             synchronized (refs){
-                for(Iterator<WeakReference<T>> iterator = refs.iterator();iterator.hasNext();){
-                    WeakReference<T> ref = iterator.next();
-                    T instance = ref.get();
+                for(Iterator<WeakReference<I>> iterator = refs.iterator();iterator.hasNext();){
+                    WeakReference<I> ref = iterator.next();
+                    I instance = ref.get();
                     if(instance==null || instance == t){
                         iterator.remove();
                         break;
@@ -479,16 +483,15 @@ public final class DynamicValue<T> implements Serializable{
          * Access a list (copy) of the current instances that were not discarded by the GC.
          * @return the list of accessible items.
          */
-        public List<T> get() {
+        public List<I> get() {
             synchronized (refs) {
-                List<T> res = new ArrayList<>();
-                for (Iterator<WeakReference<T>> iterator = refs.iterator(); iterator.hasNext(); ) {
-                    WeakReference<T> ref = iterator.next();
-                    T instance = ref.get();
+                List<I> res = new ArrayList<>();
+                for (Iterator<WeakReference<I>> iterator = refs.iterator(); iterator.hasNext(); ) {
+                    WeakReference<I> ref = iterator.next();
+                    I instance = ref.get();
                     if(instance==null){
                         iterator.remove();
-                    }
-                    else{
+                    } else{
                         res.add(instance);
                     }
                 }

@@ -38,35 +38,36 @@ public final class Utils {
 
     private static final Logger LOG = Logger.getLogger(Utils.class.getName());
 
-    private Utils(){}
+    private Utils() {
+    }
 
     /**
      * Utility method to read out repeatable annotations.
-     * @param annotated the annotated instance.
+     *
+     * @param annotated            the annotated instance.
      * @param repeatableAnnotation the repeatable annotation type
-     * @param annotationContainer the container annotation type
-     * @param <T> the repeatable annotation type
-     * @param <R> the repeatable container annotation type
+     * @param annotationContainer  the container annotation type
+     * @param <T>                  the repeatable annotation type
+     * @param <R>                  the repeatable container annotation type
      * @return a list with the annotations found (could be empty, but never null).
      */
-	public static <T extends Annotation, R extends Annotation> Collection<T>
-            getAnnotations(AnnotatedElement annotated,
-                              Class<T> repeatableAnnotation,
-                              Class<R> annotationContainer){
+    public static <T extends Annotation, R extends Annotation> Collection<T>
+    getAnnotations(AnnotatedElement annotated,
+                   Class<T> repeatableAnnotation,
+                   Class<R> annotationContainer) {
         List<T> result = new ArrayList<>();
         R containerAnnot = annotated.getAnnotation(annotationContainer);
-        if(containerAnnot!=null){
+        if (containerAnnot != null) {
             Method valueMethod;
             try {
                 valueMethod = annotationContainer.getMethod("keys");
-                result.addAll(Arrays.asList((T[])valueMethod.invoke(containerAnnot)));
+                result.addAll(Arrays.asList((T[]) valueMethod.invoke(containerAnnot)));
             } catch (Exception e) {
                 LOG.log(Level.SEVERE, "Failed to evaluate repeatable annotation.", e);
             }
-        }
-        else{
+        } else {
             T annot = annotated.getAnnotation(repeatableAnnotation);
-            if(annot!=null){
+            if (annot != null) {
                 result.add(annot);
             }
         }
@@ -75,31 +76,31 @@ public final class Utils {
 
     /**
      * Utility method to read out repeatable annotations.
-     * @param annotated the annotated instance.
+     *
+     * @param annotated            the annotated instance.
      * @param repeatableAnnotation the repeatable annotation type
-     * @param annotationContainer the container annotation type
-     * @param <T> the repeatable annotation type
-     * @param <R> the repeatable container annotation type
+     * @param annotationContainer  the container annotation type
+     * @param <T>                  the repeatable annotation type
+     * @param <R>                  the repeatable container annotation type
      * @return a list with the annotations found (could be empty, but never null).
      */
     public static <T extends Annotation, R extends Annotation> Collection<T>
     getAnnotations(AccessibleObject annotated,
                    Class<T> repeatableAnnotation,
-                   Class<R> annotationContainer){
+                   Class<R> annotationContainer) {
         List<T> result = new ArrayList<>();
         R containerAnnot = annotated.getAnnotation(annotationContainer);
-        if(containerAnnot!=null){
+        if (containerAnnot != null) {
             Method valueMethod;
             try {
                 valueMethod = annotationContainer.getMethod("keys");
-                result.addAll(Arrays.asList((T[])valueMethod.invoke(containerAnnot)));
+                result.addAll(Arrays.asList((T[]) valueMethod.invoke(containerAnnot)));
             } catch (Exception e) {
                 LOG.log(Level.SEVERE, "Failed to evaluate repeatable annotation.", e);
             }
-        }
-        else{
+        } else {
             T annot = annotated.getAnnotation(repeatableAnnotation);
-            if(annot!=null){
+            if (annot != null) {
                 result.add(annot);
             }
         }
@@ -108,16 +109,17 @@ public final class Utils {
 
     /**
      * Utility method to read out repeatable annotations.
+     *
      * @param annotationType the annotation type.
-     * @param objects the accessible objects to be looked up
-     * @param <T> the repeatable annotation type
+     * @param objects        the accessible objects to be looked up
+     * @param <T>            the repeatable annotation type
      * @return a list with the annotations found (could be empty, but never null).
      */
     public static <T extends Annotation> T getAnnotation(
-                   Class<T> annotationType, AnnotatedElement... objects){
-        for(AnnotatedElement obj:objects){
+            Class<T> annotationType, AnnotatedElement... objects) {
+        for (AnnotatedElement obj : objects) {
             T annot = obj.getAnnotation(annotationType);
-            if(annot!=null){
+            if (annot != null) {
                 return annot;
             }
         }

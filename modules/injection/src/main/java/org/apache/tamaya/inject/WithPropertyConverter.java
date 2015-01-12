@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * injecting the field keys.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD })
+@Target(value = {ElementType.FIELD, ElementType.METHOD})
 public @interface WithPropertyConverter {
 
     /**
@@ -40,7 +40,6 @@ public @interface WithPropertyConverter {
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
      */
-    @SuppressWarnings("rawtypes")
-	Class<? extends PropertyConverter<?>> value();
+    Class<? extends PropertyConverter<?>> value();
 
 }

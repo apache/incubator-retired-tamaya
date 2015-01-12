@@ -19,19 +19,14 @@
 package org.apache.tamaya.inject.internal;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-//import org.apache.tamaya.core.properties.PropertyChangeSet;
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.inject.ConfiguredProperties;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultAreas;
 import org.apache.tamaya.inject.PropertyChangeSet;
-//import org.apache.tamaya.core.internal.Utils;
 
 /**
  * Small class that contains and manages all information and access to a configured field and a concrete instance current
@@ -113,19 +108,12 @@ public class ConfiguredSetterMethod {
      */
     public boolean matchesKey(String key) {
         DefaultAreas areasAnnot = this.setterMethod.getDeclaringClass().getAnnotation(DefaultAreas.class);
-        Collection<ConfiguredProperty> configuredProperties =
-                Utils.getAnnotations(this.setterMethod, ConfiguredProperty.class, ConfiguredProperties.class);
-        for(ConfiguredProperty prop: configuredProperties) {
-            if (InjectionUtils.evaluateKeys(this.setterMethod, areasAnnot, prop).contains(key)) {
-                return true;
-            }
-        }
-        if (InjectionUtils.evaluateKeys(this.setterMethod, areasAnnot).contains(key)) {
+        ConfiguredProperty prop = this.setterMethod.getAnnotation(ConfiguredProperty.class);
+        if (InjectionUtils.evaluateKeys(this.setterMethod, areasAnnot, prop).contains(key)) {
             return true;
         }
-        return false;
+        return InjectionUtils.evaluateKeys(this.setterMethod, areasAnnot).contains(key);
     }
-
 
 
 }

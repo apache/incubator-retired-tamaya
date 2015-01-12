@@ -18,7 +18,11 @@
  */
 package org.apache.tamaya.inject;
 
-import java.lang.annotation.*;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotation to enable injection current a configured property or define the returned data for
@@ -62,18 +66,9 @@ import java.lang.annotation.*;
  * fromMap the configuration, it uses the keys fromMap the {@code DefaultValue} annotation. Interesting here
  * is that this keys is not static, it is evaluated.
  */
-@Repeatable(ConfiguredProperties.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })
 public @interface ConfiguredProperty {
-
-    /**
-     * Annotation to reference an explicit {@link org.apache.tamaya.Configuration} to be used to
-     * resolve the required properties. the configured keys is passed to {@code Configuration.current(String)}
-     * to evaluate the required configuration required.
-     * @return the configurations to be looked up for the given keys.
-     */
-    String config() default "";
 
     /**
      * Get the property names to be used. Hereby the first non null keys evaluated is injected as property keys.

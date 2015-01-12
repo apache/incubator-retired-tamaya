@@ -19,13 +19,10 @@
 package org.apache.tamaya.inject.internal;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.inject.ConfiguredProperties;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultAreas;
 
@@ -98,26 +95,11 @@ public class ConfiguredField {
      * @param key the (qualified) configuration key, not null.
      * @return true, if the key is referenced.
      */
-    public boolean matchesKey(String configName, String key) {
-        Collection<ConfiguredProperty> configuredProperties = Utils.getAnnotations(this.annotatedField, ConfiguredProperty.class,
-                ConfiguredProperties.class );
-        for(ConfiguredProperty prop: configuredProperties){
-            String currentName = prop.config().trim();
-            if(currentName.isEmpty()){
-                if(!"default".equals(configName)){
-                    continue;
-                }
-            }
-            else if(!currentName.equals(configName)){
-                continue;
-            }
-            DefaultAreas areasAnnot = this.annotatedField.getDeclaringClass().getAnnotation(DefaultAreas.class);
-            List<String> keys = InjectionUtils.evaluateKeys(this.annotatedField, areasAnnot, prop);
-            if( keys.contains(key)){
-                return true;
-            }
-        }
-        return false;
+    public boolean matchesKey(String key) {
+        ConfiguredProperty prop = this.annotatedField.getAnnotation(ConfiguredProperty.class);
+        DefaultAreas areasAnnot = this.annotatedField.getDeclaringClass().getAnnotation(DefaultAreas.class);
+        List<String> keys = InjectionUtils.evaluateKeys(this.annotatedField, areasAnnot, prop);
+        return keys.contains(key);
     }
 
 }

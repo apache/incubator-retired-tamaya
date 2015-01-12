@@ -18,7 +18,6 @@
  */
 package annottext;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultValue;
 import org.apache.tamaya.inject.LoadPolicy;
@@ -30,23 +29,29 @@ import org.apache.tamaya.inject.WithLoadPolicy;
  * Created by Anatole on 15.02.14.
  */
 @WithLoadPolicy(LoadPolicy.INITIAL)
-public interface AnnotatedFullConfig extends Configuration{
+public class AnnotatedConfigBean {
 
-    @ConfiguredProperty(keys = "foo.bar.myprop")
-    @ConfiguredProperty(keys = "mp")
-    @ConfiguredProperty(keys = "common.testdata.myProperty")
-    @DefaultValue("myValue_$[env.stage]")
+    @ConfiguredProperty(keys = {"foo.bar.myprop", "mp", "common.testdata.myProperty"})
+    @DefaultValue("ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
-    String myParameter();
+    public String myParameter;
 
     @ConfiguredProperty(keys = "simple_value")
     @WithLoadPolicy(LoadPolicy.LAZY)
-    String simpleValue();
+    public String simpleValue;
 
     @ConfiguredProperty
-    String simplestValue();
+    String anotherValue;
 
-    @ConfiguredProperty(keys = "env.host.name")
-    String hostName();
+    @ConfiguredProperty(keys = "host.name")
+    private String hostName;
+
+    public String getAnotherValue(){
+        return anotherValue;
+    }
+
+    public String getHostName(){
+        return hostName;
+    }
 
 }

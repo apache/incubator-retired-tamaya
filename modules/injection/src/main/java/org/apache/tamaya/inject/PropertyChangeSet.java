@@ -30,7 +30,7 @@ import java.util.*;
  */
 public final class PropertyChangeSet implements Serializable{
     /** The serialVersionUID. */
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     /** The base property source name. */
     private String propertySourceName;
     /** The timestamp of the change. */

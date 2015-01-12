@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.inject.ConfigurationInjector;
 
+import javax.annotation.Priority;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,33 +28,37 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Simple injector singleton that also registers instances configured using weak references.
  */
-@SuppressWarnings("rawtypes")
-public final class ConfigurationInjector {
+@Priority(0)
+public final class DefaultConfigurationInjector implements ConfigurationInjector {
 
-    private static final ConfigurationInjector INSTANCE = new ConfigurationInjector();
-
-	private Map<Class, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
+    private Map<Class, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
     /**
      * Extract the configuration annotation config and registers it per class, for later reuse.
+     *
      * @param type the type to be configured.
      * @return the configured type registered.
      */
-    public static ConfiguredType registerType(Class<?> type){
-        return INSTANCE.configuredTypes.computeIfAbsent(type, ConfiguredType::new);
+    public ConfiguredType registerTypeInternal(Class<?> type) {
+        return configuredTypes.computeIfAbsent(type, ConfiguredType::new);
+    }
+
+    @Override
+    public void registerType(Class<?> type) {
+        registerTypeInternal(type);
     }
 
     /**
      * Configured the current instance and reigsterd necessary listener to forward config change events as
      * defined by the current annotations in place.
+     *
      * @param instance the instance to be configured
      */
-    public static void configure(Object instance){
+    public void configure(Object instance) {
         Class type = Objects.requireNonNull(instance).getClass();
-        ConfiguredType configuredType = registerType(type);
+        ConfiguredType configuredType = registerTypeInternal(type);
         Objects.requireNonNull(configuredType).configure(instance);
     }
-
 
 
 }

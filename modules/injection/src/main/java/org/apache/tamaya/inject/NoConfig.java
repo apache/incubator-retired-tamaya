@@ -18,7 +18,11 @@
  */
 package org.apache.tamaya.inject;
 
-import java.lang.annotation.*;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * This is a small marker annotations to inform Tamaya that the annotated element should never be injected with

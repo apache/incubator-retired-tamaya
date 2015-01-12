@@ -31,28 +31,32 @@ import java.util.logging.Logger;
 /**
  * Simple listener container that only holds weak references on the listeners.
  */
-public final class WeakConfigListenerManager{
+public final class WeakConfigListenerManager {
 
     private static final WeakConfigListenerManager INSTANCE = new WeakConfigListenerManager();
 
     private static final Logger LOG = Logger.getLogger(WeakConfigListenerManager.class.getName());
     private StampedLock lock = new StampedLock();
-    private Map<Object,Consumer<PropertyChangeSet>> listenerReferences = new WeakHashMap<>();
+    private Map<Object, Consumer<PropertyChangeSet>> listenerReferences = new WeakHashMap<>();
 
-    /** Private singleton constructor. */
-    private WeakConfigListenerManager(){}
+    /**
+     * Private singleton constructor.
+     */
+    private WeakConfigListenerManager() {
+    }
 
-    public static WeakConfigListenerManager of(){
+    public static WeakConfigListenerManager of() {
         return INSTANCE;
     }
 
     /**
      * Registers the given consumer for the instance. If a consumer already exists for this instance the given
      * consumer is appended.
+     *
      * @param instance the instance, not null.
      * @param listener the consumer.
      */
-    public void registerConsumer(Object instance, Consumer<PropertyChangeSet> listener){
+    public void registerConsumer(Object instance, Consumer<PropertyChangeSet> listener) {
         Lock writeLock = lock.asWriteLock();
         try {
             writeLock.lock();
@@ -62,14 +66,14 @@ public final class WeakConfigListenerManager{
             } else {
                 listenerReferences.put(instance, l.andThen(listener));
             }
-        }
-        finally{
+        } finally {
             writeLock.unlock();
         }
     }
 
     /**
      * Unregisters all consumers for the given instance.
+     *
      * @param instance the instance, not null.
      */
     public void unregisterConsumer(Object instance) {
@@ -77,37 +81,35 @@ public final class WeakConfigListenerManager{
         try {
             writeLock.lock();
             listenerReferences.remove(instance);
-        }
-        finally{
+        } finally {
             writeLock.unlock();
         }
     }
 
     /**
      * Publishes a change event to all consumers registered.
+     *
      * @param change the change event, not null.
      */
-    public void publishChangeEvent(PropertyChangeSet change){
+    public void publishChangeEvent(PropertyChangeSet change) {
         Lock readLock = lock.asReadLock();
-        try{
+        try {
             readLock.lock();
             listenerReferences.values().parallelStream().forEach(l -> {
-                try{
+                try {
                     l.accept(change);
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     LOG.log(Level.SEVERE, "ConfigChangeListener failed: " + l.getClass().getName(), e);
                 }
             });
-        }
-        finally{
+        } finally {
             readLock.unlock();
         }
     }
 
 
     @Override
-    public String toString(){
+    public String toString() {
         return "WeakConfigListenerManager{" +
                 "listenerReferences=" + listenerReferences +
                 '}';

@@ -24,7 +24,6 @@ import java.util.*;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.inject.ConfiguredProperties;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultAreas;
 import org.apache.tamaya.inject.NoConfig;
@@ -90,7 +89,7 @@ public class ConfiguredType {
                 continue;
             }
             ObservesConfigChange mAnnot = m.getAnnotation(ObservesConfigChange.class);
-            Collection<ConfiguredProperty> propertiesAnnots = Utils.getAnnotations(m, ConfiguredProperty.class, ConfiguredProperties.class);
+            ConfiguredProperty prop = m.getAnnotation(ConfiguredProperty.class);
             if (type.isInterface()) {
                 // it is a template
                 if (mAnnot != null) {
@@ -99,21 +98,21 @@ public class ConfiguredType {
                     }
                 } else {
                     if (m.isDefault()) {
-                        addPropertySetter(m, propertiesAnnots);
+                        addPropertySetter(m, prop);
                     }
                 }
             } else {
                 if (mAnnot != null) {
                     addObserverMethod(m);
                 } else {
-                    addPropertySetter(m, propertiesAnnots);
+                    addPropertySetter(m, prop);
                 }
             }
         }
     }
 
-    private boolean addPropertySetter(Method m, Collection<ConfiguredProperty> propertiesAnnots) {
-        if (!propertiesAnnots.isEmpty()) {
+    private boolean addPropertySetter(Method m, ConfiguredProperty prop) {
+        if (prop!=null) {
             if (m.getParameterTypes().length == 0) {
                 // getter method
                 Class<?> returnType = m.getReturnType();
@@ -192,17 +191,6 @@ public class ConfiguredType {
             return true;
         }
         // if no class level annotation is there we might have field level annotations only
-        for (Field field : type.getDeclaredFields()) {
-            if (field.isAnnotationPresent(ConfiguredProperties.class)) {
-                return true;
-            }
-        }
-        // if no class level annotation is there we might have method level annotations only
-        for (Method method : type.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(ConfiguredProperties.class)) {
-                return true;
-            }
-        }
         for (Field field : type.getDeclaredFields()) {
             if (field.isAnnotationPresent(ConfiguredProperty.class)) {
                 return true;
