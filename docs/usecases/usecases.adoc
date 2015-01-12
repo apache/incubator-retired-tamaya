@@ -1,4 +1,4 @@
-= Apache Tamaya -- Collection of potential Use Cases
+= Apache Tamaya -- Use Cases
 :name: Tamaya
 :rootpackage: org.apache.tamaya
 :title: Apache Tamaya
@@ -16,8 +16,6 @@
 :icons:
 :encoding: UTF-8
 :numbered:
-
-
 
 toc::[]
 

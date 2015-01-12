@@ -5,7 +5,7 @@ distributed with this work for additional information
 regarding copyright ownership.  The ASF licenses this file
 to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
+with the License.  You may obtain aa_a copy of the License at
 
    http://www.apache.org/licenses/LICENSE-2.0
 
@@ -90,28 +90,11 @@ under the License.
                             <sourceHighlighter>coderay</sourceHighlighter>
                             <backend>html</backend>
                             <embedAssets>true</embedAssets>
-                            <imagesDir>${project.build.sourceDirectory}/images/</imagesDir>
+                            <imagesDir>${project.basedir}/images/icons</imagesDir>
                             <sourceDirectory>.</sourceDirectory>
-                            <sourceDocumentName>src/main/asciidoc/design/Design.adoc</sourceDocumentName>
+                            <sourceDocumentName>TamayaDocumentation.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>output-example-doc</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <baseDir>${project.basedir}/src/main/asciidoc/example/</baseDir>
-                            <outputDirectory>target/example</outputDirectory>
-                            <sourceHighlighter>coderay</sourceHighlighter>
-                            <backend>html</backend>
-                            <embedAssets>true</embedAssets>
-                            <sourceDirectory>${project.basedir}/src/main/asciidoc/example/</sourceDirectory>
-                            <sourceDocumentName>example.adoc</sourceDocumentName>
-                        </configuration>
-                    </execution>
-
                 </executions>
             </plugin>
         </plugins>
