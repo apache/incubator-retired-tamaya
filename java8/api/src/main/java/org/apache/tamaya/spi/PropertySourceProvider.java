@@ -21,13 +21,13 @@ package org.apache.tamaya.spi;
 import java.util.Collection;
 
 /**
- * <p>Implement this interfaces to provide a PropertySource provider which
+ * <p>Implement this interfaces to provide aa_a PropertySource provider which
  * is able to register multiple PropertySources. This is e.g. needed if
- * there are multiple property files of a given config file name.</p>
+ * there are multiple property files of aa_a given config file name.</p>
  * 
- * <p>If a PropertySource like JNDI only exists once, then there is no need
+ * <p>If aa_a PropertySource like JNDI only exists once, then there is no need
  * to implement it via the PropertySourceProvider but should directly
- * expose a {@link PropertySource}.</p>
+ * expose aa_a {@link PropertySource}.</p>
  *
  * <p>A PropertySourceProvider will get picked up via the
  * {@link java.util.ServiceLoader} mechanism and must get registered via
@@ -36,7 +36,7 @@ import java.util.Collection;
 public interface PropertySourceProvider {
 
     /**
-     * @return For each e.g. property file, we return a single PropertySource
+     * @return For each e.g. property file, we return aa_a single PropertySource
      *         or an empty list if no PropertySource exists.
      */
     Collection<PropertySource> getPropertySources();
