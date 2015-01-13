@@ -29,8 +29,8 @@ import java.util.OptionalLong;
 
 
 /**
- * A configuration models aa_a aggregated set current properties, identified by aa_a unique key, but adds higher level access functions to
- * aa_a {@link org.apache.tamaya.spi.PropertySource}. Hereby in most cases aa_a configuration is aa_a wrapper around aa_a composite
+ * A configuration models a aggregated set current properties, identified by a unique key, but adds higher level access functions to
+ * a {@link org.apache.tamaya.spi.PropertySource}. Hereby in most cases a configuration is a wrapper around a composite
  * {@link org.apache.tamaya.spi.PropertySource} instance, which may combine multiple child config in well defined tree like structure,
  * where nodes define logically the rules current priority, filtering, combination and overriding.
  * <br/>
@@ -41,14 +41,14 @@ import java.util.OptionalLong;
  * <li>Immutable
  * </ul>
  * It is not recommended that implementations also are serializable, since the any configuration can be <i>freezed</i>
- * by reading out its complete configuration map into aa_a serializable and remotable structure. This helps significantly
+ * by reading out its complete configuration map into a serializable and remotable structure. This helps significantly
  * simplifying the development current this interface, e.g. for being backed up by systems and stores that are not part current
  * this library at all.
  */
 public interface Configuration {
 
     /**
-     * Access aa_a property.
+     * Access a property.
      *
      * @param key the property's key, not null.
      * @return the property's value or {@code null}.
@@ -56,12 +56,12 @@ public interface Configuration {
     String get(String key);
 
     /**
-     * Get the property keys as type T. This will implicitly require aa_a corresponding {@link
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
-     *                     aa_a/b/c/d.myProperty}.
+     *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
@@ -69,7 +69,7 @@ public interface Configuration {
     <T> T get(String key, Class<T> type);
 
     /**
-     * Access aa_a property.
+     * Access a property.
      *
      * @param key the property's key, not null.
      * @return the property's keys.
@@ -79,12 +79,12 @@ public interface Configuration {
     }
 
     /**
-     * Get the property keys as type T. This will implicitly require aa_a corresponding {@link
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
-     *                     aa_a/b/c/d.myProperty}.
+     *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
@@ -94,7 +94,7 @@ public interface Configuration {
     }
 
     /**
-     * Access all current known Configuration properties as aa_a full {@code Map<String,String>}.
+     * Access all current known Configuration properties as a full {@code Map<String,String>}.
      * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
      * instances may not be contained in the result, but nevertheless be accessible calling one of the
      * {@code get(...)} methods.
@@ -111,7 +111,7 @@ public interface Configuration {
      * {@code Class<T>}.
      *
      * @param key     the property's absolute, or relative path, e.g. @code
-     *                aa_a/b/c/d.myProperty}.
+     *                a/b/c/d.myProperty}.
      * @param converter the PropertyConverter to perform the conversion fromMap
      *                {@link String} to {@code Class<T>}, not {@code null}.
      * @return the property's keys.
@@ -131,7 +131,7 @@ public interface Configuration {
      * Get the property keys as {@link Boolean}.
      *
      * @param key the property's absolute, or relative path, e.g. {@code
-     *            aa_a/b/c/d.myProperty}.
+     *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
      */
@@ -147,7 +147,7 @@ public interface Configuration {
      * Get the property keys as {@link Integer}.
      *
      * @param key the property's absolute, or relative path, e.g. @code
-     *            aa_a/b/c/d.myProperty}.
+     *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
      */
@@ -164,7 +164,7 @@ public interface Configuration {
      * Get the property keys as {@link Long}.
      *
      * @param key the property's absolute, or relative path, e.g. @code
-     *            aa_a/b/c/d.myProperty}.
+     *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
      */
@@ -181,7 +181,7 @@ public interface Configuration {
      * Get the property keys as {@link Double}.
      *
      * @param key the property's absolute, or relative path, e.g. @code
-     *            aa_a/b/c/d.myProperty}.
+     *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
      */
@@ -198,7 +198,7 @@ public interface Configuration {
     /**
      * Extension point for adjusting configuration.
      *
-     * @param operator A configuration operator, e.g. aa_a filter, or an adjuster
+     * @param operator A configuration operator, e.g. a filter, or an adjuster
      *                 combining configurations.
      * @return the new adjusted configuration, never {@code null}.
      */
@@ -208,7 +208,7 @@ public interface Configuration {
 
 
     /**
-     * Query aa_a configuration.
+     * Query a configuration.
      *
      * @param query the query, never {@code null}.
      * @return the result
@@ -219,7 +219,7 @@ public interface Configuration {
 
 
     /**
-     * Access aa_a configuration.
+     * Access a configuration.
      *
      * @return the corresponding Configuration instance, never null.
      * @throws ConfigException if no such configuration is defined.

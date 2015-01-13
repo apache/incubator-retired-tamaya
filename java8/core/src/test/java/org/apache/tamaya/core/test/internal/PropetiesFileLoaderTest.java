@@ -54,7 +54,7 @@ public class PropetiesFileLoaderTest {
         }
 
         {
-            // with aa_a while which doesn't exist
+            // with a while which doesn't exist
             Set<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("nonexistingfile.properties");
             Assert.assertNotNull(urls);
             Assert.assertTrue(urls.isEmpty());

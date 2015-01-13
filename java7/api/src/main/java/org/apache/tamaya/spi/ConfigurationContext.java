@@ -39,15 +39,15 @@ public interface ConfigurationContext {
 
     /**
      * This method returns the current list of registered PropertySources ordered via their ordinal.
-     * PropertySources with aa_a lower ordinal come last. The PropertySource with the
+     * PropertySources with a lower ordinal come last. The PropertySource with the
      * highest ordinal comes first.
      * If two PropertySources have the same ordinal number they will get sorted
      * using their class name just to ensure the user at least gets the same ordering
-     * after aa_a JVM restart, hereby names before are added last.
+     * after a JVM restart, hereby names before are added last.
      * PropertySources are loaded when this method is called the first time, which basically is
      * when the first time configuration is accessed.
      *
-     * @return aa_a sorted list of registered PropertySources.  The returned list need not be modifiable
+     * @return a sorted list of registered PropertySources.  The returned list need not be modifiable
      */
     List<PropertySource> getPropertySources();
 
@@ -85,27 +85,27 @@ public interface ConfigurationContext {
 
     /**
      * <p>
-     * This method returns the registered PropertyConverters for aa_a given type.
+     * This method returns the registered PropertyConverters for a given type.
      * The List for each type is ordered via their {@link javax.annotation.Priority}.
      * </p>
      *
      * <p>
-     * PropertyConverters with aa_a higher Priority come first. The PropertyConverter with the
+     * PropertyConverters with a higher Priority come first. The PropertyConverter with the
      * lowest Priority comes last.
      * If two PropertyConverter have the same ordinal number they will get sorted
      * using their class name just to ensure the user at least gets the same ordering
-     * after aa_a JVM restart.
+     * after a JVM restart.
      * </p>
      *
      * <p>
-     * Additionally if aa_a PropertyProvider is accessed, which is not registered the implementation
-     * should try to figure out, if there could be aa_a default implementation as follows:
+     * Additionally if a PropertyProvider is accessed, which is not registered the implementation
+     * should try to figure out, if there could be a default implementation as follows:
      * <ol>
      *     <le>Look for static factory methods: {@code of(String), valueOf(String), getInstance(String),
      *     instanceOf(String), fomr(String)}</le>
-     *     <le>Look for aa_a matching constructor: {@code T(String)}.</le>
+     *     <le>Look for a matching constructor: {@code T(String)}.</le>
      * </ol>
-     * If aa_a correspoding factory method or constructor could be found, aa_a corresponding
+     * If a correspoding factory method or constructor could be found, a corresponding
      * PropertyConverter should be created and registered automatically for the given
      * type.
      * </p>
@@ -122,13 +122,13 @@ public interface ConfigurationContext {
      * </p>
      *
      * <p>
-     * The converters returned for aa_a type should be used as aa_a chain, whereas the result of the
+     * The converters returned for a type should be used as a chain, whereas the result of the
      * first converter that is able to convert the configured value, is taken as the chain's result.
-     * No more converters are called after aa_a converter has successfully converted the input into
+     * No more converters are called after a converter has successfully converted the input into
      * the required target type.
      * </p>
      *
-     * @return aa_a sorted list of registered PropertySources per type.
+     * @return a sorted list of registered PropertySources per type.
      */
     <T> List<PropertyConverter<T>> getPropertyConverters(Class<T> type);
 

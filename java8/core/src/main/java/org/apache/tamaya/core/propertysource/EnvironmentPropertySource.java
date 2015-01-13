@@ -40,7 +40,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
 
     @Override
     public Map<String, String> getProperties() {
-        return System.getenv(); // already aa_a map and unmodifiable
+        return System.getenv(); // already a map and unmodifiable
 
     }
 

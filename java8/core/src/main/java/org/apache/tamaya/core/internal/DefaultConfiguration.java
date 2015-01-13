@@ -82,7 +82,7 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Apply filters to aa_a single property value.
+     * Apply filters to a single property value.
      *
      * @param key             the key, used for logging, not null.
      * @param unfilteredValue the unfiltered property value.
@@ -151,7 +151,7 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Filter aa_a full configuration property map.
+     * Filter a full configuration property map.
      *
      * @param inputMap the unfiltered map
      * @return the filtered map.
@@ -198,7 +198,7 @@ public class DefaultConfiguration implements Configuration {
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
-     *             aa_a/b/c/d.myProperty}.
+     *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
      * @param <T>  the value type
      * @return the converted value, never null.
