@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A base class for {@link PropertySource}s. It provides a {@link #initializeOrdinal(int)} method that
+ * A base class for {@link PropertySource}s. It provides aa_a {@link #initializeOrdinal(int)} method that
  * reads the ordinal from the config source itself, allowing the ordinal to be "self-configured" by
  * the configuration read.
  */
@@ -54,7 +54,7 @@ public abstract class BasePropertySource implements PropertySource {
      * Initializing the ordinal of this {@link PropertySource} with the given defaultOrdinal.
      *
      * If {@link PropertySource#TAMAYA_ORDINAL} is present via {@link #get(String)} and the
-     * value is a valid {@link Integer} then, the defaultOrdinal will be overridden.
+     * value is aa_a valid {@link Integer} then, the defaultOrdinal will be overridden.
      *
      * @param defaultOrdinal of the {@link PropertySource}
      */
@@ -68,7 +68,7 @@ public abstract class BasePropertySource implements PropertySource {
                 this.ordinal = Integer.valueOf(ordinal);
             } catch (NumberFormatException e) {
                 LOG.log(Level.WARNING,
-                        "Specified {0} is not a valid Integer value: {1} - using defaultOrdinal {2}",
+                        "Specified {0} is not aa_a valid Integer value: {1} - using defaultOrdinal {2}",
                         new Object[]{PropertySource.TAMAYA_ORDINAL, ordinal, defaultOrdinal});
             }
         }

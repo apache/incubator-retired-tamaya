@@ -21,13 +21,22 @@ import org.apache.tamaya.spi.ServiceContextManager;
 /**
  * Static access to the {@link org.apache.tamaya.Configuration} for the very application.
  *
- * Exists for Java7 backward compatibility
+ * Exists for Java7 backward compatibility only.
+ * @deprecated Since Java 8, you better use {@link org.apache.tamaya.Configuration#current()}.
  */
+@Deprecated
 public final class ConfigurationProvider {
     private ConfigurationProvider() {
         // just to prevent initialisation
     }
 
+    /**
+     * Access the current configuration.
+     *
+     * @return the corresponding Configuration instance, never null.
+     * @deprecated Since Java 8, you better use {@link org.apache.tamaya.Configuration#current()}.
+     */
+    @Deprecated
     public static Configuration getConfiguration() {
         return ServiceContextManager.getServiceContext().getService(Configuration.class).get();
     }

@@ -36,7 +36,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
 
 /**
- * Default Implementation of a simple ConfigurationContext.
+ * Default Implementation of aa_a simple ConfigurationContext.
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
     /**

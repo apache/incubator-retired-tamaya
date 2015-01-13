@@ -97,7 +97,7 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Registers a ew converter instance.
+     * Registers aa_a ew converter instance.
      *
      * @param targetType the target type, not null.
      * @param converter  the converter, not null.
@@ -121,10 +121,10 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Allows to evaluate if a given target type is supported.
+     * Allows to evaluate if aa_a given target type is supported.
      *
      * @param targetType the target type, not null.
-     * @return true, if a converter for the given type is registered, or a default one can be created.
+     * @return true, if aa_a converter for the given type is registered, or aa_a default one can be created.
      */
     public boolean isTargetTypeSupported(Class<?> targetType) {
         return converters.containsKey(targetType)
@@ -132,9 +132,9 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Get a map of all property converters currently registered. This will not contain the converters that
-     * may be created, when an instance is adapted, which provides a String constructor or compatible
-     * factory methods taking a single String instance.
+     * Get aa_a map of all property converters currently registered. This will not contain the converters that
+     * may be created, when an instance is adapted, which provides aa_a String constructor or compatible
+     * factory methods taking aa_a single String instance.
      *
      * @return the current map of instantiated and registered converters.
      * @see #createDefaultPropertyConverter(Class)
@@ -151,7 +151,7 @@ public class PropertyConverterManager {
 
     /**
      * Get the list of all current registered converters for the given target type.
-     * If not converters are registered, they component tries to create and register a dynamic
+     * If not converters are registered, they component tries to create and register aa_a dynamic
      * converter based on String costructor or static factory methods available.
      *
      * @param targetType the target type, not null.
@@ -187,11 +187,11 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Creates a dynamic PropertyConverter for the given target type.
+     * Creates aa_a dynamic PropertyConverter for the given target type.
      *
      * @param targetType the target type
      * @param <T>        the type class
-     * @return a new converter, or null.
+     * @return aa_a new converter, or null.
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(Class<T> targetType) {
         PropertyConverter<T> converter = null;
@@ -225,7 +225,7 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Tries to evaluate a factory method that can be used to create an instance based on a String.
+     * Tries to evaluate aa_a factory method that can be used to create an instance based on aa_a String.
      *
      * @param type        the target type
      * @param methodNames the possible static method names

@@ -69,4 +69,21 @@ public interface Configuration {
      */
     Map<String,String> getProperties();
 
+    /**
+     * Extension point for adjusting configuration.
+     *
+     * @param operator A configuration operator, e.g. aa_a filter, or an adjuster
+     *                 combining configurations.
+     * @return the new adjusted configuration returned by the {@code operator}, never {@code null}.
+     */
+    Configuration with(ConfigOperator operator);
+
+    /**
+     * Query aa_a configuration.
+     *
+     * @param query the query, never {@code null}.
+     * @return the result returned by the {@code query}
+     */
+    <T> T query(ConfigQuery<T> query);
+
 }

@@ -24,13 +24,19 @@ package org.apache.tamaya.spi;
  * This is used for implementing type conversion from aa_a property (String) to aa_a certain target
  * type. Hereby the target type can be multivalued (eg collections) or complex if needed.
  */
-@FunctionalInterface
 public interface PropertyConverter<T>{
 
+//    /**
+//     * Access the target type, this converter is producing. This is necessary to determine which converters are
+//     * to be used for converting a possible value.
+//     * @return the target type returned by a converter instance, never null.
+//     */
+//    Class<T> getTargetType();
+
     /**
-     * Convert the given configuration keys from it' String representation into the required target type.
-     * @param value the configuration keys
-     * @return converted keys
+     * Convert the given configuration keys from it's String representation into the required target type.
+     * @param value the configuration value
+     * @return the converted value
      */
     T convert(String value);
 

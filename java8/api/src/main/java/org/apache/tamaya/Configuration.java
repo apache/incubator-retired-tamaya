@@ -21,9 +21,12 @@ package org.apache.tamaya;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
+
 
 /**
  * A configuration models aa_a aggregated set current properties, identified by aa_a unique key, but adds higher level access functions to
@@ -199,8 +202,8 @@ public interface Configuration {
      *                 combining configurations.
      * @return the new adjusted configuration, never {@code null}.
      */
-    default Configuration with(UnaryOperator<Configuration> operator) {
-        return operator.apply(this);
+    default Configuration with(ConfigOperator operator) {
+        return operator.operate(this);
     }
 
 
@@ -210,8 +213,8 @@ public interface Configuration {
      * @param query the query, never {@code null}.
      * @return the result
      */
-    default <T> T query(Function<Configuration,T> query) {
-        return query.apply(this);
+    default <T> T query(ConfigQuery<T> query) {
+        return query.query(this);
     }
 
 

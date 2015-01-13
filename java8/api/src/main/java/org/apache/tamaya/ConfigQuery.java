@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,32 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.propertysource;
-
-import java.util.Map;
+package org.apache.tamaya;
 
 /**
- * This {@link org.apache.tamaya.spi.PropertySource} provides all Properties which are set
- * via <br />
- * {@code export myprop=myval} on UNIX Systems or<br />
- * {@code set myprop=myval} on Windows
+ * Models a function that maps a given {@link org.apache.tamaya.Configuration} to something else. This can be used
+ * to model additional functionality and applying it to a given {@link org.apache.tamaya.Configuration} instance by
+ * calling the {@link org.apache.tamaya.Configuration#query(org.apache.tamaya.ConfigQuery)} method.
  */
-public class EnvironmentPropertySource extends BasePropertySource {
+@FunctionalInterface
+public interface ConfigQuery<T> {
 
-    public EnvironmentPropertySource() {
-        initializeOrdinal(DefaultOrdinal.ENVIRONMENT_PROPERTIES);
-    }
-
-
-    @Override
-    public String getName() {
-        return "environment-properties";
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
-        return System.getenv(); // already aa_a map and unmodifiable
-
-    }
-
+    /**
+     * Creates a result based on the given Configuration. Queries basically acts similar to
+     * operators, whereas they returns any kind of result.
+     *
+     * @param config the input configuration, not null.
+     * @return the query result.
+     */
+    T query(Configuration config);
 }

@@ -111,7 +111,6 @@ a.b2=abVal
 Now you can use +java.util.Properties+ to read this file and access the corresponding properties, e.g.
 
 [source,properties]
-.Accessing some properties
 --------------------------------------------
 Properties props = new Properties();
 props.readProperties(...);
@@ -155,15 +154,15 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 [[API Configuration]]
 === Configuration
 
-+Configuration+ inherits all basic features from +PropertySource+, but additionally adds functionality for
-type safety and external features of any interacting with configuration:
++Configuration+ is the main API provided by Tamaya. It allows reading of single property values or the whole
+property map, but also supports type safe access.
 
 ==== Configuration (Java 7)
 
 The minimal API defined for Java version earlier than Java 8 looks as follows:
 
 [source,java]
-.Interface Configuration
+.Interface Configuration in Java 7
 --------------------------------------------
 public interface Configuration{
     String get(String key);
@@ -183,15 +182,16 @@ Hereby
 * +get(String, PropertyConverter)+ allow accessing any type, hereby also passing a +PropertyConverter+ explicitly
   that converts  the configured literal value to the type required.
 * +with, query+ provide the extension points for adding additional functionality.
-* +getProperties()+ provides access to all key/values.
-
+* +getProperties()+ provides access to all key/values, whereas entries from non scannable property sources may not
+  be included.
 
 ==== Configuration (Java 8)
 
-The API for Java 8 adds additional support for optionals:
+The API for Java 8 adds additional support for optionals and a static accessor +current()+, which replaces the
++ConfigurationProvider+ accessor singleton from Java 7.
 
 [source,java]
-.Interface Configuration
+.Interface Configuration in Java 8
 --------------------------------------------
 public interface Configuration extends PropertySource{
     // java 7 inherited methods
@@ -221,64 +221,30 @@ Hereby
   methods delegate to the +getAdapted+ method, additionally passing the required +PropertyAdapter+.
 * +get(String, PropertyConverter)+ allow accessing any type, hereby also passing a +PropertyConverter+ that converts
   the configured literal value to the type required.
-* +with, query+ provide the extension points for adding additional functionality.
-* +current()+ returns the _default_ +Configuration+
+* +with, query+ provide the extension points for adding additional functionality modelled by +ConfigOperator,
+  ConfigQuery+.
+* +current()+ returns the _current_ +Configuration+
 
 
 [[TypeConversion]]
 ==== Type Conversion (PropertyConverter)
 
-Configuration extend +PropertySource+ and adds additional support for non String types. This is achieved
-with the help of +PropertyConverter+ instances:
+Configuration also provides support for non String types. Nevertheless internally configuration is modelled as
+pure Strings only, so non String types must be created by conerting the String values into the required target type.
+This is achieved with the help of +PropertyConverter+ instances:
 
 [source,java]
-.PropertyConverter
 --------------------------------------------
-// @FunctionalInterface
+// @FunctionalInterface in Java 8
 public interface PropertyConverter<T>{
     T convert(String value);
 }
 --------------------------------------------
 
 +PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+.
-Access to converters is given by the +ConfigurationContext+.
+Access to converters is given by the +ConfigurationContext+ (see SPI a bit later)
 
-[[PropertySourceProvider]]
-==== Property Source Provider
-
-Instances of this type can be used to register a multiple collection of +PropertySource+ instances at one
-dynamically.
-
-[source,java]
-.PropertySourceProvider
---------------------------------------------
-// @FunctionalInterface
-public interface PropertySourceProvider{
-    Collection<PropertySource> getPropertySources();
-}
---------------------------------------------
-
-This allows to evaluate the property sources to be read dynamically, when the system is loading.
-
-[[PropertyFilters]]
-==== Property Value Filtering
-
-Also filters can be registered (by default) using the +ServiceLoader+. Filters allow to replace or remove values
-provided by the underlying property sources. A filter is defined as follows:
-
-[source,java]
-.PropertyFilter
---------------------------------------------
-// @FunctionalInterface
-public interface PropertyConverter{
-    String filterProperty(String key, String valueToBeFiltered);
-}
---------------------------------------------
-
-This method is called each time a single entry is accessed, and for each property in a full properties result.
-For enabling multiple resolution steps, filtering is done multiple times, until no further value change could
-be registered.
-
+[[ExtensionPoints]]
 === Extension Points
 
 We are well aware of the fact that this library will not be able to cover all kinds of use cases. Therefore
@@ -294,22 +260,22 @@ Both interfaces hereby are functional interfaces, defined in +java.util.function
 method references:
 
 [source,java]
-.Applying a Configuration Query
+.Applying a +ConfigurationQuery+
 --------------------------------------------
 ConfigSecurity securityContext = Configuration.current().query(ConfigSecurity::targetSecurityContext);
 --------------------------------------------
 
-NOTE: +ConfigSecurity+ is an arbitrary class.
+NOTE: +ConfigSecurity+ is an arbitrary class only for demonstration purposes.
 
-Or an operator calls looks as follows:
+Or an operator calls basically looks quite similar:
 
 [source,java]
-.Applying a Configuration Operators
+.Applying a +ConfigurationOperator+
 --------------------------------------------
 Configuration secured = Configuration.current().with(ConfigSecurity::secure);
 --------------------------------------------
 
-
+[[Mutability]]
 ==== Mutability
 
 In general Property sources can be modeled as mutable. Nevertheless the API does not support out of the box mutability,
@@ -319,11 +285,12 @@ due to the following reasons:
 * Mutability is only rarely required
 * Mutability can be implemented in various ways
 
-TBD
+tbd
 
+[[SPI]]
 == SPI
 
-[SPI PropertySource]
+[[PropertySource]]
 === PropertySource
 
 We have seen that constraining configuration aspects to simple literal key/value pairs provides us with an easy to
@@ -338,14 +305,11 @@ To make implementation of a custom property source as convinient as possible onl
 identified to be necessary:
 
 [source,java]
-.Interface PropertySource
 --------------------------------------------
 public interface PropertySource{
-
       String get(String key);
       boolean isBrowseable();
       Map<String, String> getProperties();
-
 }
 --------------------------------------------
 
@@ -361,11 +325,42 @@ provided by a data grid, a database, the JNDI tree or other resources. Or it can
 property sources with additional combination/aggregation rules in place.
 
 
-[SPI PropertySourceProvider]
-=== PropertySourceProvider
+[[PropertySourceProvider]]
+==== Property Source Provider
 
-[SPI PropertyFilter]
-=== PropertyFilter
+Instances of this type can be used to register multiple instances of +PropertySource+.
 
-[SPI PropertyConverter]
-=== PropertyConverter
+[source,java]
+--------------------------------------------
+// @FunctionalInterface in Java 8
+public interface PropertySourceProvider{
+    Collection<PropertySource> getPropertySources();
+}
+--------------------------------------------
+
+This allows to evaluate the property sources to be read/that are available dynamically. All property sources
+are read out and added to the current chain of +PropertySource+ instances within the current +ConfigurationContext+,
+refer also to [[ConfigurationContext]].
+
+[[PropertyFilter]]
+==== Property Value Filtering
+
+Also filters can be registered (by default) using the +ServiceLoader+. Filters allow to replace or remove values
+provided by the underlying property sources. A filter is defined as follows:
+
+[source,java]
+--------------------------------------------
+// @FunctionalInterface in Java 8
+public interface PropertyConverter{
+    String filterProperty(String key, String valueToBeFiltered);
+}
+--------------------------------------------
+
+Hereby:
+
+* returning +null+ will remove the key from the final result
+* non null values are used as the current value of the key. Nevertheless for resolving multi-step dependencies
+  filter evaluation has to be continued as long as filters are still changing some of the values to be returned.
+  To prevent possible endless loops after a defined number of loops evaluation is stopped.
+
+This method is called each time a single entry is accessed, and for each property in a full properties result.

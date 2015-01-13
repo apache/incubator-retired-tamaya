@@ -126,10 +126,11 @@ public final class DefaultServiceContext implements ServiceContext {
         }
 
         if (highestPriorityServiceCount > 1) {
-            throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}",
+            throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
                                                            highestPriorityServiceCount,
                                                            serviceType.getName(),
-                                                           highestPriority));
+                                                           highestPriority,
+                                                           services));
         }
 
         return highestService;
