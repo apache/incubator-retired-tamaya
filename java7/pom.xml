@@ -35,6 +35,16 @@ under the License.
         <jdkVersion>1.7</jdkVersion>
     </properties>
 
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.tamaya</groupId>
+                <artifactId>buildconfigurations</artifactId>
+                <version>${project.version}</version>
+            </extension>
+        </extensions>
+    </build>
+
     <modules>
         <module>api</module>
 <!--

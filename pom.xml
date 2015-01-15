@@ -201,6 +201,7 @@ under the License.
     </developers>
 
     <modules>
+        <module>buildconfigurations</module>
         <module>java7</module>
         <module>java8</module>
         <module>modules</module>

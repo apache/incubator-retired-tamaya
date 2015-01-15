@@ -44,6 +44,14 @@ under the License.
     </modules>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.tamaya</groupId>
+                <artifactId>buildconfigurations</artifactId>
+                <version>${project.version}</version>
+            </extension>
+        </extensions>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
