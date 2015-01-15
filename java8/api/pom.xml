@@ -33,16 +33,6 @@ under the License.
         The API defines a complete SE based API for reading of configuration data.
     </description>
 
-    <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.tamaya</groupId>
-                <artifactId>buildconfigurations</artifactId>
-                <version>${project.version}</version>
-            </extension>
-        </extensions>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
