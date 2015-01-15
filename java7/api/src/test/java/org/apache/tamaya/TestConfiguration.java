@@ -28,7 +28,7 @@ public class TestConfiguration implements Configuration{
 
     private static final Map<String, String> VALUES;
     static {
-        VALUES = new HashMap<String, String>();
+        VALUES = new HashMap<>();
         VALUES.put("long", String.valueOf(Long.MAX_VALUE));
         VALUES.put("int", String.valueOf(Integer.MAX_VALUE));
         VALUES.put("double", String.valueOf(Double.MAX_VALUE));
@@ -67,14 +67,14 @@ public class TestConfiguration implements Configuration{
         }
         else if(type.equals(Boolean.class)){
             if("booleanTrue".equals(key)) {
-                return (T)(Object) Boolean.TRUE;
+                return (T)Boolean.TRUE;
             }
             else{
-                return (T)(Object) Boolean.FALSE;
+                return (T)Boolean.FALSE;
             }
         }
         else if(type.equals(String.class)){
-            return (T)(Object) "aStringValue";
+            return (T)"aStringValue";
         }
         throw new ConfigException("No such property: " + key);
     }
