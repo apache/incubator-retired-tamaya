@@ -80,7 +80,17 @@ public class TestConfiguration implements Configuration{
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Configuration with(ConfigOperator operator) {
         return null;
+    }
+
+    @Override
+    public <T> T query(ConfigQuery<T> query) {
+        throw new RuntimeException("Method not implemented yet.");
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        throw new RuntimeException("Method not implemented yet.");
     }
 }
