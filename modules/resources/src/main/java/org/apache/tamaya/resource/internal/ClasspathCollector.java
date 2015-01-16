@@ -20,6 +20,8 @@ package org.apache.tamaya.resource.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -28,6 +30,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.jar.JarEntry;
@@ -121,6 +124,8 @@ public class ClasspathCollector {
                 try {
                     if (isJarFile(resource)) {
                         result.addAll(doFindPathMatchingJarResources(resource, locator.getSubPath()));
+                    } else if (resource.getProtocol().startsWith(PROTOCOL_VFSZIP)) {
+                        result.addAll(findMatchingVfsResources(resource, locator.getSubPath()));
                     } else {
                         result.addAll(FileCollector.traverseAndSelectFromChildren(getFile(resource),
                                 locator.getSubPathTokens(), 0));
@@ -194,7 +199,7 @@ public class ClasspathCollector {
                 String entryPath = entry.getName();
                 if (entryPath.startsWith(rootEntryPath)) {
                     String relativePath = entryPath.substring(rootEntryPath.length());
-                    if(relativePath.contains("/") && isFileExpression){
+                    if (relativePath.contains("/") && isFileExpression) {
                         continue;
                     }
                     if (relativePath.matches(subPattern)) {
@@ -245,7 +250,7 @@ public class ClasspathCollector {
                 PROTOCOL_ZIP.equals(protocol) ||
                 PROTOCOL_VFSZIP.equals(protocol) ||
                 PROTOCOL_WSJAR.equals(protocol) ||
-                (PROTOCOL_CODE_SOURCE.equals(protocol) && url.getPath().indexOf(JAR_URL_SEPARATOR) != -1));
+                (PROTOCOL_CODE_SOURCE.equals(protocol) && url.getPath().contains(JAR_URL_SEPARATOR)));
     }
 
     /**
@@ -265,6 +270,112 @@ public class ClasspathCollector {
         } catch (Exception ex) {
             // Fallback for URLs that are not valid URIs (should hardly ever happen).
             return new File(resourceUrl.getFile());
+        }
+    }
+
+    /**
+     * Method that collects resources from a JBoss classloading system using Vfs.
+     * @param rootResource the root resource for evaluating its children.
+     * @param locationPattern the sub pattern that all children must mach, so they are selected.
+     * @return the resources found, never null.
+     * @throws IOException
+     */
+    private static Collection<URL> findMatchingVfsResources(
+            URL rootResource, String locationPattern) throws IOException {
+        Object root = VfsSupport.getRoot(rootResource);
+        PatternVfsVisitor visitor =
+                new PatternVfsVisitor(VfsSupport.getPath(root), locationPattern);
+        VfsSupport.visit(root, visitor);
+        return visitor.getResources();
+    }
+
+    /**
+     * Simple dynamic visitor implementation used for evaluating paths from a JBoss Vfs system.
+     */
+    private static class PatternVfsVisitor implements InvocationHandler {
+        /**
+         * The regex pattern to match agains all child resources of the root path against.
+         */
+        private final String subPattern;
+        /**
+         * The resource path before yny placeholders/whitespaces are occurring.
+         */
+        private final String rootPath;
+        /**
+         * THe resources found so far.
+         */
+        private final List<URL> resources = new LinkedList<>();
+
+        /**
+         * Creates a new visitor for cfs resources.
+         *
+         * @param rootPath   the root path, until any patterns are occurring.
+         * @param subPattern the sub pattern for looking for.
+         */
+        public PatternVfsVisitor(String rootPath, String subPattern) {
+            this.subPattern = subPattern;
+            this.rootPath = (rootPath.length() == 0 || rootPath.endsWith("/") ? rootPath : rootPath + "/");
+        }
+
+        /**
+         * Method called by visitor proxy.
+         *
+         * @param proxy  the proxy instance.
+         * @param method the method called.
+         * @param args   any arguments.
+         * @return the result.
+         * @throws Throwable in case something goes wrong.
+         */
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            String methodName = method.getName();
+            if (Object.class.equals(method.getDeclaringClass())) {
+                if (methodName.equals("equals")) {
+                    // Only consider equal when proxies are identical.
+                    return (proxy == args[0]);
+                } else if (methodName.equals("hashCode")) {
+                    return System.identityHashCode(proxy);
+                }
+            } else if ("getAttributes".equals(methodName)) {
+                return VfsSupport.getVisitorAttributes();
+            } else if ("visit".equals(methodName)) {
+                visit(args[0]);
+                return null;
+            } else if ("toString".equals(methodName)) {
+                return toString();
+            }
+
+            throw new IllegalStateException("Unexpected method invocation: " + method);
+        }
+
+        /**
+         * Visitor method.
+         *
+         * @param vfsResource the vfsResource object.
+         */
+        public void visit(Object vfsResource) {
+            String subPath = VfsSupport.getPath(vfsResource).substring(this.rootPath.length());
+            if (subPath.matches(this.subPattern)) {
+                try {
+                    this.resources.add(VfsSupport.getURL(vfsResource));
+                } catch (Exception e) {
+                    LOG.log(Level.WARNING, "Failed to convert vfs resource to URL: " + vfsResource, e);
+                }
+            }
+        }
+
+        /**
+         * Access the resources found from Vfs during last visit.
+         *
+         * @return the resources found, not null.
+         */
+        public Collection<URL> getResources() {
+            return this.resources;
+        }
+
+        @Override
+        public String toString() {
+            return "sub-pattern: " + this.subPattern + ", resources: " + this.resources;
         }
     }
 
