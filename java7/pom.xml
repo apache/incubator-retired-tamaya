@@ -43,6 +43,26 @@ under the License.
 -->
     </modules>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <configuration>
+                        <excludeFilterFile>findbugs/findbugs-exclude.xml</excludeFilterFile>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.tamaya</groupId>
+                            <artifactId>buildconfigurations</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
     <profiles>
         <profile>
             <id>java7</id>
