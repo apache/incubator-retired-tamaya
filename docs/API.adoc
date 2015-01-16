@@ -211,56 +211,71 @@ public interface Configuration extends PropertySource{
     default <T> Optional<T> getOptional(String key, PropertyConverter<T> adapter);
     <T> Optional<T> getOptional(String key, Class<T> type);
 
-    public static Configuration current();
+    static Configuration current();
 }
 --------------------------------------------
 
 Hereby
 
-* +XXX getXXX(String)+ provide type safe accessors for all basic wrapper types of the JDK. Basically all this
-  methods delegate to the +getAdapted+ method, additionally passing the required +PropertyAdapter+.
-* +get(String, PropertyConverter)+ allow accessing any type, hereby also passing a +PropertyConverter+ that converts
-  the configured literal value to the type required.
+* +get(String)+ and +getOptional(String)+ provide easy access to any kind of configuration properties in their
+  String format.
+* +get(String, Class), getOptional(String, Class)+ and +getOptional(String, PropertyConverter)+ provide type safe
+  access to configuration properties. If a +PropertyConverter+ is passed, it will replace any predefined standard
+  converters defined for the type. By default several +PropertyConverter+ instances can be registered for a given
+  target type. The are managed in an ordered list, whereas the ordering is defined by +@Priority+ annotations
+  on the converters.
+* +getProperties()+ gives access to all known (=scannable) properties.
 * +with, query+ provide the extension points for adding additional functionality modelled by +ConfigOperator,
   ConfigQuery+.
 * +current()+ returns the _current_ +Configuration+
 
 
-[[TypeConversion]]
-==== Type Conversion (PropertyConverter)
+[[PropertyConverter]]
+==== Property Converters
 
-Configuration also provides support for non String types. Nevertheless internally configuration is modelled as
-pure Strings only, so non String types must be created by conerting the String values into the required target type.
-This is achieved with the help of +PropertyConverter+ instances:
+As illustrated in the previous section, +Configuration+ also to access non String types. Nevertheless internally
+all properties are strictly is modelled as pure Strings only, so non String types must be derived by converting the
+configured String values into the required target type. This is achieved with the help of +PropertyConverters+:
 
 [source,java]
 --------------------------------------------
-// @FunctionalInterface in Java 8
 public interface PropertyConverter<T>{
+    Class<T> getTargetType();
     T convert(String value);
+    //X TODO Collection<String> getSupportedFormats();
 }
 --------------------------------------------
 
-+PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+.
-Access to converters is given by the +ConfigurationContext+ (see SPI a bit later)
++PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+. Hereby
+a configuration values is passed to all registered converters for a type in order or their annotated +@Priority+
+value. The first non-null result of a converter is then returned as the current configuration value.
+
+Also worth mentioning is the fact, that the +PropertyConverter+ to be used can also be explicitly defined, when
+a configuration value is accessed, by using the method
++<T> T Configuration#getOptional(String, PropertyConverter<T> converter)+.
+
+Access to converters is given by the +ConfigurationContext+ (see <<SPI>>).
 
 [[ExtensionPoints]]
 === Extension Points
 
 We are well aware of the fact that this library will not be able to cover all kinds of use cases. Therefore
-we have added functional extension mechanisms to +Configuration+ that were used in other areas of the Java eco-system as well:
+we have added functional extension mechanisms to +Configuration+ that were used in other areas of the Java eco-system
+as well:
 
-* +with(UnaryOperator<Configuration> operator)+ allows to pass arbitrary functions that take adn return instances of +Configuration+.
-  They can be used to cover use cases such as filtering, configuration views, security interception and more.
-* +query(Function<Configuration,T> query)+ ConfigQuery+ defines a function returning any kind of result based on a
-  configuration instance. Queries are used for accessing/deriving any kind of data of a +Configuration+ instance,
-  e.g. accessing a +Set<String>+ of area keys present.
+* +with(ConfigOperator operator)+ allows to pass arbitrary unary functions that take and return instances of
+  +Configuration+. Operators can be used to cover use cases such as filtering, configuration views, security
+  interception and more.
+* +query(ConfigQuery query)+ allows to apply a function returning any kind of result based on a
+  +Configuration+ instance. Queries are used for accessing/deriving any kind of data based on of a +Configuration+
+  instance, e.g. accessing a +Set<String>+ of root keys present.
 
-Both interfaces hereby are functional interfaces, defined in +java.util.function+ and can be applied using Lambdas or
-method references:
+Both interfaces hereby are functional interfaces. Because of backward compatibility with Java 7 we did not use
++UnaryOperator, Function+ from the +java.util.function+ package. Nevertheless usage is similar, so you can
+use Lambdas and method references in Java 8:
 
 [source,java]
-.Applying a +ConfigurationQuery+
+.Applying a +ConfigurationQuery+ using a method reference
 --------------------------------------------
 ConfigSecurity securityContext = Configuration.current().query(ConfigSecurity::targetSecurityContext);
 --------------------------------------------
@@ -270,45 +285,50 @@ NOTE: +ConfigSecurity+ is an arbitrary class only for demonstration purposes.
 Or an operator calls basically looks quite similar:
 
 [source,java]
-.Applying a +ConfigurationOperator+
+.Applying a +ConfigurationOperator+ using a lambda expression:
 --------------------------------------------
-Configuration secured = Configuration.current().with(ConfigSecurity::secure);
+Configuration secured = Configuration.current()
+                           .with((config) ->
+                                 config.getOptional("foo").isPresent()?;
+                                 FooFilter.apply(config):
+                                 config);
 --------------------------------------------
 
 [[Mutability]]
 ==== Mutability
 
-In general Property sources can be modeled as mutable. Nevertheless the API does not support out of the box mutability,
-due to the following reasons:
-
-* Mutability is rather complex
-* Mutability is only rarely required
-* Mutability can be implemented in various ways
-
 tbd
+
+
+[[ConfigException]]
+=== ConfigException
+
+The class +ConfigException+ models the base *runtime* exception used by the configuration system.
 
 [[SPI]]
 == SPI
 
 [[PropertySource]]
-=== PropertySource
+=== Interface PropertySource
 
 We have seen that constraining configuration aspects to simple literal key/value pairs provides us with an easy to
 understand, generic, flexible, yet expendable mechanism. Looking at the Java language features a +java.util.Map<String,
 String>+ and +java.util.Properties+ basically model these aspects out of the box.
 
-Though there are advantages in using these types as a model, there are some severe drawbacks, mostly implementation
-of these types is far not trivial or the basic model has sever drawbacks, because of backward compatibility with
-the original collection API.
+Though there are advantages in using these types as a model, there are some severe drawbacks, notably implementation
+of these types is far not trivial and the collection API offers additional functionality not useful when aiming
+for modelling simple property sources.
 
-To make implementation of a custom property source as convinient as possible only the following methods were
+To render an implementation of a custom +PropertySource+ as convenient as possible only the following methods were
 identified to be necessary:
 
 [source,java]
 --------------------------------------------
 public interface PropertySource{
+      int getOrdinal();
+      String getName();
       String get(String key);
-      boolean isBrowseable();
+      boolean isScannable();
       Map<String, String> getProperties();
 }
 --------------------------------------------
@@ -316,17 +336,31 @@ public interface PropertySource{
 Hereby
 
 * +get+ looks similar to the methods on +Map+. It may return +null+ in case no such entry is available.
-* +getProperties+ allows to extract mapped data to a +Map+. Other methods like +containsKey, keySet+ as well as
-  streaming operations then can be applied on the returned +Map+ instance.
-* But not in all scenarios a property source may be browseable. This can be evaluated by calling +isBrowseable()+.
+* +getProperties+ allows to extract all property data to a +Map<String,String>+. Other methods like +containsKey,
+  keySet+ as well as streaming operations then can be applied on the returned +Map+ instance.
+* But not in all scenarios a property source may be scannable, e.g. when looking up keys is very inefficient, it
+  may not make sense to iterator over all keys to collect the corresponding properties.
+  This can be evaluated by calling +isScannable()+. If a +PropertySource+ is defined as non scannable accesses to
+  +getProperties()+ may not return all key/value pairs that would be available when accessed directly using the
+  +String get(String)+ method.
+* +getOrdinal()+ defines the ordinal of the +PropertySource+. Property sources are managed in an ordered chain, where
+  property sources with higher ordinals override the ones with lower ordinals. If ordinal are the same, the natural
+  ordering of the fulloy qualified class names of the property source implementations are used. The reason for
+  not using +@Priority+ annotations is that property sources can define dynamically their ordinals, e.g. based on
+  a property contained with the configuration itself.
+* Finally +getName()+ returns a (unique) name that identifies the +PropertySource+ within the current
+  +ConfigurationContext+.
 
 This interface can be implemented by any kind of logic. It could be a simple in memory map, a distributed configuration
 provided by a data grid, a database, the JNDI tree or other resources. Or it can be a combination of multiple
 property sources with additional combination/aggregation rules in place.
 
++PropertySources+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the current
+ active +ServiceContext+.
+
 
 [[PropertySourceProvider]]
-==== Property Source Provider
+==== Interface PropertySourceProvider
 
 Instances of this type can be used to register multiple instances of +PropertySource+.
 
@@ -342,11 +376,25 @@ This allows to evaluate the property sources to be read/that are available dynam
 are read out and added to the current chain of +PropertySource+ instances within the current +ConfigurationContext+,
 refer also to [[ConfigurationContext]].
 
-[[PropertyFilter]]
-==== Property Value Filtering
++PropertySourceProviders+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the current
+ active +ServiceContext+.
 
-Also filters can be registered (by default) using the +ServiceLoader+. Filters allow to replace or remove values
-provided by the underlying property sources. A filter is defined as follows:
+[[PropertyFilter]]
+==== Interface PropertyFilter
+
+Also +PropertyFilters+ can be added to a +Configuration+. They are evaluated before a +Configuration+ instance is
+passed to the user. Filters can hereby used for multiple purposes, such as
+
+* resolving placeholders
+* masking sensitive entries, such as passwords
+* constraining visibility based on the current active user
+* ...
+
++PropertyFilters+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the current
+active +ServiceContext+. Similar to property sources they are managed in an ordered filter chain, based on the
+applied +@Priority+ annotations.
+
+A +PropertyFilter+ is defined as follows:
 
 [source,java]
 --------------------------------------------

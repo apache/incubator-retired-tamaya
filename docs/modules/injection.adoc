@@ -42,26 +42,30 @@ Apache Tamaya -- Injection Module
 
 Inversion of Control (aka IoC/the Hollywood Principle) has proven to be very handy and effective in avoiding boilerplate
 code. In Java there are different frameworks available that all provide IoC mechanisms. Unfortunately IoC is not a
-built-in language feature. So for a portable solution OOTB that works also in Java SE Tamaya itself has to provide the
-according injection services. As an example refer to the following example:
+built-in language feature. So for a portable solution that works also in Java SE Tamaya itself has to provide the
+according injection services. This module adds that functionality to Tamaya. As an example refer to the following
+code snippet:
 
 [source,java]
 .Annotated Example Class
 --------------------------------------------
+package foo.bar;
+
 public class ConfiguredClass{
 
-    // resolved by default, using property name, class and package name
+    // resolved by default, using property name, class and package name: foo.bar.ConfiguredClass.testProperty
     private String testProperty;
 
-    @ConfiguredProperty(config="pluginConfig", keys={"a.b.c.key1","a.b.legacyKey"})
-    @ConfiguredProperty(config="productConfig", keys="area1.key2")
+    @ConfiguredProperty(keys={"a.b.c.key1","a.b.legacyKey",area1.key2"})
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
+    // Using a (default) String -> Integer converter
     @ConfiguredProperty(keys="a.b.c.key2")
     private int value2;
 
-    // resolved by default
+    // resolved by default as foo.bar.ConfiguredClass.accessUrl
+    // Using a (default) String -> URL converter
     @DefaultValue("http://127.0.0.1:8080/res/api/v1/info.json")
     private URL accessUrl;
 
@@ -69,7 +73,8 @@ public class ConfiguredClass{
     @NoConfig
     private Integer int1;
 
-    @ConfiguredProperty("BD")
+    // Overriding the String -> BigDecimal converter with a custom implementation.
+    @ConfiguredProperty(keys="BD")
     @WithAdapter(MyBigDecimalRoundingAdapter.class)
     private BigDecimal bigNumber;
 
@@ -77,23 +82,80 @@ public class ConfiguredClass{
 }
 --------------------------------------------
 
-The class does not show all (but most all) the possibilities that are provided. Configuring an instance of the
-class using Tamaya is very simple:
+The class does not show all (but most) possibilities provided. Configuring an instance of the
+class using Tamaya is very simple. The only thing is to pass the instance to Tamaya to let
+Tamaya inject the configuration (or throw a +ConfigException+, if this is not possible):
 
 [source,java]
 .Configuring the +ConfiguredClass+ Instance
 --------------------------------------------
 ConfiguredClass classInstance = new ConfiguredClass();
-Configuration.configure(configuredClass);
+ConfigurationInjector.configure(configuredClass);
 --------------------------------------------
 
 ==== The Annotations in detail
 
-tbd
+The +ConfigurationInjector+ interface provides methods that allow to any kind of instances be configured
+by passing the instances to +T ConfigurationInjector.getInstance().configure(T);+. The classes passed
+hereby must not be annotated with +@ConfiguredProperty+ for being configurable. By default Tamaya
+tries to determine configuration for each property of an instance passed, using the following resolution policy:
 
-The +Configuration+ interface provides static methods that allow to any kind of instances be configured
-ny just passing the instances calling +Configuration.configure(instance);+. The classes passed hereby must
-be annotated with +@ConfiguredProperty+ to define the configured properties. Hereby this annotation can be
+Given a class +a.b.MyClass+ and a field +myField+ it would try to look up the following keys:
+[source, listing]
+--------------------------------------------
+a.b.MyClass.myField
+a.b.MyClass.my-field
+MyClass.myField
+MyClass.my-field
+myField
+my-field
+--------------------------------------------
+
+So given the following properties:
+
+[source, properties]
+--------------------------------------------
+a.b.Tenant.id=1234
+Tenant.description=Any kind of tenant.
+name=<unnamed>
+--------------------------------------------
+
+The following bean can be configured as follows:
+
+[source, java]
+--------------------------------------------
+package a.b;
+
+public final class Tenant{
+  private int id;
+  private String name;
+  private String description;
+
+  public int getId(){
+    return id;
+  }
+  public String getName(){
+    return name;
+  }
+  public String getDescription(){
+    return description;
+  }
+}
+
+Tenant tenant = ConfigurationInjector.getInstance().configure(new Tenant());
+--------------------------------------------
+
+In many cases you want to create a supplier that simply creates instances that are correctly configured as defined
+by the current context. This can be done using +Suppliers+:
+
+[source, java]
+--------------------------------------------
+Supplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(Tenant::new);
+--------------------------------------------
+
+
+
+Hereby this annotation can be
 used in multiple ways and combined with other annotations such as +@DefaultValue+,
 +@WithLoadPolicy+, +@WithConfig+, +@WithConfigOperator+, +@WithPropertyAdapter+.
 
