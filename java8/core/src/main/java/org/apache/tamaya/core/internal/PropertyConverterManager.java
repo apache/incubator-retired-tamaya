@@ -237,7 +237,7 @@ public class PropertyConverterManager {
             try {
                 m = type.getDeclaredMethod(name, String.class);
                 return m;
-            } catch (Exception e) {
+            } catch (NoSuchMethodException | RuntimeException e) {
                 LOG.finest(() -> "No such factory method found on type: " + type.getName()+", methodName: " + name);
             }
         }

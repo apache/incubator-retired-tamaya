@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.core.internal.PropertyConverterManager;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Objects;
