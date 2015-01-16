@@ -254,6 +254,7 @@ under the License.
 
 
     <build>
+      <defaultGoal>clean install</defaultGoal>
         <pluginManagement>
             <plugins>
                 <plugin>
