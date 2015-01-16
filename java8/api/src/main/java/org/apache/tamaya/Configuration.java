@@ -137,10 +137,8 @@ public interface Configuration {
      */
     default Boolean getBoolean(String key) {
         Optional<Boolean> val = getOptional(key, Boolean.class);
-        if (val.isPresent()) {
-            return val.get();
-        }
-        return null;
+
+        return val.orElse(null);
     }
 
     /**
@@ -153,6 +151,7 @@ public interface Configuration {
      */
     default OptionalInt getInteger(String key) {
         Optional<Integer> val = getOptional(key, Integer.class);
+
         if (val.isPresent()){
             return OptionalInt.of(val.get());
         }
