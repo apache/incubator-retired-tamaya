@@ -22,11 +22,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.StampedLock;
 
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties.
  */
 public class SystemPropertySource extends PropertiesPropertySource {
+
+    /**
+     * Lock for internal synchronization.
+     */
+    private StampedLock propertySourceLock = new StampedLock();
+
 
     /**
      * previous System.getProperties().hashCode()
@@ -50,10 +58,11 @@ public class SystemPropertySource extends PropertiesPropertySource {
     @Override
     public Map<String, String> getProperties() {
 
+        Lock writeLock = propertySourceLock.asWriteLock();
         // only need to reload and fill our map if something has changed
-        if (previousHash != System.getProperties().hashCode()) {
-
-            synchronized (this) {
+        try {
+            writeLock.lock();
+            if (previousHash != System.getProperties().hashCode()) {
 
                 if (previousHash != System.getProperties().hashCode()) {
 
@@ -68,6 +77,8 @@ public class SystemPropertySource extends PropertiesPropertySource {
                     previousHash = systemProperties.hashCode();
                 }
             }
+        } finally {
+            writeLock.unlock();
         }
 
         return super.getProperties();

@@ -66,7 +66,7 @@ public class JSONVisitor {
         }
     }
 
-    private class VisitingContext {
+    private static class VisitingContext {
         private String namespace;
         private final ObjectNode node;
         private final Iterator<Map.Entry<String, JsonNode>> elements;

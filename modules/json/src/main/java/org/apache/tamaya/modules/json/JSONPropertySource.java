@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.StampedLock;
 
 import static java.lang.String.format;
 
@@ -40,6 +42,12 @@ public class JSONPropertySource
     private int priority = DefaultOrdinal.FILE_PROPERTIES;
     private InputResource source;
     private HashMap<String, String> values;
+
+    /**
+     * Lock for internal synchronization.
+     */
+    private StampedLock propertySourceLock = new StampedLock();
+
 
     public JSONPropertySource(File file) {
         this(file, 0);
@@ -52,10 +60,16 @@ public class JSONPropertySource
 
     @Override
     public int getOrdinal() {
-        synchronized (this) {
+        Lock writeLock = propertySourceLock.asWriteLock();
+
+        try {
+            writeLock.lock();
+
             if (values == null) {
                 readSource();
             }
+        } finally {
+            writeLock.unlock();
         }
 
         return priority;
@@ -75,13 +89,19 @@ public class JSONPropertySource
 
     @Override
     public Map<String, String> getProperties() {
-        synchronized (this) {
+        Lock writeLock = propertySourceLock.asWriteLock();
+
+        try {
+            writeLock.lock();
+
             if (values == null) {
                 readSource();
             }
-        }
 
-        return Collections.unmodifiableMap(values);
+            return Collections.unmodifiableMap(values);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     protected void readSource() {
