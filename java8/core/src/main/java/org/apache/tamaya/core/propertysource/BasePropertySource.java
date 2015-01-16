@@ -65,7 +65,7 @@ public abstract class BasePropertySource implements PropertySource {
         if (ordinal != null) {
 
             try {
-                this.ordinal = Integer.valueOf(ordinal);
+                this.ordinal = Integer.parseInt(ordinal);
             } catch (NumberFormatException e) {
                 LOG.log(Level.WARNING,
                         "Specified {0} is not a valid Integer value: {1} - using defaultOrdinal {2}",
