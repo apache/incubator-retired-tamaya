@@ -22,8 +22,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Set;
 
 public class PropetiesFileLoaderTest {
 
@@ -34,29 +34,33 @@ public class PropetiesFileLoaderTest {
 
         {
             // with .properties
-            Set<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile.properties");
+            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile.properties");
             Assert.assertNotNull(urls);
-            Assert.assertFalse(urls.isEmpty());
+            Assert.assertTrue(urls.hasMoreElements());
 
-            Properties properties = PropertiesFileLoader.load(urls.iterator().next());
+            Properties properties = PropertiesFileLoader.load(urls.nextElement());
             Assert.assertEquals(expectedProperties.size(), properties.size());
+
+            Assert.assertFalse(urls.hasMoreElements());
         }
 
         {
             // without .properties
-            Set<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile");
+            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile");
             Assert.assertNotNull(urls);
-            Assert.assertFalse(urls.isEmpty());
+            Assert.assertTrue(urls.hasMoreElements());
 
-            Properties properties = PropertiesFileLoader.load(urls.iterator().next());
+            Properties properties = PropertiesFileLoader.load(urls.nextElement());
             Assert.assertEquals(expectedProperties.size(), properties.size());
+
+            Assert.assertFalse(urls.hasMoreElements());
         }
 
         {
             // with a while which doesn't exist
-            Set<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("nonexistingfile.properties");
+            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("nonexistingfile.properties");
             Assert.assertNotNull(urls);
-            Assert.assertTrue(urls.isEmpty());
+            Assert.assertFalse(urls.hasMoreElements());
         }
 
     }

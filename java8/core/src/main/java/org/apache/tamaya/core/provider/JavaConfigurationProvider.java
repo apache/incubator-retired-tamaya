@@ -25,11 +25,12 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Provider which reads all {@code javaconfiguration.properties} files from classpath
@@ -45,12 +46,11 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
         //X TODO maybe put javaconf... in META-INF
 
         try {
-            propertySources.addAll(
-                    PropertiesFileLoader.resolvePropertiesFiles("javaconfiguration.properties")
-                            .stream()
-                            .map(PropertiesFilePropertySource::new)
-                            .collect(Collectors.toList()));
 
+            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("javaconfiguration.properties");
+            while (urls.hasMoreElements()) {
+                propertySources.add(new PropertiesFilePropertySource(urls.nextElement()));
+            }
 
         } catch (IOException e) {
             throw new ConfigException("Error while loading javaconfiguration.properties", e);

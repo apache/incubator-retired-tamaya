@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * Minimalistic loader for property files from the classpath.
@@ -44,26 +42,18 @@ public final class PropertiesFileLoader {
      *
      * @param name of the properties file
      *
-     * @return URLs of properties-files or
-     *         an empty {@link Set} if no files has been found
+     * @return {@link Enumeration} of {@link URL}s for properties-files
      *
      * @throws IOException in case of problems loading the properties-files
      */
-    public static Set<URL> resolvePropertiesFiles(String name) throws IOException {
+    public static Enumeration<URL> resolvePropertiesFiles(String name) throws IOException {
         Objects.requireNonNull(name);
 
         if (!name.endsWith(".properties")) {
             name = name + ".properties";
         }
 
-        Set<URL> urls = new HashSet<>();
-
-        Enumeration<URL> files = Thread.currentThread().getContextClassLoader().getResources(name);
-        while (files.hasMoreElements()) {
-            urls.add(files.nextElement());
-        }
-
-        return urls;
+        return Thread.currentThread().getContextClassLoader().getResources(name);
     }
 
 

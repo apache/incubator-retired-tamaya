@@ -75,9 +75,6 @@ under the License.
         <Package name="org.apache.tamaya.core.internal"/>
     </Match>
 
-    <Match>
-        <Class name="org.apache.tamaya.core.internal.PropertiesFileLoader"/>
-    </Match>
     <!--<Match>-->
         <!--<Class name="org.apache.tamaya.resolver.internal.ResourceResolver" />-->
     <!--</Match>-->
