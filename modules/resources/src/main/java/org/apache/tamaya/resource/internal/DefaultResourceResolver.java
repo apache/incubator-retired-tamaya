@@ -22,6 +22,7 @@ import org.apache.tamaya.resource.ResourceResolver;
 
 import javax.annotation.Priority;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,7 +67,7 @@ public class DefaultResourceResolver implements ResourceResolver {
             }
             resources.addAll(found);
             return !found.isEmpty();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LOG.finest(() -> "Failed to load resource from CP: " + expression);
         }
         return false;
@@ -87,7 +88,7 @@ public class DefaultResourceResolver implements ResourceResolver {
                 resources.add(url);
             }
             return !resources.isEmpty();
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             LOG.finest(() -> "Failed to load resource from CP: " + expression);
         }
         return false;
@@ -106,7 +107,7 @@ public class DefaultResourceResolver implements ResourceResolver {
                 resources.add(file.toURI().toURL());
                 return true;
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             LOG.finest(() -> "Failed to load resource from file: " + expression);
         }
         return false;
@@ -123,7 +124,7 @@ public class DefaultResourceResolver implements ResourceResolver {
             URL url = new URL(expression);
             resources.add(url);
             return true;
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             LOG.finest(() -> "Failed to load resource from file: " + expression);
         }
         return false;

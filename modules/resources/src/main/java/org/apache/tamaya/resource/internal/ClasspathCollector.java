@@ -130,11 +130,11 @@ public class ClasspathCollector {
                         result.addAll(FileCollector.traverseAndSelectFromChildren(getFile(resource),
                                 locator.getSubPathTokens(), 0));
                     }
-                } catch (Exception e) {
+                } catch (URISyntaxException | IOException e) {
                     LOG.log(Level.SEVERE, "Error locating resources for: " + expression, e);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             LOG.log(Level.SEVERE, "Error locating resources for: " + expression, e);
         }
         return result;

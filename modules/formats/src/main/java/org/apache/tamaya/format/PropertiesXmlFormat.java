@@ -20,12 +20,7 @@ package org.apache.tamaya.format;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,11 +36,6 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
      */
     private final static Logger LOG = Logger.getLogger(PropertiesXmlFormat.class.getName());
 
-    /**
-     * Creates a new format instance.
-     */
-    public PropertiesXmlFormat() { }
-
     @Override
     public Set<String> getEntryTypes() {
         Set<String> set = new HashSet<>();
@@ -57,12 +47,8 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, Map<String, String>> readConfiguration(URL url) {
-        final String name;
-        if (Objects.requireNonNull(url).getQuery() == null) {
-            name = "XML-Properties(" + Objects.requireNonNull(url).toString() + ')';
-        } else {
-            name = Objects.requireNonNull(url).getQuery();
-        }
+        Objects.requireNonNull(url);
+
         Map<String, Map<String, String>> result = new HashMap<>();
         try (InputStream is = url.openStream()) {
             if (is != null) {

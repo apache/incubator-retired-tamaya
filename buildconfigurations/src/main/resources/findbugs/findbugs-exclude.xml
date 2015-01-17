@@ -48,14 +48,34 @@ under the License.
 
     <Match>
         <!-- Note:
-           Please check this exclusion. Maybe this is not a false
-           positive.
-           Oliver B. Fischer, 17.01.2015
+             False positive reported by FindBugs 3.0.0 for exception
+             thrown in try-with-resource.
+             Oliver B. Fischer, 17.01.2015
         -->
-        <Class name="org.apache.tamaya.core.internal.PropertiesFileLoader"
-               params="java.lang.String"
-               returns="java.util.Set"/>
+        <Class name='org.apache.tamaya.format.PropertiesXmlFormat'/>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
     </Match>
 
+    <Match>
+        <!-- Note:
+             False positive reported by FindBugs 3.0.0 for exception
+             thrown in try-with-resource.
+             Oliver B. Fischer, 17.01.2015
+        -->
+        <Class name='org.apache.tamaya.format.PropertiesFormat'/>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
+    </Match>
 
+    <Match>
+        <!-- Note:
+             Intended. See the inline comment on this issue in the source file
+             in revision ae66299e25b41167008021ffe95cad236f6e2bd3
+             Oliver B. Fischer, 17.01.2015
+          -->
+        <Class name='org.apache.tamaya.resource.internal.ClasspathCollector'/>
+        <Method name="doFindPathMatchingJarResources"
+                returns="java.util.Collection"/>
+        <Bug pattern="OS_OPEN_STREAM"/>
+
+    </Match>
 </FindBugsFilter>

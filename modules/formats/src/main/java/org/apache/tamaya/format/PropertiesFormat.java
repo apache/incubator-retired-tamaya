@@ -40,12 +40,6 @@ public class PropertiesFormat implements ConfigurationFormat {
      */
     private final static Logger LOG = Logger.getLogger(PropertiesFormat.class.getName());
 
-    /**
-     * Creates a new format instance.
-     */
-    public PropertiesFormat() {
-    }
-
     @Override
     public Set<String> getEntryTypes() {
         Set<String> set = new HashSet<>();
@@ -56,12 +50,8 @@ public class PropertiesFormat implements ConfigurationFormat {
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, Map<String, String>> readConfiguration(URL url) {
-        final String name;
-        if (Objects.requireNonNull(url).getQuery() == null) {
-            name = "Properties(" + Objects.requireNonNull(url).toString() + ')';
-        } else {
-            name = Objects.requireNonNull(url).getQuery();
-        }
+        Objects.requireNonNull(url);
+
         Map<String, Map<String, String>> result = new HashMap<>();
         try (InputStream is = url.openStream()) {
             if (is != null) {

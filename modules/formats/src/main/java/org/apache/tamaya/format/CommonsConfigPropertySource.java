@@ -32,7 +32,7 @@ import java.util.Objects;
 public class CommonsConfigPropertySource implements PropertySource {
 
     private Configuration commonsConfig;
-    private Integer ordinal;
+    private int ordinal;
     private String name;
 
     public CommonsConfigPropertySource(int ordinal, String name, Configuration commonsConfig) {
@@ -42,18 +42,18 @@ public class CommonsConfigPropertySource implements PropertySource {
     }
 
     public CommonsConfigPropertySource(String name, Configuration commonsConfig) {
-        this.commonsConfig = Objects.requireNonNull(commonsConfig);
+        commonsConfig = Objects.requireNonNull(commonsConfig);
         this.name = Objects.requireNonNull(name);
         try {
             this.ordinal = commonsConfig.getInt(PropertySource.TAMAYA_ORDINAL);
         } catch (Exception e) {
-            // ignore
+            this.ordinal = 0;
         }
     }
 
     @Override
     public int getOrdinal() {
-        return ordinal == null ? 0 : ordinal.intValue();
+        return ordinal;
     }
 
     @Override
