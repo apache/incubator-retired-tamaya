@@ -134,23 +134,6 @@ public class FileCollector {
     }
 
     /**
-     * Simple matcher method for a single token.
-     * @param childFile the file to match
-     * @param subTokens the subtoken list
-     * @param tokenIndex the index where to start
-     * @return true if the file matches and should be selected.
-     */
-    private static boolean matchesFile(File childFile, List<String> subTokens, int tokenIndex) {
-        if (tokenIndex < (subTokens.size() - 1)) {
-            // not all tokens consumed, so no match!
-            return false;
-        }
-        String tokenToMatch = subTokens.get(tokenIndex);
-        tokenToMatch = tokenToMatch.replace("*", ".*").replace("?", ".?");
-        return childFile.getName().matches(tokenToMatch);
-    }
-
-    /**
      * Get an URL from a file.
      *
      * @param file the file, not null.
