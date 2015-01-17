@@ -78,4 +78,55 @@ under the License.
         <Bug pattern="OS_OPEN_STREAM"/>
 
     </Match>
+
+    <!-- Issues to review -->
+
+    <Match>
+        <Class name="org.apache.tamaya.core.internal.PropertiesFileLoader"/>
+    </Match>
+
+
+    <Match>
+        <Class name="org.apache.tamaya.resolver.internal.URLResolver" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.resolver.internal.ResourceResolver" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.resolver.internal.FileResolver" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.Utils" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.ConfiguredSetterMethod" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.ConfiguredField" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.ConfigChangeCallbackMethod" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.PropertyChangeSetBuilder" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.ConfiguredType" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.ConfigTemplateInvocationHandler" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.inject.DynamicValue" />
+    </Match>
+    <Match>
+        <Class name="" />
+    </Match>
+    <Match>
+        <Class name="" />
+    </Match>
+
 </FindBugsFilter>
