@@ -121,7 +121,7 @@ public class JSONPropertySource
             this.values = values;
 
             if (this.values.containsKey(TAMAYA_ORDINAL)) {
-                int newPriority = Integer.valueOf(this.values.get(TAMAYA_ORDINAL)).intValue();
+                int newPriority = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
                 priority = newPriority;
                 this.values.remove(TAMAYA_ORDINAL);
             }
