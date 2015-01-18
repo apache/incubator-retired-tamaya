@@ -15,6 +15,5 @@
 # specific language governing permissions and limitations
 # under the License.
 
-org.apache.tamaya.core.test.internal.DefaultServiceContextTest$MultiImpl1
-org.apache.tamaya.core.test.internal.DefaultServiceContextTest$MultiImpl2
-org.apache.tamaya.core.test.internal.DefaultServiceContextTest$MultiImpl3
+org.apache.tamaya.core.internal.DefaultServiceContextTest$InvalidPriorityImpl1
+org.apache.tamaya.core.internal.DefaultServiceContextTest$InvalidPriorityImpl2

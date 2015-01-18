@@ -84,11 +84,14 @@ public interface PropertySource {
 
 
     /**
-     * Get the name of the property source. The name should be unique for the type of source, whereas the id is used
-     * to ensure unique identity, either locally or remotely.
-     * @return the configuration's name, never null.
+     * Get the name of the property source. The name should be unique for the type of source, whereas multiple instances
+     * of the same type (and thus name) may exist in a system. Give a {@link org.apache.tamaya.spi.ConfigurationContext}
+     * the name of a PropertySource is unique.
+     * @return the property source's name, never null.
      */
-    String getName();
+    default String getName(){
+        return getClass().getName();
+    }
 
     /**
      * Access a property.
