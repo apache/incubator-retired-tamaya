@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.DefaultAreas;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance current
@@ -97,7 +97,7 @@ public class ConfiguredField {
      */
     public boolean matchesKey(String key) {
         ConfiguredProperty prop = this.annotatedField.getAnnotation(ConfiguredProperty.class);
-        DefaultAreas areasAnnot = this.annotatedField.getDeclaringClass().getAnnotation(DefaultAreas.class);
+        ConfigRoot areasAnnot = this.annotatedField.getDeclaringClass().getAnnotation(ConfigRoot.class);
         List<String> keys = InjectionUtils.evaluateKeys(this.annotatedField, areasAnnot, prop);
         return keys.contains(key);
     }

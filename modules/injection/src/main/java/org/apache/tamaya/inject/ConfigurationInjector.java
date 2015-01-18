@@ -20,6 +20,8 @@ package org.apache.tamaya.inject;
 
 import org.apache.tamaya.spi.ServiceContext;
 
+import java.util.function.Supplier;
+
 
 /**
  * Accessor interface for injection of configuration and configuration templates.
@@ -27,24 +29,29 @@ import org.apache.tamaya.spi.ServiceContext;
 public interface ConfigurationInjector {
 
     /**
-     * Extract the configuration annotation config and registers it per class, for later reuse.
-     * @param type the type to be configured.
-     * @return the configured type registered.
-     */
-    void registerType(Class<?> type);
-
-    /**
      * Configured the current instance and reigsterd necessary listener to forward config change events as
      * defined by the current annotations in place.
+     *
      * @param instance the instance to be configured
+     * @return the configured instance (allows chaining of operations).
      */
-    void configure(Object instance);
+    <T> T configure(T instance);
+
+
+    /**
+     * Creates a supplier for configured instances of the given type {@code T}.
+     * @param supplier the supplier to create new instances.
+     * @param <T> the target type.
+     * @return a supplier creating configured instances of {@code T}.
+     */
+    <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier);
 
     /**
      * Get the current injector instance.
+     *
      * @return the current injector, not null.
      */
-    public static ConfigurationInjector getInstance(){
+    public static ConfigurationInjector getInstance() {
         return ServiceContext.getInstance().getService(ConfigurationInjector.class).get();
     }
 

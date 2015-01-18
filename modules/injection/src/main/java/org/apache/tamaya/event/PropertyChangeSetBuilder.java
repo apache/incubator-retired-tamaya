@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject;
+package org.apache.tamaya.event;
 
 import org.apache.tamaya.spi.PropertySource;
 

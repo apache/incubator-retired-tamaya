@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.DefaultAreas;
 import org.apache.tamaya.inject.DefaultValue;
 import org.apache.tamaya.inject.WithLoadPolicy;
 import org.apache.tamaya.inject.WithPropertyConverter;
@@ -72,7 +72,7 @@ final class InjectionUtils {
      *                           several keys to be looked up (in absolute or relative form).
      * @return the list current keys in order how they should be processed/looked up.
      */
-    public static List<String> evaluateKeys(Member member, DefaultAreas areasAnnot, ConfiguredProperty propertyAnnotation) {
+    public static List<String> evaluateKeys(Member member, ConfigRoot areasAnnot, ConfiguredProperty propertyAnnotation) {
         List<String> keys = new ArrayList<>(Arrays.asList(propertyAnnotation.keys()));
         if (keys.isEmpty()) {
             keys.add(member.getName());
@@ -103,7 +103,7 @@ final class InjectionUtils {
      * @param areasAnnot the (optional) annotation definining areas to be looked up.
      * @return the list current keys in order how they should be processed/looked up.
      */
-    public static List<String> evaluateKeys(Member member, DefaultAreas areasAnnot) {
+    public static List<String> evaluateKeys(Member member, ConfigRoot areasAnnot) {
         List<String> keys = new ArrayList<>();
         String name = member.getName();
         String mainKey;
@@ -132,7 +132,7 @@ final class InjectionUtils {
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Method method) {
-        DefaultAreas areasAnnot = method.getDeclaringClass().getAnnotation(DefaultAreas.class);
+        ConfigRoot areasAnnot = method.getDeclaringClass().getAnnotation(ConfigRoot.class);
         WithLoadPolicy loadPolicy = Utils.getAnnotation(WithLoadPolicy.class, method, method.getDeclaringClass());
         return getConfigValueInternal(method, areasAnnot, loadPolicy);
     }
@@ -144,7 +144,7 @@ final class InjectionUtils {
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Field field) {
-        DefaultAreas areasAnnot = field.getDeclaringClass().getAnnotation(DefaultAreas.class);
+        ConfigRoot areasAnnot = field.getDeclaringClass().getAnnotation(ConfigRoot.class);
         WithLoadPolicy loadPolicy = Utils.getAnnotation(WithLoadPolicy.class, field, field.getDeclaringClass());
         return getConfigValueInternal(field, areasAnnot, loadPolicy);
     }
@@ -154,7 +154,7 @@ final class InjectionUtils {
      *
      * @return the keys to be returned, or null.
      */
-    private static String getConfigValueInternal(AnnotatedElement element, DefaultAreas areasAnnot, WithLoadPolicy loadPolicy) {
+    private static String getConfigValueInternal(AnnotatedElement element, ConfigRoot areasAnnot, WithLoadPolicy loadPolicy) {
         ConfiguredProperty prop = element.getAnnotation(ConfiguredProperty.class);
         DefaultValue defaultAnnot = element.getAnnotation(DefaultValue.class);
         String configValue = null;

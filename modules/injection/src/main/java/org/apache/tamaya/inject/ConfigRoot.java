@@ -24,15 +24,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to annotate a method on a class to be informed on config changes.
- * The exact behaviour, when configuration change events are sent can be configured
- * on each configured property/method by adding the {@link WithLoadPolicy}
- * annotation. By default listeners are informed on all changes of configurations that were used as
- * input configurations for configuring a class/instance. Additionally {@link ConfiguredProperty}
- * annotations can be added that allows to constrain changes to some limited properties.
+ * Annotation to control injection and resolution current a configured bean. The configuration keys
+ * to be resolved are basically determined by the {@link ConfiguredProperty}
+ * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
+ * to define a configuration area that is prefixed to all relative configuration keys within the
+ * corresponding class/template interface.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.METHOD })
-public @interface ObservesConfigChange {
+@Target(value = { ElementType.TYPE })
+public @interface ConfigRoot {
+
+    /**
+     * Allows to declare an operator that should be applied before injecting values into the bean.
+     * @return the operator class to be used.
+     */
+    String[] value();
 
 }

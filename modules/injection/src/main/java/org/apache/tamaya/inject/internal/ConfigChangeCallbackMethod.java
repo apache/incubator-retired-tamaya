@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.inject.PropertyChangeSet;
+import org.apache.tamaya.event.PropertyChangeSet;
 
 import java.lang.reflect.Method;
 import java.util.Optional;

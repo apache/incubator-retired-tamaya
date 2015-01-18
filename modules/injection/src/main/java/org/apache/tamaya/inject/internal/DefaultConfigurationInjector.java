@@ -24,6 +24,7 @@ import javax.annotation.Priority;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Simple injector singleton that also registers instances configured using weak references.
@@ -43,8 +44,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
         return configuredTypes.computeIfAbsent(type, ConfiguredType::new);
     }
 
-    @Override
-    public void registerType(Class<?> type) {
+    void registerType(Class<?> type) {
         registerTypeInternal(type);
     }
 
@@ -54,11 +54,16 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      *
      * @param instance the instance to be configured
      */
-    public void configure(Object instance) {
+    public <T> T configure(T instance) {
         Class type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerTypeInternal(type);
         Objects.requireNonNull(configuredType).configure(instance);
+        return instance;
     }
 
 
+    @Override
+    public <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier) {
+        return () -> configure(supplier.get());
+    }
 }

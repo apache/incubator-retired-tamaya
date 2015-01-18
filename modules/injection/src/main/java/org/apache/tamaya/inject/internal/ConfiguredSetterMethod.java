@@ -24,9 +24,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.DefaultAreas;
-import org.apache.tamaya.inject.PropertyChangeSet;
+import org.apache.tamaya.event.PropertyChangeSet;
 
 /**
  * Small class that contains and manages all information and access to a configured field and a concrete instance current
@@ -107,7 +107,7 @@ public class ConfiguredSetterMethod {
      * @return true, if the key is referenced.
      */
     public boolean matchesKey(String key) {
-        DefaultAreas areasAnnot = this.setterMethod.getDeclaringClass().getAnnotation(DefaultAreas.class);
+        ConfigRoot areasAnnot = this.setterMethod.getDeclaringClass().getAnnotation(ConfigRoot.class);
         ConfiguredProperty prop = this.setterMethod.getAnnotation(ConfiguredProperty.class);
         if (InjectionUtils.evaluateKeys(this.setterMethod, areasAnnot, prop).contains(key)) {
             return true;

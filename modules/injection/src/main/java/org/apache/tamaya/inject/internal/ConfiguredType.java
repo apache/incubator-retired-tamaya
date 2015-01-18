@@ -24,11 +24,11 @@ import java.util.*;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.DefaultAreas;
 import org.apache.tamaya.inject.NoConfig;
-import org.apache.tamaya.inject.ObservesConfigChange;
-import org.apache.tamaya.inject.PropertyChangeSet;
+import org.apache.tamaya.event.ObservesConfigChange;
+import org.apache.tamaya.event.PropertyChangeSet;
 import org.apache.tamaya.spi.PropertySource;
 
 /**
@@ -187,7 +187,7 @@ public class ConfiguredType {
     }
 
     public static boolean isConfigured(Class type) {
-        if (type.getAnnotation(DefaultAreas.class) != null) {
+        if (type.getAnnotation(ConfigRoot.class) != null) {
             return true;
         }
         // if no class level annotation is there we might have field level annotations only
