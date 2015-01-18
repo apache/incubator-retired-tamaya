@@ -20,15 +20,8 @@ package org.apache.tamaya.core.internal;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +32,9 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.core.internal.converters.EnumConverter;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Manager that deals with {@link org.apache.tamaya.spi.PropertyConverter} instances.
@@ -57,43 +52,16 @@ public class PropertyConverterManager {
      * Constructor.
      */
     public PropertyConverterManager() {
-        initDefaultConverters();
+        initConverters();
     }
-
-    private static final PropertyConverter<Character> CHAR_CONVERTER =
-            (s) -> Objects.requireNonNull(s,CHAR_NULL_ERROR).charAt(0);
 
     /**
      * Registers the default converters provided out of the box.
      */
-    protected void initDefaultConverters() {
-        // Add default converters
-        register(char.class, CHAR_CONVERTER);
-        register(byte.class, Byte::parseByte);
-        register(short.class, Short::parseShort);
-        register(int.class, Integer::parseInt);
-        register(long.class, Long::parseLong);
-        register(boolean.class, Boolean::parseBoolean);
-        register(float.class, Float::parseFloat); //X TODO not good enough as this is Locale dependent!
-        register(double.class, Double::parseDouble); //X TODO not good enough as this is Locale dependent!
-
-        register(Character.class, CHAR_CONVERTER);
-        register(Byte.class, Byte::valueOf);
-        register(Short.class, Short::valueOf);
-        register(Integer.class, Integer::valueOf);
-        register(Long.class, Long::valueOf);
-        register(Boolean.class, Boolean::valueOf);
-        register(Float.class, Float::valueOf); //X TODO not good enough as this is Locale dependent!
-        register(Double.class, Double::valueOf); //X TODO not good enough as this is Locale dependent!
-        register(BigDecimal.class, BigDecimal::new); //X TODO not good enough as this is Locale dependent!
-        register(BigInteger.class, BigInteger::new); //X TODO not good enough as this is Locale dependent!
-
-        register(Currency.class, Currency::getInstance);
-
-        register(LocalDate.class, LocalDate::parse);
-        register(LocalTime.class, LocalTime::parse);
-        register(LocalDateTime.class, LocalDateTime::parse);
-        register(ZoneId.class, ZoneId::of);
+    protected void initConverters() {
+        for(PropertyConverter conv: ServiceContext.getInstance().getServices(PropertyConverter.class)){
+            register(conv.getTargetType(), conv);
+        }
     }
 
     /**
@@ -194,27 +162,46 @@ public class PropertyConverterManager {
      * @return a new converter, or null.
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(Class<T> targetType) {
+        if(Enum.class.isAssignableFrom(targetType)){
+            return new EnumConverter<T>(targetType);
+        }
         PropertyConverter<T> converter = null;
         Method factoryMethod = getFactoryMethod(targetType, "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
-            converter = (s) -> {
-                try {
-                    factoryMethod.setAccessible(true);
-                    return targetType.cast(factoryMethod.invoke(s));
-                } catch (Exception e) {
-                    throw new ConfigException("Failed to decode '" + s + "'", e);
+            converter = new PropertyConverter<T>() {
+                @Override
+                public Class<T> getTargetType() {
+                    return targetType;
+                }
+
+                @Override
+                public T convert(String value) {
+                    try {
+                        factoryMethod.setAccessible(true);
+                        return targetType.cast(factoryMethod.invoke(value));
+                    } catch (Exception e) {
+                        throw new ConfigException("Failed to decode '" + value + "'", e);
+                    }
                 }
             };
         }
         if (converter == null) {
             try {
                 Constructor<T> constr = targetType.getDeclaredConstructor(String.class);
-                converter = (s) -> {
-                    try {
-                        constr.setAccessible(true);
-                        return constr.newInstance(s);
-                    } catch (Exception e) {
-                        throw new ConfigException("Failed to decode '" + s + "'", e);
+                converter = new PropertyConverter<T>() {
+                    @Override
+                    public Class<T> getTargetType() {
+                        return targetType;
+                    }
+
+                    @Override
+                    public T convert(String value) {
+                        try {
+                            constr.setAccessible(true);
+                            return constr.newInstance(value);
+                        } catch (Exception e) {
+                            throw new ConfigException("Failed to decode '" + value + "'", e);
+                        }
                     }
                 };
             } catch (Exception e) {

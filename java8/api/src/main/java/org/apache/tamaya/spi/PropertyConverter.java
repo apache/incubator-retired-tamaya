@@ -26,12 +26,12 @@ package org.apache.tamaya.spi;
  */
 public interface PropertyConverter<T>{
 
-//    /**
-//     * Access the target type, this converter is producing. This is necessary to determine which converters are
-//     * to be used for converting a possible value.
-//     * @return the target type returned by a converter instance, never null.
-//     */
-//    Class<T> getTargetType();
+    /**
+     * Access the target type, this converter is producing. This is necessary to determine which converters are
+     * to be used for converting a possible value.
+     * @return the target type returned by a converter instance, never null.
+     */
+    Class<T> getTargetType();
 
     /**
      * Convert the given configuration keys from it's String representation into the required target type.
@@ -45,4 +45,5 @@ public interface PropertyConverter<T>{
     //X This could be useful if e.g. no converter in the chain felt responsible
     //X because a wrongly formatted configuration string had been used.
     //X This could probably also be handled via an additional Annotation on the converter.
+    //X Collection<String> getSupportedFormats();
 }

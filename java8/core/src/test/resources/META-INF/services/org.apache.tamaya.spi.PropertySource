@@ -19,3 +19,4 @@
 org.apache.tamaya.core.testdata.TestPropertyDefaultSource
 org.apache.tamaya.core.propertysource.SystemPropertySource
 org.apache.tamaya.core.propertysource.EnvironmentPropertySource
+org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource
