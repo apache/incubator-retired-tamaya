@@ -53,9 +53,7 @@ public class EnumConverter<T> implements PropertyConverter<T> {
 
     @Override
     public T convert(String value) {
-        String trimmed = Objects.requireNonNull(value).trim();
         try {
-            Method m = enumType.getMethod("valueOf", String.class);
             return (T) factory.invoke(null, value);
         } catch (Exception e) {
             throw new ConfigException("Invalid enum value '" + value + "' for " + enumType.getName());

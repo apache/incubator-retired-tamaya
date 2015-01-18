@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -36,7 +37,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
 
     @Override
     public Boolean convert(String value) {
-        String ignoreCaseValue = value.toLowerCase();
+        String ignoreCaseValue = value.toLowerCase(Locale.ENGLISH);
         switch(ignoreCaseValue) {
             case "yes":
             case "y":

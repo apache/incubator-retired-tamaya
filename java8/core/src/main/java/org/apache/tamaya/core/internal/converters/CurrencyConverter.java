@@ -21,6 +21,7 @@ package org.apache.tamaya.core.internal.converters;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Currency;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -35,6 +36,6 @@ public class CurrencyConverter implements PropertyConverter<Currency>{
     @Override
     public Currency convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return Currency.getInstance(trimmed.toUpperCase());
+        return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));
     }
 }
