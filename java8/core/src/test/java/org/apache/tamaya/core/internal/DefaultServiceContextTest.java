@@ -16,11 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.test.internal;
+package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.internal.DefaultConfigurationContext;
-import org.apache.tamaya.core.internal.DefaultServiceContext;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Assert;
 import org.junit.Test;

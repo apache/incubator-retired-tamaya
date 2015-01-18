@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.test.internal;
+package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.core.internal.PropertiesFileLoader;
 import org.junit.Assert;
 import org.junit.Test;
 
