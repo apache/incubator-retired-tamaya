@@ -71,6 +71,22 @@ under the License.
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <configLocation>checkstyle/style.xml</configLocation>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.tamaya</groupId>
+                        <artifactId>buildconfigurations</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
         </plugins>
     </build>
