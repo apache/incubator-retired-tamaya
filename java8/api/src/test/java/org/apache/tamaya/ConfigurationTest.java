@@ -18,10 +18,6 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ListPropertyConverter;
-
-import java.util.Map;
-
 import static org.junit.Assert.*;
 
 /**
@@ -39,7 +35,6 @@ public class ConfigurationTest {
         assertEquals((long)Long.MAX_VALUE, (long)Configuration.current().getOptional("long", (s) -> Long.valueOf(s)).get());
         assertEquals((double)Float.MAX_VALUE, (double)Configuration.current().getOptional("float", (s) -> Float.valueOf(s)).get(), 0.0d);
         assertEquals((double)Double.MAX_VALUE, (double)Configuration.current().getOptional("double", (s) -> Double.valueOf(s)).get(), 0.0d);
-        ListPropertyConverter<Map<String,Integer>> test;
     }
 
     @org.junit.Test
