@@ -20,6 +20,8 @@ package org.apache.tamaya.core.internal;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,7 +62,15 @@ public class PropertyConverterManager {
      */
     protected void initConverters() {
         for(PropertyConverter conv: ServiceContext.getInstance().getServices(PropertyConverter.class)){
-            register(conv.getTargetType(), conv);
+            ParameterizedType type = ReflectionUtil.getParametrizedType(conv.getClass());
+            if(type==null || type.getActualTypeArguments().length==0){
+                LOG.warning(() -> "Failed to register PropertyConverter, no generic type information available: " +
+                        conv.getClass().getName());
+            }
+            else {
+                Type targetType = type.getActualTypeArguments()[0];
+                register((Class<?>)targetType, conv);
+            }
         }
     }
 
@@ -76,7 +86,7 @@ public class PropertyConverterManager {
         Lock writeLock = lock.asWriteLock();
         try {
             writeLock.lock();
-            List<PropertyConverter<T>> converters = List.class.cast(this.converters.get(targetType));
+            List converters = List.class.cast(this.converters.get(targetType));
             List<PropertyConverter<T>> newConverters = new ArrayList<>();
             if (converters != null) {
                 newConverters.addAll(converters);
@@ -168,40 +178,24 @@ public class PropertyConverterManager {
         PropertyConverter<T> converter = null;
         Method factoryMethod = getFactoryMethod(targetType, "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
-            converter = new PropertyConverter<T>() {
-                @Override
-                public Class<T> getTargetType() {
-                    return targetType;
-                }
-
-                @Override
-                public T convert(String value) {
+            converter = (value) -> {
                     try {
                         factoryMethod.setAccessible(true);
                         return targetType.cast(factoryMethod.invoke(value));
                     } catch (Exception e) {
                         throw new ConfigException("Failed to decode '" + value + "'", e);
                     }
-                }
             };
         }
         if (converter == null) {
             try {
                 Constructor<T> constr = targetType.getDeclaredConstructor(String.class);
-                converter = new PropertyConverter<T>() {
-                    @Override
-                    public Class<T> getTargetType() {
-                        return targetType;
-                    }
-
-                    @Override
-                    public T convert(String value) {
-                        try {
-                            constr.setAccessible(true);
-                            return constr.newInstance(value);
-                        } catch (Exception e) {
-                            throw new ConfigException("Failed to decode '" + value + "'", e);
-                        }
+                converter = (value) -> {
+                    try {
+                        constr.setAccessible(true);
+                        return constr.newInstance(value);
+                    } catch (Exception e) {
+                        throw new ConfigException("Failed to decode '" + value + "'", e);
                     }
                 };
             } catch (Exception e) {

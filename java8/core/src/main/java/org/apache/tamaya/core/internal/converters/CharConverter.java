@@ -26,10 +26,6 @@ import java.util.Objects;
  * Converter, converting from String to Character.
  */
 public class CharConverter implements PropertyConverter<Character>{
-    @Override
-    public Class<Character> getTargetType() {
-        return Character.class;
-    }
 
     @Override
     public Character convert(String value) {

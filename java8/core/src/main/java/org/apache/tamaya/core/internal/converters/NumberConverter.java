@@ -28,10 +28,6 @@ import java.util.Objects;
  * //X TODO not good enough as this is Locale dependent!
  */
 public class NumberConverter implements PropertyConverter<Number>{
-    @Override
-    public Class<Number> getTargetType() {
-        return Number.class;
-    }
 
     @Override
     public Number convert(String value) {

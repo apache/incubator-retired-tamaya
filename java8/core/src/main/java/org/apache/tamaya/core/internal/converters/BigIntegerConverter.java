@@ -28,10 +28,6 @@ import java.util.Objects;
  * //X TODO not good enough as this is Locale dependent!
  */
 public class BigIntegerConverter implements PropertyConverter<BigInteger>{
-    @Override
-    public Class<BigInteger> getTargetType() {
-        return BigInteger.class;
-    }
 
     @Override
     public BigInteger convert(String value) {

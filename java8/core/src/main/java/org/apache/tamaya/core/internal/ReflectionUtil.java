@@ -16,21 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.converters;
+package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.spi.PropertyConverter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
-import java.time.LocalTime;
-import java.util.Objects;
 
 /**
- * Converter, converting from String to LocalTime.
+ * Small utility class used by other parts.
  */
-public class LocalTimeConverter implements PropertyConverter<LocalTime>{
+public final class ReflectionUtil {
 
-    @Override
-    public LocalTime convert(String value) {
-        String trimmed = Objects.requireNonNull(value).trim();
-        return LocalTime.parse(trimmed);
+    private ReflectionUtil(){}
+
+    public static ParameterizedType getParametrizedType(Class<?> clazz) {
+        Type[] genericTypes = clazz.getGenericInterfaces();
+        for (Type type : genericTypes) {
+            if (type instanceof ParameterizedType) {
+                return (ParameterizedType) type;
+            }
+
+        }
+        return null;
     }
 }

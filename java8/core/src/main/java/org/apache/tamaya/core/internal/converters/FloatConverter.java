@@ -26,10 +26,6 @@ import java.util.Objects;
  * Converter, converting from String to Float.
  */
 public class FloatConverter implements PropertyConverter<Float>{
-    @Override
-    public Class<Float> getTargetType() {
-        return Float.class;
-    }
 
     @Override
     public Float convert(String value) {

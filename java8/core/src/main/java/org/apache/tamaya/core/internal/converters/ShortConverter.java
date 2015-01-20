@@ -26,10 +26,6 @@ import java.util.Objects;
  * Converter, converting from String to Short.
  */
 public class ShortConverter implements PropertyConverter<Short>{
-    @Override
-    public Class<Short> getTargetType() {
-        return Short.class;
-    }
 
     @Override
     public Short convert(String value) {

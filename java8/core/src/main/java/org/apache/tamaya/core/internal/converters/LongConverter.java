@@ -26,10 +26,6 @@ import java.util.Objects;
  * Converter, converting from String to Long.
  */
 public class LongConverter implements PropertyConverter<Long>{
-    @Override
-    public Class<Long> getTargetType() {
-        return Long.class;
-    }
 
     @Override
     public Long convert(String value) {

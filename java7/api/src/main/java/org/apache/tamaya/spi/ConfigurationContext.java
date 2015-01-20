@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
  * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
- * managing {@link org.apache.tamaya.spi.PropertyConverter}s, ConfigFilters, etc.
+ * managing {@link PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
 

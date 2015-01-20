@@ -26,13 +26,6 @@ package org.apache.tamaya.spi;
  */
 public interface PropertyConverter<T>{
 
-//    /**
-//     * Access the target type, this converter is producing. This is necessary to determine which converters are
-//     * to be used for converting a possible value.
-//     * @return the target type returned by a converter instance, never null.
-//     */
-//    Class<T> getTargetType();
-
     /**
      * Convert the given configuration keys from it' String representation into the required target type.
      * @param value the configuration keys

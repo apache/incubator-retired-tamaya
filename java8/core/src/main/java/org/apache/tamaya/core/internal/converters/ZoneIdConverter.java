@@ -27,10 +27,6 @@ import java.util.Objects;
  * Converter, converting from String to LocalDate.
  */
 public class ZoneIdConverter implements PropertyConverter<ZoneId>{
-    @Override
-    public Class<ZoneId> getTargetType() {
-        return ZoneId.class;
-    }
 
     @Override
     public ZoneId convert(String value) {

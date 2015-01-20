@@ -27,10 +27,6 @@ import java.util.Objects;
  * Converter, converting from String to LocalDate.
  */
 public class LocalDateConverter implements PropertyConverter<LocalDate>{
-    @Override
-    public Class<LocalDate> getTargetType() {
-        return LocalDate.class;
-    }
 
     @Override
     public LocalDate convert(String value) {

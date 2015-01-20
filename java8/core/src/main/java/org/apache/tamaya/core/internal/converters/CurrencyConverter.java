@@ -28,10 +28,6 @@ import java.util.Objects;
  * Converter, converting from String to Currency.
  */
 public class CurrencyConverter implements PropertyConverter<Currency>{
-    @Override
-    public Class<Currency> getTargetType() {
-        return Currency.class;
-    }
 
     @Override
     public Currency convert(String value) {

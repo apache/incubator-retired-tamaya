@@ -27,10 +27,6 @@ import java.util.Objects;
  * Converter, converting from String to LocalDateTime.
  */
 public class LocalDateTimeConverter implements PropertyConverter<LocalDateTime>{
-    @Override
-    public Class<LocalDateTime> getTargetType() {
-        return LocalDateTime.class;
-    }
 
     @Override
     public LocalDateTime convert(String value) {

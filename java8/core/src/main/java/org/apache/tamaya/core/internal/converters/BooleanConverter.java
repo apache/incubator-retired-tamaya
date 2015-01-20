@@ -31,11 +31,6 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Class<Boolean> getTargetType() {
-        return Boolean.class;
-    }
-
-    @Override
     public Boolean convert(String value) {
         String ignoreCaseValue = value.toLowerCase(Locale.ENGLISH);
         switch(ignoreCaseValue) {
@@ -51,7 +46,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
                 return Boolean.FALSE;
             default:
                 LOG.warning("Unknown boolean value encountered: " + value);
-                return null;
         }
+        return null;
     }
 }

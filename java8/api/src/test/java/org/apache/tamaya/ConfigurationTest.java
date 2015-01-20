@@ -18,6 +18,10 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ListPropertyConverter;
+
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -28,13 +32,14 @@ public class ConfigurationTest {
 
     @org.junit.Test
     public void testget() throws Exception {
-        assertEquals(Boolean.TRUE, Configuration.current().get("booleanTrue", (s) -> Boolean.valueOf(s)).get());
-        assertEquals(Boolean.FALSE, Configuration.current().get("booleanFalse", (s) -> Boolean.valueOf(s)).get());
-        assertEquals((int)Byte.MAX_VALUE, (int)Configuration.current().get("byte", (s) -> Byte.valueOf(s)).get());
-        assertEquals((int)Integer.MAX_VALUE, (int)Configuration.current().get("int", (s) -> Integer.valueOf(s)).get());
-        assertEquals((long)Long.MAX_VALUE, (long)Configuration.current().get("long", (s) -> Long.valueOf(s)).get());
-        assertEquals((double)Float.MAX_VALUE, (double)Configuration.current().get("float", (s) -> Float.valueOf(s)).get(), 0.0d);
-        assertEquals((double)Double.MAX_VALUE, (double)Configuration.current().get("double", (s) -> Double.valueOf(s)).get(), 0.0d);
+        assertEquals(Boolean.TRUE, Configuration.current().getOptional("booleanTrue", (s) -> Boolean.valueOf(s)).get());
+        assertEquals(Boolean.FALSE, Configuration.current().getOptional("booleanFalse", (s) -> Boolean.valueOf(s)).get());
+        assertEquals((int)Byte.MAX_VALUE, (int)Configuration.current().getOptional("byte", (s) -> Byte.valueOf(s)).get());
+        assertEquals((int)Integer.MAX_VALUE, (int)Configuration.current().getOptional("int", (s) -> Integer.valueOf(s)).get());
+        assertEquals((long)Long.MAX_VALUE, (long)Configuration.current().getOptional("long", (s) -> Long.valueOf(s)).get());
+        assertEquals((double)Float.MAX_VALUE, (double)Configuration.current().getOptional("float", (s) -> Float.valueOf(s)).get(), 0.0d);
+        assertEquals((double)Double.MAX_VALUE, (double)Configuration.current().getOptional("double", (s) -> Double.valueOf(s)).get(), 0.0d);
+        ListPropertyConverter<Map<String,Integer>> test;
     }
 
     @org.junit.Test
@@ -71,8 +76,8 @@ public class ConfigurationTest {
 
     @org.junit.Test
     public void testGetAdapted() throws Exception {
-        assertEquals("yes", Configuration.current().get("booleanTrue", (v) -> Boolean.parseBoolean(v)?"yes":"no").get());
-        assertEquals("no", Configuration.current().get("booleanFalse", (v) -> Boolean.parseBoolean(v)?"yes":"no").get());
+        assertEquals("yes", Configuration.current().getOptional("booleanTrue", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
+        assertEquals("no", Configuration.current().getOptional("booleanFalse", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
     }
 
 }

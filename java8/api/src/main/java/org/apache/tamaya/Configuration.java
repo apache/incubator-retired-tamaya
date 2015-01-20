@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.Map;
@@ -26,6 +25,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.function.Function;
 
 
 /**
@@ -60,9 +60,9 @@ public interface Configuration {
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
-     * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
+     * @param key  the property's absolute, or relative path, e.g. @code
+     *             a/b/c/d.myProperty}.
+     * @param type The target type required, not null.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
@@ -83,9 +83,9 @@ public interface Configuration {
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
-     * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
+     * @param key  the property's absolute, or relative path, e.g. @code
+     *             a/b/c/d.myProperty}.
+     * @param type The target type required, not null.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
@@ -99,7 +99,7 @@ public interface Configuration {
      * instances may not be contained in the result, but nevertheless be accessible calling one of the
      * {@code get(...)} methods.
      */
-    Map<String,String> getProperties();
+    Map<String, String> getProperties();
 
     /**
      * Get the property keys as type {@code Class<T>}.
@@ -110,22 +110,21 @@ public interface Configuration {
      * available to perform the conversion fromMap {@link String} to
      * {@code Class<T>}.
      *
-     * @param key     the property's absolute, or relative path, e.g. @code
-     *                a/b/c/d.myProperty}.
+     * @param key       the property's absolute, or relative path, e.g. @code
+     *                  a/b/c/d.myProperty}.
      * @param converter the PropertyConverter to perform the conversion fromMap
-     *                {@link String} to {@code Class<T>}, not {@code null}.
+     *                  {@link String} to {@code Class<T>}, not {@code null}.
      * @return the property's keys.
      * @throws ConfigException if the keys could not be converted to the required target
-     *                                  type, or no such property exists.
+     *                         type, or no such property exists.
      */
-    default <T> Optional<T> get(String key, PropertyConverter<T> converter) {
+    default <T> Optional<T> getOptional(String key, Function<String, T> converter) {
         Optional<String> value = getOptional(key);
         if (value.isPresent()) {
-            return Optional.ofNullable(converter.convert(value.get()));
+            return Optional.ofNullable(converter.apply(value.get()));
         }
         return Optional.empty();
     }
-
 
     /**
      * Get the property keys as {@link Boolean}.
@@ -152,7 +151,7 @@ public interface Configuration {
     default OptionalInt getInteger(String key) {
         Optional<Integer> val = getOptional(key, Integer.class);
 
-        if (val.isPresent()){
+        if (val.isPresent()) {
             return OptionalInt.of(val.get());
         }
         return OptionalInt.empty();
@@ -169,7 +168,7 @@ public interface Configuration {
      */
     default OptionalLong getLong(String key) {
         Optional<Long> val = getOptional(key, Long.class);
-        if (val.isPresent()){
+        if (val.isPresent()) {
             return OptionalLong.of(val.get());
         }
         return OptionalLong.empty();
@@ -187,7 +186,7 @@ public interface Configuration {
     default OptionalDouble getDouble(String key) {
 
         Optional<Double> val = getOptional(key, Double.class);
-        if (val.isPresent()){
+        if (val.isPresent()) {
             return OptionalDouble.of(val.get());
         }
         return OptionalDouble.empty();
@@ -223,7 +222,7 @@ public interface Configuration {
      * @return the corresponding Configuration instance, never null.
      * @throws ConfigException if no such configuration is defined.
      */
-    public static Configuration current(){
+    public static Configuration current() {
         return ServiceContext.getInstance().getService(Configuration.class).get();
     }
 

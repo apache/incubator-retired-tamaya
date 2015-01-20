@@ -26,10 +26,6 @@ import java.util.Objects;
  * Converter, converting from String to Double.
  */
 public class DoubleConverter implements PropertyConverter<Double>{
-    @Override
-    public Class<Double> getTargetType() {
-        return Double.class;
-    }
 
     @Override
     public Double convert(String value) {

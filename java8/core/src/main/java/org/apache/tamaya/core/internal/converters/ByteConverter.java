@@ -26,10 +26,6 @@ import java.util.Objects;
  * Converter, converting from String to Byte.
  */
 public class ByteConverter implements PropertyConverter<Byte>{
-    @Override
-    public Class<Byte> getTargetType() {
-        return Byte.class;
-    }
 
     @Override
     public Byte convert(String value) {

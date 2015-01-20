@@ -26,10 +26,6 @@ import java.util.Objects;
  * Converter, converting from String to Integer.
  */
 public class IntegerConverter implements PropertyConverter<Integer>{
-    @Override
-    public Class<Integer> getTargetType() {
-        return Integer.class;
-    }
 
     @Override
     public Integer convert(String value) {

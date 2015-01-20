@@ -28,10 +28,6 @@ import java.util.Objects;
  * //X TODO not good enough as this is Locale dependent!
  */
 public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
-    @Override
-    public Class<BigDecimal> getTargetType() {
-        return BigDecimal.class;
-    }
 
     @Override
     public BigDecimal convert(String value) {
