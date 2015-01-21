@@ -47,6 +47,6 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
             default:
                 LOG.warning("Unknown boolean value encountered: " + value);
         }
-        return null;
+        return Boolean.FALSE;
     }
 }
