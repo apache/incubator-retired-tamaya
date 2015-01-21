@@ -20,7 +20,6 @@ package org.apache.tamaya.event;
 
 import org.apache.tamaya.spi.PropertySource;
 
-import java.beans.PropertyChangeEvent;
 import java.util.*;
 
 /**
@@ -122,7 +121,6 @@ public final class PropertyChangeSetBuilder {
      * @return the builder for chaining.
      */
     public PropertyChangeSetBuilder addChanges(Map<String,String> map1, Map<String,String> map2) {
-        List<PropertyChangeEvent> changes = new ArrayList<>();
         for (Map.Entry<String, String> en : map1.entrySet()) {
             String val = map2.get(en.getKey());
             if (val==null) {

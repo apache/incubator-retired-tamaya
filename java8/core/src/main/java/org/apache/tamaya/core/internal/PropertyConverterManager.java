@@ -66,8 +66,7 @@ public class PropertyConverterManager {
             if(type==null || type.getActualTypeArguments().length==0){
                 LOG.warning(() -> "Failed to register PropertyConverter, no generic type information available: " +
                         conv.getClass().getName());
-            }
-            else {
+            } else {
                 Type targetType = type.getActualTypeArguments()[0];
                 register((Class<?>)targetType, conv);
             }

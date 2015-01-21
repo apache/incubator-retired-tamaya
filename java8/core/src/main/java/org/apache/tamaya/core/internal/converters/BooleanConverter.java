@@ -36,7 +36,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
         String ignoreCaseValue = Objects.requireNonNull(value)
                                         .trim()
                                         .toLowerCase(Locale.ENGLISH);
-        
+
         switch(ignoreCaseValue) {
             case "yes":
             case "y":
