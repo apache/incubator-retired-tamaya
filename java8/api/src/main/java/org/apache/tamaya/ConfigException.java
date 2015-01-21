@@ -21,24 +21,26 @@ package org.apache.tamaya;
 /**
  * Exception class (runtime exception) for configuration issues.
  */
-public class ConfigException extends RuntimeException{
+public class ConfigException extends RuntimeException {
 
     private static final long serialVersionUID = -5886094818057522680L;
 
     /**
      * Creates a new configuration exception.
+     *
      * @param message the exception message, not null.
      */
-    public ConfigException(String message){
+    public ConfigException(String message) {
         super(message);
     }
 
     /**
      * Creates a new configuration exception.
+     *
      * @param message the exception message, not null.
-     * @param t the throwable.
+     * @param t       the throwable.
      */
-    public ConfigException(String message, Throwable t){
+    public ConfigException(String message, Throwable t) {
         super(message, t);
     }
 }

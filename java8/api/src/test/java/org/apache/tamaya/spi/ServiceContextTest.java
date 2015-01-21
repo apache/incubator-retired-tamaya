@@ -27,15 +27,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 public class ServiceContextTest {
 
-    private ServiceContext serviceContext = new ServiceContext(){
+    private ServiceContext serviceContext = new ServiceContext() {
 
         @Override
         public <T> Optional<T> getService(Class<T> serviceType) {
-            if(String.class.equals(serviceType)){
+            if (String.class.equals(serviceType)) {
                 return Optional.of(serviceType.cast("ServiceContextTest"));
             }
             return Optional.empty();
@@ -43,7 +42,7 @@ public class ServiceContextTest {
 
         @Override
         public <T> List<T> getServices(Class<T> serviceType) {
-            if(String.class.equals(serviceType)){
+            if (String.class.equals(serviceType)) {
                 List<String> list = new ArrayList<>();
                 list.add("ServiceContextTest");
                 return List.class.cast(list);

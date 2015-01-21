@@ -27,6 +27,7 @@ import java.util.Map;
 public class TestConfiguration implements Configuration {
 
     private static final Map<String, String> VALUES;
+
     static {
         VALUES = new HashMap<String, String>();
         VALUES.put("long", String.valueOf(Long.MAX_VALUE));
@@ -47,34 +48,26 @@ public class TestConfiguration implements Configuration {
 
     @Override
     public <T> T get(String key, Class<T> type) {
-        if(type.equals(Long.class)){
-            return (T)(Object)Long.MAX_VALUE;
-        }
-        else if(type.equals(Integer.class)){
-            return (T)(Object) Integer.MAX_VALUE;
-        }
-        else if(type.equals(Double.class)){
-            return (T)(Object) Double.MAX_VALUE;
-        }
-        else if(type.equals(Float.class)){
-            return (T)(Object) Float.MAX_VALUE;
-        }
-        else if(type.equals(Short.class)){
-            return (T)(Object) Short.MAX_VALUE;
-        }
-        else if(type.equals(Byte.class)){
-            return (T)(Object) Byte.MAX_VALUE;
-        }
-        else if(type.equals(Boolean.class)){
-            if("booleanTrue".equals(key)) {
-                return (T)(Object) Boolean.TRUE;
+        if (type.equals(Long.class)) {
+            return (T) (Object) Long.MAX_VALUE;
+        } else if (type.equals(Integer.class)) {
+            return (T) (Object) Integer.MAX_VALUE;
+        } else if (type.equals(Double.class)) {
+            return (T) (Object) Double.MAX_VALUE;
+        } else if (type.equals(Float.class)) {
+            return (T) (Object) Float.MAX_VALUE;
+        } else if (type.equals(Short.class)) {
+            return (T) (Object) Short.MAX_VALUE;
+        } else if (type.equals(Byte.class)) {
+            return (T) (Object) Byte.MAX_VALUE;
+        } else if (type.equals(Boolean.class)) {
+            if ("booleanTrue".equals(key)) {
+                return (T) (Object) Boolean.TRUE;
+            } else {
+                return (T) (Object) Boolean.FALSE;
             }
-            else{
-                return (T)(Object) Boolean.FALSE;
-            }
-        }
-        else if(type.equals(String.class)){
-            return (T)(Object) "aStringValue";
+        } else if (type.equals(String.class)) {
+            return (T) (Object) "aStringValue";
         }
         throw new ConfigException("No such property: " + key);
     }

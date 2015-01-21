@@ -29,6 +29,10 @@ import java.util.Map;
  */
 public interface ConfigurationContext {
 
+    public static ConfigurationContext context() {
+        return ServiceContext.getInstance().getService(ConfigurationContext.class).get();
+    }
+
     /**
      * This method can be used for programmatically adding {@link PropertySource}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
@@ -51,12 +55,11 @@ public interface ConfigurationContext {
      */
     List<PropertySource> getPropertySources();
 
-
     /**
      * This method can be used for programmatically adding {@link PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
-     * @param typeToConvert the type which the converter is for
+     * @param typeToConvert     the type which the converter is for
      * @param propertyConverter the PropertyConverters to add for this type
      */
     <T> void addPropertyConverter(Class<T> typeToConvert, PropertyConverter<T> propertyConverter);
@@ -88,7 +91,7 @@ public interface ConfigurationContext {
      * This method returns the registered PropertyConverters for a given type.
      * The List for each type is ordered via their {@link javax.annotation.Priority}.
      * </p>
-     *
+     * <p>
      * <p>
      * PropertyConverters with a higher Priority come first. The PropertyConverter with the
      * lowest Priority comes last.
@@ -96,20 +99,20 @@ public interface ConfigurationContext {
      * using their class name just to ensure the user at least gets the same ordering
      * after a JVM restart.
      * </p>
-     *
+     * <p>
      * <p>
      * Additionally if a PropertyProvider is accessed, which is not registered the implementation
      * should try to figure out, if there could be a default implementation as follows:
      * <ol>
-     *     <le>Look for static factory methods: {@code of(String), valueOf(String), getInstance(String),
-     *     instanceOf(String), fomr(String)}</le>
-     *     <le>Look for a matching constructor: {@code T(String)}.</le>
+     * <le>Look for static factory methods: {@code of(String), valueOf(String), getInstance(String),
+     * instanceOf(String), fomr(String)}</le>
+     * <le>Look for a matching constructor: {@code T(String)}.</le>
      * </ol>
      * If a correspoding factory method or constructor could be found, a corresponding
      * PropertyConverter should be created and registered automatically for the given
      * type.
      * </p>
-     *
+     * <p>
      * <p>
      * The scenario could be like:
      * <pre>
@@ -120,7 +123,7 @@ public interface ConfigurationContext {
      *  }
      * </pre>
      * </p>
-     *
+     * <p>
      * <p>
      * The converters returned for a type should be used as a chain, whereas the result of the
      * first converter that is able to convert the configured value, is taken as the chain's result.
@@ -134,12 +137,9 @@ public interface ConfigurationContext {
 
     /**
      * Access the current PropertyFilter instances.
+     *
      * @return the list of registered PropertyFilters, never null.
      */
     List<PropertyFilter> getPropertyFilters();
-
-    public static ConfigurationContext context(){
-        return ServiceContext.getInstance().getService(ConfigurationContext.class).get();
-    }
 
 }

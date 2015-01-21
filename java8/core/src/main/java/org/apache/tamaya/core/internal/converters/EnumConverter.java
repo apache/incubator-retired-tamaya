@@ -21,6 +21,7 @@ package org.apache.tamaya.core.internal.converters;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -47,16 +48,12 @@ public class EnumConverter<T> implements PropertyConverter<T> {
     }
 
     @Override
-    public Class<T> getTargetType() {
-        return enumType;
-    }
-
-    @Override
     public T convert(String value) {
         try {
             return (T) factory.invoke(null, value);
-        } catch (Exception e) {
-            throw new ConfigException("Invalid enum value '" + value + "' for " + enumType.getName());
+        }
+        catch (InvocationTargetException | IllegalAccessException e) {
+            throw new ConfigException("Invalid enum value '" + value + "' for " + enumType.getName(), e);
         }
 
     }

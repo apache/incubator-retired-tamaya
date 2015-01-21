@@ -48,12 +48,48 @@ import java.util.function.Function;
 public interface Configuration {
 
     /**
+     * Access a configuration.
+     *
+     * @return the corresponding Configuration instance, never null.
+     * @throws ConfigException if no such configuration is defined.
+     */
+    public static Configuration current() {
+        return ServiceContext.getInstance().getService(Configuration.class).get();
+    }
+
+    /**
      * Access a property.
      *
      * @param key the property's key, not null.
      * @return the property's value or {@code null}.
      */
     String get(String key);
+
+//    /**
+//     * Get the property keys as type T. This will implicitly require a corresponding {@link
+//     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
+//     * fromMap the given String keys.
+//     *
+//     * @param key      the property's absolute, or relative path, e.g. @code
+//     *                 a/b/c/d.myProperty}.
+//     * @param type     The target type required, not null.
+//     * @return the property value, never null..
+//     * @throws ConfigException if the keys could not be converted to the required target type.
+//     */
+//    <T> T getListProperty(String key, TypeLiteral<T> type);
+//
+//    /**
+//     * Get the property keys as type T. This will implicitly require a corresponding {@link
+//     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
+//     * fromMap the given String keys.
+//     *
+//     * @param key       the property's absolute, or relative path, e.g. @code
+//     *                  a/b/c/d.myProperty}.
+//     * @param converter the converter to be used.
+//     * @return the property value, never null..
+//     * @throws ConfigException if the keys could not be converted to the required target type.
+//     */
+//    <T> T getListProperty(String key, Function<List<String>, T> converter);
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -157,7 +193,6 @@ public interface Configuration {
         return OptionalInt.empty();
     }
 
-
     /**
      * Get the property keys as {@link Long}.
      *
@@ -173,7 +208,6 @@ public interface Configuration {
         }
         return OptionalLong.empty();
     }
-
 
     /**
      * Get the property keys as {@link Double}.
@@ -192,7 +226,6 @@ public interface Configuration {
         return OptionalDouble.empty();
     }
 
-
     /**
      * Extension point for adjusting configuration.
      *
@@ -204,7 +237,6 @@ public interface Configuration {
         return operator.operate(this);
     }
 
-
     /**
      * Query a configuration.
      *
@@ -213,17 +245,6 @@ public interface Configuration {
      */
     default <T> T query(ConfigQuery<T> query) {
         return query.query(this);
-    }
-
-
-    /**
-     * Access a configuration.
-     *
-     * @return the corresponding Configuration instance, never null.
-     * @throws ConfigException if no such configuration is defined.
-     */
-    public static Configuration current() {
-        return ServiceContext.getInstance().getService(Configuration.class).get();
     }
 
 }

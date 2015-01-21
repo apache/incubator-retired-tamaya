@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.ConfigException;
+
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.tamaya.ConfigException;
 
 
 /**
@@ -60,7 +60,7 @@ public final class ServiceContextManager {
         } catch (Exception e) {
             throw new ConfigException("ServiceContext not loadable", e);
         }
-        if(highestServiceContext==null){
+        if (highestServiceContext == null) {
             throw new ConfigException("No ServiceContext found");
         }
         return highestServiceContext;

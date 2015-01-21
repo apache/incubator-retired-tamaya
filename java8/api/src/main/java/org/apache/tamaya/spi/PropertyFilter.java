@@ -25,7 +25,7 @@ package org.apache.tamaya.spi;
  * hereby is defined by the corresponding {@code @Priority} annotation.</p>
  * <p>Filters </p>
  */
-public interface PropertyFilter{
+public interface PropertyFilter {
 
     /**
      * <p>Maps the current {@code valueToBeFiltered} value to a new value. The resulting value will be used as the result
@@ -36,11 +36,11 @@ public interface PropertyFilter{
      * <h3>Implementation specification</h3>
      * Implementations of this class must be
      * <ul>
-     *     <li>reentrant</li>
-     *     <li>thread-safe</li>
+     * <li>reentrant</li>
+     * <li>thread-safe</li>
      * </ul>
      *
-     * @param key the key accessed, not null.
+     * @param key               the key accessed, not null.
      * @param valueToBeFiltered the value to be filtered, not null.
      * @return the filtered value, or {@code null} if the value should be removed alltogether.
      */

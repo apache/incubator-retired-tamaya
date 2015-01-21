@@ -20,8 +20,9 @@ import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Static access to the {@link org.apache.tamaya.Configuration} for the very application.
- *
+ * <p>
  * Exists for Java7 backward compatibility only.
+ *
  * @deprecated Since Java 8, you better use {@link org.apache.tamaya.Configuration#current()}.
  */
 @Deprecated

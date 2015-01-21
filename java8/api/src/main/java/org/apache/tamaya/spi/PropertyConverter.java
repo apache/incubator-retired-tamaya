@@ -24,10 +24,11 @@ package org.apache.tamaya.spi;
  * This is used for implementing type conversion from a property (String) to a certain target
  * type. Hereby the target type can be multivalued (eg collections) or complex if needed.
  */
-public interface PropertyConverter<T>{
+public interface PropertyConverter<T> {
 
     /**
      * Convert the given configuration keys from it's String representation into the required target type.
+     *
      * @param value the configuration value
      * @return the converted value
      */

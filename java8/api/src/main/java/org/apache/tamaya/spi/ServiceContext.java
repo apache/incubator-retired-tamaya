@@ -29,6 +29,15 @@ import java.util.Optional;
 public interface ServiceContext {
 
     /**
+     * Get the current {@link ServiceContext}. If necessary the {@link ServiceContext} will be laziliy loaded.
+     *
+     * @return the {@link ServiceContext} to be used.
+     */
+    public static ServiceContext getInstance() {
+        return ServiceContextManager.getServiceContext();
+    }
+
+    /**
      * @return ordinal of the ServiceContext. The one with the highest ordinal will be taken.
      */
     default int ordinal() {
@@ -51,18 +60,8 @@ public interface ServiceContext {
      * order the instance for precedence, hereby the most significant should be
      * first in order.
      *
-     * @param serviceType
-     *            the service type.
+     * @param serviceType the service type.
      * @return The instance to be used, never {@code null}
      */
-     <T> List<T> getServices(Class<T> serviceType);
-
-    /**
-     * Get the current {@link ServiceContext}. If necessary the {@link ServiceContext} will be laziliy loaded.
-     *
-     * @return the {@link ServiceContext} to be used.
-     */
-    public static ServiceContext getInstance(){
-        return ServiceContextManager.getServiceContext();
-    }
+    <T> List<T> getServices(Class<T> serviceType);
 }

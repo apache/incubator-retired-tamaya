@@ -57,10 +57,10 @@ public interface PropertySource {
      * TODO rethink whole default PropertySources and ordering:
      * TODO introduce default values or constants for ordinals
      * <ol>
-     *     <li>System properties (ordinal 400)</li>
-     *     <li>Environment properties (ordinal 300)</li>
-     *     <li>JNDI values (ordinal 200)</li>
-     *     <li>Properties file values (/META-INF/applicationConfiguration.properties) (ordinal 100)</li>
+     * <li>System properties (ordinal 400)</li>
+     * <li>Environment properties (ordinal 300)</li>
+     * <li>JNDI values (ordinal 200)</li>
+     * <li>Properties file values (/META-INF/applicationConfiguration.properties) (ordinal 100)</li>
      * </ol>
      * <p/>
      * <p><b>Important Hints for custom implementations</b>:</p>
@@ -87,16 +87,18 @@ public interface PropertySource {
      * Get the name of the property source. The name should be unique for the type of source, whereas multiple instances
      * of the same type (and thus name) may exist in a system. Give a {@link org.apache.tamaya.spi.ConfigurationContext}
      * the name of a PropertySource is unique.
+     *
      * @return the property source's name, never null.
      */
-    default String getName(){
+    default String getName() {
         return getClass().getName();
     }
 
     /**
      * Access a property.
-     *
+     * <p>
      * //X TODO discuss if the key can be null
+     *
      * @param key the property's key, not null.
      * @return the value assigned to the property or {@code null}. An empty String will kind of 'erase' previous values.
      */
@@ -109,11 +111,11 @@ public interface PropertySource {
      * @return the a corresponding map, never null.
      * //X TODO or should we just do getPropertyKeys()? Think about security (key) vs easier merging (full map)?
      */
-    Map<String,String> getProperties();
+    Map<String, String> getProperties();
 
     /**
      * Determines if this config source could be scanned for its list of properties.
-     *
+     * <p>
      * <p>
      * PropertySources which are not scannable might not be able to find all the
      * configured values to provide via {@link #getProperties()}. This can e.g. happen
@@ -121,9 +123,9 @@ public interface PropertySource {
      * </p>
      *
      * @return {@code true} if this PropertySource could be scanned for its list of properties,
-     *         {@code false} if it should not be scanned.
+     * {@code false} if it should not be scanned.
      */
-    default boolean isScannable(){
+    default boolean isScannable() {
         return true;
     }
 
