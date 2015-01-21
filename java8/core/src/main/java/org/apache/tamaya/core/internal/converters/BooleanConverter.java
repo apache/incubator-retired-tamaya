@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Short.
+ * Converter, converting from String to Boolean.
  */
 public class BooleanConverter implements PropertyConverter<Boolean> {
 
