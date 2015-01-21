@@ -51,10 +51,8 @@ public class EnumConverter<T> implements PropertyConverter<T> {
     public T convert(String value) {
         try {
             return (T) factory.invoke(null, value);
-        }
-        catch (InvocationTargetException | IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException e) {
             throw new ConfigException("Invalid enum value '" + value + "' for " + enumType.getName(), e);
         }
-
     }
 }

@@ -20,19 +20,25 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.PropertyConverter;
 
+import javax.annotation.CheckForNull;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Short.
+ * Converter, converting from String to Boolean.
  */
 public class BooleanConverter implements PropertyConverter<Boolean> {
 
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
+    @CheckForNull
     public Boolean convert(String value) {
-        String ignoreCaseValue = value.toLowerCase(Locale.ENGLISH);
+        String ignoreCaseValue = Objects.requireNonNull(value)
+                                        .trim()
+                                        .toLowerCase(Locale.ENGLISH);
+
         switch(ignoreCaseValue) {
             case "yes":
             case "y":
@@ -47,6 +53,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
             default:
                 LOG.warning("Unknown boolean value encountered: " + value);
         }
+
         return null;
     }
 }
