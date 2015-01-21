@@ -28,9 +28,14 @@ public interface PropertyConverter<T> {
 
     /**
      * Convert the given configuration keys from it's String representation into the required target type.
+     * <b>IMPORTANT NOTE: </b> Multiple instances of this type are ordered in a chain of converters that
+     * try to parse/convert a configured value. The first non-null result returned by a converter is
+     * used as the final result of the conversion. As a consequence implementations of this class must
+     * only return non-null values that are the result of a successful conversion of an entry.
      *
      * @param value the configuration value
-     * @return the converted value
+     * @return the converted value, or {@code null} if the value could not be converted. Returning a non-null
+     *         value will stop the conversion process and return the value as result (converted value).
      */
     T convert(String value);
 
