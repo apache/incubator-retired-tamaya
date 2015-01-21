@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.PropertyConverter;
 
+import javax.annotation.CheckForNull;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -32,6 +33,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
+    @CheckForNull
     public Boolean convert(String value) {
         String ignoreCaseValue = Objects.requireNonNull(value)
                                         .trim()
@@ -51,6 +53,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
             default:
                 LOG.warning("Unknown boolean value encountered: " + value);
         }
-        return Boolean.FALSE;
+
+        return null;
     }
 }
