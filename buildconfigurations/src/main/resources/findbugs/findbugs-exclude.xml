@@ -113,9 +113,9 @@ under the License.
     <Match>
         <Class name="org.apache.tamaya.inject.PropertyChangeSetBuilder" />
     </Match>
-    <Match>
-        <Class name="org.apache.tamaya.inject.internal.ConfiguredType" />
-    </Match>
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.inject.internal.ConfiguredType" />-->
+    <!--</Match>-->
     <!--<Match>-->
         <!--<Class name="org.apache.tamaya.inject.internal.ConfigTemplateInvocationHandler" />-->
     <!--</Match>-->

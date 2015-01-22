@@ -23,13 +23,11 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.NoConfig;
 import org.apache.tamaya.event.ObservesConfigChange;
 import org.apache.tamaya.event.PropertyChangeSet;
-import org.apache.tamaya.spi.PropertySource;
 
 /**
  * Structure that contains and manages configuration related things for a configured type registered.
@@ -171,20 +169,6 @@ public class ConfiguredType {
         }
     }
 
-
-    private String getName(Object source) {
-        if (source instanceof PropertySource) {
-            PropertySource ps = (PropertySource) source;
-            return ps.getName();
-        }
-        return "N/A";
-    }
-
-
-    public boolean isConfiguredBy(Configuration configuration) {
-        // TODO implement this
-        return true;
-    }
 
     public static boolean isConfigured(Class type) {
         if (type.getAnnotation(ConfigRoot.class) != null) {
