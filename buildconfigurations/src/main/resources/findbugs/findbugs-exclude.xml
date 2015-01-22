@@ -119,14 +119,8 @@ under the License.
     <Match>
         <Class name="org.apache.tamaya.inject.internal.ConfigTemplateInvocationHandler" />
     </Match>
-    <Match>
-        <Class name="org.apache.tamaya.inject.DynamicValue" />
-    </Match>
-    <Match>
-        <Class name="" />
-    </Match>
-    <Match>
-        <Class name="" />
-    </Match>
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.inject.DynamicValue" />-->
+    <!--</Match>-->
 
 </FindBugsFilter>

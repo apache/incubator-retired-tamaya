@@ -48,8 +48,10 @@ import java.util.logging.Logger;
  *     <li>Thread safe</li>
  * </ul>
  */
-public final class DynamicValue<T> implements Serializable{
+public final class DynamicValue<T> implements Serializable {
 
+    private static final long serialVersionUID = -2071172847144537443L;
+    
     /**
      * Policy to control how new values are applied to this instance.
      */
