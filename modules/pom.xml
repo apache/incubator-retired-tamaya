@@ -34,6 +34,7 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
+        <module>builder</module>
         <module>injection</module>
         <module>formats</module>
         <module>json</module>
