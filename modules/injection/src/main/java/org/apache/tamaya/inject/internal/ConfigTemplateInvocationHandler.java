@@ -40,10 +40,6 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
 
 
     /**
-     * Any overriding configurations.
-     */
-    private Configuration[] configurations;
-    /**
      * The configured type.
      */
     private ConfiguredType type;
@@ -56,7 +52,8 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
      *                       registered providers are used.
      */
     public ConfigTemplateInvocationHandler(Class<?> type, Configuration... configurations) {
-        this.configurations = Objects.requireNonNull(configurations).clone();
+        Objects.requireNonNull(configurations);
+
         this.type = new ConfiguredType(Objects.requireNonNull(type));
         if (!type.isInterface()) {
             throw new IllegalArgumentException("Can only proxy interfaces as configuration templates.");
