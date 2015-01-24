@@ -79,13 +79,16 @@ under the License.
 
     </Match>
 
+    <!-- False positive returnin null for Boolean is required by the implemented interface. -->
+    <Match>
+        <Class name="org.apache.tamaya.core.internal.converters.BooleanConverter"/>
+    </Match>
+
     <!-- Issues to review -->
 
     <Match>
         <Class name="org.apache.tamaya.core.internal.PropertiesFileLoader"/>
     </Match>
-
-
     <Match>
         <Class name="org.apache.tamaya.resolver.internal.URLResolver" />
     </Match>
