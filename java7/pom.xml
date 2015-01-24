@@ -38,9 +38,7 @@ under the License.
 
     <modules>
         <module>api</module>
-<!--
         <module>core</module>
--->
     </modules>
 
     <build>
