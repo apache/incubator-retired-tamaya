@@ -39,7 +39,7 @@ import java.util.concurrent.locks.StampedLock;
 /**
  * Default Implementation of a simple ConfigurationContext.
  */
-public class DefaultConfigurationContext implements ConfigurationContext {
+public class DefaultConfigurationContext extends BaseConfigurationContext {
     /**
      * Cubcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
      */
