@@ -41,6 +41,9 @@ under the License.
         <url>http://apache.org</url>
     </organization>
 
+    <prerequisites>
+        <maven>3.0.5</maven>
+    </prerequisites>
 
     <properties>
         <findbugs.skip>false</findbugs.skip>
