@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigurationContext;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,26 +49,26 @@ public class TestConfiguration implements Configuration {
     }
 
     @Override
-    public <T> T get(String key, Class<T> type) {
-        if (type.equals(Long.class)) {
+    public <T> T get(String key, TypeLiteral<T> type) {
+        if (type.getType().equals(Long.class)) {
             return (T) (Object) Long.MAX_VALUE;
-        } else if (type.equals(Integer.class)) {
+        } else if (type.getType().equals(Integer.class)) {
             return (T) (Object) Integer.MAX_VALUE;
-        } else if (type.equals(Double.class)) {
+        } else if (type.getType().equals(Double.class)) {
             return (T) (Object) Double.MAX_VALUE;
-        } else if (type.equals(Float.class)) {
+        } else if (type.getType().equals(Float.class)) {
             return (T) (Object) Float.MAX_VALUE;
-        } else if (type.equals(Short.class)) {
+        } else if (type.getType().equals(Short.class)) {
             return (T) (Object) Short.MAX_VALUE;
-        } else if (type.equals(Byte.class)) {
+        } else if (type.getType().equals(Byte.class)) {
             return (T) (Object) Byte.MAX_VALUE;
-        } else if (type.equals(Boolean.class)) {
+        } else if (type.getType().equals(Boolean.class)) {
             if ("booleanTrue".equals(key)) {
                 return (T) (Object) Boolean.TRUE;
             } else {
                 return (T) (Object) Boolean.FALSE;
             }
-        } else if (type.equals(String.class)) {
+        } else if (type.getType().equals(String.class)) {
             return (T) (Object) "aStringValue";
         }
         throw new ConfigException("No such property: " + key);
@@ -76,4 +78,5 @@ public class TestConfiguration implements Configuration {
     public Map<String, String> getProperties() {
         return null;
     }
+
 }

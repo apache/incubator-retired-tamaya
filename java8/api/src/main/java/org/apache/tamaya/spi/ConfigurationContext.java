@@ -19,22 +19,21 @@
 package org.apache.tamaya.spi;
 
 
+import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.TypeLiteral;
+
 import java.util.List;
 import java.util.Map;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
  * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
- * managing {@link org.apache.tamaya.spi.PropertyConverter}s, ConfigFilters, etc.
+ * managing {@link org.apache.tamaya.PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
 
-    public static ConfigurationContext context() {
-        return ServiceContext.getInstance().getService(ConfigurationContext.class).get();
-    }
-
     /**
-     * This method can be used for programmatically adding {@link PropertySource}s.
+     * This method can be used for programmatically adding {@link org.apache.tamaya.spi.PropertySource}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param propertySourcesToAdd the PropertySources to add
@@ -56,20 +55,20 @@ public interface ConfigurationContext {
     List<PropertySource> getPropertySources();
 
     /**
-     * This method can be used for programmatically adding {@link PropertyConverter}s.
+     * This method can be used for programmatically adding {@link org.apache.tamaya.PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param typeToConvert     the type which the converter is for
      * @param propertyConverter the PropertyConverters to add for this type
      */
-    <T> void addPropertyConverter(Class<T> typeToConvert, PropertyConverter<T> propertyConverter);
+    <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter);
 
     /**
      * <p>
      * This method returns the Map of registered PropertyConverters
      * per type.
      * The List for each type is ordered via their {@link javax.annotation.Priority} and
-     * cladd name. Refer also to {@link #getPropertyConverters()}.
+     * class name. Refer also to {@link #getPropertyConverters()}.
      * </p>
      * <p>
      * A simplified scenario could be like:
@@ -84,7 +83,7 @@ public interface ConfigurationContext {
      *
      * @return map with sorted list of registered PropertySources per type.
      */
-    Map<Class<?>, List<PropertyConverter<?>>> getPropertyConverters();
+    Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters();
 
     /**
      * <p>
@@ -133,7 +132,7 @@ public interface ConfigurationContext {
      *
      * @return a sorted list of registered PropertySources per type.
      */
-    <T> List<PropertyConverter<T>> getPropertyConverters(Class<T> type);
+    <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type);
 
     /**
      * Access the current PropertyFilter instances.

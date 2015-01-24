@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.test.provider;
 
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.core.provider.JavaConfigurationProvider;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Assert;
@@ -51,8 +51,8 @@ public class JavaConfigurationProviderTest {
             Assert.assertEquals(value, propertySource.get(key));
 
             // check if we had our key in configuration.current
-            Assert.assertTrue(Configuration.current().getProperties().containsKey(key));
-            Assert.assertEquals(value, Configuration.current().getOptional(key).get());
+            Assert.assertTrue(ConfigurationProvider.getConfiguration().getProperties().containsKey(key));
+            Assert.assertEquals(value, ConfigurationProvider.getConfiguration().getOptional(key).get());
         }
 
     }

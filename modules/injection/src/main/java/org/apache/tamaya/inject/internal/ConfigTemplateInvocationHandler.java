@@ -19,6 +19,7 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.TypeLiteral;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -66,6 +67,6 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
             return "Configured Proxy -> " + this.type.getType().getName();
         }
         String configValue = InjectionUtils.getConfigValue(method);
-        return InjectionUtils.adaptValue(method, method.getReturnType(), configValue);
+        return InjectionUtils.adaptValue(method,  TypeLiteral.of(method.getReturnType()), configValue);
     }
 }

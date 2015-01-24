@@ -18,14 +18,11 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ServiceContext;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.function.Function;
 
 
 /**
@@ -48,52 +45,19 @@ import java.util.function.Function;
 public interface Configuration {
 
     /**
-     * Access a configuration.
-     *
-     * @return the corresponding Configuration instance, never null.
-     * @throws ConfigException if no such configuration is defined.
-     */
-    public static Configuration current() {
-        return ServiceContext.getInstance().getService(Configuration.class).get();
-    }
-
-    /**
      * Access a property.
      *
      * @param key the property's key, not null.
      * @return the property's value or {@code null}.
      */
-    String get(String key);
+    default String get(String key) {
+        return get(key, String.class);
+    }
 
-//    /**
-//     * Get the property keys as type T. This will implicitly require a corresponding {@link
-//     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
-//     * fromMap the given String keys.
-//     *
-//     * @param key      the property's absolute, or relative path, e.g. @code
-//     *                 a/b/c/d.myProperty}.
-//     * @param type     The target type required, not null.
-//     * @return the property value, never null..
-//     * @throws ConfigException if the keys could not be converted to the required target type.
-//     */
-//    <T> T getListProperty(String key, TypeLiteral<T> type);
-//
-//    /**
-//     * Get the property keys as type T. This will implicitly require a corresponding {@link
-//     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
-//     * fromMap the given String keys.
-//     *
-//     * @param key       the property's absolute, or relative path, e.g. @code
-//     *                  a/b/c/d.myProperty}.
-//     * @param converter the converter to be used.
-//     * @return the property value, never null..
-//     * @throws ConfigException if the keys could not be converted to the required target type.
-//     */
-//    <T> T getListProperty(String key, Function<List<String>, T> converter);
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
+     * PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -102,7 +66,22 @@ public interface Configuration {
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
-    <T> T get(String key, Class<T> type);
+    default <T> T get(String key, Class<T> type) {
+        return get(key, TypeLiteral.of(type));
+    }
+
+    /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * PropertyConverter} to be available that is capable current providing type T
+     * fromMap the given String keys.
+     *
+     * @param key  the property's absolute, or relative path, e.g. @code
+     *             a/b/c/d.myProperty}.
+     * @param type The target type required, not null.
+     * @return the property value, never null..
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    <T> T get(String key, TypeLiteral<T> type);
 
     /**
      * Access a property.
@@ -116,7 +95,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
+     * PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -135,6 +114,7 @@ public interface Configuration {
      * instances may not be contained in the result, but nevertheless be accessible calling one of the
      * {@code get(...)} methods.
      */
+    @SuppressWarnings("JavaDoc")
     Map<String, String> getProperties();
 
     /**
@@ -154,13 +134,14 @@ public interface Configuration {
      * @throws ConfigException if the keys could not be converted to the required target
      *                         type, or no such property exists.
      */
-    default <T> Optional<T> getOptional(String key, Function<String, T> converter) {
+    default <T> Optional<T> getOptional(String key, PropertyConverter<T> converter) {
         Optional<String> value = getOptional(key);
         if (value.isPresent()) {
-            return Optional.ofNullable(converter.apply(value.get()));
+            return Optional.ofNullable(converter.convert(value.get()));
         }
         return Optional.empty();
     }
+
 
     /**
      * Get the property keys as {@link Boolean}.

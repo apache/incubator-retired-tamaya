@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya;
 
 
 /**
  * Interface for an property that converts a configured String into something else.
  * This is used for implementing type conversion from a property (String) to a certain target
  * type. Hereby the target type can be multivalued (eg collections) or complex if needed.
+ * @param <T> the result/target type of the converter.
  */
 public interface PropertyConverter<T> {
 
@@ -33,7 +34,7 @@ public interface PropertyConverter<T> {
      * used as the final result of the conversion. As a consequence implementations of this class must
      * only return non-null values that are the result of a successful conversion of an entry.
      *
-     * @param value the configuration value
+     * @param value the configuration value, not null.
      * @return the converted value, or {@code null} if the value could not be converted. Returning a non-null
      *         value will stop the conversion process and return the value as result (converted value).
      */

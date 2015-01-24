@@ -16,21 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal.converters;
+package org.apache.tamaya;
 
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Converter, converting from String to Double.
+ * Test Configuration class, that is used to testdata the default methods provided by the API.
  */
-public class DoubleConverter implements PropertyConverter<Double>{
+public class TestConfigurationProvider implements ConfigurationProviderSpi {
+
+    private static final Configuration config = new TestConfiguration();
+
 
     @Override
-    public Double convert(String value) {
-        String trimmed = Objects.requireNonNull(value).trim();
-        //X TODO not good enough as this is Locale dependent!
-        return Double.valueOf(trimmed);
+    public Configuration getConfiguration() {
+        return config;
+    }
+
+    @Override
+    public ConfigurationContext getConfigurationContext() {
+        return null;
     }
 }

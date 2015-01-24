@@ -22,6 +22,7 @@ package org.apache.tamaya;
  * Models a function that maps a given {@link org.apache.tamaya.Configuration} to something else. This can be used
  * to model additional functionality and applying it to a given {@link org.apache.tamaya.Configuration} instance by
  * calling the {@link org.apache.tamaya.Configuration#query(org.apache.tamaya.ConfigQuery)} method.
+ * @param <T> the result type of the query.
  */
 @FunctionalInterface
 public interface ConfigQuery<T> {

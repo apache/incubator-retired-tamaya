@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core;
 
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,25 +32,25 @@ public class ConfigurationTest {
 
     @Test
     public void testAccess(){
-        assertNotNull(Configuration.current());
+        assertNotNull(ConfigurationProvider.getConfiguration());
     }
 
     @Test
     public void testContent(){
-        assertEquals("Robin", Configuration.current().getOptional("name").get());
-        assertEquals("Sabine", Configuration.current().getOptional("name2").get()); // from default
-        assertEquals("Mapped to name: Robin", Configuration.current().getOptional("name3").get());  // oderridden default, mapped by filter to name property
-        assertEquals("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)", Configuration.current().getOptional("name4").get()); // final only
-        assertNull(Configuration.current().getOptional("name5").orElse(null)); // final only, but removed from filter
+        assertEquals("Robin", ConfigurationProvider.getConfiguration().getOptional("name").get());
+        assertEquals("Sabine", ConfigurationProvider.getConfiguration().getOptional("name2").get()); // from default
+        assertEquals("Mapped to name: Robin", ConfigurationProvider.getConfiguration().getOptional("name3").get());  // oderridden default, mapped by filter to name property
+        assertEquals("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)", ConfigurationProvider.getConfiguration().getOptional("name4").get()); // final only
+        assertNull(ConfigurationProvider.getConfiguration().getOptional("name5").orElse(null)); // final only, but removed from filter
 
-        System.out.println("name : " + Configuration.current().getOptional("name").get());
-        System.out.println("name2: " + Configuration.current().getOptional("name2").get());
-        System.out.println("name3: " + Configuration.current().getOptional("name3").get());
-        System.out.println("name4: " + Configuration.current().getOptional("name4").get());
-        System.out.println("name5: " + Configuration.current().getOptional("name5").orElse(null));
+        System.out.println("name : " + ConfigurationProvider.getConfiguration().getOptional("name").get());
+        System.out.println("name2: " + ConfigurationProvider.getConfiguration().getOptional("name2").get());
+        System.out.println("name3: " + ConfigurationProvider.getConfiguration().getOptional("name3").get());
+        System.out.println("name4: " + ConfigurationProvider.getConfiguration().getOptional("name4").get());
+        System.out.println("name5: " + ConfigurationProvider.getConfiguration().getOptional("name5").orElse(null));
 
         System.out.println("ALL :");
-        Configuration.current().getProperties().entrySet().forEach(e ->
+        ConfigurationProvider.getConfiguration().getProperties().entrySet().forEach(e ->
                 System.out.println("   " + e.getKey()+" = " + e.getValue()));
     }
 

@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class ByteConverterTest {
      */
     @Test
     public void testConvert_Byte() throws Exception {
-        Configuration config = Configuration.current();
+        Configuration config = ConfigurationProvider.getConfiguration();
         Optional<Byte> valueRead = config.getOptional("tests.converter.byte.decimal", Byte.class);
         assertTrue(valueRead.isPresent());
         assertEquals(valueRead.get().byteValue(), 101);

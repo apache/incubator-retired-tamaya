@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.event.PropertyChangeSet;
@@ -87,7 +88,7 @@ public class ConfiguredSetterMethod {
                 configValue = InjectionUtils.evaluateValue(configValue);
             }
             // Check for adapter/filter
-            Object value = InjectionUtils.adaptValue(this.setterMethod, this.setterMethod.getParameterTypes()[0], configValue);
+            Object value = InjectionUtils.adaptValue(this.setterMethod,  TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), configValue);
             setterMethod.setAccessible(true);
             setterMethod.invoke(target, value);
         } catch (Exception e) {

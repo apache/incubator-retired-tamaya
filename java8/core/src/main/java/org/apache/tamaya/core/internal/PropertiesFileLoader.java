@@ -27,6 +27,9 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * Minimalistic loader for property files from the classpath.
+ */
 public final class PropertiesFileLoader {
 
 

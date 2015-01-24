@@ -16,29 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.resolver.internal;
+package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.resolver.spi.ExpressionResolver;
-
-import javax.annotation.Priority;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
 /**
- * Property resolver implementation that interprets the resolver expression as a reference to another configuration
- * entry. It can be explicitly addressed by prefixing {@code conf:}, e.g. {@code ${conf:my.other.config.value}}.
+ * Implementation of the Configuration API. This class uses the current {@link org.apache.tamaya.spi.ConfigurationContext} to evaluate the
+ * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
+ * instance to evaluate the current Configuration.
  */
-@Priority(200)
-public final class ConfigResolver implements ExpressionResolver{
+public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
+
+    private ConfigurationContext context = new DefaultConfigurationContext();
+    private Configuration config = new DefaultConfiguration(context);
 
     @Override
-    public String getResolverPrefix() {
-        return "conf:";
+    public Configuration getConfiguration() {
+        return config;
     }
 
     @Override
-    public String evaluate(String expression){
-        return ConfigurationProvider.getConfiguration().get(expression);
+    public ConfigurationContext getConfigurationContext() {
+        return context;
     }
-
 }

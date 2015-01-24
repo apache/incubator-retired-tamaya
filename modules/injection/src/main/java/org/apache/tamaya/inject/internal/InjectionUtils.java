@@ -30,7 +30,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultValue;
@@ -38,7 +39,7 @@ import org.apache.tamaya.inject.WithLoadPolicy;
 import org.apache.tamaya.inject.WithPropertyConverter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
 
 
@@ -174,7 +175,7 @@ final class InjectionUtils {
     private static String evaluteConfigValue(List<String> keys) {
         String configValue = null;
         for (String key : keys) {
-            configValue = Configuration.current().get(key);
+            configValue = ConfigurationProvider.getConfiguration().get(key);
             if (configValue != null) {
                 break;
             }
@@ -184,27 +185,28 @@ final class InjectionUtils {
 
 
     @SuppressWarnings("rawtypes")
-    public static <T> T adaptValue(AnnotatedElement element, Class<T> targetType, String configValue) {
+    public static <T> T adaptValue(AnnotatedElement element, TypeLiteral<T> targetType, String configValue) {
         // Check for adapter/filter
         T adaptedValue = null;
         WithPropertyConverter converterAnnot = element.getAnnotation(WithPropertyConverter.class);
         Class<? extends PropertyConverter<T>> converterType;
         if (converterAnnot != null) {
             converterType = (Class<? extends PropertyConverter<T>>) converterAnnot.value();
-            if (!converterType.equals(WithPropertyConverter.class)) {
+            if (!converterType.getName().equals(WithPropertyConverter.class.getName())) {
                 try {
                     // TODO cache here...
-                    PropertyConverter<T> codec = PropertyConverter.class.cast(converterType.newInstance());
-                    adaptedValue = (T) codec.convert(configValue);
+                    PropertyConverter<T> converter = PropertyConverter.class.cast(converterType.newInstance());
+                    adaptedValue = (T) converter.convert(configValue);
                 } catch (Exception e) {
-                    LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element + ", trying default conversion.", e);
+                    LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element +
+                            ", trying default conversion.", e);
                 }
             }
         }
         if (adaptedValue != null) {
             return adaptedValue;
         }
-        if (String.class.equals(targetType)) {
+        if (String.class == targetType.getType()) {
             return (T) configValue;
         } else {
             List<PropertyConverter<T>> converters = ServiceContext.getInstance().getService(ConfigurationContext.class).get()

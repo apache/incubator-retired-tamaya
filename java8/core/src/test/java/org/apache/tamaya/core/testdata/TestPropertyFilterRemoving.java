@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertyFilter;
 
 import javax.annotation.Priority;
@@ -34,7 +34,7 @@ public class TestPropertyFilterRemoving implements PropertyFilter{
             return null;
         }
         else if("name3".equals(key)){
-            return "Mapped to name: " + Configuration.current().getOptional("name").orElse("NoName found!");
+            return "Mapped to name: " + ConfigurationProvider.getConfiguration().getOptional("name").orElse("NoName found!");
         }
         return valueToBeFiltered;
     }

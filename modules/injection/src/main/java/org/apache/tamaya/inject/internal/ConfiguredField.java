@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
 
@@ -77,7 +78,7 @@ public class ConfiguredField {
                 configValue = InjectionUtils.evaluateValue(configValue);
             }
             // Check for adapter/filter
-            Object value = InjectionUtils.adaptValue(this.annotatedField, this.annotatedField.getType(), configValue);
+            Object value = InjectionUtils.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), configValue);
             annotatedField.setAccessible(true);
             annotatedField.set(target, value);
         } catch (Exception e) {

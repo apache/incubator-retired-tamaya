@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to tge given enum type.
+ * @param <T> the enumeration type.
  */
 public class EnumConverter<T> implements PropertyConverter<T> {
     private Logger LOG = Logger.getLogger(EnumConverter.class.getName());

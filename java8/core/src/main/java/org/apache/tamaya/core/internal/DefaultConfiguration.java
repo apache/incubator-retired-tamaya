@@ -20,17 +20,18 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -55,7 +56,11 @@ public class DefaultConfiguration implements Configuration {
     /**
      * The current {@link org.apache.tamaya.spi.ConfigurationContext} of the current instance.
      */
-    private final ConfigurationContext configurationContext = ServiceContext.getInstance().getService(ConfigurationContext.class).get();
+    private final ConfigurationContext configurationContext;
+
+    public DefaultConfiguration(ConfigurationContext context){
+        this.configurationContext = Objects.requireNonNull(context);
+    }
 
     /**
      * This method evaluates the given configuration key. Hereby if goes down the chain or PropertySource instances
@@ -194,7 +199,7 @@ public class DefaultConfiguration implements Configuration {
 
     /**
      * Accesses the current String value for the given key (see {@link #getOptional(String)}) and tries to convert it
-     * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
+     * using the {@link org.apache.tamaya.PropertyConverter} instances provided by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -204,7 +209,7 @@ public class DefaultConfiguration implements Configuration {
      * @return the converted value, never null.
      */
     @Override
-    public <T> T get(String key, Class<T> type) {
+    public <T> T get(String key, TypeLiteral<T> type) {
         Optional<String> value = getOptional(key);
         if (value.isPresent()) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
@@ -219,7 +224,7 @@ public class DefaultConfiguration implements Configuration {
                             " failed to convert value: " + value.get());
                 }
             }
-            throw new ConfigException("Unparseable config value for type: " + type.getName() + ": " + key);
+            throw new ConfigException("Unparseable config value for type: " + type.getType() + ": " + key);
         }
 
         return null;

@@ -19,11 +19,11 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -39,7 +39,7 @@ public class BooleanConverterTest {
      */
     @Test
     public void testConvert_Byte() throws Exception {
-        Configuration config = Configuration.current();
+        Configuration config = ConfigurationProvider.getConfiguration();
         // trues
         Optional<Boolean> valueRead = config.getOptional("tests.converter.boolean.y1", Boolean.class);
         assertTrue(valueRead.isPresent());

@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
@@ -40,7 +41,7 @@ import java.util.concurrent.locks.StampedLock;
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
+     * Cubcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
@@ -161,17 +162,17 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     }
 
     @Override
-    public <T> void addPropertyConverter(Class<T> typeToConvert, PropertyConverter<T> propertyConverter) {
+    public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
         propertyConverterManager.register(typeToConvert, propertyConverter);
     }
 
     @Override
-    public Map<Class<?>, List<PropertyConverter<?>>> getPropertyConverters() {
+    public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
         return propertyConverterManager.getPropertyConverters();
     }
 
     @Override
-    public <T> List<PropertyConverter<T>> getPropertyConverters(Class<T> targetType) {
+    public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
         return propertyConverterManager.getPropertyConverters(targetType);
     }
 

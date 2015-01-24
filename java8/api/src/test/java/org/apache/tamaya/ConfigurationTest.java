@@ -28,51 +28,51 @@ public class ConfigurationTest {
 
     @org.junit.Test
     public void testget() throws Exception {
-        assertEquals(Boolean.TRUE, Configuration.current().getOptional("booleanTrue", (s) -> Boolean.valueOf(s)).get());
-        assertEquals(Boolean.FALSE, Configuration.current().getOptional("booleanFalse", (s) -> Boolean.valueOf(s)).get());
-        assertEquals((int) Byte.MAX_VALUE, (int) Configuration.current().getOptional("byte", (s) -> Byte.valueOf(s)).get());
-        assertEquals((int) Integer.MAX_VALUE, (int) Configuration.current().getOptional("int", (s) -> Integer.valueOf(s)).get());
-        assertEquals((long) Long.MAX_VALUE, (long) Configuration.current().getOptional("long", (s) -> Long.valueOf(s)).get());
-        assertEquals((double) Float.MAX_VALUE, (double) Configuration.current().getOptional("float", (s) -> Float.valueOf(s)).get(), 0.0d);
-        assertEquals((double) Double.MAX_VALUE, (double) Configuration.current().getOptional("double", (s) -> Double.valueOf(s)).get(), 0.0d);
+        assertEquals(Boolean.TRUE, ConfigurationProvider.getConfiguration().getOptional("booleanTrue", (s) -> Boolean.valueOf(s)).get());
+        assertEquals(Boolean.FALSE, ConfigurationProvider.getConfiguration().getOptional("booleanFalse", (s) -> Boolean.valueOf(s)).get());
+        assertEquals((int) Byte.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().getOptional("byte", (s) -> Byte.valueOf(s)).get());
+        assertEquals((int) Integer.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().getOptional("int", (s) -> Integer.valueOf(s)).get());
+        assertEquals((long) Long.MAX_VALUE, (long) ConfigurationProvider.getConfiguration().getOptional("long", (s) -> Long.valueOf(s)).get());
+        assertEquals((double) Float.MAX_VALUE, (double) ConfigurationProvider.getConfiguration().getOptional("float", (s) -> Float.valueOf(s)).get(), 0.0d);
+        assertEquals((double) Double.MAX_VALUE, (double) ConfigurationProvider.getConfiguration().getOptional("double", (s) -> Double.valueOf(s)).get(), 0.0d);
     }
 
     @org.junit.Test
     public void testGetBoolean() throws Exception {
-        assertTrue(Configuration.current().getBoolean("booleanTrue"));
-        assertFalse(Configuration.current().getBoolean("booleanFalse"));
-        assertFalse(Configuration.current().getBoolean("foorBar"));
+        assertTrue(ConfigurationProvider.getConfiguration().getBoolean("booleanTrue"));
+        assertFalse(ConfigurationProvider.getConfiguration().getBoolean("booleanFalse"));
+        assertFalse(ConfigurationProvider.getConfiguration().getBoolean("foorBar"));
     }
 
     @org.junit.Test
     public void testGetInteger() throws Exception {
-        assertEquals(Integer.MAX_VALUE, Configuration.current().getInteger("int").getAsInt());
+        assertEquals(Integer.MAX_VALUE, ConfigurationProvider.getConfiguration().getInteger("int").getAsInt());
     }
 
     @org.junit.Test
     public void testGetLong() throws Exception {
-        assertEquals(Long.MAX_VALUE, Configuration.current().getLong("long").getAsLong());
+        assertEquals(Long.MAX_VALUE, ConfigurationProvider.getConfiguration().getLong("long").getAsLong());
     }
 
     @org.junit.Test
     public void testGetDouble() throws Exception {
-        assertEquals(Double.MAX_VALUE, Configuration.current().getDouble("double").getAsDouble(), 0.0d);
+        assertEquals(Double.MAX_VALUE, ConfigurationProvider.getConfiguration().getDouble("double").getAsDouble(), 0.0d);
     }
 
     @org.junit.Test
     public void testWith() throws Exception {
-        assertEquals(Configuration.current(), Configuration.current().with(c -> c));
+        assertEquals(ConfigurationProvider.getConfiguration(), ConfigurationProvider.getConfiguration().with(c -> c));
     }
 
     @org.junit.Test
     public void testQuery() throws Exception {
-        assertEquals("myFooResult", Configuration.current().query(c -> "myFooResult"));
+        assertEquals("myFooResult", ConfigurationProvider.getConfiguration().query(c -> "myFooResult"));
     }
 
     @org.junit.Test
     public void testGetAdapted() throws Exception {
-        assertEquals("yes", Configuration.current().getOptional("booleanTrue", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
-        assertEquals("no", Configuration.current().getOptional("booleanFalse", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
+        assertEquals("yes", ConfigurationProvider.getConfiguration().getOptional("booleanTrue", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
+        assertEquals("no", ConfigurationProvider.getConfiguration().getOptional("booleanFalse", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
     }
 
 }

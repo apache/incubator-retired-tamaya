@@ -19,7 +19,7 @@
 package org.apache.tamaya.inject;
 
 
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

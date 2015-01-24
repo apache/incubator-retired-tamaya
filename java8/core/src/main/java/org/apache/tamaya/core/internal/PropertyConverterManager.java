@@ -34,19 +34,20 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.converters.EnumConverter;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
 
 /**
- * Manager that deals with {@link org.apache.tamaya.spi.PropertyConverter} instances.
+ * Manager that deals with {@link org.apache.tamaya.PropertyConverter} instances.
  * This class is thread-safe.
  */
 public class PropertyConverterManager {
     /** The logger used. */
     private static final Logger LOG = Logger.getLogger(PropertyConverterManager.class.getName());
     /** The registered converters. */
-    private Map<Class<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
+    private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /** The lock used. */
     private StampedLock lock = new StampedLock();
     private static final String CHAR_NULL_ERROR = "Cannot convert null property";
@@ -68,7 +69,7 @@ public class PropertyConverterManager {
                         conv.getClass().getName());
             } else {
                 Type targetType = type.getActualTypeArguments()[0];
-                register((Class<?>)targetType, conv);
+                register(TypeLiteral.of(targetType), conv);
             }
         }
     }
@@ -80,7 +81,7 @@ public class PropertyConverterManager {
      * @param converter  the converter, not null.
      * @param <T>        the type.
      */
-    public <T> void register(Class<T> targetType, PropertyConverter<T> converter) {
+    public <T> void register(TypeLiteral<T> targetType, PropertyConverter<T> converter) {
         Objects.requireNonNull(converter);
         Lock writeLock = lock.asWriteLock();
         try {
@@ -103,7 +104,7 @@ public class PropertyConverterManager {
      * @param targetType the target type, not null.
      * @return true, if a converter for the given type is registered, or a default one can be created.
      */
-    public boolean isTargetTypeSupported(Class<?> targetType) {
+    public boolean isTargetTypeSupported(TypeLiteral<?> targetType) {
         return converters.containsKey(targetType)
                 || createDefaultPropertyConverter(targetType) != null;
     }
@@ -114,9 +115,9 @@ public class PropertyConverterManager {
      * factory methods taking a single String instance.
      *
      * @return the current map of instantiated and registered converters.
-     * @see #createDefaultPropertyConverter(Class)
+     * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
-    public Map<Class<?>, List<PropertyConverter<?>>> getPropertyConverters() {
+    public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
         Lock readLock = lock.asReadLock();
         try {
             readLock.lock();
@@ -134,9 +135,9 @@ public class PropertyConverterManager {
      * @param targetType the target type, not null.
      * @param <T>        the type class
      * @return the ordered list of converters (may be empty for not convertible types).
-     * @see #createDefaultPropertyConverter(Class)
+     * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
-    public <T> List<PropertyConverter<T>> getPropertyConverters(Class<T> targetType) {
+    public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
         Lock readLock = lock.asReadLock();
         List<PropertyConverter<T>> converters;
         try {
@@ -170,17 +171,17 @@ public class PropertyConverterManager {
      * @param <T>        the type class
      * @return a new converter, or null.
      */
-    protected <T> PropertyConverter<T> createDefaultPropertyConverter(Class<T> targetType) {
-        if(Enum.class.isAssignableFrom(targetType)){
-            return new EnumConverter<T>(targetType);
+    protected <T> PropertyConverter<T> createDefaultPropertyConverter(TypeLiteral<T> targetType) {
+        if(Enum.class.isAssignableFrom(targetType.getRawType())){
+            return new EnumConverter<T>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
-        Method factoryMethod = getFactoryMethod(targetType, "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
+        Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
             converter = (value) -> {
                     try {
                         factoryMethod.setAccessible(true);
-                        return targetType.cast(factoryMethod.invoke(value));
+                        return targetType.getRawType().cast(factoryMethod.invoke(value));
                     } catch (Exception e) {
                         throw new ConfigException("Failed to decode '" + value + "'", e);
                     }
@@ -188,7 +189,7 @@ public class PropertyConverterManager {
         }
         if (converter == null) {
             try {
-                Constructor<T> constr = targetType.getDeclaredConstructor(String.class);
+                Constructor<T> constr = targetType.getRawType().getDeclaredConstructor(String.class);
                 converter = (value) -> {
                     try {
                         constr.setAccessible(true);
@@ -198,7 +199,7 @@ public class PropertyConverterManager {
                     }
                 };
             } catch (Exception e) {
-                LOG.finest(() -> "Failed to construct instance of type: " + targetType.getName()+": " + e);
+                LOG.finest(() -> "Failed to construct instance of type: " + targetType.getRawType().getName()+": " + e);
             }
         }
         return converter;
