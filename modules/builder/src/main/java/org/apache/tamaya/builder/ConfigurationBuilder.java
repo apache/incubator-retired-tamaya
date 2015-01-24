@@ -19,8 +19,42 @@
 package org.apache.tamaya.builder;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
+/**
+ * Builder that allows to build a Configuration completely manually.
+ */
 public class ConfigurationBuilder {
+
+    public ConfigurationBuilder addPropertySources(PropertySource... propertySources){
+        return this;
+    }
+
+    public ConfigurationBuilder addPropertySourceProviders(PropertySourceProvider... propertySourceProviders){
+        return this;
+    }
+
+    public ConfigurationBuilder addPropertyFilters(PropertyFilter... propertyFilters){
+        return this;
+    }
+
+    public ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy propertyValueCombinationPolicy){
+        return this;
+    }
+
+    public ConfigurationBuilder addPropertyConverter(PropertyConverter<?> propertyConverter){
+        return this;
+    }
+
+    public <T> ConfigurationBuilder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter){
+        return this;
+    }
+
     public Configuration build() {
         return null;
     }
