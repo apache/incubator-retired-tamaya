@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,11 +38,10 @@ public class DefaultServiceContextTest {
 
     @Test
     public void testGetService() {
-        Optional<ConfigurationContext> configurationContext = context.getService(ConfigurationContext.class);
-
-        Assert.assertNotNull(configurationContext);
-        Assert.assertTrue(configurationContext.isPresent());
-        Assert.assertTrue(configurationContext.get() instanceof DefaultConfigurationContext);
+        Optional<ConfigurationProviderSpi> providerSpi = context.getService(ConfigurationProviderSpi.class);
+        Assert.assertNotNull(providerSpi);
+        Assert.assertTrue(providerSpi.isPresent());
+        Assert.assertTrue(providerSpi.get() instanceof DefaultConfigurationProvider);
     }
 
     @Test(expected = ConfigException.class)
