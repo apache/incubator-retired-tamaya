@@ -25,6 +25,9 @@ import org.apache.tamaya.ConfigException;
 
 import java.util.*;
 
+/**
+ * Visitor implementation to read a JSON formatted input source.
+ */
 public class JSONVisitor {
     private final ObjectNode rootNode;
     private final HashMap<String, String> targetStore;
@@ -66,6 +69,9 @@ public class JSONVisitor {
         }
     }
 
+    /**
+     * Context for a sub context visited.
+     */
     private static class VisitingContext {
         private String namespace;
         private final ObjectNode node;

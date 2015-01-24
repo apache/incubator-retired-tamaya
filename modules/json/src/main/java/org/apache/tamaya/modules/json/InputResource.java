@@ -20,6 +20,9 @@ package org.apache.tamaya.modules.json;
 
 import java.io.InputStream;
 
+/**
+ * Simple Resource Abstraction.
+ */
 public interface InputResource {
     InputStream getInputStream();
 

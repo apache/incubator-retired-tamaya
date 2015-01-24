@@ -25,6 +25,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Implements an InputResource based on a file.
+ */
 public class FileBasedResource implements InputResource {
     private final File sourceFile;
 

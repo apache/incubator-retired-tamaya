@@ -47,6 +47,7 @@ import java.util.logging.Logger;
  *     <li>Serializable, when also the item stored is serializable</li>
  *     <li>Thread safe</li>
  * </ul>
+ * @param <T> The type of the value.
  */
 public final class DynamicValue<T> implements Serializable {
 

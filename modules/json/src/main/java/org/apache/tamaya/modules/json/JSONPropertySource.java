@@ -36,6 +36,9 @@ import java.util.concurrent.locks.StampedLock;
 
 import static java.lang.String.format;
 
+/**
+ * Property source based on a JSON file.
+ */
 public class JSONPropertySource
     implements PropertySource {
 
