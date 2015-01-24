@@ -16,17 +16,46 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Static access to the {@link Configuration} for the very application.
  */
 public final class ConfigurationProvider {
+
+    private static final ConfigurationProviderSpi PROVIDER_SPI = loadSpi();
+
+    private static ConfigurationProviderSpi loadSpi() {
+        ConfigurationProviderSpi spi = ServiceContextManager.getServiceContext()
+                .getService(ConfigurationProviderSpi.class);
+        if(spi==null){
+            throw new IllegalStateException("ConfigurationProviderSpi not available.");
+        }
+        return spi;
+    }
+
     private ConfigurationProvider() {
         // just to prevent initialisation
     }
 
+    /**
+     * Access the current configuration.
+     *
+     * @return the corresponding Configuration instance, never null.
+     */
     public static Configuration getConfiguration() {
-        return ServiceContextManager.getServiceContext().getService(Configuration.class);
+        return PROVIDER_SPI.getConfiguration();
     }
+
+    /**
+     * Get access to the current ConfigurationContext.
+     *
+     * @return the current ConfigurationContext, never null.
+     */
+    public static ConfigurationContext getConfigurationContext(){
+        return PROVIDER_SPI.getConfigurationContext();
+    }
+
 }

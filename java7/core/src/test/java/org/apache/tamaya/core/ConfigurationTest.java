@@ -19,6 +19,7 @@
 package org.apache.tamaya.core;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.core.internal.DefaultConfiguration;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
@@ -42,7 +43,7 @@ public class ConfigurationTest {
     }
 
     private Configuration current() {
-        return ServiceContextManager.getServiceContext().getService(Configuration.class);
+        return ConfigurationProvider.getConfiguration();
     }
 
     @Test

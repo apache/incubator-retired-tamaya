@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +56,15 @@ public class DefaultConfiguration implements Configuration {
     /**
      * The current {@link org.apache.tamaya.spi.ConfigurationContext} of the current instance.
      */
-    private final ConfigurationContext configurationContext = ServiceContextManager.getServiceContext().getService(ConfigurationContext.class);
+    private final ConfigurationContext configurationContext;
+
+    /**
+     * Constructor.
+     * @param configurationContext The configuration Context to be used.
+     */
+    public DefaultConfiguration(ConfigurationContext configurationContext){
+        this.configurationContext = Objects.requireNonNull(configurationContext);
+    }
 
     /**
      * This method evaluates the given configuration key. Hereby if goes down the chain or PropertySource instances
