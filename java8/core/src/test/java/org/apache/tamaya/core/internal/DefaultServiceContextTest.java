@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.junit.Assert;
 import org.junit.Test;

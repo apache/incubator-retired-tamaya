@@ -19,14 +19,12 @@
 package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Priority;
 import java.util.List;
-import java.util.Optional;
 
 public class DefaultServiceContextTest {
 

@@ -69,7 +69,7 @@ under the License.
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.16.1</jruby.version>
         <findbugs.version>3.0.0</findbugs.version>
-        <mockito.version>1.10.6</mockito.version>
+        <mockito.version>1.10.19</mockito.version>
         <rat.version>0.11</rat.version>
         <toolchains.plugin>1.1</toolchains.plugin>
     </properties>
