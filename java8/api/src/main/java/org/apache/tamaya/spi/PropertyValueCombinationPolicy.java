@@ -35,7 +35,7 @@ public interface PropertyValueCombinationPolicy {
      * entry evaluated by {@code propertySource.get(key)}.
      */
     public final PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = (current, key, propertySource) ->
-        Optional.ofNullable(propertySource.get(key)).orElse(current);
+            Optional.ofNullable(propertySource.get(key)).filter(s -> !s.isEmpty()).orElse(current);
 
     /**
      * Method that is called for each value evaluated by a PropertySource for the given key. This method is called

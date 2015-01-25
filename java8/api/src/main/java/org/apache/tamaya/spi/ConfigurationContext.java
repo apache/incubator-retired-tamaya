@@ -141,4 +141,10 @@ public interface ConfigurationContext {
      */
     List<PropertyFilter> getPropertyFilters();
 
+    /**
+     * Access the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used to evaluate the final
+     * property values.
+     * @return the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used, never null.
+     */
+    PropertyValueCombinationPolicy getPropertyValueCombinationPolicy();
 }

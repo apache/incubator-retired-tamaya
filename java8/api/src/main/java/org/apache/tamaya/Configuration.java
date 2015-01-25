@@ -19,6 +19,7 @@
 package org.apache.tamaya;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -106,6 +107,31 @@ public interface Configuration {
      */
     default <T> Optional<T> getOptional(String key, Class<T> type) {
         return Optional.ofNullable(get(key, type));
+    }
+
+    /**
+     * Get the property keys as type {@code Class<T>}.
+     * <p>
+     * If {@code Class<T>} is not one current
+     * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
+     * BigDecimal, String} , an according converter must be
+     * available to perform the conversion fromMap {@link String} to
+     * {@code Class<T>}.
+     *
+     * @param key       the property's absolute, or relative path, e.g. @code
+     *                  a/b/c/d.myProperty}.
+     * @param converter the PropertyConverter to perform the conversion fromMap
+     *                  {@link String} to {@code Class<T>}, not {@code null}.
+     * @return the property's keys.
+     * @throws ConfigException if the keys could not be converted to the required target
+     *                         type, or no such property exists.
+     */
+    default <T> T get(String key, PropertyConverter<T> converter) {
+        String value = get(key);
+        if (value!=null) {
+            return Objects.requireNonNull(converter).convert(value);
+        }
+        return null;
     }
 
     /**
