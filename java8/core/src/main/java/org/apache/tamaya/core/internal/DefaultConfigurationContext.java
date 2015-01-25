@@ -41,7 +41,7 @@ import java.util.concurrent.locks.StampedLock;
  */
 public class DefaultConfigurationContext extends BaseConfigurationContext {
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
+     * Subcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
