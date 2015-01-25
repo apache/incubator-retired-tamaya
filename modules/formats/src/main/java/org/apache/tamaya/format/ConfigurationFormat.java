@@ -72,7 +72,7 @@ public interface ConfigurationFormat {
      * Reads a list {@link org.apache.tamaya.spi.PropertySource} instances from a resource, using this format.
      * If the configuration format only contains entries of one ordinal type, normally only one single
      * instance of PropertySource is returned. Nevertheless custom formats may contain different sections or parts,
-     * where each part maps to a different target rdinal (eg defaults, domain config and app config). In the
+     * where each part maps to a different target ordinal (eg defaults, domain config and app config). In the
      * ladder case multiple PropertySources can be returned, each one with its own ordinal and the corresponding
      * entries.
      *
