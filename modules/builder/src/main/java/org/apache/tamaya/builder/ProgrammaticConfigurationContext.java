@@ -19,14 +19,14 @@
 package org.apache.tamaya.builder;
 
 
-import org.apache.tamaya.core.internal.BaseConfigurationContext;
+import org.apache.tamaya.core.internal.DefaultConfigurationContext;
 
 /**
- * Implementation of the {@link org.apache.tamaya.ConfigurationContext}
+ * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
  * used by the {@link org.apache.tamaya.builder.ConfigurationBuilder}
  * internally.
  */
 public class ProgrammaticConfigurationContext
-    extends BaseConfigurationContext {
+    extends DefaultConfigurationContext {
 
 }
