@@ -20,6 +20,18 @@ under the License.
 <FindBugsFilter>
 
     <Match>
+        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$1"/>
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$2"/>
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$3"/>
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$4"/>
+    </Match>
+    <Match>
         <!-- Note:
           The current version of FindBugs (version 3.0.0) is not able to detect
           the usage of this method via a method reference.

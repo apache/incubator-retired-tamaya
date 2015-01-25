@@ -28,7 +28,6 @@ import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
-import javax.xml.ws.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
