@@ -32,6 +32,22 @@ public class ConfigurationBuilderTest {
 
         Configuration config = builder.build();
 
-        // @todo assertThat(config, notNullValue());
+        assertThat(config, notNullValue());
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void buildCanBeCalledOnlyOnce() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.build();
+        builder.build();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void addPropertySourcesDoesNotAcceptNullValue() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertySources(null);
+    }
+
 }

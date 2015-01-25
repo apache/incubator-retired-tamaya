@@ -16,32 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.builder;
 
-
+import org.apache.tamaya.core.internal.BaseConfiguration;
 import org.apache.tamaya.spi.ConfigurationContext;
 
-import java.util.Objects;
-
 /**
- * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
- * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
- * instance to evaluate the current Configuration.
+ * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
+ * used by the {@link org.apache.tamaya.builder.ConfigurationBuilder}
+ * internally.
  */
-public class DefaultConfiguration extends BaseConfiguration {
+public class ProgrammaticConfiguration extends BaseConfiguration {
+    private final ConfigurationContext context;
 
-    /**
-     * The current {@link org.apache.tamaya.spi.ConfigurationContext} of the current instance.
-     */
-    private final ConfigurationContext configurationContext;
-
-    public DefaultConfiguration(ConfigurationContext context){
-        this.configurationContext = Objects.requireNonNull(context);
+    public ProgrammaticConfiguration(ConfigurationContext configurationContext) {
+        context = configurationContext;
     }
-
 
     @Override
     protected ConfigurationContext getConfigurationContext() {
-        return configurationContext;
+        return context;
     }
 }
+
