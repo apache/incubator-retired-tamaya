@@ -22,11 +22,12 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,12 +81,10 @@ public class DefaultConfiguration implements Configuration {
     public String get(String key) {
         List<PropertySource> propertySources = configurationContext.getPropertySources();
         String unfilteredValue = null;
+        PropertyValueCombinationPolicy combinationPolicy = this.configurationContext
+                .getPropertyValueCombinationPolicy();
         for (PropertySource propertySource : propertySources) {
-            String value = propertySource.get(key);
-            if (value != null) {
-                unfilteredValue = value.length() > 0 ? value : null;
-                break;
-            }
+                unfilteredValue = combinationPolicy.collect(unfilteredValue, key, propertySource);
         }
         return applyFilter(key, unfilteredValue);
     }
@@ -166,13 +165,11 @@ public class DefaultConfiguration implements Configuration {
      * @return the filtered map.
      */
     private Map<String, String> applyFilters(Map<String, String> inputMap) {
-        final Map<String, String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>();
         // Apply filters to values, prevent values filtered to null!
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             AtomicInteger changes = new AtomicInteger();
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-
-
                 for (Map.Entry<String, String> entry : inputMap.entrySet()) {
                     final String k = entry.getKey();
                     final String v = entry.getValue();
@@ -188,6 +185,9 @@ public class DefaultConfiguration implements Configuration {
                     // Remove null values
                     if (null != newValue) {
                         resultMap.put(k, newValue);
+                    }
+                    else{
+                        resultMap.remove(k);
                     }
                 }
             }
@@ -205,13 +205,12 @@ public class DefaultConfiguration implements Configuration {
                 changes.set(0);
             }
         }
-
         return resultMap;
     }
 
     /**
      * Accesses the current String value for the given key and tries to convert it
-     * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
+     * using the {@link org.apache.tamaya.PropertyConverter} instances provided by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -222,6 +221,22 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public <T> T get(String key, Class<T> type) {
+        return get(key, TypeLiteral.of(type));
+    }
+
+    /**
+     * Accesses the current String value for the given key and tries to convert it
+     * using the {@link org.apache.tamaya.PropertyConverter} instances provided by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext}.
+     *
+     * @param key  the property's absolute, or relative path, e.g. @code
+     *             a/b/c/d.myProperty}.
+     * @param type The target type required, not null.
+     * @param <T>  the value type
+     * @return the converted value, never null.
+     */
+    @Override
+    public <T> T get(String key, TypeLiteral<T> type) {
         String value = get(key);
         if (value != null) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
@@ -235,9 +250,14 @@ public class DefaultConfiguration implements Configuration {
                     LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
                 }
             }
-            throw new ConfigException("Unparseable config value for type: " + type.getName() + ": " + key);
+            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key);
         }
 
+        return null;
+    }
+
+    @Override
+    public <T> T get(String key, PropertyConverter<T> converter) {
         return null;
     }
 

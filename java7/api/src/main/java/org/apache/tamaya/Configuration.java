@@ -19,6 +19,7 @@
 package org.apache.tamaya;
 
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -50,7 +51,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
+     * PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
@@ -60,6 +61,32 @@ public interface Configuration {
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T get(String key, Class<T> type);
+
+    /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * PropertyConverter} to be available that is capable current providing type T
+     * fromMap the given String keys.
+     *
+     * @param key          the property's absolute, or relative path, e.g. @code
+     *                     a/b/c/d.myProperty}.
+     * @param type         The target type required, not null.
+     * @return the property value, never null..
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    <T> T get(String key, TypeLiteral<T> type);
+
+    /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * PropertyConverter} to be available that is capable current providing type T
+     * fromMap the given String keys.
+     *
+     * @param key          the property's absolute, or relative path, e.g. @code
+     *                     a/b/c/d.myProperty}.
+     * @param converter         The target converter to be used, not null.
+     * @return the property value, never null..
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    <T> T get(String key, PropertyConverter<T> converter);
 
     /**
      * Access all current known Configuration properties as a full {@code Map<String,String>}.

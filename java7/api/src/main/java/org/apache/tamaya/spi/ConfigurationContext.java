@@ -19,13 +19,16 @@
 package org.apache.tamaya.spi;
 
 
+import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.TypeLiteral;
+
 import java.util.List;
 import java.util.Map;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
  * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
- * managing {@link PropertyConverter}s, ConfigFilters, etc.
+ * managing {@link org.apache.tamaya.PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
 
@@ -53,13 +56,13 @@ public interface ConfigurationContext {
 
 
     /**
-     * This method can be used for programmatically adding {@link PropertyConverter}s.
+     * This method can be used for programmatically adding {@link org.apache.tamaya.PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param typeToConvert the type which the converter is for
      * @param propertyConverter the PropertyConverters to add for this type
      */
-    <T> void addPropertyConverter(Class<T> typeToConvert, PropertyConverter<T> propertyConverter);
+    <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter);
 
     /**
      * <p>
@@ -81,7 +84,7 @@ public interface ConfigurationContext {
      *
      * @return map with sorted list of registered PropertySources per type.
      */
-    Map<Class<?>, List<PropertyConverter<?>>> getPropertyConverters();
+    Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters();
 
     /**
      * <p>
@@ -130,11 +133,18 @@ public interface ConfigurationContext {
      *
      * @return a sorted list of registered PropertySources per type.
      */
-    <T> List<PropertyConverter<T>> getPropertyConverters(Class<T> type);
+    <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type);
 
     /**
      * Access the current PropertyFilter instances.
      * @return the list of registered PropertyFilters, never null.
      */
     List<PropertyFilter> getPropertyFilters();
+
+    /**
+     * Access the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used to evaluate the final
+     * property values.
+     * @return the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used, never null.
+     */
+    PropertyValueCombinationPolicy getPropertyValueCombinationPolicy();
 }

@@ -46,7 +46,11 @@ public class TypeLiteral<T> implements Serializable {
 
     protected TypeLiteral() { }
 
-    public static <T> TypeLiteral<T> of(Type type){
+    public static <L> TypeLiteral<L> of(Type type){
+        return new TypeLiteral<>(type);
+    }
+
+    public static <L> TypeLiteral<L> of(Class<L> type){
         return new TypeLiteral<>(type);
     }
 

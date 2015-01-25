@@ -18,11 +18,14 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
@@ -36,13 +39,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Logger;
 
 /**
  * Default Implementation of a simple ConfigurationContext.
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
+    /** The logger used. */
+    private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
+     * Cubcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
@@ -55,6 +61,12 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
      */
     private List<PropertyFilter> immutablePropertyFilters;
+
+    /**
+     * The overriding policy used when combining PropertySources registered to evalute the final configuration
+     * values.
+     */
+    private PropertyValueCombinationPolicy propertyValueCombinationPolicy;
 
     /**
      * Lock for internal synchronization.
@@ -80,13 +92,41 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         Collections.sort(propertySources, new PropertySourceComparator());
 
         immutablePropertySources = Collections.unmodifiableList(propertySources);
+        LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
+                createStringList(immutablePropertySources, new Function<PropertySource, String>() {
+                    @Override
+                    public String apply(PropertySource ps) {
+                        return ps.getName() + '[' + ps.getClass().getName()+']';
+                    }
+                }));
 
         // as next step we pick up the PropertyFilters pretty much the same way
         List<PropertyFilter> propertyFilters = new ArrayList<>();
         propertyFilters.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
         Collections.sort(propertyFilters, new PropertyFilterComparator());
+        immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
+        LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
+                createStringList(immutablePropertyFilters, new Function<PropertyFilter, String>() {
+                    @Override
+                    public String apply(PropertyFilter propertyFilter) {
+                        return propertyFilter.getClass().getName();
+                    }
+                }));
 
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
+        LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
+                createStringList(immutablePropertyFilters,new Function<PropertyFilter, String>() {
+                    @Override
+                    public String apply(PropertyFilter propertyFilter) {
+                        return propertyFilter.getClass().getName();
+                    }
+                }));
+
+        propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
+        if(propertyValueCombinationPolicy==null) {
+            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        }
+        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
     /**
@@ -97,7 +137,16 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         List<PropertySource> propertySources = new ArrayList<>();
         List<PropertySourceProvider> propertySourceProviders = ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class);
         for (PropertySourceProvider propertySourceProvider : propertySourceProviders) {
-                propertySources.addAll(propertySourceProvider.getPropertySources());
+            Collection<PropertySource> sources = propertySourceProvider.getPropertySources();
+            LOG.finer("PropertySourceProvider " + propertySourceProvider.getClass().getName() +
+                    " provided the following property sources: " +
+                    createStringList(sources,new Function<PropertySource, String>() {
+                        @Override
+                        public String apply(PropertySource ps) {
+                            return ps.getName() + '[' + ps.getClass().getName()+']';
+                        }
+                    }));
+                propertySources.addAll(sources);
         }
 
         return propertySources;
@@ -131,11 +180,11 @@ public class DefaultConfigurationContext implements ConfigurationContext {
          */
         private int comparePropertySources(PropertySource source1, PropertySource source2) {
             if (source1.getOrdinal() < source2.getOrdinal()) {
-                return 1;
-            } else if (source1.getOrdinal() > source2.getOrdinal()) {
                 return -1;
+            } else if (source1.getOrdinal() > source2.getOrdinal()) {
+                return 1;
             } else {
-                return source2.getClass().getName().compareTo(source1.getClass().getName());
+                return source1.getClass().getName().compareTo(source2.getClass().getName());
             }
         }
 
@@ -183,23 +232,41 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     }
 
     @Override
-    public <T> void addPropertyConverter(Class<T> typeToConvert, PropertyConverter<T> propertyConverter) {
+    public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
         propertyConverterManager.register(typeToConvert, propertyConverter);
+        LOG.info("Added PropertyConverter: " + propertyConverter.getClass().getName());
     }
 
     @Override
-    public Map<Class<?>, List<PropertyConverter<?>>> getPropertyConverters() {
+    public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
         return propertyConverterManager.getPropertyConverters();
     }
 
     @Override
-    public <T> List<PropertyConverter<T>> getPropertyConverters(Class<T> targetType) {
+    public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
         return propertyConverterManager.getPropertyConverters(targetType);
     }
 
     @Override
     public List<PropertyFilter> getPropertyFilters() {
         return immutablePropertyFilters;
+    }
+
+    @Override
+    public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy(){
+        return propertyValueCombinationPolicy;
+    }
+
+    private <T> String createStringList(Collection<T> items, Function<T,String> mapper){
+        StringBuilder builder = new StringBuilder();
+        for(T t: items){
+            builder.append(mapper.apply(t));
+        }
+        return builder.toString();
+    }
+
+    private static interface Function<T,R>{
+        R apply(T t);
     }
 
 }
