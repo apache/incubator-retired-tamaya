@@ -127,6 +127,10 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      * @return the comparison result.
      */
     private int comparePropertySources(PropertySource source1, PropertySource source2) {
+
+        //X TODO this method duplicates org.apache.tamaya.core.internal.DefaultConfigurationContext.PropertySourceComparator.comparePropertySources()
+        //X maybe we should extract the Comperator in an own class for real code-reuse (copy paste == bad code reuse)
+
         if (source1.getOrdinal() < source2.getOrdinal()) {
             return -1;
         } else if (source1.getOrdinal() > source2.getOrdinal()) {
@@ -144,6 +148,10 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      * @return the comparison result
      */
     private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
+
+        //X TODO this method duplicates org.apache.tamaya.core.internal.DefaultConfigurationContext.PropertySourceComparator.comparePropertyFilters()
+        //X maybe we should extract the Comperator in an own class for real code-reuse (copy paste == bad code reuse)
+
         Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
         Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
         int ord1 = prio1 != null ? prio1.value() : 0;
@@ -195,6 +203,9 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         return joiner.toString();
     }
 
+    /**
+     * The Builder for {@link ProgrammaticConfigurationContext}
+     */
     public final static class Builder {
         /**
          * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.

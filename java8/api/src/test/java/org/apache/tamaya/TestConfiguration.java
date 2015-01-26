@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationContext;
-
 import java.util.HashMap;
 import java.util.Map;
 

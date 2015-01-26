@@ -38,6 +38,13 @@ public class ConfigurationBuilder {
     private ProgrammaticConfigurationContext.Builder contextBuilder = new ProgrammaticConfigurationContext.Builder();
 
     /**
+     * Flag if the config has already been built.
+     * Configuration can be built only once
+     */
+    private boolean built;
+
+
+    /**
      * Allows to set configuration context during unit tests.
      */
     ConfigurationBuilder setConfigurationContext(ConfigurationContext configurationContext) {
@@ -79,6 +86,12 @@ public class ConfigurationBuilder {
      * @return a new Configuration instance.
      */
     public Configuration build() {
+        if (built) {
+            throw new IllegalStateException("building a Configuration can only be done once");
+        }
+
+        built = true;
+
         return new DefaultConfiguration(contextBuilder.build());
     }
 

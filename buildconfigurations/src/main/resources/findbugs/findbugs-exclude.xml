@@ -120,6 +120,25 @@ under the License.
         <Class name="org.apache.tamaya.core.internal.converters.BooleanConverter"/>
     </Match>
 
+    <!--
+     * findBugs does not detect usage via method references
+     * should be removed after see TODO ProgrammaticConfigurationContext:131
+    -->
+    <Match>
+        <Class name="org.apache.tamaya.builder.ProgrammaticConfigurationContext" />
+        <Method name="comparePropertySources"
+                params="org.apache.tamaya.spi.PropertySource,org.apache.tamaya.spi.PropertySource"
+                returns="int" />
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.builder.ProgrammaticConfigurationContext" />
+        <Method name="comparePropertyFilters"
+                params="org.apache.tamaya.spi.PropertyFilter,org.apache.tamaya.spi.PropertyFilter"
+                returns="int" />
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+    </Match>
+
     <!-- Issues to review -->
 
     <Match>
