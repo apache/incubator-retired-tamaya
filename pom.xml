@@ -46,7 +46,7 @@ under the License.
     </prerequisites>
 
     <properties>
-        <findbugs.skip>false</findbugs.skip>
+        <findbugs.skip>true</findbugs.skip>
         <jdkVersion>1.8</jdkVersion>
         <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
         <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
