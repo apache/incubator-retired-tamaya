@@ -29,18 +29,17 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Currency.
  */
-public class CurrencyConverter implements PropertyConverter<Currency>{
+public class CurrencyConverter implements PropertyConverter<Currency> {
 
     private static final Logger LOG = Logger.getLogger(CurrencyConverter.class.getName());
 
     @Override
     public Currency convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        try{
+        try {
             return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));
-        }
-        catch(Exception e){
-            LOG.log(Level.INFO, e, () -> "Not a valid textual currency code: " + trimmed +", checking for numeric...");
+        } catch (Exception e) {
+            LOG.log(Level.INFO, e, () -> "Not a valid textual currency code: " + trimmed + ", checking for numeric...");
         }
         try {
             // Check for numeric code
@@ -50,15 +49,14 @@ public class CurrencyConverter implements PropertyConverter<Currency>{
                     return currency;
                 }
             }
-        }
-        catch(Exception e){
-            LOG.log(Level.INFO, e, () -> "Not a valid numeric currency code: " + trimmed +", checking for locale...");
+        } catch (Exception e) {
+            LOG.log(Level.INFO, e, () -> "Not a valid numeric currency code: " + trimmed + ", checking for locale...");
         }
         try {
             // Check for numeric code
             String[] parts = trimmed.split("\\_");
             Locale locale;
-            switch(parts.length){
+            switch (parts.length) {
                 case 1:
                     locale = new Locale("", parts[0]);
                     break;
@@ -71,13 +69,12 @@ public class CurrencyConverter implements PropertyConverter<Currency>{
                 default:
                     locale = null;
             }
-            if(locale!=null){
+            if (locale != null) {
                 return Currency.getInstance(locale);
             }
-            LOG.info(() -> "Not a valid currency: " + trimmed +", giving up...");
-        }
-        catch(Exception e){
-            LOG.log(Level.INFO, e, () -> "Not a valid country locale for currency: " + trimmed +", giving up...");
+            LOG.info(() -> "Not a valid currency: " + trimmed + ", giving up...");
+        } catch (Exception e) {
+            LOG.log(Level.INFO, e, () -> "Not a valid country locale for currency: " + trimmed + ", giving up...");
         }
         return null;
     }
