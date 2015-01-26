@@ -43,6 +43,30 @@ under the License.
                 returns="int"/>
         <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
     </Match>
+    <Match>
+        <!-- Note:
+          The current version of FindBugs (version 3.0.0) is not able to detect
+          the usage of this method via a method reference.
+          Oliver B. Fischer, 17.01.2015
+        -->
+        <Class name=" org.apache.tamaya.builder.ProgrammaticConfigurationContext"/>
+        <Method name="comparePropertyFilters"
+                params="org.apache.tamaya.spi.PropertyFilter,org.apache.tamaya.spi.PropertyFilter"
+                returns="int"/>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
+    <Match>
+        <!-- Note:
+          The current version of FindBugs (version 3.0.0) is not able to detect
+          the usage of this method via a method reference.
+          Oliver B. Fischer, 17.01.2015
+        -->
+        <Class name=" org.apache.tamaya.builder.ProgrammaticConfigurationContext"/>
+        <Method name="comparePropertySources"
+                params="org.apache.tamaya.spi.PropertySource,org.apache.tamaya.spi.PropertySource"
+                returns="int"/>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
 
     <Match>
         <!-- Note:

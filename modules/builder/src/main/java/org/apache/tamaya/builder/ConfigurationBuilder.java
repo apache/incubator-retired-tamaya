@@ -21,6 +21,7 @@ package org.apache.tamaya.builder;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.core.internal.DefaultConfiguration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
@@ -33,63 +34,52 @@ import java.util.Objects;
  * Builder that allows to build a Configuration completely manually.
  */
 public class ConfigurationBuilder {
-    /**
-     * Flag to indicate if this builder instance has already been used
-     * to build a configuration.
-     */
-    private boolean burned = false;
-
-    private ConfigurationContext context = new ProgrammaticConfigurationContext();
+    /** Builder used to create new ConfigurationContext instances. */
+    private ProgrammaticConfigurationContext.Builder contextBuilder = new ProgrammaticConfigurationContext.Builder();
 
     /**
      * Allows to set configuration context during unit tests.
      */
     ConfigurationBuilder setConfigurationContext(ConfigurationContext configurationContext) {
-        context = configurationContext;
-
+        contextBuilder.setConfigurationContext(configurationContext);
         return this;
     }
 
     public ConfigurationBuilder addPropertySources(PropertySource... sources){
-        Objects.requireNonNull(sources);
-
-        context.addPropertySources(sources);
-
+        contextBuilder.addPropertySources(Objects.requireNonNull(sources));
         return this;
     }
 
     public ConfigurationBuilder addPropertySourceProviders(PropertySourceProvider... propertySourceProviders){
-
+        contextBuilder.addPropertySourceProviders(propertySourceProviders);
         return this;
     }
 
     public ConfigurationBuilder addPropertyFilters(PropertyFilter... propertyFilters){
+        contextBuilder.addPropertyFilters(propertyFilters);
         return this;
     }
 
     public ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy propertyValueCombinationPolicy){
-        return this;
-    }
-
-    public ConfigurationBuilder addPropertyConverter(PropertyConverter<?> propertyConverter){
-
+        contextBuilder.setPropertyValueCombinationPolicy(propertyValueCombinationPolicy);
         return this;
     }
 
     public <T> ConfigurationBuilder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter){
+        contextBuilder.addPropertyConverter(type, propertyConverter);
         return this;
     }
 
+    //X TODO think on a functonality/API for using the default PropertyConverters and use the configured ones here
+    //X TODO as overrides used first.
+
+
+    /**
+     * Creates a new Configuration instance based on the configured data.
+     * @return a new Configuration instance.
+     */
     public Configuration build() {
-        checkStateOfBuilder();
-        burned = true;
-
-        return new ProgrammaticConfiguration(context);
+        return new DefaultConfiguration(contextBuilder.build());
     }
 
-    private void checkStateOfBuilder() {
-        if (burned) {
-            throw new IllegalStateException("Configuration has been already build.");
-        }
-    }
 }
