@@ -21,18 +21,39 @@ package org.apache.tamaya.core.internal.converters;
 import org.apache.tamaya.PropertyConverter;
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Character.
  */
 public class CharConverter implements PropertyConverter<Character>{
 
+    private static final Logger LOG = Logger.getLogger(CharConverter.class.getName());
+
     @Override
     public Character convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        if(trimmed.length()!=1){
+        if(trimmed.isEmpty()){
             return null;
         }
-        return Character.valueOf(value.charAt(0));
+        if(trimmed.startsWith("'")) {
+            try {
+                trimmed = trimmed.substring(1, trimmed.length() - 1);
+                if (trimmed.isEmpty()) {
+                    return null;
+                }
+                return trimmed.charAt(0);
+            } catch (Exception e) {
+                LOG.warning("Invalid character format encountered: '" + value + "', valid formats are 'a', 101 and a.");
+                return null;
+            }
+        }
+        try {
+            Integer val = Integer.parseInt(trimmed);
+            return (char) val.shortValue();
+        } catch (Exception e) {
+            LOG.finest("Character format is not numeric: '" + value + "', using first character.");
+            return trimmed.charAt(0);
+        }
     }
 }

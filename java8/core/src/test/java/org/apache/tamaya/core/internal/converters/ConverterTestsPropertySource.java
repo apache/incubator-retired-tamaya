@@ -85,6 +85,44 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return "f";
             case "tests.converter.boolean.f2":
                 return "F";
+            case "tests.converter.char.f":
+                return "f";
+            case "tests.converter.char.d":
+                return "'d'";
+            case "tests.converter.char.f-before":
+                return "  f";
+            case "tests.converter.char.f-after":
+                return "f   ";
+            case "tests.converter.char.f-around":
+                return "   f      ";
+            case "tests.converter.char.f-numeric":
+                return "101";
+            case "tests.converter.currency.code1":
+                return "CHF";
+            case "tests.converter.currency.code2":
+                return "cHf";
+            case "tests.converter.currency.code3":
+                return "  CHF";
+            case "tests.converter.currency.code4":
+                return "CHF   ";
+            case "tests.converter.currency.code5":
+                return "  CHF   ";
+            case "tests.converter.currency.code-numeric1":
+                return "100";
+            case "tests.converter.currency.code-numeric2":
+                return "  100";
+            case "tests.converter.currency.code-numeric3":
+                return "100  ";
+            case "tests.converter.currency.code-numeric4":
+                return "  100  ";
+            case "tests.converter.currency.code-locale1":
+                return "DE";
+            case "tests.converter.currency.code-locale2":
+                return "  DE";
+            case "tests.converter.currency.code-locale3":
+                return "DE  ";
+            case "tests.converter.currency.code-locale4":
+                return "  DE  ";
         }
         return null;
     }

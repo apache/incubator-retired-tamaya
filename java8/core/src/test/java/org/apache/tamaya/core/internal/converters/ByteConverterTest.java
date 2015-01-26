@@ -37,21 +37,51 @@ public class ByteConverterTest {
      * @throws Exception
      */
     @Test
-    public void testConvert_Byte() throws Exception {
+    public void testConvert_Byte_Decimal() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Optional<Byte> valueRead = config.getOptional("tests.converter.byte.decimal", Byte.class);
         assertTrue(valueRead.isPresent());
         assertEquals(valueRead.get().byteValue(), 101);
-        valueRead = config.getOptional("tests.converter.byte.octal", Byte.class);
+    }
+
+    /**
+     * Test conversion. The value are provided by
+     * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_Byte_Octal() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.octal", Byte.class);
         assertTrue(valueRead.isPresent());
         assertEquals(valueRead.get().byteValue(), Byte.decode("02").byteValue());
-        valueRead = config.getOptional("tests.converter.byte.hex.lowerX", Byte.class);
+    }
+
+    /**
+     * Test conversion. The value are provided by
+     * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_Byte_Hex() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.hex.lowerX", Byte.class);
         assertTrue(valueRead.isPresent());
         assertEquals(valueRead.get().byteValue(), Byte.decode("0x2F").byteValue());
         valueRead = config.getOptional("tests.converter.byte.hex.upperX", Byte.class);
         assertTrue(valueRead.isPresent());
         assertEquals(valueRead.get().byteValue(), Byte.decode("0X3F").byteValue());
-        valueRead = config.getOptional("tests.converter.byte.foo", Byte.class);
+    }
+
+    /**
+     * Test conversion. The value are provided by
+     * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_NotPresent() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.foo", Byte.class);
         assertFalse(valueRead.isPresent());
     }
 }
