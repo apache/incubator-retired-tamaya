@@ -153,6 +153,7 @@ public class PropertyConverterManager {
         if (defaultConverter != null) {
             register(targetType, defaultConverter);
             try {
+                readLock.lock();
                 converters = List.class.cast(this.converters.get(targetType));
             } finally {
                 readLock.unlock();
