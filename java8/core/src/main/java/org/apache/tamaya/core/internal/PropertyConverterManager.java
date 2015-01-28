@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -181,8 +182,16 @@ public class PropertyConverterManager {
         if (factoryMethod != null) {
             converter = (value) -> {
                     try {
+                        if (!Modifier.isStatic(factoryMethod.getModifiers())) {
+                            throw new RuntimeException(factoryMethod.toGenericString() +
+                                                       " is not a static method. Only static " +
+                                                       "methods can be used as factory methods.");
+                        }
+
                         factoryMethod.setAccessible(true);
-                        return targetType.getRawType().cast(factoryMethod.invoke(value));
+
+                        Object invoke = factoryMethod.invoke(null, value);
+                        return targetType.getRawType().cast(invoke);
                     } catch (Exception e) {
                         throw new ConfigException("Failed to decode '" + value + "'", e);
                     }
