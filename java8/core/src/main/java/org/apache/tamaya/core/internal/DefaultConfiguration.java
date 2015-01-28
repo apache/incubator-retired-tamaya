@@ -227,7 +227,9 @@ public class DefaultConfiguration implements Configuration {
                             " failed to convert value: " + value.get());
                 }
             }
-            throw new ConfigException("Unparseable config value for type: " + type.getType() + ": " + key);
+
+            throw new ConfigException("Unable to convert config for key " +
+                                      key + " value in type " + type.getType());
         }
 
         return null;
