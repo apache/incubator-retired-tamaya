@@ -80,7 +80,17 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    public <T> ConfigurationBuilder addPropertyConverter(Class<T> type, PropertyConverter<T> propertyConverter) {
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(propertyConverter);
+
+        return addPropertyConverter(TypeLiteral.of(type), propertyConverter);
+    }
+
     public <T> ConfigurationBuilder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter){
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(propertyConverter);
+
         contextBuilder.addPropertyConverter(type, propertyConverter);
         return this;
     }

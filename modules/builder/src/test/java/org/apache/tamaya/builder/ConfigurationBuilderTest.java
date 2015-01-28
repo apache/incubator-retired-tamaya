@@ -20,7 +20,13 @@ package org.apache.tamaya.builder;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.builder.util.mockito.NotMockedAnswer;
+import org.apache.tamaya.builder.util.types.CustomTypeA;
+import org.apache.tamaya.builder.util.types.CustomTypeB;
 import org.apache.tamaya.spi.PropertySource;
+import org.hamcrest.CoreMatchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -183,5 +189,90 @@ public class ConfigurationBuilderTest {
 
         assertThat(valueOfA, notNullValue());
         assertThat(valueOfA, equalTo("b"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void canNotAddNullPropertyConverter() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertyConverter(TypeLiteral.of(CustomTypeA.class), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void canNotAddNullTypeLiteralButPropertyConverter() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertyConverter((TypeLiteral<CustomTypeA>)null,
+                                     prop -> new CustomTypeA(prop, prop));
+    }
+
+    @Test
+    public void addedPropertyConverterWithTypeLiteralIsUsedByConfiguration() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("source").when(source).getName();
+        doReturn("A").when(source).get("key");
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertyConverter(TypeLiteral.of(CustomTypeA.class),
+                                     prop -> new CustomTypeA(prop, prop))
+               .addPropertySources(source);
+
+        Configuration config = builder.build();
+
+        Object resultRaw = config.get("key", CustomTypeA.class);
+
+        assertThat(resultRaw, CoreMatchers.notNullValue());
+
+        CustomTypeA result = (CustomTypeA)resultRaw;
+
+        assertThat(result.getName(), equalTo("AA"));
+    }
+
+    @Test
+    public void addedPropertyConverterWithClassIsUsedByConfiguration() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("source").when(source).getName();
+        doReturn("A").when(source).get("key");
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertyConverter(CustomTypeA.class,
+                                     prop -> new CustomTypeA(prop, prop))
+               .addPropertySources(source);
+
+        Configuration config = builder.build();
+
+        Object resultRaw = config.get("key", CustomTypeA.class);
+
+        assertThat(resultRaw, CoreMatchers.notNullValue());
+
+        CustomTypeA result = (CustomTypeA)resultRaw;
+
+        assertThat(result.getName(), equalTo("AA"));
+    }
+
+    @Test
+    public void canGetAndConvertPropertyViaOfMethod() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("source").when(source).getName();
+        doReturn("A").when(source).get("key");
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertySources(source);
+
+        Configuration config = builder.build();
+
+        Object resultRaw = config.get("key", CustomTypeB.class);
+
+        assertThat(resultRaw, CoreMatchers.notNullValue());
+
+        CustomTypeB result = (CustomTypeB)resultRaw;
+
+        assertThat(result.getName(), equalTo("A"));
     }
 }

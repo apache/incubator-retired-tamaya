@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
@@ -100,6 +101,17 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
                 createStringList(immutablePropertyFilters, f -> f.getClass().getName()));
 
         propertyValueCombinationPolicy = builder.propertyValueCombinationPolicy;
+
+        Set<Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>>> converters = builder.propertyConverters.entrySet();
+
+        for (Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> entry : converters) {
+            TypeLiteral<?> literal = entry.getKey();
+
+            for (PropertyConverter<?> converter : entry.getValue()) {
+                propertyConverterManager.register((TypeLiteral<Object>)literal, (PropertyConverter<Object>)converter);
+            }
+        }
+
         LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
