@@ -228,8 +228,8 @@ public class DefaultConfiguration implements Configuration {
                 }
             }
 
-            throw new ConfigException("Unable to convert config for key " +
-                                      key + " value in type " + type.getType());
+            throw new ConfigException("Unable to convert config value for key " +
+                                      key + " in type " + type.getType());
         }
 
         return null;
