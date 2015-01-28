@@ -53,8 +53,16 @@ public class ConfigurationBuilder {
     }
 
     public ConfigurationBuilder addPropertySources(PropertySource... sources){
+        checkBuilderState();
+
         contextBuilder.addPropertySources(Objects.requireNonNull(sources));
         return this;
+    }
+
+    private void checkBuilderState() {
+        if (built) {
+            throw new IllegalStateException("Configuration has already been build.");
+        }
     }
 
     public ConfigurationBuilder addPropertySourceProviders(PropertySourceProvider... propertySourceProviders){
@@ -86,9 +94,7 @@ public class ConfigurationBuilder {
      * @return a new Configuration instance.
      */
     public Configuration build() {
-        if (built) {
-            throw new IllegalStateException("building a Configuration can only be done once");
-        }
+        checkBuilderState();
 
         built = true;
 

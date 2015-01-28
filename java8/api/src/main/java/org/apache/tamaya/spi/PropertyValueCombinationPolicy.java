@@ -34,8 +34,10 @@ public interface PropertyValueCombinationPolicy {
      * Default overriding collector, where each existing entry ({@code current} is overridden by a subsequent non-null
      * entry evaluated by {@code propertySource.get(key)}.
      */
-    public final PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = (current, key, propertySource) ->
-            Optional.ofNullable(propertySource.get(key)).filter(s -> !s.isEmpty()).orElse(current);
+    public final PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR =
+        (current, key, propertySource) -> Optional.ofNullable(propertySource.get(key))
+                                                  .filter(s -> !s.isEmpty())
+                                                  .orElse(current);
 
     /**
      * Method that is called for each value evaluated by a PropertySource for the given key. This method is called
