@@ -58,12 +58,16 @@ that build the base of all the other mechanisms:
 The API provides these artifacts, which are:
 
 * A simple but complete SE *API* for accessing key/value based _Configuration_:
-  ** _Configuration_ hereby models configuration and as well provides the static entry point to access configuration.
-     _Configuration_ provides
+  ** +Configuration+ hereby models configuration, the main interface of Tamaya. +Configuration+ provides
      *** access to literal key/value pairs.
-     *** functional extension points (+with,query+) based un +UnaryOperator<Configuration>+ (operator) and +Function<Configuration,T>+ (query).
+     *** functional extension points (+with,query+) based un +UnaryOperator<Configuration>+ (operator) and
+         +Function<Configuration,T>+ (query).
+  ** +ConfigurationProvider+ provides the static entry point for accessing configuration.
   ** +ConfigProvider+ provides static access to the current +Configuration+ (default configuration)
   ** +ConfigException+ defines a runtime exception for usage by the configuration system.
+   ** +PropertyConverter+, which defines conversion of String values into any required target types.
+  ** +TypeLiteral+ provides a possibility to type safe define the target type to be returned by a registered
+     +PropertyProvider+.
 
 * Additionally the *SPI* provides:
   ** _PropertySource:_ is the the SPI for adding configuration data. A +PropertySource+
@@ -72,12 +76,15 @@ The API provides these artifacts, which are:
      *** provides data key/value pairs in raw format as String key/values only
      *** can optionally support scanning of its provided values
   ** _PropertySourceProvider:_ allows to add property sources dynamically.
-  ** +PropertyConverter+, which defines conversion of String values into any required target types.
+  ** +ConfigurationProviderSpi+ defines the SPI that is used as a backing bean for the +ConfigurationProvider+
+     singleton.
   ** +PropertyFilter+, which allows filtering of property values prior getting returned to the caller.
   ** +ConfigurationContext+, which provides the container that contains the property sources and filters that form a
      configuration.
+  ** +PropertyValueCombinationPolicy+ optionally can be registered to change the way how different key/value
+     pairs are combined to build up the final +Configuration+ passed over to the filters registered.
   ** +ServiceContext+, which provides access to the components loaded, depending on the current runtime stack.
-  ** +ServiceContextManager+ provides static access to the +ServiceContext+ loaded..
+  ** +ServiceContextManager+ provides static access to the +ServiceContext+ loaded.
 
 This is also reflected in the main parts of the API, which is quite small:
 
@@ -167,11 +174,13 @@ The minimal API defined for Java version earlier than Java 8 looks as follows:
 public interface Configuration{
     String get(String key);
     <T> T get(String key, Class<T> type);
+    <T> T get(String key, TypeLiteral<T> type);
+    <T> T get(String key, PropertyConverter<T> type);
     Map<String,String> getProperties();
 
     // extension points
-    default Configuration with(ConfigOperator operator);
-    default <T> T query(ConfigQuery<T> query);
+    Configuration with(ConfigOperator operator);
+    <T> T query(ConfigQuery<T> query);
 }
 --------------------------------------------
 
@@ -185,23 +194,52 @@ Hereby
 * +getProperties()+ provides access to all key/values, whereas entries from non scannable property sources may not
   be included.
 
+The class +TypeLiteral+ is basically similar to the same class provided with CDI:
+
+[source,java]
+--------------------------------------------
+public class TypeLiteral<T> implements Serializable {
+    [...]
+    protected TypeLiteral(Type type) {
+        this.type = type;
+    }
+
+    protected TypeLiteral() { }
+
+    public static <T> TypeLiteral<T> of(Type type){...}
+
+    public final Type getType() {...}
+    public final Class<T> getRawType() {...}
+    [...]
+}
+--------------------------------------------
+
+Instances of +Configuration+ can be accessed from the +ConfigurationProvider+ singleton:
+
+[source,java]
+.Accessing Configuration
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+--------------------------------------------
+
+Hereby the singleton is backed up by an instance of +ConfigurationProviderSpi+.
+
 ==== Configuration (Java 8)
 
-The API for Java 8 adds additional support for optionals and a static accessor +current()+, which replaces the
-+ConfigurationProvider+ accessor singleton from Java 7.
+The API for Java 8 adds additional support for +Optional+:
 
 [source,java]
 .Interface Configuration in Java 8
 --------------------------------------------
 public interface Configuration extends PropertySource{
-    // java 7 inherited methods
+    // methods also defined in Java 7
     String get(String key);
     <T> T get(String key, Class<T> type);
+    <T> T get(String key, TypeLiteral<T> type);
+    <T> T get(String key, PropertyConverter<T> type);
     Map<String,String> getProperties();
-
-    // extension points
-    default Configuration with(ConfigOperator operator);
-    default <T> T query(ConfigQuery<T> query);
+    Configuration with(ConfigOperator operator);
+    <T> T query(ConfigQuery<T> query);
 
     // new java 8 optional support
     default Optional<Boolean> getBoolean(String key);
@@ -209,9 +247,9 @@ public interface Configuration extends PropertySource{
     default OptionalLong getLong(String key);
     default OptionalDouble getDouble(String key);
     default <T> Optional<T> getOptional(String key, PropertyConverter<T> adapter);
-    <T> Optional<T> getOptional(String key, Class<T> type);
+    default <T> Optional<T> getOptional(String key, Class<T> type);
+    default <T> Optional<T> getOptional(String key, TypeLiteral<T> type);
 
-    static Configuration current();
 }
 --------------------------------------------
 
@@ -219,15 +257,25 @@ Hereby
 
 * +get(String)+ and +getOptional(String)+ provide easy access to any kind of configuration properties in their
   String format.
-* +get(String, Class), getOptional(String, Class)+ and +getOptional(String, PropertyConverter)+ provide type safe
-  access to configuration properties. If a +PropertyConverter+ is passed, it will replace any predefined standard
+* +get(String, TypeLiteral)+, +getOptional(String, TypeLiteral)+, +get(String, Class), getOptional(String, Class)+ and
+  +getOptional(String, PropertyConverter)+ provide type safe access to configuration properties. If a
+  +PropertyConverter+ is passed, it will replace any predefined standard
   converters defined for the type. By default several +PropertyConverter+ instances can be registered for a given
   target type. The are managed in an ordered list, whereas the ordering is defined by +@Priority+ annotations
   on the converters.
 * +getProperties()+ gives access to all known (=scannable) properties.
 * +with, query+ provide the extension points for adding additional functionality modelled by +ConfigOperator,
   ConfigQuery+.
-* +current()+ returns the _current_ +Configuration+
+
+Instances of +Configuration+ can be accessed, exactly like in Java 7, from the +ConfigurationProvider+ singleton:
+
+[source,java]
+.Accessing Configuration
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+--------------------------------------------
+
+Hereby the singleton is backed up by an instance of +ConfigurationProviderSpi+.
 
 
 [[PropertyConverter]]
@@ -240,7 +288,6 @@ configured String values into the required target type. This is achieved with th
 [source,java]
 --------------------------------------------
 public interface PropertyConverter<T>{
-    Class<T> getTargetType();
     T convert(String value);
     //X TODO Collection<String> getSupportedFormats();
 }
@@ -254,7 +301,9 @@ Also worth mentioning is the fact, that the +PropertyConverter+ to be used can a
 a configuration value is accessed, by using the method
 +<T> T Configuration#getOptional(String, PropertyConverter<T> converter)+.
 
-Access to converters is given by the +ConfigurationContext+ (see <<SPI>>).
+Access to converters is provided by the current +ConfigurationContext+, which is accessible from
+the +ConfigurationProvider+ singleton.
+
 
 [[ExtensionPoints]]
 === Extension Points
@@ -271,7 +320,7 @@ as well:
   instance, e.g. accessing a +Set<String>+ of root keys present.
 
 Both interfaces hereby are functional interfaces. Because of backward compatibility with Java 7 we did not use
-+UnaryOperator, Function+ from the +java.util.function+ package. Nevertheless usage is similar, so you can
++UnaryOperator+ and +Function+ from the +java.util.function+ package. Nevertheless usage is similar, so you can
 use Lambdas and method references in Java 8:
 
 [source,java]
@@ -287,7 +336,7 @@ Or an operator calls basically looks quite similar:
 [source,java]
 .Applying a +ConfigurationOperator+ using a lambda expression:
 --------------------------------------------
-Configuration secured = Configuration.current()
+Configuration secured = ConfigurationProvider.getConfiguration()
                            .with((config) ->
                                  config.getOptional("foo").isPresent()?;
                                  FooFilter.apply(config):
@@ -376,8 +425,9 @@ This allows to evaluate the property sources to be read/that are available dynam
 are read out and added to the current chain of +PropertySource+ instances within the current +ConfigurationContext+,
 refer also to [[ConfigurationContext]].
 
-+PropertySourceProviders+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the current
- active +ServiceContext+.
++PropertySourceProviders+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the
+current active +ServiceContext+.
+
 
 [[PropertyFilter]]
 ==== Interface PropertyFilter
@@ -412,3 +462,28 @@ Hereby:
   To prevent possible endless loops after a defined number of loops evaluation is stopped.
 
 This method is called each time a single entry is accessed, and for each property in a full properties result.
+
+
+[[PropertyValueCombinationPolicy]]
+==== Interface PropertyValueCombinationPolicy
+
+This interface can be implemented optional. It can be used to adapt the way how property key/value pairs are combined to
+build up the final Configuration to be passed over to the +PropertyFilters+. The default implementation is just
+overriding all values read before with the new value read. Nevertheless for collections and other use cases it is
+often useful to have alternate combination policies in place, e.g. for combining values from previous sources with the
+new value.
+
+[source,java]
+--------------------------------------------
+@FunctionalInterface
+public interface PropertyValueCombinationPolicy{
+
+   public final PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR =
+           (current, key, propertySource) -> Optional.ofNullable(propertySource.get(key))
+                                                     .filter(s -> !s.isEmpty())
+                                                     .orElse(current);
+
+   String collect(String currentValue, String key, PropertySource propertySource);
+}
+--------------------------------------------
+
