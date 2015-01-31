@@ -22,17 +22,71 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.math.BigInteger;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to BigInteger.
- * //X TODO not good enough as this is Locale dependent!
+ * Converter, converting from String to BigInteger, the supported format is one of the following:
+ * <ul>
+ *     <li>0xFFFFFF</li>
+ *     <li>0XFFFFAC</li>
+ *     <li>23257352735276352753</li>
+ *     <li>-0xFFFFFF</li>
+ *     <li>-0XFFFFAC</li>
+ *     <li>-23257352735276352753</li>
+ * </ul>
  */
 public class BigIntegerConverter implements PropertyConverter<BigInteger>{
+
+    /** The logger. */
+    private static final Logger LOG = Logger.getLogger(BigIntegerConverter.class.getName());
+    /** Converter used to decode hex, octal values. */
+    private ByteConverter byteConverter = new ByteConverter();
 
     @Override
     public BigInteger convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return new BigInteger(trimmed);
+        if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
+            LOG.finer(() -> "Parsing Hex value to BigInteger: " + value);
+            trimmed = trimmed.substring(2);
+            StringBuilder decimal = new StringBuilder();
+            for(int offset = 0;offset < trimmed.length();offset+=2){
+                if(offset==trimmed.length()-1){
+                    LOG.info(() -> "Invalid Hex-Byte-String: " + value);
+                    return null;
+                }
+                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2));
+                if(val<10){
+                    decimal.append('0').append(val);
+                } else{
+                    decimal.append(val);
+                }
+            }
+            return new BigInteger(decimal.toString());
+        } else if(trimmed.startsWith("-0x") || trimmed.startsWith("-0X")){
+            LOG.finer(() -> "Parsing Hex value to BigInteger: " + value);
+            trimmed = trimmed.substring(3);
+            StringBuilder decimal = new StringBuilder();
+            for(int offset = 0;offset < trimmed.length();offset+=2){
+                if(offset==trimmed.length()-1){
+                    LOG.info("Invalid Hex-Byte-String: " + trimmed);
+                    return null;
+                }
+                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2));
+                if(val<10){
+                    decimal.append('0').append(val);
+                } else{
+                    decimal.append(val);
+                }
+            }
+            return new BigInteger('-' + decimal.toString());
+        }
+        try{
+            return new BigInteger(trimmed);
+        } catch(Exception e){
+            LOG.log(Level.FINEST, e, () -> "Failed to parse BigInteger from: " + value);
+            return null;
+        }
     }
 
 }

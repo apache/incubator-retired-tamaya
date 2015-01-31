@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.PropertyConverter;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -30,6 +31,15 @@ public class ByteConverter implements PropertyConverter<Byte>{
     @Override
     public Byte convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return Byte.decode(trimmed);
+        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+            case "MIN_VALUE":
+            case "MIN":
+                return Byte.MIN_VALUE;
+            case "MAX_VALUE":
+            case "MAX":
+                return Byte.MAX_VALUE;
+            default:
+                return Byte.decode(trimmed);
+        }
     }
 }

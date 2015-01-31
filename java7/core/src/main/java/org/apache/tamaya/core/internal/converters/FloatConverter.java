@@ -20,17 +20,56 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.PropertyConverter;
 
+import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Float.
+ * Converter, converting from String to Float, using the Java number syntax:
+ * (-)?[0-9]*\.[0-9]*. In case of error the value given also is tried being parsed as integral number using
+ * {@link LongConverter}.
  */
-public class FloatConverter implements PropertyConverter<Float>{
+public class FloatConverter implements PropertyConverter<Float> {
+    /**
+     * The logger.
+     */
+    private static final Logger LOG = Logger.getLogger(DoubleConverter.class.getName());
+    /**
+     * The converter used, when floating point parse failed.
+     */
+    private IntegerConverter integerConverter = new IntegerConverter();
 
     @Override
     public Float convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        //X TODO not good enough as this is Locale dependent!
-        return Float.valueOf(trimmed);
+        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+            case "POSITIVE_INFINITY":
+                return Float.POSITIVE_INFINITY;
+            case "NEGATIVE_INFINITY":
+                return Float.NEGATIVE_INFINITY;
+            case "NAN":
+                return Float.NaN;
+            case "MIN_VALUE":
+            case "MIN":
+                return Float.MIN_VALUE;
+            case "MAX_VALUE":
+            case "MAX":
+                return Float.MAX_VALUE;
+            default:
+                try {
+                    return Float.valueOf(trimmed);
+                } catch(Exception e){
+                    // OK perhaps we have an integral number that must be converted to the double type...
+                    LOG.log(Level.FINER, "Parsing of double as floating number failed, trying parsing integral" +
+                            " number instead...", e);
+                }
+                try{
+                    return integerConverter.convert(trimmed).floatValue();
+                } catch(Exception e){
+                    LOG.log(Level.INFO, "Unexpected error from LongConverter for " + trimmed, e);
+                    return null;
+                }
+        }
     }
 }

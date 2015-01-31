@@ -20,17 +20,53 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.PropertyConverter;
 
+import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Double.
+ * Converter, converting from String to Double, using the Java number syntax:
+ * (-)?[0-9]*\.[0-9]*. In case of error the value given also is tried being parsed as integral number using
+ * {@link LongConverter}.
  */
 public class DoubleConverter implements PropertyConverter<Double>{
+    /** The logger. */
+    private static final Logger LOG = Logger.getLogger(DoubleConverter.class.getName());
+    /** The converter used, when floating point parse failed. */
+    private LongConverter integerConverter = new LongConverter();
 
     @Override
     public Double convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        //X TODO not good enough as this is Locale dependent!
-        return Double.valueOf(trimmed);
+        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+            case "POSITIVE_INFINITY":
+                return Double.POSITIVE_INFINITY;
+            case "NEGATIVE_INFINITY":
+                return Double.NEGATIVE_INFINITY;
+            case "NAN":
+                return Double.NaN;
+            case "MIN_VALUE":
+            case "MIN":
+                return Double.MIN_VALUE;
+            case "MAX_VALUE":
+            case "MAX":
+                return Double.MAX_VALUE;
+            default:
+                try {
+                    return Double.valueOf(trimmed);
+                } catch(Exception e){
+                    // OK perhaps we have an integral number that must be converted to the double type...
+                    LOG.log(Level.FINER, "Parsing of double as floating number failed, trying parsing integral" +
+                            " number instead...", e);
+                }
+                try{
+                    return integerConverter.convert(trimmed).doubleValue();
+                } catch(Exception e){
+                    LOG.log(Level.INFO, "Unexpected error from LongConverter for " + trimmed, e);
+                    return null;
+                }
+        }
+
     }
 }

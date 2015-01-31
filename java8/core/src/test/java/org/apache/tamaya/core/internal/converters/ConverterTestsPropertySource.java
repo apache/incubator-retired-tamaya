@@ -44,6 +44,10 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return "0x2F";
             case "tests.converter.byte.hex.upperX":
                 return "0X3F";
+            case "tests.converter.byte.min":
+                return "min";
+            case "tests.converter.byte.max":
+                return "MAX_Value";
             // Boolean
             case "tests.converter.boolean.y1":
                 return "y";
@@ -85,6 +89,7 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return "f";
             case "tests.converter.boolean.f2":
                 return "F";
+            // Character
             case "tests.converter.char.f":
                 return "f";
             case "tests.converter.char.d":
@@ -97,6 +102,7 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return "   f      ";
             case "tests.converter.char.f-numeric":
                 return "101";
+            // currency
             case "tests.converter.currency.code1":
                 return "CHF";
             case "tests.converter.currency.code2":
@@ -123,21 +129,112 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return "DE  ";
             case "tests.converter.currency.code-locale4":
                 return "  DE  ";
+            //double
+            case "tests.converter.double.decimal":
+                return "1.23456789";
+            case "tests.converter.double.decimalNegative":
+                return "-1.23456789";
+            case "tests.converter.double.integer":
+                return "  100";
+            case "tests.converter.double.hex1":
+                return " 0XFF";
+            case "tests.converter.double.hex2":
+                return "-0xFF  ";
+            case "tests.converter.double.hex3":
+                return "#FF";
+            case "tests.converter.double.octal":
+                return "0013";
+            case "tests.converter.double.min":
+                return "MIN_Value";
+            case "tests.converter.double.max":
+                return "max";
+            case "tests.converter.double.nan":
+                return "NAN";
+            case "tests.converter.double.pi":
+                return "positive_infinity";
+            case "tests.converter.double.ni":
+                return "Negative_Infinity";
+            //float
+            case "tests.converter.float.decimal":
+                return "1.23456789";
+            case "tests.converter.float.decimalNegative":
+                return "-1.23456789";
+            case "tests.converter.float.integer":
+                return "  100";
+            case "tests.converter.float.hex1":
+                return " 0XFF";
+            case "tests.converter.float.hex2":
+                return "-0xFF  ";
+            case "tests.converter.float.hex3":
+                return "#FF";
+            case "tests.converter.float.octal":
+                return "0013";
+            case "tests.converter.float.min":
+                return "MIN_Value";
+            case "tests.converter.float.max":
+                return "max";
+            case "tests.converter.float.nan":
+                return "NAN";
+            case "tests.converter.float.pi":
+                return "positive_infinity";
+            case "tests.converter.float.ni":
+                return "Negative_Infinity";
+            // Integer
+            case "tests.converter.integer.decimal":
+                return "101";
+            case "tests.converter.integer.octal":
+                return "02";
+            case "tests.converter.integer.hex.lowerX":
+                return "0x2F";
+            case "tests.converter.integer.hex.upperX":
+                return "0X3F";
+            case "tests.converter.integer.min":
+                return "min";
+            case "tests.converter.integer.max":
+                return "MAX_Value";
+            // Long
+            case "tests.converter.long.decimal":
+                return "101";
+            case "tests.converter.long.octal":
+                return "02";
+            case "tests.converter.long.hex.lowerX":
+                return "0x2F";
+            case "tests.converter.long.hex.upperX":
+                return "0X3F";
+            case "tests.converter.long.min":
+                return "min";
+            case "tests.converter.long.max":
+                return "MAX_Value";
+            // Short
+            case "tests.converter.short.decimal":
+                return "101";
+            case "tests.converter.short.octal":
+                return "02";
+            case "tests.converter.short.hex.lowerX":
+                return "0x2F";
+            case "tests.converter.short.hex.upperX":
+                return "0X3F";
+            case "tests.converter.short.min":
+                return "min";
+            case "tests.converter.short.max":
+                return "MAX_Value";
+            // BigDecimal
+            case "tests.converter.bd.decimal":
+                return "101";
+            case "tests.converter.bd.float":
+                return "101.36438746";
+            case "tests.converter.bd.big":
+                return "101666666666666662333337263723628763821638923628193612983618293628763";
+            case "tests.converter.bd.bigFloat":
+                return "1016666666666666623333372637236287638216389293628763.101666666666666662333337263723628763821638923628193612983618293628763";
+            case "tests.converter.bd.hex.lowerX":
+                return "0x2F";
+            case "tests.converter.bd.hex.upperX":
+                return "0X3F";
         }
         return null;
     }
 
-    /*
-    case "yes":
-            case "y":
-            case "true":
-            case "t":
-                return Boolean.TRUE;
-            case "no":
-            case "n":
-            case "false":
-            case "f":
-     */
     @Override
     public Map<String, String> getProperties() {
         return Collections.emptyMap();

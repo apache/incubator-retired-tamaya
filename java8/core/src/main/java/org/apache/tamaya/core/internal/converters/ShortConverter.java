@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.PropertyConverter;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -30,6 +31,15 @@ public class ShortConverter implements PropertyConverter<Short>{
     @Override
     public Short convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return Short.decode(trimmed);
+        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+            case "MIN_VALUE":
+            case "MIN":
+                return Short.MIN_VALUE;
+            case "MAX_VALUE":
+            case "MAX":
+                return Short.MAX_VALUE;
+            default:
+                return Short.decode(trimmed);
+        }
     }
 }

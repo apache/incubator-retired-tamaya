@@ -110,6 +110,21 @@ public interface Configuration {
     }
 
     /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * PropertyConverter} to be available that is capable current providing type T
+     * fromMap the given String keys.
+     *
+     * @param key  the property's absolute, or relative path, e.g. @code
+     *             a/b/c/d.myProperty}.
+     * @param type The target type required, not null.
+     * @return the property value, never null..
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    default <T> Optional<T> getOptional(String key, TypeLiteral<T> type) {
+        return Optional.ofNullable(get(key, type));
+    }
+
+    /**
      * Get the property keys as type {@code Class<T>}.
      * <p>
      * If {@code Class<T>} is not one current

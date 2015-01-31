@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.PropertyConverter;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -30,6 +31,15 @@ public class IntegerConverter implements PropertyConverter<Integer>{
     @Override
     public Integer convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return Integer.decode(trimmed);
+        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+            case "MIN_VALUE":
+            case "MIN":
+                return Integer.MIN_VALUE;
+            case "MAX_VALUE":
+            case "MAX":
+                return Integer.MAX_VALUE;
+            default:
+                return Integer.decode(trimmed);
+        }
     }
 }

@@ -18,19 +18,11 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.core.internal.converters.EnumConverter;
-import org.apache.tamaya.PropertyConverter;
-import org.apache.tamaya.spi.ServiceContextManager;
-
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,29 +31,27 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Level;
+import java.util.concurrent.locks.StampedLock;
 import java.util.logging.Logger;
+
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.core.internal.converters.EnumConverter;
+import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Manager that deals with {@link org.apache.tamaya.PropertyConverter} instances.
  * This class is thread-safe.
  */
 public class PropertyConverterManager {
-    /**
-     * The logger used.
-     */
+    /** The logger used. */
     private static final Logger LOG = Logger.getLogger(PropertyConverterManager.class.getName());
-    /**
-     * The registered converters.
-     */
+    /** The registered converters. */
     private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
-    /**
-     * The lock used.
-     */
-    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    /** The lock used. */
+    private StampedLock lock = new StampedLock();
     private static final String CHAR_NULL_ERROR = "Cannot convert null property";
-
     /**
      * Constructor.
      */
@@ -73,11 +63,11 @@ public class PropertyConverterManager {
      * Registers the default converters provided out of the box.
      */
     protected void initConverters() {
-        for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)) {
+        for(PropertyConverter conv: ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)){
             ParameterizedType type = ReflectionUtil.getParametrizedType(conv.getClass());
-            if (type == null || type.getActualTypeArguments().length == 0) {
+            if(type==null || type.getActualTypeArguments().length==0){
                 LOG.warning("Failed to register PropertyConverter, no generic type information available: " +
-                            conv.getClass().getName());
+                        conv.getClass().getName());
             } else {
                 Type targetType = type.getActualTypeArguments()[0];
                 register(TypeLiteral.of(targetType), conv);
@@ -90,11 +80,10 @@ public class PropertyConverterManager {
      *
      * @param targetType the target type, not null.
      * @param converter  the converter, not null.
-     * @param <T>        the type.
      */
-    public <T> void register(TypeLiteral<T> targetType, PropertyConverter<T> converter) {
+    public void register(TypeLiteral<?> targetType, PropertyConverter<?> converter) {
         Objects.requireNonNull(converter);
-        Lock writeLock = lock.writeLock();
+        Lock writeLock = lock.asWriteLock();
         try {
             writeLock.lock();
             List converters = List.class.cast(this.converters.get(targetType));
@@ -107,16 +96,6 @@ public class PropertyConverterManager {
         } finally {
             writeLock.unlock();
         }
-    }
-
-    /**
-     * Allows to evaluate if a given target type is supported.
-     *
-     * @param targetType the target type, not null.
-     * @return true, if a converter for the given type is registered, or a default one can be created.
-     */
-    public boolean isTargetTypeSupported(Class<?> targetType) {
-        return isTargetTypeSupported(TypeLiteral.of(targetType));
     }
 
     /**
@@ -139,7 +118,7 @@ public class PropertyConverterManager {
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
     public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
-        Lock readLock = lock.readLock();
+        Lock readLock = lock.asReadLock();
         try {
             readLock.lock();
             return new HashMap<>(this.converters);
@@ -159,7 +138,7 @@ public class PropertyConverterManager {
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
     public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
-        Lock readLock = lock.readLock();
+        Lock readLock = lock.asReadLock();
         List<PropertyConverter<T>> converters;
         try {
             readLock.lock();
@@ -174,6 +153,7 @@ public class PropertyConverterManager {
         if (defaultConverter != null) {
             register(targetType, defaultConverter);
             try {
+                readLock.lock();
                 converters = List.class.cast(this.converters.get(targetType));
             } finally {
                 readLock.unlock();
@@ -193,20 +173,48 @@ public class PropertyConverterManager {
      * @return a new converter, or null.
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(final TypeLiteral<T> targetType) {
-        if (Enum.class.isAssignableFrom(targetType.getRawType())) {
+        if(Enum.class.isAssignableFrom(targetType.getRawType())){
             return new EnumConverter<T>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
         final Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
-            converter = new ViaMethodPropertyConverter<>(factoryMethod, targetType.getRawType());
+            converter = new PropertyConverter<T>() {
+                @Override
+                public T convert(String value) {
+                    try {
+                        if (!Modifier.isStatic(factoryMethod.getModifiers())) {
+                            throw new ConfigException(factoryMethod.toGenericString() +
+                                    " is not a static method. Only static " +
+                                    "methods can be used as factory methods.");
+                        }
+
+                        factoryMethod.setAccessible(true);
+
+                        Object invoke = factoryMethod.invoke(null, value);
+                        return targetType.getRawType().cast(invoke);
+                    } catch (Exception e) {
+                        throw new ConfigException("Failed to decode '" + value + "'", e);
+                    }
+                }
+            };
         }
         if (converter == null) {
             try {
                 final Constructor<T> constr = targetType.getRawType().getDeclaredConstructor(String.class);
-                converter = new ViaConstructorPropertyConverter<>(constr);
+                converter = new PropertyConverter<T>() {
+                    @Override
+                    public T convert(String value) {
+                        try {
+                            constr.setAccessible(true);
+                            return constr.newInstance(value);
+                        } catch (Exception e) {
+                            throw new ConfigException("Failed to decode '" + value + "'", e);
+                        }
+                    }
+                };
             } catch (Exception e) {
-                LOG.log(Level.FINEST, "Failed to construct instance of type: " + targetType.getRawType().getName(), e);
+                LOG.finest("Failed to construct instance of type: " + targetType.getRawType().getName()+": " + e);
             }
         }
         return converter;
@@ -226,53 +234,10 @@ public class PropertyConverterManager {
                 m = type.getDeclaredMethod(name, String.class);
                 return m;
             } catch (NoSuchMethodException | RuntimeException e) {
-                LOG.log(Level.FINEST, "No such factory method found on type: " + type.getName() + ", methodName: " + name, e);
+                LOG.finest("No such factory method found on type: " + type.getName()+", methodName: " + name);
             }
         }
         return null;
     }
 
-    private static class ViaMethodPropertyConverter<T> implements PropertyConverter<T> {
-        private final Method factoryMethod;
-        private final Class<T> targetType;
-
-        public ViaMethodPropertyConverter(Method factoryMethod, Class<T> targetType) {
-            this.factoryMethod = factoryMethod;
-            this.targetType = targetType;
-        }
-
-        public T convert(final String value) {
-            try {
-                AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        @Override
-                        public Object run() {
-                            factoryMethod.setAccessible(true);
-                            return null;
-                        }
-                    });
-                return targetType.cast(factoryMethod.invoke(value));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new ConfigException("Failed to decode '" + value + "'", e);
-            }
-        }
-    }
-
-    private static class ViaConstructorPropertyConverter<T> implements PropertyConverter<T> {
-        private final Constructor<T> constr;
-
-        public ViaConstructorPropertyConverter(Constructor<T> constr) {
-            this.constr = constr;
-        }
-
-        @Override
-        public T convert(String value) {
-            try {
-                constr.setAccessible(true);
-                return constr.newInstance(value);
-            } catch (Exception e) {
-                throw new ConfigException("Failed to decode '" + value + "'", e);
-            }
-        }
-    }
 }

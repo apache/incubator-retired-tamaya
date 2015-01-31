@@ -21,17 +21,40 @@ package org.apache.tamaya.core.internal.converters;
 import org.apache.tamaya.PropertyConverter;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to BigDecimal.
- * //X TODO not good enough as this is Locale dependent!
+ * Converter, converting from String to BigDecimal, the supported format is one of the following:
+ * <ul>
+ *     <li>232573527352.76352753</li>
+ *     <li>-23257352.735276352753</li>
+ *     <li>-0xFFFFFF (integral numbers only)</li>
+ *     <li>-0XFFFFAC (integral numbers only)</li>
+ *     <li>0xFFFFFF (integral numbers only)</li>
+ *     <li>0XFFFFAC (integral numbers only)</li>
+ * </ul>
  */
 public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
+    /** The logger. */
+    private static final Logger LOG = Logger.getLogger(BigDecimalConverter.class.getName());
+    /** Converter to be used if the format is not directly supported by BigDecimal, e.g. for integral hex values. */
+    private BigIntegerConverter integerConverter = new BigIntegerConverter();
 
     @Override
     public BigDecimal convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return new BigDecimal(trimmed);
+        try{
+            return new BigDecimal(trimmed);
+        } catch(Exception e){
+            LOG.finest(() -> "Parsing BigDecimal failed, trying BigInteger for: " + value);
+            BigInteger bigInt = integerConverter.convert(trimmed);
+            if(bigInt!=null){
+                return new BigDecimal(bigInt);
+            }
+            LOG.finest(() -> "Failed to parse BigDecimal from: " + value);
+            return null;
+        }
     }
 }

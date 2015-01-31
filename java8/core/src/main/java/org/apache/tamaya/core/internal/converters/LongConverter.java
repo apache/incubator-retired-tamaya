@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.PropertyConverter;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -30,6 +31,15 @@ public class LongConverter implements PropertyConverter<Long>{
     @Override
     public Long convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return Long.decode(trimmed);
+        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+            case "MIN_VALUE":
+            case "MIN":
+                return Long.MIN_VALUE;
+            case "MAX_VALUE":
+            case "MAX":
+                return Long.MAX_VALUE;
+            default:
+                return Long.decode(trimmed);
+        }
     }
 }

@@ -27,9 +27,9 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 /**
- * Tests the default converter for bytes.
+ * Tests the default converter for Longs.
  */
-public class ByteConverterTest {
+public class LongConverterTest {
 
     /**
      * Test conversion. The value are provided by
@@ -37,11 +37,11 @@ public class ByteConverterTest {
      * @throws Exception
      */
     @Test
-    public void testConvert_Byte_Decimal() throws Exception {
+    public void testConvert_Long_Decimal() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.decimal", Byte.class);
+        Optional<Long> valueRead = config.getOptional("tests.converter.long.decimal", Long.class);
         assertTrue(valueRead.isPresent());
-        assertEquals(valueRead.get().byteValue(), 101);
+        assertEquals(valueRead.get().intValue(), 101);
     }
 
     /**
@@ -50,11 +50,11 @@ public class ByteConverterTest {
      * @throws Exception
      */
     @Test
-    public void testConvert_Byte_Octal() throws Exception {
+    public void testConvert_Long_Octal() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.octal", Byte.class);
+        Optional<Long> valueRead = config.getOptional("tests.converter.long.octal", Long.class);
         assertTrue(valueRead.isPresent());
-        assertEquals(valueRead.get().byteValue(), Byte.decode("02").byteValue());
+        assertEquals(valueRead.get().intValue(), Long.decode("02").intValue());
     }
 
     /**
@@ -63,14 +63,14 @@ public class ByteConverterTest {
      * @throws Exception
      */
     @Test
-    public void testConvert_Byte_Hex() throws Exception {
+    public void testConvert_Long_Hex() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.hex.lowerX", Byte.class);
+        Optional<Long> valueRead = config.getOptional("tests.converter.long.hex.lowerX", Long.class);
         assertTrue(valueRead.isPresent());
-        assertEquals(valueRead.get().byteValue(), Byte.decode("0x2F").byteValue());
-        valueRead = config.getOptional("tests.converter.byte.hex.upperX", Byte.class);
+        assertEquals(valueRead.get().intValue(), Long.decode("0x2F").intValue());
+        valueRead = config.getOptional("tests.converter.long.hex.upperX", Long.class);
         assertTrue(valueRead.isPresent());
-        assertEquals(valueRead.get().byteValue(), Byte.decode("0X3F").byteValue());
+        assertEquals(valueRead.get().intValue(), Long.decode("0X3F").intValue());
     }
 
     /**
@@ -81,7 +81,7 @@ public class ByteConverterTest {
     @Test
     public void testConvert_NotPresent() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.foo", Byte.class);
+        Optional<Long> valueRead = config.getOptional("tests.converter.long.foo", Long.class);
         assertFalse(valueRead.isPresent());
     }
 
@@ -91,11 +91,11 @@ public class ByteConverterTest {
      * @throws Exception
      */
     @Test
-    public void testConvert_Byte_MinValue() throws Exception {
+    public void testConvert_Long_MinValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.min", Byte.class);
+        Optional<Long> valueRead = config.getOptional("tests.converter.long.min", Long.class);
         assertTrue(valueRead.isPresent());
-        assertEquals(Byte.MIN_VALUE, valueRead.get().byteValue());
+        assertEquals(Long.MIN_VALUE, valueRead.get().longValue());
     }
 
     /**
@@ -104,10 +104,10 @@ public class ByteConverterTest {
      * @throws Exception
      */
     @Test
-    public void testConvert_Byte_MaxValue() throws Exception {
+    public void testConvert_Long_MaxValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        Optional<Byte> valueRead = config.getOptional("tests.converter.byte.max", Byte.class);
+        Optional<Long> valueRead = config.getOptional("tests.converter.long.max", Long.class);
         assertTrue(valueRead.isPresent());
-        assertEquals(Byte.MAX_VALUE, valueRead.get().byteValue());
+        assertEquals(Long.MAX_VALUE, valueRead.get().longValue());
     }
 }

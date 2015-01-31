@@ -33,4 +33,10 @@ public class LocalTimeConverter implements PropertyConverter<LocalTime>{
         String trimmed = Objects.requireNonNull(value).trim();
         return LocalTime.parse(trimmed);
     }
+
+    public static void main(String... args){
+        LocalTime.parse("10:00");
+        LocalTime.parse("10:00:23");
+        LocalTime.parse("10");
+    }
 }

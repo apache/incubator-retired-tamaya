@@ -22,7 +22,10 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the default converter for bytes.
@@ -51,5 +54,31 @@ public class ByteConverterTest {
         assertEquals(valueRead.byteValue(), Byte.decode("0X3F").byteValue());
         valueRead = config.get("tests.converter.byte.foo", Byte.class);
         assertNull(valueRead);
+    }
+
+    /**
+     * Test conversion. The value are provided by
+     * {@link ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_Byte_MinValue() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Byte valueRead = config.get("tests.converter.byte.min", Byte.class);
+        assertTrue(valueRead!=null);
+        assertEquals(Byte.MIN_VALUE, valueRead.byteValue());
+    }
+
+    /**
+     * Test conversion. The value are provided by
+     * {@link ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_Byte_MaxValue() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Byte valueRead = config.get("tests.converter.byte.max", Byte.class);
+        assertTrue(valueRead!=null);
+        assertEquals(Byte.MAX_VALUE, valueRead.byteValue());
     }
 }
