@@ -24,7 +24,21 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * Converter, converting from String to Short.
+ * Converter, converting from String to Short, the supported format is one of the following:
+ * <ul>
+ *     <li>123 (byte value)</li>
+ *     <li>0xFF (byte value)</li>
+ *     <li>0XDF (byte value)</li>
+ *     <li>0D1 (byte value)</li>
+ *     <li>-123 (byte value)</li>
+ *     <li>-0xFF (byte value)</li>
+ *     <li>-0XDF (byte value)</li>
+ *     <li>-0D1 (byte value)</li>
+ *     <li>MIN_VALUE (ignoring case)</li>
+ *     <li>MIN (ignoring case)</li>
+ *     <li>MAX_VALUE (ignoring case)</li>
+ *     <li>MAX (ignoring case)</li>
+ * </ul>
  */
 public class ShortConverter implements PropertyConverter<Short>{
 

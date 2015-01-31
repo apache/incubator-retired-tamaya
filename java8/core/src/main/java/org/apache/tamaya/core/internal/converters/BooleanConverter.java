@@ -26,7 +26,15 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Boolean.
+ * Converter, converting from String to Boolean, the supported format is one of the following:
+ * <ul>
+ *     <li>true</li>
+ *     <li>t</li>
+ *     <li>yes</li>
+ *     <li>y</li>
+ *     <li>1</li>
+ *     <li>0</li>
+ * </ul>
  */
 public class BooleanConverter implements PropertyConverter<Boolean> {
 
@@ -44,11 +52,13 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
             case "y":
             case "true":
             case "t":
+            case "1":
                 return Boolean.TRUE;
             case "no":
             case "n":
             case "false":
             case "f":
+            case "0":
                 return Boolean.FALSE;
             default:
                 LOG.warning("Unknown boolean value encountered: " + value);

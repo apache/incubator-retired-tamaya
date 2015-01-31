@@ -24,7 +24,14 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Character.
+ * Converter, converting from String to Character, the supported format is one of the following:
+ * <ul>
+ *     <li>'a'</li>
+ *     <li>123 (byte value)</li>
+ *     <li>0xFF (byte value)</li>
+ *     <li>0XDF (byte value)</li>
+ *     <li>0D1 (byte value)</li>
+ * </ul>
  */
 public class CharConverter implements PropertyConverter<Character>{
 

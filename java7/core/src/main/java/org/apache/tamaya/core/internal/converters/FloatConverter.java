@@ -28,7 +28,12 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Float, using the Java number syntax:
  * (-)?[0-9]*\.[0-9]*. In case of error the value given also is tried being parsed as integral number using
- * {@link LongConverter}.
+ * {@link LongConverter}. Additionally the following values are supported:
+ * <ul>
+ * <li>NaN (ignoring case)</li>
+ * <li>POSITIVE_INFINITY (ignoring case)</li>
+ * <li>NEGATIVE_INFINITY (ignoring case)</li>
+ * </ul>
  */
 public class FloatConverter implements PropertyConverter<Float> {
     /**

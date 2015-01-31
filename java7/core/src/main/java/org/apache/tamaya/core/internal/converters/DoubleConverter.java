@@ -28,18 +28,27 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Double, using the Java number syntax:
  * (-)?[0-9]*\.[0-9]*. In case of error the value given also is tried being parsed as integral number using
- * {@link LongConverter}.
+ * {@link LongConverter}. Additionally the following values are supported:
+ * <ul>
+ * <li>NaN (ignoring case)</li>
+ * <li>POSITIVE_INFINITY (ignoring case)</li>
+ * <li>NEGATIVE_INFINITY (ignoring case)</li>
+ * </ul>
  */
-public class DoubleConverter implements PropertyConverter<Double>{
-    /** The logger. */
+public class DoubleConverter implements PropertyConverter<Double> {
+    /**
+     * The logger.
+     */
     private static final Logger LOG = Logger.getLogger(DoubleConverter.class.getName());
-    /** The converter used, when floating point parse failed. */
+    /**
+     * The converter used, when floating point parse failed.
+     */
     private LongConverter integerConverter = new LongConverter();
 
     @Override
     public Double convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+        switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":
                 return Double.POSITIVE_INFINITY;
             case "NEGATIVE_INFINITY":
@@ -55,14 +64,14 @@ public class DoubleConverter implements PropertyConverter<Double>{
             default:
                 try {
                     return Double.valueOf(trimmed);
-                } catch(Exception e){
+                } catch (Exception e) {
                     // OK perhaps we have an integral number that must be converted to the double type...
                     LOG.log(Level.FINER, "Parsing of double as floating number failed, trying parsing integral" +
                             " number instead...", e);
                 }
-                try{
+                try {
                     return integerConverter.convert(trimmed).doubleValue();
-                } catch(Exception e){
+                } catch (Exception e) {
                     LOG.log(Level.INFO, "Unexpected error from LongConverter for " + trimmed, e);
                     return null;
                 }

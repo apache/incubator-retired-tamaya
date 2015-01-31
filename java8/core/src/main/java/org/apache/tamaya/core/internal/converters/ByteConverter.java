@@ -24,7 +24,14 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * Converter, converting from String to Byte.
+ * Converter, converting from String to Byte, the supported format is one of the following:
+ * <ul>
+ *     <li>0xFF</li>
+ *     <li>0XFF</li>
+ *     <li>45</li>
+ *     <li>-34</li>
+ *     <li>0D1</li>
+ * </ul>
  */
 public class ByteConverter implements PropertyConverter<Byte>{
 
