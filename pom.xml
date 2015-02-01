@@ -62,7 +62,7 @@ under the License.
         <asciidoctor.version>1.5.0</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.2</asciidoctorj.version>
-        <enforcer.version>1.3.1</enforcer.version>
+        <enforcer.version>1.4</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <hamcrest.version>1.3</hamcrest.version>
         <javadoc.version>2.9.1</javadoc.version>
