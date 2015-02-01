@@ -32,5 +32,9 @@ under the License.
     <name>Apache Tamaya Build Configuration</name>
 
     <inceptionYear>2015</inceptionYear>
+
+    <properties>
+        <skipTests>true</skipTests>
+    </properties>
     
 </project>
