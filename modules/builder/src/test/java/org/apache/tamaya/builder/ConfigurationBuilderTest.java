@@ -27,13 +27,18 @@ import org.apache.tamaya.builder.util.types.CustomTypeA;
 import org.apache.tamaya.builder.util.types.CustomTypeB;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.tamaya.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -55,6 +60,10 @@ public class ConfigurationBuilderTest {
         builder.build();
         builder.build();
     }
+
+    /*********************************************************************
+     * Tests for adding P r o p e r t y S o u r c e s
+     */
 
     @Test(expected = NullPointerException.class)
     public void addPropertySourcesDoesNotAcceptNullValue() {
@@ -180,8 +189,7 @@ public class ConfigurationBuilderTest {
         doReturn("a").when(sourceTwo).get("keyOfA");
         doReturn(20).when(sourceTwo).getOrdinal();
 
-        ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne)
-                                                                 .addPropertySources(sourceTwo);
+        ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne, sourceTwo);
 
         Configuration config = builder.build();
 
@@ -190,6 +198,35 @@ public class ConfigurationBuilderTest {
         assertThat(valueOfA, notNullValue());
         assertThat(valueOfA, equalTo("b"));
     }
+
+    @Test
+    public void consecutiveCallsToAddPropertySourceArePossible() {
+        PropertySource sourceOne = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("one").when(sourceOne).getName();
+        doReturn(null).when(sourceOne).get(anyString());
+        doReturn("b").when(sourceOne).get("b");
+        doReturn(30).when(sourceOne).getOrdinal();
+
+        PropertySource sourceTwo = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+        doReturn("two").when(sourceTwo).getName();
+        doReturn(null).when(sourceTwo).get(anyString());
+        doReturn("a").when(sourceTwo).get("a");
+        doReturn(30).when(sourceTwo).getOrdinal();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne)
+                                                                 .addPropertySources(sourceTwo);
+
+        Configuration config = builder.build();
+
+        assertThat(config.get("b"), equalTo("b"));
+        assertThat(config.get("a"), equalTo("a"));
+    }
+
+    /**
+     * ******************************************************************
+     * Tests for adding P r o p e r t y C o n v e r t e r
+     */
 
     @Test(expected = NullPointerException.class)
     public void canNotAddNullPropertyConverter() {
@@ -275,4 +312,49 @@ public class ConfigurationBuilderTest {
 
         assertThat(result.getName(), equalTo("A"));
     }
+
+    /*********************************************************************
+     * Tests for adding P r o p e r t y F i l t e r
+     */
+
+    // @todo TAYAMA-60 Write more tests
+
+    /*********************************************************************
+     * Tests for adding P r o p e r t
+     */
+
+    // @todo TAYAMA-60 Write more tests
+
+    /*********************************************************************
+     * Tests for adding
+     * P r o p e r t y V a l u e C o m b i n a t i o n P o l i c y
+     */
+
+    // @todo TAYAMA-60 Write more tests
+
+    /*********************************************************************
+     * Tests for enabling and disabling of automatic loading of
+     * P r o p e r t y S o u r c e s
+     */
+
+    @Test
+    public void enablingOfProvidedPropertySourceServiceProvidersIsOk() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.disableProvidedPropertyConverters()
+               .enableProvidedPropertyConverters();
+
+        assertThat(builder.isPropertyConverterLoadingEnabled(), is(true));
+    }
+
+    @Test
+    public void disablingOfProvidedPropertySourceServiceProvidersIsOk() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.enableProvidedPropertyConverters()
+               .disableProvidedPropertyConverters();
+
+        assertThat(builder.isPropertyConverterLoadingEnabled(), is(false));
+    }
+
 }

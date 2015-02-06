@@ -30,6 +30,18 @@ import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import java.util.Objects;
 
+/* TODO LIST FOR TAMAYA-60
+ *
+ * - configurable loading of provided PropertyConverter
+ * - configurable loading of provided PropertySources
+ * - configurable loading of provided PropertySourceProviders
+ * - adding sources via URL
+ *
+ *
+ *
+ *
+ */
+
 /**
  * Builder that allows to build a Configuration completely manually.
  */
@@ -42,6 +54,12 @@ public class ConfigurationBuilder {
      * Configuration can be built only once
      */
     private boolean built;
+
+    /**
+     * Flag if all existing property converter service providers
+     * should be loaded if the configuration is build.
+     */
+    private boolean loadProvidedPropertyConverters;
 
 
     /**
@@ -92,6 +110,37 @@ public class ConfigurationBuilder {
         Objects.requireNonNull(propertyConverter);
 
         contextBuilder.addPropertyConverter(type, propertyConverter);
+        return this;
+    }
+
+
+    public boolean isPropertyConverterLoadingEnabled() {
+        return loadProvidedPropertyConverters;
+    }
+
+    /**
+     * Enables the loading of all {@link org.apache.tamaya.PropertyConverter}
+     * service providers.
+     *
+     * @see org.apache.tamaya.PropertyConverter
+     * @see #disableProvidedPropertyConverters()
+     */
+    public ConfigurationBuilder enableProvidedPropertyConverters() {
+        loadProvidedPropertyConverters = true;
+
+        return this;
+    }
+
+    /**
+     * Disables the loading of all {@link org.apache.tamaya.PropertyConverter}
+     * service providers.
+     *
+     * @see org.apache.tamaya.PropertyConverter
+     * @see #enableProvidedPropertyConverters()
+     */
+    public ConfigurationBuilder disableProvidedPropertyConverters() {
+        loadProvidedPropertyConverters = false;
+
         return this;
     }
 
