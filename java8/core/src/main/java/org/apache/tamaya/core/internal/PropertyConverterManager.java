@@ -56,7 +56,13 @@ public class PropertyConverterManager {
      * Constructor.
      */
     public PropertyConverterManager() {
-        initConverters();
+        this(true);
+    }
+
+    public PropertyConverterManager(boolean init) {
+        if (init) {
+            initConverters();
+        }
     }
 
     /**
