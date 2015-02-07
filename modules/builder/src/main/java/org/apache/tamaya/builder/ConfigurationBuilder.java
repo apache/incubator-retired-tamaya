@@ -59,7 +59,7 @@ public class ConfigurationBuilder {
      * Flag if all existing property converter service providers
      * should be loaded if the configuration is build.
      */
-    private boolean loadProvidedPropertyConverters;
+    private boolean loadProvidedPropertyConverters = true;
 
 
     /**
