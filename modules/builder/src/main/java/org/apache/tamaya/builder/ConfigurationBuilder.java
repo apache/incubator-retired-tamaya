@@ -32,7 +32,7 @@ import java.util.Objects;
 
 /* TODO LIST FOR TAMAYA-60
  *
- * - configurable loading of provided PropertyConverter
+ * - configurable loading of provided PropertyConverter DONE
  * - configurable loading of provided PropertySources
  * - configurable loading of provided PropertySourceProviders
  * - adding sources via URL
@@ -126,6 +126,8 @@ public class ConfigurationBuilder {
      * @see #disableProvidedPropertyConverters()
      */
     public ConfigurationBuilder enableProvidedPropertyConverters() {
+        checkBuilderState();
+
         loadProvidedPropertyConverters = true;
 
         return this;
@@ -139,6 +141,8 @@ public class ConfigurationBuilder {
      * @see #enableProvidedPropertyConverters()
      */
     public ConfigurationBuilder disableProvidedPropertyConverters() {
+        checkBuilderState();
+
         loadProvidedPropertyConverters = false;
 
         return this;
@@ -156,6 +160,8 @@ public class ConfigurationBuilder {
         checkBuilderState();
 
         built = true;
+
+        contextBuilder.loadProvidedPropertyConverters(isPropertyConverterLoadingEnabled());
 
         return new DefaultConfiguration(contextBuilder.build());
     }

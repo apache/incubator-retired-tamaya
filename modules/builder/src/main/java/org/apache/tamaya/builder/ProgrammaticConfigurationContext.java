@@ -88,6 +88,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      * {@link org.apache.tamaya.spi.PropertyFilter}s which are known at startup.
      */
     public ProgrammaticConfigurationContext(Builder builder) {
+        propertyConverterManager = new PropertyConverterManager(builder.loadProvidedPropertyConverters);
         immutablePropertySources.addAll(builder.propertySources);
         Collections.sort(immutablePropertySources, this::comparePropertySources);
         immutablePropertySources = Collections.unmodifiableList(immutablePropertySources);
@@ -238,6 +239,8 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         private PropertyValueCombinationPolicy propertyValueCombinationPolicy =
                 PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
 
+        private boolean loadProvidedPropertyConverters;
+
         public Builder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy) {
             this.propertyValueCombinationPolicy = Objects.requireNonNull(policy);
             return this;
@@ -307,7 +310,9 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         }
 
 
-
+        public void loadProvidedPropertyConverters(boolean state) {
+            loadProvidedPropertyConverters = state;
+        }
     }
 
 

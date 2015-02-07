@@ -25,6 +25,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.builder.util.mockito.NotMockedAnswer;
 import org.apache.tamaya.builder.util.types.CustomTypeA;
 import org.apache.tamaya.builder.util.types.CustomTypeB;
+import org.apache.tamaya.builder.util.types.CustomTypeC;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -34,6 +35,7 @@ import org.junit.Test;
 
 import static org.apache.tamaya.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -355,6 +357,39 @@ public class ConfigurationBuilderTest {
                .disableProvidedPropertyConverters();
 
         assertThat(builder.isPropertyConverterLoadingEnabled(), is(false));
+    }
+
+    @Test(expected = ConfigException.class)
+    public void bla() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("source").when(source).getName();
+        doReturn("A").when(source).get("key");
+
+        ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
+                                                                 .disableProvidedPropertyConverters();
+
+        Configuration config = builder.build();
+
+        config.get("key", CustomTypeC.class);
+    }
+
+    @Test
+    public void bla2() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("source").when(source).getName();
+        doReturn("A").when(source).get("key");
+
+        ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
+                                                                 .enableProvidedPropertyConverters();
+
+        Configuration config = builder.build();
+
+        CustomTypeC result = config.get("key", CustomTypeC.class);
+
+        assertThat(result, notNullValue());
+        assertThat(result.getValue(), equalTo("A"));
     }
 
 }
