@@ -360,13 +360,14 @@ public class ConfigurationBuilderTest {
     }
 
     @Test(expected = ConfigException.class)
-    public void bla() {
+    public void loadingOrPropertyConvertersCanBeDisabled() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
         doReturn("A").when(source).get("key");
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
+                                                                 .enableProvidedPropertyConverters()
                                                                  .disableProvidedPropertyConverters();
 
         Configuration config = builder.build();
@@ -375,13 +376,14 @@ public class ConfigurationBuilderTest {
     }
 
     @Test
-    public void bla2() {
+    public void loadingOfPropertyConvertersCanBeEnabled() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
         doReturn("A").when(source).get("key");
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
+                                                                 .disableProvidedPropertyConverters()
                                                                  .enableProvidedPropertyConverters();
 
         Configuration config = builder.build();
