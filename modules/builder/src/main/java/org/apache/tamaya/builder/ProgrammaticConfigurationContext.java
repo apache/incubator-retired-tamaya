@@ -122,7 +122,16 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
     private List<PropertySource> getAllPropertySources(Builder builder) {
         List<PropertySource> provided = builder.loadProvidedPropertySources
                 ? ServiceContext.getInstance().getServices(PropertySource.class)
-                : emptyList();
+                : new ArrayList<>();
+
+        if (builder.loadProvidedPropertySourceProviders) {
+            List<PropertySourceProvider> providers = ServiceContext.getInstance()
+                                                                  .getServices(PropertySourceProvider.class);
+            for (PropertySourceProvider provider : providers) {
+                Collection<PropertySource> sources = provider.getPropertySources();
+                provided.addAll(sources);
+            }
+        }
 
         List<PropertySource> configured = builder.propertySources;
 
@@ -265,6 +274,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
         private boolean loadProvidedPropertyConverters;
         private boolean loadProvidedPropertySources;
+        private boolean loadProvidedPropertySourceProviders;
 
         public Builder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy) {
             this.propertyValueCombinationPolicy = Objects.requireNonNull(policy);
@@ -341,6 +351,10 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
         public void loadProvidedPropertySources(boolean state) {
             loadProvidedPropertySources = state;
+        }
+
+        public void loadProvidedPropertySourceProviders(boolean state) {
+            loadProvidedPropertySourceProviders = state;
         }
     }
 

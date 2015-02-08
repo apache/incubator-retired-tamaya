@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import static org.apache.tamaya.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -443,5 +444,57 @@ public class ConfigurationBuilderTest {
 
 
         assertThat(config.get("tps_c"), Matchers.nullValue());
+    }
+
+    /*********************************************************************
+     * Tests for enabling and disabling of automatic loading of
+     * P r o p e r t y S o u r c e P r o v i d e r s
+     */
+
+    @Test
+    public void disablingOfPropertySourceProvidersIsOk() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.enableProvidedPropertySourceProviders()
+               .disableProvidedPropertySourceProviders()
+               .build();
+
+        assertThat(builder.isPropertySourceProvidersLoadingEnabled(), is(false));
+    }
+
+    @Test
+    public void enablingOfPropertySourceProvidersIsOk() {
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.disableProvidedPropertySourceProviders()
+               .enableProvidedPropertySourceProviders()
+               .build();
+
+        assertThat(builder.isPropertySourceProvidersLoadingEnabled(), is(true));
+    }
+
+    @Test
+    public void loadingOfPropertySourceProvidersCanBeEnabled() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.disableProvidedPropertySourceProviders()
+                                      .enableProvidedPropertySourceProviders()
+                                      .build();
+
+        assertThat(config.get("tpsp_x"), Matchers.equalTo("X"));
+        assertThat(config.get("tpsp_y"), Matchers.equalTo("Y"));
+    }
+
+    @Test
+    public void loadingOfPropertySourceProvidersCanBeDisabled() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.enableProvidedPropertySourceProviders()
+                                      .disableProvidedPropertySourceProviders()
+                                      .build();
+
+        assertThat(config.get("tpsp_x"), nullValue());
+        assertThat(config.get("tpsp_x"), nullValue());
     }
 }

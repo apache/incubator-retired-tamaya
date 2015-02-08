@@ -66,6 +66,7 @@ public class ConfigurationBuilder {
      * will be loaded if the configuration is build.
      */
     private boolean loadProvidedPropertySources = false;
+    private boolean loadProvidedPropertySourceProviders = false;
 
 
     /**
@@ -175,6 +176,25 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    public ConfigurationBuilder enableProvidedPropertySourceProviders() {
+        checkBuilderState();
+
+        loadProvidedPropertySourceProviders = true;
+
+        return this;
+    }
+
+    public ConfigurationBuilder disableProvidedPropertySourceProviders() {
+        checkBuilderState();
+
+        loadProvidedPropertySourceProviders = false;
+
+        return this;
+    }
+
+    public boolean isPropertySourceProvidersLoadingEnabled() {
+        return loadProvidedPropertySourceProviders;
+    }
 
     //X TODO think on a functonality/API for using the default PropertyConverters and use the configured ones here
     //X TODO as overrides used first.
@@ -191,6 +211,7 @@ public class ConfigurationBuilder {
 
         contextBuilder.loadProvidedPropertyConverters(isPropertyConverterLoadingEnabled());
         contextBuilder.loadProvidedPropertySources(isPropertySourcesLoadingEnabled());
+        contextBuilder.loadProvidedPropertySourceProviders(isPropertySourceProvidersLoadingEnabled());
 
         return new DefaultConfiguration(contextBuilder.build());
     }
