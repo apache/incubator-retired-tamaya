@@ -34,7 +34,9 @@ import java.util.Objects;
  *
  * - configurable loading of provided PropertyConverter DONE
  * - configurable loading of provided PropertySources DONE
- * - configurable loading of provided PropertySourceProviders
+ * - configurable loading of provided PropertySourceProviders DONE
+ * - Work on all TODOs for TAMAYA-60
+ * - Write JavaDoc
  * - adding sources via URL
  *
  *
