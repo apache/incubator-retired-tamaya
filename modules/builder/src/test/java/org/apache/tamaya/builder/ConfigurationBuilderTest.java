@@ -430,7 +430,7 @@ public class ConfigurationBuilderTest {
                                       .build();
 
 
-        assertThat(config.get("tps_a"), Matchers.notNullValue());
+        assertThat(config.get("tps_a"), Matchers.equalTo("A"));
     }
 
     @Test
