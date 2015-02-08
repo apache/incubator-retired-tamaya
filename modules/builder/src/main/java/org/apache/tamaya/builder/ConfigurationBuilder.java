@@ -35,6 +35,7 @@ import java.util.Objects;
  * - configurable loading of provided PropertyConverter DONE
  * - configurable loading of provided PropertySources DONE
  * - configurable loading of provided PropertySourceProviders DONE
+ * - configurable loading of provided PropertyFilters DONE
  * - Rethink the default behaviour for SPI loading
  * - Work on all TODOs for TAMAYA-60
  * - Write JavaDoc
@@ -70,6 +71,8 @@ public class ConfigurationBuilder {
      */
     private boolean loadProvidedPropertySources = false;
     private boolean loadProvidedPropertySourceProviders = false;
+
+    private boolean isLoadProvidedPropertyFilters = false;
 
 
     /**
@@ -171,6 +174,28 @@ public class ConfigurationBuilder {
         return loadProvidedPropertySources;
     }
 
+
+    public boolean isPropertyFilterLoadingEnabled() {
+        return isLoadProvidedPropertyFilters;
+    }
+
+
+    public ConfigurationBuilder enabledProvidedPropertyFilters() {
+        checkBuilderState();
+
+        isLoadProvidedPropertyFilters = true;
+
+        return this;
+    }
+
+    public ConfigurationBuilder disableProvidedPropertyFilters() {
+        checkBuilderState();
+
+        isLoadProvidedPropertyFilters = false;
+
+        return this;
+    }
+
     public ConfigurationBuilder disableProvidedPropertySources() {
         checkBuilderState();
 
@@ -215,6 +240,7 @@ public class ConfigurationBuilder {
         contextBuilder.loadProvidedPropertyConverters(isPropertyConverterLoadingEnabled());
         contextBuilder.loadProvidedPropertySources(isPropertySourcesLoadingEnabled());
         contextBuilder.loadProvidedPropertySourceProviders(isPropertySourceProvidersLoadingEnabled());
+        contextBuilder.loadProvidedPropertyFilters(isLoadProvidedPropertyFilters);
 
         return new DefaultConfiguration(contextBuilder.build());
     }

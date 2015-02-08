@@ -96,7 +96,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         LOG.info(() -> "Using " + immutablePropertySources.size() + " property sources: " +
                 createStringList(immutablePropertySources, ps -> ps.getName() + '[' + ps.getClass().getName() + ']'));
 
-        immutablePropertyFilters.addAll(builder.propertyFilters);
+        immutablePropertyFilters.addAll(getPropertyFilters(builder));
         Collections.sort(immutablePropertyFilters, this::comparePropertyFilters);
         immutablePropertyFilters = Collections.unmodifiableList(immutablePropertyFilters);
         LOG.info(() -> "Using " + immutablePropertyFilters.size() + " property filters: " +
@@ -115,6 +115,16 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         }
 
         LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
+    }
+
+    private List<PropertyFilter> getPropertyFilters(Builder builder) {
+        List<PropertyFilter> provided = builder.loadProvidedPropertyFilters
+                ? ServiceContext.getInstance().getServices(PropertyFilter.class)
+                : new ArrayList<>(0);
+
+        List<PropertyFilter> configured = builder.propertyFilters;
+
+        return join(provided, configured);
     }
 
     private List<PropertySource> getAllPropertySources(Builder builder) {
@@ -273,6 +283,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         private boolean loadProvidedPropertyConverters;
         private boolean loadProvidedPropertySources;
         private boolean loadProvidedPropertySourceProviders;
+        private boolean loadProvidedPropertyFilters;
 
         public Builder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy) {
             this.propertyValueCombinationPolicy = Objects.requireNonNull(policy);
@@ -353,6 +364,10 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
         public void loadProvidedPropertySourceProviders(boolean state) {
             loadProvidedPropertySourceProviders = state;
+        }
+
+        public void loadProvidedPropertyFilters(boolean state) {
+            loadProvidedPropertyFilters = state;
         }
     }
 

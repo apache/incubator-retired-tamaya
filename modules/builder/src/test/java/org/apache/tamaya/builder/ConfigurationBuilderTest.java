@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.builder;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
@@ -446,6 +447,73 @@ public class ConfigurationBuilderTest {
 
         assertThat(builder.isPropertySourcesLoadingEnabled(), is(false));
         assertThat(config.get("tps_c"), Matchers.nullValue());
+    }
+
+    /*********************************************************************
+     * Tests for enabling and disabling of automatic loading of
+     * P r o p e r t y F i l t e r s
+     */
+
+    @Test
+    public void enablingOfPropertyFiltersLoadingIsOk() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("source").when(source).getName();
+        doReturn("A").when(source).get("key");
+        doReturn(100).when(source).getOrdinal();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.disableProvidedPropertyFilters()
+                                      .enabledProvidedPropertyFilters()
+                                      .addPropertySources(source)
+                                      .build();
+
+        String property = config.get("key");
+
+        assertThat(property, CoreMatchers.notNullValue());
+        assertThat(property, Matchers.equalTo("AinBerlin"));
+    }
+
+    @Test
+    public void disablingOfPropertyFiltersLoadingIsOk() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.enabledProvidedPropertyFilters()
+               .disableProvidedPropertyFilters();
+
+        assertThat(builder.isPropertyFilterLoadingEnabled(), is(false));
+    }
+
+    @Test
+    public void loadingOfPropertyFiltersCanBeDisabled() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.disableProvidedPropertyFilters()
+               .enabledProvidedPropertyFilters();
+
+        assertThat(builder.isPropertyFilterLoadingEnabled(), is(true));
+    }
+
+    @Test
+    public void loadingOfPropertyFiltersCanBeEnabled() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("source").when(source).getName();
+        doReturn("A").when(source).get("key");
+        doReturn(100).when(source).getOrdinal();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.enabledProvidedPropertyFilters()
+                                      .disableProvidedPropertyFilters()
+                                      .addPropertySources(source)
+                                      .build();
+
+        String property = config.get("key");
+
+        assertThat(property, CoreMatchers.notNullValue());
+        assertThat(property, Matchers.equalTo("A"));
     }
 
     /*********************************************************************
