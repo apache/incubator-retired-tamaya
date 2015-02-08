@@ -120,7 +120,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
     private List<PropertySource> getAllPropertySources(Builder builder) {
         List<PropertySource> provided = builder.loadProvidedPropertySources
                 ? ServiceContext.getInstance().getServices(PropertySource.class)
-                : new ArrayList<>();
+                : new ArrayList<>(0);
 
         if (builder.loadProvidedPropertySourceProviders) {
             List<PropertySourceProvider> providers = ServiceContext.getInstance()
