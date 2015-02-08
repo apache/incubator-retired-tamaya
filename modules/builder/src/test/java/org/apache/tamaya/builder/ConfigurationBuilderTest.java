@@ -431,6 +431,7 @@ public class ConfigurationBuilderTest {
                                       .build();
 
 
+        assertThat(builder.isPropertySourcesLoadingEnabled(), is(true));
         assertThat(config.get("tps_a"), Matchers.equalTo("A"));
     }
 
@@ -443,6 +444,7 @@ public class ConfigurationBuilderTest {
                                       .build();
 
 
+        assertThat(builder.isPropertySourcesLoadingEnabled(), is(false));
         assertThat(config.get("tps_c"), Matchers.nullValue());
     }
 
@@ -482,6 +484,7 @@ public class ConfigurationBuilderTest {
                                       .enableProvidedPropertySourceProviders()
                                       .build();
 
+        assertThat(builder.isPropertySourceProvidersLoadingEnabled(), is(true));
         assertThat(config.get("tpsp_x"), Matchers.equalTo("X"));
         assertThat(config.get("tpsp_y"), Matchers.equalTo("Y"));
     }
@@ -494,6 +497,7 @@ public class ConfigurationBuilderTest {
                                       .disableProvidedPropertySourceProviders()
                                       .build();
 
+        assertThat(builder.isPropertySourceProvidersLoadingEnabled(), is(false));
         assertThat(config.get("tpsp_x"), nullValue());
         assertThat(config.get("tpsp_x"), nullValue());
     }
