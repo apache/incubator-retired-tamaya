@@ -35,6 +35,7 @@ import java.util.Objects;
  * - configurable loading of provided PropertyConverter DONE
  * - configurable loading of provided PropertySources DONE
  * - configurable loading of provided PropertySourceProviders DONE
+ * - Rethink the default behaviour for SPI loading
  * - Work on all TODOs for TAMAYA-60
  * - Write JavaDoc
  * - adding sources via URL
