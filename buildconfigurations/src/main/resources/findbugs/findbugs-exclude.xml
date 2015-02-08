@@ -142,6 +142,10 @@ under the License.
     <!-- Issues to review -->
 
     <Match>
+        <Package name="org.apache.tamaya.core.internal"/>
+    </Match>
+
+    <Match>
         <Class name="org.apache.tamaya.core.internal.PropertiesFileLoader"/>
     </Match>
     <Match>
