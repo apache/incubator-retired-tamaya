@@ -45,8 +45,6 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
-import static java.util.Collections.emptyList;
-
 /**
  * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
  * used by the {@link org.apache.tamaya.builder.ConfigurationBuilder}
