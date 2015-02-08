@@ -33,7 +33,7 @@ import java.util.Objects;
 /* TODO LIST FOR TAMAYA-60
  *
  * - configurable loading of provided PropertyConverter DONE
- * - configurable loading of provided PropertySources
+ * - configurable loading of provided PropertySources DONE
  * - configurable loading of provided PropertySourceProviders
  * - adding sources via URL
  *
@@ -60,6 +60,12 @@ public class ConfigurationBuilder {
      * should be loaded if the configuration is build.
      */
     private boolean loadProvidedPropertyConverters = true;
+
+    /**
+     * Flag if all existing property source service providers
+     * will be loaded if the configuration is build.
+     */
+    private boolean loadProvidedPropertySources = false;
 
 
     /**
@@ -148,6 +154,28 @@ public class ConfigurationBuilder {
         return this;
     }
 
+
+    public ConfigurationBuilder enableProvidedPropertySources() {
+        checkBuilderState();
+
+        loadProvidedPropertySources = true;
+
+        return this;
+    }
+
+    public boolean isPropertySourcesLoadingEnabled() {
+        return loadProvidedPropertySources;
+    }
+
+    public ConfigurationBuilder disableProvidedPropertySources() {
+        checkBuilderState();
+
+        loadProvidedPropertySources = false;
+
+        return this;
+    }
+
+
     //X TODO think on a functonality/API for using the default PropertyConverters and use the configured ones here
     //X TODO as overrides used first.
 
@@ -162,6 +190,7 @@ public class ConfigurationBuilder {
         built = true;
 
         contextBuilder.loadProvidedPropertyConverters(isPropertyConverterLoadingEnabled());
+        contextBuilder.loadProvidedPropertySources(isPropertySourcesLoadingEnabled());
 
         return new DefaultConfiguration(contextBuilder.build());
     }

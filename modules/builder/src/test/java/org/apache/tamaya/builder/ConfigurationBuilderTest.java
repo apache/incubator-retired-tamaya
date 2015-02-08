@@ -20,26 +20,21 @@ package org.apache.tamaya.builder;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.builder.util.mockito.NotMockedAnswer;
 import org.apache.tamaya.builder.util.types.CustomTypeA;
 import org.apache.tamaya.builder.util.types.CustomTypeB;
 import org.apache.tamaya.builder.util.types.CustomTypeC;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.tamaya.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -79,6 +74,7 @@ public class ConfigurationBuilderTest {
         PropertySource first = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("first").when(first).getName();
+        doReturn(100).when(first).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(first);
 
@@ -97,6 +93,7 @@ public class ConfigurationBuilderTest {
 
         doReturn("one").when(source).getName();
         doReturn("a").when(source).get("keyOfA");
+        doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source);
 
@@ -251,6 +248,7 @@ public class ConfigurationBuilderTest {
 
         doReturn("source").when(source).getName();
         doReturn("A").when(source).get("key");
+        doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
@@ -275,6 +273,7 @@ public class ConfigurationBuilderTest {
 
         doReturn("source").when(source).getName();
         doReturn("A").when(source).get("key");
+        doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
@@ -299,6 +298,7 @@ public class ConfigurationBuilderTest {
 
         doReturn("source").when(source).getName();
         doReturn("A").when(source).get("key");
+        doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
@@ -365,6 +365,7 @@ public class ConfigurationBuilderTest {
 
         doReturn("source").when(source).getName();
         doReturn("A").when(source).get("key");
+        doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
                                                                  .enableProvidedPropertyConverters()
@@ -381,6 +382,7 @@ public class ConfigurationBuilderTest {
 
         doReturn("source").when(source).getName();
         doReturn("A").when(source).get("key");
+        doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
                                                                  .disableProvidedPropertyConverters()
@@ -394,4 +396,52 @@ public class ConfigurationBuilderTest {
         assertThat(result.getValue(), equalTo("A"));
     }
 
+    /*********************************************************************
+     * Tests for enabling and disabling of automatic loading of
+     * P r o p e r t y S o u r c e s
+     */
+
+    @Test
+    public void enablingOfPropertySourceLoadingIsOk() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.disableProvidedPropertySources()
+               .enableProvidedPropertySources();
+
+        assertThat(builder.isPropertySourcesLoadingEnabled(), is(true));
+    }
+
+    @Test
+    public void disablingPropertySourceLoadingIsOk() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.enableProvidedPropertySources()
+               .disableProvidedPropertySources();
+
+        assertThat(builder.isPropertySourcesLoadingEnabled(), is(false));
+    }
+
+    @Test
+    public void loadingOfPropertySourcesCanBeEnabled() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.disableProvidedPropertySources()
+                                      .enableProvidedPropertySources()
+                                      .build();
+
+
+        assertThat(config.get("tps_a"), Matchers.notNullValue());
+    }
+
+    @Test
+    public void loadingOfPropertySourcesCanBeDisabled() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.enableProvidedPropertySources()
+                                      .disableProvidedPropertySources()
+                                      .build();
+
+
+        assertThat(config.get("tps_c"), Matchers.nullValue());
+    }
 }

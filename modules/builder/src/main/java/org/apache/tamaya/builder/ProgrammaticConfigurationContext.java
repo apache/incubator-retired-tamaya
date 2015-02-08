@@ -27,6 +27,7 @@ import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 import java.util.logging.Logger;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
@@ -89,7 +92,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      */
     public ProgrammaticConfigurationContext(Builder builder) {
         propertyConverterManager = new PropertyConverterManager(builder.loadProvidedPropertyConverters);
-        immutablePropertySources.addAll(builder.propertySources);
+        immutablePropertySources = getAllPropertySources(builder);
         Collections.sort(immutablePropertySources, this::comparePropertySources);
         immutablePropertySources = Collections.unmodifiableList(immutablePropertySources);
         LOG.info(() -> "Using " + immutablePropertySources.size() + " property sources: " +
@@ -116,6 +119,27 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
+    private List<PropertySource> getAllPropertySources(Builder builder) {
+        List<PropertySource> provided = builder.loadProvidedPropertySources
+                ? ServiceContext.getInstance().getServices(PropertySource.class)
+                : emptyList();
+
+        List<PropertySource> configured = builder.propertySources;
+
+        return join(provided, configured);
+    }
+
+    private <T> List<T> join(List<T> a, List<T> b) {
+        int sizeA = a.size();
+        int sizeB = b.size();
+
+        ArrayList<T> result = new ArrayList<>(sizeA + sizeB);
+
+        result.addAll(a);
+        result.addAll(b);
+
+        return result;
+    }
 
     @Override
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
@@ -240,6 +264,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
                 PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
 
         private boolean loadProvidedPropertyConverters;
+        private boolean loadProvidedPropertySources;
 
         public Builder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy) {
             this.propertyValueCombinationPolicy = Objects.requireNonNull(policy);
@@ -312,6 +337,10 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
         public void loadProvidedPropertyConverters(boolean state) {
             loadProvidedPropertyConverters = state;
+        }
+
+        public void loadProvidedPropertySources(boolean state) {
+            loadProvidedPropertySources = state;
         }
     }
 
