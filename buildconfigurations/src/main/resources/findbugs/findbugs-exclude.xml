@@ -24,20 +24,17 @@ under the License.
           the usage of this method via a method reference.
           Oliver B. Fischer, 17.01.2015
         -->
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
     </Match>
 
     <Match>
-        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$1"/>
+        <!-- Note: We will not fail because of an unread field. -->
+        <Bug pattern="URF_UNREAD_FIELD" />
     </Match>
+
     <Match>
-        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$2"/>
-    </Match>
-    <Match>
-        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$3"/>
-    </Match>
-    <Match>
-        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$4"/>
+        <!-- Note: We will not fail because of an unused field -->
+        <Bug pattern="UUF_UNUSED_FIELD" />
     </Match>
 
     <Match>
