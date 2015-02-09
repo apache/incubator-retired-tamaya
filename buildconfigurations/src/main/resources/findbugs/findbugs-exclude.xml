@@ -108,9 +108,6 @@ under the License.
         <Class name="org.apache.tamaya.inject.internal.ConfiguredSetterMethod" />
     </Match>
     <Match>
-        <Class name="org.apache.tamaya.inject.internal.ConfiguredField" />
-    </Match>
-    <Match>
         <Class name="org.apache.tamaya.inject.internal.ConfigChangeCallbackMethod" />
     </Match>
     <Match>

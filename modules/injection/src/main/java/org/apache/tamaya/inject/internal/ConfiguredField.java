@@ -19,6 +19,8 @@
 package org.apache.tamaya.inject.internal;
 
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,7 +40,7 @@ public class ConfiguredField {
     /**
      * The configured field instance.
      */
-    private Field annotatedField;
+    protected Field annotatedField;
 
     /**
      * Models a configured field and provides mechanisms for injection.
@@ -73,14 +75,22 @@ public class ConfiguredField {
     public void applyValue(Object target, String configValue, boolean resolve) throws ConfigException {
         Objects.requireNonNull(target);
         try {
-            if (resolve && configValue != null) {
-                // net step perform exression resolution, if any
-                configValue = InjectionUtils.evaluateValue(configValue);
-            }
+            // Next step perform expression resolution, if any
+            String evaluatedValue = resolve && configValue != null
+                    ? InjectionUtils.evaluateValue(configValue)
+                    : configValue;
+
             // Check for adapter/filter
-            Object value = InjectionUtils.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), configValue);
-            annotatedField.setAccessible(true);
-            annotatedField.set(target, value);
+            Object value = InjectionUtils.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), evaluatedValue);
+
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+                @Override
+                public Object run() throws Exception {
+                    annotatedField.setAccessible(true);
+                    annotatedField.set(target, value);
+                    return value;
+                }
+            });
         } catch (Exception e) {
             throw new ConfigException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
                     .getName() + '.' + annotatedField.getName(), e);
