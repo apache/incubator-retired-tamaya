@@ -79,9 +79,6 @@ under the License.
         <Class name="org.apache.tamaya.core.internal.PropertiesFileLoader"/>
     </Match>
     <Match>
-        <Class name="org.apache.tamaya.resolver.internal.URLResolver" />
-    </Match>
-    <Match>
         <Class name="org.apache.tamaya.resolver.internal.ResourceResolver" />
     </Match>
     <Match>
@@ -91,16 +88,10 @@ under the License.
         <Class name="org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator" />
     </Match>
     <Match>
-        <Class name="org.apache.tamaya.inject.internal.Utils" />
-    </Match>
-    <Match>
         <Class name="org.apache.tamaya.inject.internal.ConfiguredSetterMethod" />
     </Match>
     <Match>
         <Class name="org.apache.tamaya.inject.internal.ConfigChangeCallbackMethod" />
-    </Match>
-    <Match>
-        <Class name="org.apache.tamaya.inject.PropertyChangeSetBuilder" />
     </Match>
 
 </FindBugsFilter>

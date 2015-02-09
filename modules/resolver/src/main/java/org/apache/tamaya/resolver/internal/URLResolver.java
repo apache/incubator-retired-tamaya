@@ -43,18 +43,19 @@ public final class URLResolver implements ExpressionResolver {
 
     @Override
     public String evaluate(String expression) {
-        BufferedReader in;
         try {
             URL url = new URL(expression);
-            in = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
-            StringBuilder builder = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                builder.append(inputLine).append("\n");
+            try (InputStreamReader inputStreamReader = new InputStreamReader(url.openStream());
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader))
+            {
+                StringBuilder builder = new StringBuilder();
+                String inputLine;
+                while ((inputLine = bufferedReader.readLine()) != null) {
+                    builder.append(inputLine).append("\n");
+                }
+
+                return builder.toString();
             }
-            in.close();
-            return builder.toString();
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);
             return null;
