@@ -18,6 +18,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 <FindBugsFilter>
+    <Match>
+        <!-- Note:
+          The current version of FindBugs (version 3.0.0) is not able to detect
+          the usage of this method via a method reference.
+          Oliver B. Fischer, 17.01.2015
+        -->
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
 
     <Match>
         <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$1"/>
@@ -30,56 +38,6 @@ under the License.
     </Match>
     <Match>
         <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext$4"/>
-    </Match>
-    <Match>
-        <!-- Note:
-          The current version of FindBugs (version 3.0.0) is not able to detect
-          the usage of this method via a method reference.
-          Oliver B. Fischer, 17.01.2015
-        -->
-        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext"/>
-        <Method name="comparePropertySources"
-                params="org.apache.tamaya.spi.PropertySource,org.apache.tamaya.spi.PropertySource"
-                returns="int"/>
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
-    </Match>
-    <Match>
-        <!-- Note:
-          The current version of FindBugs (version 3.0.0) is not able to detect
-          the usage of this method via a method reference.
-          Oliver B. Fischer, 17.01.2015
-        -->
-        <Class name=" org.apache.tamaya.builder.ProgrammaticConfigurationContext"/>
-        <Method name="comparePropertyFilters"
-                params="org.apache.tamaya.spi.PropertyFilter,org.apache.tamaya.spi.PropertyFilter"
-                returns="int"/>
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
-    </Match>
-    <Match>
-        <!-- Note:
-          The current version of FindBugs (version 3.0.0) is not able to detect
-          the usage of this method via a method reference.
-          Oliver B. Fischer, 17.01.2015
-        -->
-        <Class name=" org.apache.tamaya.builder.ProgrammaticConfigurationContext"/>
-        <Method name="comparePropertySources"
-                params="org.apache.tamaya.spi.PropertySource,org.apache.tamaya.spi.PropertySource"
-                returns="int"/>
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
-    </Match>
-
-    <Match>
-        <!-- Note:
-         The current version of FindBugs (version 3.0.0) is not able to detect
-         the usage of this method via a method reference.
-         Oliver B. Fischer, 17.01.2015
-       -->
-
-        <Class name="org.apache.tamaya.core.internal.DefaultConfigurationContext"/>
-        <Method name="comparePropertyFilters"
-                params="org.apache.tamaya.spi.PropertyFilter,org.apache.tamaya.spi.PropertyFilter"
-                returns="int"/>
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
     </Match>
 
     <Match>
@@ -124,20 +82,6 @@ under the License.
      * findBugs does not detect usage via method references
      * should be removed after see TODO ProgrammaticConfigurationContext:131
     -->
-    <Match>
-        <Class name="org.apache.tamaya.builder.ProgrammaticConfigurationContext" />
-        <Method name="comparePropertySources"
-                params="org.apache.tamaya.spi.PropertySource,org.apache.tamaya.spi.PropertySource"
-                returns="int" />
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
-    </Match>
-    <Match>
-        <Class name="org.apache.tamaya.builder.ProgrammaticConfigurationContext" />
-        <Method name="comparePropertyFilters"
-                params="org.apache.tamaya.spi.PropertyFilter,org.apache.tamaya.spi.PropertyFilter"
-                returns="int" />
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
-    </Match>
 
     <!-- Issues to review -->
 
@@ -175,14 +119,5 @@ under the License.
     <Match>
         <Class name="org.apache.tamaya.inject.PropertyChangeSetBuilder" />
     </Match>
-    <!--<Match>-->
-        <!--<Class name="org.apache.tamaya.inject.internal.ConfiguredType" />-->
-    <!--</Match>-->
-    <!--<Match>-->
-        <!--<Class name="org.apache.tamaya.inject.internal.ConfigTemplateInvocationHandler" />-->
-    <!--</Match>-->
-    <!--<Match>-->
-        <!--<Class name="org.apache.tamaya.inject.DynamicValue" />-->
-    <!--</Match>-->
 
 </FindBugsFilter>
