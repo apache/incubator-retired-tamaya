@@ -19,12 +19,21 @@ under the License.
 -->
 <FindBugsFilter>
     <Match>
-        <!-- Note:
+        <!-- Note: @todo Write a bug report
           The current version of FindBugs (version 3.0.0) is not able to detect
           the usage of this method via a method reference.
           Oliver B. Fischer, 17.01.2015
         -->
         <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+    </Match>
+
+    <Match>
+        <!-- Note: @todo Write a bug report
+          The current version of FindBugs (version 3.0.0) is not able to detect
+          correctly caught exceptions.
+          Oliver B. Fischer, 09.02.2015
+        -->
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
     </Match>
 
     <Match>
@@ -35,26 +44,6 @@ under the License.
     <Match>
         <!-- Note: We will not fail because of an unused field -->
         <Bug pattern="UUF_UNUSED_FIELD" />
-    </Match>
-
-    <Match>
-        <!-- Note:
-             False positive reported by FindBugs 3.0.0 for exception
-             thrown in try-with-resource.
-             Oliver B. Fischer, 17.01.2015
-        -->
-        <Class name='org.apache.tamaya.format.PropertiesXmlFormat'/>
-        <Bug pattern="REC_CATCH_EXCEPTION"/>
-    </Match>
-
-    <Match>
-        <!-- Note:
-             False positive reported by FindBugs 3.0.0 for exception
-             thrown in try-with-resource.
-             Oliver B. Fischer, 17.01.2015
-        -->
-        <Class name='org.apache.tamaya.format.PropertiesFormat'/>
-        <Bug pattern="REC_CATCH_EXCEPTION"/>
     </Match>
 
     <Match>

@@ -83,14 +83,12 @@ public class ConfiguredField {
             // Check for adapter/filter
             Object value = InjectionUtils.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), evaluatedValue);
 
-            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-                @Override
-                public Object run() throws Exception {
-                    annotatedField.setAccessible(true);
-                    annotatedField.set(target, value);
-                    return value;
-                }
+            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+                annotatedField.setAccessible(true);
+                return annotatedField;
             });
+
+            annotatedField.set(target, value);
         } catch (Exception e) {
             throw new ConfigException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
                     .getName() + '.' + annotatedField.getName(), e);
