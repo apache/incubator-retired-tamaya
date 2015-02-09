@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Property resolver implementation that tries to load the given resource from the current classpath using the
  * Thread Context classloader, and as fallback from the classloader that loaded this module and system classloader.
@@ -83,16 +85,17 @@ public final class ResourceResolver implements ExpressionResolver {
 
     private String readURL(String expression, List<ClassLoader> classLoaders) {
         URL url = getUrl(expression, classLoaders);
-        BufferedReader in;
-        try {
-            in = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
+
+        try (InputStreamReader streamReader = new InputStreamReader(url.openStream(), UTF_8);
+             BufferedReader bufferedReader = new BufferedReader(streamReader)){
+
             StringBuilder builder = new StringBuilder();
             String inputLine;
-            while ((inputLine = in.readLine()) != null) {
+
+            while ((inputLine = bufferedReader.readLine()) != null) {
                 builder.append(inputLine).append("\n");
             }
-            in.close();
+
             return builder.toString();
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);
