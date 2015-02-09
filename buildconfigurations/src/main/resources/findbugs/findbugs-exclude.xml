@@ -81,12 +81,12 @@ under the License.
     <Match>
         <Class name="org.apache.tamaya.resolver.internal.ResourceResolver" />
     </Match>
-    <Match>
-        <Class name="org.apache.tamaya.resolver.internal.FileResolver" />
-    </Match>
-    <Match>
-        <Class name="org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator" />
-    </Match>
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.resolver.internal.FileResolver" />-->
+    <!--</Match>-->
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator" />-->
+    <!--</Match>-->
     <!--<Match>-->
         <!--<Class name="org.apache.tamaya.inject.internal.ConfiguredSetterMethod" />-->
     <!--</Match>-->
