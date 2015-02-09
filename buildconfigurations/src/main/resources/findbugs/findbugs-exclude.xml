@@ -87,9 +87,9 @@ under the License.
     <Match>
         <Class name="org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator" />
     </Match>
-    <Match>
-        <Class name="org.apache.tamaya.inject.internal.ConfiguredSetterMethod" />
-    </Match>
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.inject.internal.ConfiguredSetterMethod" />-->
+    <!--</Match>-->
     <Match>
         <Class name="org.apache.tamaya.inject.internal.ConfigChangeCallbackMethod" />
     </Match>

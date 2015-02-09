@@ -19,6 +19,8 @@
 package org.apache.tamaya.inject.internal;
 
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -83,13 +85,18 @@ public class ConfiguredSetterMethod {
     public void applyValue(Object target, String configValue, boolean resolve) throws ConfigException {
         Objects.requireNonNull(target);
         try {
-            if (resolve && configValue != null) {
-                // net step perform exression resolution, if any
-                configValue = InjectionUtils.evaluateValue(configValue);
-            }
+            String evaluatedString = resolve && configValue != null
+                    ? InjectionUtils.evaluateValue(configValue)
+                    : configValue;
+
             // Check for adapter/filter
-            Object value = InjectionUtils.adaptValue(this.setterMethod,  TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), configValue);
-            setterMethod.setAccessible(true);
+            Object value = InjectionUtils.adaptValue(this.setterMethod,  TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), evaluatedString);
+
+            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+                setterMethod.setAccessible(true);
+                return setterMethod;
+            });
+
             setterMethod.invoke(target, value);
         } catch (Exception e) {
             throw new ConfigException("Failed to annotation configured method: " + this.setterMethod.getDeclaringClass()
