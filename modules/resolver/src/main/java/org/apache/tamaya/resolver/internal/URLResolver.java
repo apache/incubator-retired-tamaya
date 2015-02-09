@@ -27,6 +27,8 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Property resolver implementation that interprets the resolver expression as an URL to be resolved.
  * It can be explicitly addressed by prefixing {@code url:}, e.g. {@code ${url:http//www.oracle.com}}.
@@ -45,7 +47,7 @@ public final class URLResolver implements ExpressionResolver {
     public String evaluate(String expression) {
         try {
             URL url = new URL(expression);
-            try (InputStreamReader inputStreamReader = new InputStreamReader(url.openStream());
+            try (InputStreamReader inputStreamReader = new InputStreamReader(url.openStream(), UTF_8);
                  BufferedReader bufferedReader = new BufferedReader(inputStreamReader))
             {
                 StringBuilder builder = new StringBuilder();
