@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
-public class PropetiesFileLoaderTest {
+public class PropertiesFileLoaderTest {
 
 
     @Test
