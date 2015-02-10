@@ -28,7 +28,7 @@ under the License.
         <version>0.1-incubating-SNAPSHOT</version>
     </parent>
 
-    <artifactId>json</artifactId>
+    <artifactId>tamaya-json</artifactId>
     <name>Apache Tamaya JSON Support</name>
     <inceptionYear>2015</inceptionYear>
 
