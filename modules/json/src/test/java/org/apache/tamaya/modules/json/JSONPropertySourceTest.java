@@ -43,9 +43,7 @@ public class JSONPropertySourceTest {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        File configFile = new File(configURL.toURI());
-
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
 
         source.getProperties();
     }
@@ -56,9 +54,7 @@ public class JSONPropertySourceTest {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        File configFile = new File(configURL.toURI());
-
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
 
         assertThat(source.getProperties().keySet(), hasSize(0));
     }
@@ -69,9 +65,7 @@ public class JSONPropertySourceTest {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        File configFile = new File(configURL.toURI());
-
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
 
         assertThat(source.getProperties().keySet(), hasSize(3));
 
@@ -93,18 +87,16 @@ public class JSONPropertySourceTest {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        File configFile = new File(configURL.toURI());
-
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
 
         assertThat(source.getProperties().keySet(), hasSize(5));
 
-        String keyb = source.get("b");
+        String keyB = source.get("b");
         String keyDO = source.get("d.o");
         String keyDP = source.get("d.p");
 
-        assertThat(keyb, notNullValue());
-        assertThat(keyb, equalTo("B"));
+        assertThat(keyB, notNullValue());
+        assertThat(keyB, equalTo("B"));
         assertThat(keyDO, notNullValue());
         assertThat(keyDO, equalTo("O"));
         assertThat(keyDP, Matchers.notNullValue());
@@ -120,7 +112,7 @@ public class JSONPropertySourceTest {
 
         File configFile = new File(configURL.toURI());
 
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+        JSONPropertySource source = new JSONPropertySource(configFile.toString(), 10);
 
         assertThat(source.getProperties().keySet(), hasSize(4));
 
@@ -145,9 +137,7 @@ public class JSONPropertySourceTest {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        File configFile = new File(configURL.toURI());
-
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
 
         assertThat(source.get(PropertySource.TAMAYA_ORDINAL), nullValue());
     }
@@ -158,9 +148,7 @@ public class JSONPropertySourceTest {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        File configFile = new File(configURL.toURI());
-
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
 
         assertThat(source.getOrdinal(), is(16784));
     }
@@ -173,7 +161,7 @@ public class JSONPropertySourceTest {
 
         File configFile = new File(configURL.toURI());
 
-        JSONPropertySource source = new JSONPropertySource(configFile);
+        JSONPropertySource source = new JSONPropertySource(configFile.toString());
 
         assertThat(source.getOrdinal(), is(16784));
 

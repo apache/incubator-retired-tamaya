@@ -23,14 +23,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.propertysource.DefaultOrdinal;
+import org.apache.tamaya.resource.ResourceResolver;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
 
@@ -42,8 +48,9 @@ import static java.lang.String.format;
 public class JSONPropertySource
     implements PropertySource {
 
+    private URL urlResource;
     private int priority = DefaultOrdinal.FILE_PROPERTIES;
-    private InputResource source;
+
     private HashMap<String, String> values;
 
     /**
@@ -51,14 +58,64 @@ public class JSONPropertySource
      */
     private StampedLock propertySourceLock = new StampedLock();
 
+    public JSONPropertySource(URL resource) {
+        init(resource);
+    }
+
+    public JSONPropertySource(String resourcePath) {
+        this(resourcePath, DefaultOrdinal.FILE_PROPERTIES);
+    }
+
+    public JSONPropertySource(String resourcePath, int prio) {
+        priority = prio;
+
+        Optional<ResourceResolver> resolver = ServiceContext.getInstance().getService(ResourceResolver.class);
+
+        if (!resolver.isPresent()) {
+            throw new ConfigException("Unable to load " + ResourceResolver.class.getCanonicalName());
+        }
+
+        Collection<URL> resources = resolver.get().getResources(resourcePath);
+
+        if (resources.size() == 0) {
+            throw new ConfigException("Unable to find " + resourcePath);
+        } else if (resources.size() > 1) {
+            throw new ConfigException("Unable to resolve " + resourcePath + " to a single resource.");
+        }
+
+        URL url = resources.iterator().next();
+
+        init(url, prio);
+    }
 
     public JSONPropertySource(File file) {
-        this(file, 0);
+        init(file);
+    }
+
+    private void init(File resource) {
+        init(resource, DefaultOrdinal.FILE_PROPERTIES);
+    }
+
+    private void init(File resource, int prio) {
+
+        try {
+            init(resource.toURI().toURL(), prio);
+        } catch (MalformedURLException e) {
+            throw new ConfigException(format("%s seems not to be a valid file.", resource), e);
+        }
+    }
+
+    private void init(URL resource) {
+        init(resource, DefaultOrdinal.FILE_PROPERTIES);
+    }
+
+    private void init(URL resource, int prio) {
+        priority = prio;
+        urlResource = resource;
     }
 
     public JSONPropertySource(File file, int priority) {
-        this.priority = priority;
-        source = new FileBasedResource(file);
+        init(file, priority);
     }
 
     @Override
@@ -108,7 +165,7 @@ public class JSONPropertySource
     }
 
     protected void readSource() {
-        try (InputStream is = source.getInputStream()) {
+        try (InputStream is = urlResource.openStream()) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(is);
 
@@ -130,7 +187,7 @@ public class JSONPropertySource
             }
         }
         catch (Throwable t) {
-            throw new ConfigException(format("Failed to read properties from %s", source.getDescription()), t);
+            throw new ConfigException(format("Failed to read properties from %s", urlResource.toExternalForm()), t);
         }
 
     }

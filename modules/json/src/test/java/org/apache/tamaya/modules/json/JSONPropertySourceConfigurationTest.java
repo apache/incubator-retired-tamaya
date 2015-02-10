@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
-import java.io.File;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,8 +39,9 @@ public class JSONPropertySourceConfigurationTest {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/simple-flat-string-only-config.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
-        File configFile = new File(configURL.toURI());
-        JSONPropertySource source = new JSONPropertySource(configFile, 10);
+
+        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
+
         assertThat(source.getProperties().keySet(), hasSize(3));
 
         ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
