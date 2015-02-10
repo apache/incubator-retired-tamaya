@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.ConfigException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -70,23 +72,13 @@ public final class PropertiesFileLoader {
 
         Properties properties = new Properties();
 
-        InputStream stream = null;
-        try {
-            stream = propertiesFile.openStream();
+        try (InputStream stream = propertiesFile.openStream()) {
 
             if (stream != null) {
                 properties.load(stream);
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Error loading Properties " + propertiesFile, e);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    // bad luck -> stream is already closed
-                }
-            }
+            throw new ConfigException("Error loading properties " + propertiesFile, e);
         }
 
         return properties;
