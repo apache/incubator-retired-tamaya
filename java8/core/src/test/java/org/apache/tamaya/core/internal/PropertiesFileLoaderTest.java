@@ -27,42 +27,47 @@ import java.util.Properties;
 
 public class PropertiesFileLoaderTest {
 
+    @Test
+    public void resolveExistingPropertiesFileWithExtension() throws Exception {
+        Properties expectedProperties = PropertiesFileLoader.load(Thread.currentThread()
+                                                                        .getContextClassLoader()
+                                                                        .getResource("testfile.properties"));
+
+
+        // with .properties
+        Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile.properties");
+        Assert.assertNotNull(urls);
+        Assert.assertTrue(urls.hasMoreElements());
+
+        Properties properties = PropertiesFileLoader.load(urls.nextElement());
+        Assert.assertEquals(expectedProperties.size(), properties.size());
+
+        Assert.assertFalse(urls.hasMoreElements());
+    }
 
     @Test
-    public void testResolvePropertiesFiles() throws Exception {
-        Properties expectedProperties = PropertiesFileLoader.load(Thread.currentThread().getContextClassLoader().getResource("testfile.properties"));
+    public void resolveExistingPropertiesFileWithoutExtension() throws Exception {
+        Properties expectedProperties = PropertiesFileLoader.load(Thread.currentThread()
+                                                                        .getContextClassLoader()
+                                                                        .getResource("testfile.properties"));
 
-        {
-            // with .properties
-            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile.properties");
-            Assert.assertNotNull(urls);
-            Assert.assertTrue(urls.hasMoreElements());
+        // without .properties
+        Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile");
+        Assert.assertNotNull(urls);
+        Assert.assertTrue(urls.hasMoreElements());
 
-            Properties properties = PropertiesFileLoader.load(urls.nextElement());
-            Assert.assertEquals(expectedProperties.size(), properties.size());
+        Properties properties = PropertiesFileLoader.load(urls.nextElement());
+        Assert.assertEquals(expectedProperties.size(), properties.size());
 
-            Assert.assertFalse(urls.hasMoreElements());
-        }
+        Assert.assertFalse(urls.hasMoreElements());
+    }
 
-        {
-            // without .properties
-            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("testfile");
-            Assert.assertNotNull(urls);
-            Assert.assertTrue(urls.hasMoreElements());
-
-            Properties properties = PropertiesFileLoader.load(urls.nextElement());
-            Assert.assertEquals(expectedProperties.size(), properties.size());
-
-            Assert.assertFalse(urls.hasMoreElements());
-        }
-
-        {
-            // with a while which doesn't exist
-            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("nonexistingfile.properties");
-            Assert.assertNotNull(urls);
-            Assert.assertFalse(urls.hasMoreElements());
-        }
-
+    @Test
+    public void resolveNonExistingPropertiesFile() throws Exception {
+        // with a while which doesn't exist
+        Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("nonexistingfile.properties");
+        Assert.assertNotNull(urls);
+        Assert.assertFalse(urls.hasMoreElements());
     }
 
     @Test
