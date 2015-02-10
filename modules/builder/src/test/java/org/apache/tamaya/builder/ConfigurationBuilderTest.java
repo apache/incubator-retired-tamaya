@@ -26,11 +26,14 @@ import org.apache.tamaya.builder.util.types.CustomTypeB;
 import org.apache.tamaya.builder.util.types.CustomTypeC;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertySourceProvider;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
+
+import static java.util.Arrays.asList;
 import static org.apache.tamaya.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -40,6 +43,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ConfigurationBuilderTest {
 
@@ -224,6 +228,29 @@ public class ConfigurationBuilderTest {
         assertThat(config.get("a"), equalTo("a"));
     }
 
+    @Test
+    public void addMultiplePropertySourcesWhereOneIsNull() {
+        PropertySource sourceOne = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("one").when(sourceOne).getName();
+        doReturn(null).when(sourceOne).get(anyString());
+        doReturn("b").when(sourceOne).get("b");
+        doReturn(30).when(sourceOne).getOrdinal();
+
+        PropertySource sourceTwo = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+        doReturn("two").when(sourceTwo).getName();
+        doReturn(null).when(sourceTwo).get(anyString());
+        doReturn("a").when(sourceTwo).get("a");
+        doReturn(30).when(sourceTwo).getOrdinal();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne, null, sourceTwo);
+
+        Configuration config = builder.build();
+
+        assertThat(config.get("b"), equalTo("b"));
+        assertThat(config.get("a"), equalTo("a"));
+    }
+
     /**
      * ******************************************************************
      * Tests for adding P r o p e r t y C o n v e r t e r
@@ -369,6 +396,28 @@ public class ConfigurationBuilderTest {
     }
 
     @Test
+    public void canAddMultipleNonSPIPropertyFiltersWhileOneIsNull() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("M").when(source).get("key");
+        doReturn("source").when(source).getName();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySources(source)
+                                      .addPropertyFilters(new TestNonSPIPropertyFilterA(),
+                                              null,
+                                              new TestNonSPIPropertyFilterB())
+                                      .build();
+
+        String property = config.get("key");
+
+        assertThat(property, CoreMatchers.notNullValue());
+        assertThat(property, CoreMatchers.containsString("ABC"));
+        assertThat(property, CoreMatchers.containsString("XYZ"));
+    }
+
+    @Test
     public void overhandedNullPropertyFilterIsSafelyHandled() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
@@ -410,10 +459,64 @@ public class ConfigurationBuilderTest {
     }
 
     /*********************************************************************
-     * Tests for adding P r o p e r t
+     * Tests for adding
+     * P r o p e r t y S o u r c e P r o v i d e r s
      */
 
-    // @todo TAYAMA-60 Write more tests
+    @Test
+    public void handlesSafelyPropertyProviderReturningNullInsteadOfPropertySource() {
+        PropertySourceProvider nullReturning = mock(PropertySourceProvider.class, NOT_MOCKED_ANSWER);
+
+        doReturn(asList((PropertySource)null)).when(nullReturning).getPropertySources();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySourceProviders(new TestPropertySourceProviderB(),
+                                                                  nullReturning,
+                                                                  new TestPropertySourceProvider())
+                                      .build();
+
+        assertThat(config.get("tpsp_a"), Matchers.equalTo("A"));
+        assertThat(config.get("tpsp_b"), Matchers.equalTo("B"));
+        assertThat(config.get("tpsp_x"), Matchers.equalTo("X"));
+        assertThat(config.get("tpsp_y"), Matchers.equalTo("Y"));
+
+        verify(nullReturning).getPropertySources();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void cannotAddNullAsPropertyProvider() {
+        new ConfigurationBuilder().addPropertySourceProviders(null);
+    }
+
+    @Test
+    public void canAddMultipleNonSPIPropertySourceProviders() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySourceProviders(new TestPropertySourceProviderB(),
+                                                                  new TestPropertySourceProvider())
+                                      .build();
+
+        assertThat(config.get("tpsp_a"), Matchers.equalTo("A"));
+        assertThat(config.get("tpsp_b"), Matchers.equalTo("B"));
+        assertThat(config.get("tpsp_x"), Matchers.equalTo("X"));
+        assertThat(config.get("tpsp_y"), Matchers.equalTo("Y"));
+    }
+
+    @Test
+    public void canAddMultipleNonSPIPropertySourceProvidersWhileOfOfThemIsNull() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySourceProviders(new TestPropertySourceProviderB(), null,
+                                                                  new TestPropertySourceProvider())
+                                      .build();
+
+        assertThat(config.get("tpsp_a"), Matchers.equalTo("A"));
+        assertThat(config.get("tpsp_b"), Matchers.equalTo("B"));
+        assertThat(config.get("tpsp_x"), Matchers.equalTo("X"));
+        assertThat(config.get("tpsp_y"), Matchers.equalTo("Y"));
+    }
+
 
     /*********************************************************************
      * Tests for adding
