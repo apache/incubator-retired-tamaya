@@ -18,13 +18,13 @@
  */
 package org.apache.tamaya.builder;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.builder.util.types.CustomTypeA;
 import org.apache.tamaya.builder.util.types.CustomTypeB;
 import org.apache.tamaya.builder.util.types.CustomTypeC;
+import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -321,7 +321,93 @@ public class ConfigurationBuilderTest {
      * Tests for adding P r o p e r t y F i l t e r
      */
 
-    // @todo TAYAMA-60 Write more tests
+    @Test(expected = NullPointerException.class)
+    public void canNotAddNullAsPropertyFilter() {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertyFilters(null);
+    }
+
+    @Test
+    public void canAddNonSPIPropertyFilter() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("M").when(source).get("key");
+        doReturn("source").when(source).getName();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySources(source)
+                                      .addPropertyFilters(new TestNonSPIPropertyFilterA())
+                                      .build();
+
+        String property = config.get("key");
+
+        assertThat(property, CoreMatchers.notNullValue());
+        assertThat(property, CoreMatchers.containsString("ABC"));
+    }
+
+    @Test
+    public void canAddNonSPIPropertyFiltersViaConsecutiveCalls() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("M").when(source).get("key");
+        doReturn("source").when(source).getName();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySources(source)
+                                      .addPropertyFilters(new TestNonSPIPropertyFilterA())
+                                      .addPropertyFilters(new TestNonSPIPropertyFilterB())
+                                      .build();
+
+        String property = config.get("key");
+
+        assertThat(property, CoreMatchers.notNullValue());
+        assertThat(property, CoreMatchers.containsString("ABC"));
+        assertThat(property, CoreMatchers.containsString("XYZ"));
+    }
+
+    @Test
+    public void overhandedNullPropertyFilterIsSafelyHandled() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("M").when(source).get("key");
+        doReturn("source").when(source).getName();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySources(source)
+                                      .addPropertyFilters((PropertyFilter)null) // The cast is needed!
+                                      .addPropertyFilters(new TestNonSPIPropertyFilterB())
+                                      .build();
+
+        String property = config.get("key");
+
+        assertThat(property, CoreMatchers.notNullValue());
+        assertThat(property, CoreMatchers.containsString("XYZ"));
+    }
+
+    @Test
+    public void canAddMultipleNonSPIPropertyFilter() {
+        PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+
+        doReturn("M").when(source).get("key");
+        doReturn("source").when(source).getName();
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySources(source)
+                                      .addPropertyFilters(new TestNonSPIPropertyFilterA(),
+                                                          new TestNonSPIPropertyFilterB())
+                                      .build();
+
+        String property = config.get("key");
+
+        assertThat(property, CoreMatchers.notNullValue());
+        assertThat(property, CoreMatchers.containsString("ABC"));
+        assertThat(property, CoreMatchers.containsString("XYZ"));
+    }
 
     /*********************************************************************
      * Tests for adding P r o p e r t

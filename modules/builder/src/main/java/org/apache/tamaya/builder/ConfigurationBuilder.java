@@ -36,6 +36,7 @@ import java.util.Objects;
  * - configurable loading of provided PropertySources DONE
  * - configurable loading of provided PropertySourceProviders DONE
  * - configurable loading of provided PropertyFilters DONE
+ * - I can not overhand null in varargs
  * - Rethink the default behaviour for SPI loading
  * - Work on all TODOs for TAMAYA-60
  * - Write JavaDoc
@@ -102,6 +103,8 @@ public class ConfigurationBuilder {
     }
 
     public ConfigurationBuilder addPropertyFilters(PropertyFilter... propertyFilters){
+        Objects.requireNonNull(propertyFilters);
+
         contextBuilder.addPropertyFilters(propertyFilters);
         return this;
     }

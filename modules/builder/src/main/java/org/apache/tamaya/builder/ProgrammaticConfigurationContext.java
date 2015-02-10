@@ -44,6 +44,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
@@ -312,7 +315,11 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         }
 
         public Builder addPropertyFilters(PropertyFilter... propertySources) {
-            this.propertyFilters.addAll(Arrays.asList(propertySources));
+            List<PropertyFilter> sources = Stream.of(propertySources).filter(this::isNotNull)
+                                                 .collect(toList());
+
+            this.propertyFilters.addAll(sources);
+
             return this;
         }
 
@@ -368,6 +375,10 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
         public void loadProvidedPropertyFilters(boolean state) {
             loadProvidedPropertyFilters = state;
+        }
+
+        private <T> boolean isNotNull(T item) {
+            return null != item;
         }
     }
 
