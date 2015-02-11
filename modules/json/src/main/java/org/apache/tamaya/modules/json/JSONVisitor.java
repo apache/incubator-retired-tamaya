@@ -19,6 +19,7 @@
 package org.apache.tamaya.modules.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import org.apache.tamaya.ConfigException;
@@ -55,6 +56,8 @@ public class JSONVisitor {
                     String key = stack.peek().getNSPrefix() + current.getKey();
                     ObjectNode node = (ObjectNode) current.getValue();
                     stack.push(new VisitingContext(node, key));
+                } else if (current.getValue() instanceof ArrayNode) {
+                    throw new ConfigException("Arrays are not supported at the moment.");
                 } else {
                     throw new ConfigException("Internal failure while processing JSON document.");
                 }

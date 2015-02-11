@@ -39,7 +39,7 @@ public class JSONPropertySourceTest {
 
     @Test(expected = ConfigException.class)
     public void emptyJSONFileResultsInConfigException() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/empty-file.json");
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/empty-file.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -166,4 +166,40 @@ public class JSONPropertySourceTest {
         assertThat(source.getOrdinal(), is(16784));
 
     }
+
+    @Test(expected = ConfigException.class)
+    public void canHandleIllegalJSONFileConsistingOfOneOpeningBracket() {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/only-opening-bracket.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        new JSONPropertySource(configURL).getProperties();
+    }
+
+    @Test(expected = ConfigException.class)
+    public void canHandleIllegalJSONFileWhichIsEmpty() {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/empty-file.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        new JSONPropertySource(configURL).getProperties();
+    }
+
+    @Test(expected = ConfigException.class)
+    public void canHandleIllegalJSONFileWhichConsistsOnlyOfAnArray() {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/array.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        new JSONPropertySource(configURL).getProperties();
+    }
+    @Test(expected = ConfigException.class)
+    public void canHandleIllegalJSONFileWhichContainsAnArray() {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/with-array.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        new JSONPropertySource(configURL).getProperties();
+    }
+
 }
