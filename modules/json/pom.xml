@@ -61,6 +61,35 @@ under the License.
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.daemon</groupId>
+            <artifactId>arquillian-daemon-container-managed</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.daemon</groupId>
+            <artifactId>arquillian-daemon-container-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.daemon</groupId>
+            <artifactId>arquillian-daemon-main</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.daemon</groupId>
+            <artifactId>arquillian-daemon-protocol-arquillian</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.daemon</groupId>
+            <artifactId>arquillian-daemon-protocol-wire</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.daemon</groupId>
+            <artifactId>arquillian-daemon-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
@@ -69,8 +98,37 @@ under the License.
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
         </dependency>
-
-
     </dependencies>
-    
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copyMain</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <stripVersion>true</stripVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.arquillian.daemon</groupId>
+                                    <artifactId>arquillian-daemon-main</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
 </project>

@@ -59,6 +59,7 @@ under the License.
         <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
+        <arquillian.deamon.version>1.0.0.Alpha1</arquillian.deamon.version>
         <asciidoctor.version>1.5.0</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.2</asciidoctorj.version>
@@ -239,6 +240,56 @@ under the License.
                 <version>${hamcrest.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.1.6.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.jboss.arquillian.daemon</groupId>
+                <artifactId>arquillian-daemon-container-managed</artifactId>
+                <version>${arquillian.deamon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.daemon</groupId>
+                <artifactId>arquillian-daemon-container-common</artifactId>
+                <version>${arquillian.deamon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.daemon</groupId>
+                <artifactId>arquillian-daemon-main</artifactId>
+                <version>${arquillian.deamon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.daemon</groupId>
+                <artifactId>arquillian-daemon-protocol-arquillian</artifactId>
+                <version>${arquillian.deamon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.daemon</groupId>
+                <artifactId>arquillian-daemon-protocol-wire</artifactId>
+                <version>${arquillian.deamon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.daemon</groupId>
+                <artifactId>arquillian-daemon-server</artifactId>
+                <version>${arquillian.deamon.version}</version>
+            </dependency>
+
+            <!--<dependency>-->
+                <!--<groupId>org.jboss.arquillian.junit</groupId>-->
+                <!--<artifactId>arquillian-junit-container</artifactId>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>org.mockito</groupId>
