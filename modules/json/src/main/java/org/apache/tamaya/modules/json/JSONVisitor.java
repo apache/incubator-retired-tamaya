@@ -66,7 +66,7 @@ public class JSONVisitor {
 
                 while (!goOn && stack.size() > 0) {
                     stack.remove();
-                    goOn = stack.size() > 0 ? stack.peek().hasNext() : false;
+                    goOn = (stack.size() > 0) && stack.peek().hasNext();
                 }
             } while (goOn);
         }
