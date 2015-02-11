@@ -37,6 +37,7 @@ import java.util.List;
  */
 public class JavaConfigurationProvider implements PropertySourceProvider {
 
+    public static final String DEFAULT_PROPERTIES_FILE_NAME="javaconfiguration.properties";
 
     @Override
     public Collection<PropertySource> getPropertySources() {
@@ -47,7 +48,7 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
 
         try {
 
-            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("javaconfiguration.properties");
+            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("META-INF/"+DEFAULT_PROPERTIES_FILE_NAME);
             while (urls.hasMoreElements()) {
                 propertySources.add(new PropertiesFilePropertySource(urls.nextElement()));
             }
