@@ -202,6 +202,7 @@ under the License.
             <timezone>-1</timezone>
         </developer>
 
+
     </developers>
 
     <modules>
@@ -218,6 +219,12 @@ under the License.
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${findbugs.version}</version>
             </dependency>
 
             <dependency>
