@@ -23,6 +23,7 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +57,7 @@ public class EnumConverter<T> implements PropertyConverter<T> {
             LOG.log(Level.FINEST, "Invalid enum value '" + value + "' for " + enumType.getName(), e);
         }
         try {
-            return (T) factory.invoke(null, value);
+            return (T) factory.invoke(null, value.toUpperCase(Locale.ENGLISH));
         } catch (InvocationTargetException | IllegalAccessException e) {
             LOG.log(Level.FINEST, "Invalid enum value '" + value + "' for " + enumType.getName(), e);
         }
