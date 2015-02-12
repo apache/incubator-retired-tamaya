@@ -37,9 +37,15 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
     public Currency convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
         try {
-            return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));
+            return Currency.getInstance(trimmed);
         } catch (Exception e) {
-            LOG.log(Level.INFO, e, () -> "Not a valid textual currency code: " + trimmed + ", checking for numeric...");
+            // try converting to upper case, works for all default ISO currencies.
+            try {
+                return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));
+            } catch (Exception e2) {
+                LOG.finest(() -> "Not a valid textual currency code: " + trimmed +
+                        ", checking for numeric code...");
+            }
         }
         try {
             // Check for numeric code
@@ -50,7 +56,7 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
                 }
             }
         } catch (Exception e) {
-            LOG.log(Level.INFO, e, () -> "Not a valid numeric currency code: " + trimmed + ", checking for locale...");
+            LOG.finest(() -> "Not a valid numeric currency code: " + trimmed + ", checking for locale...");
         }
         try {
             // Check for numeric code
@@ -72,9 +78,9 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
             if (locale != null) {
                 return Currency.getInstance(locale);
             }
-            LOG.info(() -> "Not a valid currency: " + trimmed + ", giving up...");
+            LOG.finest(() -> "Not a valid currency: " + trimmed + ", giving up...");
         } catch (Exception e) {
-            LOG.log(Level.INFO, e, () -> "Not a valid country locale for currency: " + trimmed + ", giving up...");
+            LOG.log(Level.FINEST, e, () -> "Not a valid country locale for currency: " + trimmed + ", giving up...");
         }
         return null;
     }

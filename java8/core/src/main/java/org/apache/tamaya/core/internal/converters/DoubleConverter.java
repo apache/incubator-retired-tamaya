@@ -57,15 +57,14 @@ public class DoubleConverter implements PropertyConverter<Double>{
                     return Double.valueOf(trimmed);
                 } catch(Exception e){
                     // OK perhaps we have an integral number that must be converted to the double type...
-                    LOG.log(Level.FINER, e, () -> "Parsing of double as floating number failed, trying parsing integral" +
-                            " number instead...");
+                    LOG.log(Level.FINEST, e, () -> "Parsing of double as floating number failed, trying parsing " +
+                            "integral/hex number instead...");
                 }
-                try{
-                    return integerConverter.convert(trimmed).doubleValue();
-                } catch(Exception e){
-                    LOG.log(Level.INFO, e, () -> "Unexpected error from LongConverter for " + trimmed);
-                    return null;
+                Long val = integerConverter.convert(trimmed);
+                if(val!=null){
+                    return val.doubleValue();
                 }
+                return null;
         }
     }
 }

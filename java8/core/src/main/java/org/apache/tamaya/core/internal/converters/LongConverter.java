@@ -22,30 +22,33 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Long, the supported format is one of the following:
  * <ul>
- *     <li>123 (byte value)</li>
- *     <li>0xFF (byte value)</li>
- *     <li>0XDF (byte value)</li>
- *     <li>0D1 (byte value)</li>
- *     <li>-123 (byte value)</li>
- *     <li>-0xFF (byte value)</li>
- *     <li>-0XDF (byte value)</li>
- *     <li>-0D1 (byte value)</li>
- *     <li>MIN_VALUE (ignoring case)</li>
- *     <li>MIN (ignoring case)</li>
- *     <li>MAX_VALUE (ignoring case)</li>
- *     <li>MAX (ignoring case)</li>
+ * <li>123 (byte value)</li>
+ * <li>0xFF (byte value)</li>
+ * <li>0XDF (byte value)</li>
+ * <li>0D1 (byte value)</li>
+ * <li>-123 (byte value)</li>
+ * <li>-0xFF (byte value)</li>
+ * <li>-0XDF (byte value)</li>
+ * <li>-0D1 (byte value)</li>
+ * <li>MIN_VALUE (ignoring case)</li>
+ * <li>MIN (ignoring case)</li>
+ * <li>MAX_VALUE (ignoring case)</li>
+ * <li>MAX (ignoring case)</li>
  * </ul>
  */
-public class LongConverter implements PropertyConverter<Long>{
+public class LongConverter implements PropertyConverter<Long> {
+
+    private static final Logger LOGGER = Logger.getLogger(LongConverter.class.getName());
 
     @Override
     public Long convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+        switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "MIN_VALUE":
             case "MIN":
                 return Long.MIN_VALUE;
@@ -53,7 +56,13 @@ public class LongConverter implements PropertyConverter<Long>{
             case "MAX":
                 return Long.MAX_VALUE;
             default:
-                return Long.decode(trimmed);
+                try {
+                    return Long.decode(trimmed);
+                } catch (Exception e) {
+                    LOGGER.finest("Unable to parse Long value: " + value);
+                    return null;
+                }
         }
     }
+
 }

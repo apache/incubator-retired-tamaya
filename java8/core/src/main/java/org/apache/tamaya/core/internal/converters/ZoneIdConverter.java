@@ -22,15 +22,25 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.time.ZoneId;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to LocalDate.
+ * Converter, converting from String to ZoneId. Valid inputs are as defined by {@link ZoneId#of(String)}.
  */
 public class ZoneIdConverter implements PropertyConverter<ZoneId>{
+
+    /** the logger. */
+    private static final Logger LOG = Logger.getLogger(ShortConverter.class.getName());
 
     @Override
     public ZoneId convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        return ZoneId.of(trimmed);
+        try{
+            return ZoneId.of(trimmed);
+        }
+        catch(Exception e){
+            LOG.finest("Unparseable ZoneId: " + trimmed);
+            return null;
+        }
     }
 }

@@ -51,7 +51,7 @@ public class CharConverter implements PropertyConverter<Character>{
                 }
                 return trimmed.charAt(0);
             } catch (Exception e) {
-                LOG.warning("Invalid character format encountered: '" + value + "', valid formats are 'a', 101 and a.");
+                LOG.finest("Invalid character format encountered: '" + value + "', valid formats are 'a', 101 and a.");
                 return null;
             }
         }

@@ -22,6 +22,7 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Byte, the supported format is one of the following:
@@ -35,6 +36,8 @@ import java.util.Objects;
  */
 public class ByteConverter implements PropertyConverter<Byte>{
 
+    private Logger LOG = Logger.getLogger(getClass().getName());
+
     @Override
     public Byte convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
@@ -46,7 +49,13 @@ public class ByteConverter implements PropertyConverter<Byte>{
             case "MAX":
                 return Byte.MAX_VALUE;
             default:
-                return Byte.decode(trimmed);
+                try{
+                    return Byte.decode(trimmed);
+                }
+                catch(Exception e){
+                    LOG.finest("Failed to parse Byte value: " + value);
+                    return null;
+                }
         }
     }
 }
