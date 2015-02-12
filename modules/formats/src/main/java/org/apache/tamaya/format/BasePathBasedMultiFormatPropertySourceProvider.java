@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -89,14 +88,10 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
     /**
      * Method to create a {@link org.apache.tamaya.spi.PropertySource} based on the given entries read.
      *
-     * @param entryTypeName the entry type of the entries read, not null.
-     * @param entries       the entries read by the {@link org.apache.tamaya.format.ConfigurationFormat}
-     * @param formatUsed    the format instance used to read the entries.
+     * @param data the configuration data, not null.
      * @return the {@link org.apache.tamaya.spi.PropertySource} instance ready to be registered.
-     * @see org.apache.tamaya.format.ConfigurationFormat#getEntryTypes()
      */
-    protected abstract PropertySource getPropertySource(String entryTypeName, Map<String, String> entries,
-                                                        ConfigurationFormat formatUsed);
+    protected abstract Collection<PropertySource> getPropertySources(ConfigurationData data);
 
     /**
      * This method does dynamically resolve the paths using the current ClassLoader set. If no ClassLoader was
@@ -107,23 +102,16 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
      */
     @Override
     public Collection<PropertySource> getPropertySources() {
+        ResourceResolver resourceResolver = ServiceContext.getInstance().getService(ResourceResolver.class).get();
         List<PropertySource> propertySources = new ArrayList<>();
         paths.forEach((path) -> {
-            for (URL res : ServiceContext.getInstance().getService(ResourceResolver.class).get().getResources(
+            for (URL res : resourceResolver.getResources(
                     this.classLoader.orElse(Thread.currentThread().getContextClassLoader()),
                     path)) {
                 try {
                     for (ConfigurationFormat format : configFormats) {
-                        Map<String, Map<String, String>> entries = format.readConfiguration(res);
-                        for (Map.Entry<String, Map<String, String>> en : entries.entrySet()) {
-                            PropertySource ps = getPropertySource(en.getKey(), en.getValue(), format);
-                            if (ps != null) {
-                                propertySources.add(ps);
-                            } else {
-                                LOG.info(() -> "Config Entries read ignored by PropertySourceFactory: format=" + format +
-                                        ", entryType=" + en.getKey());
-                            }
-                        }
+                        ConfigurationData entries = format.readConfiguration(res);
+                        propertySources.addAll(getPropertySources(entries));
                     }
                 } catch (Exception e) {
                     LOG.log(Level.WARNING, "Failed to add resource based config: " + res, e);

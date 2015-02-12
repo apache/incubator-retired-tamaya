@@ -19,54 +19,23 @@
 package org.apache.tamaya.format;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Implementations current this class encapsulate the mechanism how to read a
  * resource including interpreting the format correctly (e.g. xml vs.
- * properties). In most cases file only contains entries of the same priority, which would then
- * result in only one {@link org.apache.tamaya.spi.PropertySource}. Complex file formats, hoiwever, may contain entries
- * of different priorities. In this cases, each ordinal type found must be returned as a separate
- * {@link org.apache.tamaya.spi.PropertySource} instance.
+ * properties vs. ini). In most cases file only contains entries of the same priority, which would then
+ * result in only one {@link org.apache.tamaya.spi.PropertySource}. Complex file formats, however, may contain entries
+ * of different priorities. In this cases, each ordinal type found typically is returned as a separate section so the
+ * consuming {@link org.apache.tamaya.spi.PropertySourceProvider} implementation can distribute the different part to
+ * individual {@link org.apache.tamaya.spi.PropertySource}s.<p>
+ * <h3>Implementation Requirements</h3>
+ * Implementations of this type must be
+ * <ul>
+ *     <li>thread-safe</li>
+ * </ul>
  */
+@FunctionalInterface
 public interface ConfigurationFormat {
-
-    /**
-     * The default entry type returned if a format implementation does not support any explicit entry types.
-     */
-    public static final String DEFAULT_ENTRY_TYPE = "default";
-    public static final Set<String> DEFAULT_ENTRY_TYPE_SET = initDefaultSet();
-    public static final String DYNAMIC_ENTRY_TYPE = "<dynamic>";
-
-    static Set<String> initDefaultSet(){
-            Set<String> set = new HashSet<>();
-            set.add(DEFAULT_ENTRY_TYPE);
-            return Collections.unmodifiableSet(set);
-    };
-
-    /**
-     * Access the different entry types a format supports. Entries of the same entry type hereby share the same
-     * configuration priority. The reason for this concept is that a configuration format can produce different
-     * types of properties, e.g. default properties, named properties, overriding ones as illustrated below:
-     * <pre>
-     *     [defaults]
-     *     a.b.c=alphabet
-     *     foo.bar=any
-     *
-     *     [staged:development]
-     *     a.b.myEntry=1234
-     *
-     *     [management-overrides]
-     *     a.b.d=Alphabet
-     * </pre>
-     * If just using ordinary property files, of course, only one entry type is returned, called 'default'.
-     * #see DEFAULT_ENTRY_TYPE
-     * @return the set of supported entry types, never null and never empty.
-     */
-    public Set<String> getEntryTypes();
 
     /**
      * Reads a list {@link org.apache.tamaya.spi.PropertySource} instances from a resource, using this format.
@@ -78,10 +47,9 @@ public interface ConfigurationFormat {
      *
      * @param url the url to read the configuration data from (could be a file, a remote location, a classpath
      *            resource or something else.
-     * @return the corresponding {@link java.util.Map} instances of properties read, never {@code null}. Each
-     * {@link java.util.Map} instance hereby is provided using a type key.
+     * @return the corresponding {@link ConfigurationData} containing sections/properties read, never {@code null}.
      * @throws org.apache.tamaya.ConfigException if parsing of the input fails.
      */
-    Map<String, Map<String,String>> readConfiguration(URL url);
+    ConfigurationData readConfiguration(URL url);
 
 }

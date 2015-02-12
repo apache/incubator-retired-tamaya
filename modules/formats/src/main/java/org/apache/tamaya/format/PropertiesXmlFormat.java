@@ -36,29 +36,21 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
      */
     private final static Logger LOG = Logger.getLogger(PropertiesXmlFormat.class.getName());
 
-    @Override
-    public Set<String> getEntryTypes() {
-        Set<String> set = new HashSet<>();
-        set.add(ConfigurationFormat.DEFAULT_ENTRY_TYPE);
-        return set;
-    }
-
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Map<String, String>> readConfiguration(URL url) {
+    public ConfigurationData readConfiguration(URL url) {
         Objects.requireNonNull(url);
 
-        Map<String, Map<String, String>> result = new HashMap<>();
         try (InputStream is = url.openStream()) {
             if (is != null) {
                 final Properties p = new Properties();
-                p.loadFromXML(is);
-                result.put(ConfigurationFormat.DEFAULT_ENTRY_TYPE, Map.class.cast(p));
+                p.load(is);
+                return ConfigurationDataBuilder.of(url, this).addProperties( Map.class.cast(p)).build();
             }
         } catch (Exception e) {
             LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + url);
         }
-        return result;
+        return ConfigurationDataBuilder.of(url, this).build();
     }
 }

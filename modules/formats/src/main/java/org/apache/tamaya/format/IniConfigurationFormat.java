@@ -24,12 +24,9 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.tamaya.ConfigException;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Implements a ini file format based on the APache Commons
@@ -37,21 +34,9 @@ import java.util.Set;
  */
 public class IniConfigurationFormat implements ConfigurationFormat{
 
-    private Set<String> entryTypes = new HashSet<>();
-
-    public IniConfigurationFormat(){
-        entryTypes.add(ConfigurationFormat.DYNAMIC_ENTRY_TYPE);
-        entryTypes = Collections.unmodifiableSet(entryTypes);
-    }
-
     @Override
-    public Set<String> getEntryTypes() {
-        return entryTypes;
-    }
-
-    @Override
-    public Map<String, Map<String, String>> readConfiguration(URL url) {
-        Map<String, Map<String, String>> result = new HashMap<>();
+    public ConfigurationData readConfiguration(URL url) {
+        ConfigurationDataBuilder builder = ConfigurationDataBuilder.of(url, this);
         try {
             HierarchicalINIConfiguration commonIniConfiguration = new HierarchicalINIConfiguration(url);
             for(String section:commonIniConfiguration.getSections()){
@@ -62,11 +47,11 @@ public class IniConfigurationFormat implements ConfigurationFormat{
                     String key = keyIter.next();
                     properties.put(key, sectionConfig.getString(key));
                 }
-                result.put(section, properties);
+                builder.addProperties(section, properties);
             }
-            return result;
         } catch (ConfigurationException e) {
             throw new ConfigException("Failed to parse ini-file format from " + url, e);
         }
+        return builder.build();
     }
 }

@@ -64,40 +64,9 @@ public abstract class BaseSimpleFormatPropertySourceProvider implements Property
     /**
      * Method to create a {@link org.apache.tamaya.spi.PropertySource} based on the given entries read.
      *
-     * @param entryTypeName the entry type of the entries read, not null.
-     * @param entries       the entries read by the {@link ConfigurationFormat}
-     * @param formatUsed    the format instance used to read the entries.
+     * @param configData the config data read.
      * @return the {@link org.apache.tamaya.spi.PropertySource} instance ready to be registered.
-     * @see ConfigurationFormat#getEntryTypes()
      */
-    protected abstract PropertySource getPropertySource(String entryTypeName, Map<String, String> entries,
-                                                        ConfigurationFormat formatUsed);
-
-    /**
-     * This method does dynamically resolve the paths using the current ClassLoader set. If no ClassLoader was
-     * explcitly set during creation the current Thread context ClassLoader is used. If none of the supported
-     * formats is able to parse a resource a WARNING log is written.
-     *
-     * @return the PropertySources successfully read
-     */
-    @Override
-    public Collection<PropertySource> getPropertySources() {
-        List<PropertySource> propertySources = new ArrayList<>();
-        try {
-            Map<String, Map<String, String>> entries = configFormat.readConfiguration(resource);
-            for (Map.Entry<String, Map<String, String>> en : entries.entrySet()) {
-                PropertySource ps = getPropertySource(en.getKey(), en.getValue(), configFormat);
-                if (ps != null) {
-                    propertySources.add(ps);
-                } else {
-                    LOG.info(() -> "Config Entries read ignored by PropertySourceFactory: format=" + configFormat +
-                            ", entryType=" + en.getKey());
-                }
-            }
-        } catch (Exception e) {
-            LOG.log(Level.WARNING, "Failed to add resource based config: " + resource, e);
-        }
-        return propertySources;
-    }
+    protected abstract Collection<PropertySource> createPropertySourcea(ConfigurationData configData);
 
 }
