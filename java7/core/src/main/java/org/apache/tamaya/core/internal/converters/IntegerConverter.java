@@ -22,6 +22,7 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Integer, the supported format is one of the following:
@@ -42,6 +43,11 @@ import java.util.Objects;
  */
 public class IntegerConverter implements PropertyConverter<Integer>{
 
+    /**
+     * The logger.
+     */
+    private static final Logger LOG = Logger.getLogger(IntegerConverter.class.getName());
+
     @Override
     public Integer convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
@@ -53,7 +59,13 @@ public class IntegerConverter implements PropertyConverter<Integer>{
             case "MAX":
                 return Integer.MAX_VALUE;
             default:
-                return Integer.decode(trimmed);
+                try{
+                    return Integer.decode(trimmed);
+                }
+                catch(Exception e){
+                    LOG.finest("Unparseable Integer value: " + trimmed);
+                    return null;
+                }
         }
 
     }

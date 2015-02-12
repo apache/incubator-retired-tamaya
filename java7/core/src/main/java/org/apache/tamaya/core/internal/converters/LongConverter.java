@@ -22,6 +22,8 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Long, the supported format is one of the following:
@@ -42,19 +44,28 @@ import java.util.Objects;
  */
 public class LongConverter implements PropertyConverter<Long>{
 
+    private static final Logger LOGGER = Logger.getLogger(LongConverter.class.getName());
+
     @Override
     public Long convert(String value) {
-        String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)){
-            case "MIN_VALUE":
-            case "MIN":
-                return Long.MIN_VALUE;
-            case "MAX_VALUE":
-            case "MAX":
-                return Long.MAX_VALUE;
-            default:
-                return Long.decode(trimmed);
-        }
+
+            String trimmed = Objects.requireNonNull(value).trim();
+            switch (trimmed.toUpperCase(Locale.ENGLISH)) {
+                case "MIN_VALUE":
+                case "MIN":
+                    return Long.MIN_VALUE;
+                case "MAX_VALUE":
+                case "MAX":
+                    return Long.MAX_VALUE;
+                default:
+                    try {
+                        return Long.decode(trimmed);
+                    }
+                    catch(Exception e){
+                        LOGGER.finest("Unable to parse Long value: " + value);
+                        return null;
+                    }
+            }
 
     }
 }

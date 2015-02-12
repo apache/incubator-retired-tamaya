@@ -22,6 +22,7 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Short, the supported format is one of the following:
@@ -42,6 +43,9 @@ import java.util.Objects;
  */
 public class ShortConverter implements PropertyConverter<Short>{
 
+    /** the logger. */
+    private static final Logger LOG = Logger.getLogger(ShortConverter.class.getName());
+
     @Override
     public Short convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
@@ -53,7 +57,14 @@ public class ShortConverter implements PropertyConverter<Short>{
             case "MAX":
                 return Short.MAX_VALUE;
             default:
-                return Short.decode(trimmed);
+                try{
+                    return Short.decode(trimmed);
+                }
+                catch(Exception e){
+                    LOG.finest("Unparseable Short: " + trimmed);
+                    return null;
+                }
         }
     }
+
 }

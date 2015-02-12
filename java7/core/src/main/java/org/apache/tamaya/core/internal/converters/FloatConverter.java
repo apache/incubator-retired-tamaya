@@ -39,7 +39,7 @@ public class FloatConverter implements PropertyConverter<Float> {
     /**
      * The logger.
      */
-    private static final Logger LOG = Logger.getLogger(DoubleConverter.class.getName());
+    private static final Logger LOG = Logger.getLogger(FloatConverter.class.getName());
     /**
      * The converter used, when floating point parse failed.
      */
@@ -66,15 +66,15 @@ public class FloatConverter implements PropertyConverter<Float> {
                     return Float.valueOf(trimmed);
                 } catch(Exception e){
                     // OK perhaps we have an integral number that must be converted to the double type...
-                    LOG.log(Level.FINER, "Parsing of double as floating number failed, trying parsing integral" +
-                            " number instead...", e);
+                    LOG.finest("Parsing of float as floating number failed, trying parsing integral" +
+                            " number/hex instead...");
                 }
-                try{
-                    return integerConverter.convert(trimmed).floatValue();
-                } catch(Exception e){
-                    LOG.log(Level.INFO, "Unexpected error from LongConverter for " + trimmed, e);
-                    return null;
+                Integer val = integerConverter.convert(trimmed);
+                if(val!=null) {
+                    return val.floatValue();
                 }
+                LOG.finest("Unparseable float value: " + trimmed);
+                return null;
         }
     }
 }

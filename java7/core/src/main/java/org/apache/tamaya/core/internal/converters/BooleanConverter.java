@@ -49,7 +49,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
             case "f":
                 return Boolean.FALSE;
             default:
-                LOG.warning("Unknown boolean value encountered: " + value);
+                LOG.finest("Unknown boolean value encountered: " + value);
         }
         return null;
     }

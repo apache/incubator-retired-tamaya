@@ -47,12 +47,12 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger>{
     public BigInteger convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
-            LOG.finer("Parsing Hex value to BigInteger: " + value);
+            LOG.finest("Parsing Hex value to BigInteger: " + value);
             trimmed = trimmed.substring(2);
             StringBuilder decimal = new StringBuilder();
             for(int offset = 0;offset < trimmed.length();offset+=2){
                 if(offset==trimmed.length()-1){
-                    LOG.info("Invalid Hex-Byte-String: " + value);
+                    LOG.finest("Invalid Hex-Byte-String: " + value);
                     return null;
                 }
                 byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2));
@@ -64,12 +64,12 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger>{
             }
             return new BigInteger(decimal.toString());
         } else if(trimmed.startsWith("-0x") || trimmed.startsWith("-0X")){
-            LOG.finer("Parsing Hex value to BigInteger: " + value);
+            LOG.finest("Parsing Hex value to BigInteger: " + value);
             trimmed = trimmed.substring(3);
             StringBuilder decimal = new StringBuilder();
             for(int offset = 0;offset < trimmed.length();offset+=2){
                 if(offset==trimmed.length()-1){
-                    LOG.info("Invalid Hex-Byte-String: " + trimmed);
+                    LOG.finest("Invalid Hex-Byte-String: " + trimmed);
                     return null;
                 }
                 byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2));

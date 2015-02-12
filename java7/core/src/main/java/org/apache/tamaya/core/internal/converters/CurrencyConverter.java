@@ -45,7 +45,7 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
         try {
             return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));
         } catch (Exception e) {
-            LOG.log(Level.INFO, "Not a valid textual currency code: " + trimmed + ", checking for numeric...", e);
+            LOG.log(Level.FINEST, "Not a valid textual currency code: " + trimmed + ", checking for numeric...", e);
         }
         try {
             // Check for numeric code
@@ -56,7 +56,7 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
                 }
             }
         } catch (Exception e) {
-            LOG.log(Level.INFO, "Not a valid numeric currency code: " + trimmed + ", checking for locale...", e);
+            LOG.log(Level.FINEST, "Not a valid numeric currency code: " + trimmed + ", checking for locale...", e);
         }
         try {
             // Check for numeric code
@@ -78,9 +78,9 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
             if (locale != null) {
                 return Currency.getInstance(locale);
             }
-            LOG.info("Not a valid currency: " + trimmed + ", giving up...");
+            LOG.finest("Not a valid currency: " + trimmed + ", giving up...");
         } catch (Exception e) {
-            LOG.log(Level.INFO, "Not a valid country locale for currency: " + trimmed + ", giving up...", e);
+            LOG.log(Level.FINEST, "Not a valid country locale for currency: " + trimmed + ", giving up...", e);
         }
         return null;
     }
