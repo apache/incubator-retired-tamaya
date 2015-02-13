@@ -425,7 +425,7 @@ under the License.
                                 <goal>verify</goal>
                             </goals>
                             <configuration>
-                                <argLine>-Xms1024m -Xmx2048m -XX:MaxPermSize=512m</argLine>
+                                <argLine>-Xms512m -Xmx1048m -XX:MaxPermSize=512m</argLine>
                             </configuration>
                         </execution>
                     </executions>
