@@ -36,7 +36,7 @@ under the License.
     <modules>
         <module>builder</module>
         <module>injection</module>
-        <module>formats</module>
+        <!--<module>formats</module>-->
         <module>json</module>
         <module>resolver</module>
         <module>resources</module>
