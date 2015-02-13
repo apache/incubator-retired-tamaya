@@ -49,10 +49,9 @@ public class ByteConverter implements PropertyConverter<Byte>{
             case "MAX":
                 return Byte.MAX_VALUE;
             default:
-                try{
+                try {
                     return Byte.decode(trimmed);
-                }
-                catch(Exception e){
+                } catch (Exception e){
                     LOG.finest("Failed to parse Byte value: " + value);
                     return null;
                 }

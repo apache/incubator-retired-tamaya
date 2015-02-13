@@ -22,7 +22,6 @@ import org.apache.tamaya.PropertyConverter;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -43,7 +42,8 @@ public class FloatConverter implements PropertyConverter<Float> {
     @Override
     public Float convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+
+        switch(trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":
                 return Float.POSITIVE_INFINITY;
             case "NEGATIVE_INFINITY":
@@ -59,15 +59,18 @@ public class FloatConverter implements PropertyConverter<Float> {
             default:
                 try {
                     return Float.valueOf(trimmed);
-                } catch(Exception e){
+                } catch(Exception e) {
                     // OK perhaps we have an integral number that must be converted to the double type...
                     LOG.finest(() -> "Parsing of float as floating number failed, trying parsing integral" +
                             " number/hex instead...");
                 }
+
                 Integer val = integerConverter.convert(trimmed);
-                if(val!=null) {
+
+                if (val!=null) {
                     return val.floatValue();
                 }
+
                 LOG.finest(() -> "Unparseable float value: " + trimmed);
                 return null;
         }

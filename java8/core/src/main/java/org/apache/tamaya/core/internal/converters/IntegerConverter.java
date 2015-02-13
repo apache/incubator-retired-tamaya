@@ -51,7 +51,8 @@ public class IntegerConverter implements PropertyConverter<Integer>{
     @Override
     public Integer convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+
+        switch(trimmed.toUpperCase(Locale.ENGLISH)) {
             case "MIN_VALUE":
             case "MIN":
                 return Integer.MIN_VALUE;
@@ -59,10 +60,9 @@ public class IntegerConverter implements PropertyConverter<Integer>{
             case "MAX":
                 return Integer.MAX_VALUE;
             default:
-                try{
+                try {
                     return Integer.decode(trimmed);
-                }
-                catch(Exception e){
+                } catch (Exception e){
                     LOG.finest(() -> "Unparseable Integer value: " + trimmed);
                     return null;
                 }

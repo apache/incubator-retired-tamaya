@@ -49,7 +49,8 @@ public class ShortConverter implements PropertyConverter<Short>{
     @Override
     public Short convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+
+        switch(trimmed.toUpperCase(Locale.ENGLISH)) {
             case "MIN_VALUE":
             case "MIN":
                 return Short.MIN_VALUE;
@@ -57,10 +58,9 @@ public class ShortConverter implements PropertyConverter<Short>{
             case "MAX":
                 return Short.MAX_VALUE;
             default:
-                try{
+                try {
                     return Short.decode(trimmed);
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     LOG.finest(() -> "Unparseable Short: " + trimmed);
                     return null;
                 }

@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to ZoneId. Valid inputs are as defined by {@link ZoneId#of(String)}.
  */
-public class ZoneIdConverter implements PropertyConverter<ZoneId>{
+public class ZoneIdConverter implements PropertyConverter<ZoneId> {
 
     /** the logger. */
     private static final Logger LOG = Logger.getLogger(ShortConverter.class.getName());
@@ -35,10 +35,10 @@ public class ZoneIdConverter implements PropertyConverter<ZoneId>{
     @Override
     public ZoneId convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        try{
+
+        try {
             return ZoneId.of(trimmed);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOG.finest("Unparseable ZoneId: " + trimmed);
             return null;
         }

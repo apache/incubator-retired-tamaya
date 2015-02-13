@@ -21,7 +21,6 @@ package org.apache.tamaya.core.internal.converters;
 import org.apache.tamaya.PropertyConverter;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,19 +28,20 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to URI, using new URI(value).
  */
-public class URiConverter implements PropertyConverter<URI>{
+public class URiConverter implements PropertyConverter<URI> {
 
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
     public URI convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        try{
+
+        try {
             return new URI(trimmed);
-        }
-        catch(Exception e){
+        } catch (Exception e){
             LOG.log(Level.FINE, e, () -> "Unparseable URI: " + trimmed);
         }
+
         return null;
     }
 }

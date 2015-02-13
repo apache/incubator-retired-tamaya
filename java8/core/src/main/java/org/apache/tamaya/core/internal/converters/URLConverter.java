@@ -35,12 +35,13 @@ public class URLConverter implements PropertyConverter<URL>{
     @Override
     public URL convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        try{
+
+        try {
             return new URL(trimmed);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOG.log(Level.FINE, e, () -> "Unparseable URL: " + trimmed);
         }
+
         return null;
     }
 }
