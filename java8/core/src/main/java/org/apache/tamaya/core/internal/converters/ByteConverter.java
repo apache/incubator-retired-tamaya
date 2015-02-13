@@ -27,21 +27,21 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Byte, the supported format is one of the following:
  * <ul>
- *     <li>0xFF</li>
- *     <li>0XFF</li>
- *     <li>45</li>
- *     <li>-34</li>
- *     <li>0D1</li>
+ * <li>0xFF</li>
+ * <li>0XFF</li>
+ * <li>45</li>
+ * <li>-34</li>
+ * <li>0D1</li>
  * </ul>
  */
-public class ByteConverter implements PropertyConverter<Byte>{
+public class ByteConverter implements PropertyConverter<Byte> {
 
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
     public Byte convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)){
+        switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "MIN_VALUE":
             case "MIN":
                 return Byte.MIN_VALUE;
@@ -51,7 +51,7 @@ public class ByteConverter implements PropertyConverter<Byte>{
             default:
                 try {
                     return Byte.decode(trimmed);
-                } catch (Exception e){
+                } catch (Exception e) {
                     LOG.finest("Failed to parse Byte value: " + value);
                     return null;
                 }

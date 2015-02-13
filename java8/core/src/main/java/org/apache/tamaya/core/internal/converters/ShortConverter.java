@@ -27,30 +27,31 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Short, the supported format is one of the following:
  * <ul>
- *     <li>123 (byte value)</li>
- *     <li>0xFF (byte value)</li>
- *     <li>0XDF (byte value)</li>
- *     <li>0D1 (byte value)</li>
- *     <li>-123 (byte value)</li>
- *     <li>-0xFF (byte value)</li>
- *     <li>-0XDF (byte value)</li>
- *     <li>-0D1 (byte value)</li>
- *     <li>MIN_VALUE (ignoring case)</li>
- *     <li>MIN (ignoring case)</li>
- *     <li>MAX_VALUE (ignoring case)</li>
- *     <li>MAX (ignoring case)</li>
+ * <li>123 (byte value)</li>
+ * <li>0xFF (byte value)</li>
+ * <li>0XDF (byte value)</li>
+ * <li>0D1 (byte value)</li>
+ * <li>-123 (byte value)</li>
+ * <li>-0xFF (byte value)</li>
+ * <li>-0XDF (byte value)</li>
+ * <li>-0D1 (byte value)</li>
+ * <li>MIN_VALUE (ignoring case)</li>
+ * <li>MIN (ignoring case)</li>
+ * <li>MAX_VALUE (ignoring case)</li>
+ * <li>MAX (ignoring case)</li>
  * </ul>
  */
-public class ShortConverter implements PropertyConverter<Short>{
+public class ShortConverter implements PropertyConverter<Short> {
 
-    /** the logger. */
+    /**
+     * the logger.
+     */
     private static final Logger LOG = Logger.getLogger(ShortConverter.class.getName());
 
     @Override
     public Short convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-
-        switch(trimmed.toUpperCase(Locale.ENGLISH)) {
+        switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "MIN_VALUE":
             case "MIN":
                 return Short.MIN_VALUE;

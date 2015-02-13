@@ -37,15 +37,19 @@ import java.util.logging.Logger;
  */
 public class NumberConverter implements PropertyConverter<Number> {
 
-    /** the logger. */
+    /**
+     * the logger.
+     */
     private static final Logger LOGGER = Logger.getLogger(NumberConverter.class.getName());
-    /** Converter used for trying to parse as an integral value. */
+    /**
+     * Converter used for trying to parse as an integral value.
+     */
     private LongConverter longConverter = new LongConverter();
 
     @Override
     public Number convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        switch(trimmed.toUpperCase(Locale.ENGLISH)) {
+        switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":
                 return Double.POSITIVE_INFINITY;
             case "NEGATIVE_INFINITY":
@@ -54,14 +58,12 @@ public class NumberConverter implements PropertyConverter<Number> {
                 return Double.NaN;
             default:
                 Long lVal = longConverter.convert(trimmed);
-
                 if (lVal != null) {
                     return lVal;
                 }
-
                 try {
                     return new BigDecimal(trimmed);
-                } catch (Exception e){
+                } catch (Exception e) {
                     LOGGER.finest("Unparseable Number: " + trimmed);
                     return null;
                 }

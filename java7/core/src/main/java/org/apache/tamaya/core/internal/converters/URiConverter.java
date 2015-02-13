@@ -28,17 +28,16 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to URI, using new URI(value).
  */
-public class URiConverter implements PropertyConverter<URI>{
+public class URiConverter implements PropertyConverter<URI> {
 
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
     public URI convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-        try{
+        try {
             return new URI(trimmed);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOG.log(Level.FINE, "Unparseable URI: " + trimmed, e);
         }
         return null;

@@ -26,12 +26,12 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Class, hereby using the following classloaders:
  * <ul>
- *     <li>The current ThreadContext ClassLoader</li>
- *     <li>The Classloader of this class</li>
- *     <li>The system Classloader</li>
+ * <li>The current ThreadContext ClassLoader</li>
+ * <li>The Classloader of this class</li>
+ * <li>The system Classloader</li>
  * </ul>
  */
-public class ClassConverter implements PropertyConverter<Class<?>>{
+public class ClassConverter implements PropertyConverter<Class<?>> {
 
     private Logger LOG = Logger.getLogger(getClass().getName());
 
@@ -43,16 +43,14 @@ public class ClassConverter implements PropertyConverter<Class<?>>{
         } catch (Exception e) {
             LOG.finest("Class not found in context CL: " + trimmed);
         }
-
         try {
             return Class.forName(trimmed, false, ClassConverter.class.getClassLoader());
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOG.finest("Class not found in ClassConverter's CL: " + trimmed);
         }
-
         try {
             return Class.forName(trimmed, false, ClassLoader.getSystemClassLoader());
-        } catch (Exception e){
+        } catch (Exception e) {
             LOG.finest("Class not found in System CL (giving up): " + trimmed);
             return null;
         }

@@ -29,13 +29,14 @@ import java.util.logging.Logger;
  */
 public class ZoneIdConverter implements PropertyConverter<ZoneId> {
 
-    /** the logger. */
+    /**
+     * the logger.
+     */
     private static final Logger LOG = Logger.getLogger(ShortConverter.class.getName());
 
     @Override
     public ZoneId convert(String value) {
         String trimmed = Objects.requireNonNull(value).trim();
-
         try {
             return ZoneId.of(trimmed);
         } catch (Exception e) {
