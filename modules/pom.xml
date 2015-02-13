@@ -35,6 +35,7 @@ under the License.
 
     <modules>
         <module>builder</module>
+        <module>apiextensions</module>
         <module>injection</module>
         <!--<module>formats</module>-->
         <module>json</module>
