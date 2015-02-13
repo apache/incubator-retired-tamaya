@@ -20,7 +20,6 @@ package org.apache.tamaya.format;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
