@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.*;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.util.*;
 
 /**
- * Implementation for a {@link org.apache.tamaya.PropertySource} that is an aggregate current
+ * Implementation for a {@link org.apache.tamaya.spi.PropertySource} that is an aggregate current
  * multiple child instances. Controlled by an {@link org.apache.tamaya.AggregationPolicy} the
  * following aggregations are supported:
  * <ul>
@@ -66,7 +66,7 @@ class AggregatedPropertySource extends AbstractPropertySource {
 	}
 
 	/**
-	 * Return the names current the {@link org.apache.tamaya.PropertySource} instances to be
+	 * Return the names current the {@link org.apache.tamaya.spi.PropertySource} instances to be
 	 * aggregated in this instance, in the order current precedence (the first are
 	 * the weakest).
 	 * 

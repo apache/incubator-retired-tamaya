@@ -20,6 +20,7 @@ package org.apache.tamaya.core.config;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.io.Serializable;
 import java.util.Map;

@@ -18,13 +18,12 @@
  */
 package old;
 
-import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.*;
 
 /**
- * Implementation for a {@link org.apache.tamaya.PropertySource} that is an aggregate current
+ * Implementation for a {@link org.apache.tamaya.spi.PropertySource} that is an aggregate current
  * multiple child instances. Controlled by an {@link org.apache.tamaya.AggregationPolicy} the
  * following aggregations are supported:
  * <ul>

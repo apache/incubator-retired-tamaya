@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.core.ConfigurationFunctions;
 import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;

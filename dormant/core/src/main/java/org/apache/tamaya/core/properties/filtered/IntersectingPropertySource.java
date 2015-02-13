@@ -18,12 +18,7 @@
  */
 package org.apache.tamaya.core.properties.filtered;
 
-import org.apache.tamaya.*;
-import org.apache.tamaya.core.properties.filtered.AggregatedPropertySource;
 import org.apache.tamaya.spi.PropertySource;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Provider implementation that combines multiple other config by intersecting

@@ -321,7 +321,7 @@ public final class PropertySourcesBuilder {
 
 //
 //    /**
-//     * Filters the current {@link org.apache.tamaya.PropertySource} with the given valueFilter.
+//     * Filters the current {@link org.apache.tamaya.spi.PropertySource} with the given valueFilter.
 //     *
 //     * @param valueFilter the value filter, not null.
 //     * @return the (dynamically) filtered source instance, never null.
@@ -337,7 +337,7 @@ public final class PropertySourcesBuilder {
 
 
     /**
-     * Subtracts with the given {@link org.apache.tamaya.PropertySource} instance from the current properties.
+     * Subtracts with the given {@link org.apache.tamaya.spi.PropertySource} instance from the current properties.
      *
      * @param providers the maps to be subtracted, not null.
      * @return the builder for chaining.

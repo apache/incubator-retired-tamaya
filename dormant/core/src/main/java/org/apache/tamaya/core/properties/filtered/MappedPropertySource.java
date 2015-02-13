@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.spi.PropertySource;
 
 /**

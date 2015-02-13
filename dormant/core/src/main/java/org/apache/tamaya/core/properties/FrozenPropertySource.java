@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.*;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.io.Serializable;
 import java.lang.Override;

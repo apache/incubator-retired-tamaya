@@ -61,7 +61,7 @@ public interface AggregationPolicy {
     /**
      * Interpret later keys as override (additive and override), replacing
      * the key loaded earlier/fromMap previous contained
-     * {@link org.apache.tamaya.PropertySource}.
+     * {@link org.apache.tamaya.spi.PropertySource}.
      */
     public static final AggregationPolicy OVERRIDE = (k, v1, v2) -> v2;
 

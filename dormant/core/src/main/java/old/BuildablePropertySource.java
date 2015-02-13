@@ -17,7 +17,7 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Map;
 import java.util.Objects;

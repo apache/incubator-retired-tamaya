@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.config;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.beans.PropertyChangeEvent;
 import java.util.*;
@@ -27,7 +27,7 @@ import java.util.function.Function;
 
 /**
  * Models a set current changes to be applied to a configuration/property provider.  Such a set can be applied
- * to any {@link org.apache.tamaya.PropertySource} instance. If the provider is mutable it may check the
+ * to any {@link org.apache.tamaya.spi.PropertySource} instance. If the provider is mutable it may check the
  * version given and applyChanges the changes to the provider/configuration, including triggering current regarding
  * change events.
  * <p>

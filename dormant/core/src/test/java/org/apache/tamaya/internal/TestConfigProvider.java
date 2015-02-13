@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.internal;
 
-import org.apache.tamaya.PropertySource;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import old.ConfigurationProviderSpi;
 

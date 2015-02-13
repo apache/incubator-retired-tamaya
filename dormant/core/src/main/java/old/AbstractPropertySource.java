@@ -21,10 +21,10 @@ package org.apache.tamaya.core.properties;
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 
 /**
- * Abstract base class for implementing a {@link org.apache.tamaya.PropertySource}.
+ * Abstract base class for implementing a {@link org.apache.tamaya.spi.PropertySource}.
  */
 public abstract class AbstractPropertySource implements PropertySource, Serializable{
     /**

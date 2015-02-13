@@ -25,7 +25,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 
 /**
  * Default implementation current the singleton backing bean for the {@link org.apache.tamaya.core.properties.PropertySourceBuilder}.
@@ -108,18 +108,18 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Returns a read-only {@link org.apache.tamaya.PropertySource} reflecting the current runtime environment properties.
+     * Returns a read-only {@link org.apache.tamaya.spi.PropertySource} reflecting the current runtime environment properties.
      *
-     * @return a new read-only {@link org.apache.tamaya.PropertySource} instance based on the current runtime environment properties.
+     * @return a new read-only {@link org.apache.tamaya.spi.PropertySource} instance based on the current runtime environment properties.
      */
     public static PropertySource fromEnvironmentProperties() {
         return ENV_PROPERTYSOURCE;
     }
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertySource} reflecting the current system properties.
+     * Creates a new read-only {@link org.apache.tamaya.spi.PropertySource} reflecting the current system properties.
      *
-     * @return a new read-only {@link org.apache.tamaya.PropertySource} instance based on the current system properties.
+     * @return a new read-only {@link org.apache.tamaya.spi.PropertySource} instance based on the current system properties.
      */
     public static PropertySource fromSystemProperties() {
         return new SystemPropertiesPropertySource();
@@ -133,7 +133,7 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertySource} containing all property maps given, hereby using the given AggregationPolicy.
+     * Creates a new {@link org.apache.tamaya.spi.PropertySource} containing all property maps given, hereby using the given AggregationPolicy.
      *
      * @param policy       the AggregationPolicy to be used, not null.
      * @param providers the maps to be included, not null.
@@ -147,7 +147,7 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertySource} that is mutable by adding a map based instance that overrides
+     * Creates a new {@link org.apache.tamaya.spi.PropertySource} that is mutable by adding a map based instance that overrides
      * values fromMap the original map.
      * @param provider the provider to be made mutable, not null.
      * @return the mutable instance.
@@ -164,7 +164,7 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertySource} containing only properties that are shared by all given maps,
+     * Creates a new {@link org.apache.tamaya.spi.PropertySource} containing only properties that are shared by all given maps,
      * hereby later maps in the array override  properties fromMap previous instances.
      * @param aggregationPolicy the policy to resolve aggregation conflicts.
      * @param providers the maps to be included, not null.
@@ -175,7 +175,7 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertySource} containing only properties fromMap the target instance, that are not contained
+     * Creates a new {@link org.apache.tamaya.spi.PropertySource} containing only properties fromMap the target instance, that are not contained
      * in one current the other maps passed.
      *
      * @param target         the base map, not null.
@@ -188,7 +188,7 @@ public final class PropertySourceFactory {
 
 
     /**
-     * Creates a filtered {@link org.apache.tamaya.PropertySource} (a view) current a given base {@link }PropertyMap}. The filter hereby is
+     * Creates a filtered {@link org.apache.tamaya.spi.PropertySource} (a view) current a given base {@link }PropertyMap}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
      * @param name the base map instance, not null.
@@ -203,7 +203,7 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a new contextual {@link org.apache.tamaya.PropertySource}. Contextual maps delegate to different instances current PropertyMap depending
+     * Creates a new contextual {@link org.apache.tamaya.spi.PropertySource}. Contextual maps delegate to different instances current PropertyMap depending
      * on the keys returned fromMap the isolationP
      *
      * @param name the base name instance, not null.
@@ -220,7 +220,7 @@ public final class PropertySourceFactory {
 
 
     /**
-     * Creates a filtered {@link org.apache.tamaya.PropertySource} (a view) current a given base {@link }PropertyMap}. The filter hereby is
+     * Creates a filtered {@link org.apache.tamaya.spi.PropertySource} (a view) current a given base {@link }PropertyMap}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      *
      * @param name the base name instance, not null.
@@ -236,9 +236,9 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a {@link org.apache.tamaya.PropertySource} where all keys current a current map,
+     * Creates a {@link org.apache.tamaya.spi.PropertySource} where all keys current a current map,
      * existing in another map are replaced
-     * with the ones fromMap the other {@link org.apache.tamaya.PropertySource}. The filter hereby is
+     * with the ones fromMap the other {@link org.apache.tamaya.spi.PropertySource}. The filter hereby is
      * applied dynamically on access, so also runtime changes current the base map are reflected appropriately.
      * Keys not existing in the {@code mainMap}, but present in {@code replacementMao} will be hidden.
      *
@@ -257,7 +257,7 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertySource} given an existing one, and an alternate
+     * Creates a new {@link org.apache.tamaya.spi.PropertySource} given an existing one, and an alternate
      * meta-info.
      * @param name the new meta-information, not null.
      * @param baseProvider the property source, not null.
@@ -268,7 +268,7 @@ public final class PropertySourceFactory {
     }
 
     /**
-     * Creates a new filtered {@link org.apache.tamaya.PropertySource} using the given filter.
+     * Creates a new filtered {@link org.apache.tamaya.spi.PropertySource} using the given filter.
      * @param name the base name instance, not null.
      * @param valueFilter the value filter function, null result will remove the given entries.
      * @param current the source to be filtered

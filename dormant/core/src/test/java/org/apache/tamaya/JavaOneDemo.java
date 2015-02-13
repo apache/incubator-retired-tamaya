@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.tamaya.core.ConfigurationFunctions;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
+import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
 /**

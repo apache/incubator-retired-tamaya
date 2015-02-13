@@ -18,13 +18,11 @@
  */
 package org.apache.tamaya.core.properties;
 
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 /**
  * Accessor that provides useful functions along with configuration.
@@ -65,7 +63,7 @@ public final class PropertySourceFunctions {
 
 
     /**
-     * Intersetcs the current properties with the given {@link org.apache.tamaya.PropertySource} instance.
+     * Intersetcs the current properties with the given {@link org.apache.tamaya.spi.PropertySource} instance.
      *
      * @param providers the maps to be intersected, not null.
      * @return the builder for chaining.

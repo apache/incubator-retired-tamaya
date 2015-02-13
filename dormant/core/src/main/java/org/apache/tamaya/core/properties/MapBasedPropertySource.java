@@ -21,11 +21,10 @@ package org.apache.tamaya.core.properties;
 import java.lang.Override;
 import java.lang.String;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * Models a {@link org.apache.tamaya.PropertySource} that can be build using a builder pattern.
+ * Models a {@link org.apache.tamaya.spi.PropertySource} that can be build using a builder pattern.
  */
 public class MapBasedPropertySource implements PropertySource {
 

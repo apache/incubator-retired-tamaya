@@ -19,7 +19,7 @@
 package org.apache.tamaya.ucs;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
 import org.junit.Test;

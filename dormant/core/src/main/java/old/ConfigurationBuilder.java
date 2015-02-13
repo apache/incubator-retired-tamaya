@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.core.config.FreezedConfiguration;
 import org.apache.tamaya.core.properties.AggregationPolicy;
 import org.apache.tamaya.core.properties.PropertySourceBuilder;
@@ -145,7 +145,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Creates a new {@link org.apache.tamaya.PropertySource} using the given command line arguments and adds it
+     * Creates a new {@link org.apache.tamaya.spi.PropertySource} using the given command line arguments and adds it
      * using the current aggregation policy in place.
      *
      * @param args the command line arguments, not null.
@@ -157,7 +157,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertySource} by reading the according path format. The effective format read
+     * Creates a new read-only {@link org.apache.tamaya.spi.PropertySource} by reading the according path format. The effective format read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
      * Properties read are aggregated using the current aggregation policy active.
      *
@@ -171,7 +171,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertySource} by reading the according path format. The effective format read
+     * Creates a new read-only {@link org.apache.tamaya.spi.PropertySource} by reading the according path format. The effective format read
      * hereby are determined by the {@code PathResolverService} configured into the {@code Bootstrap} SPI.
      * Properties read are aggregated using the current aggregation policy active.
      *
@@ -184,7 +184,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertySource} by reading the according URL format.
+     * Creates a new read-only {@link org.apache.tamaya.spi.PropertySource} by reading the according URL format.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param urls the urls to be read, not null.
@@ -196,7 +196,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertySource} by reading the according URL format.
+     * Creates a new read-only {@link org.apache.tamaya.spi.PropertySource} by reading the according URL format.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param urls the urls to be read, not null.
@@ -209,7 +209,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Creates a new read-only {@link org.apache.tamaya.PropertySource} based on the given map.
+     * Creates a new read-only {@link org.apache.tamaya.spi.PropertySource} based on the given map.
      * Properties read are aggregated using the current aggregation policy active.
      *
      * @param map the map to be added, not null.
@@ -242,7 +242,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.spi.PropertySource} instances using the current {@link AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
@@ -255,7 +255,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Adds the given {@link org.apache.tamaya.PropertySource} instances using the current {@link AggregationPolicy}
+     * Adds the given {@link org.apache.tamaya.spi.PropertySource} instances using the current {@link AggregationPolicy}
      * active.
      *
      * @param providers the maps to be included, not null.
@@ -268,7 +268,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Intersetcs the current properties with the given {@link org.apache.tamaya.PropertySource} instance.
+     * Intersetcs the current properties with the given {@link org.apache.tamaya.spi.PropertySource} instance.
      *
      * @param providers the maps to be intersected, not null.
      * @return the builder for chaining.
@@ -280,7 +280,7 @@ public final class ConfigurationBuilder {
 
 
     /**
-     * Subtracts with the given {@link org.apache.tamaya.PropertySource} instance from the current properties.
+     * Subtracts with the given {@link org.apache.tamaya.spi.PropertySource} instance from the current properties.
      *
      * @param providers the maps to be subtracted, not null.
      * @return the builder for chaining.
@@ -313,7 +313,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Creates a new contextual {@link org.apache.tamaya.PropertySource}. Contextual maps delegate to different instances current PropertyMap depending
+     * Creates a new contextual {@link org.apache.tamaya.spi.PropertySource}. Contextual maps delegate to different instances current PropertyMap depending
      * on the keys returned fromMap the isolationP
      *
      * @param mapSupplier          the supplier creating new provider instances
@@ -353,7 +353,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Creates a {@link org.apache.tamaya.PropertySource} instance that is serializable and immutable,
+     * Creates a {@link org.apache.tamaya.spi.PropertySource} instance that is serializable and immutable,
      * so it can be sent over a network connection.
      *
      * @return the freezed instance, never null.
@@ -363,7 +363,7 @@ public final class ConfigurationBuilder {
     }
 
     /**
-     * Creates a {@link org.apache.tamaya.PropertySource} instance that is serializable and immutable,
+     * Creates a {@link org.apache.tamaya.spi.PropertySource} instance that is serializable and immutable,
      * so it can be sent over a network connection.
      *
      * @return the freezed instance, never null.

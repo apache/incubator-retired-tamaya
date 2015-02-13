@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.config;
 
-import org.apache.tamaya.PropertySource;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
