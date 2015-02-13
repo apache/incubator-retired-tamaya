@@ -21,13 +21,13 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-extensions</artifactId>
+        <groupId>org.apache.tamaya.ext.integration</groupId>
+        <artifactId>tamaya-integrations</artifactId>
         <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-formats</artifactId>
-    <name>Apache Tamaya Format Services</name>
+    <artifactId>commons</artifactId>
+    <name>Apache Tamaya Commons Configuration Integration</name>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -38,8 +38,13 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-resources</artifactId>
+            <artifactId>tamaya-formats</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.10</version>
         </dependency>
     </dependencies>
 </project>

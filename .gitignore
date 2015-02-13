@@ -12,3 +12,5 @@ release.properties
 .project
 .settings
 .classpath
+
+modules/integration/commons-config/commons-configuration.iml

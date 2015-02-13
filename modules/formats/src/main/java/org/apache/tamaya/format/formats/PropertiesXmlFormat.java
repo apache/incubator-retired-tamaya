@@ -16,26 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.format;
+package org.apache.tamaya.format.formats;
+
+import org.apache.tamaya.format.ConfigurationData;
+import org.apache.tamaya.format.ConfigurationDataBuilder;
+import org.apache.tamaya.format.ConfigurationFormat;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of a {@link ConfigurationFormat} for -properties files.
+ * Implementation of a {@link org.apache.tamaya.format.ConfigurationFormat} for xml property
+ * files.
  *
- * @see java.util.Properties#load(java.io.InputStream)
+ * @see java.util.Properties#loadFromXML(java.io.InputStream)
  */
-public class PropertiesFormat implements ConfigurationFormat {
+public class PropertiesXmlFormat implements ConfigurationFormat {
     /**
      * The logger.
      */
-    private final static Logger LOG = Logger.getLogger(PropertiesFormat.class.getName());
+    private final static Logger LOG = Logger.getLogger(PropertiesXmlFormat.class.getName());
 
 
     @SuppressWarnings("unchecked")
@@ -52,6 +55,6 @@ public class PropertiesFormat implements ConfigurationFormat {
         } catch (Exception e) {
             LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + url);
         }
-        return ConfigurationDataBuilder.of(url, this).build();
+        return null;
     }
 }

@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.format;
+package org.apache.tamaya.integration.commons;
+
+//X TODO Move out into separate commons-config integration module...
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.tamaya.spi.PropertySource;

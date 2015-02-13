@@ -16,12 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.format;
+package org.apache.tamaya.integration.commons;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.format.ConfigurationData;
+import org.apache.tamaya.format.ConfigurationDataBuilder;
+import org.apache.tamaya.format.ConfigurationFormat;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -32,7 +35,7 @@ import java.util.Map;
  * Implements a ini file format based on the APache Commons
  * {@link org.apache.commons.configuration.HierarchicalINIConfiguration}.
  */
-public class IniConfigurationFormat implements ConfigurationFormat{
+public class IniConfigurationFormat implements ConfigurationFormat {
 
     @Override
     public ConfigurationData readConfiguration(URL url) {

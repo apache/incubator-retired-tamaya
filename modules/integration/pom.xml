@@ -23,7 +23,7 @@ under the License.
     <parent>
         <artifactId>tamaya-extensions-all</artifactId>
         <groupId>org.apache.tamaya.ext</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <packaging>pom</packaging>
@@ -34,6 +34,7 @@ under the License.
     <modules>
         <module>cdi</module>
         <module>se</module>
+        <module>commons</module>
     </modules>
 
 </project>
