@@ -22,6 +22,9 @@ import org.apache.tamaya.spi.PropertySource;
 
 import java.net.URL;
 
+/**
+ * TBD
+ */
 public interface PropertySourceFactory {
     boolean acceptable(URL url);
 
