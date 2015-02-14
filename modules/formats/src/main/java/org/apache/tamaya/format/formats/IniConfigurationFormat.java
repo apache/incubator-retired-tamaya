@@ -24,6 +24,7 @@ import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.logging.Level;
@@ -40,9 +41,15 @@ public class IniConfigurationFormat implements ConfigurationFormat {
     private final static Logger LOG = Logger.getLogger(IniConfigurationFormat.class.getName());
 
     @Override
-    public ConfigurationData readConfiguration(URL url) {
-        ConfigurationDataBuilder builder = ConfigurationDataBuilder.of(url, this);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));) {
+    public boolean accepts(URL url) {
+        String fileName = url.getFile();
+        return fileName.endsWith(".ini") || fileName.endsWith(".INI");
+    }
+
+    @Override
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
+        ConfigurationDataBuilder builder = ConfigurationDataBuilder.of(resource, this);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
             String line = reader.readLine();
             int lineNum = 0;
             String section = null;
@@ -57,7 +64,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                     int end = line.indexOf(']');
                     if (end < 0) {
                         throw new ConfigException(
-                                "Invalid INI-Format, ']' expected, at " + lineNum + " in " + url);
+                                "Invalid INI-Format, ']' expected, at " + lineNum + " in " + resource);
                     }
                     section = line.substring(1, end);
                 } else if (line.trim().startsWith("#")) {
@@ -77,7 +84,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
             }
             return builder.build();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, e, () -> "Could not read configuration: " + url);
+            LOG.log(Level.SEVERE, e, () -> "Could not read configuration: " + resource);
         }
         return null;
     }

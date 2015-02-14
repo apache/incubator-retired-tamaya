@@ -22,6 +22,7 @@ import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
@@ -42,19 +43,30 @@ public class PropertiesFormat implements ConfigurationFormat {
     private final static Logger LOG = Logger.getLogger(PropertiesFormat.class.getName());
 
 
+    @Override
+    public boolean accepts(URL url) {
+        String fileName = url.getFile();
+        return fileName.endsWith(".properties") || fileName.endsWith(".PROPERTIES") ||
+                fileName.endsWith(".conf") || fileName.endsWith(".CONF");
+    }
+
     @SuppressWarnings("unchecked")
     @Override
-    public ConfigurationData readConfiguration(URL url) {
-        Objects.requireNonNull(url);
-
-        try (InputStream is = url.openStream()) {
-            if (is != null) {
-                final Properties p = new Properties();
-                p.load(is);
-                return ConfigurationDataBuilder.of(url, this).addProperties( Map.class.cast(p)).build();
-            }
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
+        Objects.requireNonNull(inputStream);
+        Objects.requireNonNull(resource);
+        try {
+            final Properties p = new Properties();
+            p.load(inputStream);
+            return ConfigurationDataBuilder.of(resource, this).addProperties(Map.class.cast(p)).build();
         } catch (Exception e) {
-            LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + url);
+            LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + resource);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                LOG.log(Level.FINEST, e, () -> "Failed to close resource: " + resource);
+            }
         }
         return null;
     }

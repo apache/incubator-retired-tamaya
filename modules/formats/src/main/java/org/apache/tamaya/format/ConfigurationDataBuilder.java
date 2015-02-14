@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.format;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +31,7 @@ public final class ConfigurationDataBuilder {
     /** The format instance used to read this instance. */
     ConfigurationFormat format;
     /** The resource read. */
-    URL resource;
+    String resource;
     /** The data read. */
     Map<String,Map<String,String>> data = new HashMap<>();
 
@@ -41,7 +40,7 @@ public final class ConfigurationDataBuilder {
      * @param resource the configuration resource URL, not null.
      * @param format the format that read this data, not null.
      */
-    private ConfigurationDataBuilder(URL resource, ConfigurationFormat format){
+    private ConfigurationDataBuilder(String resource, ConfigurationFormat format){
         this.format = Objects.requireNonNull(format);
         this.resource = Objects.requireNonNull(resource);
     }
@@ -51,7 +50,7 @@ public final class ConfigurationDataBuilder {
      * @param resource the configuration resource URL, not null.
      * @param format the format that read this data, not null.
      */
-    public static ConfigurationDataBuilder of(URL resource, ConfigurationFormat format){
+    public static ConfigurationDataBuilder of(String resource, ConfigurationFormat format){
         return new ConfigurationDataBuilder(resource, format);
     }
 
@@ -134,7 +133,7 @@ public final class ConfigurationDataBuilder {
         return "ConfigurationDataBuilder{" +
                 "format=" + format +
                 ", data=" + data +
-                ", resource=" + resource.toString() +
+                ", resource=" + resource +
                 '}';
     }
 }
