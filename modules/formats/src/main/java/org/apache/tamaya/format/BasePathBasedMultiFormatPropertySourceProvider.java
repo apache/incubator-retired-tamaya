@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.ServiceContext;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,9 +109,9 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
             for (URL res : resourceResolver.getResources(
                     this.classLoader.orElse(Thread.currentThread().getContextClassLoader()),
                     path)) {
-                try {
+                try(InputStream is = res.openStream()) {
                     for (ConfigurationFormat format : configFormats) {
-                        ConfigurationData entries = format.readConfiguration(res);
+                        ConfigurationData entries = format.readConfiguration(res.toString(), is);
                         propertySources.addAll(getPropertySources(entries));
                     }
                 } catch (Exception e) {

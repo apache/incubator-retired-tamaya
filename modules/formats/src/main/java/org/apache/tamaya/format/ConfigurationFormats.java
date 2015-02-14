@@ -57,6 +57,16 @@ public class ConfigurationFormats {
     }
 
     /**
+     * Get all currently available formats, ordered by priority.
+     *
+     * @return the currently available formats, never null.
+     */
+    public static List<ConfigurationFormat> getFormats(URL url) {
+        List<ConfigurationFormat> formats = getFormats();
+        return formats.stream().filter(f -> f.accepts(url)).collect(Collectors.toList());
+    }
+
+    /**
      * Tries to read configuration data from a given URL, hereby traversing all known formats in order of precedence.
      * Hereby the formats are first filtered to check if the URL is acceptable, before the input is being parsed.
      *
@@ -65,8 +75,7 @@ public class ConfigurationFormats {
      * @throws IOException if the resource cannot be read.
      */
     public static ConfigurationData readConfigurationData(final URL url) throws IOException{
-        List<ConfigurationFormat> formats = getFormats();
-        formats = formats.stream().filter(f -> f.accepts(url)).collect(Collectors.toList());
+        List<ConfigurationFormat> formats = getFormats(url);
         return readConfigurationData(url, formats.toArray(new ConfigurationFormat[formats.size()]));
     }
 
@@ -99,8 +108,9 @@ public class ConfigurationFormats {
         byte[] bytes = new byte[256];
         try{
             int read = inputStream.read(bytes);
-            while(read != 0){
+            while(read > 0){
                 bos.write(bytes, 0, read);
+                read = inputStream.read(bytes);
             }
         } finally{
             try {
