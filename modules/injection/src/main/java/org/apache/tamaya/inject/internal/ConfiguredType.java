@@ -152,14 +152,14 @@ public class ConfiguredType {
      */
     public void configure(Object instance) {
         for (ConfiguredField field : configuredFields) {
-            field.applyInitialValue(instance);
+            field.applyValue(instance);
         }
         for (ConfiguredSetterMethod method : configuredSetterMethods) {
-            method.applyInitialValue(instance);
-            // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
-            WeakConfigListenerManager.of().registerConsumer(instance, method.createConsumer(instance));
+            method.applyValue(instance, true);
+//            // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
+//            WeakConfigListenerManager.of().registerConsumer(instance, method.createConsumer(instance));
         }
-        // Register callbacks for this intance (weakly)
+        // Register callbacks for this instance (weakly)
         for (ConfigChangeCallbackMethod callback : callbackMethods) {
             WeakConfigListenerManager.of().registerConsumer(instance, callback.createConsumer(instance));
         }

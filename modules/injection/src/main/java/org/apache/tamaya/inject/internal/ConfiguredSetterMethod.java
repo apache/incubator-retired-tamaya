@@ -23,13 +23,9 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.ConfigRoot;
-import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.event.PropertyChangeSet;
 
 /**
  * Small class that contains and manages all information and access to a configured field and a concrete instance current
@@ -54,35 +50,14 @@ public class ConfiguredSetterMethod {
                         m.getParameterCount() == 1).get();
     }
 
-    public Consumer<PropertyChangeSet> createConsumer(Object instance){
-        // TODO consider environment as well
-        return event -> {
-            String configValue = InjectionUtils.getConfigValue(setterMethod);
-            applyValue(instance,configValue, false);
-        };
-    }
-
-
     /**
      * Evaluate the initial keys fromMap the configuration and applyChanges it to the field.
      *
      * @param target the target instance.
      * @throws ConfigException if evaluation or conversion failed.
      */
-    public void applyInitialValue(Object target) throws ConfigException {
+    public void applyValue(Object target, boolean resolve) throws ConfigException {
         String configValue = InjectionUtils.getConfigValue(this.setterMethod);
-        applyValue(target, configValue, false);
-    }
-
-    /**
-     * This method reapplies a changed configuration keys to the field.
-     *
-     * @param target      the target instance, not null.
-     * @param configValue the new keys to be applied, null will trigger the evaluation current the configured default keys.
-     * @param resolve     set to true, if expression resolution should be applied on the keys passed.
-     * @throws org.apache.tamaya.ConfigException if the configuration required could not be resolved or converted.
-     */
-    public void applyValue(Object target, String configValue, boolean resolve) throws ConfigException {
         Objects.requireNonNull(target);
         try {
             String evaluatedString = resolve && configValue != null
@@ -102,25 +77,6 @@ public class ConfiguredSetterMethod {
             throw new ConfigException("Failed to annotation configured method: " + this.setterMethod.getDeclaringClass()
                     .getName() + '.' + setterMethod.getName(), e);
         }
-    }
-
-
-
-    /**
-     * This method checks if the given (qualified) configuration key is referenced fromMap this field.
-     * This is useful to determine, if a key changed in a configuration should trigger any change events
-     * on the related instances.
-     *
-     * @param key the (qualified) configuration key, not null.
-     * @return true, if the key is referenced.
-     */
-    public boolean matchesKey(String key) {
-        ConfigRoot areasAnnot = this.setterMethod.getDeclaringClass().getAnnotation(ConfigRoot.class);
-        ConfiguredProperty prop = this.setterMethod.getAnnotation(ConfiguredProperty.class);
-        if (InjectionUtils.evaluateKeys(this.setterMethod, areasAnnot, prop).contains(key)) {
-            return true;
-        }
-        return InjectionUtils.evaluateKeys(this.setterMethod, areasAnnot).contains(key);
     }
 
 

@@ -18,17 +18,12 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.DynamicValue;
-import org.apache.tamaya.inject.WithPropertyConverter;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
@@ -74,34 +69,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
             return this.configuration;
         }
         if (method.getReturnType() == DynamicValue.class) {
-            // Check for adapter/filter
-            Type targetType = method.getGenericReturnType();
-            if (targetType == null) {
-                throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
-                        .getTypeName() + '.' + method.getName());
-            }
-            if (targetType instanceof ParameterizedType) {
-                ParameterizedType pt = (ParameterizedType) targetType;
-                Type[] types = pt.getActualTypeArguments();
-                if (types.length != 1) {
-                    throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
-                            .getTypeName() + '.' + method.getName());
-                }
-                targetType = (Class) types[0];
-            }
-            PropertyConverter<Object> propertyConverter = null;
-            WithPropertyConverter annot = method.getAnnotation(WithPropertyConverter.class);
-            if (annot != null) {
-                try {
-                    propertyConverter = (PropertyConverter<Object>) annot.value().newInstance();
-                } catch (Exception e) {
-                    throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
-                            method.getDeclaringClass().getTypeName()
-                            + '.' + method.getName(), e);
-                }
-            }
-            return new DefaultDynamicValue<Object>(method.getName(),
-                    this.configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method));
+            return DefaultDynamicValue.of(method, configuration);
         }
         String configValue = InjectionUtils.getConfigValue(method);
         Object result = InjectionUtils.adaptValue(method, TypeLiteral.of(method.getReturnType()), configValue);

@@ -44,7 +44,7 @@ import org.apache.tamaya.spi.ServiceContext;
 
 
 /**
- * Created by Anatole on 19.12.2014.
+ * Utility class containing several aspects used in this module.
  */
 @SuppressWarnings("unchecked")
 final class InjectionUtils {

@@ -18,10 +18,12 @@
  */
 package org.apache.tamaya.inject.internal;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.DynamicValue;
+import org.apache.tamaya.inject.WithPropertyConverter;
 
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
@@ -29,6 +31,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -106,7 +112,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * @param targetType        the target type, not null.
      * @param propertyConverter the optional converter to be used.
      */
-    DefaultDynamicValue(String propertyName, Configuration configuration, TypeLiteral<T> targetType,
+    private DefaultDynamicValue(String propertyName, Configuration configuration, TypeLiteral<T> targetType,
                         PropertyConverter<T> propertyConverter, List<String> keys) {
         this.propertyName = Objects.requireNonNull(propertyName);
         this.keys = keys.toArray(new String[keys.size()]);
@@ -116,6 +122,68 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
         this.value = Optional.ofNullable(evaluateValue());
     }
 
+    public static DynamicValue of(Field annotatedField, Configuration configuration){
+        // Check for adapter/filter
+        Type targetType = annotatedField.getGenericType();
+        if (targetType == null) {
+            throw new ConfigException("Failed to evaluate target type for " + annotatedField.getAnnotatedType().getType().getTypeName()
+                    + '.' + annotatedField.getName());
+        }
+        if (targetType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) targetType;
+            Type[] types = pt.getActualTypeArguments();
+            if (types.length != 1) {
+                throw new ConfigException("Failed to evaluate target type for " + annotatedField.getAnnotatedType().getType().getTypeName()
+                        + '.' + annotatedField.getName());
+            }
+            targetType = (Class) types[0];
+        }
+        PropertyConverter<?> propertyConverter = null;
+        WithPropertyConverter annot = annotatedField.getAnnotation(WithPropertyConverter.class);
+        if (annot != null) {
+            try {
+                propertyConverter = annot.value().newInstance();
+            } catch (Exception e) {
+                throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
+                        annotatedField.getAnnotatedType().getType().getTypeName()
+                        + '.' + annotatedField.getName(), e);
+            }
+        }
+        List<String> keys = InjectionUtils.getKeys(annotatedField);
+        return new DefaultDynamicValue(annotatedField.getName(), configuration,
+                TypeLiteral.of(targetType), propertyConverter, keys);
+    }
+
+    public static DynamicValue of(Method method, Configuration configuration){
+        // Check for adapter/filter
+        Type targetType = method.getGenericReturnType();
+        if (targetType == null) {
+            throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
+                    .getTypeName() + '.' + method.getName());
+        }
+        if (targetType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) targetType;
+            Type[] types = pt.getActualTypeArguments();
+            if (types.length != 1) {
+                throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
+                        .getTypeName() + '.' + method.getName());
+            }
+            targetType = (Class) types[0];
+        }
+        PropertyConverter<Object> propertyConverter = null;
+        WithPropertyConverter annot = method.getAnnotation(WithPropertyConverter.class);
+        if (annot != null) {
+            try {
+                propertyConverter = (PropertyConverter<Object>) annot.value().newInstance();
+            } catch (Exception e) {
+                throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
+                        method.getDeclaringClass().getTypeName()
+                        + '.' + method.getName(), e);
+            }
+        }
+        return new DefaultDynamicValue<Object>(method.getName(),
+                configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method));
+    }
 
     /**
      * Performs a commit, if necessary, and returns the current value.
