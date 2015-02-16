@@ -94,10 +94,6 @@ public class ConfiguredType {
                     if (m.isDefault()) {
                         addObserverMethod(m);
                     }
-                } else {
-                    if (m.isDefault()) {
-                        addPropertySetter(m, prop);
-                    }
                 }
             } else {
                 if (mAnnot != null) {
@@ -191,5 +187,10 @@ public class ConfiguredType {
 
     public Class getType() {
         return this.type;
+    }
+
+    @Override
+    public String toString() {
+        return "ConfiguredType{"+ this.getType().getName() + '}';
     }
 }

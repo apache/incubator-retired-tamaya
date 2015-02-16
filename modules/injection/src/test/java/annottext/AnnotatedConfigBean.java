@@ -20,6 +20,7 @@ package annottext;
 
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultValue;
+import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.inject.LoadPolicy;
 import org.apache.tamaya.inject.WithLoadPolicy;
 
@@ -46,12 +47,19 @@ public class AnnotatedConfigBean {
     @ConfiguredProperty(keys = "host.name")
     private String hostName;
 
+    @ConfiguredProperty(keys = "host.name")
+    private DynamicValue<String> dynamicHostname;
+
     public String getAnotherValue(){
         return anotherValue;
     }
 
     public String getHostName(){
         return hostName;
+    }
+
+    public DynamicValue<String> getDynamicValue(){
+        return dynamicHostname;
     }
 
 }

@@ -18,9 +18,11 @@
  */
 package org.apache.tamaya.inject.internal;
 
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
+import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,11 +56,27 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      *
      * @param instance the instance to be configured
      */
+    @Override
     public <T> T configure(T instance) {
         Class type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerTypeInternal(type);
         Objects.requireNonNull(configuredType).configure(instance);
         return instance;
+    }
+
+    /**
+     * Create a template implementting the annotated methods based on current configuration data.
+     *
+     * @param templateType the type of the template to be created.
+     */
+    @Override
+    public <T> T createTemplate(Class<T> templateType) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if(cl==null){
+            cl = this.getClass().getClassLoader();
+        }
+        return (T)Proxy.newProxyInstance(cl,new Class[]{Supplier.class, Objects.requireNonNull(templateType)},
+                new ConfigTemplateInvocationHandler(templateType, ConfigurationProvider.getConfiguration()));
     }
 
 

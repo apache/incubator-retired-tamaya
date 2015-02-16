@@ -18,11 +18,17 @@
  */
 package org.apache.tamaya.inject.internal;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.inject.DynamicValue;
+import org.apache.tamaya.inject.WithPropertyConverter;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
@@ -30,43 +36,78 @@ import java.util.Objects;
  */
 public final class ConfigTemplateInvocationHandler implements InvocationHandler {
 
-    /*
-    TODO
-    the given method (in case of a template) can use different caching strategies:
-    1) no caching (always evaluate the values completely) - slow.
-    2) instance caching (a cache per instance).
-    3) classloader caching...
-    4) global shared cache.
-     */
-
-
     /**
      * The configured type.
      */
     private ConfiguredType type;
 
     /**
-     * Creates a new handler instance.
-     * @param type           the target type, not null.
-     * @param configurations overriding configurations to be used for evaluating the values for injection into {@code instance}, not null.
-     *                       If no such config is passed, the default configurationa provided by the current
-     *                       registered providers are used.
+     * The configuration instance of this proxy.
      */
-    public ConfigTemplateInvocationHandler(Class<?> type, Configuration... configurations) {
-        Objects.requireNonNull(configurations);
+    private Configuration configuration;
 
+    /**
+     * Creates a new handler instance.
+     *
+     * @param type          the target type, not null.
+     * @param configuration the configuration to be used for evaluating the values for injection into {@code instance},
+     *                      not null.
+     */
+    public ConfigTemplateInvocationHandler(Class<?> type, Configuration configuration) {
+        Objects.requireNonNull(configuration);
         this.type = new ConfiguredType(Objects.requireNonNull(type));
         if (!type.isInterface()) {
             throw new IllegalArgumentException("Can only proxy interfaces as configuration templates.");
         }
+        this.configuration = Objects.requireNonNull(configuration);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if ("toString".equals(method.getName())) {
             return "Configured Proxy -> " + this.type.getType().getName();
+        } else if ("hashCode".equals(method.getName())) {
+            return Objects.hashCode(proxy);
+        } else if ("equals".equals(method.getName())) {
+            return Objects.equals(proxy, args[0]);
+        } else if ("get".equals(method.getName())) {
+            return this.configuration;
+        }
+        if (method.getReturnType() == DynamicValue.class) {
+            // Check for adapter/filter
+            Type targetType = method.getGenericReturnType();
+            if (targetType == null) {
+                throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
+                        .getTypeName() + '.' + method.getName());
+            }
+            if (targetType instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) targetType;
+                Type[] types = pt.getActualTypeArguments();
+                if (types.length != 1) {
+                    throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
+                            .getTypeName() + '.' + method.getName());
+                }
+                targetType = (Class) types[0];
+            }
+            PropertyConverter<Object> propertyConverter = null;
+            WithPropertyConverter annot = method.getAnnotation(WithPropertyConverter.class);
+            if (annot != null) {
+                try {
+                    propertyConverter = (PropertyConverter<Object>) annot.value().newInstance();
+                } catch (Exception e) {
+                    throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
+                            method.getDeclaringClass().getTypeName()
+                            + '.' + method.getName(), e);
+                }
+            }
+            return new DefaultDynamicValue<Object>(method.getName(),
+                    this.configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method));
         }
         String configValue = InjectionUtils.getConfigValue(method);
-        return InjectionUtils.adaptValue(method,  TypeLiteral.of(method.getReturnType()), configValue);
+        Object result = InjectionUtils.adaptValue(method, TypeLiteral.of(method.getReturnType()), configValue);
+        if (result == null && method.isDefault()) {
+            result = method.getDefaultValue();
+        }
+        return result;
     }
 }

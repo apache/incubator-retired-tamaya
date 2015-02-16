@@ -18,16 +18,24 @@
  */
 package org.apache.tamaya.inject.internal;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.inject.ConfigRoot;
+import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.DynamicValue;
+import org.apache.tamaya.inject.WithPropertyConverter;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Objects;
-
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.ConfigRoot;
-import org.apache.tamaya.inject.ConfiguredProperty;
+import java.util.logging.Logger;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance current
@@ -35,8 +43,10 @@ import org.apache.tamaya.inject.ConfiguredProperty;
  * final keys by reflection.
  */
 public class ConfiguredField {
-
-
+    /**
+     * The logger used.
+     */
+    private static final Logger LOG = Logger.getLogger(ConfiguredField.class.getName());
     /**
      * The configured field instance.
      */
@@ -59,10 +69,64 @@ public class ConfiguredField {
      * @throws ConfigException if evaluation or conversion failed.
      */
     public void applyInitialValue(Object target) throws ConfigException {
-        String configValue = InjectionUtils.getConfigValue(this.annotatedField);
-        applyValue(target, configValue, false);
+        if (this.annotatedField.getType() == DynamicValue.class) {
+            initDynamicValue(target);
+        } else {
+            String configValue = InjectionUtils.getConfigValue(this.annotatedField);
+            applyValue(target, configValue, false);
+        }
     }
 
+
+    /**
+     * This method instantiates and assigns a dynamic value.
+     *
+     * @param target the target instance, not null.
+     * @throws ConfigException if the configuration required could not be resolved or converted.
+     */
+    public void initDynamicValue(Object target) throws ConfigException {
+        Objects.requireNonNull(target);
+        try {
+            // Check for adapter/filter
+            Type targetType = this.annotatedField.getGenericType();
+            if (targetType == null) {
+                throw new ConfigException("Failed to evaluate target type for " + annotatedField.getAnnotatedType().getType().getTypeName()
+                        + '.' + annotatedField.getName());
+            }
+            if (targetType instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) targetType;
+                Type[] types = pt.getActualTypeArguments();
+                if (types.length != 1) {
+                    throw new ConfigException("Failed to evaluate target type for " + annotatedField.getAnnotatedType().getType().getTypeName()
+                            + '.' + annotatedField.getName());
+                }
+                targetType = (Class) types[0];
+            }
+            PropertyConverter<?> propertyConverter = null;
+            WithPropertyConverter annot = this.annotatedField.getAnnotation(WithPropertyConverter.class);
+            if (annot != null) {
+                try {
+                    propertyConverter = annot.value().newInstance();
+                } catch (Exception e) {
+                    throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
+                            annotatedField.getAnnotatedType().getType().getTypeName()
+                            + '.' + annotatedField.getName(), e);
+                }
+            }
+            List<String> keys = InjectionUtils.getKeys(this.annotatedField);
+            Configuration configuration = ConfigurationProvider.getConfiguration();
+            Object value = new DefaultDynamicValue(this.annotatedField.getName(), configuration,
+                    TypeLiteral.of(targetType), propertyConverter, keys);
+            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+                annotatedField.setAccessible(true);
+                return annotatedField;
+            });
+            annotatedField.set(target, value);
+        } catch (Exception e) {
+            throw new ConfigException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
+                    .getName() + '.' + annotatedField.getName(), e);
+        }
+    }
 
     /**
      * This method reapplies a changed configuration keys to the field.
@@ -111,4 +175,10 @@ public class ConfiguredField {
         return keys.contains(key);
     }
 
+    @Override
+    public String toString() {
+        return "ConfiguredField{" +
+                annotatedField.getName() + ": " +
+                " " + annotatedField.getAnnotatedType().getType().getTypeName() + '}';
+    }
 }

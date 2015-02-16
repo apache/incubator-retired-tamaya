@@ -37,6 +37,13 @@ public interface ConfigurationInjector {
      */
     <T> T configure(T instance);
 
+    /**
+     * Create a template implementting the annotated methods based on current configuration data.
+     *
+     * @param templateType the type of the template to be created.
+     */
+    <T> T createTemplate(Class<T> templateType);
+
 
     /**
      * Creates a supplier for configured instances of the given type {@code T}.

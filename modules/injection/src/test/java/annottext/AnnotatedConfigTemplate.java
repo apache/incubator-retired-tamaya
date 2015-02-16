@@ -20,6 +20,7 @@ package annottext;
 
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultValue;
+import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.inject.LoadPolicy;
 import org.apache.tamaya.inject.WithLoadPolicy;
 
@@ -32,7 +33,7 @@ import org.apache.tamaya.inject.WithLoadPolicy;
 public interface AnnotatedConfigTemplate {
 
     @ConfiguredProperty(keys = {"foo.bar.myprop", "mp","common.testdata.myProperty"})
-    @DefaultValue("myValue_${env.stage}")
+    @DefaultValue("ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     String myParameter();
 
@@ -41,9 +42,12 @@ public interface AnnotatedConfigTemplate {
     String simpleValue();
 
     @ConfiguredProperty
-    String simplestValue();
+    default String simplestValue(){return "HALLO!";}
 
     @ConfiguredProperty(keys = "host.name")
     String hostName();
+
+    @ConfiguredProperty(keys = "host.name")
+    DynamicValue<String> getDynamicValue();
 
 }

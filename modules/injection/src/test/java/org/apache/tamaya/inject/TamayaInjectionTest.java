@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Anatole on 12.01.2015.
@@ -43,6 +44,25 @@ public class TamayaInjectionTest {
         assertEquals(testInstance.getAnotherValue(), "HALLO!");
         assertEquals(testInstance.myParameter, "ET");
         assertEquals(testInstance.simpleValue, "aSimpleValue");
+        assertNotNull(testInstance.getDynamicValue());
+        assertTrue(testInstance.getDynamicValue().isPresent());
+        assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
+        assertEquals(testInstance.getHostName(), testInstance.getDynamicValue().get());
+    }
+
+    @Test
+    public void testConfigTemplate(){
+        assertNotNull(ConfigurationInjector.getInstance());
+        AnnotatedConfigTemplate testInstance = ConfigurationInjector.getInstance()
+                .createTemplate(AnnotatedConfigTemplate.class);
+        assertEquals(testInstance.hostName(), "tamaya01.incubator.apache.org");
+        assertEquals(testInstance.myParameter(), "ET");
+        assertEquals(testInstance.simpleValue(), "aSimpleValue");
+        assertNotNull(testInstance.getDynamicValue());
+        assertTrue(testInstance.getDynamicValue().isPresent());
+        assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
+        assertEquals(testInstance.hostName(), testInstance.getDynamicValue().get());
+//        assertEquals(testInstance.simplestValue(), "HALLO!");
     }
 
 }

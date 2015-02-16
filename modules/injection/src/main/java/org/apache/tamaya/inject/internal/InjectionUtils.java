@@ -74,6 +74,9 @@ final class InjectionUtils {
      * @return the list current keys in order how they should be processed/looked up.
      */
     public static List<String> evaluateKeys(Member member, ConfigRoot areasAnnot, ConfiguredProperty propertyAnnotation) {
+        if(propertyAnnotation==null){
+            return evaluateKeys(member, areasAnnot);
+        }
         List<String> keys = new ArrayList<>(Arrays.asList(propertyAnnotation.keys()));
         if (keys.isEmpty()) {
             keys.add(member.getName());
@@ -159,17 +162,39 @@ final class InjectionUtils {
         ConfiguredProperty prop = element.getAnnotation(ConfiguredProperty.class);
         DefaultValue defaultAnnot = element.getAnnotation(DefaultValue.class);
         String configValue = null;
+        List<String> keys = null;
         if (prop == null) {
-            List<String> keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
-            configValue = evaluteConfigValue(keys);
+            keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
         } else {
-            List<String> keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
-            configValue = evaluteConfigValue(keys);
+            keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
         }
+        configValue = evaluteConfigValue(keys);
         if (configValue == null && defaultAnnot != null) {
             return defaultAnnot.value();
         }
         return configValue;
+    }
+
+    /**
+     * Collects all keys to be be accessed as defined by any annotations of type
+     * {@link org.apache.tamaya.inject.ConfigRoot}, {@link org.apache.tamaya.inject.ConfiguredProperty}.
+     * @param field the (optionally) annotated field instance
+     * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
+     */
+    public static List<String> getKeys(Field field) {
+        ConfigRoot areasAnnot = field.getDeclaringClass().getAnnotation(ConfigRoot.class);
+        return InjectionUtils.evaluateKeys((Member) field, areasAnnot, field.getAnnotation(ConfiguredProperty.class));
+    }
+
+    /**
+     * Collects all keys to be be accessed as defined by any annotations of type
+     * {@link org.apache.tamaya.inject.ConfigRoot}, {@link org.apache.tamaya.inject.ConfiguredProperty}.
+     * @param method the (optionally) annotated method instance
+     * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
+     */
+    public static List<String> getKeys(Method method) {
+        ConfigRoot areasAnnot = method.getDeclaringClass().getAnnotation(ConfigRoot.class);
+        return InjectionUtils.evaluateKeys((Member) method, areasAnnot, method.getAnnotation(ConfiguredProperty.class));
     }
 
     private static String evaluteConfigValue(List<String> keys) {
@@ -235,4 +260,6 @@ final class InjectionUtils {
         }
         return value;
     }
+
+
 }
