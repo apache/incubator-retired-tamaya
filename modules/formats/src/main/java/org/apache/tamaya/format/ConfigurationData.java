@@ -40,9 +40,10 @@ public final class ConfigurationData {
      * The default entry type returned if a format implementation does not support any explicit entry types.
      */
     public static final String DEFAULT_SECTION_NAME = "default";
+
     /**
      * Name of a section that should be written by every format implementation if possible, hereby mapping the
-     * complete configuration strcuture to one flattened key/value layer. This section is used for creating
+     * complete configuration structure to one flattened key/value layer. This section is used for creating
      * default PropertySource for a ConfigurationData instance.
      */
     public static final String FLATTENED_SECTION_NAME = "_flattened";
