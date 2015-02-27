@@ -33,6 +33,11 @@ public class ConverterTestsPropertySource implements PropertySource{
     }
 
     @Override
+    public String getName() {
+        return "ConverterTestsPropertySource";
+    }
+
+    @Override
     public String get(String key) {
         switch(key){
             // Bytes

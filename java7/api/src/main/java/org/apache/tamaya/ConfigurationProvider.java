@@ -17,6 +17,7 @@
 package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -56,6 +57,46 @@ public final class ConfigurationProvider {
      */
     public static ConfigurationContext getConfigurationContext(){
         return PROVIDER_SPI.getConfigurationContext();
+    }
+
+    /**
+     * This method allows to replace the current {@link org.apache.tamaya.spi.ConfigurationContext} with a new
+     * instance. This can be used to update the context with a new one, e.g. because some of the configuration
+     * data has changed and should be updated. It is the responsibility of the ConfigurationProvider to trigger
+     * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
+     * listeners can do whatever is appropriate to react to any given configuration changes.
+     *
+     * @param context the new ConfigurationContext to be applied.
+     * @throws java.lang.UnsupportedOperationException if the current provider is read-only and does not support
+     *                                                 applying a new ConfigurationContext.
+     */
+    public static void setConfigurationContext(ConfigurationContext context) {
+        PROVIDER_SPI.setConfigurationContext(context);
+    }
+
+    /**
+     * Method that allows to determine if a new {@link org.apache.tamaya.spi.ConfigurationContext} can be applied
+     * programmatically.
+     * @see #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)
+     * @return true, if {@link #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)} is supported
+     * by the current implementation.
+     */
+    public static boolean isConfigurationContextSettable() {
+        return PROVIDER_SPI.isConfigurationContextSettable();
+    }
+
+    /**
+     * Create a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder} instance. This method creates
+     * a new builder instance that is not related to any concrete {@link org.apache.tamaya.spi.ConfigurationContext}.
+     * You can use {@link #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)} to change the
+     * current configuration context.
+     *
+     * @return a new, empty {@link org.apache.tamaya.spi.ConfigurationContextBuilder}, never null.
+     * @see #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)
+     * @see org.apache.tamaya.spi.ConfigurationContext
+     */
+    public static ConfigurationContextBuilder getConfigurationContextBuilder() {
+        return PROVIDER_SPI.getConfigurationContextBuilder();
     }
 
 }

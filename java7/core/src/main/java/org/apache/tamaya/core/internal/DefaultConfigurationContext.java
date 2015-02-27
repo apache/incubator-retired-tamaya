@@ -70,7 +70,13 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /**
      * Lock for internal synchronization.
      */
-    private ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
+
+    /** Comparator used for ordering property sources. */
+    private final PropertySourceComparator propertySourceComparator = new PropertySourceComparator();
+
+    /** Comparator used for ordering property filters. */
+    private final PropertyFilterComparator propertyFilterComparator = new PropertyFilterComparator();
 
 
     /**
@@ -92,12 +98,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
         immutablePropertySources = Collections.unmodifiableList(propertySources);
         LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
-                createStringList(immutablePropertySources, new Function<PropertySource, String>() {
-                    @Override
-                    public String apply(PropertySource ps) {
-                        return ps.getName() + '[' + ps.getClass().getName()+']';
-                    }
-                }));
+                immutablePropertySources);
 
         // as next step we pick up the PropertyFilters pretty much the same way
         List<PropertyFilter> propertyFilters = new ArrayList<>();
@@ -105,24 +106,38 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         Collections.sort(propertyFilters, new PropertyFilterComparator());
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
         LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
-                createStringList(immutablePropertyFilters, new Function<PropertyFilter, String>() {
-                    @Override
-                    public String apply(PropertyFilter propertyFilter) {
-                        return propertyFilter.getClass().getName();
-                    }
-                }));
+                immutablePropertyFilters);
 
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
         LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
-                createStringList(immutablePropertyFilters,new Function<PropertyFilter, String>() {
-                    @Override
-                    public String apply(PropertyFilter propertyFilter) {
-                        return propertyFilter.getClass().getName();
-                    }
-                }));
-
+                immutablePropertyFilters);
         propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
         if(propertyValueCombinationPolicy==null) {
+            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        }
+        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
+    }
+
+    DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
+        List<PropertySource> propertySources = new ArrayList<>();
+        // first we load all PropertySources which got registered via java.util.ServiceLoader
+        propertySources.addAll(builder.propertySources);
+        // now sort them according to their ordinal values
+        Collections.sort(propertySources, propertySourceComparator);
+        immutablePropertySources = Collections.unmodifiableList(propertySources);
+        LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
+                immutablePropertySources);
+
+        // as next step we pick up the PropertyFilters pretty much the same way
+        List<PropertyFilter> propertyFilters = new ArrayList<>();
+        propertyFilters.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
+        Collections.sort(propertyFilters, propertyFilterComparator);
+        immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
+        LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
+                immutablePropertyFilters);
+
+        propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
+        if(propertyValueCombinationPolicy==null){
             propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
         }
         LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
@@ -138,13 +153,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         for (PropertySourceProvider propertySourceProvider : propertySourceProviders) {
             Collection<PropertySource> sources = propertySourceProvider.getPropertySources();
             LOG.finer("PropertySourceProvider " + propertySourceProvider.getClass().getName() +
-                    " provided the following property sources: " +
-                    createStringList(sources,new Function<PropertySource, String>() {
-                        @Override
-                        public String apply(PropertySource ps) {
-                            return ps.getName() + '[' + ps.getClass().getName()+']';
-                        }
-                    }));
+                    " provided the following property sources: " + sources);
                 propertySources.addAll(sources);
         }
 
@@ -254,18 +263,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     @Override
     public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy(){
         return propertyValueCombinationPolicy;
-    }
-
-    private <T> String createStringList(Collection<T> items, Function<T,String> mapper){
-        StringBuilder builder = new StringBuilder();
-        for(T t: items){
-            builder.append(mapper.apply(t));
-        }
-        return builder.toString();
-    }
-
-    private static interface Function<T,R>{
-        R apply(T t);
     }
 
 }

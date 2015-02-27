@@ -103,14 +103,7 @@ public class TypeLiteral<T> implements Serializable {
      * @return the generic type parameter of the given single type generic interfaceType, or null.
      */
     public static Type getTypeParameter(Class<?> clazz, Class<?> interfaceType) {
-        Type type = clazz;
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            if (parameterizedType.getActualTypeArguments().length == 1) {
-                return parameterizedType.getActualTypeArguments()[0];
-            }
-        }
-        type = clazz.getGenericSuperclass();
+        Type type = clazz.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             if(interfaceType == null ||type.equals(interfaceType)){
                 ParameterizedType parameterizedType = (ParameterizedType) type;

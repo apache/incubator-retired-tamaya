@@ -34,7 +34,7 @@ public class ConverterTestsPropertySource implements PropertySource{
 
     @Override
     public String getName(){
-        return getClass().getName();
+        return "ConverterTestsPropertySource";
     }
 
     @Override
