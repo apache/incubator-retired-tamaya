@@ -199,17 +199,24 @@ The class +TypeLiteral+ is basically similar to the same class provided with CDI
 [source,java]
 --------------------------------------------
 public class TypeLiteral<T> implements Serializable {
+
     [...]
+
     protected TypeLiteral(Type type) {
         this.type = type;
     }
 
     protected TypeLiteral() { }
 
-    public static <T> TypeLiteral<T> of(Type type){...}
+    public static <L> TypeLiteral<L> of(Type type){...}
+    public static <L> TypeLiteral<L> of(Class<L> type){...}
 
     public final Type getType() {...}
     public final Class<T> getRawType() {...}
+
+    public static Type getGenericInterfaceTypeParameter(Class<?> clazz, Class<?> interfaceType){...}
+    public static Type getTypeParameter(Class<?> clazz, Class<?> interfaceType){...}
+
     [...]
 }
 --------------------------------------------
@@ -231,7 +238,7 @@ The API for Java 8 adds additional support for +Optional+:
 [source,java]
 .Interface Configuration in Java 8
 --------------------------------------------
-public interface Configuration extends PropertySource{
+public interface Configuration{
     // methods also defined in Java 7
     String get(String key);
     <T> T get(String key, Class<T> type);
@@ -242,14 +249,15 @@ public interface Configuration extends PropertySource{
     <T> T query(ConfigQuery<T> query);
 
     // new java 8 optional support
-    default Optional<Boolean> getBoolean(String key);
-    default OptionalInt getInteger(String key);
-    default OptionalLong getLong(String key);
-    default OptionalDouble getDouble(String key);
-    default <T> Optional<T> getOptional(String key, PropertyConverter<T> adapter);
-    default <T> Optional<T> getOptional(String key, Class<T> type);
-    default <T> Optional<T> getOptional(String key, TypeLiteral<T> type);
+    default Optional<String> getOptional(String key){...}
+    default <T> Optional<T> getOptional(String key, Class<T> type){...}
+    default <T> Optional<T> getOptional(String key, TypeLiteral<T> type){...}
+    default <T> Optional<T> getOptional(String key, PropertyConverter<T> converter){...}
 
+    default Boolean getBoolean(String key){...}
+    default OptionalInt getInteger(String key){...}
+    default OptionalLong getLong(String key){...}
+    default OptionalDouble getDouble(String key){...}
 }
 --------------------------------------------
 
@@ -275,14 +283,14 @@ Instances of +Configuration+ can be accessed, exactly like in Java 7, from the +
 Configuration config = ConfigurationProvider.getConfiguration();
 --------------------------------------------
 
-Hereby the singleton is backed up by an instance of +ConfigurationProviderSpi+.
+Hereby the +ConfigurationProvider+ singleton is backed up by an instance of +<<ConfigurationProviderSpi>>+.
 
 
 [[PropertyConverter]]
 ==== Property Converters
 
 As illustrated in the previous section, +Configuration+ also to access non String types. Nevertheless internally
-all properties are strictly is modelled as pure Strings only, so non String types must be derived by converting the
+all properties are strictly modelled as pure Strings only, so non String types must be derived by converting the
 configured String values into the required target type. This is achieved with the help of +PropertyConverters+:
 
 [source,java]
@@ -294,12 +302,13 @@ public interface PropertyConverter<T>{
 --------------------------------------------
 
 +PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+. Hereby
-a configuration values is passed to all registered converters for a type in order or their annotated +@Priority+
+a configuration String value is passed to all registered converters for a type in order of their annotated +@Priority+
 value. The first non-null result of a converter is then returned as the current configuration value.
 
 Also worth mentioning is the fact, that the +PropertyConverter+ to be used can also be explicitly defined, when
-a configuration value is accessed, by using the method
-+<T> T Configuration#getOptional(String, PropertyConverter<T> converter)+.
+a configuration value is accessed, by using the methods
++<T> Optional<T> Configuration#getOptional(String, PropertyConverter<T> converter)+ (Java 8 only) and
++<T> T Configuration#get(String, PropertyConverter<T> converter)+.
 
 Access to converters is provided by the current +ConfigurationContext+, which is accessible from
 the +ConfigurationProvider+ singleton.
@@ -331,7 +340,8 @@ ConfigSecurity securityContext = Configuration.current().query(ConfigSecurity::t
 
 NOTE: +ConfigSecurity+ is an arbitrary class only for demonstration purposes.
 
-Or an operator calls basically looks quite similar:
+
+Operator calls basically look similar:
 
 [source,java]
 .Applying a +ConfigurationOperator+ using a lambda expression:
@@ -343,16 +353,12 @@ Configuration secured = ConfigurationProvider.getConfiguration()
                                  config);
 --------------------------------------------
 
-[[Mutability]]
-==== Mutability
-
-tbd
-
 
 [[ConfigException]]
 === ConfigException
 
 The class +ConfigException+ models the base *runtime* exception used by the configuration system.
+
 
 [[SPI]]
 == SPI
@@ -487,3 +493,111 @@ public interface PropertyValueCombinationPolicy{
 }
 --------------------------------------------
 
+[[ConfigurationContext]]
+==== The Configuration Context
+
+A +Configuration+ is basically based on a so called +ConfigurationContext+, which is
+managed by the +ConfigurationProvider+. Similarly the current +ConfigurationContext+ can be accessed from the
++ConfigurationProvider+ singleton:
+
+[source,java]
+.Accessing the current +ConfigurationContext+
+--------------------------------------------
+ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
+--------------------------------------------
+
+The +ConfigurationContext+ provides access to the internal building blocks that determine the final +Configuration+:
+
+* +PropertySources+ registered (including the PropertySources provided from +PropertySourceProvider+ instances).
+* +PropertyFilter+ registered that filter values before they are returned to the client
+* +PropertyConverter+ instances that provide conversion functionality for converting String values to any other types.
+* the current +PropertyValueCombinationPolicy+ that determines how property values from different PropertySources are
+  combined to the final property value returned to the client.
+
+
+[[Mutability]]
+==== Changing the current Configuration Context
+
+By default the +ConfigurationContext+ is not mutable once it is created. In most cases mutability is also not wanted
+or at least not a needed feature. Nevertheless there are use cases where the current +ConfigurationContext+ (and
+consequently +Configuration+) must be adapted:
+
+* New configuration files where detected in a folder observed by Tamaya.
+* Remote configuration, e.g. stored in a database or alternate ways has been updated and the current system must
+  be adapted to these changes.
+* The overall configuration context is manually setup by the application logic.
+* Within unit testing alternate configuration setup should be setup to meet the configuration requirements of the
+  tests executed.
+
+In such cases the +ConfigurationContext+ must be mutable, meaning it must be possible:
+
+* to add or remove +PropertySource+ instances
+* to add or remove +PropertyFilter+ instances
+* to add or remove +PropertyConverter+ instances
+* to redefine the current +PropertyValueCombinationPolicy+ instances.
+
+This can be achieved by obtaining an instance of +ConfigurationContextBuilder+. Instances of this builder can be
+accessed either
+
+* from the current +ConfigurationContext+, hereby returning a builder instance preinitialized with the values from the
+  current +ConfigurationContext+
+* from the current +ConfigurationProvider+ singleton.
+
+[source,java]
+.Accessing a +ConfigurationContextBuilder+
+--------------------------------------------
+ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfigurationContext().toBuilder();
+ConfigurationContextBuilder emptyContextBuilder = ConfigurationProvider.getConfigurationContextBuilder();
+--------------------------------------------
+
+With such a builder a nre +ConfigurationContext+ can be created and then applied:
+
+[source,java]
+.Creating and applying a new +ConfigurationContext+
+--------------------------------------------
+ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfigurationContext().toBuilder();
+ConfigurationContext context = preinitializedContextBuilder.addPropertySources(new MyPropertySource())
+                                                           .addPropertyFilter(new MyFilter()).build();
+ConfigurationProvider.setConfigurationContext(context);
+--------------------------------------------
+
+Hereby +ConfigurationProvider.setConfigurationContext(context)+ can throw a +UnsupportedOperationException+. if not
+sure one may access the method +boolean ConfigurationProvider.isConfigurationContextSettable()+ to check if the current
++ConfigurationContext+ is mutable.
+
+
+[[ConfigurationProviderSpi]]
+==== Implementing and Managing Configuration
+
+One of the most important SPI in Tamaya if the +ConfigurationProviderSpi+ interface, which is backing up the
++ConfigurationProvider+ singleton. Implementing this class allows
+
+* to fully determine the implementation class for +Configuration+
+* to manage the current +ConfigurationContext+ in the scope and granularity required.
+* to provide access to the right +Configuration/ConfigurationContext+ based on the current runtime context.
+* Performing changes as set with the current +ConfigurationContextBuilder+.
+
+[[ServiceContext]]
+==== The ServiceContext
+
+The +ServiceContext+ is also a very important SPI, which allows to define how components are loaded in Tamaya.
+The +ServiceContext+ hereby defines access methods to obtain components, whereas itself it is available from the
++ServiceContextManager+ singleton:
+
+[source,java]
+.Accessing the +ServiceContext+
+--------------------------------------------
+ServiceContext serviceContext = ServiceContextManager.getServiceContext();
+
+public interface ServiceContext{
+    int ordinal();
+    <T> T getService(Class<T> serviceType);
+    <T> List<T> getServices(Class<T> serviceType);
+}
+--------------------------------------------
+
+With the +ServiceContext+ a component can be accessed in two different ways:
+
+. access as as a single property. Hereby the registered instances (if multiple) are sorted by priority and then finally
+  the most significant instance is returned only.
+. access all items given its type. This will return (by default) all  instances loaded a
