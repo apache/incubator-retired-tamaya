@@ -21,6 +21,7 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
@@ -29,14 +30,11 @@ import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -68,12 +66,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     private PropertyValueCombinationPolicy propertyValueCombinationPolicy;
 
     /**
-     * Lock for internal synchronization.
-     */
-    private StampedLock propertySourceLock = new StampedLock();
-
-
-    /**
      * The first time the Configuration system gets invoked we do initialize
      * all our {@link org.apache.tamaya.spi.PropertySource}s and
      * {@link org.apache.tamaya.spi.PropertyFilter}s which are known at startup.
@@ -87,6 +79,29 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         // after that we add all PropertySources which get dynamically registered via their PropertySourceProviders
         propertySources.addAll(evaluatePropertySourcesFromProviders());
 
+        // now sort them according to their ordinal values
+        Collections.sort(propertySources, this::comparePropertySources);
+        immutablePropertySources = Collections.unmodifiableList(propertySources);
+        LOG.info(() -> "Registered " + immutablePropertySources.size() + " property sources: " +
+                createStringList(immutablePropertySources,ps -> ps.getName() + '[' + ps.getClass().getName()+']'));
+
+        // as next step we pick up the PropertyFilters pretty much the same way
+        List<PropertyFilter> propertyFilters = new ArrayList<>();
+        propertyFilters.addAll(ServiceContext.getInstance().getServices(PropertyFilter.class));
+        Collections.sort(propertyFilters, this::comparePropertyFilters);
+        immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
+        LOG.info(() -> "Registered " + immutablePropertyFilters.size() + " property filters: " +
+                createStringList(immutablePropertyFilters,f -> f.getClass().getName()));
+
+        propertyValueCombinationPolicy = ServiceContext.getInstance().getService(PropertyValueCombinationPolicy.class)
+                .orElse(PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR);
+        LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
+    }
+
+    DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
+        List<PropertySource> propertySources = new ArrayList<>();
+        // first we load all PropertySources which got registered via java.util.ServiceLoader
+        propertySources.addAll(builder.propertySources);
         // now sort them according to their ordinal values
         Collections.sort(propertySources, this::comparePropertySources);
         immutablePropertySources = Collections.unmodifiableList(propertySources);
@@ -123,20 +138,20 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         return propertySources;
     }
 
-    @Override
-    public void addPropertySources(PropertySource... propertySourcesToAdd) {
-        Lock writeLock = propertySourceLock.asWriteLock();
-        try {
-            writeLock.lock();
-            List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
-            newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
-            Collections.sort(newPropertySources, this::comparePropertySources);
-
-            this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
-        } finally {
-            writeLock.unlock();
-        }
-    }
+//    @Override
+//    public void addPropertySources(PropertySource... propertySourcesToAdd) {
+//        Lock writeLock = propertySourceLock.asWriteLock();
+//        try {
+//            writeLock.lock();
+//            List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
+//            newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
+//            Collections.sort(newPropertySources, this::comparePropertySources);
+//
+//            this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
+//        } finally {
+//            writeLock.unlock();
+//        }
+//    }
 
     /**
      * Order property source reversely, the most important come first.
@@ -182,11 +197,11 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         return immutablePropertySources;
     }
 
-    @Override
-    public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
-        propertyConverterManager.register(typeToConvert, propertyConverter);
-        LOG.info(() -> "Added PropertyConverter: " + propertyConverter.getClass().getName());
-    }
+//    @Override
+//    public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
+//        propertyConverterManager.register(typeToConvert, propertyConverter);
+//        LOG.info(() -> "Added PropertyConverter: " + propertyConverter.getClass().getName());
+//    }
 
     @Override
     public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
@@ -208,10 +223,14 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         return propertyValueCombinationPolicy;
     }
 
+    @Override
+    public ConfigurationContextBuilder toBuilder() {
+        return new DefaultConfigurationContextBuilder().setContext(this);
+    }
+
     private <T> String createStringList(Collection<T> propertySources, Function<T,String> mapper){
         StringJoiner joiner = new StringJoiner(", ");
         propertySources.forEach(t -> joiner.add(mapper.apply(t)));
         return joiner.toString();
     }
-
 }

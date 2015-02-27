@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
 /**
@@ -40,5 +41,19 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
     @Override
     public ConfigurationContext getConfigurationContext() {
         return context;
+    }
+
+    @Override
+    public ConfigurationContextBuilder getConfigurationContextBuilder() {
+        return new DefaultConfigurationContextBuilder();
+    }
+
+    @Override
+    public void setConfigurationContext(ConfigurationContext context){
+        Configuration oldConfig = this.config;
+        Configuration newConfig = new DefaultConfiguration(context);
+        // TODO think on a SPI or move event part into API...
+        this.config = newConfig;
+        this.context = context;
     }
 }
