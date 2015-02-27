@@ -16,53 +16,67 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.config;
+package org.apache.tamaya.events.delta;
 
+import org.apache.tamaya.events.FrozenPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Event that contains a set current changes that were applied or could be applied.
  * This class is immutable and thread-safe. To create instances use
- * {@link ConfigChangeSetBuilder}.
+ * {@link org.apache.tamaya.events.delta.PropertySourceChangeBuilder}.
  *
  * Created by Anatole on 22.10.2014.
  */
-public final class ConfigChangeSet implements Serializable{
+public final class PropertySourceChange implements Serializable{
 
     private static final long serialVersionUID = 1l;
     /** The base property provider/configuration. */
-    private PropertySource propertySource;
+    private FrozenPropertySource propertySource;
     /** The base version, usable for optimistic locking. */
-    private String baseVersion;
+    private String version = UUID.randomUUID().toString();
+    /** The timestamp of the change set in millis from the epoch. */
+    private long timestamp = System.currentTimeMillis();
     /** The recorded changes. */
     private Map<String,PropertyChangeEvent> changes = new HashMap<>();
+    /** The overall type of change. */
+    private ChangeType changeType;
 
     /**
-     * Get an empty change set for the given provider.
-     * @param propertyProvider The base property provider/configuration, not null.
-     * @return an empty ConfigChangeSet instance.
+     * Constructor used by {@link org.apache.tamaya.events.delta.PropertySourceChangeBuilder}.
+     * @param builder The builder used, not null.
      */
-    public static ConfigChangeSet emptyChangeSet(PropertySource propertyProvider){
-        return new ConfigChangeSet(propertyProvider, Collections.emptySet());
+    PropertySourceChange(PropertySourceChangeBuilder builder) {
+        this.propertySource = FrozenPropertySource.of(builder.source);
+        builder.delta.values().forEach((c) -> this.changes.put(c.getPropertyName(), c));
+        if(builder.version!=null){
+            this.version = builder.version;
+        }
+        if(builder.timestamp!=null){
+            this.timestamp = builder.timestamp;
+        }
+        this.changeType = builder.changeType;
     }
 
     /**
-     * Constructor used by {@link ConfigChangeSetBuilder}.
-     * @param propertySource The base property provider/configuration, not null.
-     * @param changes The recorded changes, not null.
+     * Gets the type of change for this PropertySource.
+     * @return the type of change for this PropertySource, never null.
      */
-    ConfigChangeSet(PropertySource propertySource, Collection<PropertyChangeEvent> changes) {
-        this.propertySource = Objects.requireNonNull(propertySource);
-        changes.forEach((c) -> this.changes.put(c.getPropertyName(), c));
+    public ChangeType getChangeType(){
+        return this.changeType;
     }
 
     /**
      * Get the underlying property provider/configuration.
-     * @return the underlying property provider/configuration, never null.
+     * @return the underlying property provider/configuration, or null, if the change instance was deserialized.
      */
     public PropertySource getPropertySource(){
         return this.propertySource;
@@ -72,8 +86,17 @@ public final class ConfigChangeSet implements Serializable{
      * Get the base version, usable for optimistic locking.
      * @return the base version.
      */
-    public String getBaseVersion(){
-        return baseVersion;
+    public String getVersion(){
+        return version;
+    }
+
+    /**
+     * Get the timestamp in millis from the current epoch. it is expected that the timestamp and the version are unique to
+     * identify a changeset.
+     * @return the timestamp, when this changeset was created.
+     */
+    public long getTimestamp(){
+        return timestamp;
     }
 
     /**
@@ -158,12 +181,31 @@ public final class ConfigChangeSet implements Serializable{
     }
 
 
+    /**
+     * Create a change event for a new PropertySource that was added.
+     * @param propertySource the new property source, not null.
+     * @return a new PropertySourceChange, representing a PropertySource that was added.
+     */
+    public static PropertySourceChange ofAdded(PropertySource propertySource) {
+        return PropertySourceChangeBuilder.of(propertySource, ChangeType.NEW).build();
+    }
+
+    /**
+     * Create a change event for a deleted PropertySource.
+     * @param propertySource the deleted property source, not null.
+     * @return a new PropertySourceChange, representing a PropertySource that was deleted.
+     */
+    public static PropertySourceChange ofDeleted(PropertySource propertySource) {
+        return PropertySourceChangeBuilder.of(propertySource, ChangeType.DELETED).build();
+    }
+
     @Override
     public String toString() {
-        return "ConfigChangeSet{" +
-                "properties=" + propertySource +
-                ", baseVersion=" + baseVersion +
-                ", changes=" + changes +
+        return "PropertySourceChange{" +
+                "changeType=" + changeType +
+                ", propertySource=" + propertySource +
+                ", version='" + version + '\'' +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

@@ -41,6 +41,7 @@ under the License.
         <module>json</module>
         <module>resolver</module>
         <module>resources</module>
+        <module>events</module>
         <!-- module>metamodels</module -->
         <!-- module>integration</module -->
     </modules>
