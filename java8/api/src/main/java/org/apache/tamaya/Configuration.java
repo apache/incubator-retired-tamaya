@@ -18,12 +18,15 @@
  */
 package org.apache.tamaya;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -79,10 +82,30 @@ public interface Configuration {
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
-     * @return the property value, never null..
-     * @throws ConfigException if the keys could not be converted to the required target type.
+     * @return the property value, or null, if the underlying value is null as well.
+     * @throws ConfigException if the value could not be converted to the required target type by any of the
+     *                         registered converters.
      */
-    <T> T get(String key, TypeLiteral<T> type);
+    default <T> T get(String key, TypeLiteral<T> type) {
+        List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext().getPropertyConverters(
+                type);
+        String value = get(key);
+        if (value == null) {
+            return null;
+        }
+        for (PropertyConverter<T> converter : converters) {
+            try {
+                T item = converter.convert(value);
+                if (item != null) {
+                    return item;
+                }
+            } catch (Exception e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, e, () -> "PropertyConverter was throwing " +
+                        "exception instead of returning null: " + converter.getClass().getName());
+            }
+        }
+        throw new ConfigException("Unconvertible value: " + value + ", target: " + type);
+    }
 
     /**
      * Access a property.
@@ -143,7 +166,7 @@ public interface Configuration {
      */
     default <T> T get(String key, PropertyConverter<T> converter) {
         String value = get(key);
-        if (value!=null) {
+        if (value != null) {
             return Objects.requireNonNull(converter).convert(value);
         }
         return null;

@@ -90,9 +90,7 @@ public interface PropertySource {
      *
      * @return the property source's name, never null.
      */
-    default String getName() {
-        return getClass().getName();
-    }
+    String getName();
 
     /**
      * Access a property.

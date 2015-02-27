@@ -18,12 +18,14 @@
  */
 package org.apache.tamaya.spi;
 
-
 import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
@@ -31,14 +33,6 @@ import java.util.Map;
  * managing {@link org.apache.tamaya.PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
-
-    /**
-     * This method can be used for programmatically adding {@link org.apache.tamaya.spi.PropertySource}s.
-     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
-     *
-     * @param propertySourcesToAdd the PropertySources to add
-     */
-    void addPropertySources(PropertySource... propertySourcesToAdd);
 
     /**
      * This method returns the current list of registered PropertySources ordered via their ordinal.
@@ -55,20 +49,21 @@ public interface ConfigurationContext {
     List<PropertySource> getPropertySources();
 
     /**
-     * This method can be used for programmatically adding {@link org.apache.tamaya.PropertyConverter}s.
-     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
+     * This method returns a subset ot the currently registered PropertySources.
      *
-     * @param typeToConvert     the type which the converter is for
-     * @param propertyConverter the PropertyConverters to add for this type
+     * @param selector the selector query, not null.
+     * @return a collectino of selected PropertySources.
      */
-    <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter);
+    default Collection<PropertySource> getPropertySources(Predicate<PropertySource> selector){
+        return getPropertySources().stream().filter(selector).collect(Collectors.toList());
+    }
 
     /**
      * <p>
      * This method returns the Map of registered PropertyConverters
      * per type.
      * The List for each type is ordered via their {@link javax.annotation.Priority} and
-     * class name. Refer also to {@link #getPropertyConverters()}.
+     * class name.
      * </p>
      * <p>
      * A simplified scenario could be like:
@@ -147,4 +142,12 @@ public interface ConfigurationContext {
      * @return the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used, never null.
      */
     PropertyValueCombinationPolicy getPropertyValueCombinationPolicy();
+
+    /**
+     * Creates a new updates instance for changing the current ConfigurationContext.
+     * @throws java.lang.UnsupportedOperationException if this ConfigurationContext is not updateable.
+     * @return a new ConfigurationContextUpdates instance.
+     */
+    ConfigurationContextBuilder toBuilder();
+
 }
