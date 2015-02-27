@@ -19,7 +19,6 @@
 package org.apache.tamaya;
 
 import java.util.Map;
-import java.util.Objects;
 
 
 /**
