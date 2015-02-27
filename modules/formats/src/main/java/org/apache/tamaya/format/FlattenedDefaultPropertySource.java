@@ -19,42 +19,68 @@
 package org.apache.tamaya.format;
 
 import org.apache.tamaya.spi.PropertySource;
+import sun.reflect.generics.reflectiveObjects.LazyReflectiveObjectGenerator;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Flattened default PropertySource that uses the flattened config data read from an URL by a
  * ${@link org.apache.tamaya.format.ConfigurationFormat}.
  */
 public class FlattenedDefaultPropertySource implements PropertySource {
-
-    private Map<String, String> data;
+    private static final Logger LOG = Logger.getLogger(FlattenedDefaultPropertySource.class.getName());
+    private Map<String, String> defaultSection;
+    private ConfigurationData data;
 
     /*
      * Constructor, uses hereby the flattened config data read from an URL by a
      * ${@link org.apache.tamaya.format.ConfigurationFormat}, and if not present falls back to the default section.
      */
     public FlattenedDefaultPropertySource(ConfigurationData data) {
-        this.data = data.getSection(ConfigurationData.FLATTENED_SECTION_NAME);
-        if (this.data == null) {
-            this.data = data.getDefaultSection();
+        this.defaultSection = data.getSection(ConfigurationData.FLATTENED_SECTION_NAME);
+        if (this.defaultSection == null) {
+            this.defaultSection = data.getDefaultSection();
         }
-        this.data = Collections.unmodifiableMap(this.data);
+        this.defaultSection = Collections.unmodifiableMap(this.defaultSection);
+        this.data = data;
+    }
+
+    @Override
+    public String getName(){
+        String name = this.defaultSection.get("[meta].name");
+        if(name==null){
+            name = this.data.getResource();
+        }
+        if(name==null){
+            name = getClass().getSimpleName();
+        }
+        return name;
     }
 
     @Override
     public int getOrdinal() {
-        return 0; // TODO read from config!
+        String ordinalValue = this.defaultSection.get(PropertySource.TAMAYA_ORDINAL);
+        if(ordinalValue!=null){
+            try{
+                return Integer.parseInt(ordinalValue.trim());
+            }
+            catch(Exception e){
+                LOG.log(Level.WARNING, e, () -> "Failed to parse Tamaya ordinal from " + data.getResource());
+            }
+        }
+        return 0;
     }
 
     @Override
     public String get(String key) {
-        return data.get(key);
+        return defaultSection.get(key);
     }
 
     @Override
     public Map<String, String> getProperties() {
-        return data;
+        return defaultSection;
     }
 }
