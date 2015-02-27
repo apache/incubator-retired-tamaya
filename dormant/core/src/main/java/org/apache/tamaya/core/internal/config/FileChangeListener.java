@@ -14,8 +14,9 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.apache.tamaya.ConfigException;
 import old.ConfigurationProviderSpi;
 
@@ -30,7 +31,7 @@ import old.ConfigurationProviderSpi;
  */
 class FileChangeListener implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(FileChangeListener.class);
+    private static final Logger LOGGER = Logger.getLogger(FileChangeListener.class.getName());
 
     private WatchService watchService;
 
@@ -119,7 +120,7 @@ class FileChangeListener implements Runnable {
             FileSystem fileSystem = Paths.get(".").getFileSystem();
             return fileSystem.newWatchService();
         } catch (IOException e) {
-            LOGGER.warn("This file System does not supports WatchService", e);
+            LOGGER.log(Level.WARNING, "The file System does not supports WatchService", e);
             return null;
         }
 

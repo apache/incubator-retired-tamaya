@@ -29,20 +29,27 @@ import java.util.Map;
  * PropertySource implementation that stores all current values of a given (possibly dynamic, contextual and non remote
  * capable instance) and is fully serializable. Note that hereby only the scannable key/value pairs are considered.
  */
-public final class FrozenPropertySource implements PropertySource, Serializable{
+public final class FrozenPropertySource implements PropertySource, Serializable {
     private static final long serialVersionUID = -6373137316556444171L;
-    /** The ordinal. */
+    /**
+     * The ordinal.
+     */
     private int ordinal;
-    /** The properties read. */
-    private Map<String,String> properties = new HashMap<>();
-    /** The PropertySource's name. */
+    /**
+     * The properties read.
+     */
+    private Map<String, String> properties = new HashMap<>();
+    /**
+     * The PropertySource's name.
+     */
     private String name;
 
     /**
      * Constructor.
+     *
      * @param propertySource The base PropertySource.
      */
-    private FrozenPropertySource(PropertySource propertySource){
+    private FrozenPropertySource(PropertySource propertySource) {
         this.properties.putAll(propertySource.getProperties());
         this.properties.put("[meta]frozenAt", String.valueOf(System.currentTimeMillis()));
         this.properties = Collections.unmodifiableMap(this.properties);
@@ -50,21 +57,22 @@ public final class FrozenPropertySource implements PropertySource, Serializable{
         this.name = propertySource.getName();
     }
 
-    @Override
-    public String getName(){
-        return this.name;
-    }
-
     /**
      * Creates a new FrozenPropertySource instance based on a PropertySource given.
+     *
      * @param propertySource the property source to be frozen, not null.
      * @return the frozen property source.
      */
-    public static FrozenPropertySource of(PropertySource propertySource){
-        if(propertySource instanceof FrozenPropertySource){
-            return (FrozenPropertySource)propertySource;
+    public static FrozenPropertySource of(PropertySource propertySource) {
+        if (propertySource instanceof FrozenPropertySource) {
+            return (FrozenPropertySource) propertySource;
         }
         return new FrozenPropertySource(propertySource);
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 
     @Override
@@ -78,15 +86,18 @@ public final class FrozenPropertySource implements PropertySource, Serializable{
     }
 
     @Override
-    public Map<String,String> getProperties(){
+    public Map<String, String> getProperties() {
         return properties;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FrozenPropertySource)) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FrozenPropertySource)) {
+            return false;
+        }
         FrozenPropertySource that = (FrozenPropertySource) o;
         return ordinal == that.ordinal && properties.equals(that.properties);
     }
@@ -102,7 +113,7 @@ public final class FrozenPropertySource implements PropertySource, Serializable{
     public String toString() {
         return "FrozenPropertySource{" +
                 "properties=" + properties +
-                ", ordinal="+ordinal +
+                ", ordinal=" + ordinal +
                 '}';
     }
 }

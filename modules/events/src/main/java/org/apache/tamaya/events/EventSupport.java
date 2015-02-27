@@ -28,9 +28,9 @@ import org.apache.tamaya.spi.ServiceContext;
  */
 public class EventSupport {
     /**
-     * The backing spi.
+     * The backing SPI.
      */
-    private static final EventSupportSpi spi = ServiceContext.getInstance()
+    private static final EventSupportSpi SPI = ServiceContext.getInstance()
             .getService(EventSupportSpi.class)
             .orElseThrow(() -> new ConfigException("No SPI registered for " +
                     EventSupport.class.getName()));
@@ -48,7 +48,7 @@ public class EventSupport {
      * @param l the listener not null.
      */
     public static <T> void addListener(Listener<T> l) {
-        spi.addListener(l);
+        SPI.addListener(l);
     }
 
     /**
@@ -58,7 +58,7 @@ public class EventSupport {
      * @param l the listener not null.
      */
     public static <T> void removeListener(Listener<T> l) {
-        spi.removeListener(l);
+        SPI.removeListener(l);
     }
 
     /**
@@ -77,7 +77,7 @@ public class EventSupport {
      *              @param eventType the event type, the vent may be a subclass.
      */
     public static <T> void fireEvent(T event, Class<T> eventType) {
-        spi.fireEvent(event, eventType);
+        SPI.fireEvent(event, eventType);
     }
 
 }

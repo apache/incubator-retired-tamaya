@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  */
 public final class ConfigurationContextChange implements Serializable{
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
     private List<PropertySourceChange> changedPropertySources = new ArrayList<>();
     /** The base version, usable for optimistic locking. */

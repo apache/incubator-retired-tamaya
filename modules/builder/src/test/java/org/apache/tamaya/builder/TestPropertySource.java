@@ -42,6 +42,11 @@ public class TestPropertySource
     }
 
     @Override
+    public String getName() {
+        return "TestPropertySource";
+    }
+
+    @Override
     public String get(String key) {
         return getProperties().get(key);
     }

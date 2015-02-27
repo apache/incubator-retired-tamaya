@@ -18,14 +18,16 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.events.delta.ConfigurationChange;
-
 /**
  * Interface to be implemented for listening on changes on {@link org.apache.tamaya.Configuration} instances.
+ * @param <T> the type listened to.
  */
 @FunctionalInterface
 public interface Listener<T> {
-
+    /**
+     * Called if an event occurred.
+     * @param event the event, not null.
+     */
     void onEvent(T event);
 
 }

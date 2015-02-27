@@ -49,10 +49,9 @@ public class DefaultEventSupportSpi implements EventSupportSpi {
     public DefaultEventSupportSpi() {
         try {
             for (Listener<?> l : ServiceContext.getInstance().getServices(Listener.class)) {
-                try{
+                try {
                     addListener(l);
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     LOG.log(Level.WARNING, e, () -> "Failed to load configured listener: " + l.getClass().getName());
                 }
             }
@@ -63,7 +62,7 @@ public class DefaultEventSupportSpi implements EventSupportSpi {
 
     @Override
     public <T> void addListener(Listener<T> l) {
-        Type type = TypeLiteral.getTypeParameter(l.getClass());
+        Type type = TypeLiteral.getTypeParameter(l.getClass(), Listener.class);
         List<Listener> listeners = listenerMap.computeIfAbsent(type,
                 (k) -> Collections.synchronizedList(new ArrayList<>()));
         synchronized (listeners) {
@@ -75,7 +74,7 @@ public class DefaultEventSupportSpi implements EventSupportSpi {
 
     @Override
     public <T> void removeListener(Listener<T> l) {
-        Type type = TypeLiteral.getTypeParameter(l.getClass());
+        Type type = TypeLiteral.getTypeParameter(l.getClass(), Listener.class);
         List<Listener> listeners = listenerMap.get(type);
         if (listeners != null) {
             synchronized (listeners) {

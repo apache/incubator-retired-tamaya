@@ -19,7 +19,6 @@
 package org.apache.tamaya.format;
 
 import org.apache.tamaya.spi.PropertySource;
-import sun.reflect.generics.reflectiveObjects.LazyReflectiveObjectGenerator;
 
 import java.util.Collections;
 import java.util.Map;
@@ -49,12 +48,12 @@ public class FlattenedDefaultPropertySource implements PropertySource {
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         String name = this.defaultSection.get("[meta].name");
-        if(name==null){
+        if (name == null) {
             name = this.data.getResource();
         }
-        if(name==null){
+        if (name == null) {
             name = getClass().getSimpleName();
         }
         return name;
@@ -63,11 +62,10 @@ public class FlattenedDefaultPropertySource implements PropertySource {
     @Override
     public int getOrdinal() {
         String ordinalValue = this.defaultSection.get(PropertySource.TAMAYA_ORDINAL);
-        if(ordinalValue!=null){
-            try{
+        if (ordinalValue != null) {
+            try {
                 return Integer.parseInt(ordinalValue.trim());
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 LOG.log(Level.WARNING, e, () -> "Failed to parse Tamaya ordinal from " + data.getResource());
             }
         }

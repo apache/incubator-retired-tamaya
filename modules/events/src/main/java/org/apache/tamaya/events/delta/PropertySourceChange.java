@@ -38,7 +38,7 @@ import java.util.UUID;
  */
 public final class PropertySourceChange implements Serializable{
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
     private FrozenPropertySource propertySource;
     /** The base version, usable for optimistic locking. */

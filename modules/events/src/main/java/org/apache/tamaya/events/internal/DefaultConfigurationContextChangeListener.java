@@ -42,7 +42,7 @@ public class DefaultConfigurationContextChangeListener implements Listener<Confi
         ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
         Collection<PropertySource> affectedPropertySources = context.getPropertySources(ps ->
                 event.isAffected(ps));
-        if(!affectedPropertySources.isEmpty()){
+        if (!affectedPropertySources.isEmpty()) {
             ConfigurationContext newContext = context.toBuilder()
                     .removePropertySources(event.getRemovedPropertySources().stream()
                             .map(ps -> ps.getName()).collect(Collectors.toSet()))
@@ -51,8 +51,7 @@ public class DefaultConfigurationContextChangeListener implements Listener<Confi
                     .build();
             try {
                 ConfigurationProvider.setConfigurationContext(newContext);
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 LOG.log(Level.INFO, "Failed to update the current ConfigurationContext due to config model changes", e);
             }
         }

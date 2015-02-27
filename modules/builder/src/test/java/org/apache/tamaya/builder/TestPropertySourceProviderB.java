@@ -48,6 +48,11 @@ public class TestPropertySourceProviderB
         }
 
         @Override
+        public String getName() {
+            return "BProvidingPropertySource";
+        }
+
+        @Override
         public String get(String key) {
             return getProperties().get(key);
         }
@@ -74,6 +79,11 @@ public class TestPropertySourceProviderB
         @Override
         public int getOrdinal() {
             return 100;
+        }
+
+        @Override
+        public String getName() {
+            return "AProvidingPropertySource";
         }
     }
 }

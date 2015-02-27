@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * Class that has the responsibility to watch the folder and then publish the changes to a
@@ -62,14 +61,19 @@ class FileChangeListener implements Runnable {
 
         if (Objects.nonNull(watchService) && Objects.nonNull(directory)) {
             try {
-                directory.register(watchService, ENTRY_DELETE, ENTRY_MODIFY,
-                        ENTRY_CREATE);
+                directory.register(watchService,
+                        StandardWatchEventKinds.ENTRY_DELETE,
+                        StandardWatchEventKinds.ENTRY_MODIFY,
+                        StandardWatchEventKinds.ENTRY_CREATE);
             } catch (IOException e) {
                 throw new FileChangeListenerException("An error happened when does try to registry to watch the folder", e);
             }
         }
     }
 
+    /**
+     * Stops the listener service from observing the target directory.
+     */
     public void stopListener(){
         running = false;
     }
@@ -84,7 +88,9 @@ class FileChangeListener implements Runnable {
         }
     }
 
-
+    /**
+     * Start watching the current folder.
+     */
     private void watchFolder() {
         try {
             WatchKey watckKey = watchService.take();
@@ -104,7 +110,10 @@ class FileChangeListener implements Runnable {
         }
     }
 
-
+    /**
+     * Get the watch service.
+     * @return the watch service, or null, if the watch service is not supported.
+     */
     private WatchService getWatchService() {
         try {
             FileSystem fileSystem = Paths.get(".").getFileSystem();
@@ -116,10 +125,18 @@ class FileChangeListener implements Runnable {
 
     }
 
+    /**
+     * Exception if file listening fails.
+     */
     static class FileChangeListenerException extends ConfigException {
-
+        /** Serialversion UID. */
         private static final long serialVersionUID = -8965486770881001513L;
 
+        /**
+         * Constructor.
+         * @param message a message
+         * @param cause an (optional) root cause.
+         */
         public FileChangeListenerException(String message, Throwable cause) {
             super(message, cause);
         }
