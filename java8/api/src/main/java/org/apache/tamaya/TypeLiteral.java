@@ -44,12 +44,26 @@ public class TypeLiteral<T> implements Serializable {
         this.type = type;
     }
 
+    /**
+     * Constructor only for directly implemeting a TypeLiteral hereby dynamically implementing a generic interface.
+     */
     protected TypeLiteral() { }
 
-    public static <T> TypeLiteral<T> of(Type type){
+    /**
+     * Creates a new TypeLiteral based on a given type.
+     * @param type the type , not null.
+     * @param <R> the literal generic type.
+     * @return the corresponding TypeLiteral, never null.
+     */
+    public static <R> TypeLiteral<R> of(Type type){
         return new TypeLiteral<>(type);
     }
 
+    /**
+     * Evaluates the subclass of a TypeLiteral instance.
+     * @param clazz the typeliteral class (could be an anonymous class).
+     * @return the subclass implemented by the TypeLiteral.
+     */
     private static Class<?> getTypeLiteralSubclass(Class<?> clazz) {
         Class<?> superclass = clazz.getSuperclass();
         if (superclass.equals(TypeLiteral.class)) {
@@ -61,18 +75,55 @@ public class TypeLiteral<T> implements Serializable {
         }
     }
 
-    private static Type getTypeParameter(Class<?> superclass) {
-        Type type = superclass.getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            if (parameterizedType.getActualTypeArguments().length == 1) {
-                return parameterizedType.getActualTypeArguments()[0];
+    /**
+     * Checks the current implemented generic interfaces and evaluates the given single type parameter.
+     * @param clazz the class to check, not null.
+     * @param interfaceType the interface type to be checked, not null.
+     * @return the generic type parameter, or null, if it cannot be evaluated.
+     */
+    public static Type getGenericInterfaceTypeParameter(Class<?> clazz, Class<?> interfaceType) {
+        for(Type type: clazz.getGenericInterfaces()){
+            if(interfaceType!=null && !interfaceType.equals(type)){
+                continue;
+            }
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                if (parameterizedType.getActualTypeArguments().length == 1) {
+                    return parameterizedType.getActualTypeArguments()[0];
+                }
             }
         }
         return null;
     }
 
     /**
+     * Method that checks the class's type for a generic interface implementation type.
+     * @param clazz the type class, not null.
+     * @param interfaceType the generic interface to check (there could be multiple ones implemented by a class).
+     * @return the generic type parameter of the given single type generic interfaceType, or null.
+     */
+    public static Type getTypeParameter(Class<?> clazz, Class<?> interfaceType) {
+        Type type = clazz;
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            if (parameterizedType.getActualTypeArguments().length == 1) {
+                return parameterizedType.getActualTypeArguments()[0];
+            }
+        }
+        type = clazz.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            if(interfaceType == null ||type.equals(interfaceType)){
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                if (parameterizedType.getActualTypeArguments().length == 1) {
+                    return parameterizedType.getActualTypeArguments()[0];
+                }
+            }
+        }
+        return getTypeParameter(clazz, interfaceType);
+    }
+
+    /**
+     * Returns basic Java type.
      * @return the actual type represented by this object
      */
     public final Type getType() {
@@ -81,7 +132,7 @@ public class TypeLiteral<T> implements Serializable {
             if (typeLiteralSubclass == null) {
                 throw new RuntimeException(getClass() + " is not a subclass of TypeLiteral");
             }
-            type = getTypeParameter(typeLiteralSubclass);
+            type = getTypeParameter(typeLiteralSubclass, null);
             if (type == null) {
                 throw new RuntimeException(getClass() + " does not specify the type parameter T of TypeLiteral<T>");
             }
@@ -90,6 +141,7 @@ public class TypeLiteral<T> implements Serializable {
     }
 
     /**
+     * Get the raw type of the current type.
      * @return the raw type represented by this object
      */
     @SuppressWarnings("unchecked")
