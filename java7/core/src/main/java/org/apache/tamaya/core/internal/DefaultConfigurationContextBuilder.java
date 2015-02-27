@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
@@ -39,7 +40,7 @@ import java.util.Objects;
  */
 class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
 
-    List<PropertySource> propertySources = new ArrayList<>();
+    Map<String, PropertySource> propertySources = new HashMap<>();
     List<PropertyFilter> propertyFilters = new ArrayList<>();
     Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
     PropertyValueCombinationPolicy combinationPolicy;
@@ -50,7 +51,9 @@ class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder 
     @Override
     public ConfigurationContextBuilder setContext(ConfigurationContext context) {
         this.propertySources.clear();
-        this.propertySources.addAll(context.getPropertySources());
+        for(PropertySource ps:context.getPropertySources()) {
+            this.propertySources.put(ps.getName(), ps);
+        }
         this.propertyFilters.clear();
         this.propertyFilters.addAll(context.getPropertyFilters());
         this.propertyConverters.clear();
@@ -60,30 +63,34 @@ class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder 
     }
 
     @Override
+    public ConfigurationContextBuilder addPropertySources(Collection<PropertySource> propertySourcesToAdd) {
+        for(PropertySource ps:propertySourcesToAdd){
+            if(this.propertySources.containsKey(ps.getName())){
+                throw new ConfigException("Duplicate PropertySource: " + ps.getName());
+            }
+        }
+        for(PropertySource ps:propertySourcesToAdd) {
+            this.propertySources.put(ps.getName(), ps);
+        }
+        return this;
+    }
+
+    @Override
     public ConfigurationContextBuilder addPropertySources(PropertySource... propertySourcesToAdd) {
         return addPropertySources(Arrays.asList(propertySourcesToAdd));
     }
 
     @Override
-    public ConfigurationContextBuilder addPropertySources(Collection<PropertySource> propertySourcesToAdd) {
-        this.propertySources.addAll(propertySourcesToAdd);
+    public ConfigurationContextBuilder removePropertySources(Collection<String> propertySourcesToRemove) {
+        for(String key: propertySourcesToRemove){
+            this.propertySources.remove(key);
+        }
         return this;
     }
 
     @Override
-    public ConfigurationContextBuilder removePropertySources(PropertySource... propertySourcesToRemove) {
+    public ConfigurationContextBuilder removePropertySources(String... propertySourcesToRemove) {
         return removePropertySources(Arrays.asList(propertySourcesToRemove));
-    }
-
-    @Override
-    public ConfigurationContextBuilder removePropertySources(Collection<PropertySource> propertySourcesToRemove) {
-        this.propertySources.removeAll(propertySourcesToRemove);
-        return this;
-    }
-
-    @Override
-    public ConfigurationContextBuilder addPropertyFilters(PropertyFilter... filters) {
-        return addPropertyFilters(Arrays.asList(filters));
     }
 
     @Override
@@ -93,8 +100,8 @@ class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder 
     }
 
     @Override
-    public ConfigurationContextBuilder removePropertyFilters(PropertyFilter... filters) {
-        return removePropertyFilters(Arrays.asList(filters));
+    public ConfigurationContextBuilder addPropertyFilters(PropertyFilter... filters) {
+        return addPropertyFilters(Arrays.asList(filters));
     }
 
     @Override
@@ -104,15 +111,17 @@ class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder 
     }
 
     @Override
-    public <T> ConfigurationContextBuilder addPropertyConverter(TypeLiteral<T> typeToConvert,
-                                                                PropertyConverter<T> propertyConverter) {
+    public ConfigurationContextBuilder removePropertyFilters(PropertyFilter... filters) {
+        return removePropertyFilters(Arrays.asList(filters));
+    }
+
+    @Override
+    public <T> ConfigurationContextBuilder addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
         List<PropertyConverter<?>> converters = this.propertyConverters.get(typeToConvert);
         if(converters==null){
-            converters = new ArrayList<>();
-            this.propertyConverters.putIfAbsent(typeToConvert, converters);
-            converters = this.propertyConverters.get(typeToConvert);
+            converters =  new ArrayList<>();
+            this.propertyConverters.put(typeToConvert, converters);
         }
-        converters.add(propertyConverter);
         return this;
     }
 

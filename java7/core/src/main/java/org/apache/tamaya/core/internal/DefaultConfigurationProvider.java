@@ -54,6 +54,13 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
         Configuration newConfig = new DefaultConfiguration(context);
         // TODO think on a SPI or move event part into API...
         this.config = newConfig;
+        this.context = context;
+    }
+
+
+    @Override
+    public boolean isConfigurationContextSettable() {
+        return true;
     }
 
 }

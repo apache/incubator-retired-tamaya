@@ -121,7 +121,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
         List<PropertySource> propertySources = new ArrayList<>();
         // first we load all PropertySources which got registered via java.util.ServiceLoader
-        propertySources.addAll(builder.propertySources);
+        propertySources.addAll(builder.propertySources.values());
         // now sort them according to their ordinal values
         Collections.sort(propertySources, propertySourceComparator);
         immutablePropertySources = Collections.unmodifiableList(propertySources);

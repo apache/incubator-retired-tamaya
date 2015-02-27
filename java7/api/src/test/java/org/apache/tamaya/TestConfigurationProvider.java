@@ -19,6 +19,7 @@
 package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
 /**
@@ -28,7 +29,6 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
     private static final Configuration config = new TestConfiguration();
 
-
     @Override
     public Configuration getConfiguration() {
         return config;
@@ -36,6 +36,21 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
     @Override
     public ConfigurationContext getConfigurationContext() {
+        return null;
+    }
+
+    @Override
+    public void setConfigurationContext(ConfigurationContext context) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isConfigurationContextSettable() {
+        return false;
+    }
+
+    @Override
+    public ConfigurationContextBuilder getConfigurationContextBuilder() {
         return null;
     }
 }

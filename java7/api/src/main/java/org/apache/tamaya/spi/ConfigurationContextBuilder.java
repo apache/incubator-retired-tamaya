@@ -21,9 +21,7 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Predicate;
 
 /**
  * A builder for creating new or adapting instances of {@link ConfigurationContext}.
@@ -112,13 +110,6 @@ public interface ConfigurationContextBuilder {
      * @return this builder, for chaining, never null.
      */
     ConfigurationContextBuilder removePropertyFilters(PropertyFilter... filters);
-    /**
-     * Removes the given PropertyFilter instances.
-     *
-     * @param selector the selector query, not null.
-     * @return this builder, for chaining, never null.
-     */
-    ConfigurationContextBuilder removePropertyFilters(Predicate<PropertyFilter> selector);
 
     /**
      * Removes the given PropertyFilter instances.
@@ -127,14 +118,6 @@ public interface ConfigurationContextBuilder {
      * @return this builder, for chaining, never null.
      */
     ConfigurationContextBuilder removePropertyFilters(Collection<PropertyFilter> filters);
-
-    /**
-     * Remove the property sources selected by the given selector predicate.
-     *
-     * @param selector the selector query, not null.
-     * @return this builder, for chaining, never null.
-     */
-    ConfigurationContextBuilder removePropertySources(Predicate<PropertySource> selector);
 
     /**
      * This method can be used for programmatically adding {@link org.apache.tamaya.PropertyConverter}s.
