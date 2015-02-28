@@ -23,6 +23,7 @@ import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.PropertyConverterManager;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
@@ -42,6 +43,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -155,7 +157,6 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
                      .collect(toList());
     }
 
-    @Override
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
         Lock writeLock = propertySourceLock.asWriteLock();
         try {
@@ -222,7 +223,6 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         return immutablePropertySources;
     }
 
-    @Override
     public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
         propertyConverterManager.register(typeToConvert, propertyConverter);
         LOG.info(() -> "Added PropertyConverter: " + propertyConverter.getClass().getName());
@@ -252,6 +252,18 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         StringJoiner joiner = new StringJoiner(", ");
         propertySources.forEach(t -> joiner.add(mapper.apply(t)));
         return joiner.toString();
+    }
+
+    @Override
+    public ConfigurationContextBuilder toBuilder() {
+        // @todo Check if it could be useful to support this method, Oliver B. Fischer
+        throw new RuntimeException("This method is currently not supported.");
+    }
+
+    @Override
+    public Collection<PropertySource> getPropertySources(Predicate<PropertySource> selector) {
+        // @todo Check if it could be useful to support this method, Oliver B. Fischer
+        throw new RuntimeException("This method is currently not supported.");
     }
 
     /**
