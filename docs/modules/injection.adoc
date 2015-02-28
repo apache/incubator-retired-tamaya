@@ -40,10 +40,10 @@ Apache Tamaya -- Injection Module
 == The Tamaya Injection API
 === Overview
 
-Inversion of Control (aka IoC/the Hollywood Principle) has proven to be very handy and effective in avoiding boilerplate
+Inversion of Control (aka IoC/the Hollywood Principle) has proven to be very useful and effective in avoiding boilerplate
 code. In Java there are different frameworks available that all provide IoC mechanisms. Unfortunately IoC is not a
 built-in language feature. So for a portable solution that works also in Java SE Tamaya itself has to provide the
-according injection services. This module adds that functionality to Tamaya. As an example refer to the following
+according injection services. This module adds this functionality to Tamaya. As an example refer to the following
 code snippet:
 
 [source,java]
@@ -95,7 +95,7 @@ ConfigurationInjector.configure(configuredClass);
 
 ==== The Annotations in detail
 
-The +ConfigurationInjector+ interface provides methods that allow to any kind of instances be configured
+The +ConfigurationInjector+ interface provides methods that allow any kind of instances to be configured
 by passing the instances to +T ConfigurationInjector.getInstance().configure(T);+. The classes passed
 hereby must not be annotated with +@ConfiguredProperty+ for being configurable. By default Tamaya
 tries to determine configuration for each property of an instance passed, using the following resolution policy:
