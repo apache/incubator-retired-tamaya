@@ -585,16 +585,16 @@ The +ServiceContext+ hereby defines access methods to obtain components, whereas
 +ServiceContextManager+ singleton:
 
 [source,java]
-.Accessing the +ServiceContext+
---------------------------------------------
-ServiceContext serviceContext = ServiceContextManager.getServiceContext();
+                                            .Accessing the +ServiceContext+
+                                            --------------------------------------------
+                                            ServiceContext serviceContext = ServiceContextManager.getServiceContext();
 
-public interface ServiceContext{
-    int ordinal();
-    <T> T getService(Class<T> serviceType);
-    <T> List<T> getServices(Class<T> serviceType);
-}
---------------------------------------------
+                                            public interface ServiceContext{
+                                                int ordinal();
+                                                <T> T getService(Class<T> serviceType);
+                                                <T> List<T> getServices(Class<T> serviceType);
+                                            }
+                                            --------------------------------------------
 
 With the +ServiceContext+ a component can be accessed in two different ways:
 

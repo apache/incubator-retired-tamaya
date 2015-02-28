@@ -64,7 +64,7 @@ For details about the extension modules available and  their functionality refer
 
 As said the _Core_ module delivers several default +PropertyConverter+ instances out of the box:
 
-[width="100%",frame="1",options="header"]
+[width="100%",frame="1",options="header",grid="all"]
 |=======
 |_Target Type_             |_Class Name_              |_Supported Formats_
 |java.math.BigDecimal    |BigDecimalConverter     |1.2345, 0xFF
@@ -142,7 +142,7 @@ NOTE: TODO Discuss the defaults provided by core!
 The Tamaya Core implementation provides a couple of default +PropertySource+ implementations, which are automatically
 registered. They are all in the package +org.apache.tamaya.core.propertysource+:
 
-[width="100%",frame="1",options="header"]
+[width="100%",frame="1",options="header",grid="all"]
 |=======
 |_Type_                                   |_Class Name_                   |_Ordinal Used_
 |Environment Properties                   |EnvironmentPropertySource      |300

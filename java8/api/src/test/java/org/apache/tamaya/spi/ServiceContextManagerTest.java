@@ -27,9 +27,13 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ServiceContextManagerTest {
 
@@ -65,8 +69,28 @@ public class ServiceContextManagerTest {
     public void testGetServiceContext() {
 
         ServiceContext context = ServiceContextManager.getServiceContext();
-        Assert.assertEquals(100, context.ordinal());
+        Assert.assertEquals(1, context.ordinal());
 
+    }
+
+    @Test
+    public void testSetServiceContext(){
+        ServiceContext ctx = new ServiceContext() {
+            @Override
+            public <T> Optional<T> getService(Class<T> serviceType) {
+                return null;
+            }
+
+            @Override
+            public <T> List<T> getServices(Class<T> serviceType) {
+                return Collections.emptyList();
+            }
+        };
+        ServiceContext prevContext = ServiceContextManager.set(ctx);
+        if(prevContext!=null) {
+            ServiceContextManager.set(prevContext);
+            assertTrue(ServiceContextManager.getServiceContext() == prevContext);
+        }
     }
 
 

@@ -52,10 +52,9 @@ public class TypeLiteral<T> implements Serializable {
     /**
      * Creates a new TypeLiteral based on a given type.
      * @param type the type , not null.
-     * @param <R> the literal generic type.
      * @return the corresponding TypeLiteral, never null.
      */
-    public static <R> TypeLiteral<R> of(Type type){
+    public static TypeLiteral<?> of(Type type){
         return new TypeLiteral<>(type);
     }
 

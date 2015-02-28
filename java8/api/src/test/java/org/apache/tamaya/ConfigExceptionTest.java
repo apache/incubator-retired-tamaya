@@ -18,33 +18,29 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Test Configuration class, that is used to testdata the default methods provided by the API.
+ * Tests instantiating {@link org.apache.tamaya.ConfigException}.
  */
-public class TestConfigurationProvider implements ConfigurationProviderSpi {
+public class ConfigExceptionTest {
 
-    private static final Configuration config = new TestConfiguration();
-
-
-    @Override
-    public Configuration getConfiguration() {
-        return config;
+    @Test
+    public void testCreationMessage(){
+        ConfigException ex = new ConfigException("test");
+        assertNull(ex.getCause());
+        assertEquals(ex.getMessage(), "test");
     }
 
-    @Override
-    public ConfigurationContext getConfigurationContext() {
-        return null;
+    @Test
+    public void testCreationMessageThrowable(){
+        Exception e = new IllegalStateException("blabla");
+        ConfigException ex = new ConfigException("test", e);
+        assertTrue(ex.getCause() == e);
+        assertEquals("test", ex.getMessage());
     }
 
-    @Override
-    public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return null;
-    }
 }
