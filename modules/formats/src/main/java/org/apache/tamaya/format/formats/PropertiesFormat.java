@@ -21,8 +21,8 @@ package org.apache.tamaya.format.formats;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.apache.tamaya.format.InputStreamCloser;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
@@ -55,19 +55,15 @@ public class PropertiesFormat implements ConfigurationFormat {
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
         Objects.requireNonNull(inputStream);
         Objects.requireNonNull(resource);
-        try {
+
+        try (InputStream in = new InputStreamCloser(inputStream)) {
             final Properties p = new Properties();
-            p.load(inputStream);
+            p.load(in);
             return ConfigurationDataBuilder.of(resource, this).addProperties(Map.class.cast(p)).build();
         } catch (Exception e) {
             LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + resource);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                LOG.log(Level.FINEST, e, () -> "Failed to close resource: " + resource);
-            }
         }
+
         return null;
     }
 }
