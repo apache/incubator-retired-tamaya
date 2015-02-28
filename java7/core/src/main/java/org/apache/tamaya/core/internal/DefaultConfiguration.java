@@ -22,9 +22,9 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
@@ -221,7 +221,7 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public <T> T get(String key, Class<T> type) {
-        return get(key, TypeLiteral.of(type));
+        return get(key, (TypeLiteral<T>)TypeLiteral.of(type));
     }
 
     /**

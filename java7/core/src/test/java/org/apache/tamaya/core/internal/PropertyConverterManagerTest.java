@@ -43,7 +43,7 @@ public class PropertyConverterManagerTest {
     public void factoryMethodOfIsUsedAsConverter() {
         PropertyConverterManager manager = new PropertyConverterManager();
 
-        List<PropertyConverter<MyType>> converters = manager.getPropertyConverters(TypeLiteral.of(MyType.class));
+        List<PropertyConverter<MyType>> converters = manager.getPropertyConverters((TypeLiteral)TypeLiteral.of(MyType.class));
 
         assertThat(converters, hasSize(1));
 
