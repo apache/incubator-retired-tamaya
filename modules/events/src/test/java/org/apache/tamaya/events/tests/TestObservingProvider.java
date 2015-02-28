@@ -39,7 +39,7 @@ import java.util.Iterator;
 public class TestObservingProvider extends ObservingPropertySourceProvider{
 
     public TestObservingProvider(){
-        super(Paths.get("C:\\Users\\Anatole\\IdeaProjects\\incubator-tamaya\\modules\\events/src/test/data"),
+        super(Paths.get("src/test/data"),
                 new PropertiesFormat());
     }
 }
