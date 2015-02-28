@@ -41,6 +41,19 @@ public class InputStreamCloserTest {
     }
 
     @Test
+    public void givenStreamIsClosedInTryWithResourcesConstruct() throws Exception {
+        InputStream stream = mock(InputStream.class);
+
+        doReturn(34).when(stream).read();
+
+        try (InputStream in = new InputStreamCloser(stream)) {
+            in.read();
+        }
+
+        verify(stream).close();
+    }
+
+    @Test
     public void callToReadIsForwardedCallToWrapped() throws IOException {
         InputStream stream = mock(InputStream.class);
 
