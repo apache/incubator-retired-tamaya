@@ -19,14 +19,16 @@
 package org.apache.tamaya.modules.json;
 
 
+import org.apache.tamaya.format.ConfigurationData;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class JSONFormatTest {
+public class JSONFormatTest extends CommonJSONTestCaseCollection {
     private JSONFormat format = new JSONFormat();
 
     @Test(expected = NullPointerException.class)
@@ -60,5 +62,14 @@ public class JSONFormatTest {
         URL url = new URL("ftp://nowhere.somewhere/a/b/c/d/conf.json");
 
         assertThat(format.accepts(url), is(false));
+    }
+
+    @Override
+    UnifiedConfigData getPropertiesFrom(URL source) throws Exception {
+        try (InputStream is = source.openStream()) {
+            ConfigurationData data = format.readConfiguration(source.toString(), is);
+
+            return new ConfigurationDataUCD(data);
+        }
     }
 }

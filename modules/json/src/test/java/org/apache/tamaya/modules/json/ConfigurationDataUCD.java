@@ -18,32 +18,27 @@
  */
 package org.apache.tamaya.modules.json;
 
+import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.spi.PropertySource;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
 
-import java.net.URL;
+import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+public class ConfigurationDataUCD implements UnifiedConfigData {
+    private ConfigurationData data;
 
-public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
-
-    @Test
-    public void tamayaOrdinalKeywordIsNotPropagatedAsNormalProperty() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
-
-        assertThat(configURL, CoreMatchers.notNullValue());
-
-        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
-
-        assertThat(source.get(PropertySource.TAMAYA_ORDINAL), nullValue());
+    public ConfigurationDataUCD(ConfigurationData configurationData) {
+        data = configurationData;
     }
 
     @Override
-    UnifiedConfigData getPropertiesFrom(URL source) throws Exception {
-        JSONPropertySource propertySource = new JSONPropertySource(source);
+    public Map<String, String> getProperties() {
+        return data.getDefaultSection();
+    }
 
-        return new JSONPropertySourceUCD(propertySource);
+    @Override
+    public int getOrdinal() {
+        String value = data.getDefaultSection().get(PropertySource.TAMAYA_ORDINAL);
+
+        return Integer.parseInt(value);
     }
 }

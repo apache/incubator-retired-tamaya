@@ -18,32 +18,30 @@
  */
 package org.apache.tamaya.modules.json;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.hamcrest.CoreMatchers;
+import org.apache.tamaya.format.ConfigurationFormat;
+import org.apache.tamaya.spi.ServiceContext;
 import org.junit.Test;
 
-import java.net.URL;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 
-public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
-
+/**
+ * Integration tests for {@link JSONFormat}.
+ */
+public class JSONFormatIT {
     @Test
-    public void tamayaOrdinalKeywordIsNotPropagatedAsNormalProperty() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
+    public void jsonFormatCanBeFoundViaServiceLoader() throws Exception {
+        List<ConfigurationFormat> formats = ServiceContext.getInstance()
+                                                          .getServices(ConfigurationFormat.class);
 
-        assertThat(configURL, CoreMatchers.notNullValue());
+        ConfigurationFormat format = formats.stream()
+                                            .filter(s -> s instanceof JSONFormat)
+                                            .findFirst().get();
 
-        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
-
-        assertThat(source.get(PropertySource.TAMAYA_ORDINAL), nullValue());
-    }
-
-    @Override
-    UnifiedConfigData getPropertiesFrom(URL source) throws Exception {
-        JSONPropertySource propertySource = new JSONPropertySource(source);
-
-        return new JSONPropertySourceUCD(propertySource);
+        assertThat(format, notNullValue());
+        assertThat(format, instanceOf(JSONFormat.class));
     }
 }
