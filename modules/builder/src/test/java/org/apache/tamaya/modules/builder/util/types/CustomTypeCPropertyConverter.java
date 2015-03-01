@@ -16,24 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder.util.types;
+package org.apache.tamaya.modules.builder.util.types;
 
-/**
- * Custom type with factory method
- * {@link org.apache.tamaya.builder.util.types.CustomTypeB#of(String)}
- */
-public class CustomTypeB {
-    private String name;
+import org.apache.tamaya.PropertyConverter;
 
-    private CustomTypeB(String value) {
-        this.name = value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public static CustomTypeB of(String source) {
-        return new CustomTypeB(source);
+public class CustomTypeCPropertyConverter implements PropertyConverter<org.apache.tamaya.modules.builder.util.types.CustomTypeC> {
+    @Override
+    public org.apache.tamaya.modules.builder.util.types.CustomTypeC convert(String value) {
+        return org.apache.tamaya.modules.builder.util.types.CustomTypeC.produceFrom(value);
     }
 }

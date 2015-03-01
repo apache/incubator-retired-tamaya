@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder;
+package org.apache.tamaya.modules.builder;
 
 
 import org.apache.tamaya.PropertyConverter;
@@ -52,7 +52,7 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
- * used by the {@link org.apache.tamaya.builder.ConfigurationBuilder}
+ * used by the {@link org.apache.tamaya.modules.builder.ConfigurationBuilder}
  * internally.
  */
 class ProgrammaticConfigurationContext implements ConfigurationContext {

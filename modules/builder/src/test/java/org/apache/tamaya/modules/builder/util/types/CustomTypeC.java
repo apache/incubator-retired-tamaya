@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder.util.types;
+package org.apache.tamaya.modules.builder.util.types;
 
 public class CustomTypeC {
     private String value;

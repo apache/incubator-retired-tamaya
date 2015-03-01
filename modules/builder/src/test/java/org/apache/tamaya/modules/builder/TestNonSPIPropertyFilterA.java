@@ -16,17 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder;
+package org.apache.tamaya.modules.builder;
 
 import org.apache.tamaya.spi.PropertyFilter;
 
-public class TestPropertyFilter implements PropertyFilter {
+public class TestNonSPIPropertyFilterA implements PropertyFilter {
     @Override
     public String filterProperty(String key, String value) {
         String result = value;
 
-        if (!result.contains(("inBerlin"))) {
-            result = value + "inBerlin";
+        if (!result.contains(("ABC"))) {
+            result = value + "ABC";
         }
 
         return result;

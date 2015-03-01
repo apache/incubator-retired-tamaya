@@ -16,19 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder.util.types;
+package org.apache.tamaya.modules.builder;
 
-/**
- * Custom type with two argument constructor.
- */
-public class CustomTypeA {
-    private String name;
+import org.apache.tamaya.spi.PropertySource;
 
-    public CustomTypeA(String name, String other) {
-        this.name = name + other;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Map;
+
+public class TestPropertySource
+    implements PropertySource
+{
+    private Map<String, String> properties;
+
+    {
+        properties = new Hashtable<>(3);
+        properties.put("tps_a", "A");
+        properties.put("tps_b", "B");
+        properties.put("tps_c", "C");
     }
 
+    @Override
+    public int getOrdinal() {
+        return 456;
+    }
+
+    @Override
     public String getName() {
-        return name;
+        return "TestPropertySource";
+    }
+
+    @Override
+    public String get(String key) {
+        return getProperties().get(key);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 }

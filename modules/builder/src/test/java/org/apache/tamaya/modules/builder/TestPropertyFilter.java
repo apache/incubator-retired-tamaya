@@ -16,43 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder;
+package org.apache.tamaya.modules.builder;
 
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyFilter;
 
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Map;
-
-public class TestPropertySource
-    implements PropertySource
-{
-    private Map<String, String> properties;
-
-    {
-        properties = new Hashtable<>(3);
-        properties.put("tps_a", "A");
-        properties.put("tps_b", "B");
-        properties.put("tps_c", "C");
-    }
-
+public class TestPropertyFilter implements PropertyFilter {
     @Override
-    public int getOrdinal() {
-        return 456;
-    }
+    public String filterProperty(String key, String value) {
+        String result = value;
 
-    @Override
-    public String getName() {
-        return "TestPropertySource";
-    }
+        if (!result.contains(("inBerlin"))) {
+            result = value + "inBerlin";
+        }
 
-    @Override
-    public String get(String key) {
-        return getProperties().get(key);
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
-        return Collections.unmodifiableMap(properties);
+        return result;
     }
 }

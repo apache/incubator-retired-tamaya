@@ -16,19 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder;
+package org.apache.tamaya.modules.builder.util.types;
 
-import org.apache.tamaya.spi.PropertyFilter;
+/**
+ * Custom type with two argument constructor.
+ */
+public class CustomTypeA {
+    private String name;
 
-public class TestNonSPIPropertyFilterA implements PropertyFilter {
-    @Override
-    public String filterProperty(String key, String value) {
-        String result = value;
+    public CustomTypeA(String name, String other) {
+        this.name = name + other;
+    }
 
-        if (!result.contains(("ABC"))) {
-            result = value + "ABC";
-        }
-
-        return result;
+    public String getName() {
+        return name;
     }
 }

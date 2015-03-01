@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder;
+package org.apache.tamaya.modules.builder;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.builder.util.types.CustomTypeA;
-import org.apache.tamaya.builder.util.types.CustomTypeB;
-import org.apache.tamaya.builder.util.types.CustomTypeC;
+import org.apache.tamaya.modules.builder.util.types.CustomTypeA;
+import org.apache.tamaya.modules.builder.util.types.CustomTypeB;
+import org.apache.tamaya.modules.builder.util.types.CustomTypeC;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
@@ -34,7 +34,7 @@ import org.junit.Test;
 
 
 import static java.util.Arrays.asList;
-import static org.apache.tamaya.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
+import static org.apache.tamaya.modules.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,6 +44,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
 
 public class ConfigurationBuilderTest {
 

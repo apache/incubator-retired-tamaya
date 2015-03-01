@@ -16,13 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.builder.util.types;
+package org.apache.tamaya.modules.builder;
 
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
 
-public class CustomTypeCPropertyConverter implements PropertyConverter<CustomTypeC> {
+public class TestNonSPIPropertyFilterB implements PropertyFilter {
     @Override
-    public CustomTypeC convert(String value) {
-        return CustomTypeC.produceFrom(value);
+    public String filterProperty(String key, String value) {
+        String result = value;
+
+        if (!result.contains(("XYZ"))) {
+            result = value + "XYZ";
+        }
+
+        return result;
     }
 }
