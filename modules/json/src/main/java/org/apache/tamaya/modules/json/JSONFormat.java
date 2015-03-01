@@ -18,14 +18,9 @@
  */
 package org.apache.tamaya.modules.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationFormat;
-import org.apache.tamaya.format.InputStreamCloser;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
@@ -57,14 +52,14 @@ public class JSONFormat implements ConfigurationFormat {
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
 
-        try (InputStream is = new InputStreamCloser(inputStream)){
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(is);
+//        try (InputStream is = new InputStreamCloser(inputStream)){
+//            ObjectMapper mapper = new ObjectMapper();
+//            JsonNode root = mapper.readTree(is);
 
 
-        } catch (IOException e) {
-            throw new ConfigException("Failed to ");
-        }
+//        } catch (IOException e) {
+//            throw new ConfigException("Failed to ");
+//        }
 
 
 
