@@ -1,11 +1,11 @@
-Apache Tamaya -- Injection Module
-=================================
+Apache Tamaya -- Extension: Injection
+=====================================
 :name: Tamaya
-:rootpackage: org.apache.tamaya.inject
-:title: Apache Tamaya Injection
-:revnumber: 0.1-SNAPSHOT
+:rootpackage: org.apache.tamaya.ext.injection
+:title: Apache Tamaya Extension: Injection
+:revnumber: 0.1.1
 :revremark: Incubator
-:revdate: November 2014
+:revdate: March 2015
 :longversion: {revnumber} ({revremark}) {revdate}
 :authorinitials: ATR
 :author: Anatole Tresch
@@ -18,7 +18,6 @@ Apache Tamaya -- Injection Module
 :icons:
 :encoding: UTF-8
 :numbered:
-
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -35,10 +34,24 @@ Apache Tamaya -- Injection Module
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+'''
+
 <<<
-[[Injection]]
-== The Tamaya Injection API
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Core]]
+== Tamaya Injection (Extension Module)
 === Overview
+
+Tamaya Injection is an extension module. Refer to the link::modules.html[extensions documentation] for further details
+about modules.
+
+Tamaya Injection provides functionality for injecting configured values into beans, or creating configuration
+template instances.
 
 Inversion of Control (aka IoC/the Hollywood Principle) has proven to be very useful and effective in avoiding boilerplate
 code. In Java there are different frameworks available that all provide IoC mechanisms. Unfortunately IoC is not a

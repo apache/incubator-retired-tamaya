@@ -1,3 +1,22 @@
+Apache Tamaya -- Requirements
+=============================
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya Requirements
+:revnumber: 1.0
+:revremark: Incubator
+:revdate: March 2015
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: OBF
+:author: Oliver B. Fischer
+:email: <plexus@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -14,7 +33,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
+toc::[]
 <<<
 [[Requirements]]
 == Requirements
@@ -67,11 +86,11 @@ Besides Strings +Configuration+ should also support the following types:
 
 Hereby type conversion should be done as follows:
 
-# Check if for the given target type an explicit adapter is registered, if so, use the registered adapter.
-#If no adapter is present, check if the target type T has static methods called +T of(String), T getInstance(String), T valueOf(String), T from(String)+. If so
+. Check if for the given target type an explicit adapter is registered, if so, use the registered adapter.
+. If no adapter is present, check if the target type T has static methods called +T of(String), T getInstance(String), T valueOf(String), T from(String)+. If so
 use this method to create the non value of T.
-# Check if the target type has a constructor T(String). If so, try to instantiate an instance using the constructor.
-# Give up, throw a IllegalArgument exception.
+. Check if the target type has a constructor T(String). If so, try to instantiate an instance using the constructor.
+. Give up, throw a IllegalArgument exception.
 
 === Configuration Fomats
 

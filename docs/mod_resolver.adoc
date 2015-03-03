@@ -1,9 +1,9 @@
-Apache Tamaya -- Extension Modules
+Apache Tamaya -- Extension: Resolver
 ==================================
 :name: Tamaya
-:rootpackage: org.apache.tamaya
-:title: Apache Tamaya Extension Modules
-:revnumber: 0.1-SNAPSHOT
+:rootpackage: org.apache.tamaya.ext.resolver
+:title: Apache Tamaya Extension: Resolver
+:revnumber: 0.1.1
 :revremark: Incubator
 :revdate: March 2015
 :longversion: {revnumber} ({revremark}) {revdate}
@@ -12,6 +12,7 @@ Apache Tamaya -- Extension Modules
 :email: <anatole@apache.org>
 :source-highlighter: coderay
 :website: http://tamaya.incubator.apache.org/
+:iconsdir: {imagesdir}/icons
 :toc:
 :toc-placement: manual
 :icons:
@@ -33,20 +34,24 @@ Apache Tamaya -- Extension Modules
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+'''
+
+<<<
+
 toc::[]
 
+<<<
+:numbered!:
+<<<
+[[Core]]
+== Tamaya Events (Extension Module)
+=== Overview
 
-== Mature Extensions
+Tamaya Resolver is an extension module. Refer to the link::modules.html[extensions documentation] for further details
+about modules.
 
-[width="100%",frame="1",options="header",grid="all"]
-|=======
-|_Artifact_                                 |_Description_                                |_Links_
-|+org.apache.tamaya.ext:tamaya-resources+     |Provides ant-style resource path resolution  |link::mod_resources.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-resolver+      |Provides placeholder and dynamic resolution functionality for configuration values.  |link::mod_resolver.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-events+        |Provides support for publishing configuration changes  |link::mod_events.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-formats+       |Provides an abstract model for configuration formats   |link::mod_formats.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-injection+     |Provides configuration injection services and congiruation template support.  |link::mod_injection.html[Documentation]
-|=======
+Tamaya Events provides an abstraction for events like change events, when configuration has bee changed.
 
 
-== Extensions in Experimental Stage
+
+tbc...

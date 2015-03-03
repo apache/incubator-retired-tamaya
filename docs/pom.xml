@@ -29,7 +29,7 @@ under the License.
 
     <artifactId>tamaya-docs</artifactId>
     <name>Apache Tamaya - Documentation</name>
-    <description>The Documentation projects keeps together the documentation files in asciidic and other formats
+    <description>The Documentation projects keeps together the documentation files in asciidoc and other formats
         for the Apache Tamaya project.
     </description>
 
@@ -86,13 +86,12 @@ under the License.
                         </goals>
                         <configuration>
                             <baseDir>${project.basedir}</baseDir>
-                            <outputDirectory>target/design</outputDirectory>
+                            <outputDirectory>target/adocs</outputDirectory>
                             <sourceHighlighter>coderay</sourceHighlighter>
                             <backend>html</backend>
                             <embedAssets>true</embedAssets>
                             <imagesDir>${project.basedir}/images/icons</imagesDir>
                             <sourceDirectory>.</sourceDirectory>
-                            <sourceDocumentName>TamayaDocumentation.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
                 </executions>

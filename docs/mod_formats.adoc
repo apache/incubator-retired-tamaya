@@ -1,0 +1,61 @@
+Apache Tamaya -- Extension: Formats
+===================================
+:name: Tamaya
+:rootpackage: org.apache.tamaya.ext.formats
+:title: Apache Tamaya Extension: Formats
+:revnumber: 0.1.1
+:revremark: Incubator
+:revdate: March 2015
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:iconsdir: {imagesdir}/icons
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Core]]
+== Tamaya Formats (Extension Module)
+=== Overview
+
+Tamaya Formats is an extension module. Refer to the link::modules.html[extensions documentation] for further details.
+
+Tamaya Formats provides an abstraction for configuration formats provding the following benefits:
+
+* Parsing of resources in can be implemented separately from interpreting the different aspects/parts parsed. As an
+  example a file format can define different sections. Depending on the company specific semantics of the sections
+  a different set of +PropertySource+ instances must be created.
+* Similarly the configuration abstraction can also be used as an interface for integrating Tamaya with alternate
+  frameworks that provide logic for reading configuration files, such as Apache commons.configuration.
+
+
+tbc...
