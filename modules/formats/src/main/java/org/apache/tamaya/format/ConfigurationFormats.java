@@ -25,17 +25,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
  * Small accessor and management class dealing with {@link org.apache.tamaya.format.ConfigurationFormat}
  * instances.
  */
-public class ConfigurationFormats {
+public final class ConfigurationFormats {
     /**
      * The logger used.
      */
@@ -54,6 +59,26 @@ public class ConfigurationFormats {
      */
     public static List<ConfigurationFormat> getFormats() {
         return ServiceContext.getInstance().getServices(ConfigurationFormat.class);
+    }
+
+    /**
+     * Get all currently available formats, ordered by priority.
+     *
+     * @return the currently available formats, never null.
+     */
+    public static List<ConfigurationFormat> getFormats(String... formatNames) {
+        Set<String> names = new HashSet<>(Arrays.asList(formatNames));
+        return getFormats(f -> names.contains(f));
+    }
+
+    /**
+     * Get all currently available formats, ordered by priority.
+     *
+     * @return the currently available formats, never null.
+     */
+    public static List<ConfigurationFormat> getFormats(Predicate<String> namePredicate) {
+        return getFormats().stream().filter(f -> namePredicate.test(f.getName()))
+                .collect(Collectors.toList());
     }
 
     /**

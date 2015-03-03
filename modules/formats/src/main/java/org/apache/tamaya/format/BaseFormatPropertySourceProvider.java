@@ -19,15 +19,17 @@
 package org.apache.tamaya.format;
 
 import org.apache.tamaya.resource.ResourceResolver;
+import org.apache.tamaya.resource.Resources;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
-import org.apache.tamaya.spi.ServiceContext;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,11 +43,11 @@ import java.util.logging.Logger;
  * passed get a chance to read the resource, if they succeed the result is taken as the providers PropertySources
  * to be exposed.
  */
-public abstract class BasePathBasedMultiFormatPropertySourceProvider implements PropertySourceProvider {
+public abstract class BaseFormatPropertySourceProvider implements PropertySourceProvider {
     /**
      * The logger used.
      */
-    private static final Logger LOG = Logger.getLogger(BasePathBasedMultiFormatPropertySourceProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(BaseFormatPropertySourceProvider.class.getName());
     /**
      * The config formats supported for the given location/resource paths.
      */
@@ -53,7 +55,7 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
     /**
      * The paths to be evaluated.
      */
-    private List<String> paths = new ArrayList<>();
+    private Collection<URL> paths = new ArrayList<>();
     /**
      * The ClassLoader to use.
      */
@@ -65,11 +67,36 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
      * @param formats the formats to be used, not null, not empty.
      * @param paths   the paths to be resolved, not null, not empty.
      */
-    public BasePathBasedMultiFormatPropertySourceProvider(
+    public BaseFormatPropertySourceProvider(
             List<ConfigurationFormat> formats,
-            String... paths) {
+            URL... paths) {
         this.configFormats.addAll(Objects.requireNonNull(formats));
         this.paths.addAll(Arrays.asList(Objects.requireNonNull(paths)));
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param classLoader the ClassLoader to be used, not null, not empty.
+     * @param formats the formats to be used, not null, not empty.
+     * @param paths   the paths to be resolved, not null, not empty.
+     */
+    public BaseFormatPropertySourceProvider(
+            List<ConfigurationFormat> formats,
+            ClassLoader classLoader, String... paths) {
+        this.configFormats.addAll(Objects.requireNonNull(formats));
+        for(String path:paths) {
+            Enumeration<URL> urls = null;
+            try {
+                urls = classLoader.getResources(path);
+            } catch (IOException e) {
+                LOG.log(Level.WARNING, e, () -> "Failed to read resource: " + path);
+                continue;
+            }
+            while(urls.hasMoreElements()) {
+                this.paths.add(urls.nextElement());
+            }
+        }
     }
 
     /**
@@ -78,9 +105,9 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
      * @param formats the formats to be used, not null, not empty.
      * @param paths   the paths to be resolved, not null, not empty.
      */
-    public BasePathBasedMultiFormatPropertySourceProvider(
+    public BaseFormatPropertySourceProvider(
             ClassLoader classLoader,
-            List<ConfigurationFormat> formats, String... paths) {
+            List<ConfigurationFormat> formats, URL... paths) {
         this.classLoader = Optional.ofNullable(classLoader);
         this.configFormats.addAll(Objects.requireNonNull(formats));
         this.paths.addAll(Arrays.asList(Objects.requireNonNull(paths)));
@@ -103,20 +130,16 @@ public abstract class BasePathBasedMultiFormatPropertySourceProvider implements 
      */
     @Override
     public Collection<PropertySource> getPropertySources() {
-        ResourceResolver resourceResolver = ServiceContext.getInstance().getService(ResourceResolver.class).get();
+        ResourceResolver resourceResolver = Resources.getResourceResolver();
         List<PropertySource> propertySources = new ArrayList<>();
-        paths.forEach((path) -> {
-            for (URL res : resourceResolver.getResources(
-                    this.classLoader.orElse(Thread.currentThread().getContextClassLoader()),
-                    path)) {
-                try(InputStream is = res.openStream()) {
-                    for (ConfigurationFormat format : configFormats) {
-                        ConfigurationData entries = format.readConfiguration(res.toString(), is);
-                        propertySources.addAll(getPropertySources(entries));
-                    }
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Failed to add resource based config: " + res, e);
+        this.paths.forEach(res -> {
+            try(InputStream is = res.openStream()) {
+                for (ConfigurationFormat format : configFormats) {
+                    ConfigurationData data = format.readConfiguration(res.toString(), is);
+                    propertySources.addAll(getPropertySources(data));
                 }
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to add resource based config: " + res, e);
             }
         });
         return propertySources;

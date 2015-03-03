@@ -38,6 +38,12 @@ import java.net.URL;
 public interface ConfigurationFormat {
 
     /**
+     * Get a unique name of the format. This name can be used to access the format.
+     * @return
+     */
+    public String getName();
+
+    /**
      * Allows the format to examine the given resource, e.g. for a matching file ending. Only, if a format accepts an
      * URL, it will be tried for reading the configuration.
      * @param url the url to read the configuration data from (could be a file, a remote location, a classpath

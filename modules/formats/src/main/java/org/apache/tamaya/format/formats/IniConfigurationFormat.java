@@ -41,6 +41,11 @@ public class IniConfigurationFormat implements ConfigurationFormat {
     private final static Logger LOG = Logger.getLogger(IniConfigurationFormat.class.getName());
 
     @Override
+    public String getName() {
+        return "ini";
+    }
+
+    @Override
     public boolean accepts(URL url) {
         String fileName = url.getFile();
         return fileName.endsWith(".ini") || fileName.endsWith(".INI");

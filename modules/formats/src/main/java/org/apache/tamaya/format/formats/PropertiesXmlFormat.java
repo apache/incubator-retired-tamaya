@@ -42,6 +42,11 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
     private final static Logger LOG = Logger.getLogger(PropertiesXmlFormat.class.getName());
 
     @Override
+    public String getName() {
+        return "xml-properties";
+    }
+
+    @Override
     public boolean accepts(URL url) {
         String fileName = url.getFile();
         return fileName.endsWith(".xml") || fileName.endsWith(".XML");

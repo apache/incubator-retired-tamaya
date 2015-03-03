@@ -44,6 +44,11 @@ public class PropertiesFormat implements ConfigurationFormat {
 
 
     @Override
+    public String getName() {
+        return "properties";
+    }
+
+    @Override
     public boolean accepts(URL url) {
         String fileName = url.getFile();
         return fileName.endsWith(".properties") || fileName.endsWith(".PROPERTIES") ||
