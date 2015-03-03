@@ -1,3 +1,23 @@
+Apache Tamaya -- Core
+=====================
+:name: Tamaya
+:rootpackage: org.apache.tamaya.core
+:title: Apache Tamaya Core
+:revnumber: 0.1.1
+:revremark: Incubator
+:revdate: March 2015
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:iconsdir: {imagesdir}/icons
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -14,36 +34,38 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+'''
+
+<<<
+image::http://tamaya.incubator.apache.org/resources/images/logos/logo_wood.png[]
+
+toc::[]
+
+<<<
+:numbered!:
 <<<
 [[Core]]
 == Tamaya Core
 === Overview
 
-Tamaya Core provides an implementation of the Tamaya Configuration API and adds additional functionality and
-building blocks for supporting SPI implementations.
+Tamaya Core provides an implementation of the link:API.html[Tamaya Configuration API] and adds additional functionality
+and building blocks for supporting SPI implementations.
 
 Tamaya Core contains the following artifacts:
 
-* Implementations of +Configuration, ConfigurationContext, ConfigurationContextBuilder+ ConfigurationProvider+
-* A +ServiceLoader+ based +ServiceContext+ implementation.
-* A PropertyConverterManager+ that loads and stores references to all the rconfigured +PropertyConverter+ instances.
-* Default PropertySources for environment data.
-
-All minimally required components are implemented and registered, so basically the RI is a complete configuration
-solution. Nevertheless it is also very minimalistic:
-
-. It collects all +PropertySource+ and +PropertySourceProvider+ instances registered with the +ServiceLoader+ and
+* Implementations of +Configuration, ConfigurationContext, ConfigurationContextBuilder+ ConfigurationProviderSpi+
+* A +java.util.ServiceLoader+ based +ServiceContext+ implementation. Hereby it implements component priorization based
+  on the +@Priority+ annotations.
+* A PropertyConverterManager+ that loads and stores references to all the preconfigured +PropertyConverter+ instances
+hereby providing type conversion for all important types.
+* A simple default configuration setup using the current classpath and an optional staging variable.
+* It collects all +PropertySource+ and +PropertySourceProvider+ instances registered with the +ServiceLoader+ and
   registers them in the global +ConfigurationContext+
-. It provides a +ConfigurationContextBuilder+ and allows changing the current +ConfigurationContext+.
-. It provides +PropertyConverter+ instances for the most commonly used types.
-. It implements component priorization based on the +@Priority+ annotations.
-. It provides default +PropertySource+ implementations for
-  .. Environment Properties
-  .. System Properties
-  .. PropertySources based on +Properties+.
+* It provides a +ConfigurationContextBuilder+ and allows changing the current +ConfigurationContext+.
 
-The overall size of the library is very small. Nevertheless it is flexible enough to be extended with additional
-features as needed, such as
+The overall size of the library is very small. All required components are implemented and registered, so basically the
+Core module is a complete configuration solution. Nevertheless it is also very minimalistic, but fortunately is flexible
+enough to be extended/accommodated with additional features as needed, such as
 
 * placeholder and resolution mechanisms
 * dynamic resource path lookup, e.g. with ant styled patterns
@@ -56,13 +78,14 @@ features as needed, such as
 * remote configuration
 * and more
 
-For details about the extension modules available and  their functionality refer to the extension user guide.
+For details about the extension modules available and  their functionality refer to the link:modules.html[extension user guide].
 
 
 [[CorePropertyConverters]]
 === Default PropertyConverters in Core
 
-As said the _Core_ module delivers several default +PropertyConverter+ instances out of the box:
+As mentioned the Core module delivers several default +PropertyConverter+ instances out of the box. Find below the
+listing of converters automatically registered with the Core module:
 
 [width="100%",frame="1",options="header",grid="all"]
 |=======
@@ -92,18 +115,19 @@ As said the _Core_ module delivers several default +PropertyConverter+ instances
 
 === Registering PropertyConverters
 
-Additional +PropertyConverters+ can be implemented easily. It is recommended to register then using the +ServiceLoader+,
-menaing you add a file under +META-INF/service/org.apache.tamaya.spi.PropertyConverter+ containing the fully qualified
+Additional +PropertyConverters+ can be implemented easily. It is recommended to register then using the +java.util.ServiceLoader+,
+meaning you add a file under +META-INF/service/org.apache.tamaya.spi.PropertyConverter+ containing the fully qualified
 class names of the converters to be registered (one line per each).
 
-Alternatively you can also use a +ConfigurationContextBuilder+ to add additional converters programmatically, Note
-hereby that implementations can be read-only thus not allowing adding additional converters programmatically.
+Alternatively you can also use a +ConfigurationContextBuilder+ to add additional converters programmatically.
+
+NOTE: API Implementations can be read-only thus not allowing adding additional converters programmatically.
 
 
-[[ComponentPriorization]]
+[[ComponentLoadingAndPriorization]]
 === Component Loading and Priorization
 
-Tamaya Core in general loads all components using the +ServiceLoader+ mechanism. This means that new components
+Tamaya Core in general loads all components using the +java.util.ServiceLoader+ mechanism. This means that new components
 must be registered by adding a file under +META-INF/service/<myInterfaceName>+ containing the fully qualified
 implementation class names of the components to be registered (one line per each).
 The +ServiceLoader+ itself does not provide any functionality for overriding or ordering of components. Tamaya
@@ -132,12 +156,32 @@ due to several reasons:
   whatever may be appropriate.
 
 
-
-NOTE: TODO Discuss the defaults provided by core!
-
-
 [[CorePropertySources]]
-=== Default PropertySources in Core
+== Configuration Setup in Core
+
+Tamaya Core provides a minimal, but already powerful configuration setting, that allows you to configure SE
+applications already easily. Basically you can provide configuration properties using the following formats and
+locations (from weakest to strongest):
+
+. Read environment properties and add them prefixed with +env.+
+. Read all files found in +META-INF/cfg/defaults.properties+
+. Read all files found in +META-INF/cfg/${tamaya.stage}/defaults.properties+
+. Read all files found in +META-INF/cfg/config.properties+
+. Read all files found in +META-INF/cfg/${tamaya.stage}/config.properties+
+. Read current system properties.
+
+Hereby +tamaya.stage+ can be set by setting an according environment property, or by applying (overriding any environment
+property) a corresponding system property:
+
+[source, listing]
+-----------------------------------------
+-Dtamaya.stage=test
+-----------------------------------------
+
+If not set the staging locations will be ignored.
+
+
+=== Overview of Registered Default Property Sources and Providers
 
 The Tamaya Core implementation provides a couple of default +PropertySource+ implementations, which are automatically
 registered. They are all in the package +org.apache.tamaya.core.propertysource+:
@@ -154,6 +198,7 @@ registered. They are all in the package +org.apache.tamaya.core.propertysource+:
 
 There is also a class +DefaultOrdinal+, which defines several default ordinals. Beside the ordinals for system
 and environment properties above, there may additional default ordinals defined in the future.
+
 
 === Abstract Class PropertiesFilePropertySource
 
@@ -212,3 +257,13 @@ the inherited +protected void initializeOrdinal(final int defaultOrdinal)+, or d
 
 With +org.apache.tamaya.core.provider.JavaConfigurationProvider+ there is also a default +PropertySourceProvider+
 present that loads all .properties files found at +META-INF/javaconfiguration.properties+.
+
+
+[[Extensions]]
+== Adding Extensions
+
+The Core module only implements the link:API.html[API]. Many users require/wish additional functionality from a
+configuration system. Fortunately there are numerous extensions available, that add different functionality.
+Loading extensions hereby is trivial: you only are required to add the corresponding dependency to the classpath.
+
+For detailed information on the extensions available refer to the link:modules.html[extensions documentation].

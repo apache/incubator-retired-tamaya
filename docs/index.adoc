@@ -8,7 +8,7 @@ Apache Tamaya -- Documentation
 :revdate: November 2014
 :longversion: {revnumber} ({revremark}) {revdate}
 :authorinitials: ATR
-:author: Anatole Tresch, Anatole Tresch
+:author: Anatole Tresch
 :email: <anatole@apache.org>
 :source-highlighter: coderay
 :website: http://tamaya.incubator.apache.org/
@@ -18,12 +18,27 @@ Apache Tamaya -- Documentation
 :icons:
 :encoding: UTF-8
 :numbered:
-
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
 '''
 
 <<<
 
--> add image : : https://raw.githubusercontent.com/JavaConfig/config-api/master/src/main/asciidoc/images/javaconfig.jpg[]
+image::http://tamaya.incubator.apache.org/resources/images/logos/logo_wood.png[]
 
 toc::[]
 
@@ -53,13 +68,15 @@ under the License.
 <<<
 
 == Introduction
-This document describes the Tamaya Configuration System. It provides an overview of the different building blocks and
+This documentation describes the Tamaya Configuration System. It provides an overview of the different building blocks and
 links you to more detailed documentations.
+
 
 === Working Group
 This work is being conducted as part of a community lead joint effort under the Apache Software Foundation. This
 specification is the result of the collaborative work of the members of the Tamaya Users Group and the community at
 large.
+
 
 === Goals
 Configuration is a key feature in all kind of programming languages. Basically configuration is the parametrization of
@@ -67,13 +84,14 @@ well defined aspects of a software product without having to recompile/rebuild t
 can affect basically every part of a system, which renders configuration to a real cross-cutting concern, usable in
 many facets.
 
+
 ==== Targets
 Tamaya targets to support all general configuration aspects in a system, e.g.
 
 * application configuration
-** plugins
-** modules
-** components
+  ** plugins
+  ** modules
+  ** components
 * Container configuration, e.g. of Java EE enabling portability and dynamic provisioning
 * Configuration of CDI (interceptors, decorators and alternatives)
 * Configuration of Bean Validation, JSF, web applications etc.
@@ -91,43 +109,50 @@ Since configuration is implemented and applied in various ways Tamaya will allow
 * configuration filtering and property adapters
 * configuration of collections
 
-=== Required Java version
-The full API is based on Java SE 8.0 language features, whereas a compatible PI is similarly available for Java SE 7.
 
+=== Required Java version
+The full API is based on Java SE 8.0 language features, whereas a compatible implementation of API and Core
+is similarly available for Java SE 7 as well.
+
+
+== Overview
 === How is Tamaya organized
+
 The Tamaya project consists of the following parts:
 
-* The *API* is a complete SE based configuration API, that provides the absolute minimum of functionality needed.
-  It is modelled in a minimal, but expendable way. It should be easily implemented within a few kb, so it is also
-  possible to use it witin Java ME. The main features supported by the minimal API are:
+* The link:API.html[API] is a complete SE based configuration API, that provides the minimum of functionality needed.
+  It is modelled in a extensible way and only requires a few kb. The main features supported by the link:API.html[] are:
   ** Reading configuration as String/String key/value pairs
-  ** Reading configuration as type safe values, including transparent conversion.
+  ** Reading configuration as type safe values, including type conversion.
   ** Extending configuration using operators and queries.
-  ** An SPI providing abstractions for component lifecycle, property sources, peroperty source providers, configuration
+  ** An SPI providing abstractions for component lifecycle, property sources, property source providers, configuration
      context and property filters.
-* The "core* part implements the API. Basically with the core part and the API you are ready to go, but you may
-  add additional extensions that provide additional features that are very useful.
-* Extensions are additional libraries that you can add to your project setup. Most important features implemented
-  by modules are
+* The link:Core.html[Core] implements the link:API.html[API]. Basically with the core part (and the API) you are ready to go, but you may
+  add additional extensions that provide more features that are very useful.
+* Extensions are additional libraries that you can add to your project setup. Most important features are:
   ** Dynamic resolution of configured values.
   ** Pattern based resource location
   ** Configuration injection and configuration template support
   ** Support for additional configuration formats
+  ** Collection Support
   ** Prepared configuration metamodels
   ** Integration with other frameworks as configuration consumer or producer.
 * Finally the *documentation* module provides comprehensive documentation on all features provided.
 
-=== Further Information
-==== Use Cases
-The use cases collected can be found link:usecases/usecases.adoc[here].
+== Further Information
 
-==== Requirements
-The requirements collected can be found link:requirements/requirements.adoc[here].
+* There is a small document discussing link:usecases.html[Use Cases] and
+* a document discussing link:requirements.html[Requirements].
 
-==== Modules
-Detailed documentation on the available modules can be found link:modules/modules.adoc[here].
+== Detailed Documentation
 
-==== Examples
-A comprehensive set of examples can be found link:examples/examples.adoc[here].
+* link:API.html[Tamaya API Documentation] and link:../javadoc/api/index.html[API Javadoc]
+* link:Core.html[Tamaya Core Documentation] and link:../javadoc/core/index.html[Core Javadoc]
+* link:modules.html[Tamaya Modules Documentation] and link:../javadoc/modules/index.html[Extensions Javadoc]
+
+
+== Examples
+
+* A comprehensive set of examples can be found link:../examples.html[here].
 
 

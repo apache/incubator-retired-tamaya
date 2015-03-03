@@ -18,12 +18,27 @@ Apache Tamaya -- API
 :icons:
 :encoding: UTF-8
 :numbered:
-
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
 '''
 
 <<<
 
--> add image : : https://raw.githubusercontent.com/JavaConfig/config-api/master/src/main/asciidoc/images/javaconfig.jpg[]
+image::http://tamaya.incubator.apache.org/resources/images/logos/logo_wood.png[]
 
 toc::[]
 
@@ -49,6 +64,7 @@ under the License.
 -----------------------------------------------------------
 
 :numbered:
+
 [[API]]
 == The Tamaya API
 === Overview
@@ -92,10 +108,12 @@ This is also reflected in the main parts of the API, which is quite small:
 * +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +ServiceContext+
   mechanism.
 
+
 === Compatibility
 
 The Tamaya API basically is compatible with Java 7 and Java 8. Java 8 additionally introduces additional methods
 hereby leveraging the newly added Java 8 +Optional+ features and _default_ methods.
+
 
 [[APIKeyValues]]
 === Key/Value Pairs
@@ -125,6 +143,7 @@ String val = props.getProperty("a.b.c");
 val = props.getProperty("a.b.c.1");
 ...
 --------------------------------------------
+
 
 ==== Why Using Strings Only
 
@@ -158,11 +177,13 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 * String s also can be used as references pointing to other locations and formats, where configuration is
   accessible.
 
+
 [[API Configuration]]
 === Configuration
 
 +Configuration+ is the main API provided by Tamaya. It allows reading of single property values or the whole
 property map, but also supports type safe access.
+
 
 ==== Configuration (Java 7)
 
@@ -363,6 +384,7 @@ The class +ConfigException+ models the base *runtime* exception used by the conf
 [[SPI]]
 == SPI
 
+
 [[PropertySource]]
 === Interface PropertySource
 
@@ -493,6 +515,7 @@ public interface PropertyValueCombinationPolicy{
 }
 --------------------------------------------
 
+
 [[ConfigurationContext]]
 ==== The Configuration Context
 
@@ -577,6 +600,7 @@ One of the most important SPI in Tamaya if the +ConfigurationProviderSpi+ interf
 * to provide access to the right +Configuration/ConfigurationContext+ based on the current runtime context.
 * Performing changes as set with the current +ConfigurationContextBuilder+.
 
+
 [[ServiceContext]]
 ==== The ServiceContext
 
@@ -585,19 +609,117 @@ The +ServiceContext+ hereby defines access methods to obtain components, whereas
 +ServiceContextManager+ singleton:
 
 [source,java]
-                                            .Accessing the +ServiceContext+
-                                            --------------------------------------------
-                                            ServiceContext serviceContext = ServiceContextManager.getServiceContext();
+.Accessing the +ServiceContext+
+--------------------------------------------
+ServiceContext serviceContext = ServiceContextManager.getServiceContext();
 
-                                            public interface ServiceContext{
-                                                int ordinal();
-                                                <T> T getService(Class<T> serviceType);
-                                                <T> List<T> getServices(Class<T> serviceType);
-                                            }
-                                            --------------------------------------------
+public interface ServiceContext{
+    int ordinal();
+    <T> T getService(Class<T> serviceType);
+    <T> List<T> getServices(Class<T> serviceType);
+}
+--------------------------------------------
 
 With the +ServiceContext+ a component can be accessed in two different ways:
 
 . access as as a single property. Hereby the registered instances (if multiple) are sorted by priority and then finally
   the most significant instance is returned only.
-. access all items given its type. This will return (by default) all  instances loaded a
+. access all items given its type. This will return (by default) all  instances loadedable from the current
+  runtime context, ordered by priority, hereby the most significant components added first.
+
+
+## Examples
+### Accessing Configuration
+
+_Configuration_ is obtained from the ConfigurationProvider singleton:
+
+[source,java]
+.Accessing +Configuration+
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+--------------------------------------------
+
+Many users in a SE context will probably only work with _Configuration_, since it offers all functionality
+needed for basic configuration with a very lean memory and runtime footprint. In Java 7 access to the keys is
+very similar to *Map<String,String>*, whereas in Java 8 additionally usage of _Optional_ is supported:
+
+[source,java]
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+String myKey = config.get("myKey");                         // may return null
+int myLimit = config.getInt("all.size.limit").getAsInt();   // Never returns null
+--------------------------------------------
+
+In Java 8 the following would be possible as well:
+
+[source,java]
+--------------------------------------------
+int myLimit = config.getOptionalInt("all.size.limit").getAsInt(); // OptionalInt
+Class<T> targetClass = config.get("myClass", Class.class);        // Optional<Class>, returns  never null
+--------------------------------------------
+
+
+### Environment and System Properties
+
+By default environment and system properties are provided automatically as part of the default _Configuration_. The
+environment properties hereby are prefixed with _env._. So we can access the current _PROMPT_ environment variable
+as follows:
+
+[source,java]
+--------------------------------------------
+String prompt = ConfigurationProvider.getConfiguration().get("env.PROMPT");
+--------------------------------------------
+
+Similary the system properties are directly applied to the _Configuration_. So if we pass the following system
+property to our JVM:
+
+[source,java]
+--------------------------------------------
+java ... -Duse.my.system.answer=yes
+--------------------------------------------
+
+we can access it as follows:
+
+[source,java]
+--------------------------------------------
+boolean useMySystem = ConfigurationProvider.getBoolean("use.my.system.answer");
+--------------------------------------------
+
+
+### Adding a Custom Configuration
+
+Adding a classpath based configuration is simply as well: just implement an according _PropertySource_. With the
+Tamaya core module you just have to perform the following steps:
+
+. Define a PropertySource as follows:
+
+[source,java]
+--------------------------------------------
+  public class MyPropertySource extends PropertiesFilePropertySource{
+
+    public MyPropertySource(){
+        super(ClassLoader.getSystemClassLoader().getResource("META-INF/cfg/myconfig.properties"));
+    }
+  }
+--------------------------------------------
+
+. Register the new PropertySource using the ServiceLoader by adding the following file:
+
+[source,listing]
+--------------------------------------------
+META-INF/services/org.apache.tamaya.spi.PropertySource
+--------------------------------------------
+
+And adding there the entry for the new PropertySource:
+
+[source,listing]
+--------------------------------------------
+comp.mapackage.MyPropertySource
+--------------------------------------------
+
+
+[[APIImpl]]
+== API Implementation
+
+The API is implemented by the Tamaya _Core_module. Refer to the link:Core.html[Core documentation] for
+further details.

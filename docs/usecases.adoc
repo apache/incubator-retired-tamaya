@@ -1,0 +1,59 @@
+= Apache Tamaya -- Use Cases
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya
+:revnumber: 0.1-SNAPSHOT
+:revremark: Incubator
+:revdate: November 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: OBF
+:author: Oliver B. Fischer
+:email: <plexus@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+toc::[]
+
+
+== Use Cases for Java SE Environments
+
+include::uc/simple-access.adoc[]
+include::uc/simple-property-access.adoc[]
+include::uc/value-placeholders.adoc[]
+include::uc/type-safe-properties.adoc[]
+include::uc/templates.adoc[]
+include::uc/java8.adoc[]
+include::uc/locations.adoc[]
+include::uc/formats.adoc[]
+include::uc/multiple-configurations.adoc[]
+include::uc/external-configuration.adoc[]
+include::uc/context-dependent-configuration.adoc[]
+include::uc/dynamic-provisioning.adoc[]
+include::uc/minimal-propertysource.adoc[]
+include::uc/scannable-properties.adoc[]
+include::uc/combine-configs.adoc[]
+include::uc/management.adoc[]
+include::uc/service-context.adoc[]
+include::uc/injection.adoc[]
+
+
