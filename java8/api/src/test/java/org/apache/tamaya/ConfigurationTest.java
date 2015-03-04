@@ -39,9 +39,11 @@ public class ConfigurationTest {
 
     @org.junit.Test
     public void testGetBoolean() throws Exception {
-        assertTrue(ConfigurationProvider.getConfiguration().getBoolean("booleanTrue"));
-        assertFalse(ConfigurationProvider.getConfiguration().getBoolean("booleanFalse"));
-        assertFalse(ConfigurationProvider.getConfiguration().getBoolean("foorBar"));
+        assertTrue(ConfigurationProvider.getConfiguration().getBoolean("booleanTrue").isPresent());
+        assertTrue(ConfigurationProvider.getConfiguration().getBoolean("booleanFalse").isPresent());
+        assertFalse(ConfigurationProvider.getConfiguration().getBoolean("booleanFalse").get());
+        assertTrue(ConfigurationProvider.getConfiguration().getBoolean("booleanTrue").get());
+        assertFalse(ConfigurationProvider.getConfiguration().getBoolean("fooBar").isPresent());
     }
 
     @org.junit.Test

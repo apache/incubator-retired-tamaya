@@ -63,13 +63,13 @@ public class TestConfiguration implements Configuration {
         } else if (type.getType().equals(Boolean.class)) {
             if ("booleanTrue".equals(key)) {
                 return (T) (Object) Boolean.TRUE;
-            } else {
+            } else if ("booleanFalse".equals(key)) {
                 return (T) (Object) Boolean.FALSE;
             }
         } else if (type.getType().equals(String.class)) {
             return (T) (Object) "aStringValue";
         }
-        throw new ConfigException("No such property: " + key);
+        return null;
     }
 
     @Override

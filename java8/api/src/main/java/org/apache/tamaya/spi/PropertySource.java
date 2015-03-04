@@ -20,6 +20,8 @@ package org.apache.tamaya.spi;
 
 
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -78,9 +80,19 @@ public interface PropertySource {
      * config-source, but all of them have ordinal 400 by default (and can be reordered in a fine-grained manner.</p>
      *
      * @return the 'importance' aka ordinal of the configured values. The higher, the more important.
-     * //X TODO think about making this a default method which returns default priority
      */
-    int getOrdinal();
+    default int getOrdinal(){
+        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        if(configuredOrdinal!=null){
+            try{
+                return Integer.parseInt(configuredOrdinal);
+            } catch(Exception e){
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, e,
+                        () -> "Configured Ordinal is not an int number: " + configuredOrdinal);
+            }
+        }
+        return 0;
+    }
 
 
     /**

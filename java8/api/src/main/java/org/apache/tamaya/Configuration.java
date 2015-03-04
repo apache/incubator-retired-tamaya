@@ -67,6 +67,7 @@ public interface Configuration {
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
+     * @param <T>  the target type.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
@@ -82,6 +83,7 @@ public interface Configuration {
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
+     * @param <T>  the target type.
      * @return the property value, or null, if the underlying value is null as well.
      * @throws ConfigException if the value could not be converted to the required target type by any of the
      *                         registered converters.
@@ -125,6 +127,7 @@ public interface Configuration {
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
+     * @param <T>  the target type.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
@@ -140,6 +143,7 @@ public interface Configuration {
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
+     * @param <T>  the target type.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
@@ -160,6 +164,7 @@ public interface Configuration {
      *                  a/b/c/d.myProperty}.
      * @param converter the PropertyConverter to perform the conversion fromMap
      *                  {@link String} to {@code Class<T>}, not {@code null}.
+     * @param <T>       the target type.
      * @return the property's keys.
      * @throws ConfigException if the keys could not be converted to the required target
      *                         type, or no such property exists.
@@ -177,6 +182,9 @@ public interface Configuration {
      * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
      * instances may not be contained in the result, but nevertheless be accessible calling one of the
      * {@code get(...)} methods.
+     *
+     * @return the current properties. These may not include all properties from non-scannable
+     * {@link org.apache.tamaya.spi.PropertySource}s.
      */
     @SuppressWarnings("JavaDoc")
     Map<String, String> getProperties();
@@ -194,9 +202,11 @@ public interface Configuration {
      *                  a/b/c/d.myProperty}.
      * @param converter the PropertyConverter to perform the conversion fromMap
      *                  {@link String} to {@code Class<T>}, not {@code null}.
+     * @param <T>       the target type.
      * @return the property's keys.
      * @throws ConfigException if the keys could not be converted to the required target
      *                         type, or no such property exists.
+     * @since Java8
      */
     default <T> Optional<T> getOptional(String key, PropertyConverter<T> converter) {
         Optional<String> value = getOptional(key);
@@ -214,11 +224,10 @@ public interface Configuration {
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
+     * @since Java8
      */
-    default Boolean getBoolean(String key) {
-        Optional<Boolean> val = getOptional(key, Boolean.class);
-
-        return val.orElse(null);
+    default Optional<Boolean> getBoolean(String key) {
+        return getOptional(key, Boolean.class);
     }
 
     /**
@@ -228,6 +237,7 @@ public interface Configuration {
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
+     * @since Java8
      */
     default OptionalInt getInteger(String key) {
         Optional<Integer> val = getOptional(key, Integer.class);
@@ -245,6 +255,7 @@ public interface Configuration {
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
+     * @since Java8
      */
     default OptionalLong getLong(String key) {
         Optional<Long> val = getOptional(key, Long.class);
@@ -261,6 +272,7 @@ public interface Configuration {
      *            a/b/c/d.myProperty}.
      * @return the property's keys.
      * @throws ConfigException if the configured value could not be converted to the target type.
+     * @since Java8
      */
     default OptionalDouble getDouble(String key) {
 
@@ -286,6 +298,7 @@ public interface Configuration {
      * Query a configuration.
      *
      * @param query the query, never {@code null}.
+     * @param <T>       the target query result type.
      * @return the result
      */
     default <T> T query(ConfigQuery<T> query) {
