@@ -18,17 +18,30 @@
  */
 package org.apache.tamaya.modules.builder;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.DefaultConfiguration;
+import org.apache.tamaya.format.ConfigurationData;
+import org.apache.tamaya.format.ConfigurationFormats;
+import org.apache.tamaya.format.FlattenedDefaultPropertySource;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /* TODO LIST FOR TAMAYA-60
  *
@@ -40,7 +53,7 @@ import java.util.Objects;
  * - Rethink the default behaviour for SPI loading
  * - Work on all TODOs for TAMAYA-60
  * - Write JavaDoc
- * - adding sources via URL
+ * - adding sources via URL IN PROGRESS
  *
  *
  *
@@ -81,6 +94,39 @@ public class ConfigurationBuilder {
      */
     ConfigurationBuilder setConfigurationContext(ConfigurationContext configurationContext) {
         contextBuilder.setConfigurationContext(configurationContext);
+        return this;
+    }
+
+    public ConfigurationBuilder addPropertySource(URL url) {
+        try {
+            ConfigurationData data = ConfigurationFormats.readConfigurationData(url);
+            FlattenedDefaultPropertySource propertySource = new FlattenedDefaultPropertySource(data);
+            addPropertySources(propertySource);
+        } catch (IOException e) {
+            throw new ConfigException("Failed to read " + url.toString(), e);
+        }
+
+        return this;
+    }
+
+    public ConfigurationBuilder addPropertySource(URL url, URL... urls) {
+        Stream.of(Collections.singletonList(url), Arrays.asList(urls))
+              .flatMap(Collection::stream)
+              .filter(entry -> entry != null)
+              .collect(Collectors.toList())
+              .forEach(this::addPropertySource);
+
+        return this;
+    }
+
+    public ConfigurationBuilder addPropertySource(String url, String... urls) {
+        Stream.of(Collections.singletonList(url), Arrays.asList(urls))
+              .flatMap(Collection::stream)
+              .filter(entry -> entry != null)
+              .map(new StringToURLMapper())
+              .collect(Collectors.toList())
+              .forEach(this::addPropertySource);
+
         return this;
     }
 
@@ -248,4 +294,17 @@ public class ConfigurationBuilder {
         return new DefaultConfiguration(contextBuilder.build());
     }
 
+    /**
+     * Mapper to map a URL given as string to an URL instance.
+     */
+    private static class StringToURLMapper implements Function<String, URL> {
+        @Override
+        public URL apply(String u) {
+            try {
+                return new URL(u);
+            } catch (MalformedURLException e) {
+                throw new ConfigException(u + " is not a valid URL", e);
+            }
+        }
+    }
 }

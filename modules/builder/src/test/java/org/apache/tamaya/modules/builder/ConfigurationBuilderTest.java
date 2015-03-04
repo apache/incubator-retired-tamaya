@@ -33,6 +33,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
+import java.net.URL;
+
 import static java.util.Arrays.asList;
 import static org.apache.tamaya.modules.builder.util.mockito.NotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -759,4 +761,108 @@ public class ConfigurationBuilderTest {
         assertThat(config.get("tpsp_x"), nullValue());
         assertThat(config.get("tpsp_x"), nullValue());
     }
+
+    /*********************************************************************
+     * Tests for loading resources via URL (as String)
+     */
+
+    @Test
+    public void loadOneJSONPropertySourceViaStringURL() {
+        URL resource = this.getClass().getResource("/configfiles/json/simple.json");
+
+        assertThat(resource, CoreMatchers.notNullValue());
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySource(resource.toString())
+                                      .build();
+
+        assertThat(config, CoreMatchers.notNullValue());
+        assertThat(config.get("a"), equalTo("A"));
+        assertThat(config.get("b"), equalTo("B"));
+    }
+
+    @Test
+    public void loadMultipleJSONPropertySourceViaStringURL() {
+        URL first = this.getClass().getResource("/configfiles/json/first.json");
+        URL second = this.getClass().getResource("/configfiles/json/second.json");
+        URL third = this.getClass().getResource("/configfiles/json/third.json");
+
+        assertThat(first, CoreMatchers.notNullValue());
+        assertThat(second, CoreMatchers.notNullValue());
+        assertThat(third, CoreMatchers.notNullValue());
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySource(first.toString(), second.toString(),
+                                                         null, third.toString())
+                                      .build();
+
+        assertThat(config, CoreMatchers.notNullValue());
+
+        // from first.json
+        assertThat(config.get("d"), equalTo("D"));
+        assertThat(config.get("e"), equalTo("E"));
+
+        // from second.json
+        assertThat(config.get("m"), equalTo("M"));
+        assertThat(config.get("n"), equalTo("N"));
+
+        // from thrid.json
+        assertThat(config.get("p"), equalTo("P"));
+        assertThat(config.get("q"), equalTo("Q"));
+    }
+
+    /**
+     * ******************************************************************
+     * Tests for loading resources via URL (as URL object)
+     */
+
+    @Test
+    public void loadOneJSONPropertySourceViaURL() {
+        URL resource = this.getClass().getResource("/configfiles/json/simple.json");
+
+        assertThat(resource, CoreMatchers.notNullValue());
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySource(resource)
+                                      .build();
+
+        assertThat(config, CoreMatchers.notNullValue());
+        assertThat(config.get("a"), equalTo("A"));
+        assertThat(config.get("b"), equalTo("B"));
+    }
+
+    @Test
+    public void loadMultipleJSONPropertySourceViaURL() {
+        URL first = this.getClass().getResource("/configfiles/json/first.json");
+        URL second = this.getClass().getResource("/configfiles/json/second.json");
+        URL third = this.getClass().getResource("/configfiles/json/third.json");
+
+        assertThat(first, CoreMatchers.notNullValue());
+        assertThat(second, CoreMatchers.notNullValue());
+        assertThat(third, CoreMatchers.notNullValue());
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        Configuration config = builder.addPropertySource(first, second,
+                                                         null, third)
+                                      .build();
+
+        assertThat(config, CoreMatchers.notNullValue());
+
+        // from first.json
+        assertThat(config.get("d"), equalTo("D"));
+        assertThat(config.get("e"), equalTo("E"));
+
+        // from second.json
+        assertThat(config.get("m"), equalTo("M"));
+        assertThat(config.get("n"), equalTo("N"));
+
+        // from thrid.json
+        assertThat(config.get("p"), equalTo("P"));
+        assertThat(config.get("q"), equalTo("Q"));
+    }
+
 }
