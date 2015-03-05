@@ -43,6 +43,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+
 /* TODO LIST FOR TAMAYA-60
  *
  * - configurable loading of provided PropertyConverter DONE
@@ -99,7 +101,8 @@ public class ConfigurationBuilder {
 
     public ConfigurationBuilder addPropertySource(URL url) {
         try {
-            ConfigurationData data = ConfigurationFormats.readConfigurationData(url);
+            ConfigurationData data = getConfigurationDataFromURL(url);
+
             FlattenedDefaultPropertySource propertySource = new FlattenedDefaultPropertySource(data);
             addPropertySources(propertySource);
         } catch (IOException e) {
@@ -107,6 +110,19 @@ public class ConfigurationBuilder {
         }
 
         return this;
+    }
+
+    private ConfigurationData getConfigurationDataFromURL(URL url) throws IOException {
+        ConfigurationData data = ConfigurationFormats.readConfigurationData(url);
+
+        if (null == data) {
+            String mesg = format("No configuration format found which is able " +
+                                 "to read properties from %s.", url.toString());
+
+            throw new ConfigException(mesg);
+        }
+
+        return data;
     }
 
     public ConfigurationBuilder addPropertySource(URL url, URL... urls) {

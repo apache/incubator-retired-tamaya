@@ -766,6 +766,17 @@ public class ConfigurationBuilderTest {
      * Tests for loading resources via URL (as String)
      */
 
+    @Test(expected = ConfigException.class)
+    public void tryToLoadOneUnsupportedPropertySourceViaStringURL() {
+        URL resource = this.getClass().getResource("/configfiles/other/simple.oml");
+
+        assertThat(resource, CoreMatchers.notNullValue());
+
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.addPropertySource(resource.toString()).build();
+    }
+
     @Test
     public void loadOneJSONPropertySourceViaStringURL() {
         URL resource = this.getClass().getResource("/configfiles/json/simple.json");
