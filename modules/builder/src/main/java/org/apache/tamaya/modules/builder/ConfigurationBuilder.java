@@ -125,6 +125,28 @@ public class ConfigurationBuilder {
         return data;
     }
 
+    /**
+     * Adds one or more resources with properties in an arbitrary format
+     * to the configuration to be build.
+     *
+     * <p>If a specific format is supported depends on the available
+     * {@link org.apache.tamaya.format.ConfigurationFormat} implementations.</p>
+     *
+     *<pre>
+     * URL first = new URL("file:/etc/service/config.json");
+     * URL second = new URL(file:/etc/defaults/values.properties");
+     *
+     * builder.addPropertySources(first, second);
+     *</pre>
+     *
+     * @param url first resource with properties for the the configuration to be build.
+     * @param urls list additional of resources with properties for the configuration to be
+     *             build.
+     * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.format.ConfigurationFormat
+     * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
+     */
     public ConfigurationBuilder addPropertySource(URL url, URL... urls) {
         Stream.of(Collections.singletonList(url), Arrays.asList(urls))
               .flatMap(Collection::stream)
