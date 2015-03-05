@@ -55,7 +55,7 @@ import static java.lang.String.format;
  * - Rethink the default behaviour for SPI loading
  * - Work on all TODOs for TAMAYA-60
  * - Write JavaDoc
- * - adding sources via URL IN PROGRESS
+ * - adding sources via URL DONE
  *
  *
  *
