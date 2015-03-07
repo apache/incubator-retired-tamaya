@@ -112,7 +112,7 @@ public class ConfigurationBuilder {
         return this;
     }
 
-    private ConfigurationData getConfigurationDataFromURL(URL url) throws IOException {
+    protected ConfigurationData getConfigurationDataFromURL(URL url) throws IOException {
         ConfigurationData data = ConfigurationFormats.readConfigurationData(url);
 
         if (null == data) {

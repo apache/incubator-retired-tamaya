@@ -31,8 +31,10 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 
+import java.io.IOException;
 import java.net.URL;
 
 import static java.util.Arrays.asList;
@@ -43,7 +45,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -760,6 +764,19 @@ public class ConfigurationBuilderTest {
         assertThat(builder.isPropertySourceProvidersLoadingEnabled(), is(false));
         assertThat(config.get("tpsp_x"), nullValue());
         assertThat(config.get("tpsp_x"), nullValue());
+    }
+
+    @Test(expected = ConfigException.class)
+    public void ioExceptionIsTurnedInConfigExceptionWhenLoadingResourceViaURL() throws Exception {
+        URL resource = this.getClass().getResource("/configfiles/json/simple.json");
+
+        assertThat(resource, CoreMatchers.notNullValue());
+
+        ConfigurationBuilder builder = mock(ConfigurationBuilder.class, CALLS_REAL_METHODS);
+
+        doThrow(IOException.class).when(builder).getConfigurationDataFromURL(Mockito.eq(resource));
+
+        builder.addPropertySource(resource).build();
     }
 
     /*********************************************************************
