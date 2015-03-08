@@ -63,7 +63,29 @@ import static java.lang.String.format;
  */
 
 /**
- * Builder that allows to build a Configuration completely manually.
+ * <p>Builder class used for building a configuration manually without relying
+ * only on the Service Provider Interface API.</p>
+ *
+ * <p><strong>Features of the builder</strong></p>
+ *
+ * <ol>
+ *   <li>Adding of property converters manually</li>
+ *   <li>Adding of property sources directly</li>
+ *   <li>Adding of property sources via URL</li>
+ *   <li>Adding of property source providers directly</li>
+ *   <li>Enabling and disabling of via SPI mechanism provided resources as converters,
+ *       property sources, etc.</li>
+ * </ol>
+ *
+ * <p><strong>Example</strong></p>
+ *
+ * <pre>{@code ConfigurationBuilder builder = new ConfigurationBuilder();
+ * builder.disableProvidedPropertySources()           // Do not load provided property
+ *        .disableProvidedPropertySourceProviders()   // sources and providers automatically
+ *        .addPropertySource("file:/etc/conf.properties"); // Load properties from conf.properties
+ *
+ * Configuration config = builder.build();
+ * }</pre>
  */
 public class ConfigurationBuilder {
     /** Builder used to create new ConfigurationContext instances. */
@@ -307,6 +329,13 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * Checks if the automatic loading of {@link org.apache.tamaya.spi.PropertySourceProvider
+     * PropertySourceProviders} is enabled or disabled.
+     *
+     * @return {@code true} if the automatic loading is enabled,
+     *         otherwise {@code false}.
+     */
     public boolean isPropertySourceProvidersLoadingEnabled() {
         return loadProvidedPropertySourceProviders;
     }
@@ -316,8 +345,10 @@ public class ConfigurationBuilder {
 
 
     /**
-     * Creates a new Configuration instance based on the configured data.
-     * @return a new Configuration instance.
+     * Builds a new configuration based on the configuration of this builder instance.
+     *
+     * @return a new {@link org.apache.tamaya.Configuration configuration instance},
+     *         never {@code null}.
      */
     public Configuration build() {
         checkBuilderState();
