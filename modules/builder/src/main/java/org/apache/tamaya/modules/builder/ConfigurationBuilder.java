@@ -121,6 +121,9 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder addPropertySource(URL url) {
         try {
             ConfigurationData data = getConfigurationDataFromURL(url);
@@ -179,6 +182,9 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder addPropertySource(String url, String... urls) {
         Stream.of(Collections.singletonList(url), Arrays.asList(urls))
               .flatMap(Collection::stream)
@@ -190,6 +196,9 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder addPropertySources(PropertySource... sources){
         checkBuilderState();
 
@@ -203,11 +212,17 @@ public class ConfigurationBuilder {
         }
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder addPropertySourceProviders(PropertySourceProvider... propertySourceProviders){
         contextBuilder.addPropertySourceProviders(propertySourceProviders);
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder addPropertyFilters(PropertyFilter... propertyFilters){
         Objects.requireNonNull(propertyFilters);
 
@@ -215,11 +230,17 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy propertyValueCombinationPolicy){
         contextBuilder.setPropertyValueCombinationPolicy(propertyValueCombinationPolicy);
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public <T> ConfigurationBuilder addPropertyConverter(Class<T> type, PropertyConverter<T> propertyConverter) {
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverter);
@@ -227,6 +248,9 @@ public class ConfigurationBuilder {
         return addPropertyConverter(TypeLiteral.of(type), propertyConverter);
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public <T> ConfigurationBuilder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter){
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverter);
@@ -244,6 +268,8 @@ public class ConfigurationBuilder {
      * Enables the loading of all {@link org.apache.tamaya.PropertyConverter}
      * service providers.
      *
+     * @return the builder instance currently used
+     *
      * @see org.apache.tamaya.PropertyConverter
      * @see #disableProvidedPropertyConverters()
      */
@@ -259,6 +285,8 @@ public class ConfigurationBuilder {
      * Disables the loading of all {@link org.apache.tamaya.PropertyConverter}
      * service providers.
      *
+     * @return the builder instance currently used
+     *
      * @see org.apache.tamaya.PropertyConverter
      * @see #enableProvidedPropertyConverters()
      */
@@ -271,6 +299,9 @@ public class ConfigurationBuilder {
     }
 
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder enableProvidedPropertySources() {
         checkBuilderState();
 
@@ -289,6 +320,9 @@ public class ConfigurationBuilder {
     }
 
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder enabledProvidedPropertyFilters() {
         checkBuilderState();
 
@@ -297,6 +331,9 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder disableProvidedPropertyFilters() {
         checkBuilderState();
 
@@ -305,6 +342,9 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder disableProvidedPropertySources() {
         checkBuilderState();
 
@@ -313,6 +353,11 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     *
+     *
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder enableProvidedPropertySourceProviders() {
         checkBuilderState();
 
@@ -321,6 +366,12 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * Disables the automatic loading of {@link org.apache.tamaya.spi.PropertySourceProvider
+     * property source providers} provided via the SPI API.
+     *
+     * @return the builder instance currently used
+     */
     public ConfigurationBuilder disableProvidedPropertySourceProviders() {
         checkBuilderState();
 
