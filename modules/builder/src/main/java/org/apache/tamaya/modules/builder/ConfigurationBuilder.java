@@ -122,7 +122,23 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Adds one resources with properties in an arbitrary format
+     * to the configuration to be build.
+     *
+     * <p>If a specific format is supported depends on the available
+     * {@link org.apache.tamaya.format.ConfigurationFormat} implementations.</p>
+     *
+     * <pre>{@code URL resource = new URL("file:/etc/service/config.json");
+     *
+     * builder.addPropertySources(resource);}
+     * </pre>
+     *
+     * @param url resource with properties for the the configuration to be build.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.format.ConfigurationFormat
+     * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
     public ConfigurationBuilder addPropertySource(URL url) {
         try {
@@ -325,7 +341,7 @@ public class ConfigurationBuilder {
     }
 
     /**
-     * Disables the loading of all {@link org.apache.tamaya.PropertyConverter}
+     * Disables the automatic loading of all {@link org.apache.tamaya.PropertyConverter}
      * service providers.
      *
      * @return the builder instance currently used
@@ -343,7 +359,13 @@ public class ConfigurationBuilder {
 
 
     /**
+     * Enables the automatic loading of all {@link org.apache.tamaya.spi.PropertySource}
+     * service providers.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertySource
+     * @see #disableProvidedPropertySources()
      */
     public ConfigurationBuilder enableProvidedPropertySources() {
         checkBuilderState();
@@ -353,11 +375,25 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * Checks if the automatic loading of all {@link org.apache.tamaya.spi.PropertySource
+     * PropertySource} service providers is enabled or disabled.
+     *
+     * @return {@code true} if the automatic loading is enabled,
+     *         otherwise {@code false}.
+     */
     public boolean isPropertySourcesLoadingEnabled() {
         return loadProvidedPropertySources;
     }
 
 
+    /**
+     * Checks if the automatic loading of all {@link org.apache.tamaya.spi.PropertyFilter
+     * PropertyFilter} service providers is enabled or disabled.
+     *
+     * @return {@code true} if the automatic loading is enabled,
+     * otherwise {@code false}.
+     */
     public boolean isPropertyFilterLoadingEnabled() {
         return isLoadProvidedPropertyFilters;
     }
@@ -375,7 +411,7 @@ public class ConfigurationBuilder {
     }
 
     /**
-     * Disables the loading of all {@link org.apache.tamaya.spi.PropertyFilter}
+     * Disables the automatic loading of all {@link org.apache.tamaya.spi.PropertyFilter}
      * service providers.
      *
      * @return the builder instance currently used
@@ -394,7 +430,13 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Disables the automatic loading of all {@link org.apache.tamaya.spi.PropertySource}
+     * service providers.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertySource
+     * @see #enableProvidedPropertySources()
      */
     public ConfigurationBuilder disableProvidedPropertySources() {
         checkBuilderState();
@@ -405,9 +447,13 @@ public class ConfigurationBuilder {
     }
 
     /**
-     *
+     * Enables the automatic loading of {@link org.apache.tamaya.spi.PropertySourceProvider
+     * property source providers} provided via the SPI API.
      *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertySourceProvider
+     * @see
      */
     public ConfigurationBuilder enableProvidedPropertySourceProviders() {
         checkBuilderState();
