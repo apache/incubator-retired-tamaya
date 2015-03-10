@@ -157,16 +157,16 @@ public class ConfigurationBuilder {
      * <p>If a specific format is supported depends on the available
      * {@link org.apache.tamaya.format.ConfigurationFormat} implementations.</p>
      *
-     *<pre>
-     * URL first = new URL("file:/etc/service/config.json");
-     * URL second = new URL(file:/etc/defaults/values.properties");
+     *<pre>{@code URL first = new URL("file:/etc/service/config.json");
+     * URL second = new URL("file:/etc/defaults/values.properties");
      *
-     * builder.addPropertySources(first, second);
+     * builder.addPropertySources(first, second);}
      *</pre>
      *
      * @param url first resource with properties for the the configuration to be build.
      * @param urls list additional of resources with properties for the configuration to be
      *             build.
+     *
      * @return the builder instance currently used
      *
      * @see org.apache.tamaya.format.ConfigurationFormat
@@ -182,8 +182,26 @@ public class ConfigurationBuilder {
         return this;
     }
 
+
     /**
+     * Adds one or more resources with properties in an arbitrary format
+     * to the configuration to be build.
+     *
+     * <p>If a specific format is supported depends on the available
+     * {@link org.apache.tamaya.format.ConfigurationFormat} implementations.</p>
+     *
+     *<pre>{@code builder.addPropertySources("file:/etc/service/config.json",
+     *                            "file:/etc/defaults/values.properties");}
+     *</pre>
+     *
+     * @param url first resource with properties for the the configuration to be build.
+     * @param urls list additional of resources with properties for the configuration to be
+     *             build.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.format.ConfigurationFormat
+     * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
     public ConfigurationBuilder addPropertySource(String url, String... urls) {
         Stream.of(Collections.singletonList(url), Arrays.asList(urls))
@@ -197,7 +215,20 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Adds one or more property source instances to the configuration to be build.
+     *
+     *<pre>{@code PropertySource first = new CustomPropertySource();
+     * PropertySource second = new YetAnotherPropertySource();
+     *
+     * builder.addPropertySources(first, second)};
+     *</pre>
+     *
+     * @param sources list of property source instances with properties for the
+     *                configuration to be build.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertySource
      */
     public ConfigurationBuilder addPropertySources(PropertySource... sources){
         checkBuilderState();
@@ -213,10 +244,22 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Adds one or more property source provider instances to the configuration to be build.
+     *
+     * <pre>{@code PropertySourceProvider jc = new JavaConfigurationProvider();
+     *
+     * builder.addPropertySources(jc)};
+     * </pre>
+     *
+     * @param providers list of property source provider instances each providing a set
+     *                  of property source instances for the configuration to be build.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertySourceProvider
      */
-    public ConfigurationBuilder addPropertySourceProviders(PropertySourceProvider... propertySourceProviders){
-        contextBuilder.addPropertySourceProviders(propertySourceProviders);
+    public ConfigurationBuilder addPropertySourceProviders(PropertySourceProvider... providers){
+        contextBuilder.addPropertySourceProviders(providers);
         return this;
     }
 
@@ -332,6 +375,14 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Disables the loading of all {@link org.apache.tamaya.spi.PropertyFilter}
+     * service providers.
+     *
+     * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertyFilter
+     * @see #enabledProvidedPropertyFilters()
+     *
      * @return the builder instance currently used
      */
     public ConfigurationBuilder disableProvidedPropertyFilters() {
