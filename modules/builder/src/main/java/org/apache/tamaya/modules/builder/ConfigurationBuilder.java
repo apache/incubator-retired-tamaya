@@ -45,23 +45,6 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
-/* TODO LIST FOR TAMAYA-60
- *
- * - configurable loading of provided PropertyConverter DONE
- * - configurable loading of provided PropertySources DONE
- * - configurable loading of provided PropertySourceProviders DONE
- * - configurable loading of provided PropertyFilters DONE
- * - I can not overhand null in varargs
- * - Rethink the default behaviour for SPI loading
- * - Work on all TODOs for TAMAYA-60
- * - Write JavaDoc
- * - adding sources via URL DONE
- *
- *
- *
- *
- */
-
 /**
  * <p>Builder class used for building a configuration manually without relying
  * only on the Service Provider Interface API.</p>
@@ -112,6 +95,11 @@ public class ConfigurationBuilder {
 
     private boolean isLoadProvidedPropertyFilters = false;
 
+    /**
+     * Creates a new builder instance.
+     */
+    public ConfigurationBuilder() {
+    }
 
     /**
      * Allows to set configuration context during unit tests.
@@ -280,14 +268,30 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Adds one or more property filter instances to the configuration to be build.
+     *
+     * <pre>{@code PropertyFilter quoteReplacingFilter = new QuoteFilter();
+     * PropertyFilter commaRemovingFilter = new CommaFilter();
+     *
+     * builder.addPropertyFilters(commaRemovingFilter, quoteReplacingFilter)};
+     * </pre>
+     *
+     * @param filters list of property filter instances which should be applied
+     *                to the properties of the configuration to be build.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertyFilter
+     * @see #disableProvidedPropertyFilters()
+     * @see #enabledProvidedPropertyFilters()
      */
-    public ConfigurationBuilder addPropertyFilters(PropertyFilter... propertyFilters){
-        Objects.requireNonNull(propertyFilters);
+    public ConfigurationBuilder addPropertyFilters(PropertyFilter... filters){
+        Objects.requireNonNull(filters);
 
-        contextBuilder.addPropertyFilters(propertyFilters);
+        contextBuilder.addPropertyFilters(filters);
         return this;
     }
+
 
     /**
      * @return the builder instance currently used
@@ -298,13 +302,29 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Adds a property converter for the a given type to the configuration to
+     * be build.
+     *
+     * <pre>{@code PropertyConverter<MyType> converter = value -> new MyType(value, 42);
+     *
+     * builder.addPropertyConverter(MyType.class, converter}
+     * </pre>
+     *
+     * @param type the required target type the converter should be applied to
+     * @param converter the converter to be used to convert the string property
+     *                  to the given target type.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.PropertyConverter
+     * @see #enableProvidedPropertyConverters()
+     * @see #disableProvidedPropertyConverters()
      */
-    public <T> ConfigurationBuilder addPropertyConverter(Class<T> type, PropertyConverter<T> propertyConverter) {
+    public <T> ConfigurationBuilder addPropertyConverter(Class<T> type, PropertyConverter<T> converter) {
         Objects.requireNonNull(type);
-        Objects.requireNonNull(propertyConverter);
+        Objects.requireNonNull(converter);
 
-        return addPropertyConverter(TypeLiteral.of(type), propertyConverter);
+        return addPropertyConverter(TypeLiteral.of(type), converter);
     }
 
     /**
@@ -318,7 +338,18 @@ public class ConfigurationBuilder {
         return this;
     }
 
-
+    /**
+     * Checks if the automatic loading of all {@link org.apache.tamaya.PropertyConverter
+     * PropertyConverter} service providers is enabled or disabled.
+     *
+     * @return {@code true} if the automatic loading is enabled,
+     *         otherwise {@code false}.
+     *
+     * @see #enableProvidedPropertyConverters()
+     * @see #disableProvidedPropertyConverters()
+     * @see #addPropertyConverter(Class, org.apache.tamaya.PropertyConverter)
+     * @see #addPropertyConverter(org.apache.tamaya.TypeLiteral, org.apache.tamaya.PropertyConverter)
+     */
     public boolean isPropertyConverterLoadingEnabled() {
         return loadProvidedPropertyConverters;
     }
@@ -331,6 +362,7 @@ public class ConfigurationBuilder {
      *
      * @see org.apache.tamaya.PropertyConverter
      * @see #disableProvidedPropertyConverters()
+     * @see #enableProvidedPropertyConverters()
      */
     public ConfigurationBuilder enableProvidedPropertyConverters() {
         checkBuilderState();
@@ -348,6 +380,7 @@ public class ConfigurationBuilder {
      *
      * @see org.apache.tamaya.PropertyConverter
      * @see #enableProvidedPropertyConverters()
+     * @see #addPropertyConverter(Class, org.apache.tamaya.PropertyConverter)
      */
     public ConfigurationBuilder disableProvidedPropertyConverters() {
         checkBuilderState();
@@ -392,15 +425,21 @@ public class ConfigurationBuilder {
      * PropertyFilter} service providers is enabled or disabled.
      *
      * @return {@code true} if the automatic loading is enabled,
-     * otherwise {@code false}.
+     *         otherwise {@code false}.
      */
     public boolean isPropertyFilterLoadingEnabled() {
         return isLoadProvidedPropertyFilters;
     }
 
-
     /**
+     * Enables the automatic loading of all {@link org.apache.tamaya.spi.PropertyFilter}
+     * service providers.
+     *
      * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.spi.PropertyFilter
+     * @see #disableProvidedPropertyFilters()
+     * @see #addPropertyFilters(org.apache.tamaya.spi.PropertyFilter...)
      */
     public ConfigurationBuilder enabledProvidedPropertyFilters() {
         checkBuilderState();
@@ -418,6 +457,7 @@ public class ConfigurationBuilder {
      *
      * @see org.apache.tamaya.spi.PropertyFilter
      * @see #enabledProvidedPropertyFilters()
+     * @see #addPropertyFilters(org.apache.tamaya.spi.PropertyFilter...)
      *
      * @return the builder instance currently used
      */
