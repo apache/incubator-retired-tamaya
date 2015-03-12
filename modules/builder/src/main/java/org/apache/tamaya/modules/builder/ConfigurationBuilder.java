@@ -69,6 +69,19 @@ import static java.lang.String.format;
  *
  * Configuration config = builder.build();
  * }</pre>
+ *
+ * <p><strong>Support for configuration formats</strong></p>
+ *
+ * The configuration builder allows you to add property resources
+ * via a URL, as shown in the code example above, without implementing
+ * a {@link org.apache.tamaya.spi.PropertySource PropertySource} or providing an
+ * instance of a {@link org.apache.tamaya.spi.PropertySource PropertySource}.
+ * If a property resource in
+ * a specific format can be added to configuration builder or not depends
+ * on the available implementations of
+ * {@link org.apache.tamaya.format.ConfigurationFormat} in the classpath.
+ * Which formats are available can be checked via
+ * {@link org.apache.tamaya.format.ConfigurationFormats#getFormats()}.
  */
 public class ConfigurationBuilder {
     /** Builder used to create new ConfigurationContext instances. */
