@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.builder;
+package org.apache.tamaya.builder;
 
 import org.apache.tamaya.spi.PropertySource;
 

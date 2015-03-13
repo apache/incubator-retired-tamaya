@@ -16,21 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.builder.util.types;
+package org.apache.tamaya.builder.util.types;
 
-public class CustomTypeC {
-    private String value;
+/**
+ * Custom type with two argument constructor.
+ */
+public class CustomTypeA {
+    private String name;
 
-
-    public CustomTypeC(String in, @SuppressWarnings("unused") int iHideThisConstructorForTamaya) {
-        value = in;
+    public CustomTypeA(String name, String other) {
+        this.name = name + other;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public static CustomTypeC produceFrom(String in) {
-        return new CustomTypeC(in, -1);
+    public String getName() {
+        return name;
     }
 }

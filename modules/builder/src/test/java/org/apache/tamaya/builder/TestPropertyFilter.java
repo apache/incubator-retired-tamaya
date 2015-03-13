@@ -16,24 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.builder.util.types;
+package org.apache.tamaya.builder;
 
-/**
- * Custom type with factory method
- * {@link org.apache.tamaya.builder.util.types.CustomTypeB#of(String)}
- */
-public class CustomTypeB {
-    private String name;
+import org.apache.tamaya.spi.PropertyFilter;
 
-    private CustomTypeB(String value) {
-        this.name = value;
-    }
+public class TestPropertyFilter implements PropertyFilter {
+    @Override
+    public String filterProperty(String key, String value) {
+        String result = value;
 
-    public String getName() {
-        return name;
-    }
+        if (!result.contains(("inBerlin"))) {
+            result = value + "inBerlin";
+        }
 
-    public static CustomTypeB of(String source) {
-        return new CustomTypeB(source);
+        return result;
     }
 }

@@ -16,19 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.builder;
-
-import org.apache.tamaya.spi.PropertyFilter;
-
-public class TestPropertyFilter implements PropertyFilter {
-    @Override
-    public String filterProperty(String key, String value) {
-        String result = value;
-
-        if (!result.contains(("inBerlin"))) {
-            result = value + "inBerlin";
-        }
-
-        return result;
-    }
-}
+/**
+ * This package provides
+ * {@link org.apache.tamaya.builder.ConfigurationBuilder a configuration
+ * builder} that allows to build a configuration manually without
+ * using exclusively on the Service Provider Interface API of Tamaya.
+ *
+ * @see org.apache.tamaya.builder.ConfigurationBuilder
+ * @see org.apache.tamaya.Configuration
+ */
+package org.apache.tamaya.builder;

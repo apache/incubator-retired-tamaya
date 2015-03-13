@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.builder;
+package org.apache.tamaya.builder;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
@@ -26,21 +26,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-public class TestPropertySourceProvider
+public class TestPropertySourceProviderB
     implements PropertySourceProvider
 {
     @Override
     public Collection<PropertySource> getPropertySources() {
         ArrayList<PropertySource> sources = new ArrayList<>(2);
 
-        sources.add(new XProvidingPropertySource());
-        sources.add(new YProvidingPropertySource());
+        sources.add(new AProvidingPropertySource());
+        sources.add(new BProvidingPropertySource());
 
         return sources;
     }
 
-    private class YProvidingPropertySource implements PropertySource {
-        private Map<String, String> props = Collections.singletonMap("tpsp_x", "X");
+    private class BProvidingPropertySource implements PropertySource {
+        private Map<String, String> props = Collections.singletonMap("tpsp_b", "B");
 
         @Override
         public int getOrdinal() {
@@ -49,7 +49,7 @@ public class TestPropertySourceProvider
 
         @Override
         public String getName() {
-            return "YProvidingPropertySource";
+            return "BProvidingPropertySource";
         }
 
         @Override
@@ -63,8 +63,8 @@ public class TestPropertySourceProvider
         }
     }
 
-    private class XProvidingPropertySource implements PropertySource {
-        private Map<String, String> props = Collections.singletonMap("tpsp_y", "Y");
+    private class AProvidingPropertySource implements PropertySource {
+        private Map<String, String> props = Collections.singletonMap("tpsp_a", "A");
 
         @Override
         public Map<String, String> getProperties() {
@@ -83,7 +83,7 @@ public class TestPropertySourceProvider
 
         @Override
         public String getName() {
-            return "XProvidingPropertySource";
+            return "AProvidingPropertySource";
         }
     }
 }

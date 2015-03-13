@@ -16,19 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.builder.util.types;
+package org.apache.tamaya.builder.util.types;
 
-/**
- * Custom type with two argument constructor.
- */
-public class CustomTypeA {
-    private String name;
+import org.apache.tamaya.PropertyConverter;
 
-    public CustomTypeA(String name, String other) {
-        this.name = name + other;
-    }
-
-    public String getName() {
-        return name;
+public class CustomTypeCPropertyConverter implements PropertyConverter<org.apache.tamaya.builder.util.types.CustomTypeC> {
+    @Override
+    public org.apache.tamaya.builder.util.types.CustomTypeC convert(String value) {
+        return org.apache.tamaya.builder.util.types.CustomTypeC.produceFrom(value);
     }
 }

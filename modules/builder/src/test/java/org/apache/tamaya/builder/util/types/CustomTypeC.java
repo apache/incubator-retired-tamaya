@@ -16,13 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * This package provides
- * {@link org.apache.tamaya.modules.builder.ConfigurationBuilder a configuration
- * builder} that allows to build a configuration manually without
- * using exclusively on the Service Provider Interface API of Tamaya.
- *
- * @see org.apache.tamaya.modules.builder.ConfigurationBuilder
- * @see org.apache.tamaya.Configuration
- */
-package org.apache.tamaya.modules.builder;
+package org.apache.tamaya.builder.util.types;
+
+public class CustomTypeC {
+    private String value;
+
+
+    public CustomTypeC(String in, @SuppressWarnings("unused") int iHideThisConstructorForTamaya) {
+        value = in;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public static CustomTypeC produceFrom(String in) {
+        return new CustomTypeC(in, -1);
+    }
+}
