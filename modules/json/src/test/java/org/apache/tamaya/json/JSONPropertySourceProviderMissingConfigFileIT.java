@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.json;
+package org.apache.tamaya.json;
 
 import org.apache.tamaya.core.internal.DefaultServiceContext;
 import org.apache.tamaya.spi.PropertySourceProvider;

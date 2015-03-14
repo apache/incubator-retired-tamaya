@@ -16,29 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.json;
+package org.apache.tamaya.json;
 
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.format.ConfigurationFormat;
 
-import java.util.Map;
+import java.io.InputStream;
+import java.net.URL;
 
-public class ConfigurationDataUCD implements UnifiedConfigData {
-    private ConfigurationData data;
+/**
+ * Configuration format able to read JSON files and to turn them in
+ * {@link org.apache.tamaya.format.ConfigurationData} instances.
+ */
+public class JSONConfigurationFormat implements ConfigurationFormat {
 
-    public ConfigurationDataUCD(ConfigurationData configurationData) {
-        data = configurationData;
+    @Override
+    public boolean accepts(URL url) {
+        throw new java.lang.RuntimeException("Not implemented yet!");
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return data.getDefaultSection();
-    }
-
-    @Override
-    public int getOrdinal() {
-        String value = data.getDefaultSection().get(PropertySource.TAMAYA_ORDINAL);
-
-        return Integer.parseInt(value);
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
+        throw new java.lang.RuntimeException("Not implemented yet!");
     }
 }

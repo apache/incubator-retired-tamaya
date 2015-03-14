@@ -16,24 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.modules.json;
+package org.apache.tamaya.json;
+
+import org.apache.tamaya.format.ConfigurationData;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Map;
 
-public class JSONPropertySourceUCD implements UnifiedConfigData {
-    private JSONPropertySource propertySource;
+public class ConfigurationDataUCD implements UnifiedConfigData {
+    private ConfigurationData data;
 
-    public JSONPropertySourceUCD(JSONPropertySource source) {
-        propertySource = source;
+    public ConfigurationDataUCD(ConfigurationData configurationData) {
+        data = configurationData;
     }
 
     @Override
     public Map<String, String> getProperties() {
-        return propertySource.getProperties();
+        return data.getDefaultSection();
     }
 
     @Override
     public int getOrdinal() {
-        return propertySource.getOrdinal();
+        String value = data.getDefaultSection().get(PropertySource.TAMAYA_ORDINAL);
+
+        return Integer.parseInt(value);
     }
 }
