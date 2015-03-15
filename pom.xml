@@ -61,6 +61,8 @@ under the License.
         <!-- Dependency and plugin relate version properties go here -->
         <arquillian.version>1.1.7.Final</arquillian.version>
         <arquillian.deamon.version>1.0.0.Alpha1</arquillian.deamon.version>
+
+        <!-- Keep the JRuby version in sync with the one used by Asciidoctor -->
         <asciidoctor.version>1.5.0</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.2</asciidoctorj.version>
@@ -70,7 +72,7 @@ under the License.
         <hamcrest.version>1.3</hamcrest.version>
         <javadoc.version>2.9.1</javadoc.version>
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
-        <jruby.version>1.7.16.1</jruby.version>
+        <jruby.version>1.7.18</jruby.version>
         <findbugs.version>3.0.0</findbugs.version>
         <mockito.version>1.10.19</mockito.version>
         <rat.version>0.11</rat.version>
