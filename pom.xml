@@ -59,6 +59,7 @@ under the License.
         <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
+        <arquillian.version>1.1.7.Final</arquillian.version>
         <arquillian.deamon.version>1.0.0.Alpha1</arquillian.deamon.version>
         <asciidoctor.version>1.5.0</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
@@ -245,7 +246,7 @@ under the License.
             <dependency>
                 <groupId>org.jboss.arquillian.</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.1.6.Final</version>
+                <version>${arquillian.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
