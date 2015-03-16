@@ -107,15 +107,4 @@ public interface ResourceResolver {
      */
     Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
 
-    /**
-     * Access the current ResourceResolver.
-     * @return the current ResourceResolver instance, never null.
-     * @throws ConfigException, if no ResourceResolver is available (should not happen).
-     */
-    public static ResourceResolver getInstance(){
-        return ServiceContext.getInstance().getService(ResourceResolver.class).orElseThrow(
-                () -> new ConfigException("ResourceResolver not available.")
-        );
-    }
-
 }
