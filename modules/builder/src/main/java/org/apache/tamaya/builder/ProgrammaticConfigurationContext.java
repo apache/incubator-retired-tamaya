@@ -1,0 +1,406 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.tamaya.builder;
+
+
+import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.core.internal.PropertyConverterManager;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.ServiceContext;
+
+import javax.annotation.Priority;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.StampedLock;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
+
+/**
+ * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
+ * used by the {@link org.apache.tamaya.builder.ConfigurationBuilder}
+ * internally.
+ */
+class ProgrammaticConfigurationContext implements ConfigurationContext {
+
+    /**
+     * The logger used.
+     */
+    private final static Logger LOG = Logger.getLogger(ProgrammaticConfigurationContext.class.getName());
+    /**
+     * Cubcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
+     */
+    private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
+
+    /**
+     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+     */
+    private List<PropertySource> immutablePropertySources = new ArrayList<>();
+
+    /**
+     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
+     */
+    private List<PropertyFilter> immutablePropertyFilters = new ArrayList<>();
+
+    /**
+     * The overriding policy used when combining PropertySources registered to evalute the final configuration
+     * values.
+     */
+    private PropertyValueCombinationPolicy propertyValueCombinationPolicy;
+
+    /**
+     * Lock for internal synchronization.
+     */
+    private StampedLock propertySourceLock = new StampedLock();
+
+
+    /**
+     * The first time the Configuration system gets invoked we do initialize
+     * all our {@link org.apache.tamaya.spi.PropertySource}s and
+     * {@link org.apache.tamaya.spi.PropertyFilter}s which are known at startup.
+     */
+    @SuppressWarnings("unchecked")
+    public ProgrammaticConfigurationContext(Builder builder) {
+        propertyConverterManager = new PropertyConverterManager(builder.loadProvidedPropertyConverters);
+
+        immutablePropertySources = getAllPropertySources(builder).stream()
+                                                                 .sorted(this::comparePropertySources)
+                                                                 .collect(Collectors.toList());
+
+
+        immutablePropertyFilters = getPropertyFilters(builder).stream()
+                                                              .sorted(this::comparePropertyFilters)
+                                                              .collect(toList());
+
+
+        propertyValueCombinationPolicy = builder.propertyValueCombinationPolicy;
+
+        builder.propertyConverters.forEach((literal, converters) -> {
+            converters.stream().filter(c -> c != null)
+                      .forEach(c -> propertyConverterManager.register((TypeLiteral<Object>) literal,
+                                                                      (PropertyConverter<Object>) c));
+        });
+
+        LOG.info(() -> "Using " + immutablePropertySources.size() + " property sources: " +
+                createStringList(immutablePropertySources, ps -> ps.getName() + '[' + ps.getClass().getName() + ']'));
+
+
+        LOG.info(() -> "Using " + immutablePropertyFilters.size() + " property filters: " +
+                createStringList(immutablePropertyFilters, f -> f.getClass().getName()));
+
+
+        LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
+    }
+
+    private List<PropertyFilter> getPropertyFilters(Builder builder) {
+        List<PropertyFilter> provided = builder.loadProvidedPropertyFilters
+                ? ServiceContext.getInstance().getServices(PropertyFilter.class)
+                : new ArrayList<>(0);
+
+        List<PropertyFilter> configured = builder.propertyFilters;
+
+        return Stream.of(provided, configured).flatMap(Collection::stream)
+                     .collect(toList());
+    }
+
+    private List<PropertySource> getAllPropertySources(Builder builder) {
+        List<PropertySource> provided = builder.loadProvidedPropertySources
+                ? ServiceContext.getInstance().getServices(PropertySource.class)
+                : new ArrayList<>(0);
+
+        if (builder.loadProvidedPropertySourceProviders) {
+            List<PropertySourceProvider> providers = ServiceContext.getInstance()
+                                                                  .getServices(PropertySourceProvider.class);
+            for (PropertySourceProvider provider : providers) {
+                Collection<PropertySource> sources = provider.getPropertySources();
+                provided.addAll(sources);
+            }
+        }
+
+        List<PropertySource> configured = builder.propertySources;
+
+        return Stream.of(provided, configured).flatMap(Collection::stream)
+                     .collect(toList());
+    }
+
+    public void addPropertySources(PropertySource... propertySourcesToAdd) {
+        Lock writeLock = propertySourceLock.asWriteLock();
+        try {
+            writeLock.lock();
+            List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
+            newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
+            Collections.sort(newPropertySources, this::comparePropertySources);
+
+            this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    /**
+     * Order property source reversely, the most important come first.
+     *
+     * @param source1 the first PropertySource
+     * @param source2 the second PropertySource
+     * @return the comparison result.
+     */
+    private int comparePropertySources(PropertySource source1, PropertySource source2) {
+
+        //X TODO this method duplicates org.apache.tamaya.core.internal.DefaultConfigurationContext.PropertySourceComparator.comparePropertySources()
+        //X maybe we should extract the Comperator in an own class for real code-reuse (copy paste == bad code reuse)
+
+        if (source1.getOrdinal() < source2.getOrdinal()) {
+            return -1;
+        } else if (source1.getOrdinal() > source2.getOrdinal()) {
+            return 1;
+        } else {
+            return source1.getClass().getName().compareTo(source2.getClass().getName());
+        }
+    }
+
+    /**
+     * Compare 2 filters for ordering the filter chain.
+     *
+     * @param filter1 the first filter
+     * @param filter2 the second filter
+     * @return the comparison result
+     */
+    private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
+
+        //X TODO this method duplicates org.apache.tamaya.core.internal.DefaultConfigurationContext.PropertySourceComparator.comparePropertyFilters()
+        //X maybe we should extract the Comperator in an own class for real code-reuse (copy paste == bad code reuse)
+
+        Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
+        Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
+        int ord1 = prio1 != null ? prio1.value() : 0;
+        int ord2 = prio2 != null ? prio2.value() : 0;
+
+        if (ord1 < ord2) {
+            return -1;
+        } else if (ord1 > ord2) {
+            return 1;
+        } else {
+            return filter1.getClass().getName().compareTo(filter2.getClass().getName());
+        }
+    }
+
+    @Override
+    public List<PropertySource> getPropertySources() {
+        return immutablePropertySources;
+    }
+
+    public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
+        propertyConverterManager.register(typeToConvert, propertyConverter);
+        LOG.info(() -> "Added PropertyConverter: " + propertyConverter.getClass().getName());
+    }
+
+    @Override
+    public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
+        return propertyConverterManager.getPropertyConverters();
+    }
+
+    @Override
+    public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
+        return propertyConverterManager.getPropertyConverters(targetType);
+    }
+
+    @Override
+    public List<PropertyFilter> getPropertyFilters() {
+        return immutablePropertyFilters;
+    }
+
+    @Override
+    public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
+        return propertyValueCombinationPolicy;
+    }
+
+    private <T> String createStringList(Collection<T> propertySources, Function<T, String> mapper) {
+        StringJoiner joiner = new StringJoiner(", ");
+        propertySources.forEach(t -> joiner.add(mapper.apply(t)));
+        return joiner.toString();
+    }
+
+    @Override
+    public ConfigurationContextBuilder toBuilder() {
+        // @todo Check if it could be useful to support this method, Oliver B. Fischer
+        throw new RuntimeException("This method is currently not supported.");
+    }
+
+    @Override
+    public Collection<PropertySource> getPropertySources(Predicate<PropertySource> selector) {
+        // @todo Check if it could be useful to support this method, Oliver B. Fischer
+        throw new RuntimeException("This method is currently not supported.");
+    }
+
+    /**
+     * The Builder for {@link ProgrammaticConfigurationContext}
+     */
+    public final static class Builder {
+        /**
+         * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+         */
+        private List<PropertySource> propertySources = new ArrayList<>();
+
+        /**
+         * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
+         */
+        private List<PropertyFilter> propertyFilters = new ArrayList<>();
+
+        private Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
+
+        /**
+         * The overriding policy used when combining PropertySources registered to evalute the final configuration
+         * values.
+         */
+        private PropertyValueCombinationPolicy propertyValueCombinationPolicy =
+                PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+
+        private boolean loadProvidedPropertyConverters;
+        private boolean loadProvidedPropertySources;
+        private boolean loadProvidedPropertySourceProviders;
+        private boolean loadProvidedPropertyFilters;
+
+        public Builder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy) {
+            this.propertyValueCombinationPolicy = Objects.requireNonNull(policy);
+            return this;
+        }
+
+        public Builder addPropertySources(PropertySource... propertySources) {
+            List<PropertySource> filtered = Stream.of(propertySources).filter(this::isNotNull)
+                                                  .collect(toList());
+
+            this.propertySources.addAll(filtered);
+
+            return this;
+        }
+
+        public Builder addPropertySources(Collection<PropertySource> propertySources) {
+            List<PropertySource> filtered = propertySources.stream().filter(this::isNotNull)
+                                                           .collect(toList());
+
+            this.propertySources.addAll(filtered);
+
+            return this;
+        }
+
+        public Builder addPropertySourceProviders(PropertySourceProvider... propertySourceProviders) {
+            List<PropertySourceProvider> providers = Stream.of(propertySourceProviders).filter(this::isNotNull)
+                                                           .collect(toList());
+
+            return addPropertySourceProviders(providers);
+        }
+
+        public Builder addPropertySourceProviders(Collection<PropertySourceProvider> providers) {
+            List<PropertySource> filtered = providers.stream().filter(this::isNotNull)
+                                                     .flatMap(p -> p.getPropertySources().stream())
+                                                     .filter(this::isNotNull)
+                                                     .collect(toList());
+
+            this.propertySources.addAll(filtered);
+
+            return this;
+        }
+
+        public Builder addPropertyFilters(PropertyFilter... propertySources) {
+            List<PropertyFilter> sources = Stream.of(propertySources).filter(this::isNotNull)
+                                                 .collect(toList());
+
+            this.propertyFilters.addAll(sources);
+
+            return this;
+        }
+
+        public Builder addPropertyFilters(Collection<PropertyFilter> propertySources) {
+            List<PropertyFilter> sources = propertySources.stream().filter(this::isNotNull)
+                                                          .collect(toList());
+
+            this.propertyFilters.addAll(sources);
+
+            return this;
+        }
+
+        /**
+         * Should be never used.
+         */
+        @Deprecated
+        public Builder setConfigurationContext(ConfigurationContext configurationContext) {
+            this.addPropertySources(configurationContext.getPropertySources());
+            this.addPropertyFilters(configurationContext.getPropertyFilters());
+            this.propertyValueCombinationPolicy = Objects.requireNonNull(
+                    configurationContext.getPropertyValueCombinationPolicy());
+            return this;
+        }
+
+        //X TODO think on a functonality/API for using the default PropertyConverters and use the configured ones here
+        //X TODO as overrides used first.
+
+        public <T> Builder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter) {
+            propertyConverters.computeIfAbsent(type, (t) -> new ArrayList<>())
+                              .add(propertyConverter);
+
+            return this;
+        }
+
+        public ConfigurationContext build() {
+            return new ProgrammaticConfigurationContext(this);
+        }
+
+
+        public void loadProvidedPropertyConverters(boolean state) {
+            loadProvidedPropertyConverters = state;
+        }
+
+        public void loadProvidedPropertySources(boolean state) {
+            loadProvidedPropertySources = state;
+        }
+
+        public void loadProvidedPropertySourceProviders(boolean state) {
+            loadProvidedPropertySourceProviders = state;
+        }
+
+        public void loadProvidedPropertyFilters(boolean state) {
+            loadProvidedPropertyFilters = state;
+        }
+
+        private <T> boolean isNotNull(T item) {
+            return null != item;
+        }
+    }
+
+
+
+}

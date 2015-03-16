@@ -44,6 +44,7 @@ N/A
 [width="100%",frame="1",options="header",grid="all"]
 |=======
 |_Artifact_                                 |_Description_                                |_Links_
+|+org.apache.tamaya.ext:tamaya-builder+       |Provides a fluent-style builder for configurations   | link:mod_builder.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-resources+     |Provides ant-style resource path resolution  |link:mod_resources.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-resolver+      |Provides placeholder and dynamic resolution functionality for configuration values.  |link:mod_resolver.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-events+        |Provides support for publishing configuration changes  |link:mod_events.html[Documentation]
