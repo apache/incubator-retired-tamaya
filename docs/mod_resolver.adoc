@@ -14,10 +14,10 @@ Apache Tamaya -- Extension: Resolver
 :website: http://tamaya.incubator.apache.org/
 :iconsdir: {imagesdir}/icons
 :toc:
-:toc-placement: manual
 :icons:
 :encoding: UTF-8
 :numbered:
+
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -34,24 +34,83 @@ Apache Tamaya -- Extension: Resolver
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-'''
 
-<<<
-
-toc::[]
-
-<<<
-:numbered!:
-<<<
 [[Core]]
-== Tamaya Events (Extension Module)
+== Tamaya Resolver (Extension Module)
+
 === Overview
 
 Tamaya Resolver is an extension module. Refer to the link::modules.html[extensions documentation] for further details
 about modules.
 
-Tamaya Events provides an abstraction for events like change events, when configuration has bee changed.
+Tamaya Resolver provides a dynamic resolution mechanism, which allows to use UNIX-styled (+${...}+ placeholder
+expressions in your configuration values. The resolver hereby supports transitive resolution and also prevents
+cycles to loop endlessly.
 
+=== Installation
 
+To benefit from dynamic value resolution you only must add the corresponding dependency to your module:
 
-tbc...
+[source, xml]
+===============================================
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-resolver</artifactId>
+  <version>...</version>
+</dependency>
+===============================================
+
+The module automatically registers an according +PropertyFilter+ that is automatically called, whenever a value
+is accessed.
+
+=== Available Resolvers
+
+Currently the module defined the following resolvers:
+
+.Available Resolvers
+|=======
+|_Expression_                                 |_Description_                                |_Example_
+|+conf:<configKey>+       |Reads another configKey and replaces the expression with the value found.   | conf-ref=${conf:anotherConf.entryKey}
+|+resource:<resourceRef>+       |Reads a resource from the current classpath and replaces the expression with the given text content.   | cp-ref=${resource:Testresource.txt}
+|+file:<fileRef>+       |Reads a resource from the current classpath and replaces the expression with the given text content.   | file-ref=${file:c:\myFile.txt}
+|+url:<url>+       |Reads an URL and replaces the expression with the given text content.   | url-ref=${url:http://www.google.com}
+|=======
+
+=== SPI: Implementing your own Resolvers
+
+The module also provides an easy but powerful SPI for adding your own resolver implementations. Basically the
+first and most important thing to do is implementing the +ExpressionResolver+ interface:
+
+.Implementing a Custom Resolver
+[source, java]
+================================================================
+public class PwdDecrypter implements ExpressionResolver {
+
+  @Override
+  public String getResolverPrefix(){
+     return "decrypt:";
+  }
+
+  @Override
+  public String evaluate(String expression){
+    return decrypt(expression);
+  }
+
+  private String decrypt(String s){
+    ...
+  }
+}
+================================================================
+
+Basically that is all you must do, after having registered the class with the +ServiceLoader+ it will be found
+and loaded by the implementation. With that all expressions that start with the given prefix are passed to the
+resolver, so all the following expressions will be sent to the implementation:
+
+[source,listing]
+=============================================================================
+blabla ${decrypt:myname}
+blabla ${decrypt:myname} foo blabla ${decrypt:myname}
+=============================================================================
+
+Hereby evaluation is repeasted until no further change of values could be detetced. In case of a endless loop
+the evaluation is broken after a (configurable) number of cycles.
