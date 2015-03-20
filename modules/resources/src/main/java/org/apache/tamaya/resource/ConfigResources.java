@@ -24,12 +24,12 @@ import org.apache.tamaya.spi.ServiceContext;
 /**
  * Singleton Accessor for accessing the current {@link org.apache.tamaya.resource.ResourceResolver} instance.
  */
-public final class Resources {
+public final class ConfigResources {
 
     /**
      * Singleton constructor.
      */
-    private Resources(){}
+    private ConfigResources(){}
 
     /**
      * Access the current ResourceResolver.
