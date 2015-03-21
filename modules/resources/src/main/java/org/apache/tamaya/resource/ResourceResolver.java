@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.ServiceContext;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
