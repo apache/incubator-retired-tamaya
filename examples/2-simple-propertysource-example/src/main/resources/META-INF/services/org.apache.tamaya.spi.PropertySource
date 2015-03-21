@@ -1,0 +1,2 @@
+SimplePropertySource
+org.apache.tamaya.core.propertysource.EnvironmentPropertiesPropertySource
