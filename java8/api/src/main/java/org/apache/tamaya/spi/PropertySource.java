@@ -20,6 +20,7 @@ package org.apache.tamaya.spi;
 
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,7 +113,10 @@ public interface PropertySource {
      * @param key the property's key, not null.
      * @return the value assigned to the property or {@code null}. An empty String will kind of 'erase' previous values.
      */
-    String get(String key);
+    default String get(String key){
+        Objects.requireNonNull(key, "key must not be null");
+        return getProperties().get(key);
+    }
 
     /**
      * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
