@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.resource.ResourceResolver;
-import org.apache.tamaya.resource.Resources;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
@@ -130,7 +128,6 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
      */
     @Override
     public Collection<PropertySource> getPropertySources() {
-        ResourceResolver resourceResolver = Resources.getResourceResolver();
         List<PropertySource> propertySources = new ArrayList<>();
         this.paths.forEach(res -> {
             try(InputStream is = res.openStream()) {
