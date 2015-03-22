@@ -42,6 +42,11 @@ import java.util.Objects;
 public class JSONFormat implements ConfigurationFormat {
 
     @Override
+    public String getName() {
+        return "json";
+    }
+
+    @Override
     public boolean accepts(URL url) {
         Objects.requireNonNull(url);
 

@@ -31,6 +31,11 @@ import java.net.URL;
 public class JSONConfigurationFormat implements ConfigurationFormat {
 
     @Override
+    public String getName() {
+        return "json";
+    }
+
+    @Override
     public boolean accepts(URL url) {
         throw new java.lang.RuntimeException("Not implemented yet!");
     }
