@@ -541,11 +541,8 @@ under the License.
                         <include>pom.xml</include>
                     </includes>
                     <excludes>
-                        <exclude>**/*/MANIFEST.MF</exclude>
                         <exclude>.git</exclude>
-                        <exclude>.gitignore</exclude>
                         <exclude>derby.log</exclude>
-                        <exclude>**/META-INF/services/*</exclude>
                         <exclude>**/bootstrap-*</exclude>
                         <exclude>**/js/jquery-*</exclude>
                         <exclude>**/*.json</exclude>
