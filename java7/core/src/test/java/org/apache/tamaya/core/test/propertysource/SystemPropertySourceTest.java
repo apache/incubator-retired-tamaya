@@ -48,7 +48,7 @@ public class SystemPropertySourceTest {
 
     @Test
     public void testGetName() throws Exception {
-        Assert.assertEquals("system-properties", new SystemPropertySource().getName());
+        Assert.assertEquals("system-properties", testPropertySource.getName());
     }
 
     @Test
@@ -56,11 +56,9 @@ public class SystemPropertySourceTest {
         String propertyKeyToCheck = System.getProperties().stringPropertyNames().iterator().next();
 
         String property = testPropertySource.get(propertyKeyToCheck);
-        Assert.assertTrue("Property '" + propertyKeyToCheck + "' is not present in " + SystemPropertySource.class.getSimpleName(),
-                          property != null);
+        Assert.assertNotNull("Property '" + propertyKeyToCheck + "' is not present in " +
+                SystemPropertySource.class.getSimpleName(), property);
         Assert.assertEquals(System.getProperty(propertyKeyToCheck), property);
-
-
     }
 
     @Test

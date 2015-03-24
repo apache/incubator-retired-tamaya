@@ -185,52 +185,52 @@ public class PropertyConverterManager {
     private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
         Type parameterType = targetType.getType();
         if(parameterType == int.class){
-            return TypeLiteral.of(Integer.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Integer.class));
         }
         if(parameterType == short.class){
-            return TypeLiteral.of(Short.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Short.class));
         }
         if(parameterType == byte.class){
-            return TypeLiteral.of(Byte.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Byte.class));
         }
         if(parameterType == long.class){
-            return TypeLiteral.of(Long.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Long.class));
         }
         if(parameterType == boolean.class){
-            return TypeLiteral.of(Boolean.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Boolean.class));
         }
         if(parameterType == char.class){
-            return TypeLiteral.of(Character.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Character.class));
         }
         if(parameterType == float.class){
-            return TypeLiteral.of(Float.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Float.class));
         }
         if(parameterType == double.class){
-            return TypeLiteral.of(Double.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Double.class));
         }
         if(parameterType == int[].class){
-            return TypeLiteral.of(Integer[].class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Integer[].class));
         }
         if(parameterType == short[].class){
-            return TypeLiteral.of(Short[].class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Short[].class));
         }
         if(parameterType == byte[].class){
-            return TypeLiteral.of(Byte[].class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Byte[].class));
         }
         if(parameterType == long[].class){
-            return TypeLiteral.of(Long[].class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Long[].class));
         }
         if(parameterType == boolean.class){
-            return TypeLiteral.of(Boolean.class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Boolean.class));
         }
         if(parameterType == char[].class){
-            return TypeLiteral.of(Character[].class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Character[].class));
         }
         if(parameterType == float[].class){
-            return TypeLiteral.of(Float[].class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Float[].class));
         }
         if(parameterType == double[].class){
-            return TypeLiteral.of(Double[].class);
+            return TypeLiteral.class.cast(TypeLiteral.of(Double[].class));
         }
         return null;
     }

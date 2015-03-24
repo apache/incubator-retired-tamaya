@@ -21,20 +21,14 @@ package org.apache.tamaya.core.test.propertysource;
 import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 public class PropertiesFilePropertySourceTest {
 
-    private SimplePropertySource testfilePropertySource;
-    private SimplePropertySource overrideOrdinalPropertySource;
-
-
-    @Before
-    public void initTest() {
-        testfilePropertySource = new SimplePropertySource(Thread.currentThread().getContextClassLoader().getResource("testfile.properties"));
-        overrideOrdinalPropertySource = new SimplePropertySource(Thread.currentThread().getContextClassLoader().getResource("overrideOrdinal.properties"));
-    }
+    private SimplePropertySource testfilePropertySource = new SimplePropertySource(Thread.currentThread()
+            .getContextClassLoader().getResource("testfile.properties"));
+    private SimplePropertySource overrideOrdinalPropertySource = new SimplePropertySource(
+            Thread.currentThread().getContextClassLoader().getResource("overrideOrdinal.properties"));
 
 
     @Test

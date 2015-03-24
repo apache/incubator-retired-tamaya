@@ -33,7 +33,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class SystemPropertySource implements PropertySource {
 
     /**
-     * default ordinal for {@link org.apache.tamaya.core.propertysource.SystemPropertiesPropertySource}
+     * default ordinal for {@link org.apache.tamaya.core.propertysource.SystemPropertySource}
      */
     public static final int DEFAULT_ORDINAL = 1000;
 
@@ -54,8 +54,8 @@ public class SystemPropertySource implements PropertySource {
     private Map<String, String> loadProperties() {
         Map<String,String> props = new HashMap<>();
         Properties sysProps = System.getProperties();
-        for(Map.Entry<Object,Object> en: sysProps.entrySet()) {
-            props.put(en.toString(), en.toString());
+        for(String name: sysProps.stringPropertyNames()) {
+            props.put(name,sysProps.getProperty(name));
         }
         return props;
     }
@@ -78,18 +78,12 @@ public class SystemPropertySource implements PropertySource {
     @Override
     public Map<String, String> getProperties() {
         // only need to reload and fill our map if something has changed
-        // synchonization was removed, Instance was marked as volatile. In the worst case it
+        // synchronization was removed, Instance was marked as volatile. In the worst case it
         // is reloaded twice, but the values will be the same.
         if (previousHash != System.getProperties().hashCode()) {
-            Properties systemProperties = System.getProperties();
-            Map<String, String> properties = new HashMap<>();
-
-            for (String propertyName : systemProperties.stringPropertyNames()) {
-                properties.put(propertyName, System.getProperty(propertyName));
-            }
-
+            Map<String, String> properties = loadProperties();
             this.cachedProperties = Collections.unmodifiableMap(properties);
-            previousHash = systemProperties.hashCode();
+            previousHash = System.getProperties().hashCode();
         }
         return this.cachedProperties;
     }

@@ -75,28 +75,13 @@ public class SimplePropertySource extends BasePropertySource{
     }
 
     @Override
-    public int getOrdinal() {
-        return 0;
-    }
-
-    @Override
     public String getName() {
         return name;
     }
 
     @Override
-    public String get(String key) {
-        return null;
-    }
-
-    @Override
     public Map<String, String> getProperties() {
         return this.properties;
-    }
-
-    @Override
-    public boolean isScannable() {
-        return false;
     }
 
     /**
@@ -115,8 +100,8 @@ public class SimplePropertySource extends BasePropertySource{
             if (stream != null) {
                 props.load(stream);
             }
-            for(Map.Entry<Object,Object> en:props.entrySet()){
-                properties.put(en.getKey().toString(), en.getValue().toString());
+            for(String key:props.stringPropertyNames()){
+                 properties.put(key, props.getProperty(key));
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties " + propertiesFile, e);

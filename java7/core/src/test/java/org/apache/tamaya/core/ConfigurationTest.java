@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -66,4 +67,5 @@ public class ConfigurationTest {
             System.out.println("   " + entry.getKey()+" = " + entry.getValue());
         }
     }
+
 }
