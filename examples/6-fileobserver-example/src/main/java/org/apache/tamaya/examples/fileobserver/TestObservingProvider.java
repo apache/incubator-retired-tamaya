@@ -16,27 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.examples.fileobserver;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import org.apache.tamaya.events.folderobserver.ObservingPropertySourceProvider;
+import org.apache.tamaya.format.formats.PropertiesFormat;
 
+import java.nio.file.Paths;
 
 /**
- * Small utility class used by other parts.
+ * Test configuration property source provider that observes a directory and updated the config if necessary.
  */
-public final class ReflectionUtil {
+public class TestObservingProvider extends ObservingPropertySourceProvider{
 
-    private ReflectionUtil(){}
+    public TestObservingProvider(){
+        super(Paths.get("C:\\Users\\Anatole\\IdeaProjects\\incubator-tamaya\\examples\\6-fileobserver-example\\src\\data"), new PropertiesFormat());
+        System.out.println("C:\\Users\\Anatole\\IdeaProjects\\incubator-tamaya\\examples\\6-fileobserver-example\\src\\data");
 
-    public static ParameterizedType getParametrizedType(Class<?> clazz) {
-        Type[] genericTypes = clazz.getGenericInterfaces();
-        for (Type type : genericTypes) {
-            if (type instanceof ParameterizedType) {
-                return (ParameterizedType) type;
-            }
-
-        }
-        return null;
     }
 }

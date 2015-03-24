@@ -1,4 +1,4 @@
-/*
+package org.apache.tamaya.examples.resources;/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,32 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.propertysource;
 
-import org.apache.tamaya.core.internal.PropertiesFileLoader;
+import org.apache.tamaya.core.propertysource.SimplePropertySource;
+import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.net.URL;
 
 /**
- * {@link org.apache.tamaya.spi.PropertySource} for properties-files
+ * Created by Anatole on 20.03.2015.
  */
-public class PropertiesFilePropertySource extends PropertiesPropertySource {
+public class MyPathPropertySourceProvider extends AbstractPathPropertySourceProvider {
 
-
-    private String fileName;
-
-
-    public PropertiesFilePropertySource(URL propertiesFile) {
-        super(PropertiesFileLoader.load(propertiesFile));
-
-        initializeOrdinal(DefaultOrdinal.FILE_PROPERTIES);
-        this.fileName = propertiesFile.toExternalForm();
+    public MyPathPropertySourceProvider(){
+        super("cfgOther/**/*.properties", "META-INF/MyOtherConfigProperties.*");
     }
-
 
     @Override
-    public String getName() {
-        return fileName;
+    protected PropertySource getPropertySource(URL url) {
+        return new SimplePropertySource(url);
     }
-
 }

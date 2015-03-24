@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.examples.minimal;
+package org.apache.tamaya.examples.simple;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
@@ -25,14 +25,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by Anatole on 20.03.2015.
+ * This is a small example that simply adds a self-written {@link org.apache.tamaya.spi.PropertySource}
+ * ({@link SimplePropertySource}) and a {@link org.apache.tamaya.spi.PropertySourceProvider}
+ * ({@link SimplePropertySourceProvider}).
  */
 public class ExampleMain {
 
     public static void main(String... args){
-        System.out.println("****************************************************");
-        System.out.println("Minimal Example");
-        System.out.println("****************************************************");
+        System.out.println("*****************************************************");
+        System.out.println("Simple Example (with a PropertySource and a Provider)");
+        System.out.println("*****************************************************");
         System.out.println();
         Configuration cfg = ConfigurationProvider.getConfiguration();
         System.out.println("Example Metadata:");
@@ -42,12 +44,15 @@ public class ExampleMain {
         System.out.println("  Version     :  " + cfg.get("example.version"));
         System.out.println("  Author      :  " + cfg.get("example.author"));
         System.out.println();
+        System.out.println("  Path        :  " + cfg.get("Path"));
+        System.out.println("  aProp       :  " + cfg.get("aProp"));
+        System.out.println();
         System.out.println("FULL DUMP:\n\n" + dump(cfg.getProperties()));
     }
 
     private static String dump(Map<String, String> properties) {
         StringBuilder b = new StringBuilder();
-        new TreeMap<>(properties).forEach((k, v) -> b.append("  " + k + " = " + v + '\n'));
+        new TreeMap<>(properties).forEach((k,v)->b.append("  " + k + " = " + v + '\n'));
         return b.toString();
     }
 }
