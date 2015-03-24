@@ -47,8 +47,7 @@ public class SimplePropertySource implements PropertySource{
         try{
             this.properties = load(propertiesLocation.toURI().toURL());
             this.name = propertiesLocation.toString();
-        }
-        catch(IOException e){
+        } catch(IOException e){
             throw new ConfigException("Failed to load properties from " + propertiesLocation,e);
         }
     }
