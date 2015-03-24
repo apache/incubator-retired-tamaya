@@ -21,7 +21,6 @@ package org.apache.tamaya.core.internal;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +37,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.converters.EnumConverter;
 import org.apache.tamaya.PropertyConverter;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Manager that deals with {@link org.apache.tamaya.PropertyConverter} instances.
@@ -51,7 +50,6 @@ public class PropertyConverterManager {
     private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /** The lock used. */
     private StampedLock lock = new StampedLock();
-    private static final String CHAR_NULL_ERROR = "Cannot convert null property";
     /**
      * Constructor.
      */
@@ -69,15 +67,9 @@ public class PropertyConverterManager {
      * Registers the default converters provided out of the box.
      */
     protected void initConverters() {
-        for(PropertyConverter conv: ServiceContext.getInstance().getServices(PropertyConverter.class)){
-            ParameterizedType type = ReflectionUtil.getParametrizedType(conv.getClass());
-            if(type==null || type.getActualTypeArguments().length==0){
-                LOG.warning(() -> "Failed to register PropertyConverter, no generic type information available: " +
-                        conv.getClass().getName());
-            } else {
-                Type targetType = type.getActualTypeArguments()[0];
-                register(TypeLiteral.of(targetType), conv);
-            }
+        for(PropertyConverter conv: ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)){
+            Type type = TypeLiteral.getTypeParameter(conv.getClass(), PropertyConverter.class);
+            register(TypeLiteral.of(type), conv);
         }
     }
 
@@ -156,6 +148,18 @@ public class PropertyConverterManager {
         if (converters != null) {
             return converters;
         }
+        TypeLiteral<T> boxedType = mapBoxedType(targetType);
+        if(boxedType!=null){
+            try {
+                readLock.lock();
+                converters = List.class.cast(this.converters.get(boxedType));
+            } finally {
+                readLock.unlock();
+            }
+            if (converters != null) {
+                return converters;
+            }
+        }
         PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
         if (defaultConverter != null) {
             register(targetType, defaultConverter);
@@ -173,6 +177,65 @@ public class PropertyConverterManager {
     }
 
     /**
+     * Maps native types to the corresponding boxed types.
+     * @param targetType the native type.
+     * @param <T> the type
+     * @return the boxed type, or null.
+     */
+    private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
+        Type parameterType = targetType.getType();
+        if(parameterType == int.class){
+            return TypeLiteral.of(Integer.class);
+        }
+        if(parameterType == short.class){
+            return TypeLiteral.of(Short.class);
+        }
+        if(parameterType == byte.class){
+            return TypeLiteral.of(Byte.class);
+        }
+        if(parameterType == long.class){
+            return TypeLiteral.of(Long.class);
+        }
+        if(parameterType == boolean.class){
+            return TypeLiteral.of(Boolean.class);
+        }
+        if(parameterType == char.class){
+            return TypeLiteral.of(Character.class);
+        }
+        if(parameterType == float.class){
+            return TypeLiteral.of(Float.class);
+        }
+        if(parameterType == double.class){
+            return TypeLiteral.of(Double.class);
+        }
+        if(parameterType == int[].class){
+            return TypeLiteral.of(Integer[].class);
+        }
+        if(parameterType == short[].class){
+            return TypeLiteral.of(Short[].class);
+        }
+        if(parameterType == byte[].class){
+            return TypeLiteral.of(Byte[].class);
+        }
+        if(parameterType == long[].class){
+            return TypeLiteral.of(Long[].class);
+        }
+        if(parameterType == boolean.class){
+            return TypeLiteral.of(Boolean.class);
+        }
+        if(parameterType == char[].class){
+            return TypeLiteral.of(Character[].class);
+        }
+        if(parameterType == float[].class){
+            return TypeLiteral.of(Float[].class);
+        }
+        if(parameterType == double[].class){
+            return TypeLiteral.of(Double[].class);
+        }
+        return null;
+    }
+
+    /**
      * Creates a dynamic PropertyConverter for the given target type.
      *
      * @param targetType the target type
@@ -181,7 +244,7 @@ public class PropertyConverterManager {
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(TypeLiteral<T> targetType) {
         if(Enum.class.isAssignableFrom(targetType.getRawType())){
-            return new EnumConverter<T>(targetType.getRawType());
+            return new EnumConverter<>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
         Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");

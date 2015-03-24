@@ -21,7 +21,6 @@ package org.apache.tamaya.core.internal;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,12 +50,17 @@ public class PropertyConverterManager {
     private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /** The lock used. */
     private StampedLock lock = new StampedLock();
-    private static final String CHAR_NULL_ERROR = "Cannot convert null property";
     /**
      * Constructor.
      */
     public PropertyConverterManager() {
-        initConverters();
+        this(true);
+    }
+
+    public PropertyConverterManager(boolean init) {
+        if (init) {
+            initConverters();
+        }
     }
 
     /**
@@ -64,14 +68,8 @@ public class PropertyConverterManager {
      */
     protected void initConverters() {
         for(PropertyConverter conv: ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)){
-            ParameterizedType type = ReflectionUtil.getParametrizedType(conv.getClass());
-            if(type==null || type.getActualTypeArguments().length==0){
-                LOG.warning("Failed to register PropertyConverter, no generic type information available: " +
-                        conv.getClass().getName());
-            } else {
-                Type targetType = type.getActualTypeArguments()[0];
-                register(TypeLiteral.of(targetType), conv);
-            }
+            Type type = TypeLiteral.getTypeParameter(conv.getClass(), PropertyConverter.class);
+            register(TypeLiteral.of(type), conv);
         }
     }
 
@@ -80,13 +78,14 @@ public class PropertyConverterManager {
      *
      * @param targetType the target type, not null.
      * @param converter  the converter, not null.
+     * @param <T>        the type.
      */
-    public void register(TypeLiteral<?> targetType, PropertyConverter<?> converter) {
+    public <T> void register(TypeLiteral<T> targetType, PropertyConverter<T> converter) {
         Objects.requireNonNull(converter);
         Lock writeLock = lock.asWriteLock();
         try {
             writeLock.lock();
-            List converters = List.class.cast(this.converters.get(targetType));
+            List<PropertyConverter<T>> converters = List.class.cast(this.converters.get(targetType));
             List<PropertyConverter<?>> newConverters = new ArrayList<>();
             if (converters != null) {
                 newConverters.addAll(converters);
@@ -149,6 +148,18 @@ public class PropertyConverterManager {
         if (converters != null) {
             return converters;
         }
+        TypeLiteral<T> boxedType = mapBoxedType(targetType);
+        if(boxedType!=null){
+            try {
+                readLock.lock();
+                converters = List.class.cast(this.converters.get(boxedType));
+            } finally {
+                readLock.unlock();
+            }
+            if (converters != null) {
+                return converters;
+            }
+        }
         PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
         if (defaultConverter != null) {
             register(targetType, defaultConverter);
@@ -163,6 +174,65 @@ public class PropertyConverterManager {
             return converters;
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Maps native types to the corresponding boxed types.
+     * @param targetType the native type.
+     * @param <T> the type
+     * @return the boxed type, or null.
+     */
+    private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
+        Type parameterType = targetType.getType();
+        if(parameterType == int.class){
+            return TypeLiteral.of(Integer.class);
+        }
+        if(parameterType == short.class){
+            return TypeLiteral.of(Short.class);
+        }
+        if(parameterType == byte.class){
+            return TypeLiteral.of(Byte.class);
+        }
+        if(parameterType == long.class){
+            return TypeLiteral.of(Long.class);
+        }
+        if(parameterType == boolean.class){
+            return TypeLiteral.of(Boolean.class);
+        }
+        if(parameterType == char.class){
+            return TypeLiteral.of(Character.class);
+        }
+        if(parameterType == float.class){
+            return TypeLiteral.of(Float.class);
+        }
+        if(parameterType == double.class){
+            return TypeLiteral.of(Double.class);
+        }
+        if(parameterType == int[].class){
+            return TypeLiteral.of(Integer[].class);
+        }
+        if(parameterType == short[].class){
+            return TypeLiteral.of(Short[].class);
+        }
+        if(parameterType == byte[].class){
+            return TypeLiteral.of(Byte[].class);
+        }
+        if(parameterType == long[].class){
+            return TypeLiteral.of(Long[].class);
+        }
+        if(parameterType == boolean.class){
+            return TypeLiteral.of(Boolean.class);
+        }
+        if(parameterType == char[].class){
+            return TypeLiteral.of(Character[].class);
+        }
+        if(parameterType == float[].class){
+            return TypeLiteral.of(Float[].class);
+        }
+        if(parameterType == double[].class){
+            return TypeLiteral.of(Double[].class);
+        }
+        return null;
     }
 
     /**
