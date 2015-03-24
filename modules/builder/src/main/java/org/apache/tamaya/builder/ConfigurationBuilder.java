@@ -37,7 +37,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -180,8 +179,7 @@ public class ConfigurationBuilder {
      * builder.addPropertySources(first, second);}
      *</pre>
      *
-     * @param url first resource with properties for the the configuration to be build.
-     * @param urls list additional of resources with properties for the configuration to be
+     * @param urls list of resources with properties for the configuration to be
      *             build.
      *
      * @return the builder instance currently used
@@ -189,8 +187,8 @@ public class ConfigurationBuilder {
      * @see org.apache.tamaya.format.ConfigurationFormat
      * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
-    public ConfigurationBuilder addPropertySource(URL url, URL... urls) {
-        Stream.of(Collections.singletonList(url), Arrays.asList(urls))
+    public ConfigurationBuilder addPropertySource(URL... urls) {
+        Stream.of(Arrays.asList(urls))
               .flatMap(Collection::stream)
               .filter(entry -> entry != null)
               .collect(Collectors.toList())
@@ -211,8 +209,7 @@ public class ConfigurationBuilder {
      *                            "file:/etc/defaults/values.properties");}
      *</pre>
      *
-     * @param url first resource with properties for the the configuration to be build.
-     * @param urls list additional of resources with properties for the configuration to be
+     * @param urls list of resources with properties for the configuration to be
      *             build.
      *
      * @return the builder instance currently used
@@ -220,8 +217,8 @@ public class ConfigurationBuilder {
      * @see org.apache.tamaya.format.ConfigurationFormat
      * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
-    public ConfigurationBuilder addPropertySource(String url, String... urls) {
-        Stream.of(Collections.singletonList(url), Arrays.asList(urls))
+    public ConfigurationBuilder addPropertySource(String... urls) {
+        Stream.of(Arrays.asList(urls))
               .flatMap(Collection::stream)
               .filter(entry -> entry != null)
               .map(new StringToURLMapper())
