@@ -64,9 +64,9 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
                 Collection<URL> resources = ConfigResources.getResourceResolver().getResources(resource);
                 for (URL url : resources) {
                     try {
-                        PropertySource propertySource = getPropertySource(url);
-                        if(propertySource!=null){
-                            propertySources.add(propertySource);
+                        Collection<PropertySource>  propertySourcesToInclude = getPropertySources(url);
+                        if(propertySourcesToInclude!=null){
+                            propertySources.addAll(propertySourcesToInclude);
                         }
                     } catch (Exception e) {
                         LOG.log(Level.WARNING, "Failed to read configuration from " + url, e);
@@ -83,11 +83,11 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
      * Factory method that creates a {@link org.apache.tamaya.spi.PropertySource} based on the URL found by
      * the resource locator.
      * @param url the URL, not null.
-     * @return the {@link org.apache.tamaya.spi.PropertySource} to be included into the current provider's sources
+     * @return the {@link org.apache.tamaya.spi.PropertySource}s to be included into the current provider's sources
      * list. It is safe to return {@code null} here, in case the content of the URL has shown to be not relevant
      * as configuration input. In case the input is not valid or accessible an exception can be thrown or logged.
      */
-    protected abstract PropertySource getPropertySource(URL url);
+    protected abstract Collection<PropertySource> getPropertySources(URL url);
 
     /**
      * Utility method that reads a .properties file from the given url and creates a corresponding

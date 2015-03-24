@@ -74,4 +74,8 @@ public final class PropertySourceBuilder {
         this.properties.putAll(propertySource.getProperties());
         return this;
     }
+
+    public PropertySource build(){
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
 }
