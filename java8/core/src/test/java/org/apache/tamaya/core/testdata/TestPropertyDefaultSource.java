@@ -27,12 +27,12 @@ import java.util.Map;
 /**
  * Test provider reading properties from classpath:cfg/defaults/**.properties.
  */
-public class TestPropertyDefaultSource extends BasePropertySource{
+public class TestPropertyDefaultSource extends BasePropertySource {
 
     private Map<String,String> properties = new HashMap<>();
 
     public TestPropertyDefaultSource() {
-        initializeOrdinal(100);
+        super(100);
         properties.put("name","Anatole");
         properties.put("name2","Sabine");
         properties = Collections.unmodifiableMap(properties);

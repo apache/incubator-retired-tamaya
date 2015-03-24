@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.spi.PropertySource;
+
 import java.util.Map;
 
 /**
@@ -26,16 +28,26 @@ import java.util.Map;
  * {@code export myprop=myval} on UNIX Systems or<br />
  * {@code set myprop=myval} on Windows
  */
-public class EnvironmentPropertySource extends BasePropertySource {
+public class EnvironmentPropertySource implements PropertySource {
 
-    public EnvironmentPropertySource() {
-        initializeOrdinal(DefaultOrdinal.ENVIRONMENT_PROPERTIES);
+    /**
+     * default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
+     */
+    public static final int DEFAULT_ORDINAL = 300;
+
+    @Override
+    public int getOrdinal() {
+        return DEFAULT_ORDINAL;
     }
-
 
     @Override
     public String getName() {
         return "environment-properties";
+    }
+
+    @Override
+    public String get(String key) {
+        return getProperties().get(key);
     }
 
     @Override

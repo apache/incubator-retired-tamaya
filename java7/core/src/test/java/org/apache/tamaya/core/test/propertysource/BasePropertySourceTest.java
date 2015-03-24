@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.test.propertysource;
 
 import org.apache.tamaya.core.propertysource.BasePropertySource;
-import org.apache.tamaya.core.propertysource.DefaultOrdinal;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,7 +32,7 @@ public class BasePropertySourceTest {
     @Test
     public void testGetOrdinal() {
 
-        PropertySource defaultPropertySource = new BasePropertySource() {
+        PropertySource defaultPropertySource = new BasePropertySource(56) {
 
             @Override
             public String getName() {
@@ -51,7 +50,7 @@ public class BasePropertySourceTest {
             }
         };
 
-        Assert.assertEquals(DefaultOrdinal.PROPERTY_SOURCE, defaultPropertySource.getOrdinal());
+        Assert.assertEquals(56, defaultPropertySource.getOrdinal());
         Assert.assertEquals(1000, new OverriddenOrdinalPropertySource().getOrdinal());
 
         // propertySource with invalid ordinal
@@ -66,7 +65,7 @@ public class BasePropertySourceTest {
     private static class OverriddenOrdinalPropertySource extends BasePropertySource {
 
         private OverriddenOrdinalPropertySource() {
-            initializeOrdinal(250);
+            super(250);
         }
 
         @Override
@@ -80,13 +79,12 @@ public class BasePropertySourceTest {
             map.put(PropertySource.TAMAYA_ORDINAL, "1000");
             return map;
         }
-
     }
 
     private static class OverriddenInvalidOrdinalPropertySource extends BasePropertySource {
 
         private OverriddenInvalidOrdinalPropertySource() {
-            initializeOrdinal(1);
+            super(1);
         }
 
         @Override

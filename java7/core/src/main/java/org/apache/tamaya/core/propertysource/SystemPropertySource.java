@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.spi.PropertySource;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,13 +30,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties.
  */
-public class SystemPropertySource extends PropertiesPropertySource {
+public class SystemPropertySource implements PropertySource {
 
     /**
-     * Lock for internal synchronization.
+     * default ordinal for {@link org.apache.tamaya.core.propertysource.SystemPropertiesPropertySource}
      */
-    private ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
+    public static final int DEFAULT_ORDINAL = 1000;
 
+    private volatile Map<String,String> cachedProperties;
 
     /**
      * previous System.getProperties().hashCode()
@@ -44,11 +47,23 @@ public class SystemPropertySource extends PropertiesPropertySource {
 
 
     public SystemPropertySource() {
-        super(System.getProperties());
+        cachedProperties = loadProperties();
         previousHash = System.getProperties().hashCode();
-        initializeOrdinal(DefaultOrdinal.SYSTEM_PROPERTIES);
     }
 
+    private Map<String, String> loadProperties() {
+        Map<String,String> props = new HashMap<>();
+        Properties sysProps = System.getProperties();
+        for(Map.Entry<Object,Object> en: sysProps.entrySet()) {
+            props.put(en.toString(), en.toString());
+        }
+        return props;
+    }
+
+    @Override
+    public int getOrdinal() {
+        return DEFAULT_ORDINAL;
+    }
 
     @Override
     public String getName() {
@@ -56,32 +71,27 @@ public class SystemPropertySource extends PropertiesPropertySource {
     }
 
     @Override
+    public String get(String key) {
+        return getProperties().get(key);
+    }
+
+    @Override
     public Map<String, String> getProperties() {
-
-        Lock writeLock = propertySourceLock.writeLock();
         // only need to reload and fill our map if something has changed
-        try {
-            writeLock.lock();
-            if (previousHash != System.getProperties().hashCode()) {
+        // synchonization was removed, Instance was marked as volatile. In the worst case it
+        // is reloaded twice, but the values will be the same.
+        if (previousHash != System.getProperties().hashCode()) {
+            Properties systemProperties = System.getProperties();
+            Map<String, String> properties = new HashMap<>();
 
-                if (previousHash != System.getProperties().hashCode()) {
-
-                    Properties systemProperties = System.getProperties();
-                    Map<String, String> properties = new HashMap<>();
-
-                    for (String propertyName : systemProperties.stringPropertyNames()) {
-                        properties.put(propertyName, System.getProperty(propertyName));
-                    }
-
-                    this.properties = Collections.unmodifiableMap(properties);
-                    previousHash = systemProperties.hashCode();
-                }
+            for (String propertyName : systemProperties.stringPropertyNames()) {
+                properties.put(propertyName, System.getProperty(propertyName));
             }
-        } finally {
-            writeLock.unlock();
-        }
 
-        return super.getProperties();
+            this.cachedProperties = Collections.unmodifiableMap(properties);
+            previousHash = systemProperties.hashCode();
+        }
+        return this.cachedProperties;
     }
 
     @Override

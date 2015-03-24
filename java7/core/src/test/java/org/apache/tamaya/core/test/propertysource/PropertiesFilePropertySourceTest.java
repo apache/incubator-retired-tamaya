@@ -18,34 +18,28 @@
  */
 package org.apache.tamaya.core.test.propertysource;
 
-import org.apache.tamaya.core.internal.PropertiesFileLoader;
-import org.apache.tamaya.core.propertysource.DefaultOrdinal;
-import org.apache.tamaya.core.propertysource.PropertiesFilePropertySource;
+import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URL;
-import java.util.Map;
-import java.util.Properties;
-
 public class PropertiesFilePropertySourceTest {
 
-    private PropertiesFilePropertySource testfilePropertySource;
-    private PropertiesFilePropertySource overrideOrdinalPropertySource;
+    private SimplePropertySource testfilePropertySource;
+    private SimplePropertySource overrideOrdinalPropertySource;
 
 
     @Before
     public void initTest() {
-        testfilePropertySource = new PropertiesFilePropertySource(Thread.currentThread().getContextClassLoader().getResource("testfile.properties"));
-        overrideOrdinalPropertySource = new PropertiesFilePropertySource(Thread.currentThread().getContextClassLoader().getResource("overrideOrdinal.properties"));
+        testfilePropertySource = new SimplePropertySource(Thread.currentThread().getContextClassLoader().getResource("testfile.properties"));
+        overrideOrdinalPropertySource = new SimplePropertySource(Thread.currentThread().getContextClassLoader().getResource("overrideOrdinal.properties"));
     }
 
 
     @Test
     public void testGetOrdinal() {
-        Assert.assertEquals(DefaultOrdinal.FILE_PROPERTIES, testfilePropertySource.getOrdinal());
+        Assert.assertEquals(0, testfilePropertySource.getOrdinal());
         Assert.assertEquals(Integer.parseInt(overrideOrdinalPropertySource.get(PropertySource.TAMAYA_ORDINAL)), overrideOrdinalPropertySource.getOrdinal());
     }
 
@@ -60,12 +54,11 @@ public class PropertiesFilePropertySourceTest {
 
     @Test
     public void testGetProperties() throws Exception {
-        Properties expectedProperties = PropertiesFileLoader.load(new URL(testfilePropertySource.getName()));
-
-        Assert.assertEquals(expectedProperties.size(), testfilePropertySource.getProperties().size());
-
-        for (Map.Entry<String, String> entry : testfilePropertySource.getProperties().entrySet()) {
-            Assert.assertEquals(expectedProperties.getProperty(entry.getKey()), entry.getValue());
-        }
+        Assert.assertEquals(5, testfilePropertySource.getProperties().size());
+        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key1"));
+        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key2"));
+        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key3"));
+        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key4"));
+        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key5"));
     }
 }

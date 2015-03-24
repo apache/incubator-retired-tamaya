@@ -51,7 +51,7 @@ public class TestPropertySourceProvider implements PropertySourceProvider {
         private Map<String, String> properties = new HashMap<>();
 
         public MyPropertySource() {
-            initializeOrdinal(200);
+            super(200);
             properties.put("name", "Robin");
             properties.put("name3", "Lukas");
             properties.put("name4", "Sereina");

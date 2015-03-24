@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.test.propertysource;
 
-import org.apache.tamaya.core.propertysource.DefaultOrdinal;
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Assert;
@@ -36,11 +35,12 @@ public class SystemPropertySourceTest {
     public void testGetOrdinal() throws Exception {
 
         // test the default ordinal
-        Assert.assertEquals(DefaultOrdinal.SYSTEM_PROPERTIES, testPropertySource.getOrdinal());
+        Assert.assertEquals(SystemPropertySource.DEFAULT_ORDINAL, testPropertySource.getOrdinal());
 
         // set the ordinal to 1000
         System.setProperty(PropertySource.TAMAYA_ORDINAL, "1000");
-        Assert.assertEquals(1000, new SystemPropertySource().getOrdinal()); // currently its not possible to change ordinal at runtime
+        Assert.assertEquals(1000, new SystemPropertySource().getOrdinal());
+        // currently its not possible to change ordinal at runtime
 
         // reset it to not destroy other tests!!
         System.clearProperty(PropertySource.TAMAYA_ORDINAL);

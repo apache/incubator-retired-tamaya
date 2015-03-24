@@ -20,58 +20,36 @@ package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.spi.PropertySource;
 
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A base class for {@link PropertySource}s. It provides a {@link #initializeOrdinal(int)} method that
- * reads the ordinal from the config source itself, allowing the ordinal to be "self-configured" by
- * the configuration read.
+ * Abstract {@link org.apache.tamaya.spi.PropertySource} that allows to set a default ordinal that will be used, if no
+ * ordinal is provided with the config.
  */
-public abstract class BasePropertySource implements PropertySource {
+public abstract class BasePropertySource implements PropertySource{
+    /** default ordinal that will be used, if no ordinal is provided with the config. */
+    private final int defaultOrdinal;
 
-    private static final Logger LOG = Logger.getLogger(BasePropertySource.class.getName());
-
-
-    private int ordinal = DefaultOrdinal.PROPERTY_SOURCE;
-
+    /**
+     * COnstructor.
+     * @param defaultOrdinal default ordinal that will be used, if no ordinal is provided with the config.
+     */
+    protected BasePropertySource(int defaultOrdinal){
+        this.defaultOrdinal = defaultOrdinal;
+    }
 
     @Override
     public int getOrdinal() {
-        return ordinal;
-    }
-
-
-    @Override
-    public String get(String key) {
-        Objects.requireNonNull(key, "key must not be null");
-        return getProperties().get(key);
-    }
-
-
-    /**
-     * Initializing the ordinal of this {@link PropertySource} with the given defaultOrdinal.
-     *
-     * If {@link PropertySource#TAMAYA_ORDINAL} is present via {@link #get(String)} and the
-     * value is a valid {@link Integer} then, the defaultOrdinal will be overridden.
-     *
-     * @param defaultOrdinal of the {@link PropertySource}
-     */
-    protected void initializeOrdinal(final int defaultOrdinal) {
-        this.ordinal = defaultOrdinal;
-
-        String ordinal = get(PropertySource.TAMAYA_ORDINAL);
-        if (ordinal != null) {
-
-            try {
-                this.ordinal = Integer.parseInt(ordinal);
-            } catch (NumberFormatException e) {
-                LOG.log(Level.WARNING,
-                        "Specified {0} is not a valid Integer value: {1} - using defaultOrdinal {2}",
-                        new Object[]{PropertySource.TAMAYA_ORDINAL, ordinal, defaultOrdinal});
+        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        if(configuredOrdinal!=null){
+            try{
+                return Integer.parseInt(configuredOrdinal);
+            } catch(Exception e){
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, e,
+                        () -> "Configured Ordinal is not an int number: " + configuredOrdinal);
             }
         }
+        return defaultOrdinal;
     }
-
 }

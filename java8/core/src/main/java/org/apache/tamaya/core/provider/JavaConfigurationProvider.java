@@ -19,8 +19,7 @@
 package org.apache.tamaya.core.provider;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.internal.PropertiesFileLoader;
-import org.apache.tamaya.core.propertysource.PropertiesFilePropertySource;
+import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
@@ -36,27 +35,24 @@ import java.util.List;
  * Provider which reads all {@code javaconfiguration.properties} files from classpath
  */
 public class JavaConfigurationProvider implements PropertySourceProvider {
-
-    public static final String DEFAULT_PROPERTIES_FILE_NAME="javaconfiguration.properties";
+    /** Default location in the classpath, where Tamaya looks for configuration by default. */
+    public static final String DEFAULT_PROPERTIES_FILE_NAME="META-INF/javaconfiguration.properties";
 
     @Override
     public Collection<PropertySource> getPropertySources() {
-
         List<PropertySource> propertySources = new ArrayList<>();
-
-        //X TODO maybe put javaconf... in META-INF
-
         try {
-
-            Enumeration<URL> urls = PropertiesFileLoader.resolvePropertiesFiles("META-INF/"+DEFAULT_PROPERTIES_FILE_NAME);
+            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
+                    .getResources(DEFAULT_PROPERTIES_FILE_NAME);
             while (urls.hasMoreElements()) {
-                propertySources.add(new PropertiesFilePropertySource(urls.nextElement()));
+                propertySources.add(new SimplePropertySource(urls.nextElement()));
             }
 
         } catch (IOException e) {
             throw new ConfigException("Error while loading javaconfiguration.properties", e);
         }
-
         return Collections.unmodifiableList(propertySources);
     }
+
+
 }
