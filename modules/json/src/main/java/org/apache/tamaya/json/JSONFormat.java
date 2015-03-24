@@ -48,12 +48,7 @@ public class JSONFormat implements ConfigurationFormat {
 
     @Override
     public boolean accepts(URL url) {
-        Objects.requireNonNull(url);
-
-        boolean isAFile = url.getProtocol().equals("file");
-        boolean isJSON = url.getPath().endsWith(".json");
-
-        return isAFile && isJSON;
+        return Objects.requireNonNull(url).getPath().endsWith(".json");
     }
 
     @Override

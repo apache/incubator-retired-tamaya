@@ -20,6 +20,8 @@ package org.apache.tamaya.json;
 
 
 import org.apache.tamaya.format.ConfigurationData;
+import org.apache.tamaya.format.FlattenedDefaultPropertySource;
+import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -53,23 +55,21 @@ public class JSONFormatTest extends CommonJSONTestCaseCollection {
     @Test
     public void aHTTPBasedURLIsNotAccepted() throws Exception {
         URL url = new URL("http://nowhere.somewhere/conf.json");
-
-        assertThat(format.accepts(url), is(false));
+        assertThat(format.accepts(url), is(true));
     }
 
     @Test
     public void aFTPBasedURLIsNotAccepted() throws Exception {
         URL url = new URL("ftp://nowhere.somewhere/a/b/c/d/conf.json");
 
-        assertThat(format.accepts(url), is(false));
+        assertThat(format.accepts(url), is(true));
     }
 
     @Override
-    UnifiedConfigData getPropertiesFrom(URL source) throws Exception {
+    PropertySource getPropertiesFrom(URL source) throws Exception {
         try (InputStream is = source.openStream()) {
             ConfigurationData data = format.readConfiguration(source.toString(), is);
-
-            return new ConfigurationDataUCD(data);
+            return new FlattenedDefaultPropertySource(data);
         }
     }
 }

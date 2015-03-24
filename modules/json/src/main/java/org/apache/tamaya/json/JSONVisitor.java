@@ -31,9 +31,9 @@ import java.util.*;
  */
 public class JSONVisitor {
     private final ObjectNode rootNode;
-    private final HashMap<String, String> targetStore;
+    private final Map<String, String> targetStore;
 
-    public JSONVisitor(ObjectNode startNode, HashMap<String, String> target) {
+    public JSONVisitor(ObjectNode startNode, Map<String, String> target) {
         rootNode = startNode;
         targetStore = target;
     }
@@ -96,8 +96,7 @@ public class JSONVisitor {
 
 
         public boolean hasNext() {
-            boolean hasNext = elements.hasNext();
-            return hasNext;
+            return elements.hasNext();
         }
 
         public String getNSPrefix() {

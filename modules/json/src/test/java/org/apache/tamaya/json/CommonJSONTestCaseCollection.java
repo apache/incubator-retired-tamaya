@@ -19,6 +19,7 @@
 package org.apache.tamaya.json;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -37,7 +38,7 @@ import static org.hamcrest.Matchers.hasSize;
  */
 public abstract class CommonJSONTestCaseCollection {
 
-    abstract UnifiedConfigData getPropertiesFrom(URL source) throws Exception;
+    abstract PropertySource getPropertiesFrom(URL source) throws Exception;
 
     @Test
     public void canReadNestedStringOnlyJSONConfigFile() throws Exception {
@@ -46,7 +47,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        UnifiedConfigData properties = getPropertiesFrom(configURL);
+        PropertySource properties = getPropertiesFrom(configURL);
 
         assertThat(properties.getProperties().keySet(), hasSize(5));
 
@@ -70,7 +71,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        UnifiedConfigData properties = getPropertiesFrom(configURL);
+        PropertySource properties = getPropertiesFrom(configURL);
 
         assertThat(properties.getProperties().keySet(), hasSize(4));
 
@@ -122,7 +123,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        UnifiedConfigData properties = getPropertiesFrom(configURL);
+        PropertySource properties = getPropertiesFrom(configURL);
 
         assertThat(properties.getOrdinal(), is(16784));
     }
@@ -133,7 +134,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        UnifiedConfigData properties = getPropertiesFrom(configURL);
+        PropertySource properties = getPropertiesFrom(configURL);
 
         assertThat(properties.getProperties().keySet(), hasSize(3));
 
@@ -155,7 +156,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        UnifiedConfigData properties = getPropertiesFrom(configURL);
+        PropertySource properties = getPropertiesFrom(configURL);
 
         properties.getProperties();
     }
@@ -166,7 +167,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        UnifiedConfigData properties = getPropertiesFrom(configURL);
+        PropertySource properties = getPropertiesFrom(configURL);
 
         assertThat(properties.getProperties().keySet(), hasSize(0));
     }

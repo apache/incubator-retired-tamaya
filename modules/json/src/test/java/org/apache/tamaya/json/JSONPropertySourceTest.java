@@ -24,8 +24,8 @@ import org.junit.Test;
 
 import java.net.URL;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
@@ -35,15 +35,13 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        JSONPropertySource source = new JSONPropertySource(configURL.toString(), 10);
-
-        assertThat(source.get(PropertySource.TAMAYA_ORDINAL), nullValue());
+        JSONPropertySource source = new JSONPropertySource(configURL, 4);
+        assertEquals(source.get(PropertySource.TAMAYA_ORDINAL), "16784");
     }
 
     @Override
-    UnifiedConfigData getPropertiesFrom(URL source) throws Exception {
+    PropertySource getPropertiesFrom(URL source) throws Exception {
         JSONPropertySource propertySource = new JSONPropertySource(source);
-
-        return new JSONPropertySourceUCD(propertySource);
+        return propertySource;
     }
 }

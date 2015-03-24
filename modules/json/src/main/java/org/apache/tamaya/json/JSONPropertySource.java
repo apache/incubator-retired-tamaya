@@ -22,149 +22,81 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.propertysource.DefaultOrdinal;
-import org.apache.tamaya.resource.ResourceResolver;
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.ServiceContext;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.StampedLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
 /**
  * Property source based on a JSON file.
  */
-public class JSONPropertySource
-    implements PropertySource {
-
+public class JSONPropertySource implements PropertySource {
+    /** The underlying resource. */
     private URL urlResource;
-    private int priority = DefaultOrdinal.FILE_PROPERTIES;
-
-    private HashMap<String, String> values;
+    /** The values read. */
+    private Map<String, String> values;
+    /** The evaluated ordinal. */
+    private int ordinal;
 
     /**
-     * Lock for internal synchronization.
+     * Constructor, hereby using 0 as the default ordinal.
+     * @param resource the resource modelled as URL, not null.
      */
-    private StampedLock propertySourceLock = new StampedLock();
-
     public JSONPropertySource(URL resource) {
-        init(resource);
+        this(resource, 0);
     }
 
-    public JSONPropertySource(String resourcePath) {
-        this(resourcePath, DefaultOrdinal.FILE_PROPERTIES);
-    }
-
-    public JSONPropertySource(String resourcePath, int prio) {
-        priority = prio;
-
-        Optional<ResourceResolver> resolver = ServiceContext.getInstance().getService(ResourceResolver.class);
-
-        if (!resolver.isPresent()) {
-            throw new ConfigException("Unable to load " + ResourceResolver.class.getCanonicalName());
-        }
-
-        Collection<URL> resources = resolver.get().getResources(resourcePath);
-
-        if (resources.size() == 0) {
-            throw new ConfigException("Unable to find " + resourcePath);
-        } else if (resources.size() > 1) {
-            throw new ConfigException("Unable to resolve " + resourcePath + " to a single resource.");
-        }
-
-        URL url = resources.iterator().next();
-
-        init(url, prio);
-    }
-
-    public JSONPropertySource(File file) {
-        init(file);
-    }
-
-    private void init(File resource) {
-        init(resource, DefaultOrdinal.FILE_PROPERTIES);
-    }
-
-    private void init(File resource, int prio) {
-
-        try {
-            init(resource.toURI().toURL(), prio);
-        } catch (MalformedURLException e) {
-            throw new ConfigException(format("%s seems not to be a valid file.", resource), e);
+    /**
+     * Constructor.
+     * @param resource the resource modelled as URL, not null.
+     * @param defaultOrdinal the defaultOrdinal to be used.
+     */
+    public JSONPropertySource(URL resource, int defaultOrdinal) {
+        urlResource = Objects.requireNonNull(resource);
+        this.ordinal = defaultOrdinal; // may be overriden by read...
+        this.values = readConfig(urlResource);
+        if (this.values.containsKey(TAMAYA_ORDINAL)) {
+            this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
         }
     }
 
-    private void init(URL resource) {
-        init(resource, DefaultOrdinal.FILE_PROPERTIES);
-    }
-
-    private void init(URL resource, int prio) {
-        priority = prio;
-        urlResource = resource;
-    }
-
-    public JSONPropertySource(File file, int priority) {
-        init(file, priority);
-    }
 
     @Override
     public int getOrdinal() {
-        Lock writeLock = propertySourceLock.asWriteLock();
-
-        try {
-            writeLock.lock();
-
-            if (values == null) {
-                readSource();
+        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        if(configuredOrdinal!=null){
+            try{
+                return Integer.parseInt(configuredOrdinal);
+            } catch(Exception e){
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, e,
+                        () -> "Configured Ordinal is not an int number: " + configuredOrdinal);
             }
-        } finally {
-            writeLock.unlock();
         }
-
-        return priority;
+        return ordinal;
     }
 
     @Override
     public String getName() {
-        return "json-properties";
-    }
-
-    @Override
-    public String get(String key) {
-        Objects.requireNonNull(key, "Key must not be null");
-
-        return getProperties().get(key);
+        return urlResource.toExternalForm();
     }
 
     @Override
     public Map<String, String> getProperties() {
-        Lock writeLock = propertySourceLock.asWriteLock();
-
-        try {
-            writeLock.lock();
-
-            if (values == null) {
-                readSource();
-            }
-
-            return Collections.unmodifiableMap(values);
-        } finally {
-            writeLock.unlock();
-        }
+        return Collections.unmodifiableMap(values);
     }
 
-    protected void readSource() {
+    /**
+     * Reads the configuration.
+     */
+    protected Map<String, String> readConfig(URL urlResource) {
         try (InputStream is = urlResource.openStream()) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(is);
@@ -174,22 +106,14 @@ public class JSONPropertySource
                 throw new ConfigException("Currently only JSON objects are supported");
             }
 
-            HashMap<String, String> values = new HashMap<>();
+            Map<String, String> values = new HashMap<>();
             JSONVisitor visitor = new JSONVisitor((ObjectNode) root, values);
             visitor.run();
-
-            this.values = values;
-
-            if (this.values.containsKey(TAMAYA_ORDINAL)) {
-                int newPriority = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
-                priority = newPriority;
-                this.values.remove(TAMAYA_ORDINAL);
-            }
+            return values;
         }
         catch (Throwable t) {
             throw new ConfigException(format("Failed to read properties from %s", urlResource.toExternalForm()), t);
         }
-
     }
 
     @Override
