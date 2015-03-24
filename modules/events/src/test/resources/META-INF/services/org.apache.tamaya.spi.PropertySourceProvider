@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.events.tests.TestObservingProvider
+org.apache.tamaya.events.tests.org.apache.tamaya.examples.fileobserver.TestObservingProvider

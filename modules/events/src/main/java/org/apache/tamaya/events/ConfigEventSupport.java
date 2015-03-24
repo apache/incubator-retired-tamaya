@@ -26,19 +26,19 @@ import org.apache.tamaya.spi.ServiceContext;
  * Singleton accessor for accessing the event support component that distributes change events of
  * {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.Configuration}.
  */
-public class EventSupport {
+public class ConfigEventSupport {
     /**
      * The backing SPI.
      */
     private static final EventSupportSpi SPI = ServiceContext.getInstance()
             .getService(EventSupportSpi.class)
             .orElseThrow(() -> new ConfigException("No SPI registered for " +
-                    EventSupport.class.getName()));
+                    ConfigEventSupport.class.getName()));
 
     /**
      * Private singleton constructor.
      */
-    private EventSupport() {
+    private ConfigEventSupport() {
     }
 
     /**
