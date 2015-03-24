@@ -22,6 +22,8 @@ import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Created by Anatole on 20.03.2015.
@@ -33,7 +35,7 @@ public class MyPathPropertySourceProvider extends AbstractPathPropertySourceProv
     }
 
     @Override
-    protected PropertySource getPropertySource(URL url) {
-        return new SimplePropertySource(url);
+    protected Collection<PropertySource> getPropertySources(URL url) {
+        return Arrays.asList(new PropertySource[]{new SimplePropertySource(url)});
     }
 }
