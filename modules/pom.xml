@@ -35,15 +35,13 @@ under the License.
 
     <modules>
         <module>builder</module>
-        <module>apiextensions</module>
-        <module>injection</module>
+        <module>events</module>
         <module>formats</module>
+        <module>injection</module>
         <module>json</module>
+        <module>metamodels</module>
         <module>resolver</module>
         <module>resources</module>
-        <module>events</module>
-        <!-- module>metamodels</module -->
-        <!-- module>integration</module -->
     </modules>
 
     <build>

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events.tests;
+package org.apache.tamaya.events;
 
 import org.apache.tamaya.events.folderobserver.ObservingPropertySourceProvider;
 import org.apache.tamaya.format.formats.PropertiesFormat;
@@ -24,6 +24,7 @@ import org.apache.tamaya.format.formats.PropertiesFormat;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -32,6 +33,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 /**
  * Test configuration property source provider that observes a directory and updated the config if necessary.
@@ -39,7 +41,21 @@ import java.util.Iterator;
 public class TestObservingProvider extends ObservingPropertySourceProvider{
 
     public TestObservingProvider(){
-        super(Paths.get("src/test/data"),
+        super(Paths.get(getTestPath()),
                 new PropertiesFormat());
+        Logger.getLogger(getClass().getName()).info("Using test directory: " + getTestPath());
+    }
+
+    public static File getTestDirectory(){
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File dir = new File(tempDir, "tamaya-events-testdir");
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        return dir;
+    }
+
+    private static String getTestPath(){
+        return getTestDirectory().getAbsolutePath();
     }
 }

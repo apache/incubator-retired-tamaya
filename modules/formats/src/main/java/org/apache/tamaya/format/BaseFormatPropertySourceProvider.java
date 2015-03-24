@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.resource.ResourceResolver;
-import org.apache.tamaya.resource.Resources;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
@@ -75,6 +73,33 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
     }
 
     /**
+     * Creates a new instance, hereby using the current thread context classloader, or if not available the classloader
+     * that loaded this class.
+     * @param formats the formats to be used, not null, not empty.
+     * @param paths   the paths to be resolved, not null, not empty.
+     */
+    public BaseFormatPropertySourceProvider(
+            List<ConfigurationFormat> formats, String... paths) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if(cl==null){
+            cl = getClass().getClassLoader();
+        }
+        this.configFormats.addAll(Objects.requireNonNull(formats));
+        for(String path:paths) {
+            Enumeration<URL> urls = null;
+            try {
+                urls = cl.getResources(path);
+            } catch (IOException e) {
+                LOG.log(Level.WARNING, e, () -> "Failed to read resource: " + path);
+                continue;
+            }
+            while(urls.hasMoreElements()) {
+                this.paths.add(urls.nextElement());
+            }
+        }
+    }
+
+    /**
      * Creates a new instance.
      *
      * @param classLoader the ClassLoader to be used, not null, not empty.
@@ -99,19 +124,6 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
         }
     }
 
-    /**
-     * Creates a new instance.
-     *
-     * @param formats the formats to be used, not null, not empty.
-     * @param paths   the paths to be resolved, not null, not empty.
-     */
-    public BaseFormatPropertySourceProvider(
-            ClassLoader classLoader,
-            List<ConfigurationFormat> formats, URL... paths) {
-        this.classLoader = Optional.ofNullable(classLoader);
-        this.configFormats.addAll(Objects.requireNonNull(formats));
-        this.paths.addAll(Arrays.asList(Objects.requireNonNull(paths)));
-    }
 
     /**
      * Method to create a {@link org.apache.tamaya.spi.PropertySource} based on the given entries read.
@@ -130,7 +142,6 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
      */
     @Override
     public Collection<PropertySource> getPropertySources() {
-        ResourceResolver resourceResolver = Resources.getResourceResolver();
         List<PropertySource> propertySources = new ArrayList<>();
         this.paths.forEach(res -> {
             try(InputStream is = res.openStream()) {

@@ -38,7 +38,6 @@ import org.apache.tamaya.inject.DefaultValue;
 import org.apache.tamaya.inject.WithLoadPolicy;
 import org.apache.tamaya.inject.WithPropertyConverter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
 

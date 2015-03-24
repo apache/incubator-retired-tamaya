@@ -23,7 +23,10 @@ import org.apache.tamaya.spi.PropertySource;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,16 +40,18 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
     }
 
     @Override
-    protected PropertySource getPropertySource(URL url) {
+    protected Collection<PropertySource> getPropertySources(URL url) {
+        List<PropertySource> list = new ArrayList<>();
         Properties props = new Properties();
         try(InputStream is = url.openStream()){
             props.load(is);
-            return new PropertiesBasedPropertySource(url.toString(), props);
+            list.add(new PropertiesBasedPropertySource(url.toString(), props));
         }
         catch(Exception e){
             e.printStackTrace();
             return null;
         }
+        return list;
     }
 
 

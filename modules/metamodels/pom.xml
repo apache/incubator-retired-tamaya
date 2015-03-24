@@ -33,7 +33,6 @@ under the License.
 
     <modules>
         <module>simple</module>
-        <module>environment</module>
     </modules>
 
 </project>

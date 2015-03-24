@@ -33,6 +33,8 @@ public class FlattenedDefaultPropertySource implements PropertySource {
     private static final Logger LOG = Logger.getLogger(FlattenedDefaultPropertySource.class.getName());
     private Map<String, String> defaultSection;
     private ConfigurationData data;
+    private int defaultOrdinal = 0;
+
 
     /*
      * Constructor, uses hereby the flattened config data read from an URL by a
@@ -45,6 +47,20 @@ public class FlattenedDefaultPropertySource implements PropertySource {
         }
         this.defaultSection = Collections.unmodifiableMap(this.defaultSection);
         this.data = data;
+    }
+
+    /*
+     * Constructor, uses hereby the flattened config data read from an URL by a
+     * ${@link org.apache.tamaya.format.ConfigurationFormat}, and if not present falls back to the default section.
+     */
+    public FlattenedDefaultPropertySource(int defaultOrdinal, ConfigurationData data) {
+        this.defaultSection = data.getSection(ConfigurationData.FLATTENED_SECTION_NAME);
+        if (this.defaultSection == null) {
+            this.defaultSection = data.getDefaultSection();
+        }
+        this.defaultSection = Collections.unmodifiableMap(this.defaultSection);
+        this.data = data;
+        this.defaultOrdinal = defaultOrdinal;
     }
 
     @Override
@@ -69,7 +85,7 @@ public class FlattenedDefaultPropertySource implements PropertySource {
                 LOG.log(Level.WARNING, e, () -> "Failed to parse Tamaya ordinal from " + data.getResource());
             }
         }
-        return 0;
+        return defaultOrdinal;
     }
 
     @Override

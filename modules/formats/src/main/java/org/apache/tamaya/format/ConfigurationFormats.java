@@ -25,7 +25,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -98,7 +100,7 @@ public final class ConfigurationFormats {
      * @return the ConfigurationData read, or null.
      * @throws IOException if the resource cannot be read.
      */
-    public static ConfigurationData readConfigurationData(final URL url) throws IOException{
+    public static ConfigurationData readConfigurationData(final URL url) throws IOException {
         List<ConfigurationFormat> formats = getFormats(url);
         return readConfigurationData(url, formats.toArray(new ConfigurationFormat[formats.size()]));
     }
@@ -115,12 +117,34 @@ public final class ConfigurationFormats {
         return readConfigurationData(url.toString(), url.openStream(), formats);
     }
 
+    /**
+     *
+     * @param urls the urls from where to read, not null.
+     * @param formats the formats to try.
+     * @return the {@link org.apache.tamaya.format.ConfigurationData} of the files successfully decoded by the
+     * given formats.
+     */
+    public static Collection<ConfigurationData> getPropertySources(Collection<URL> urls, ConfigurationFormat... formats) {
+        List<ConfigurationData> dataRead = new ArrayList<>();
+        for (URL url : urls) {
+            try {
+                ConfigurationData data = readConfigurationData(url, formats);
+                if (data != null) {
+                    dataRead.add(data);
+                }
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Error reading file: " + url.toExternalForm(), e);
+            }
+        }
+        return dataRead;
+    }
 
     /**
      * Tries to read configuration data from a given URL, hereby explicitly trying all given formats in order.
-     * @param resource a descriptive name for the resource, since an InputStream does not have any)
+     *
+     * @param resource    a descriptive name for the resource, since an InputStream does not have any)
      * @param inputStream the inputStream from where to read, not null.
-     * @param formats the formats to try.
+     * @param formats     the formats to try.
      * @return the ConfigurationData read, or null.
      * @throws IOException if the resource cannot be read.
      */
@@ -130,13 +154,13 @@ public final class ConfigurationFormats {
         Objects.requireNonNull(resource);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] bytes = new byte[256];
-        try{
+        try {
             int read = inputStream.read(bytes);
-            while(read > 0){
+            while (read > 0) {
                 bos.write(bytes, 0, read);
                 read = inputStream.read(bytes);
             }
-        } finally{
+        } finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
@@ -145,17 +169,18 @@ public final class ConfigurationFormats {
         }
         ConfigurationData data;
         for (ConfigurationFormat format : formats) {
-            try(ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray())) {
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray())) {
                 data = format.readConfiguration(resource, bis);
                 if (data != null) {
                     return data;
                 }
             } catch (Exception e) {
                 LOG.log(Level.INFO, e,
-                        () -> "Format "+format.getClass().getName()+" failed to read resource " + resource);
+                        () -> "Format " + format.getClass().getName() + " failed to read resource " + resource);
             }
         }
         return null;
     }
+
 
 }
