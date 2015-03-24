@@ -46,7 +46,7 @@ under the License.
             <artifactId>mockito-core</artifactId>
         </dependency>
 
-        <dependency>
+        <!-- dependency>
             <groupId>org.jboss.arquillian.daemon</groupId>
             <artifactId>arquillian-daemon-container-managed</artifactId>
         </dependency>
@@ -73,16 +73,7 @@ under the License.
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-        </dependency>
-
+        </dependency-->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
