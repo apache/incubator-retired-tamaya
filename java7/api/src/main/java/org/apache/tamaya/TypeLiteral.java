@@ -52,9 +52,10 @@ public class TypeLiteral<T> implements Serializable {
     /**
      * Creates a new TypeLiteral based on a given type.
      * @param type the type , not null.
+     * @param <R> the literal generic type.
      * @return the corresponding TypeLiteral, never null.
      */
-    public static TypeLiteral<?> of(Type type){
+    public static <R> TypeLiteral<R> of(Type type){
         return new TypeLiteral<>(type);
     }
 
@@ -102,16 +103,18 @@ public class TypeLiteral<T> implements Serializable {
      * @return the generic type parameter of the given single type generic interfaceType, or null.
      */
     public static Type getTypeParameter(Class<?> clazz, Class<?> interfaceType) {
-        Type type = clazz.getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            if(interfaceType == null ||type.equals(interfaceType)){
+        Type[] types = clazz.getGenericInterfaces();
+        for(Type type:types) {
+            if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
-                if (parameterizedType.getActualTypeArguments().length == 1) {
-                    return parameterizedType.getActualTypeArguments()[0];
+                if(interfaceType==null || parameterizedType.getRawType().equals(interfaceType)){
+                    if (parameterizedType.getActualTypeArguments().length == 1) {
+                        return parameterizedType.getActualTypeArguments()[0];
+                    }
                 }
             }
         }
-        return getTypeParameter(clazz, interfaceType);
+        return null;
     }
 
     /**
