@@ -114,7 +114,7 @@ public class ConfiguredField {
             });
             annotatedField.set(target, value);
         } catch (Exception e) {
-            throw new ConfigException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
+            throw new ConfigException("Failed to evaluate annotated field: " + this.annotatedField.getDeclaringClass()
                     .getName() + '.' + annotatedField.getName(), e);
         }
     }

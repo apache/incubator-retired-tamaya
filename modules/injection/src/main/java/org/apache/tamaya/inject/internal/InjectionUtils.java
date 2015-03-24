@@ -234,7 +234,7 @@ final class InjectionUtils {
         if (String.class == targetType.getType()) {
             return (T) configValue;
         } else {
-            List<PropertyConverter<T>> converters = ServiceContext.getInstance().getService(ConfigurationContext.class).get()
+            List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                     .getPropertyConverters(targetType);
             for (PropertyConverter<T> converter : converters) {
                 adaptedValue = (T) converter.convert(configValue);
