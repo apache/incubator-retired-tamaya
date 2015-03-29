@@ -582,6 +582,18 @@ under the License.
         </profile>
 
         <profile>
+            <id>sandbox</id>
+            <activation>
+                <property>
+                    <name>sandbox</name>
+                </property>
+            </activation>
+            <modules>
+                <module>sandbox</module>
+            </modules>
+        </profile>
+
+        <profile>
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
