@@ -20,12 +20,13 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
-        <artifactId>tamaya-sandbox</artifactId>
         <groupId>org.apache.tamaya.ext</groupId>
+        <artifactId>tamaya-sandbox</artifactId>
         <version>0.1-incubating-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
+
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tamaya.ext.integration</groupId>
@@ -33,7 +34,6 @@ under the License.
 
     <modules>
         <module>cdi</module>
-        <module>se</module>
         <module>commons</module>
     </modules>
 

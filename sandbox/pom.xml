@@ -24,11 +24,11 @@ under the License.
         <groupId>org.apache.tamaya</groupId>
         <artifactId>tamaya-all</artifactId>
         <version>0.1-incubating-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>tamaya-sandbox</artifactId>
     <groupId>org.apache.tamaya.ext</groupId>
+
     <name>Apache Tamaya Sandbox Modules</name>
     <description>This project contains the several extensions that can be used with Tamaya, but are not (yet) ready for
         a release.</description>

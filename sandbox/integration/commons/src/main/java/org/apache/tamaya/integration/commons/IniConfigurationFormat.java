@@ -26,6 +26,7 @@ import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,9 +38,8 @@ import java.util.Map;
  */
 public class IniConfigurationFormat implements ConfigurationFormat {
 
-    @Override
     public ConfigurationData readConfiguration(URL url) {
-        ConfigurationDataBuilder builder = ConfigurationDataBuilder.of(url, this);
+        ConfigurationDataBuilder builder = ConfigurationDataBuilder.of(url.toString(), this);
         try {
             HierarchicalINIConfiguration commonIniConfiguration = new HierarchicalINIConfiguration(url);
             for(String section:commonIniConfiguration.getSections()){
@@ -56,5 +56,20 @@ public class IniConfigurationFormat implements ConfigurationFormat {
             throw new ConfigException("Failed to parse ini-file format from " + url, e);
         }
         return builder.build();
+    }
+
+    @Override
+    public String getName() {
+        throw new RuntimeException("Not implemented yet!");
+    }
+
+    @Override
+    public boolean accepts(URL url) {
+        throw new RuntimeException("Not implemented yet!");
+    }
+
+    @Override
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
+        throw new RuntimeException("Not implemented yet!");
     }
 }

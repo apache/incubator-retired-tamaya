@@ -21,14 +21,13 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya.integration</groupId>
-        <artifactId>tamaya-integration-all</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>..</relativePath>
+        <groupId>org.apache.tamaya.ext.integration</groupId>
+        <artifactId>tamaya-integrations</artifactId>
+        <version>0.1-incubating-SNAPSHOT</version>
     </parent>
+
     <artifactId>tamaya-cdi</artifactId>
     <name>Apache Tamaya Modules Integration - CDI</name>
-    <packaging>jar</packaging>
 
     <properties>
         <owb.version>1.5.0-SNAPSHOT</owb.version>

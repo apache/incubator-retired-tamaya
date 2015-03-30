@@ -26,13 +26,14 @@ under the License.
         <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
+
     <artifactId>tamaya-management</artifactId>
     <name>Apache Tamaya Modules Integration - Java Management Extensions</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
         </dependency>
