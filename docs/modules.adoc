@@ -55,4 +55,8 @@ N/A
 
 == Extensions in Experimental Stage
 
-tbd
+[width="100%",frame="1",options="header",grid="all"]
+|=======
+|_Artifact_                                 |_Description_                                |_Links_
+|+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.   | link:mod_jodatime.html[Documentation]
+|=======
