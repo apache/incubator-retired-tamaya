@@ -47,7 +47,7 @@ toc::[]
 == Tamaya Formats (Extension Module)
 === Overview
 
-Tamaya Formats is an extension module. Refer to the link::modules.html[extensions documentation] for further details.
+Tamaya Formats is an extension module. Refer to the link:modules.html[extensions documentation] for further details.
 
 Tamaya Formats provides an abstraction for configuration formats provding the following benefits:
 

@@ -40,7 +40,7 @@
 
 === Overview
 
-Tamaya Resolver is an extension module. Refer to the link::modules.html[extensions documentation] for further details
+Tamaya Resolver is an extension module. Refer to the link:modules.html[extensions documentation] for further details
 about modules.
 
 Tamaya Resolver provides a dynamic resolution mechanism, which allows to use UNIX-styled (+${...}+ placeholder

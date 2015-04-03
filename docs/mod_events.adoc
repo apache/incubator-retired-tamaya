@@ -47,7 +47,7 @@ toc::[]
 == Tamaya Events (Extension Module)
 === Overview
 
-Tamaya Events is an extension module. Refer to the link::modules.html[extensions documentation] for further details
+Tamaya Events is an extension module. Refer to the link:modules.html[extensions documentation] for further details
 about modules.
 
 Tamaya Events provides an abstraction for events like change events, when configuration has bee changed.

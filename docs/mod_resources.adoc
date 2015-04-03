@@ -47,7 +47,7 @@ toc::[]
 == Tamaya Resources (Extension Module)
 === Overview
 
-Tamaya Resources is an extension module. Refer to the link::modules.html[extensions documentation] for further details
+Tamaya Resources is an extension module. Refer to the link:modules.html[extensions documentation] for further details
 about modules.
 
 Tamaya Resources defines some additional tools to locate resources in your classpath or file system based on descriptive
