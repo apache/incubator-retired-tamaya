@@ -3,7 +3,7 @@ Apache Tamaya -- Extension Modules
 :name: Tamaya
 :rootpackage: org.apache.tamaya
 :title: Apache Tamaya Extension Modules
-:revnumber: 0.1-SNAPSHOT
+:revnumber: {tamayaVersion}
 :revremark: Incubator
 :revdate: March 2015
 :longversion: {revnumber} ({revremark}) {revdate}

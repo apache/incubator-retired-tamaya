@@ -56,7 +56,7 @@ To benefit from dynamic value resolution you only must add the corresponding dep
 <dependency>
   <groupId>org.apache.tamaya.ext</groupId>
   <artifactId>tamaya-resolver</artifactId>
-  <version>...</version>
+  <version>{tamayaVersion}</version>
 </dependency>
 ===============================================
 
