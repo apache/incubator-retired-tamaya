@@ -38,6 +38,7 @@ under the License.
         <module>apiextensions</module>
         <module>integration</module>
         <module>management</module>
+        <module>jodatime</module>
     </modules>
 
 </project>
