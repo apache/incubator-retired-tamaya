@@ -41,6 +41,21 @@ public abstract class CommonJSONTestCaseCollection {
     abstract PropertySource getPropertiesFrom(URL source) throws Exception;
 
     @Test
+    public void canReadNonLatinCharacters() throws Exception {
+        URL configURL = JSONPropertySourceTest.class
+             .getResource("/configs/valid/cyrillic.json");
+
+        assertThat(configURL, Matchers.notNullValue());
+
+        PropertySource propertySource = getPropertiesFrom(configURL);
+
+        assertThat(propertySource.get("name"), Matchers.notNullValue());
+        assertThat(propertySource.get("name"), equalTo("\u041e\u043b\u0438\u0432\u0435\u0440"));
+        assertThat(propertySource.get("\u0444\u0430\u043c\u0438\u043b\u0438\u044f"), Matchers.notNullValue());
+        assertThat(propertySource.get("\u0444\u0430\u043c\u0438\u043b\u0438\u044f"), Matchers.equalTo("Fischer"));
+    }
+
+    @Test
     public void canReadNestedStringOnlyJSONConfigFile() throws Exception {
         URL configURL = JSONPropertySourceTest.class
                 .getResource("/configs/valid/simple-nested-string-only-config-1.json");
