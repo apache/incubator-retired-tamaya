@@ -1,5 +1,5 @@
-Apache Tamaya -- Extension: Builder
-==================================
+= Apache Tamaya -- Extension: Builder
+
 :name: Tamaya
 :rootpackage: org.apache.tamaya.builder
 :title: Apache Tamaya Extension: Builder

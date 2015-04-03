@@ -1,5 +1,5 @@
-Apache Tamaya -- Extension: Formats
-===================================
+= Apache Tamaya -- Extension: Formats
+
 :name: Tamaya
 :rootpackage: org.apache.tamaya.ext.formats
 :title: Apache Tamaya Extension: Formats

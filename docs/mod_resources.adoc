@@ -1,5 +1,5 @@
-Apache Tamaya -- Extension: Resources
-==================================
+= Apache Tamaya -- Extension: Resources
+
 :name: Tamaya
 :rootpackage: org.apache.tamaya.ext.resources
 :title: Apache Tamaya Extension: Resources

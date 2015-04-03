@@ -1,5 +1,5 @@
-Apache Tamaya -- Extension: Events
-==================================
+= Apache Tamaya -- Extension: Events
+
 :name: Tamaya
 :rootpackage: org.apache.tamaya.ext.events
 :title: Apache Tamaya Extension: Events

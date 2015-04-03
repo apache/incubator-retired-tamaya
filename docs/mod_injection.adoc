@@ -1,5 +1,5 @@
-Apache Tamaya -- Extension: Injection
-=====================================
+= Apache Tamaya -- Extension: Injection
+
 :name: Tamaya
 :rootpackage: org.apache.tamaya.ext.injection
 :title: Apache Tamaya Extension: Injection

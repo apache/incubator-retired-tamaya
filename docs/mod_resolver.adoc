@@ -1,5 +1,5 @@
-Apache Tamaya -- Extension: Resolver
-==================================
+= Apache Tamaya -- Extension: Resolver
+
 :name: Tamaya
 :rootpackage: org.apache.tamaya.ext.resolver
 :title: Apache Tamaya Extension: Resolver
