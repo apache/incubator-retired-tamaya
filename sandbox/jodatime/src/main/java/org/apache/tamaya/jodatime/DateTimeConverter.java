@@ -27,6 +27,24 @@ import org.joda.time.format.DateTimeParser;
 
 import java.util.Objects;
 
+/**
+ * Converter, converting from {@code String} to Joda-Time's
+ * {@code DateTime}.
+ *
+ * The converter supports the following formats for the provided
+ * time information:
+ *
+ * <ul>
+ *     <li>{@code yyyy-MM-dd'T'HH:mm:ss.SSSZ}</li>
+ *     <li>{@code yyyy-MM-dd'T'HH:mm:ss.SSSz}</li>
+ *     <li>{@code yyyy-MM-dd'T'HH:mm:ssZ}</li>
+ *     <li>{@code yyyy-MM-dd'T'HH:mm:ssz}</li>
+ *     <li>{@code yyyy-MM-dd'T'HH:mmZ}</li>
+ *     <li>{@code yyyy-MM-dd'T'HH:mmz}</li>
+ *     <li>{@code yyyy-MM-dd'T'HHZ}</li>
+ *     <li>{@code yyyy-MM-dd'T'HHz}</li>
+ * </ul>
+ */
 public class DateTimeConverter implements PropertyConverter<DateTime> {
     // The DateTimeFormatter returned by ISODateTimeFormat are thread safe
     // according to the JavaDoc of JodaTime
