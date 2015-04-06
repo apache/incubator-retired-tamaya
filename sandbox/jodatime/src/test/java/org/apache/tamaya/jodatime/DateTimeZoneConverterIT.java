@@ -29,18 +29,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class DateTimeConverterIT {
+public class DateTimeZoneConverterIT {
     @Test
     public void bla() {
         List<PropertyConverter> formats = ServiceContext.getInstance()
                                                         .getServices(PropertyConverter.class);
 
         PropertyConverter converter = formats.stream()
-                                             .filter(s -> s instanceof DateTimeConverter)
+                                             .filter(s -> s instanceof DateTimeZoneConverter)
                                              .findFirst().get();
 
         assertThat("Converter not found via service context.", converter, notNullValue());
-        assertThat(converter, instanceOf(DateTimeConverter.class));
+        assertThat(converter, instanceOf(DateTimeZoneConverter.class));
     }
 
 }
