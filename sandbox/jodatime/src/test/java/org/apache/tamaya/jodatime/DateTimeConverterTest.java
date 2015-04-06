@@ -73,11 +73,7 @@ public class DateTimeConverterTest {
     @Test
     public void invalidInputValuesResultInReturningNull() {
         String[] inputValues = {
-             "2007-08-01T12:34:45.000+0:0",
-             "2007-08-01T12:34:45.000+00:0",
-             "2007-08-01T12:34:45.000+00:0",
-             "2007-08-01T+00:00",
-             "2007-08-01+00:00"
+             "00:00", "a", "-", "+ :00", "+00:"
         };
 
         for (String input : inputValues) {
