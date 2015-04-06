@@ -42,7 +42,7 @@ public class DateTimeZoneConverter implements PropertyConverter<DateTimeZone> {
                 result = DateTimeZone.forID(trimmed);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             result = null; // Give the next converter a change. Read the JavaDoc of convert
         }
 

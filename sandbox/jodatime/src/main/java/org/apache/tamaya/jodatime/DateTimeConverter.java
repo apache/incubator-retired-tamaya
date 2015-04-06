@@ -61,7 +61,7 @@ public class DateTimeConverter implements PropertyConverter<DateTime> {
 
         try {
             result = formatter.parseDateTime(trimmed);
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             // Ok, go on and try the next parser
         }
 
