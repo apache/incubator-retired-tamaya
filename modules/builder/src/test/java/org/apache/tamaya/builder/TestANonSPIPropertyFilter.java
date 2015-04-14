@@ -20,13 +20,13 @@ package org.apache.tamaya.builder;
 
 import org.apache.tamaya.spi.PropertyFilter;
 
-public class TestNonSPIPropertyFilterB implements PropertyFilter {
+public class TestANonSPIPropertyFilter implements PropertyFilter {
     @Override
     public String filterProperty(String key, String value) {
         String result = value;
 
-        if (!result.contains(("XYZ"))) {
-            result = value + "XYZ";
+        if (!result.contains(("ABC"))) {
+            result = value + "ABC";
         }
 
         return result;

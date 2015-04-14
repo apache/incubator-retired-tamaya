@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertyFilter;
 
@@ -28,14 +27,14 @@ import javax.annotation.Priority;
  * Simple PropertyFilter that filters exact one value, registered using ServiceLoader.
  */
 @Priority(200)
-public class TestPropertyFilterRemoving implements PropertyFilter{
+public class TestRemovingPropertyFilter implements PropertyFilter{
     @Override
     public String filterProperty(String key, String valueToBeFiltered) {
         if("name5".equals(key)){
             return null;
         }
         else if("name3".equals(key)){
-            return "Mapped to name: " + ConfigurationProvider.getConfiguration().get("name");
+            return "Mapped to name: " + ConfigurationProvider.getConfiguration().getOptional("name").orElse("NoName found!");
         }
         return valueToBeFiltered;
     }

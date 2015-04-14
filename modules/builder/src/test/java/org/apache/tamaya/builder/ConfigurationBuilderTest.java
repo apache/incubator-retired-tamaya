@@ -372,7 +372,7 @@ public class ConfigurationBuilderTest {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         Configuration config = builder.addPropertySources(source)
-                                      .addPropertyFilters(new TestNonSPIPropertyFilterA())
+                                      .addPropertyFilters(new TestANonSPIPropertyFilter())
                                       .build();
 
         String property = config.get("key");
@@ -391,8 +391,8 @@ public class ConfigurationBuilderTest {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         Configuration config = builder.addPropertySources(source)
-                                      .addPropertyFilters(new TestNonSPIPropertyFilterA())
-                                      .addPropertyFilters(new TestNonSPIPropertyFilterB())
+                                      .addPropertyFilters(new TestANonSPIPropertyFilter())
+                                      .addPropertyFilters(new TestBNonSPIPropertyFilter())
                                       .build();
 
         String property = config.get("key");
@@ -412,9 +412,9 @@ public class ConfigurationBuilderTest {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         Configuration config = builder.addPropertySources(source)
-                                      .addPropertyFilters(new TestNonSPIPropertyFilterA(),
+                                      .addPropertyFilters(new TestANonSPIPropertyFilter(),
                                               null,
-                                              new TestNonSPIPropertyFilterB())
+                                              new TestBNonSPIPropertyFilter())
                                       .build();
 
         String property = config.get("key");
@@ -435,7 +435,7 @@ public class ConfigurationBuilderTest {
 
         Configuration config = builder.addPropertySources(source)
                                       .addPropertyFilters((PropertyFilter)null) // The cast is needed!
-                                      .addPropertyFilters(new TestNonSPIPropertyFilterB())
+                                      .addPropertyFilters(new TestBNonSPIPropertyFilter())
                                       .build();
 
         String property = config.get("key");
@@ -454,8 +454,8 @@ public class ConfigurationBuilderTest {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         Configuration config = builder.addPropertySources(source)
-                                      .addPropertyFilters(new TestNonSPIPropertyFilterA(),
-                                                          new TestNonSPIPropertyFilterB())
+                                      .addPropertyFilters(new TestANonSPIPropertyFilter(),
+                                                          new TestBNonSPIPropertyFilter())
                                       .build();
 
         String property = config.get("key");

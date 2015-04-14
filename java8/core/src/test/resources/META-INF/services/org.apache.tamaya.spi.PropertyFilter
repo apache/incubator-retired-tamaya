@@ -17,4 +17,4 @@
 # under the License.
 #
 org.apache.tamaya.core.testdata.TestPropertyFilter
-org.apache.tamaya.core.testdata.TestPropertyFilterRemoving
+org.apache.tamaya.core.testdata.TestRemovingPropertyFilter

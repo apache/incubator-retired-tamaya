@@ -42,10 +42,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class DefaultConfigurationTest {
-    private FilterAppendingA FILTER_APPENDING_A = new FilterAppendingA();
-    private FilterPrependingB FILTER_PREPENDING_B = new FilterPrependingB();
-    private FilterPrependingC FILTER_PREPENDING_C = new FilterPrependingC();
-    private FilterPrependingD FILTER_PREPENDING_D = new FilterPrependingD();
+    private AppendingAFilter FILTER_APPENDING_A = new AppendingAFilter();
+    private PrependingBFilter FILTER_PREPENDING_B = new PrependingBFilter();
+    private PrependingCFilter FILTER_PREPENDING_C = new PrependingCFilter();
+    private PrependingDFilter FILTER_PREPENDING_D = new PrependingDFilter();
 
     /* =
      * =- Section with tests for filtering properties with PropertyFilters
@@ -80,8 +80,8 @@ public class DefaultConfigurationTest {
     public void filteringOfGivenValueWorksWithTwoFiltersWithoutPriority() {
         List<PropertyFilter> filters = new ArrayList<>();
 
-        FilterAppendingA filterA = spy(FILTER_APPENDING_A);
-        FilterPrependingB filterB = spy(FILTER_PREPENDING_B);
+        AppendingAFilter filterA = spy(FILTER_APPENDING_A);
+        PrependingBFilter filterB = spy(FILTER_PREPENDING_B);
         filters.add(filterA);
         filters.add(filterB);
 
@@ -163,7 +163,7 @@ public class DefaultConfigurationTest {
         assertThat(value, equalTo("$D$CV"));
     }
 
-    private static class FilterAppendingA implements PropertyFilter {
+    private static class AppendingAFilter implements PropertyFilter {
         @Override
         public String filterProperty(String key, String value) {
             return value.endsWith("A$")
@@ -172,7 +172,7 @@ public class DefaultConfigurationTest {
         }
     }
 
-    private static class FilterPrependingB implements PropertyFilter {
+    private static class PrependingBFilter implements PropertyFilter {
         @Override
         public String filterProperty(String key, String value) {
             return value.startsWith("$B")
@@ -182,7 +182,7 @@ public class DefaultConfigurationTest {
     }
 
     @Priority(987)
-    private static class FilterPrependingC implements PropertyFilter {
+    private static class PrependingCFilter implements PropertyFilter {
         @Override
         public String filterProperty(String key, String value) {
             return value.contains("$C")
@@ -192,7 +192,7 @@ public class DefaultConfigurationTest {
     }
 
     @Priority(111)
-    private static class FilterPrependingD implements PropertyFilter {
+    private static class PrependingDFilter implements PropertyFilter {
         @Override
         public String filterProperty(String key, String value) {
             return value.contains("$D")
