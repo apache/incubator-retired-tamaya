@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test class that tests the default methods implemented on {@link org.apache.tamaya.Configuration}. The provided
- * {@link org.apache.tamaya.TestConfiguration} is implemeted with maximal use of the default methods.
+ * {@link org.apache.tamaya.TestConfiguration} is implemented with maximal use of the default methods.
  */
 public class ConfigurationTest {
 
