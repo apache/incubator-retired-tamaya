@@ -196,7 +196,6 @@ public interface Configuration{
     String get(String key);
     <T> T get(String key, Class<T> type);
     <T> T get(String key, TypeLiteral<T> type);
-    <T> T get(String key, PropertyConverter<T> type);
     Map<String,String> getProperties();
 
     // extension points
@@ -207,10 +206,7 @@ public interface Configuration{
 
 Hereby
 
-* +<T> T get(String, Class<T>)+ provides type safe accessors for all basic wrapper types of the JDK. Basically all this
-  methods delegate to the +get(String, PropertyConverter)+ method, additionally passing the required +PropertyConverter+.
-* +get(String, PropertyConverter)+ allow accessing any type, hereby also passing a +PropertyConverter+ explicitly
-  that converts  the configured literal value to the type required.
+* +<T> T get(String, Class<T>)+ provides type safe accessors for all basic wrapper types of the JDK.
 * +with, query+ provide the extension points for adding additional functionality.
 * +getProperties()+ provides access to all key/values, whereas entries from non scannable property sources may not
   be included.
@@ -264,7 +260,6 @@ public interface Configuration{
     String get(String key);
     <T> T get(String key, Class<T> type);
     <T> T get(String key, TypeLiteral<T> type);
-    <T> T get(String key, PropertyConverter<T> type);
     Map<String,String> getProperties();
     Configuration with(ConfigOperator operator);
     <T> T query(ConfigQuery<T> query);
@@ -273,7 +268,6 @@ public interface Configuration{
     default Optional<String> getOptional(String key){...}
     default <T> Optional<T> getOptional(String key, Class<T> type){...}
     default <T> Optional<T> getOptional(String key, TypeLiteral<T> type){...}
-    default <T> Optional<T> getOptional(String key, PropertyConverter<T> converter){...}
 
     default Boolean getBoolean(String key){...}
     default OptionalInt getInteger(String key){...}
@@ -286,10 +280,9 @@ Hereby
 
 * +get(String)+ and +getOptional(String)+ provide easy access to any kind of configuration properties in their
   String format.
-* +get(String, TypeLiteral)+, +getOptional(String, TypeLiteral)+, +get(String, Class), getOptional(String, Class)+ and
-  +getOptional(String, PropertyConverter)+ provide type safe access to configuration properties. If a
-  +PropertyConverter+ is passed, it will replace any predefined standard
-  converters defined for the type. By default several +PropertyConverter+ instances can be registered for a given
+* +get(String, TypeLiteral)+, +getOptional(String, TypeLiteral)+, +get(String, Class)+ and
+  +getOptional(String, Class)+ provide type safe access to configuration properties.
+  +PropertyConverter+ instances can be registered for a given
   target type. The are managed in an ordered list, whereas the ordering is defined by +@Priority+ annotations
   on the converters.
 * +getProperties()+ gives access to all known (=scannable) properties.
@@ -325,11 +318,6 @@ public interface PropertyConverter<T>{
 +PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+. Hereby
 a configuration String value is passed to all registered converters for a type in order of their annotated +@Priority+
 value. The first non-null result of a converter is then returned as the current configuration value.
-
-Also worth mentioning is the fact, that the +PropertyConverter+ to be used can also be explicitly defined, when
-a configuration value is accessed, by using the methods
-+<T> Optional<T> Configuration#getOptional(String, PropertyConverter<T> converter)+ (Java 8 only) and
-+<T> T Configuration#get(String, PropertyConverter<T> converter)+.
 
 Access to converters is provided by the current +ConfigurationContext+, which is accessible from
 the +ConfigurationProvider+ singleton.

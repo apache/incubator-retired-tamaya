@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya;
 
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -26,18 +28,18 @@ import static org.junit.Assert.*;
  */
 public class ConfigurationTest {
 
-    @org.junit.Test
+    @Test
     public void testget() throws Exception {
-        assertEquals(Boolean.TRUE, ConfigurationProvider.getConfiguration().getOptional("booleanTrue", (s) -> Boolean.valueOf(s)).get());
-        assertEquals(Boolean.FALSE, ConfigurationProvider.getConfiguration().getOptional("booleanFalse", (s) -> Boolean.valueOf(s)).get());
-        assertEquals((int) Byte.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().getOptional("byte", (s) -> Byte.valueOf(s)).get());
-        assertEquals((int) Integer.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().getOptional("int", (s) -> Integer.valueOf(s)).get());
-        assertEquals((long) Long.MAX_VALUE, (long) ConfigurationProvider.getConfiguration().getOptional("long", (s) -> Long.valueOf(s)).get());
-        assertEquals((double) Float.MAX_VALUE, (double) ConfigurationProvider.getConfiguration().getOptional("float", (s) -> Float.valueOf(s)).get(), 0.0d);
-        assertEquals((double) Double.MAX_VALUE, (double) ConfigurationProvider.getConfiguration().getOptional("double", (s) -> Double.valueOf(s)).get(), 0.0d);
+        assertEquals(Boolean.TRUE, ConfigurationProvider.getConfiguration().getOptional("booleanTrue", Boolean.class).get());
+        assertEquals(Boolean.FALSE, ConfigurationProvider.getConfiguration().getOptional("booleanFalse", Boolean.class).get());
+        assertEquals((int) Byte.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().getOptional("byte", Byte.class).get());
+        assertEquals((int) Integer.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().getOptional("int", Integer.class).get());
+        assertEquals((long) Long.MAX_VALUE, (long) ConfigurationProvider.getConfiguration().getOptional("long", Long.class).get());
+        assertEquals((double) Float.MAX_VALUE, (double) ConfigurationProvider.getConfiguration().getOptional("float", Float.class).get(), 0.0d);
+        assertEquals((double) Double.MAX_VALUE, (double) ConfigurationProvider.getConfiguration().getOptional("double", Double.class).get(), 0.0d);
     }
 
-    @org.junit.Test
+    @Test
     public void testGetBoolean() throws Exception {
         assertTrue(ConfigurationProvider.getConfiguration().getBoolean("booleanTrue").isPresent());
         assertTrue(ConfigurationProvider.getConfiguration().getBoolean("booleanFalse").isPresent());
@@ -46,35 +48,28 @@ public class ConfigurationTest {
         assertFalse(ConfigurationProvider.getConfiguration().getBoolean("fooBar").isPresent());
     }
 
-    @org.junit.Test
+    @Test
     public void testGetInteger() throws Exception {
         assertEquals(Integer.MAX_VALUE, ConfigurationProvider.getConfiguration().getInteger("int").getAsInt());
     }
 
-    @org.junit.Test
+    @Test
     public void testGetLong() throws Exception {
         assertEquals(Long.MAX_VALUE, ConfigurationProvider.getConfiguration().getLong("long").getAsLong());
     }
 
-    @org.junit.Test
+    @Test
     public void testGetDouble() throws Exception {
         assertEquals(Double.MAX_VALUE, ConfigurationProvider.getConfiguration().getDouble("double").getAsDouble(), 0.0d);
     }
 
-    @org.junit.Test
+    @Test
     public void testWith() throws Exception {
         assertEquals(ConfigurationProvider.getConfiguration(), ConfigurationProvider.getConfiguration().with(c -> c));
     }
 
-    @org.junit.Test
+    @Test
     public void testQuery() throws Exception {
         assertEquals("myFooResult", ConfigurationProvider.getConfiguration().query(c -> "myFooResult"));
     }
-
-    @org.junit.Test
-    public void testGetAdapted() throws Exception {
-        assertEquals("yes", ConfigurationProvider.getConfiguration().getOptional("booleanTrue", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
-        assertEquals("no", ConfigurationProvider.getConfiguration().getOptional("booleanFalse", (v) -> Boolean.parseBoolean(v) ? "yes" : "no").get());
-    }
-
 }

@@ -75,19 +75,6 @@ public interface Configuration {
     <T> T get(String key, TypeLiteral<T> type);
 
     /**
-     * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyConverter} to be available that is capable current providing type T
-     * fromMap the given String keys.
-     *
-     * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param converter         The target converter to be used, not null.
-     * @return the property value, never null..
-     * @throws ConfigException if the keys could not be converted to the required target type.
-     */
-    <T> T get(String key, PropertyConverter<T> converter);
-
-    /**
      * Access all current known Configuration properties as a full {@code Map<String,String>}.
      * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
      * instances may not be contained in the result, but nevertheless be accessible calling one of the

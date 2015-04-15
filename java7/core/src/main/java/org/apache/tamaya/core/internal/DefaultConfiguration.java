@@ -256,11 +256,6 @@ public class DefaultConfiguration implements Configuration {
         return null;
     }
 
-    @Override
-    public <T> T get(String key, PropertyConverter<T> converter) {
-        return null;
-    }
-
     public Configuration with(ConfigOperator operator) {
         return operator.operate(this);
     }

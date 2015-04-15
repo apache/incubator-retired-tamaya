@@ -314,18 +314,22 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * @return the current actual value, or null.
      */
     public T evaluateValue() {
+        T value = null;
+
         for (String key : keys) {
-            T value;
             if (propertyConverter == null) {
                 value = configuration.get(key, targetType);
             } else {
-                value = configuration.get(key, propertyConverter);
+                String source = configuration.get(key);
+                value = propertyConverter.convert(source);
             }
+
             if (value != null) {
-                return value;
+                break;
             }
         }
-        return null;
+
+        return value;
     }
 
     /**

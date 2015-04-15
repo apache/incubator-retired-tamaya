@@ -85,11 +85,6 @@ public class TestConfiguration implements Configuration{
     }
 
     @Override
-    public <T> T get(String key, PropertyConverter<T> converter) {
-        throw new RuntimeException("Method not implemented yet.");
-    }
-
-    @Override
     public Configuration with(ConfigOperator operator) {
         return null;
     }

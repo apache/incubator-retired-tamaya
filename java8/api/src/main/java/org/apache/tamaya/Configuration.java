@@ -20,7 +20,6 @@ package org.apache.tamaya;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -152,32 +151,6 @@ public interface Configuration {
     }
 
     /**
-     * Get the property keys as type {@code Class<T>}.
-     * <p>
-     * If {@code Class<T>} is not one current
-     * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
-     * BigDecimal, String} , an according converter must be
-     * available to perform the conversion fromMap {@link String} to
-     * {@code Class<T>}.
-     *
-     * @param key       the property's absolute, or relative path, e.g. @code
-     *                  a/b/c/d.myProperty}.
-     * @param converter the PropertyConverter to perform the conversion fromMap
-     *                  {@link String} to {@code Class<T>}, not {@code null}.
-     * @param <T>       the target type.
-     * @return the property's keys.
-     * @throws ConfigException if the keys could not be converted to the required target
-     *                         type, or no such property exists.
-     */
-    default <T> T get(String key, PropertyConverter<T> converter) {
-        String value = get(key);
-        if (value != null) {
-            return Objects.requireNonNull(converter).convert(value);
-        }
-        return null;
-    }
-
-    /**
      * Access all current known Configuration properties as a full {@code Map<String,String>}.
      * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
      * instances may not be contained in the result, but nevertheless be accessible calling one of the
@@ -188,33 +161,6 @@ public interface Configuration {
      */
     @SuppressWarnings("JavaDoc")
     Map<String, String> getProperties();
-
-    /**
-     * Get the property keys as type {@code Class<T>}.
-     * <p>
-     * If {@code Class<T>} is not one current
-     * {@code Boolean, Short, Integer, Long, Float, Double, BigInteger,
-     * BigDecimal, String} , an according converter must be
-     * available to perform the conversion fromMap {@link String} to
-     * {@code Class<T>}.
-     *
-     * @param key       the property's absolute, or relative path, e.g. @code
-     *                  a/b/c/d.myProperty}.
-     * @param converter the PropertyConverter to perform the conversion fromMap
-     *                  {@link String} to {@code Class<T>}, not {@code null}.
-     * @param <T>       the target type.
-     * @return the property's keys.
-     * @throws ConfigException if the keys could not be converted to the required target
-     *                         type, or no such property exists.
-     * @since Java8
-     */
-    default <T> Optional<T> getOptional(String key, PropertyConverter<T> converter) {
-        Optional<String> value = getOptional(key);
-        if (value.isPresent()) {
-            return Optional.ofNullable(converter.convert(value.get()));
-        }
-        return Optional.empty();
-    }
 
 
     /**
