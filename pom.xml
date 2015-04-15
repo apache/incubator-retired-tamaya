@@ -780,6 +780,7 @@ under the License.
         </plugins>
     </reporting>
 
+    <!--
     <repositories>
         <repository>
             <id>org.apache.people</id>
@@ -793,5 +794,5 @@ under the License.
             </releases>
         </repository>
     </repositories>
-
+   -->
 </project>
