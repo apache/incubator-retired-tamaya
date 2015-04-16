@@ -35,7 +35,7 @@ under the License.
         ]]></cypher>
     </constraint>
 
-    <constraint id="naming:namingOfPropertyConverters">
+    <constraint id="naming:namingOfPropertyFilter">
         <requiresConcept refId="java:AnonymousInnerType"/>
         <description>Class name of implementations of PropertyFilter must end with 'Filter'</description>
         <cypher><![CDATA[
