@@ -35,7 +35,7 @@ under the License.
         ]]></cypher>
     </constraint>
 
-    <constraint id="naming:namingOfPropertyFilter">
+    <constraint id="naming:namingOfPropertyFilters">
         <requiresConcept refId="java:AnonymousInnerType"/>
         <description>Class name of implementations of PropertyFilter must end with 'Filter'</description>
         <cypher><![CDATA[
@@ -54,5 +54,6 @@ under the License.
 
     <group id="default">
         <includeConstraint refId="naming:namingOfPropertyConverters"/>
+        <includeConstraint refId="naming:namingOfPropertyFilters"/>
     </group>
 </jqa:jqassistant-rules>
