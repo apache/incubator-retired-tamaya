@@ -18,14 +18,11 @@
  */
 package org.apache.tamaya;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -60,7 +57,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyConverter} to be available that is capable current providing type T
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -76,7 +73,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyConverter} to be available that is capable current providing type T
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -87,26 +84,7 @@ public interface Configuration {
      * @throws ConfigException if the value could not be converted to the required target type by any of the
      *                         registered converters.
      */
-    default <T> T get(String key, TypeLiteral<T> type) {
-        List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext().getPropertyConverters(
-                type);
-        String value = get(key);
-        if (value == null) {
-            return null;
-        }
-        for (PropertyConverter<T> converter : converters) {
-            try {
-                T item = converter.convert(value);
-                if (item != null) {
-                    return item;
-                }
-            } catch (Exception e) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, e, () -> "PropertyConverter was throwing " +
-                        "exception instead of returning null: " + converter.getClass().getName());
-            }
-        }
-        throw new ConfigException("Unconvertible value: " + value + ", target: " + type);
-    }
+    <T> T get(String key, TypeLiteral<T> type);
 
     /**
      * Access a property.
@@ -120,7 +98,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyConverter} to be available that is capable current providing type T
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -136,7 +114,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyConverter} to be available that is capable current providing type T
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key  the property's absolute, or relative path, e.g. @code

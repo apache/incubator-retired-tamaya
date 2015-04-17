@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

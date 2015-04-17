@@ -18,11 +18,10 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

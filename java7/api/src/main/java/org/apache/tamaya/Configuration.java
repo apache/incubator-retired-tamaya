@@ -50,7 +50,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyConverter} to be available that is capable current providing type T
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code
@@ -63,7 +63,7 @@ public interface Configuration {
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * PropertyConverter} to be available that is capable current providing type T
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
      * @param key          the property's absolute, or relative path, e.g. @code

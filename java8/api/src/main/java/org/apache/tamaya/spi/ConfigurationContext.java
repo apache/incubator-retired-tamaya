@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 
 import java.util.Collection;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
  * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
- * managing {@link org.apache.tamaya.PropertyConverter}s, ConfigFilters, etc.
+ * managing {@link PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
 

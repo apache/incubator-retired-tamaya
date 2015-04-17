@@ -75,17 +75,6 @@ public final class ConfigurationProvider {
     }
 
     /**
-     * Method that allows to determine if a new {@link org.apache.tamaya.spi.ConfigurationContext} can be applied
-     * programmatically.
-     * @see #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)
-     * @return true, if {@link #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)} is supported
-     * by the current implementation.
-     */
-    public static boolean isConfigurationContextSettable() {
-        return PROVIDER_SPI.isConfigurationContextSettable();
-    }
-
-    /**
      * Create a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder} instance. This method creates
      * a new builder instance that is not related to any concrete {@link org.apache.tamaya.spi.ConfigurationContext}.
      * You can use {@link #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)} to change the

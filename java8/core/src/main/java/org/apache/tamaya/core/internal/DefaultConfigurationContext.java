@@ -20,7 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
@@ -45,7 +45,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /** The logger used. */
     private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
+     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 

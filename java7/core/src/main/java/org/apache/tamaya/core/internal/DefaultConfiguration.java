@@ -22,7 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyFilter;
@@ -210,7 +210,7 @@ public class DefaultConfiguration implements Configuration {
 
     /**
      * Accesses the current String value for the given key and tries to convert it
-     * using the {@link org.apache.tamaya.PropertyConverter} instances provided by the current
+     * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -226,7 +226,7 @@ public class DefaultConfiguration implements Configuration {
 
     /**
      * Accesses the current String value for the given key and tries to convert it
-     * using the {@link org.apache.tamaya.PropertyConverter} instances provided by the current
+     * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code

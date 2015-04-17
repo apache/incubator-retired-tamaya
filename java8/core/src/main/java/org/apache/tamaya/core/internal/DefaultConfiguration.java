@@ -22,7 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static java.util.Map.*;
 
 /**
  * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
@@ -197,12 +199,12 @@ public class DefaultConfiguration implements Configuration {
         }
         // Remove null values
         return inputMap.entrySet().parallelStream().filter((e) -> e.getValue() != null).collect(
-                Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue()));
+                Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     /**
      * Accesses the current String value for the given key (see {@link #getOptional(String)}) and tries to convert it
-     * using the {@link org.apache.tamaya.PropertyConverter} instances provided by the current
+     * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
@@ -231,7 +233,7 @@ public class DefaultConfiguration implements Configuration {
             throw new ConfigException("Unable to convert config value for key " +
                                       key + " in type " + type.getType());
         }
-
         return null;
     }
+
 }

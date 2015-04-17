@@ -36,11 +36,11 @@ import java.util.logging.Logger;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.converters.EnumConverter;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
- * Manager that deals with {@link org.apache.tamaya.PropertyConverter} instances.
+ * Manager that deals with {@link org.apache.tamaya.spi.PropertyConverter} instances.
  * This class is thread-safe.
  */
 public class PropertyConverterManager {

@@ -19,7 +19,6 @@
 package org.apache.tamaya.spi;
 
 
-import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.Map;
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
  * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
- * managing {@link org.apache.tamaya.PropertyConverter}s, ConfigFilters, etc.
+ * managing {@link PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
 
@@ -56,7 +55,7 @@ public interface ConfigurationContext {
 
 
     /**
-     * This method can be used for programmatically adding {@link org.apache.tamaya.PropertyConverter}s.
+     * This method can be used for programmatically adding {@link PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param typeToConvert the type which the converter is for

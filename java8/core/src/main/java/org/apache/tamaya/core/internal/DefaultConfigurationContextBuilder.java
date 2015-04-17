@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;

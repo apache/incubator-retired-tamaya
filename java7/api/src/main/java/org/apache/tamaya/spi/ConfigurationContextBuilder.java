@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 
 import java.util.Collection;
@@ -120,7 +119,7 @@ public interface ConfigurationContextBuilder {
     ConfigurationContextBuilder removePropertyFilters(Collection<PropertyFilter> filters);
 
     /**
-     * This method can be used for programmatically adding {@link org.apache.tamaya.PropertyConverter}s.
+     * This method can be used for programmatically adding {@link PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param typeToConvert     the type which the converter is for
