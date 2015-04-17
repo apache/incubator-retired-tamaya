@@ -20,7 +20,7 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.inject.WithPropertyConverter;
@@ -77,7 +77,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      */
     private Configuration configuration;
     /**
-     * The target type of the property used to lookup a matching {@link org.apache.tamaya.PropertyConverter}.
+     * The target type of the property used to lookup a matching {@link org.apache.tamaya.spi.PropertyConverter}.
      * If null, {@code propertyConverter} is set and used instead.
      */
     private TypeLiteral<T> targetType;

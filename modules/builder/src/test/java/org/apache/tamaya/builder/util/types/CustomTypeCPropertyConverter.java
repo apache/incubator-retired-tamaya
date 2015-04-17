@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.builder.util.types;
 
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 
 public class CustomTypeCPropertyConverter implements PropertyConverter<org.apache.tamaya.builder.util.types.CustomTypeC> {
     @Override

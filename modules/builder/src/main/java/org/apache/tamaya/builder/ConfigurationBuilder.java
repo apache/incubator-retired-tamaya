@@ -20,7 +20,7 @@ package org.apache.tamaya.builder;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.DefaultConfiguration;
 import org.apache.tamaya.format.ConfigurationData;
@@ -326,7 +326,7 @@ public class ConfigurationBuilder {
      *
      * @return the builder instance currently used
      *
-     * @see org.apache.tamaya.PropertyConverter
+     * @see org.apache.tamaya.spi.PropertyConverter
      * @see #enableProvidedPropertyConverters()
      * @see #disableProvidedPropertyConverters()
      */
@@ -349,7 +349,7 @@ public class ConfigurationBuilder {
     }
 
     /**
-     * Checks if the automatic loading of all {@link org.apache.tamaya.PropertyConverter
+     * Checks if the automatic loading of all {@link org.apache.tamaya.spi.PropertyConverter
      * PropertyConverter} service providers is enabled or disabled.
      *
      * @return {@code true} if the automatic loading is enabled,
@@ -357,20 +357,20 @@ public class ConfigurationBuilder {
      *
      * @see #enableProvidedPropertyConverters()
      * @see #disableProvidedPropertyConverters()
-     * @see #addPropertyConverter(Class, org.apache.tamaya.PropertyConverter)
-     * @see #addPropertyConverter(org.apache.tamaya.TypeLiteral, org.apache.tamaya.PropertyConverter)
+     * @see #addPropertyConverter(Class, org.apache.tamaya.spi.PropertyConverter)
+     * @see #addPropertyConverter(org.apache.tamaya.TypeLiteral, org.apache.tamaya.spi.PropertyConverter)
      */
     public boolean isPropertyConverterLoadingEnabled() {
         return loadProvidedPropertyConverters;
     }
 
     /**
-     * Enables the loading of all {@link org.apache.tamaya.PropertyConverter}
+     * Enables the loading of all {@link org.apache.tamaya.spi.PropertyConverter}
      * service providers.
      *
      * @return the builder instance currently used
      *
-     * @see org.apache.tamaya.PropertyConverter
+     * @see org.apache.tamaya.spi.PropertyConverter
      * @see #disableProvidedPropertyConverters()
      * @see #enableProvidedPropertyConverters()
      */
@@ -383,14 +383,14 @@ public class ConfigurationBuilder {
     }
 
     /**
-     * Disables the automatic loading of all {@link org.apache.tamaya.PropertyConverter}
+     * Disables the automatic loading of all {@link org.apache.tamaya.spi.PropertyConverter}
      * service providers.
      *
      * @return the builder instance currently used
      *
-     * @see org.apache.tamaya.PropertyConverter
+     * @see org.apache.tamaya.spi.PropertyConverter
      * @see #enableProvidedPropertyConverters()
-     * @see #addPropertyConverter(Class, org.apache.tamaya.PropertyConverter)
+     * @see #addPropertyConverter(Class, org.apache.tamaya.spi.PropertyConverter)
      */
     public ConfigurationBuilder disableProvidedPropertyConverters() {
         checkBuilderState();

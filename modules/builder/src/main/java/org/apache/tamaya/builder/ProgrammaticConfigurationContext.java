@@ -19,7 +19,7 @@
 package org.apache.tamaya.builder;
 
 
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.PropertyConverterManager;
 import org.apache.tamaya.spi.ConfigurationContext;
@@ -62,7 +62,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      */
     private final static Logger LOG = Logger.getLogger(ProgrammaticConfigurationContext.class.getName());
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.PropertyConverter} instances.
+     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
