@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.jodatime;
 
-import org.apache.tamaya.PropertyConverter;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.joda.time.DateTimeZone;
 
 import java.util.regex.Pattern;
