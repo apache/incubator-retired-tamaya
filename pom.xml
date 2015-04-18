@@ -57,7 +57,7 @@ under the License.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jackson.version>2.5.1</jackson.version>
         <junit.version>4.12</junit.version>
-        <jqassistant.version>1.0.0-RC1</jqassistant.version>
+        <jqassistant.version>1.0.0</jqassistant.version>
 
         <!-- Dependency and plugin relate version properties go here -->
         <arquillian.version>1.1.7.Final</arquillian.version>
