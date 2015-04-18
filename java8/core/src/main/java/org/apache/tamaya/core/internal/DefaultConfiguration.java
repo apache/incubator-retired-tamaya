@@ -28,7 +28,6 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +37,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static java.util.Map.*;
 
 /**
  * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
@@ -143,7 +140,6 @@ public class DefaultConfiguration implements Configuration {
     @Override
     public Map<String, String> getProperties() {
         List<PropertySource> propertySources = new ArrayList<>(configurationContext.getPropertySources());
-        Collections.reverse(propertySources);
         Map<String, String> result = new HashMap<>();
         for (PropertySource propertySource : propertySources) {
             try {
@@ -199,7 +195,7 @@ public class DefaultConfiguration implements Configuration {
         }
         // Remove null values
         return inputMap.entrySet().parallelStream().filter((e) -> e.getValue() != null).collect(
-                Collectors.toMap(Entry::getKey, Entry::getValue));
+                Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
