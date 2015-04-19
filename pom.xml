@@ -477,6 +477,10 @@ under the License.
                     <groupId>com.buschmais.jqassistant.scm</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
                     <version>${jqassistant.version}</version>
+                    <configuration>
+                        <storeDirectory>jqassistant.datastore</storeDirectory>
+                    </configuration>
+
                     <executions>
                         <execution>
                             <id>scan</id>
