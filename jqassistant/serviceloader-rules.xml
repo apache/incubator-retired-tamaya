@@ -1,0 +1,53 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="serviceLoader:SPI">
+        <description>Labels all .spi packages as "SPI".</description>
+        <cypher><![CDATA[
+			MATCH
+				(package:Package)-->(type:Type:Java)
+
+			WHERE
+				package.name = "spi"
+
+			SET
+				type:SPI
+
+			RETURN
+				type
+        ]]></cypher>
+    </concept>
+
+	<constraint id="serviceLoader:correctServiceLoaderNaming">
+		<requiresConcept refId="serviceLoader:SPI"/>
+		<description>A service provider must be contained in a service provider configuration file with the full qualified binary name of the service's type.</description>
+		<cypher><![CDATA[
+			MATCH
+				(sl:ServiceLoader)-[:CONTAINS]->(impl:Type)-[:IMPLEMENTS]->(spi:SPI)
+
+			WHERE
+				NOT split(sl.fileName, '/')[-1] = spi.fqn
+
+			RETURN
+				impl.fqn AS impl, spi.fqn as spi, sl.fileName AS spiConfig
+        ]]></cypher>
+	</constraint>
+
+</jqa:jqassistant-rules>
