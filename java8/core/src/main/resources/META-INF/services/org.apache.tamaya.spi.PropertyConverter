@@ -32,3 +32,4 @@ org.apache.tamaya.core.internal.converters.LocalDateTimeConverter
 org.apache.tamaya.core.internal.converters.LocalTimeConverter
 org.apache.tamaya.core.internal.converters.ZoneIdConverter
 org.apache.tamaya.core.internal.converters.NumberConverter
+org.apache.tamaya.core.internal.converters.URLConverter

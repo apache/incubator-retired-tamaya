@@ -19,6 +19,7 @@
 org.apache.tamaya.core.internal.converters.BooleanConverter
 org.apache.tamaya.core.internal.converters.ByteConverter
 org.apache.tamaya.core.internal.converters.CharConverter
+org.apache.tamaya.core.internal.converters.ClassConverter
 org.apache.tamaya.core.internal.converters.DoubleConverter
 org.apache.tamaya.core.internal.converters.FloatConverter
 org.apache.tamaya.core.internal.converters.IntegerConverter
@@ -28,3 +29,4 @@ org.apache.tamaya.core.internal.converters.BigDecimalConverter
 org.apache.tamaya.core.internal.converters.BigIntegerConverter
 org.apache.tamaya.core.internal.converters.CurrencyConverter
 org.apache.tamaya.core.internal.converters.NumberConverter
+org.apache.tamaya.core.internal.converters.URLConverter
