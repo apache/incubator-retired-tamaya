@@ -29,4 +29,5 @@ org.apache.tamaya.core.internal.converters.BigDecimalConverter
 org.apache.tamaya.core.internal.converters.BigIntegerConverter
 org.apache.tamaya.core.internal.converters.CurrencyConverter
 org.apache.tamaya.core.internal.converters.NumberConverter
+org.apache.tamaya.core.internal.converters.URIConverter
 org.apache.tamaya.core.internal.converters.URLConverter
