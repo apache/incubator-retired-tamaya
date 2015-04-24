@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to URI, using new URI(value).
  */
-public class URiConverter implements PropertyConverter<URI>{
+public class URIConverter implements PropertyConverter<URI>{
 
     private Logger LOG = Logger.getLogger(getClass().getName());
 
