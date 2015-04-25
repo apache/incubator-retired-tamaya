@@ -50,4 +50,44 @@ under the License.
         ]]></cypher>
 	</constraint>
 
+	<constraint id="serviceLoader:ServiceImplementationsMustBeListedInServiceConfigurations"
+				severity="info">
+		<requiresConcept refId="java:AnonymousInnerType"/>
+		<requiresConcept refId="serviceLoader:SPI"/>
+		<description>All property converter implementations must be declared in a service loader file.</description>
+        <cypher><![CDATA[
+            MATCH
+				(impl)-[:IMPLEMENTS*]->(spi:SPI)
+
+			WHERE
+                NOT (:ServiceLoader)-[:CONTAINS]->(impl)
+                AND NOT impl:Anonymous:Inner
+                AND (impl.abstract=false OR impl.abstract IS NULL)
+
+                // Ignore SPI implementations without a default constructor
+                // We assume that the developer of this class had to implement for some reason
+                // this interface but not intended it to be used as service provider
+                AND NOT (impl)-[:DECLARES]->(:Constructor)-[:HAS]->(:Parameter)
+
+                // Do not pay attention to test utilities. We rely on the name of the class
+                AND NOT (impl.name =~ 'Test.*' OR impl.name =~ '.*\\$Test.*'
+                         OR impl.name =~'.*Test\\$.*')
+
+                AND NOT impl.fqn IN [// All classes of the builder MUST not use the SPI mechanism
+                                     'org.apache.tamaya.builder.ProgrammaticConfigurationContext',
+                                     // See TAMAYA-77 and TAMAYA-78, Oliver B. Fischer, 2015-04-25
+                                     'org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder'
+                                    ]
+
+                RETURN
+                    impl.fqn AS undeclaredService
+        ]]></cypher>
+	</constraint>
+
+	<!-- @todo
+      Constraints to be defined
+      - Empty service configurations
+
+      -->
+
 </jqa:jqassistant-rules>
