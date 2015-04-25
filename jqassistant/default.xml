@@ -57,5 +57,6 @@ under the License.
         <includeConstraint refId="naming:namingOfPropertyFilters"/>
         <includeConstraint refId="serviceLoader:correctServiceLoaderNaming"/>
         <includeConstraint refId="serviceLoader:ServiceImplementationsMustBeListedInServiceConfigurations"/>
+        <includeConstraint refId="serviceLoader:serviceConfigurationsMustNotBeEmpty"/>
     </group>
 </jqa:jqassistant-rules>

@@ -84,10 +84,18 @@ under the License.
         ]]></cypher>
 	</constraint>
 
-	<!-- @todo
-      Constraints to be defined
-      - Empty service configurations
+    <constraint id="serviceLoader:serviceConfigurationsMustNotBeEmpty">
+        <requiresConcept refId="serviceLoader:SPI"/>
+        <description>Empty service configurations must not be provided.</description>
+        <cypher><![CDATA[
+            MATCH
+                (sc:ServiceLoader)
 
-      -->
+            WHERE
+                NOT (sc)-[:CONTAINS]->()
 
+            RETURN
+                sc.fileName AS emptyServiceConfiguration
+        ]]></cypher>
+    </constraint>
 </jqa:jqassistant-rules>
