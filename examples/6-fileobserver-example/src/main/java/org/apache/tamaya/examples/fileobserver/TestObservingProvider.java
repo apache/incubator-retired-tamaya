@@ -29,8 +29,7 @@ import java.nio.file.Paths;
 public class TestObservingProvider extends ObservingPropertySourceProvider{
 
     public TestObservingProvider(){
-        super(Paths.get("C:\\Users\\Anatole\\IdeaProjects\\incubator-tamaya\\examples\\6-fileobserver-example\\src\\data"), new PropertiesFormat());
-        System.out.println("C:\\Users\\Anatole\\IdeaProjects\\incubator-tamaya\\examples\\6-fileobserver-example\\src\\data");
-
+        super(Paths.get("C:\\Users\\Anatole\\IdeaProjects\\incubator-tamaya\\examples\\6-fileobserver-example\\src\\data"),
+                new PropertiesFormat());
     }
 }

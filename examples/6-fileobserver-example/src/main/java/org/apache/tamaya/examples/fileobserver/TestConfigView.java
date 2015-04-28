@@ -18,10 +18,17 @@
  */
 package org.apache.tamaya.examples.fileobserver;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.PropertyConverter;
 
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +51,39 @@ public class TestConfigView implements ConfigOperator{
             public Map<String, String> getProperties() {
                 return config.getProperties().entrySet().stream().filter(e -> e.getKey().startsWith("test")).collect(
                         Collectors.toMap(en -> en.getKey(), en -> en.getValue()));
+            }
+            /**
+             * Accesses the current String value for the given key and tries to convert it
+             * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
+             * {@link org.apache.tamaya.spi.ConfigurationContext}.
+             *
+             * @param key  the property's absolute, or relative path, e.g. @code
+             *             a/b/c/d.myProperty}.
+             * @param type The target type required, not null.
+             * @param <T>  the value type
+             * @return the converted value, never null.
+             */
+            @Override
+            public <T> T get(String key, TypeLiteral<T> type) {
+                String value = get(key);
+                if (value != null) {
+                    List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
+                            .getPropertyConverters(type);
+                    for (PropertyConverter<T> converter : converters) {
+                        try {
+                            T t = converter.convert(value);
+                            if (t != null) {
+                                return t;
+                            }
+                        } catch (Exception e) {
+                            Logger.getLogger(getClass().getName())
+                                    .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: "
+                                            + value, e);
+                        }
+                    }
+                    throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key);
+                }
+                return null;
             }
         };
     }
