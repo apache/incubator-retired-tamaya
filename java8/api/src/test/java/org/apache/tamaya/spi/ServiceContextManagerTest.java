@@ -78,7 +78,7 @@ public class ServiceContextManagerTest {
         ServiceContext ctx = new ServiceContext() {
             @Override
             public <T> Optional<T> getService(Class<T> serviceType) {
-                return null;
+                return Optional.empty();
             }
 
             @Override
@@ -104,7 +104,7 @@ public class ServiceContextManagerTest {
 
         @Override
         public <T> Optional<T> getService(Class<T> serviceType) {
-            return null;
+            return Optional.empty();
         }
 
         @Override
