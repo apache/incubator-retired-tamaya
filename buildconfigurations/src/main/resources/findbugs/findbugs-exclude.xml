@@ -19,6 +19,11 @@ under the License.
 -->
 <FindBugsFilter>
     <Match>
+        <!-- Also catches simple anonamous classes... -->
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />
+    </Match>
+
+    <Match>
         <!-- Note: @todo Write a bug report
           The current version of FindBugs (version 3.0.0) is not able to detect
           the usage of this method via a method reference.

@@ -1,0 +1,780 @@
+Apache Tamaya -- High Level Design
+==================================
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya
+:revnumber: 0.1-SNAPSHOT
+:revremark: Incubator
+:revdate: January 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:iconsdir: {imagesdir}/icons
+:toc:
+:toc-placement: manual
+:icons:
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+image::http://tamaya.incubator.apache.org/resources/images/logos/logo_wood.png[]
+
+toc::[]
+
+<<<
+:numbered!:
+-----------------------------------------------------------
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-----------------------------------------------------------
+
+:numbered:
+
+[[Core Concepts]]
+== The Tamaya API
+=== Overview
+Though Tamaya is a very powerful and flexible solution there are basically only a few simple core concepts required
+that build the base of all the other mechanisms:
+
+The API provides these artifacts, which are:
+
+* A simple but complete SE *API* for accessing key/value based _Configuration_:
+  ** +Configuration+ hereby models configuration, the main interface of Tamaya. +Configuration+ provides
+     *** access to literal key/value pairs.
+     *** functional extension points (+with,query+) based on +UnaryOperator<Configuration>+ (operator) and
+         +Function<Configuration,T>+ (query).
+  ** +ConfigurationProvider+ provides the static entry point for accessing configuration.
+  ** +ConfigProvider+ provides static access to the current +Configuration+ (default configuration)
+  ** +ConfigException+ defines a runtime exception for usage by the configuration system.
+  ** +TypeLiteral+ provides a possibility to type safe define the target type to be returned by a registered
+     +PropertyProvider+.
+  ** +PropertyConverter+, which defines conversion of String values into any required target types.
+
+* Additionally the *SPI* provides:
+  ** _PropertySource:_ is the the SPI for adding configuration data. A +PropertySource+
+     hereby
+     *** is designed as a minimalistic data interface to be implemented by any kind of data providers (local or remote)
+     *** provides data key/value pairs in raw format as String key/values only
+     *** can optionally support scanning of its provided values
+  ** _PropertySourceProvider:_ allows to add property sources dynamically.
+  ** +ConfigurationProviderSpi+ defines the SPI that is used as a backing bean for the +ConfigurationProvider+
+     singleton.
+  ** +PropertyFilter+, which allows filtering of property values prior getting returned to the caller.
+  ** +ConfigurationContext+, which provides the container that contains the property sources and filters that form a
+     configuration.
+  ** +PropertyValueCombinationPolicy+ optionally can be registered to change the way how different key/value
+     pairs are combined to build up the final +Configuration+ passed over to the filters registered.
+  ** +ServiceContext+, which provides access to the components loaded, depending on the current runtime stack.
+  ** +ServiceContextManager+ provides static access to the +ServiceContext+ loaded.
+
+This is also reflected in the main parts of the API, which is quite small:
+
+* +org.apache.tamaya+ contains the main API abstractions used by users.
+* +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +ServiceContext+
+  mechanism.
+
+
+=== How Tamaya organizes Configuration
+
+All the mentioned artifacts are used to organize configuration in a higly flexible and extendable way. Hereby the
++PropertySource+ is the key artifact. In general Tamaya organizes Configuration as follows:
+
+. Bootstrapping
+  ** Initially the JDK +ServiceLoader+ API is used to determine a +ServiceContext+ implementation that should control
+     Tamaya overall component loading. If not found, a default implementation is registered, which relies on the
+     Java +ServiceLoader+ mechanism. In all other cases the found instance is registered to resolve any loading of
+     components and services within Tamaya.
+
+. Loading and building the current +ConfigurationContext+:
+  ** Tamaya loads all available +PropertySource+ instances. Hereby +PropertySource+ instances can be
+    *** Directly registered (using the mechanism defined by the current +ServiceContext+ implementation, by default
+        the Java +ServiceLoader+.
+    *** Provided by a registered instance of +PropertySourceProvider+.
+  ** All loaded property sources are _ordered based on each ordinal_, returned from +PropertySource.getOrdinal()+ as
+    an ordered chain of PropertySources, building up the ordered chain of +PropertySource+ instances used for raw
+    configuration value evaluation.
+  ** Tamaya loads all available +PropertyFilter+ instances. Hereby +PropertyFilter+ instances can be registered
+     by default using the Java +ServiceLoader+ API. The +PropertyFilter+ instances loaded are ordered based on the
+     +@Priority+ annotations found on each filter. If no priority annotation is present, +0+ is assumed.
+  ** Tamaya loads all available +PropertyConverter+ instances. Hereby +PropertyConverter+ instances can be registered
+       by default using the Java +ServiceLoader+ API. The +PropertyConverter+ instances loaded are ordered based on the
+       +@Priority+ annotations found on each filter. If no priority annotation is present, +0+ is assumed. It is
+       possible to register multiple converters for the same target type.
+
+. Evaluating raw property values:
+  ** When evaluating a concrete configuration value for a given key, Tamaya iterates through this chain of registered
+     PropertySources. Hereby the final value, by default, is determined by the last non-null value returned from a
+     +PropertySource+.
+  ** Since the ladder may not always be appropriate, e.g. when values should be combined instead of overridden, a
+     instance of +PropertyValueCombinationPolicy+ can be registered, which allows to add more detailed behaviour how values
+     are combined.
+  ** Access to the complete configuration +Map+ is performing the same resolution and combination algorithm, but for all
+     key/value pairs available.
+
+. Filtering the raw properties:
+  ** Each raw configuration value evaluated is filtered by the ordered filter chain, as long as there are any changes
+     applied by any of the filters called. This ensures that also transitive replacements by filters are possible.
+     If, after a configurable number of evaluation loops still values are changes during each loop, the filtering
+     process is aborted, since a non-resolvable circular filter issue is assumed.
+  ** The ourput is the final configuration value as type +String+.
+
+. Applying further conversions:
+  ** Finally, if the required target type, does not match +Java.lang.String+, all registered +PropertyConverter+
+     instances targeting the corresponding target type are asked to convert the given final String-based configuration
+     entry to the required target type.
+  ** The first non-null value returned by a +PropertyConverter+ is used as the final typed configuration value and
+     returned to the caller.
+
+. Adding/Changing functionality:
+  ** Basically the bahaviour of Tamaya can be customized using the following mechanisms:
+     *** Registering additional (default) +PropertySource+ instances.
+     *** Registering additional (default) +PropertySourceProvider+ instances.
+     *** Adapting the way how multiple entries with the same key are combined (+PropertyValueCombinationPolicy+).
+     *** Adding additional support for new target types configurable by registering additional +PropertyConverter+
+         instances.
+     *** Complex extensions may adapt the complete +ConfigurationContext+, using the +ConfigurationContextBuilder+ and
+         reapply the changed instance using +ConfigurationProvider.setConfigurationContext(ConfigurationContext)+.
+         This is one example how to react on dynamic changes detected on configuration files read.
+     *** Registering additional +PropertyFilter+ instances, that filter the configuration values extracted.
+     *** Registering an alternate +ServiceContext+ to support alternate runtime containers, e.g. a CDI container.
+     *** A combination of all above.
+  ** Additionally instances of +ConfigOperator, ConfigQuery+ can be provided that provide additional functionality
+     that should not be globally visible. It is recommended to provide them from a singleton accessor, hereby hiding
+     the effective implementation classes.
+
+=== Compatibility
+
+The Tamaya API basically is compatible with Java 7 and Java 8. Java 8 additionally introduces additional methods
+hereby leveraging the newly added Java 8 +Optional+ features and _default_ methods.
+
+
+[[APIKeyValues]]
+=== Key/Value Pairs
+
+Basically configuration is a very generic concept. Therefore it should be modelled in a generic way. The most simple
+and most commonly used approach are simple literal key/value pairs. So the core building block of {name} are key/value pairs.
+You can think of a common +.properties+ file, e.g.
+
+[source,properties]
+.A simple properties file
+--------------------------------------------
+a.b.c=cVal
+a.b.c.1=cVal1
+a.b.c.2=cVal2
+a=aVal
+a.b=abVal
+a.b2=abVal
+--------------------------------------------
+
+Now you can use +java.util.Properties+ to read this file and access the corresponding properties, e.g.
+
+[source,properties]
+--------------------------------------------
+Properties props = new Properties();
+props.readProperties(...);
+String val = props.getProperty("a.b.c");
+val = props.getProperty("a.b.c.1");
+...
+--------------------------------------------
+
+
+==== Why Using Strings Only
+
+There are good reason to keep of non String-values as core storage representation of configuration. Mostly
+there are several huge advantages:
+
+* Strings are simple to understand
+* Strings are human readable and therefore easy to prove for correctness
+* Strings can easily be used within different language, different VMs, files or network communications.
+* Strings can easily be compared and manipulated
+* Strings can easily be searched, indexed and cached
+* It is very easy to provide Strings as configuration, which gives much flexibility for providing configuration in
+  production as well in testing.
+* and more...
+
+On the other side there are also disadvantages:
+
+* Strings are inherently not type safe, they do not provide validation out of the box for special types, such as
+numbers, dates etc.
+* In many cases you want to access configuration in a typesafe way avoiding conversion to the target types explicitly
+  throughout your code.
+* Strings are neither hierarchical nor multi-valued, so mapping hierarchical and collection structures requires some
+  extra efforts.
+
+Nevertheless most of these advantages can be mitigated easily, hereby still keeping all the benefits from above:
+
+* Adding type safe adapters on top of String allow to add any type easily, that can be directly mapped out of Strings.
+  This includes all common base types such as numbers, dates, time, but also timezones, formatting patterns and more.
+* Also multi-valued, complex and collection types can be defined as a corresponding +PropertyAdapter+ knows how to
+  parse and create the target instance required.
+* String s also can be used as references pointing to other locations and formats, where configuration is
+  accessible.
+
+
+[[API Configuration]]
+=== Configuration
+
++Configuration+ is the main API provided by Tamaya. It allows reading of single property values or the whole
+property map, but also supports type safe access.
+
+
+==== Configuration (Java 7)
+
+The minimal API defined for Java version earlier than Java 8 looks as follows:
+
+[source,java]
+.Interface Configuration in Java 7
+--------------------------------------------
+public interface Configuration{
+    String get(String key);
+    <T> T get(String key, Class<T> type);
+    <T> T get(String key, TypeLiteral<T> type);
+    Map<String,String> getProperties();
+
+    // extension points
+    Configuration with(ConfigOperator operator);
+    <T> T query(ConfigQuery<T> query);
+}
+--------------------------------------------
+
+Hereby
+
+* +<T> T get(String, Class<T>)+ provides type safe accessors for all basic wrapper types of the JDK.
+* +with, query+ provide the extension points for adding additional functionality.
+* +getProperties()+ provides access to all key/values, whereas entries from non scannable property sources may not
+  be included.
+
+The class +TypeLiteral+ is basically similar to the same class provided with CDI:
+
+[source,java]
+--------------------------------------------
+public class TypeLiteral<T> implements Serializable {
+
+    [...]
+
+    protected TypeLiteral(Type type) {
+        this.type = type;
+    }
+
+    protected TypeLiteral() { }
+
+    public static <L> TypeLiteral<L> of(Type type){...}
+    public static <L> TypeLiteral<L> of(Class<L> type){...}
+
+    public final Type getType() {...}
+    public final Class<T> getRawType() {...}
+
+    public static Type getGenericInterfaceTypeParameter(Class<?> clazz, Class<?> interfaceType){...}
+    public static Type getTypeParameter(Class<?> clazz, Class<?> interfaceType){...}
+
+    [...]
+}
+--------------------------------------------
+
+Instances of +Configuration+ can be accessed from the +ConfigurationProvider+ singleton:
+
+[source,java]
+.Accessing Configuration
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+--------------------------------------------
+
+Hereby the singleton is backed up by an instance of +ConfigurationProviderSpi+.
+
+==== Configuration (Java 8)
+
+The API for Java 8 adds additional support for +Optional+:
+
+[source,java]
+.Interface Configuration in Java 8
+--------------------------------------------
+public interface Configuration{
+    // methods also defined in Java 7
+    String get(String key);
+    <T> T get(String key, Class<T> type);
+    <T> T get(String key, TypeLiteral<T> type);
+    Map<String,String> getProperties();
+    Configuration with(ConfigOperator operator);
+    <T> T query(ConfigQuery<T> query);
+
+    // new java 8 optional support
+    default Optional<String> getOptional(String key){...}
+    default <T> Optional<T> getOptional(String key, Class<T> type){...}
+    default <T> Optional<T> getOptional(String key, TypeLiteral<T> type){...}
+
+    default Boolean getBoolean(String key){...}
+    default OptionalInt getInteger(String key){...}
+    default OptionalLong getLong(String key){...}
+    default OptionalDouble getDouble(String key){...}
+}
+--------------------------------------------
+
+Hereby
+
+* +get(String)+ and +getOptional(String)+ provide easy access to any kind of configuration properties in their
+  String format.
+* +get(String, TypeLiteral)+, +getOptional(String, TypeLiteral)+, +get(String, Class)+ and
+  +getOptional(String, Class)+ provide type safe access to configuration properties.
+  +PropertyConverter+ instances can be registered for a given
+  target type. The are managed in an ordered list, whereas the ordering is defined by +@Priority+ annotations
+  on the converters.
+* +getProperties()+ gives access to all known (=scannable) properties.
+* +with, query+ provide the extension points for adding additional functionality modelled by +ConfigOperator,
+  ConfigQuery+.
+
+Instances of +Configuration+ can be accessed, exactly like in Java 7, from the +ConfigurationProvider+ singleton:
+
+[source,java]
+.Accessing Configuration
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+--------------------------------------------
+
+Hereby the +ConfigurationProvider+ singleton is backed up by an instance of +<<ConfigurationProviderSpi>>+.
+
+
+[[PropertyConverter]]
+==== Property Converters
+
+As illustrated in the previous section, +Configuration+ also to access non String types. Nevertheless internally
+all properties are strictly modelled as pure Strings only, so non String types must be derived by converting the
+configured String values into the required target type. This is achieved with the help of +PropertyConverters+:
+
+[source,java]
+--------------------------------------------
+public interface PropertyConverter<T>{
+    T convert(String value);
+    //X TODO Collection<String> getSupportedFormats();
+}
+--------------------------------------------
+
++PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+. Hereby
+a configuration String value is passed to all registered converters for a type in order of their annotated +@Priority+
+value. The first non-null result of a converter is then returned as the current configuration value.
+
+Access to converters is provided by the current +ConfigurationContext+, which is accessible from
+the +ConfigurationProvider+ singleton.
+
+
+[[ExtensionPoints]]
+=== Extension Points
+
+We are well aware of the fact that this library will not be able to cover all kinds of use cases. Therefore
+we have added functional extension mechanisms to +Configuration+ that were used in other areas of the Java eco-system
+as well:
+
+* +with(ConfigOperator operator)+ allows to pass arbitrary unary functions that take and return instances of
+  +Configuration+. Operators can be used to cover use cases such as filtering, configuration views, security
+  interception and more.
+* +query(ConfigQuery query)+ allows to apply a function returning any kind of result based on a
+  +Configuration+ instance. Queries are used for accessing/deriving any kind of data based on of a +Configuration+
+  instance, e.g. accessing a +Set<String>+ of root keys present.
+
+Both interfaces hereby are functional interfaces. Because of backward compatibility with Java 7 we did not use
++UnaryOperator+ and +Function+ from the +java.util.function+ package. Nevertheless usage is similar, so you can
+use Lambdas and method references in Java 8:
+
+[source,java]
+.Applying a +ConfigurationQuery+ using a method reference
+--------------------------------------------
+ConfigSecurity securityContext = Configuration.current().query(ConfigSecurity::targetSecurityContext);
+--------------------------------------------
+
+NOTE: +ConfigSecurity+ is an arbitrary class only for demonstration purposes.
+
+
+Operator calls basically look similar:
+
+[source,java]
+.Applying a +ConfigurationOperator+ using a lambda expression:
+--------------------------------------------
+Configuration secured = ConfigurationProvider.getConfiguration()
+                           .with((config) ->
+                                 config.getOptional("foo").isPresent()?;
+                                 FooFilter.apply(config):
+                                 config);
+--------------------------------------------
+
+
+[[ConfigException]]
+=== ConfigException
+
+The class +ConfigException+ models the base *runtime* exception used by the configuration system.
+
+
+[[SPI]]
+== SPI
+
+[[PropertySource]]
+=== Interface PropertySource
+
+We have seen that constraining configuration aspects to simple literal key/value pairs provides us with an easy to
+understand, generic, flexible, yet expendable mechanism. Looking at the Java language features a +java.util.Map<String,
+String>+ and +java.util.Properties+ basically model these aspects out of the box.
+
+Though there are advantages in using these types as a model, there are some severe drawbacks, notably implementation
+of these types is far not trivial and the collection API offers additional functionality not useful when aiming
+for modelling simple property sources.
+
+To render an implementation of a custom +PropertySource+ as convenient as possible only the following methods were
+identified to be necessary:
+
+[source,java]
+--------------------------------------------
+public interface PropertySource{
+      int getOrdinal();
+      String getName();
+      String get(String key);
+      boolean isScannable();
+      Map<String, String> getProperties();
+}
+--------------------------------------------
+
+Hereby
+
+* +get+ looks similar to the methods on +Map+. It may return +null+ in case no such entry is available.
+* +getProperties+ allows to extract all property data to a +Map<String,String>+. Other methods like +containsKey,
+  keySet+ as well as streaming operations then can be applied on the returned +Map+ instance.
+* But not in all scenarios a property source may be scannable, e.g. when looking up keys is very inefficient, it
+  may not make sense to iterator over all keys to collect the corresponding properties.
+  This can be evaluated by calling +isScannable()+. If a +PropertySource+ is defined as non scannable accesses to
+  +getProperties()+ may not return all key/value pairs that would be available when accessed directly using the
+  +String get(String)+ method.
+* +getOrdinal()+ defines the ordinal of the +PropertySource+. Property sources are managed in an ordered chain, where
+  property sources with higher ordinals override the ones with lower ordinals. If ordinal are the same, the natural
+  ordering of the fulloy qualified class names of the property source implementations are used. The reason for
+  not using +@Priority+ annotations is that property sources can define dynamically their ordinals, e.g. based on
+  a property contained with the configuration itself.
+* Finally +getName()+ returns a (unique) name that identifies the +PropertySource+ within the current
+  +ConfigurationContext+.
+
+This interface can be implemented by any kind of logic. It could be a simple in memory map, a distributed configuration
+provided by a data grid, a database, the JNDI tree or other resources. Or it can be a combination of multiple
+property sources with additional combination/aggregation rules in place.
+
++PropertySources+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the current
+ active +ServiceContext+.
+
+
+[[PropertySourceProvider]]
+==== Interface PropertySourceProvider
+
+Instances of this type can be used to register multiple instances of +PropertySource+.
+
+[source,java]
+--------------------------------------------
+// @FunctionalInterface in Java 8
+public interface PropertySourceProvider{
+    Collection<PropertySource> getPropertySources();
+}
+--------------------------------------------
+
+This allows to evaluate the property sources to be read/that are available dynamically. All property sources
+are read out and added to the current chain of +PropertySource+ instances within the current +ConfigurationContext+,
+refer also to [[ConfigurationContext]].
+
++PropertySourceProviders+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the
+current active +ServiceContext+.
+
+
+[[PropertyFilter]]
+==== Interface PropertyFilter
+
+Also +PropertyFilters+ can be added to a +Configuration+. They are evaluated before a +Configuration+ instance is
+passed to the user. Filters can hereby used for multiple purposes, such as
+
+* resolving placeholders
+* masking sensitive entries, such as passwords
+* constraining visibility based on the current active user
+* ...
+
++PropertyFilters+ are by default registered using the Java +ServiceLoader+ or the mechanism provided by the current
+active +ServiceContext+. Similar to property sources they are managed in an ordered filter chain, based on the
+applied +@Priority+ annotations.
+
+A +PropertyFilter+ is defined as follows:
+
+[source,java]
+--------------------------------------------
+// @FunctionalInterface in Java 8
+public interface PropertyConverter{
+    String filterProperty(String key, String valueToBeFiltered);
+}
+--------------------------------------------
+
+Hereby:
+
+* returning +null+ will remove the key from the final result
+* non null values are used as the current value of the key. Nevertheless for resolving multi-step dependencies
+  filter evaluation has to be continued as long as filters are still changing some of the values to be returned.
+  To prevent possible endless loops after a defined number of loops evaluation is stopped.
+
+This method is called each time a single entry is accessed, and for each property in a full properties result.
+
+
+[[PropertyValueCombinationPolicy]]
+==== Interface PropertyValueCombinationPolicy
+
+This interface can be implemented optional. It can be used to adapt the way how property key/value pairs are combined to
+build up the final Configuration to be passed over to the +PropertyFilters+. The default implementation is just
+overriding all values read before with the new value read. Nevertheless for collections and other use cases it is
+often useful to have alternate combination policies in place, e.g. for combining values from previous sources with the
+new value.
+
+[source,java]
+--------------------------------------------
+@FunctionalInterface
+public interface PropertyValueCombinationPolicy{
+
+   public final PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR =
+           (current, key, propertySource) -> Optional.ofNullable(propertySource.get(key))
+                                                     .filter(s -> !s.isEmpty())
+                                                     .orElse(current);
+
+   String collect(String currentValue, String key, PropertySource propertySource);
+}
+--------------------------------------------
+
+
+[[ConfigurationContext]]
+==== The Configuration Context
+
+A +Configuration+ is basically based on a so called +ConfigurationContext+, which is
+managed by the +ConfigurationProvider+. Similarly the current +ConfigurationContext+ can be accessed from the
++ConfigurationProvider+ singleton:
+
+[source,java]
+.Accessing the current +ConfigurationContext+
+--------------------------------------------
+ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
+--------------------------------------------
+
+The +ConfigurationContext+ provides access to the internal building blocks that determine the final +Configuration+:
+
+* +PropertySources+ registered (including the PropertySources provided from +PropertySourceProvider+ instances).
+* +PropertyFilter+ registered that filter values before they are returned to the client
+* +PropertyConverter+ instances that provide conversion functionality for converting String values to any other types.
+* the current +PropertyValueCombinationPolicy+ that determines how property values from different PropertySources are
+  combined to the final property value returned to the client.
+
+
+[[Mutability]]
+==== Changing the current Configuration Context
+
+By default the +ConfigurationContext+ is not mutable once it is created. In most cases mutability is also not wanted
+or at least not a needed feature. Nevertheless there are use cases where the current +ConfigurationContext+ (and
+consequently +Configuration+) must be adapted:
+
+* New configuration files where detected in a folder observed by Tamaya.
+* Remote configuration, e.g. stored in a database or alternate ways has been updated and the current system must
+  be adapted to these changes.
+* The overall configuration context is manually setup by the application logic.
+* Within unit testing alternate configuration setup should be setup to meet the configuration requirements of the
+  tests executed.
+
+In such cases the +ConfigurationContext+ must be mutable, meaning it must be possible:
+
+* to add or remove +PropertySource+ instances
+* to add or remove +PropertyFilter+ instances
+* to add or remove +PropertyConverter+ instances
+* to redefine the current +PropertyValueCombinationPolicy+ instances.
+
+This can be achieved by obtaining an instance of +ConfigurationContextBuilder+. Instances of this builder can be
+accessed either
+
+* from the current +ConfigurationContext+, hereby returning a builder instance preinitialized with the values from the
+  current +ConfigurationContext+
+* from the current +ConfigurationProvider+ singleton.
+
+[source,java]
+.Accessing a +ConfigurationContextBuilder+
+--------------------------------------------
+ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfigurationContext().toBuilder();
+ConfigurationContextBuilder emptyContextBuilder = ConfigurationProvider.getConfigurationContextBuilder();
+--------------------------------------------
+
+With such a builder a nre +ConfigurationContext+ can be created and then applied:
+
+[source,java]
+.Creating and applying a new +ConfigurationContext+
+--------------------------------------------
+ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfigurationContext().toBuilder();
+ConfigurationContext context = preinitializedContextBuilder.addPropertySources(new MyPropertySource())
+                                                           .addPropertyFilter(new MyFilter()).build();
+ConfigurationProvider.setConfigurationContext(context);
+--------------------------------------------
+
+Hereby +ConfigurationProvider.setConfigurationContext(context)+ can throw a +UnsupportedOperationException+. if not
+sure one may access the method +boolean ConfigurationProvider.isConfigurationContextSettable()+ to check if the current
++ConfigurationContext+ is mutable.
+
+
+[[ConfigurationProviderSpi]]
+==== Implementing and Managing Configuration
+
+One of the most important SPI in Tamaya if the +ConfigurationProviderSpi+ interface, which is backing up the
++ConfigurationProvider+ singleton. Implementing this class allows
+
+* to fully determine the implementation class for +Configuration+
+* to manage the current +ConfigurationContext+ in the scope and granularity required.
+* to provide access to the right +Configuration/ConfigurationContext+ based on the current runtime context.
+* Performing changes as set with the current +ConfigurationContextBuilder+.
+
+
+[[ServiceContext]]
+==== The ServiceContext
+
+The +ServiceContext+ is also a very important SPI, which allows to define how components are loaded in Tamaya.
+The +ServiceContext+ hereby defines access methods to obtain components, whereas itself it is available from the
++ServiceContextManager+ singleton:
+
+[source,java]
+.Accessing the +ServiceContext+
+--------------------------------------------
+ServiceContext serviceContext = ServiceContextManager.getServiceContext();
+
+public interface ServiceContext{
+    int ordinal();
+    <T> T getService(Class<T> serviceType);
+    <T> List<T> getServices(Class<T> serviceType);
+}
+--------------------------------------------
+
+With the +ServiceContext+ a component can be accessed in two different ways:
+
+. access as as a single property. Hereby the registered instances (if multiple) are sorted by priority and then finally
+  the most significant instance is returned only.
+. access all items given its type. This will return (by default) all  instances loadedable from the current
+  runtime context, ordered by priority, hereby the most significant components added first.
+
+
+## Examples
+### Accessing Configuration
+
+_Configuration_ is obtained from the ConfigurationProvider singleton:
+
+[source,java]
+.Accessing +Configuration+
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+--------------------------------------------
+
+Many users in a SE context will probably only work with _Configuration_, since it offers all functionality
+needed for basic configuration with a very lean memory and runtime footprint. In Java 7 access to the keys is
+very similar to *Map<String,String>*, whereas in Java 8 additionally usage of _Optional_ is supported:
+
+[source,java]
+--------------------------------------------
+Configuration config = ConfigurationProvider.getConfiguration();
+String myKey = config.get("myKey");                         // may return null
+int myLimit = config.getInt("all.size.limit").getAsInt();   // Never returns null
+--------------------------------------------
+
+In Java 8 the following would be possible as well:
+
+[source,java]
+--------------------------------------------
+int myLimit = config.getOptionalInt("all.size.limit").getAsInt(); // OptionalInt
+Class<T> targetClass = config.get("myClass", Class.class);        // Optional<Class>, returns  never null
+--------------------------------------------
+
+
+### Environment and System Properties
+
+By default environment and system properties are provided automatically as part of the default _Configuration_. The
+environment properties hereby are prefixed with _env._. So we can access the current _PROMPT_ environment variable
+as follows:
+
+[source,java]
+--------------------------------------------
+String prompt = ConfigurationProvider.getConfiguration().get("env.PROMPT");
+--------------------------------------------
+
+Similary the system properties are directly applied to the _Configuration_. So if we pass the following system
+property to our JVM:
+
+[source,java]
+--------------------------------------------
+java ... -Duse.my.system.answer=yes
+--------------------------------------------
+
+we can access it as follows:
+
+[source,java]
+--------------------------------------------
+boolean useMySystem = ConfigurationProvider.getBoolean("use.my.system.answer");
+--------------------------------------------
+
+
+### Adding a Custom Configuration
+
+Adding a classpath based configuration is simply as well: just implement an according _PropertySource_. With the
+Tamaya core module you just have to perform the following steps:
+
+. Define a PropertySource as follows:
+
+[source,java]
+--------------------------------------------
+  public class MyPropertySource extends PropertiesFilePropertySource{
+
+    public MyPropertySource(){
+        super(ClassLoader.getSystemClassLoader().getResource("META-INF/cfg/myconfig.properties"));
+    }
+  }
+--------------------------------------------
+
+. Register the new PropertySource using the ServiceLoader by adding the following file:
+
+[source,listing]
+--------------------------------------------
+META-INF/services/org.apache.tamaya.spi.PropertySource
+--------------------------------------------
+
+And adding there the entry for the new PropertySource:
+
+[source,listing]
+--------------------------------------------
+comp.mapackage.MyPropertySource
+--------------------------------------------
+
+
+[[APIImpl]]
+== API Implementation
+
+The API is implemented by the Tamaya _Core_module. Refer to the link:Core.html[Core documentation] for
+further details.
