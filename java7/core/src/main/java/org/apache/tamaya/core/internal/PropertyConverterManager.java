@@ -30,7 +30,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.StampedLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
@@ -49,7 +50,7 @@ public class PropertyConverterManager {
     /** The registered converters. */
     private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /** The lock used. */
-    private StampedLock lock = new StampedLock();
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
     /**
      * Constructor.
      */
@@ -82,7 +83,7 @@ public class PropertyConverterManager {
      */
     public <T> void register(TypeLiteral<T> targetType, PropertyConverter<T> converter) {
         Objects.requireNonNull(converter);
-        Lock writeLock = lock.asWriteLock();
+        Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
             List<PropertyConverter<T>> converters = List.class.cast(this.converters.get(targetType));
@@ -117,7 +118,7 @@ public class PropertyConverterManager {
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
     public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
-        Lock readLock = lock.asReadLock();
+        Lock readLock = lock.readLock();
         try {
             readLock.lock();
             return new HashMap<>(this.converters);
@@ -137,7 +138,7 @@ public class PropertyConverterManager {
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
     public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
-        Lock readLock = lock.asReadLock();
+        Lock readLock = lock.readLock();
         List<PropertyConverter<T>> converters;
         try {
             readLock.lock();
