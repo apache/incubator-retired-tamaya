@@ -20,6 +20,7 @@ package org.apache.tamaya.inject.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 import org.apache.tamaya.ConfigException;
@@ -70,6 +71,12 @@ public class ConfiguredType {
             if (f.isAnnotationPresent(NoConfig.class)) {
                 continue;
             }
+            if (Modifier.isFinal(f.getModifiers())) {
+                continue;
+            }
+            if (f.isSynthetic()) {
+                continue;
+            }
             try {
                 ConfiguredField configuredField = new ConfiguredField(f);
                 configuredFields.add(configuredField);
@@ -84,6 +91,9 @@ public class ConfiguredType {
         // TODO revisit this logic here...
         for (Method m : type.getDeclaredMethods()) {
             if (m.isAnnotationPresent(NoConfig.class)) {
+                continue;
+            }
+            if (m.isSynthetic()) {
                 continue;
             }
             ObservesConfigChange mAnnot = m.getAnnotation(ObservesConfigChange.class);

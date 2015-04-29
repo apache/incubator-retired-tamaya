@@ -62,4 +62,7 @@ public class AnnotatedConfigBean {
         return dynamicHostname;
     }
 
+    // verify we don't try to inject final fields
+    public static final String CONSTANT = "a constant";
+
 }
