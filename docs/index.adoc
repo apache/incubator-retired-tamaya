@@ -124,11 +124,11 @@ The Tamaya project consists of the following parts:
   It is modelled in a extensible way and only requires a few kb. The main features supported by the link:API.html[] are:
   ** Reading configuration as String/String key/value pairs
   ** Reading configuration as type safe values, including type conversion.
-  ** Extending configuration using operators and queries.
-  ** An SPI providing abstractions for component lifecycle, property sources, property source providers, configuration
-     context and property filters.
-* The link:Core.html[Core] implements the link:API.html[API]. Basically with the core part (and the API) you are ready to go, but you may
-  add additional extensions that provide more features that are very useful.
+  ** Converting/mapping configuration using operators and queries.
+  ** An SPI providing abstractions for handling property sources, property filters and component lifecycle management.
+
+* The link:Core.html[Core] implements the link:API.html[API]. Basically with the core part (and the API) you are ready
+to go, but you may want to add additional extensions that provide more features that are very useful.
 * Extensions are additional libraries that you can add to your project setup. Most important features are:
   ** Dynamic resolution of configured values.
   ** Pattern based resource location
@@ -141,14 +141,25 @@ The Tamaya project consists of the following parts:
 
 == Further Information
 
-* There is a small document discussing link:usecases.html[Use Cases] and
-* a document discussing link:requirements.html[Requirements].
+There is further documentation available describing in more detail
+* link:usecases.html[Possible Use Cases]
+* link:requirements.html[Requirements].
 
 == Detailed Documentation
 
-* link:API.html[Tamaya API Documentation] and link:../javadoc/api/index.html[API Javadoc]
-* link:Core.html[Tamaya Core Documentation] and link:../javadoc/core/index.html[Core Javadoc]
-* link:modules.html[Tamaya Modules Documentation] and link:../javadoc/modules/index.html[Extensions Javadoc]
+Javadoc of the current API
+
+* link:API.html[General API Documentation] and link:../javadoc/api/java7/index.html[API Javadoc for Java7] /
+  link:../javadoc/api/java8/index.html[API Javadoc for Java8]
+
+Javadoc of the current Core Implementation
+
+* link:Core.html[General Core Documentation] and link:../javadoc/core/java7/index.html[Core Javadoc for Java7] /
+  link:../javadoc/core/java8/index.html[Core Javadoc for Java8]
+
+Javadoc of the current Extension Modules
+
+* link:modules.html[General Module Documentation]
 
 
 == Examples
