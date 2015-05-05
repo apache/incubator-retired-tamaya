@@ -39,6 +39,9 @@ under the License.
         <module>integration</module>
         <module>management</module>
         <module>jodatime</module>
+        <module>functions</module>
+        <module>sysprops</module>
+        <module>environment</module>
     </modules>
 
 </project>

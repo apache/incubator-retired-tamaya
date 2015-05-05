@@ -26,9 +26,8 @@ under the License.
         <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-
-    <artifactId>tamaya-management</artifactId>
-    <name>Apache Tamaya Modules - Java Management Extensions</name>
+    <artifactId>tamaya-functions</artifactId>
+    <name>Apache Tamaya Common Functional Extensions</name>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -37,6 +36,17 @@ under the License.
             <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-    </dependencies>
+        <!-- Test scope only, do not create a code dependency! -->
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 </project>

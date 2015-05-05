@@ -21,7 +21,7 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya.ext.integration</groupId>
+        <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-integrations</artifactId>
         <version>0.1-incubating-SNAPSHOT</version>
     </parent>

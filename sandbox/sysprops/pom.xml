@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -26,15 +26,44 @@ under the License.
         <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-
-    <artifactId>tamaya-management</artifactId>
-    <name>Apache Tamaya Modules - Java Management Extensions</name>
+    <artifactId>tamaya-sysprops</artifactId>
+    <name>Apache Tamaya - Configured Java SE System Properties</name>
     <packaging>jar</packaging>
+
+    <properties>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.tamaya</groupId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>tamaya-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

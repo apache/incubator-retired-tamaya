@@ -27,8 +27,8 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>tamaya-management</artifactId>
-    <name>Apache Tamaya Modules - Java Management Extensions</name>
+    <artifactId>tamaya-environment</artifactId>
+    <name>Apache Tamaya Modules - Environment Manager</name>
     <packaging>jar</packaging>
 
     <dependencies>
