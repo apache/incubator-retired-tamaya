@@ -149,7 +149,6 @@ public class ConfigurationBuilder {
         } catch (IOException e) {
             throw new ConfigException("Failed to read " + url.toString(), e);
         }
-
         return this;
     }
 
@@ -187,13 +186,41 @@ public class ConfigurationBuilder {
      * @see org.apache.tamaya.format.ConfigurationFormat
      * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
-    public ConfigurationBuilder addPropertySource(URL... urls) {
+    public ConfigurationBuilder addPropertySources(URL... urls) {
         Stream.of(Arrays.asList(urls))
               .flatMap(Collection::stream)
               .filter(entry -> entry != null)
               .collect(Collectors.toList())
               .forEach(this::addPropertySource);
 
+        return this;
+    }
+
+    /**
+     * Adds one or more resources with properties in an arbitrary format
+     * to the configuration to be build.
+     *
+     * <p>If a specific format is supported depends on the available
+     * {@link org.apache.tamaya.format.ConfigurationFormat} implementations.</p>
+     *
+     *<pre>{@code URL first = new URL("file:/etc/service/config.json");
+     * URL second = new URL("file:/etc/defaults/values.properties");
+     *
+     * builder.addPropertySources(first, second);}
+     *</pre>
+     *
+     * @param urls list of resources with properties for the configuration to be
+     *             build.
+     *
+     * @return the builder instance currently used
+     *
+     * @see org.apache.tamaya.format.ConfigurationFormat
+     * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
+     */
+    public ConfigurationBuilder addPropertySources(Collection<URL> urls) {
+        urls.stream()
+                .filter(entry -> entry != null)
+                .forEach(this::addPropertySource);
         return this;
     }
 
@@ -217,7 +244,7 @@ public class ConfigurationBuilder {
      * @see org.apache.tamaya.format.ConfigurationFormat
      * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
-    public ConfigurationBuilder addPropertySource(String... urls) {
+    public ConfigurationBuilder addPropertySources(String... urls) {
         Stream.of(Arrays.asList(urls))
               .flatMap(Collection::stream)
               .filter(entry -> entry != null)
