@@ -21,28 +21,35 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
+        <groupId>org.apache.tamaya.ext</groupId>
+        <artifactId>tamaya-sandbox</artifactId>
         <version>0.1-incubating-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>tamaya-sandbox</artifactId>
-    <groupId>org.apache.tamaya.ext</groupId>
+    <artifactId>tamaya-remote</artifactId>
+    <name>Apache Tamaya Remote PropertySource</name>
+    <packaging>jar</packaging>
 
-    <name>Apache Tamaya Sandbox Modules</name>
-    <description>This project contains the several extensions that can be used with Tamaya, but are not (yet) ready for
-        a release.</description>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>apiextensions</module>
-        <module>integration</module>
-        <module>management</module>
-        <module>jodatime</module>
-        <module>functions</module>
-        <module>sysprops</module>
-        <module>environment</module>
-        <module>remote</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tamaya-json</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 </project>
