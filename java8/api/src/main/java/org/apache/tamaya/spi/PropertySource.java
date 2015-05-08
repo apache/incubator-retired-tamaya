@@ -92,9 +92,16 @@ public interface PropertySource {
                         () -> "Configured Ordinal is not an int number: " + configuredOrdinal);
             }
         }
-        return 0;
+        return getDefaultOrdinal();
     }
 
+    /**
+     * Returns the  default ordinal used, when no ordinal is set, or the ordinal was not parseable to an int value.
+     * @return the  default ordinal used, by default 0.
+     */
+    default int getDefaultOrdinal(){
+        return 0;
+    }
 
     /**
      * Get the name of the property source. The name should be unique for the type of source, whereas multiple instances

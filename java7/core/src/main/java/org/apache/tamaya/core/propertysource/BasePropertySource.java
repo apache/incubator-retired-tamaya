@@ -39,6 +39,13 @@ public abstract class BasePropertySource implements PropertySource{
         this.defaultOrdinal = defaultOrdinal;
     }
 
+    /**
+     * Constructor, using a default ordinal of 0.
+     */
+    protected BasePropertySource(){
+        this(0);
+    }
+
     @Override
     public int getOrdinal() {
         String configuredOrdinal = get(TAMAYA_ORDINAL);
@@ -50,6 +57,14 @@ public abstract class BasePropertySource implements PropertySource{
                         "Configured Ordinal is not an int number: " + configuredOrdinal, e);
             }
         }
+        return getDefaultOrdinal();
+    }
+
+    /**
+     * Returns the  default ordinal used, when no ordinal is set, or the ordinal was not parseable to an int value.
+     * @return the  default ordinal used, by default 0.
+     */
+    public int getDefaultOrdinal(){
         return defaultOrdinal;
     }
 
