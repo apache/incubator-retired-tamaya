@@ -791,7 +791,7 @@ public class ConfigurationBuilderTest {
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.addPropertySource(resource.toString()).build();
+        builder.addPropertySources(resource.toString()).build();
     }
 
     @Test
@@ -802,7 +802,7 @@ public class ConfigurationBuilderTest {
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        Configuration config = builder.addPropertySource(resource.toString())
+        Configuration config = builder.addPropertySources(resource.toString())
                                       .build();
 
         assertThat(config, CoreMatchers.notNullValue());
@@ -822,7 +822,7 @@ public class ConfigurationBuilderTest {
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        Configuration config = builder.addPropertySource(first.toString(), second.toString(),
+        Configuration config = builder.addPropertySources(first.toString(), second.toString(),
                                                          null, third.toString())
                                       .build();
 
@@ -874,7 +874,7 @@ public class ConfigurationBuilderTest {
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        Configuration config = builder.addPropertySource(first, second,
+        Configuration config = builder.addPropertySources(first, second,
                                                          null, third)
                                       .build();
 
