@@ -23,44 +23,54 @@ import java.lang.reflect.Type;
 
 
 /**
-* <p>Class for instantiation of objects that represent parameterized types
-* with current parameters.</p>
-* <p>
-* <p>An object that represents a parameterized type may be obtained by
-* subclassing <tt>TypeLiteral</tt>.</p>
-* <p>
-* <pre>
-* TypeLiteral&lt;List&lt;Integer&gt;&gt; stringListType = new TypeLiteral&lt;List&lt;Integer&gt;&gt;() {};
-* </pre>
-*
-* @param <T> the type, including all type parameters
-*/
+ * <p>Class for instantiation of objects that represent parameterized types
+ * with current parameters.</p>
+ * <p>
+ * <p>An object that represents a parameterized type may be obtained by
+ * subclassing <tt>TypeLiteral</tt>.</p>
+ * <p>
+ * <pre>
+ * TypeLiteral&lt;List&lt;Integer&gt;&gt; stringListType = new TypeLiteral&lt;List&lt;Integer&gt;&gt;() {};
+ * </pre>
+ *
+ * @param <T> the type, including all type parameters
+ */
 public class TypeLiteral<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Type type;
+    private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
+    /** The current defined type. */
+    private Type definedType;
 
-    protected TypeLiteral(Type type) {
-        this.type = type;
+    /**
+     * Constructor.
+     * @param definedType the defined type.
+     */
+    protected TypeLiteral(Type definedType) {
+        this.definedType = definedType;
     }
 
     /**
      * Constructor only for directly implemeting a TypeLiteral hereby dynamically implementing a generic interface.
      */
-    protected TypeLiteral() { }
+    protected TypeLiteral() {
+        this.definedType = getDefinedType(this.getClass());
+    }
 
     /**
      * Creates a new TypeLiteral based on a given type.
+     *
      * @param type the type , not null.
-     * @param <R> the literal generic type.
+     * @param <R>  the literal generic type.
      * @return the corresponding TypeLiteral, never null.
      */
-    public static <R> TypeLiteral<R> of(Type type){
+    public static <R> TypeLiteral<R> of(Type type) {
         return new TypeLiteral<>(type);
     }
 
     /**
      * Evaluates the subclass of a TypeLiteral instance.
+     *
      * @param clazz the typeliteral class (could be an anonymous class).
      * @return the subclass implemented by the TypeLiteral.
      */
@@ -77,107 +87,130 @@ public class TypeLiteral<T> implements Serializable {
 
     /**
      * Checks the current implemented generic interfaces and evaluates the given single type parameter.
-     * @param clazz the class to check, not null.
+     *
+     * @param clazz         the class to check, not null.
      * @param interfaceType the interface type to be checked, not null.
      * @return the generic type parameter, or null, if it cannot be evaluated.
      */
-    public static Type getGenericInterfaceTypeParameter(Class<?> clazz, Class<?> interfaceType) {
-        for(Type type: clazz.getGenericInterfaces()){
-            if(interfaceType!=null && !interfaceType.equals(type)){
-                continue;
-            }
+    public static Type[] getGenericInterfaceTypeParameters(Class<?> clazz, Class<?> interfaceType) {
+        for (Type type : clazz.getGenericInterfaces()) {
             if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
-                if (parameterizedType.getActualTypeArguments().length == 1) {
-                    return parameterizedType.getActualTypeArguments()[0];
+                if(parameterizedType.getRawType().equals(interfaceType)){
+                    return parameterizedType.getActualTypeArguments();
                 }
             }
         }
-        return null;
+        return EMPTY_TYPE_ARRAY;
     }
 
     /**
      * Method that checks the class's type for a generic interface implementation type.
-     * @param clazz the type class, not null.
-     * @param interfaceType the generic interface to check (there could be multiple ones implemented by a class).
+     *
+     * @param type         the type, not null.
      * @return the generic type parameter of the given single type generic interfaceType, or null.
      */
-    public static Type getTypeParameter(Class<?> clazz, Class<?> interfaceType) {
-        Type[] types = clazz.getGenericInterfaces();
-        for(Type type:types) {
-            if (type instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) type;
-                if(interfaceType==null || parameterizedType.getRawType().equals(interfaceType)){
-                    if (parameterizedType.getActualTypeArguments().length == 1) {
-                        return parameterizedType.getActualTypeArguments()[0];
-                    }
-                }
-            }
+    public static Type[] getTypeParameters(Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            return parameterizedType.getActualTypeArguments();
         }
-        return null;
+        return EMPTY_TYPE_ARRAY;
+    }
+
+    public final Type getType() {
+        return definedType;
     }
 
     /**
-     * Returns basic Java type.
-     * @return the actual type represented by this object
-     */
-    public final Type getType() {
-        if (type == null) {
-            Class<?> typeLiteralSubclass = getTypeLiteralSubclass(this.getClass());
-            if (typeLiteralSubclass == null) {
-                throw new RuntimeException(getClass() + " is not a subclass of TypeLiteral");
-            }
-            type = getTypeParameter(typeLiteralSubclass, null);
-            if (type == null) {
-                throw new RuntimeException(getClass() + " does not specify the type parameter T of TypeLiteral<T>");
-            }
+      * Returns basic raw Java type.
+      *
+      * @return the actual type represented by this object
+      */
+    public final Class<T> getRawType() {
+        Class<T> rawType = null;
+
+        if (this.definedType instanceof Class) {
+            rawType = (Class<T>) this.definedType;
+        } else if (this.definedType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) this.definedType;
+            rawType = (Class<T>) pt.getRawType();
+
+        } else if (this.definedType instanceof GenericArrayType) {
+            rawType = (Class<T>) Object[].class;
+        } else {
+            throw new RuntimeException("Illegal type for the Type Literal Class");
         }
+
+        return rawType;
+    }
+
+
+    protected Type getDefinedType(Class<?> clazz) {
+        Type type = null;
+
+        if (clazz == null) {
+            throw new RuntimeException("Class parameter clazz can not be null");
+        }
+
+        Type superClazz = clazz.getGenericSuperclass();
+
+        if (superClazz.equals(Object.class)) {
+            throw new RuntimeException("Super class must be parametrized type");
+        } else if (superClazz instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) superClazz;
+            Type[] actualArgs = pt.getActualTypeArguments();
+
+            if (actualArgs.length == 1) {
+                type = actualArgs[0];
+
+            } else {
+                throw new RuntimeException("More than one parametric type");
+            }
+
+        } else {
+            type = getDefinedType((Class<?>) superClazz);
+        }
+
         return type;
     }
 
-    /**
-     * Get the raw type of the current type.
-     * @return the raw type represented by this object
-     */
-    @SuppressWarnings("unchecked")
-    public final Class<T> getRawType() {
-        Type type = getType();
-        if (type instanceof Class) {
-            return (Class<T>) type;
-        } else if (type instanceof ParameterizedType) {
-            return (Class<T>) ((ParameterizedType) type).getRawType();
-        } else if (type instanceof GenericArrayType) {
-            return (Class<T>) Object[].class;
-        } else {
-            throw new RuntimeException("Illegal type");
-        }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((definedType == null) ? 0 : definedType.hashCode());
+        return result;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o){
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof TypeLiteral)){
+        if (obj == null) {
             return false;
         }
-        TypeLiteral that = (TypeLiteral) o;
-        if (type != null ? !type.equals(that.type) : that.type != null){
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TypeLiteral other = (TypeLiteral) obj;
+        if (definedType == null) {
+            if (other.definedType != null) {
+                return false;
+            }
+        } else if (!definedType.equals(other.definedType)) {
             return false;
         }
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        int result = type != null ? type.hashCode() : 0;
-        return result;
-    }
 
     @Override
     public String toString() {
         return "TypeLiteral{" +
-                "type=" + type +
+                "type=" + definedType +
                 '}';
     }
 

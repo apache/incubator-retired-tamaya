@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.test.propertysource;
+package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
@@ -48,7 +48,7 @@ public class SystemPropertySourceTest {
 
     @Test
     public void testGetName() throws Exception {
-        Assert.assertEquals("system-properties", testPropertySource.getName());
+        Assert.assertEquals("system-properties", new SystemPropertySource().getName());
     }
 
     @Test
@@ -56,9 +56,11 @@ public class SystemPropertySourceTest {
         String propertyKeyToCheck = System.getProperties().stringPropertyNames().iterator().next();
 
         String property = testPropertySource.get(propertyKeyToCheck);
-        Assert.assertNotNull("Property '" + propertyKeyToCheck + "' is not present in " +
-                SystemPropertySource.class.getSimpleName(), property);
+        Assert.assertTrue("Property '" + propertyKeyToCheck + "' is not present in " + SystemPropertySource.class.getSimpleName(),
+                          property != null);
         Assert.assertEquals(System.getProperty(propertyKeyToCheck), property);
+
+
     }
 
     @Test

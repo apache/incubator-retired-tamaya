@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.test.provider;
+package org.apache.tamaya.core.provider;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.core.provider.JavaConfigurationProvider;
@@ -52,7 +52,7 @@ public class JavaConfigurationProviderTest {
 
             // check if we had our key in configuration.current
             Assert.assertTrue(ConfigurationProvider.getConfiguration().getProperties().containsKey(key));
-            Assert.assertEquals(value, ConfigurationProvider.getConfiguration().get(key));
+            Assert.assertEquals(value, ConfigurationProvider.getConfiguration().getOptional(key).get());
         }
 
     }

@@ -68,7 +68,7 @@ public class PropertyConverterManager {
      */
     protected void initConverters() {
         for(PropertyConverter conv: ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)){
-            Type type = TypeLiteral.getTypeParameter(conv.getClass(), PropertyConverter.class);
+            Type type = TypeLiteral.getGenericInterfaceTypeParameters(conv.getClass(), PropertyConverter.class)[0];
             register(TypeLiteral.of(type), conv);
         }
     }

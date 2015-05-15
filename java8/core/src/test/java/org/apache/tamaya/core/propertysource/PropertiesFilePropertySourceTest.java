@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.test.propertysource;
+package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
