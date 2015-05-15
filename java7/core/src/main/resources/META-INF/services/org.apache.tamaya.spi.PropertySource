@@ -18,4 +18,3 @@
 #
 org.apache.tamaya.core.propertysource.EnvironmentPropertySource
 org.apache.tamaya.core.propertysource.SystemPropertySource
-

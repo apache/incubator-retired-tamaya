@@ -98,4 +98,28 @@ under the License.
                 sc.fileName AS emptyServiceConfiguration
         ]]></cypher>
     </constraint>
+
+    <constraint id="serviceLoader:serviceConfigurationsMustNotContainNonExistingClasses">
+        <requiresConcept refId="serviceLoader:SPI"/>
+        <description>Service configurations must contain only existing classes.</description>
+        <cypher><![CDATA[
+        MATCH
+            (sl:ServiceLoader)-[:CONTAINS]->(entry)
+
+        WHERE
+            NOT entry:Class
+
+            // Have to exclude these files as jQAssistant cannot handle inner classes in
+            // service configurations in version 1.0.0.
+            // I reported this problem already to the project
+            // Oliver B. Fischer, 15.5.5
+            AND NOT sl.fileName IN ['/META-INF/services/org.apache.tamaya.core.internal.DefaultServiceContextTest$MultiImplsInterface',
+                                    '/META-INF/services/org.apache.tamaya.core.internal.DefaultServiceContextTest$InvalidPriorityInterface',
+                                    '/META-INF/services/org.apache.tamaya.core.internal.DefaultServiceContextTest$InvalidPriorityInterface']
+
+        RETURN
+            sl.fileName AS serviceConfiguration, entry.name AS class
+        ]]></cypher>
+    </constraint>
+
 </jqa:jqassistant-rules>
