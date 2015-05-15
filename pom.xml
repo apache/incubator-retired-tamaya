@@ -56,7 +56,6 @@ under the License.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jackson.version>2.5.1</jackson.version>
         <junit.version>4.12</junit.version>
-        <jqassistant.version>1.0.0</jqassistant.version>
 
         <!-- Dependency and plugin relate version properties go here -->
         <arquillian.version>1.1.7.Final</arquillian.version>
@@ -472,44 +471,11 @@ under the License.
                     <version>3.3</version>
                     <inherited>true</inherited>
                 </plugin>
-                <plugin>
-                    <groupId>com.buschmais.jqassistant.scm</groupId>
-                    <artifactId>jqassistant-maven-plugin</artifactId>
-                    <version>${jqassistant.version}</version>
-                    <configuration>
-                        <storeDirectory>jqassistant.datastore</storeDirectory>
-                    </configuration>
-
-                    <executions>
-                        <execution>
-                            <id>scan</id>
-                            <goals>
-                                <goal>scan</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>analyze</id>
-                            <goals>
-                                <goal>analyze</goal>
-                            </goals>
-                            <configuration>
-                                <!-- @todo Enable after 1.0.0-RC2 -->
-                                <failOnViolations>true</failOnViolations>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
             </plugins>
         </pluginManagement>
 
 
         <plugins>
-            <plugin>
-                <groupId>com.buschmais.jqassistant.scm</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-            </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -681,7 +647,6 @@ under the License.
                 <checkstyle.skip>true</checkstyle.skip>
                 <findbugs.skip>true</findbugs.skip>
                 <rat.skip>true</rat.skip>
-                <jqassistant.skip>true</jqassistant.skip>
             </properties>
         </profile>
 
