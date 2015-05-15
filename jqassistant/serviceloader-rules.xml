@@ -74,9 +74,9 @@ under the License.
                          OR impl.name =~'.*Test\\$.*')
 
                 AND NOT impl.fqn IN [// All classes of the builder MUST not use the SPI mechanism
-                                     'org.apache.tamaya.builder.ProgrammaticConfigurationContext',
+                                     'org.apache.tamaya.builder.ProgrammaticConfigurationContext'
                                      // See TAMAYA-77 and TAMAYA-78, Oliver B. Fischer, 2015-04-25
-                                     'org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder'
+                                     // 'org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder'
                                     ]
 
                 RETURN

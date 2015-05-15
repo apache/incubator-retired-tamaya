@@ -60,9 +60,11 @@ public final class ServiceContextManager {
         } catch (Exception e) {
             throw new ConfigException("ServiceContext not loadable", e);
         }
-        if(highestServiceContext==null){
+
+        if (highestServiceContext==null){
             throw new ConfigException("No ServiceContext found");
         }
+
         return highestServiceContext;
     }
 
@@ -74,6 +76,7 @@ public final class ServiceContextManager {
     public static ServiceContext set(ServiceContext serviceContextProvider) {
         ServiceContext currentContext = ServiceContextManager.serviceContextProviderDelegate;
         Objects.requireNonNull(serviceContextProvider);
+
         synchronized (ServiceContextManager.class) {
             if (ServiceContextManager.serviceContextProviderDelegate == null) {
                 ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
@@ -87,6 +90,7 @@ public final class ServiceContextManager {
                 ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
             }
         }
+
         return currentContext;
     }
 
@@ -103,6 +107,7 @@ public final class ServiceContextManager {
                 }
             }
         }
+
         return serviceContextProviderDelegate;
     }
 

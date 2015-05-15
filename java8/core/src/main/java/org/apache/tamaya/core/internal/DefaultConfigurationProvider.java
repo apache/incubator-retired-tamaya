@@ -22,6 +22,10 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
+
+import java.util.Optional;
 
 /**
  * Implementation of the Configuration API. This class uses the current {@link org.apache.tamaya.spi.ConfigurationContext} to evaluate the
@@ -45,7 +49,10 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
 
     @Override
     public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return new DefaultConfigurationContextBuilder();
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext();
+        Optional<ConfigurationContextBuilder> service = serviceContext.getService(ConfigurationContextBuilder.class);
+
+        return service.get();
     }
 
     @Override
