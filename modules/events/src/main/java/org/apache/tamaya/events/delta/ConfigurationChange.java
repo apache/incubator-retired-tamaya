@@ -118,7 +118,8 @@ public final class ConfigurationChange implements Serializable{
      * @return the number current added entries.
      */
     public int getAddedSize() {
-        return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null).count();
+        return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null &&
+                e.getNewValue() != null).count();
     }
 
     /**

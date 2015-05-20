@@ -112,8 +112,9 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     @Override
     public String toString() {
         return "FrozenPropertySource{" +
-                "properties=" + properties +
+                "name=" + name +
                 ", ordinal=" + ordinal +
+                ", properties=" + properties +
                 '}';
     }
 }

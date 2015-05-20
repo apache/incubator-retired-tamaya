@@ -103,9 +103,9 @@ public final class PropertySourceChangeBuilder {
         for (Map.Entry<String, String> en : map2.getProperties().entrySet()) {
             String val = map1.get(en.getKey());
             if (val == null) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), null));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), val, en.getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), val));
             }
         }
         return changes;

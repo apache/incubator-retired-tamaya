@@ -40,8 +40,10 @@ import java.util.logging.Logger;
  */
 public class TestObservingProvider extends ObservingPropertySourceProvider{
 
+    public static Path propertyLocation;
+
     public TestObservingProvider(){
-        super(Paths.get(getTestPath()),
+        super(propertyLocation,
                 new PropertiesFormat());
         Logger.getLogger(getClass().getName()).info("Using test directory: " + getTestPath());
     }

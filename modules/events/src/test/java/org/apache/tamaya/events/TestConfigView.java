@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.examples.fileobserver;
+package org.apache.tamaya.events;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
