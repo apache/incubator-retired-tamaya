@@ -21,6 +21,7 @@ package org.apache.tamaya.format;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class FlattenedDefaultPropertySource implements PropertySource {
     private static final Logger LOG = Logger.getLogger(FlattenedDefaultPropertySource.class.getName());
-    private Map<String, String> defaultSection;
+    private Map<String, String> properties;
     private ConfigurationData data;
     private int defaultOrdinal = 0;
 
@@ -41,11 +42,7 @@ public class FlattenedDefaultPropertySource implements PropertySource {
      * ${@link org.apache.tamaya.format.ConfigurationFormat}, and if not present falls back to the default section.
      */
     public FlattenedDefaultPropertySource(ConfigurationData data) {
-        this.defaultSection = data.getSection(ConfigurationData.FLATTENED_SECTION_NAME);
-        if (this.defaultSection == null) {
-            this.defaultSection = data.getDefaultSection();
-        }
-        this.defaultSection = Collections.unmodifiableMap(this.defaultSection);
+        this.properties = populateData(data);
         this.data = data;
     }
 
@@ -54,18 +51,33 @@ public class FlattenedDefaultPropertySource implements PropertySource {
      * ${@link org.apache.tamaya.format.ConfigurationFormat}, and if not present falls back to the default section.
      */
     public FlattenedDefaultPropertySource(int defaultOrdinal, ConfigurationData data) {
-        this.defaultSection = data.getSection(ConfigurationData.FLATTENED_SECTION_NAME);
-        if (this.defaultSection == null) {
-            this.defaultSection = data.getDefaultSection();
-        }
-        this.defaultSection = Collections.unmodifiableMap(this.defaultSection);
+        this.properties = populateData(data);
         this.data = data;
         this.defaultOrdinal = defaultOrdinal;
     }
 
+    private Map<String, String> populateData(ConfigurationData data) {
+        Map<String, String> result = data.getSection(ConfigurationData.FLATTENED_SECTION_NAME);
+        if (result == null) {
+            result = data.getDefaultSection();
+        }
+        if (result == null) {
+            result = new HashMap<>();
+        }
+        if(result.isEmpty()){
+            for(String section:data.getSections()){
+                Map<String,String> sectionMap = data.getSection(section);
+                for(Map.Entry<String,String> en: sectionMap.entrySet()){
+                    result.put(section + '.' + en.getKey(), en.getValue());
+                }
+            }
+        }
+        return Collections.unmodifiableMap(result);
+    }
+
     @Override
     public String getName() {
-        String name = this.defaultSection.get("[meta].name");
+        String name = this.properties.get("[meta].name");
         if (name == null) {
             name = this.data.getResource();
         }
@@ -77,7 +89,7 @@ public class FlattenedDefaultPropertySource implements PropertySource {
 
     @Override
     public int getOrdinal() {
-        String ordinalValue = this.defaultSection.get(PropertySource.TAMAYA_ORDINAL);
+        String ordinalValue = this.properties.get(PropertySource.TAMAYA_ORDINAL);
         if (ordinalValue != null) {
             try {
                 return Integer.parseInt(ordinalValue.trim());
@@ -90,11 +102,11 @@ public class FlattenedDefaultPropertySource implements PropertySource {
 
     @Override
     public String get(String key) {
-        return defaultSection.get(key);
+        return properties.get(key);
     }
 
     @Override
     public Map<String, String> getProperties() {
-        return defaultSection;
+        return properties;
     }
 }
