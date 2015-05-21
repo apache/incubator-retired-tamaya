@@ -29,7 +29,7 @@ public final class RuntimeContextProvider {
     private static final ContextSpi contextSpi = loadSpi();
 
     private static ContextSpi loadSpi(){
-        return ServiceContext.getInstance().getService(ContextSpi.class);
+        return ServiceContext.getInstance().getService(ContextSpi.class).get();
     }
 
     /**
@@ -44,15 +44,6 @@ public final class RuntimeContextProvider {
      */
     public static RuntimeContext current(){
         return contextSpi.getCurrentContext();
-    }
-
-    /**
-     * Get the current {@link org.apache.tamaya.environment.RuntimeContextProvider}. The environment is used to determine the current runtime state, which
-     * is important for returning the correct configuration.
-     * @return the current Environment, never null.
-     */
-    public static RuntimeContext root(){
-        return contextSpi.getRootContext();
     }
 
 }

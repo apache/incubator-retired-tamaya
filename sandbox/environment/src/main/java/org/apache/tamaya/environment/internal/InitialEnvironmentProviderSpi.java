@@ -24,24 +24,26 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.environment.RuntimeContext;
-import org.apache.tamaya.environment.spi.ContextDataProvider;
+import org.apache.tamaya.environment.spi.ContextProviderSpi;
 import org.apache.tamaya.environment.RuntimeContextBuilder;
+
+import javax.annotation.Priority;
 
 /**
  * Default {@link org.apache.tamaya.environment.RuntimeContext}.
  */
-public final class InitialEnvironmentProvider implements ContextDataProvider{
+@Priority(0)
+public final class InitialEnvironmentProviderSpi implements ContextProviderSpi {
 
     private static final String STAGE_PROP = "env.STAGE";
     private Map<String,String> contextData = new HashMap<>();
 
-	public InitialEnvironmentProvider() {
+	public InitialEnvironmentProviderSpi() {
         try {
             contextData.put("host", InetAddress.getLocalHost().toString());
         } catch (Exception e) {
@@ -64,10 +66,9 @@ public final class InitialEnvironmentProvider implements ContextDataProvider{
         contextData = Collections.unmodifiableMap(contextData);
 	}
 
-
     @Override
-    public RuntimeContext getContext(RuntimeContext currentContext) {
-        return RuntimeContextBuilder.of("root").withParentContext(currentContext)
-                .setAll(contextData).build();
+    public void setupContext(RuntimeContextBuilder contextBuilder) {
+        contextBuilder.setAll(contextData);
+        contextBuilder.setContextId("root");
     }
 }

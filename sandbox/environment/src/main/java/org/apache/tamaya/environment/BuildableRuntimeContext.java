@@ -28,8 +28,6 @@ import java.util.TreeMap;
 class BuildableRuntimeContext implements RuntimeContext {
     /** The context id, never null or empty. */
     private String contextId;
-    /** The parent context. */
-    private RuntimeContext parentContext;
 
     /**
      * The environment data.
@@ -44,7 +42,6 @@ class BuildableRuntimeContext implements RuntimeContext {
     BuildableRuntimeContext(RuntimeContextBuilder builder) {
         Objects.requireNonNull(builder);
         this.contextId = builder.contextId;
-        this.parentContext = builder.parentContext;
         context.putAll(builder.contextData);
     }
 
@@ -56,19 +53,6 @@ class BuildableRuntimeContext implements RuntimeContext {
     @Override
     public String getContextId() {
         return contextId;
-    }
-
-    @Override
-    public String getQualifiedContextId() {
-        if(parentContext!=null){
-            return parentContext.getQualifiedContextId()+"/"+contextId;
-        }
-        return contextId;
-    }
-
-    @Override
-    public RuntimeContext getParentContext() {
-        return parentContext;
     }
 
     @Override

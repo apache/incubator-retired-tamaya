@@ -38,10 +38,4 @@ public interface ContextSpi {
      */
     RuntimeContext getCurrentContext();
 
-    /**
-     * Get the current root environment id.
-     * @return the corresponding root environment id, never null.
-     */
-    RuntimeContext getRootContext();
-
 }

@@ -19,11 +19,14 @@
 package org.apache.tamaya.environment.internal;
 
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.environment.RuntimeContext;
 import org.apache.tamaya.environment.RuntimeContextBuilder;
+import org.apache.tamaya.environment.spi.ContextProviderSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service for accessing {@link org.apache.tamaya.environment.RuntimeContext}. Environments are used to
@@ -34,35 +37,25 @@ import java.util.*;
  * <li>and behaves contextual.
  * </ul>
  */
-public class SingleEnvironmentManager implements org.apache.tamaya.environment.spi.ContextSpi{
+public class SingleEnvironmentManager implements org.apache.tamaya.environment.spi.ContextSpi {
 
-    private final List<EnvironmentProvider> environmentProviders = loadEnvironmentProviders();
-    private RuntimeContext rootEnvironment = getCurrentEnvironment();
+    private final List<ContextProviderSpi> environmentProviders = loadEnvironmentProviders();
 
-    private List<EnvironmentProvider> loadEnvironmentProviders() {
-        List<EnvironmentProvider> providerList = new ArrayList<>();
-        for(EnvironmentProvider prov: ServiceContext.getInstance().getServices(EnvironmentProvider.class)){
+    private List<ContextProviderSpi> loadEnvironmentProviders() {
+        List<ContextProviderSpi> providerList = new ArrayList<>();
+        for (ContextProviderSpi prov : ServiceContext.getInstance().getServices(ContextProviderSpi.class)) {
             providerList.add(prov);
         }
         return providerList;
     }
 
     @Override
-    public RuntimeContext getCurrentEnvironment(){
-        RuntimeContextBuilder b = RuntimeContextBuilder.of();
-        for(EnvironmentProvider prov: environmentProviders){
-            if(prov.isActive()){
-                if(prov.isActive()){
-                    b.setAll(prov.getEnvironmentData());
-                }
-            }
+    public RuntimeContext getCurrentContext() {
+        RuntimeContextBuilder builder = RuntimeContextBuilder.of("unknown");
+        for (ContextProviderSpi prov : environmentProviders) {
+            prov.setupContext(builder);
         }
-        return b.build();
-    }
-
-    @Override
-    public RuntimeContext getRootEnvironment(){
-        return rootEnvironment;
+        return builder.build();
     }
 
 }

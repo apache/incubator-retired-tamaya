@@ -29,8 +29,6 @@ public final class RuntimeContextBuilder {
 
     /** The context id, never null or empty. */
     String contextId;
-    /** The parent context. */
-    RuntimeContext parentContext;
 
     /** THe environment data. */
     Map<String,String> contextData = new HashMap<>();
@@ -38,9 +36,8 @@ public final class RuntimeContextBuilder {
     /**
      * Constructor.
      */
-    private RuntimeContextBuilder(String contextId, RuntimeContext parentContext) {
+    private RuntimeContextBuilder(String contextId) {
         this.contextId = Objects.requireNonNull(contextId);
-        this.parentContext = parentContext;
     }
 
     /**
@@ -48,24 +45,16 @@ public final class RuntimeContextBuilder {
      * @return the new builder instance.
      */
     public static RuntimeContextBuilder of(String contextId) {
-        return new RuntimeContextBuilder(contextId, null);
+        return new RuntimeContextBuilder(contextId);
     }
 
     /**
-     * Creates a new buildr instance.
-     * @return the new builder instance.
-     */
-    public static RuntimeContextBuilder of(String contextId, RuntimeContext parentContext) {
-        return new RuntimeContextBuilder(contextId, parentContext);
-    }
-
-    /**
-     * Sets a new parent context.
-     * @param parentContext the parent context (can be null).
+     * Sets the environment contextId.
+     * @param contextId the contextId, not null.
      * @return the builder for chaining
      */
-    public RuntimeContextBuilder withParentContext(RuntimeContext parentContext){
-        this.parentContext = parentContext;
+    public RuntimeContextBuilder setContextId(String contextId){
+        this.contextId = Objects.requireNonNull(contextId);
         return this;
     }
 

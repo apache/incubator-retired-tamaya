@@ -16,32 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment;
+package org.apache.tamaya.environment.internal;
 
-import org.apache.tamaya.environment.RuntimeContextBuilder;
-import org.apache.tamaya.environment.spi.ContextProviderSpi;
 
 import javax.annotation.Priority;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Environment provider used by some tests.
+ * This class implements a {@link org.apache.tamaya.environment.RuntimeContextProvider} that tries
+ * to read configuration for an ear deployment located under {@code META-INF/env/ear.properties,
+ * META-INF/env/ear.xml or META-INF/env/ear.ini}. The environment id hereby is defined by a
+ * configuration entry named {@code org.apache.tamaya.core.env.earId}.
+ *
+ * Only if such a configuration with such an {@code earId} is found an {@link org.apache.tamaya.environment.RuntimeContext}
+ * is created and attached to the corresponding ear classloader.
  */
-@Priority(2000)
-public class TestEnvironmentProvider implements ContextProviderSpi {
-    private Map<String, String> data = new HashMap<>();
+@Priority(3000)
+public class ClassLoaderDependentAppEnvironmentProvider extends AbstractClassLoaderDependentRuntimeContextSpi{
 
-    public TestEnvironmentProvider(){
-        data.put("env.STAGE", "MyStage");
-        data.put("java.version", System.getProperty("java.version"));
-        data = Collections.unmodifiableMap(data);
+    public ClassLoaderDependentAppEnvironmentProvider(){
+        super("app");
     }
 
-
-    @Override
-    public void setupContext(RuntimeContextBuilder contextBuilder){
-        contextBuilder.setAll(data);
-    }
 }

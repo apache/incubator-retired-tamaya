@@ -20,6 +20,7 @@ package org.apache.tamaya.environment.spi;
 
 
 import org.apache.tamaya.environment.RuntimeContext;
+import org.apache.tamaya.environment.RuntimeContextBuilder;
 
 
 /**
@@ -28,15 +29,17 @@ import org.apache.tamaya.environment.RuntimeContext;
  * effective ordering depends on the current {@link org.apache.tamaya.spi.ServiceContext} implementation
  * active).
  */
-public interface ContextDataProvider {
+public interface ContextProviderSpi {
+
+    public static final String ENVIRONMENT_TYPE = "environment-type";
 
     /**
      * If a data providers identifies a new runtime context level, it should build a new
      * {@link org.apache.tamaya.environment.RuntimeContext} with all the related data to be added to this
      * context, otherwise it should simply return null.
      *
-     * @param currentContext the current context, or null for the root context.
+     * @param contextBuilder the current context builder.
      * @return the new current context for the current runtime state, or null.
      */
-    public RuntimeContext getContext(RuntimeContext currentContext);
+    void setupContext(RuntimeContextBuilder contextBuilder);
 }

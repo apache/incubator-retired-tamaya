@@ -18,41 +18,33 @@
  */
 package org.apache.tamaya.metamodel.environment;
 
-import org.apache.tamaya.Environment;
+import org.apache.tamaya.environment.RuntimeContext;
+import org.apache.tamaya.environment.RuntimeContextProvider;
 import org.junit.Test;
 
 
 import static org.junit.Assert.*;
 
 /**
- * Tests for basic {@link org.apache.tamaya.EnvironmentManager} functionality.
+ * Tests for basic {@link RuntimeContextProvider} functionality.
  * Created by Anatole on 17.10.2014.
  */
-public class EnvironmentManagerTest {
+public class RuntimeContextProviderSpiTest {
 
     @Test
     public void testGetEnvironment(){
-        RuntimeContext env = RuntimeContext.current();
+        RuntimeContext env = RuntimeContextProvider.current();
         assertNotNull(env);
-        RuntimeContext env2 = RuntimeContext.current();
+        RuntimeContext env2 = RuntimeContextProvider.current();
         assertNotNull(env2);
         assertFalse("Current Environments requested in same context are not the same!", env==env2);
     }
 
     @Test
-    public void testGetRootEnvironment(){
-        RuntimeContext env = RuntimeContext.root();
-        assertNotNull(env);
-        RuntimeContext env2 = RuntimeContext.root();
-        assertNotNull(env2);
-        assertTrue("Root Environments requested in same context are not the same!", env==env2);
-    }
-
-    @Test
     public void testRootIsNotCurrentEnvironment(){
-        RuntimeContext env1 = RuntimeContext.root();
-        RuntimeContext env2 = RuntimeContext.current();
+        RuntimeContext env1 = RuntimeContextProvider.current();
         assertNotNull(env1);
+        RuntimeContext env2 = RuntimeContextProvider.current();
         assertNotNull(env2);
         // within this testdata environment these are always the same
         assertEquals(env1, env2);
@@ -60,7 +52,6 @@ public class EnvironmentManagerTest {
 
     @Test
     public void testEnvironmentOverride(){
-        assertEquals(RuntimeContext.root().get("user.country").get(),System.getProperty("user.country"));
-        assertEquals(RuntimeContext.current().get("user.country").get(), System.getProperty("user.country"));
+        assertEquals(RuntimeContextProvider.current().get("env.STAGE"), "MyStage");
     }
 }

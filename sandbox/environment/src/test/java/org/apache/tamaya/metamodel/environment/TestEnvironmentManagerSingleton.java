@@ -18,17 +18,19 @@
  */
 package org.apache.tamaya.metamodel.environment;
 
+import org.apache.tamaya.environment.RuntimeContext;
+import org.apache.tamaya.environment.spi.ContextSpi;
+
 /**
  * Created by Anatole on 12.09.2014.
  */
-public class TestEnvironmentManagerSingleton implements org.apache.tamaya.metamodel.environment.spi.ContextSpi {
-    @Override
-    public RuntimeContext getCurrentEnvironment(){
+public class TestEnvironmentManagerSingleton implements ContextSpi {
+
+    public RuntimeContext getCurrentContext(){
         return null;
     }
 
-    @Override
-    public RuntimeContext getRootEnvironment(){
+    public RuntimeContext getRootContext(){
         return null;
     }
 

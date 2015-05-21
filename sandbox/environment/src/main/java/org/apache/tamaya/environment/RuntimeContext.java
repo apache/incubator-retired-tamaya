@@ -44,20 +44,6 @@ public interface RuntimeContext {
     String getContextId();
 
     /**
-     * Returns a full (and unique) context id that identifies the current context. Depending on the environment isolation this
-     * can be always the same key (e.g. in a SE use case) or a varying key depending on the current classloader
-     * visible (OSGI, EE environment).
-     * @return the context id, never null.
-     */
-    String getQualifiedContextId();
-
-    /**
-     * Access the parent context.
-     * @return the parent context for this instance, or null, if this is a root context.
-     */
-    RuntimeContext getParentContext();
-
-    /**
      * Access a runtime context variable.
      * @param key the key
      * @return the corresponding value.
