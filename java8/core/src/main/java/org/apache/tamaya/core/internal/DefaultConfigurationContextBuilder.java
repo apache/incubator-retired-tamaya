@@ -41,14 +41,14 @@ import java.util.stream.Collectors;
 /**
  * Default implementation of {@link org.apache.tamaya.spi.ConfigurationContextBuilder}.
  */
-class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
+public class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
 
     List<PropertySource> propertySources = new ArrayList<>();
     List<PropertyFilter> propertyFilters = new ArrayList<>();
     Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
     PropertyValueCombinationPolicy combinationPolicy;
 
-    DefaultConfigurationContextBuilder(){
+    public DefaultConfigurationContextBuilder(){
     }
 
     @Override

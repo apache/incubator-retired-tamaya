@@ -38,14 +38,14 @@ import java.util.Objects;
 /**
  * Default implementation of {@link org.apache.tamaya.spi.ConfigurationContextBuilder}.
  */
-class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
+public class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
 
     Map<String, PropertySource> propertySources = new HashMap<>();
     List<PropertyFilter> propertyFilters = new ArrayList<>();
     Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
     PropertyValueCombinationPolicy combinationPolicy;
 
-    DefaultConfigurationContextBuilder(){
+    public DefaultConfigurationContextBuilder(){
     }
 
     @Override
