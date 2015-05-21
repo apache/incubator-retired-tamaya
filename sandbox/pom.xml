@@ -35,7 +35,6 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
-        <module>apiextensions</module>
         <module>integration</module>
         <module>management</module>
         <module>jodatime</module>
