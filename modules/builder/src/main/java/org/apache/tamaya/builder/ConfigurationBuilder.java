@@ -71,7 +71,7 @@ import static java.lang.String.format;
  *
  * <p><strong>Support for configuration formats</strong></p>
  *
- * The configuration builder allows you to add property resources
+ * The configuration builder allows you to put property resources
  * via a URL, as shown in the code example above, without implementing
  * a {@link org.apache.tamaya.spi.PropertySource PropertySource} or providing an
  * instance of a {@link org.apache.tamaya.spi.PropertySource PropertySource}.

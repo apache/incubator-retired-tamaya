@@ -43,6 +43,11 @@ under the License.
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-builder</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>

@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.events;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.tamaya.events.folderobserver.ObservingPropertySourceProvider;
 import org.apache.tamaya.format.formats.PropertiesFormat;
 
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +35,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -41,6 +44,43 @@ import java.util.logging.Logger;
 public class TestObservingProvider extends ObservingPropertySourceProvider{
 
     public static Path propertyLocation;
+
+    static{
+        try {
+            // create some temporary config
+            Path tempDir = Files.createTempDirectory("observedFolder");
+
+            TestObservingProvider.propertyLocation = tempDir;
+
+            FileUtils.copyInputStreamToFile(
+                    TestObservingProvider.class.getResourceAsStream("/test.properties"),
+                    new File(tempDir.toFile(), "test.properties"));
+
+            Runtime.getRuntime().addShutdownHook(new Thread(){
+                @Override
+                public void run(){
+                    try{
+                        // cleanup directory
+                        Files.deleteIfExists(getTargetFile("test1.properties"));
+                        Files.deleteIfExists(getTargetFile("test2.properties"));
+                        Files.deleteIfExists(getTargetFile("test3.properties"));
+                    }
+                    catch(Exception e){
+                        Logger.getLogger("TestObservingProvider").log(Level.WARNING,
+                                "Failed to cleanup config test dir", e);
+                    }
+                }
+            });
+        }
+        catch(Exception e){
+            Logger.getLogger("TestObservingProvider").log(Level.WARNING, "Failed to init config test dir", e);
+        }
+    }
+
+    private static Path getTargetFile(String name) {
+        File testFile = new File(TestObservingProvider.getTestDirectory(), name);
+        return Paths.get(testFile.toURI());
+    }
 
     public TestObservingProvider(){
         super(propertyLocation,

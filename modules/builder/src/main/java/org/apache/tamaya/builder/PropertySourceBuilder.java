@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.resource;
+package org.apache.tamaya.builder;
 
 import org.apache.tamaya.spi.PropertySource;
 
@@ -28,8 +28,11 @@ import java.util.Objects;
  * Simple builder for building a {@link org.apache.tamaya.spi.PropertySource}.
  */
 public final class PropertySourceBuilder {
+    /** The ordinal to be used. */
     private int ordinal;
+    /** The name to be used. */
     private String name;
+    /** The properties. */
     private Map<String,String> properties = new HashMap<>();
 
     /** private constructor. */
@@ -55,27 +58,61 @@ public final class PropertySourceBuilder {
         return new PropertySourceBuilder(name);
     }
 
-    public PropertySourceBuilder add(String key, String value){
+    /**
+     * Sets a new property key/value.
+     * @param key the property key, not null.
+     * @param value the property value, not null.
+     * @return the bulder for chaining.
+     */
+    public PropertySourceBuilder put(String key, String value){
         this.properties.put(key, value);
         return this;
     }
 
-    public PropertySourceBuilder addAll(Map<String,String> values){
+    /**
+     * Put all the given key, values.
+     * @param values the new key/values, not null.
+     * @return the bulder for chaining.
+     */
+    public PropertySourceBuilder putAll(Map<String, String> values){
         this.properties.putAll(values);
         return this;
     }
 
+    /**
+     * Sets the ordinal to be used explicitly (instead evaluating it using {@code tamaya.ordinal}.
+     * @param ordinal the explicit ordinal to be used.
+     * @return the bulder for chaining.
+     */
     public PropertySourceBuilder withOrdinal(int ordinal){
         this.ordinal = ordinal;
         return this;
     }
 
-    public PropertySourceBuilder addValues(PropertySource propertySource){
+    /**
+     * Puts all values from the given property source.
+     * @param propertySource the property source, not null.
+     * @return the bulder for chaining.
+     */
+    public PropertySourceBuilder putAll(PropertySource propertySource){
         this.properties.putAll(propertySource.getProperties());
         return this;
     }
 
+    /**
+     * Creates a new immutable {@link org.apache.tamaya.spi.PropertySource} instance.
+     * @return a new immutable {@link org.apache.tamaya.spi.PropertySource} instance, never null.
+     */
     public PropertySource build(){
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return new SimplePropertySource(name, properties);
+    }
+
+    @Override
+    public String toString() {
+        return "PropertySourceBuilder{" +
+                "ordinal=" + ordinal +
+                ", name='" + name + '\'' +
+                ", properties=" + properties +
+                '}';
     }
 }

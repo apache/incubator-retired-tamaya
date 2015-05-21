@@ -18,9 +18,9 @@
  */
 package org.apache.tamaya.events.delta;
 
+import org.apache.tamaya.builder.PropertySourceBuilder;
 import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
-import org.apache.tamaya.resource.PropertySourceBuilder;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
@@ -99,10 +99,10 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsRemoved() throws Exception {
-        PropertySource ps1 = PropertySourceBuilder.of("test").add("key1", "value1")
-                .add("key2", "value2").build();
-        PropertySource ps2 = PropertySourceBuilder.of("test").add("key1", "value2")
-                .add("key3", "value3").build();
+        PropertySource ps1 = PropertySourceBuilder.of("test").put("key1", "value1")
+                .put("key2", "value2").build();
+        PropertySource ps2 = PropertySourceBuilder.of("test").put("key1", "value2")
+                .put("key3", "value3").build();
         PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
                 .addChanges(
                         ps2
@@ -114,10 +114,10 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsAdded() throws Exception {
-        PropertySource ps1 = PropertySourceBuilder.of("test").add("key1", "value1")
-                .add("key2", "value2").build();
-        PropertySource ps2 = PropertySourceBuilder.of("test").add("key1", "value2")
-                .add("key3", "value3").build();
+        PropertySource ps1 = PropertySourceBuilder.of("test").put("key1", "value1")
+                .put("key2", "value2").build();
+        PropertySource ps2 = PropertySourceBuilder.of("test").put("key1", "value2")
+                .put("key3", "value3").build();
         PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
                 .addChanges(
                         ps2
@@ -129,10 +129,10 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsUpdated() throws Exception {
-        PropertySource ps1 = PropertySourceBuilder.of("test").add("key1", "value1")
-                .add("key2", "value2").build();
-        PropertySource ps2 = PropertySourceBuilder.of("test").add("key1", "value2")
-                .add("key3", "value3").build();
+        PropertySource ps1 = PropertySourceBuilder.of("test").put("key1", "value1")
+                .put("key2", "value2").build();
+        PropertySource ps2 = PropertySourceBuilder.of("test").put("key1", "value2")
+                .put("key3", "value3").build();
         PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
                 .addChanges(
                         ps2
