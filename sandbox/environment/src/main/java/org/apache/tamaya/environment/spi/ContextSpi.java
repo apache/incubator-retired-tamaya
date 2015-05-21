@@ -16,8 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment.spi;
+package org.apache.tamaya.environment.spi;
 
+
+import org.apache.tamaya.environment.RuntimeContext;
 
 /**
  * Service for accessing the current ids that identify a runtime environment. Environments are used to

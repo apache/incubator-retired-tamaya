@@ -16,18 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment.internal;
+package org.apache.tamaya.environment.internal;
 
 
-import org.apache.tamaya.metamodel.environment.RuntimeContext;
-import org.apache.tamaya.metamodel.environment.RuntimeContextBuilder;
-import org.apache.tamaya.metamodel.environment.spi.EnvironmentProvider;
+import org.apache.tamaya.environment.RuntimeContext;
+import org.apache.tamaya.environment.RuntimeContextBuilder;
 import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
 
 /**
- * Service for accessing {@link org.apache.tamaya.metamodel.environment.RuntimeContext}. Environments are used to
+ * Service for accessing {@link org.apache.tamaya.environment.RuntimeContext}. Environments are used to
  * access/determine configurations.<br/>
  * <h3>Implementation PropertyMapSpec</h3> This class is
  * <ul>
@@ -35,7 +34,7 @@ import java.util.*;
  * <li>and behaves contextual.
  * </ul>
  */
-public class SingleEnvironmentManager implements org.apache.tamaya.metamodel.environment.spi.ContextSpi {
+public class SingleEnvironmentManager implements org.apache.tamaya.environment.spi.ContextSpi{
 
     private final List<EnvironmentProvider> environmentProviders = loadEnvironmentProviders();
     private RuntimeContext rootEnvironment = getCurrentEnvironment();

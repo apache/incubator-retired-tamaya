@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment.internal;
+package org.apache.tamaya.environment.internal;
 
 import java.net.InetAddress;
 import java.util.Collections;
@@ -29,47 +29,45 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.core.env.ConfiguredSystemProperties;
+import org.apache.tamaya.environment.RuntimeContext;
 import org.apache.tamaya.environment.spi.ContextDataProvider;
-import org.apache.tamaya.metamodel.environment.RuntimeContextBuilder;
-import org.apache.tamaya.metamodel.environment.spi.EnvironmentProvider;
+import org.apache.tamaya.environment.RuntimeContextBuilder;
 
 /**
- * Default {@link org.apache.tamaya.metamodel.environment.RuntimeContext}.
+ * Default {@link org.apache.tamaya.environment.RuntimeContext}.
  */
 public final class InitialEnvironmentProvider implements ContextDataProvider{
 
-	private Map<String,String> contextData = new HashMap<>();
+    private static final String STAGE_PROP = "env.STAGE";
+    private Map<String,String> contextData = new HashMap<>();
 
 	public InitialEnvironmentProvider() {
-        Properties props = System.getProperties();
-        if(props instanceof ConfiguredSystemProperties){
-            props = ((ConfiguredSystemProperties)props).getInitialProperties();
-        }
-        String stageValue =  props.getProperty(RuntimeContextBuilder.STAGE_PROP);
-        contextData.put(RuntimeContextBuilder.STAGE_PROP, stageValue);
-        contextData.put("timezone", TimeZone.getDefault().getID());
-        contextData.put("locale", Locale.getDefault().toString());
         try {
             contextData.put("host", InetAddress.getLocalHost().toString());
         } catch (Exception e) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, e, () -> "Failed to evaluate hostname.");
         }
-        // Copy env properties....
+        contextData.put("timezone", TimeZone.getDefault().getID());
+        contextData.put("locale", Locale.getDefault().toString());
+        // Copy all env properties....
         for (Entry<String, String> en : System.getenv().entrySet()) {
             contextData.put(en.getKey(), en.getValue());
         }
+        String value = System.getProperty(STAGE_PROP);
+        if(value==null) {
+            value = System.getenv(STAGE_PROP);
+        }
+        if(value==null){
+            value = "DEVELOPMENT";
+        }
+        contextData.put(STAGE_PROP, value);
         contextData = Collections.unmodifiableMap(contextData);
 	}
 
+
     @Override
-    public boolean isActive(){
-        return true;
+    public RuntimeContext getContext(RuntimeContext currentContext) {
+        return RuntimeContextBuilder.of("root").withParentContext(currentContext)
+                .setAll(contextData).build();
     }
-
-    @Override
-	public Map<String,String> getContextData() {
-        return contextData;
-	}
-
 }
