@@ -123,10 +123,10 @@ public class TypeLiteral<T> implements Serializable {
     }
 
     /**
-      * Returns basic raw Java type.
-      *
-      * @return the actual type represented by this object
-      */
+     * Returns basic raw Java type.
+     *
+     * @return the actual type represented by this object
+     */
     public final Class<T> getRawType() {
         Class<T> rawType = null;
 

@@ -51,7 +51,7 @@ public interface Configuration {
      * @return the property's value or {@code null}.
      */
     default String get(String key) {
-        return get(key, String.class);
+        return getProperties().get(key);
     }
 
 
