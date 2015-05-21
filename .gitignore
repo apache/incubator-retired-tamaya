@@ -12,6 +12,7 @@ release.properties
 .project
 .settings
 .classpath
-jqassistant.datastore
+/jqassistant.datastore
+/data
 modules/integration/commons-config/commons-configuration.iml
 examples/simple-propertysource/tamaya-example-simple-propertysource.iml

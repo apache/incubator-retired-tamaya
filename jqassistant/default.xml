@@ -58,5 +58,6 @@ under the License.
         <includeConstraint refId="serviceLoader:correctServiceLoaderNaming"/>
         <includeConstraint refId="serviceLoader:ServiceImplementationsMustBeListedInServiceConfigurations"/>
         <includeConstraint refId="serviceLoader:serviceConfigurationsMustNotBeEmpty"/>
+        <includeConstraint refId="serviceLoader:serviceConfigurationsMustNotContainNonExistingClasses"/>
     </group>
 </jqa:jqassistant-rules>

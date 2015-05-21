@@ -27,6 +27,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -225,7 +227,12 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     @Override
     public ConfigurationContextBuilder toBuilder() {
-        return new DefaultConfigurationContextBuilder().setContext(this);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext();
+        Optional<ConfigurationContextBuilder> service = serviceContext.getService(ConfigurationContextBuilder.class);
+
+        service.get().setContext(this);
+
+        return service.get();
     }
 
     private <T> String createStringList(Collection<T> propertySources, Function<T,String> mapper){
