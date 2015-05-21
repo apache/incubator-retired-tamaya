@@ -68,15 +68,40 @@ under the License.
 <<<
 
 == Introduction
-This documentation describes the Tamaya Configuration System. It provides an overview of the different building blocks and
-links you to more detailed documentations.
+[[WhatIsTamaya]]
+=== What is Apache Tamaya?
+Tamaya is a very powerful yet flexible configuration solution. It's core is built based on a few simple concepts.
+Summarizing Tamaya provides you
+
+* a simple _key/value_ configuration model.
+* a uniform API for accessing _configuration_, regardless if you are running in a Java SE, Java EE or OSGI environment.
+  This API is capable of hiding all the complexities in configuration management, your developers only need to know,
+  where and in which format configuration can be added to the system.
+* A +ConfigurationBuilder+ allowing you to create a configuration completely manually and managing the configuration
+  lifecycle on your own.
+* a minimalistic implementation, which in the future might also be targeting Java ME environments.
+* a powerful SPI that allows you to extend/adapt Tamaya with all kind of additional mechanisms commonly used in
+  many use cases.
+* a bunch of modules that can be added to your classpath thus adding different functionality to your system as needed.
 
 
+=== What is Apache Tamaya NOT?
+
+Nevertheless there are a few things that are not part of Tamaya:
+
+* Tamaya comes as a modular framework, where you have to decide, which features make sense for you. So you have to do
+  a selection, which modules make sense.
+* Though Tamaya comes with a very minimalistic configuration scheme out-of-the-box, it does by default typically not
+  cover your enterprise requirements. Also here Tamaya offers hooks and examples showing how you can easily
+  replace your current configuration logic with Tamaya. So you must know how you want to organize configuration in
+  your enterprise context, such as supported file locations, formats, overriding and filter rules etc.
+
+
+[[WorkingGroup]]
 === Working Group
 This work is being conducted as part of a community lead joint effort under the Apache Software Foundation. This
 specification is the result of the collaborative work of the members of the Tamaya Users Group and the community at
 large.
-
 
 === Goals
 Configuration is a key feature in all kind of programming languages. Basically configuration is the parametrization of
@@ -84,8 +109,7 @@ well defined aspects of a software product without having to recompile/rebuild t
 can affect basically every part of a system, which renders configuration to a real cross-cutting concern, usable in
 many facets.
 
-
-==== Targets
+=== Targets
 Tamaya targets to support all general configuration aspects in a system, e.g.
 
 * application configuration
@@ -109,15 +133,6 @@ Since configuration is implemented and applied in various ways Tamaya will allow
 * configuration filtering and property adapters
 * configuration of collections
 
-
-=== Required Java version
-The full API is based on Java SE 8.0 language features, whereas a compatible implementation of API and Core
-is similarly available for Java SE 7 as well.
-
-
-== Overview
-=== How is Tamaya organized
-
 The Tamaya project consists of the following parts:
 
 * The link:API.html[API] is a complete SE based configuration API, that provides the minimum of functionality needed.
@@ -139,13 +154,26 @@ to go, but you may want to add additional extensions that provide more features 
   ** Integration with other frameworks as configuration consumer or producer.
 * Finally the *documentation* module provides comprehensive documentation on all features provided.
 
-== Further Information
 
-There is further documentation available describing in more detail
-* link:usecases.html[Possible Use Cases]
-* link:requirements.html[Requirements].
+=== Required Java version
+The full API is based on Java SE 8.0 language features, whereas a compatible implementation of API and Core
+is similarly available for Java SE 7 as well.
 
-== Detailed Documentation
+
+== Where should I continue
+
+=== Further Documentation
+
+* If you want to have a deeper look at the API/SPI, we recommend the link:API.html[API documentation].
+* If you want to have an overview about the available modules, continue link:modules.html[here].
+* If you want to look to the numerous examples, continue link:examples.html[here].
+* If you are interested in the software design in place, continue link:HighLevelDesign.html[here].
+
+Finally
+* If you are interested in the collected requirements, continue link:Requirements.html[here].
+* If you are interested in the collected use cases, continue link:usecases.html[here].
+
+=== API Documentation
 
 Javadoc of the current API
 
@@ -159,11 +187,9 @@ Javadoc of the current Core Implementation
 
 Javadoc of the current Extension Modules
 
-* link:modules.html[General Module Documentation]
 
+=== Examples
 
-== Examples
-
-* A comprehensive set of examples can be found link:../examples.html[here].
+A comprehensive set of examples can be found link:../examples.html[here].
 
 
