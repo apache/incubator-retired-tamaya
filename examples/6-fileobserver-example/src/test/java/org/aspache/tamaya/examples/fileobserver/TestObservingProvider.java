@@ -16,11 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.examples.fileobserver;
+package org.aspache.tamaya.examples.fileobserver;
 
 import org.apache.tamaya.events.folderobserver.ObservingPropertySourceProvider;
 import org.apache.tamaya.format.formats.PropertiesFormat;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -28,8 +29,9 @@ import java.nio.file.Paths;
  */
 public class TestObservingProvider extends ObservingPropertySourceProvider{
 
+    public static Path propertyLocation;
+
     public TestObservingProvider(){
-        super(Paths.get("C:\\Users\\Anatole\\IdeaProjects\\incubator-tamaya\\examples\\6-fileobserver-example\\src\\data"),
-                new PropertiesFormat());
+        super(propertyLocation, new PropertiesFormat());
     }
 }

@@ -25,7 +25,8 @@ under the License.
     <version>1.0-incubating-SNAPSHOT</version>
     <name>Apache Tamaya Example: File Observer</name>
     <description>This project contains a simple example observing a directory for (config) file changes, that updates
-        the configuration correspondingly.</description>
+        the configuration correspondingly.
+    </description>
     <packaging>jar</packaging>
 
 
@@ -45,6 +46,11 @@ under the License.
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
         </dependency>
     </dependencies>
 
