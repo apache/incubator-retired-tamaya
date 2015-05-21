@@ -18,19 +18,18 @@
  */
 package org.apache.tamaya.environment;
 
+import org.apache.tamaya.environment.spi.ContextSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
-import java.util.Map;
-
 /**
- * Singleton accessor to the current {@link org.apache.tamaya.metamodel.environment.RuntimeContext}.
+ * Singleton accessor to the current {@link org.apache.tamaya.environment.RuntimeContext}.
  */
 public final class RuntimeContextProvider {
 
     private static final ContextSpi contextSpi = loadSpi();
 
     private static ContextSpi loadSpi(){
-        return ServiceContext.getInstance().getSingleton(org.apache.tamaya.environment.spi.ContextSpi.class);
+        return ServiceContext.getInstance().getService(ContextSpi.class);
     }
 
     /**

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment;
+package org.apache.tamaya.environment;
 
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +26,10 @@ import java.util.TreeMap;
  * Environment class that is used by the {@link org.apache.tamaya.environment.RuntimeContextBuilder}.
  */
 class BuildableRuntimeContext implements RuntimeContext {
+    /** The context id, never null or empty. */
+    private String contextId;
+    /** The parent context. */
+    private RuntimeContext parentContext;
 
     /**
      * The environment data.
@@ -37,14 +41,34 @@ class BuildableRuntimeContext implements RuntimeContext {
      *
      * @param builder the builder, not null.
      */
-    BuildableRuntimeContext(EnvironmentBuilder builder) {
+    BuildableRuntimeContext(RuntimeContextBuilder builder) {
         Objects.requireNonNull(builder);
+        this.contextId = builder.contextId;
+        this.parentContext = builder.parentContext;
         context.putAll(builder.contextData);
     }
 
     @Override
     public Map<String, String> toMap() {
         return context;
+    }
+
+    @Override
+    public String getContextId() {
+        return contextId;
+    }
+
+    @Override
+    public String getQualifiedContextId() {
+        if(parentContext!=null){
+            return parentContext.getQualifiedContextId()+"/"+contextId;
+        }
+        return contextId;
+    }
+
+    @Override
+    public RuntimeContext getParentContext() {
+        return parentContext;
     }
 
     @Override
@@ -62,7 +86,7 @@ class BuildableRuntimeContext implements RuntimeContext {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BuildableEnvironment that = (BuildableEnvironment) o;
+        BuildableRuntimeContext that = (BuildableRuntimeContext) o;
         return context.equals(that.context);
     }
 

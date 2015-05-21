@@ -27,6 +27,7 @@ import org.apache.tamaya.core.properties.ConfigurationFormat;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
 
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,9 +44,9 @@ public class SystemClassLoaderEnvironmentProvider implements ContextDataProvider
 
 
     public SystemClassLoaderEnvironmentProvider(){
-        List<Resource> propertyResources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(ClassLoader.getSystemClassLoader(),
+        List<URL> propertyResources = Resource.getResources(ClassLoader.getSystemClassLoader(),
                 "classpath:META-INF/env/system.properties", "classpath:META-INF/env/system.xml", "classpath:META-INF/env/system.ini");
-        for(Resource resource:propertyResources){
+        for(URL resource:propertyResources){
             try{
                 ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
                 Map<String,String> data = format.readConfiguration(resource);
@@ -57,14 +58,10 @@ public class SystemClassLoaderEnvironmentProvider implements ContextDataProvider
         }
         data.put("classloader.type", ClassLoader.getSystemClassLoader().getClass().getName());
         data.put("classloader.info", ClassLoader.getSystemClassLoader().toString());
-        Set<Resource> resourceSet = new HashSet<>();
+        Set<URL> resourceSet = new HashSet<>();
         resourceSet.addAll(propertyResources);
         data.put("environment.system.sources", resourceSet.toString());
         this.data = Collections.unmodifiableMap(data);
-    }
-    @Override
-    public boolean isActive() {
-        return true;
     }
 
     @Override

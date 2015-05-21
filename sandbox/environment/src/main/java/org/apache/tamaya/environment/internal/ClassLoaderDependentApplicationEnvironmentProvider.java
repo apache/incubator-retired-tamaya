@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment.internal;
+package org.apache.tamaya.environment.internal;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,7 +61,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Conte
         if(available!=null && !available){
             return false;
         }
-        List<Resource> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
+        List<URL> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/context/application.properties", "classpath:META-INF/context/application.xml", "classpath:META-INF/context/application.ini");
         available = !propertyUris.isEmpty();
         this.contextsAvailable.put(cl, available);
@@ -77,11 +78,11 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Conte
         if(data!=null){
             return data;
         }
-        List<Resource> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
+        List<URL> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/context/application.properties", "classpath:META-INF/context/application.xml", "classpath:META-INF/context/application.ini");
         data = new HashMap<>();
 
-        for(Resource resource:propertyUris){
+        for(URL resource:propertyUris){
             try{
                 ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
                 data.putAll(format.readConfiguration(resource));
@@ -92,7 +93,7 @@ public class ClassLoaderDependentApplicationEnvironmentProvider implements Conte
         }
         data.put("classloader.type", cl.getClass().getName());
         data.put("classloader.info", cl.toString());
-        Set<Resource> uris = new HashSet<>();
+        Set<URL> uris = new HashSet<>();
         uris.addAll(propertyUris);
         data.put("context.sources", uris.toString());
         data = Collections.unmodifiableMap(data);

@@ -66,7 +66,7 @@ public final class ConfigurationDataBuilder {
 
     /**
      * Adds (empty) sections,if they are not yet existing. Already existing sections will not be touched.
-     * @param sections the new sections to add.
+     * @param sections the new sections to put.
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSections(String... sections){

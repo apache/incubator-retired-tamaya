@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment.internal;
+package org.apache.tamaya.environment.internal;
 
 import org.apache.tamaya.core.config.ConfigurationFormats;
 import org.apache.tamaya.core.resource.Resource;
@@ -27,6 +27,7 @@ import org.apache.tamaya.core.properties.ConfigurationFormat;
 import org.apache.tamaya.core.resource.ResourceLoader;
 
 
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -60,7 +61,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
         if(available!=null && !available){
             return false;
         }
-        List<Resource> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
+        List<URL> propertyUris = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/context/ear.properties", "classpath:META-INF/context/ear.xml", "classpath:META-INF/context/ear.ini");
         available = !propertyUris.isEmpty();
         this.contextsAvailable.put(cl, available);
@@ -77,10 +78,10 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
         if(data!=null){
             return data;
         }
-        List<Resource> resources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
+        List<URL> resources = ServiceContext.getInstance().getSingleton(ResourceLoader.class).getResources(cl,
                 "classpath:META-INF/context/ear.properties", "classpath:META-INF/context/ear.xml", "classpath:META-INF/context/ear.ini");
         data = new HashMap<>();
-        for(Resource resource:resources){
+        for(URL resource:resources){
             try{
                 ConfigurationFormat format = ConfigurationFormats.getFormat(resource);
                 Map<String,String> read = format.readConfiguration(resource);
@@ -97,7 +98,7 @@ public class ClassLoaderDependentEarEnvironmentProvider implements EnvironmentPr
         }
         data.put("classloader.type", cl.getClass().getName());
         data.put("classloader.info", cl.toString());
-        Set<Resource> resourceSet = new HashSet<>();
+        Set<URL> resourceSet = new HashSet<>();
         resourceSet.addAll(resources);
         data.put("context.sources", resourceSet.toString());
         data = Collections.unmodifiableMap(data);

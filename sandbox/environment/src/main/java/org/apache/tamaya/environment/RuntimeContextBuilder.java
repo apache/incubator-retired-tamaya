@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.metamodel.environment;
+package org.apache.tamaya.environment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,21 +27,46 @@ import java.util.Objects;
 */
 public final class RuntimeContextBuilder {
 
+    /** The context id, never null or empty. */
+    String contextId;
+    /** The parent context. */
+    RuntimeContext parentContext;
+
     /** THe environment data. */
     Map<String,String> contextData = new HashMap<>();
 
     /**
      * Constructor.
      */
-    private RuntimeContextBuilder() {
+    private RuntimeContextBuilder(String contextId, RuntimeContext parentContext) {
+        this.contextId = Objects.requireNonNull(contextId);
+        this.parentContext = parentContext;
     }
 
     /**
      * Creates a new buildr instance.
      * @return the new builder instance.
      */
-    public static final RuntimeContextBuilder of() {
-        return new RuntimeContextBuilder();
+    public static RuntimeContextBuilder of(String contextId) {
+        return new RuntimeContextBuilder(contextId, null);
+    }
+
+    /**
+     * Creates a new buildr instance.
+     * @return the new builder instance.
+     */
+    public static RuntimeContextBuilder of(String contextId, RuntimeContext parentContext) {
+        return new RuntimeContextBuilder(contextId, parentContext);
+    }
+
+    /**
+     * Sets a new parent context.
+     * @param parentContext the parent context (can be null).
+     * @return the builder for chaining
+     */
+    public RuntimeContextBuilder withParentContext(RuntimeContext parentContext){
+        this.parentContext = parentContext;
+        return this;
     }
 
     /**

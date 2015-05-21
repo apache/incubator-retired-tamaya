@@ -150,7 +150,7 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
                     propertySources.addAll(getPropertySources(data));
                 }
             } catch (Exception e) {
-                LOG.log(Level.WARNING, "Failed to add resource based config: " + res, e);
+                LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
             }
         });
         return propertySources;
