@@ -34,13 +34,13 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
-        <module>minimal-example</module>
-        <module>simple-propertysource-example</module>
-        <!-- module>resources-example</module>
-        <module>resolver-example</module>
-        <module>formats-example</module>
-        <module>injection-example</module>
-        <module>events-example</module -->
+        <module>1-minimal-example</module>
+        <module>2-simple-propertysource-example</module>
+        <module>3-resources-example</module>
+        <module>4-resolver-example</module>
+        <module>6-fileobserver-example</module>
+        <module>5-injection-example</module>
+        <module>7-builder-example</module>
         <!-- module>remote-example</module -->
     </modules>
 
