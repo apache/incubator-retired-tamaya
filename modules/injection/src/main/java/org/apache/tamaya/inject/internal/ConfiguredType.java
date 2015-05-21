@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.inject.ConfigRoot;
@@ -36,6 +37,8 @@ import org.apache.tamaya.event.PropertyChangeSet;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ConfiguredType {
+    /** The log used. */
+    private static final Logger LOG = Logger.getLogger(ConfiguredType.class.getName());
     /**
      * A list with all annotated instance variables.
      */
@@ -69,17 +72,25 @@ public class ConfiguredType {
     private void initFields(Class type) {
         for (Field f : type.getDeclaredFields()) {
             if (f.isAnnotationPresent(NoConfig.class)) {
+                LOG.finest(() -> "Ignored @NoConfig annotated field " +f.getClass().getName() + "#" +
+                        f.toGenericString());
                 continue;
             }
             if (Modifier.isFinal(f.getModifiers())) {
+                LOG.finest(() -> "Ignored final field " +f.getClass().getName() + "#" +
+                        f.toGenericString());
                 continue;
             }
             if (f.isSynthetic()) {
+                LOG.finest(() -> "Ignored synthetic field " +f.getClass().getName() + "#" +
+                        f.toGenericString());
                 continue;
             }
             try {
                 ConfiguredField configuredField = new ConfiguredField(f);
                 configuredFields.add(configuredField);
+                LOG.finer(() -> "Registered field " +f.getClass().getName() + "#" +
+                        f.toGenericString());
             } catch (Exception e) {
                 throw new ConfigException("Failed to initialized configured field: " +
                         f.getDeclaringClass().getName() + '.' + f.getName(), e);
@@ -91,25 +102,36 @@ public class ConfiguredType {
         // TODO revisit this logic here...
         for (Method m : type.getDeclaredMethods()) {
             if (m.isAnnotationPresent(NoConfig.class)) {
+                LOG.finest(() -> "Ignored @NoConfig annotated method " +m.getClass().getName() + "#" +
+                        m.toGenericString());
                 continue;
             }
             if (m.isSynthetic()) {
+                LOG.finest(() -> "Ignored synthetic method " +m.getClass().getName() + "#" +
+                        m.toGenericString());
                 continue;
             }
-            ObservesConfigChange mAnnot = m.getAnnotation(ObservesConfigChange.class);
-            ConfiguredProperty prop = m.getAnnotation(ConfiguredProperty.class);
+            ObservesConfigChange observesAnnot = m.getAnnotation(ObservesConfigChange.class);
+            ConfiguredProperty propAnnot = m.getAnnotation(ConfiguredProperty.class);
             if (type.isInterface()) {
                 // it is a template
-                if (mAnnot != null) {
-                    if (m.isDefault()) {
-                        addObserverMethod(m);
+                if (observesAnnot != null && m.isDefault()) {
+                    if(addObserverMethod(m)){
+                        LOG.finer(() -> "Added configured observer for template: " + m.getClass().getName() + "#" +
+                                m.toGenericString());
                     }
                 }
             } else {
-                if (mAnnot != null) {
-                    addObserverMethod(m);
+                if (observesAnnot != null) {
+                    if(addObserverMethod(m)){
+                        LOG.finer(() -> "Added configured observer: " + m.getClass().getName() + "#" +
+                                m.toGenericString());
+                    }
                 } else {
-                    addPropertySetter(m, prop);
+                    if (addPropertySetter(m, propAnnot)) {
+                        LOG.finer(() -> "Added configured setter: " + m.getClass().getName() + "#"+
+                                m.toGenericString());
+                    }
                 }
             }
         }
@@ -117,10 +139,10 @@ public class ConfiguredType {
 
     private boolean addPropertySetter(Method m, ConfiguredProperty prop) {
         if (prop!=null) {
-            if (m.getParameterTypes().length == 0) {
+            if (m.getParameterTypes().length == 1) {
                 // getter method
                 Class<?> returnType = m.getReturnType();
-                if (!void.class.equals(returnType)) {
+                if (void.class.equals(returnType)) {
                     try {
                         configuredSetterMethods.add(new ConfiguredSetterMethod(m));
                         return true;
@@ -136,18 +158,19 @@ public class ConfiguredType {
 
 
 
-    private void addObserverMethod(Method m) {
+    private boolean addObserverMethod(Method m) {
         if (m.getParameterTypes().length != 1) {
-            return;
+            return false;
         }
         if (!m.getParameterTypes()[0].equals(PropertyChangeSet.class)) {
-            return;
+            return false;
         }
         if (!void.class.equals(m.getReturnType())) {
-            return;
+            return false;
         }
         try {
             this.callbackMethods.add(new ConfigChangeCallbackMethod(m));
+            return true;
         } catch (Exception e) {
             throw new ConfigException("Failed to initialized configured callback method: " +
                     m.getDeclaringClass().getName() + '.' + m.getName(), e);

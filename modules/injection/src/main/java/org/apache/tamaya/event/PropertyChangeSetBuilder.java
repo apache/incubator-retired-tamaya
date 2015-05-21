@@ -20,7 +20,10 @@ package org.apache.tamaya.event;
 
 import org.apache.tamaya.spi.PropertySource;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Models a set current changes to be applied to a configuration/property provider.  Such a set can be applied
@@ -56,7 +59,7 @@ public final class PropertyChangeSetBuilder {
     /**
      * Constructor.
      *
-     * @param source      the underlying configuration/provider, not null.
+     * @param source the underlying configuration/provider, not null.
      */
     private PropertyChangeSetBuilder(PropertySource source) {
         this.propertySourceName = Objects.requireNonNull(source).getName();
@@ -76,7 +79,7 @@ public final class PropertyChangeSetBuilder {
     /**
      * Marks the given key(s) as removed.
      *
-     * @param keys       the keys removed
+     * @param keys the keys removed
      * @return the builder for chaining.
      */
     public PropertyChangeSetBuilder remove(String... keys) {
@@ -89,7 +92,7 @@ public final class PropertyChangeSetBuilder {
     /**
      * Marks the given key(s) as added.
      *
-     * @param keys       the keys added
+     * @param keys the keys added
      * @return the builder for chaining.
      */
     public PropertyChangeSetBuilder add(String... keys) {
@@ -102,7 +105,7 @@ public final class PropertyChangeSetBuilder {
     /**
      * Marks the given key(s) as updaed.
      *
-     * @param keys       the keys updated
+     * @param keys the keys updated
      * @return the builder for chaining.
      */
     public PropertyChangeSetBuilder update(String... keys) {
@@ -120,10 +123,10 @@ public final class PropertyChangeSetBuilder {
      * @param map2 the target map, not null.
      * @return the builder for chaining.
      */
-    public PropertyChangeSetBuilder addChanges(Map<String,String> map1, Map<String,String> map2) {
+    public PropertyChangeSetBuilder addChanges(Map<String, String> map1, Map<String, String> map2) {
         for (Map.Entry<String, String> en : map1.entrySet()) {
             String val = map2.get(en.getKey());
-            if (val==null) {
+            if (val == null) {
                 remove(en.getKey());
             } else if (!val.equals(en.getValue())) {
                 update(en.getKey());
@@ -131,12 +134,21 @@ public final class PropertyChangeSetBuilder {
         }
         for (Map.Entry<String, String> en : map2.entrySet()) {
             String val = map1.get(en.getKey());
-            if (val==null) {
+            if (val == null) {
                 add(en.getKey());
             }
             // update case already handled before!
         }
         return this;
+    }
+
+    /**
+     * Builds s new change set.
+     *
+     * @return a new change set, never null.
+     */
+    public PropertyChangeSet build() {
+        return new PropertyChangeSet(this);
     }
 
     /*
@@ -146,7 +158,7 @@ public final class PropertyChangeSetBuilder {
     @Override
     public String toString() {
         return "PropertyChangeEventBuilder [propertySourceName=" + propertySourceName + ", " +
-                ", added=" + addedKeys + ", updated=" + updatedKeys +  ", removed=" + removedKeys +"]";
+                ", added=" + addedKeys + ", updated=" + updatedKeys + ", removed=" + removedKeys + "]";
     }
 
 }

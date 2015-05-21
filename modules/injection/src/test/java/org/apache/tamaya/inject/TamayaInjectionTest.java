@@ -48,6 +48,7 @@ public class TamayaInjectionTest {
         assertTrue(testInstance.getDynamicValue().isPresent());
         assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
         assertEquals(testInstance.getHostName(), testInstance.getDynamicValue().get());
+        assertEquals(testInstance.javaVersion, System.getProperty("java.version"));
     }
 
     @Test

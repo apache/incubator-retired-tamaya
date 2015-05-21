@@ -208,8 +208,10 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
                         newValue.orElse(null));
                 value = newValue;
                 newValue = null;
-                for (Consumer<PropertyChangeEvent> consumer : listeners.get()) {
-                    consumer.accept(evt);
+                if(listeners!=null) {
+                    for (Consumer<PropertyChangeEvent> consumer : listeners.get()) {
+                        consumer.accept(evt);
+                    }
                 }
             }
         }

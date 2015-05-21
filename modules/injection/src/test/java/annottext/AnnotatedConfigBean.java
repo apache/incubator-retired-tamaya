@@ -18,11 +18,17 @@
  */
 package annottext;
 
+import org.apache.tamaya.event.ObservesConfigChange;
+import org.apache.tamaya.event.PropertyChangeSet;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultValue;
 import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.inject.LoadPolicy;
+import org.apache.tamaya.inject.NoConfig;
 import org.apache.tamaya.inject.WithLoadPolicy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An example showing some basic annotations, using an interface to be proxied by the
@@ -50,6 +56,9 @@ public class AnnotatedConfigBean {
     @ConfiguredProperty(keys = "host.name")
     private DynamicValue<String> dynamicHostname;
 
+    @NoConfig
+    public String javaVersion;
+
     public String getAnotherValue(){
         return anotherValue;
     }
@@ -62,7 +71,21 @@ public class AnnotatedConfigBean {
         return dynamicHostname;
     }
 
+    @NoConfig
+    private List<String> events = new ArrayList<>();
+
     // verify we don't try to inject final fields
     public static final String CONSTANT = "a constant";
 
+
+    @ConfiguredProperty(keys = "java.version")
+    void setJavaVersion(String version){
+        this.javaVersion = version;
+    }
+
+    @ConfiguredProperty(keys="b")
+    @ObservesConfigChange
+    public void callBackTest(PropertyChangeSet value){
+        this.events.add(value.toString());
+    }
 }
