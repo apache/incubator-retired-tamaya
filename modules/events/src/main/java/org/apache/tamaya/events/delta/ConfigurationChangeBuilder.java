@@ -140,6 +140,17 @@ public final class ConfigurationChangeBuilder {
     }
 
     /**
+     * Applies a single key/value change.
+     * @param key the changed key
+     * @param value the new value.
+     * @return this instance for chining.
+     */
+    public ConfigurationChangeBuilder addChange(String key, String value) {
+        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key), value));
+        return this;
+    }
+
+    /**
      * Get the current values, also considering any changes recorded within this change set.
      *
      * @param key the key current the entry, not null.
@@ -240,5 +251,6 @@ public final class ConfigurationChangeBuilder {
         return "ConfigurationChangeSetBuilder [config=" + source + ", " +
                 ", delta=" + delta + "]";
     }
+
 
 }

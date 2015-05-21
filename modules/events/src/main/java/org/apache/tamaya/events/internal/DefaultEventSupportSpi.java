@@ -62,7 +62,7 @@ public class DefaultEventSupportSpi implements EventSupportSpi {
 
     @Override
     public <T> void addListener(Listener<T> l) {
-        Type type = TypeLiteral.getTypeParameter(l.getClass(), Listener.class);
+        Type type = TypeLiteral.getGenericInterfaceTypeParameters(l.getClass(), Listener.class)[0];
         List<Listener> listeners = listenerMap.computeIfAbsent(type,
                 (k) -> Collections.synchronizedList(new ArrayList<>()));
         synchronized (listeners) {
@@ -74,7 +74,7 @@ public class DefaultEventSupportSpi implements EventSupportSpi {
 
     @Override
     public <T> void removeListener(Listener<T> l) {
-        Type type = TypeLiteral.getTypeParameter(l.getClass(), Listener.class);
+        Type type = TypeLiteral.getGenericInterfaceTypeParameters(l.getClass(), Listener.class)[0];
         List<Listener> listeners = listenerMap.get(type);
         if (listeners != null) {
             synchronized (listeners) {
