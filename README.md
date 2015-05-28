@@ -1,14 +1,18 @@
-# Building Apache Tamaya (incubating)
+# Apache Tamaya (incubating)
 
+Tamaya is a very powerful yet flexible configuration solution. It's core is built based on a few simple concepts. More information on Tamaya can be found
+on the [homepage of Apache Tamaya](http://tamaya.incubator.apache.org/).
 
-The Apache Tamaya project contains modules which are intended to be used with Java8 and others
-which are for Java7. 
+## Building Apache Tamaya
 
-This means if we like to release then we need to have both JDK-1.7 and JDK-1.8 
+The Apache Tamaya project contains modules which are intended to be used with Java 8 and others
+which are for Java 7.
+
+If you would like to build Tamaya you need to have both JDK 1.7 and JDK-1.8 
 installed on your computer.
 
 To tell Maven which JDK it should use for each of the projects we do leverage the 
-maven-toolchains-plugin and Mavens toolchains support.
+[Maven Toolchain Plugin](https://maven.apache.org/plugins/maven-toolchains-plugin/) and Mavens toolchains support.
 
 See the following links for more information
 
@@ -18,10 +22,10 @@ See the following links for more information
 The easiest way to setup your computer for being able to use toolchains is to 
 simply copy the provided `./toolchains.xml` sample to `~.m2/toolchains.xml` and 
 edit the paths to your own JDK installations.
-We activate the maven-toolchains-plugin with a 'java7' profile in all 
-the modules we need it.
 
-For building the java7 modules with JDK-1.7 you simply need to build Tamaya with
+If your Maven toolchain is installed correctly you can build Tamaya by the following command:
 
-    $> mvn clean install -Pjava7
+    $> maven clean install
+
+
 
