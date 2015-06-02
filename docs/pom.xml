@@ -94,7 +94,7 @@ under the License.
                             <backend>html</backend>
                             <embedAssets>true</embedAssets>
                             <imagesDir>${project.basedir}/images/icons</imagesDir>
-                            <sourceDirectory>.</sourceDirectory>
+                            <preserveDirectories>true</preserveDirectories>
                         </configuration>
                     </execution>
                 </executions>
