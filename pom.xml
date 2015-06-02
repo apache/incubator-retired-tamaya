@@ -545,6 +545,7 @@ under the License.
                         <exclude>**/bootstrap-*</exclude>
                         <exclude>**/js/jquery-*</exclude>
                         <exclude>**/*.json</exclude>
+                        <exclude>**/*.adoc</exclude>
                         <!-- json can't get comments -->
                     </excludes>
                 </configuration>
