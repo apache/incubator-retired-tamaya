@@ -89,7 +89,7 @@ under the License.
                                 <tamayaVersion>${project.version}</tamayaVersion>
                             </attributes>
                             <baseDir>${project.basedir}</baseDir>
-                            <outputDirectory>target/adocs</outputDirectory>
+                            <outputDirectory>${project.build.directory}/adocs</outputDirectory>
                             <sourceHighlighter>coderay</sourceHighlighter>
                             <backend>html</backend>
                             <embedAssets>true</embedAssets>
