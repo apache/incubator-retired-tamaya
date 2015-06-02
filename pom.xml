@@ -546,6 +546,7 @@ under the License.
                         <exclude>**/js/jquery-*</exclude>
                         <exclude>**/*.json</exclude>
                         <exclude>**/*.adoc</exclude>
+                        <exclude>**/*.md</exclude>
                         <!-- json can't get comments -->
                     </excludes>
                 </configuration>
