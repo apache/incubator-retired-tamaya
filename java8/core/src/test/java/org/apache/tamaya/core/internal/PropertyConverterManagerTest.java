@@ -74,4 +74,89 @@ public class PropertyConverterManagerTest {
         }
 
     }
+
+    @Test
+    public void testDirectConverterMapping(){
+        PropertyConverterManager manager = new PropertyConverterManager();
+        List<PropertyConverter<C>> converters = manager.getPropertyConverters(TypeLiteral.of(C.class));
+        assertThat(converters, hasSize(1));
+
+        PropertyConverter<C> converter = converters.get(0);
+        C result = converter.convert("testDirectConverterMapping");
+
+        assertThat(result, notNullValue());
+        assertThat(result, instanceOf(C.class));
+        assertThat(((C)result).getInValue(), equalTo("testDirectConverterMapping"));
+    }
+
+    @Test
+    public void testDirectSuperclassConverterMapping(){
+        PropertyConverterManager manager = new PropertyConverterManager();
+        List<PropertyConverter<B>> converters = manager.getPropertyConverters(TypeLiteral.of(B.class));
+        assertThat(converters, hasSize(1));
+
+        PropertyConverter<B> converter = converters.get(0);
+        B result = converter.convert("testDirectSuperclassConverterMapping");
+
+        assertThat(result, notNullValue());
+        assertThat(result, instanceOf(C.class));
+        assertThat(((C)result).getInValue(), equalTo("testDirectSuperclassConverterMapping"));
+    }
+
+    @Test
+    public void testTransitiveSuperclassConverterMapping(){
+        PropertyConverterManager manager = new PropertyConverterManager();
+        List<PropertyConverter<A>> converters = manager.getPropertyConverters(TypeLiteral.of(A.class));
+        assertThat(converters, hasSize(1));
+
+        PropertyConverter<A> converter = converters.get(0);
+        A result = converter.convert("testTransitiveSuperclassConverterMapping");
+
+        assertThat(result, notNullValue());
+        assertThat(result, instanceOf(C.class));
+        assertThat(((C)result).getInValue(), equalTo("testTransitiveSuperclassConverterMapping"));
+    }
+
+    @Test
+    public void testDirectInterfaceMapping(){
+        PropertyConverterManager manager = new PropertyConverterManager();
+        List<PropertyConverter<Readable>> converters = manager.getPropertyConverters(TypeLiteral.of(Readable.class));
+        assertThat(converters, hasSize(1));
+
+        PropertyConverter<Readable> converter = converters.get(0);
+        Readable result = converter.convert("testDirectInterfaceMapping");
+
+        assertThat(result, notNullValue());
+        assertThat(result, instanceOf(C.class));
+        assertThat(((C)result).getInValue(), equalTo("testDirectInterfaceMapping"));
+    }
+
+    @Test
+    public void testTransitiveInterfaceMapping1(){
+        PropertyConverterManager manager = new PropertyConverterManager();
+        List<PropertyConverter<Runnable>> converters = manager.getPropertyConverters(TypeLiteral.of(Runnable.class));
+        assertThat(converters, hasSize(1));
+
+        PropertyConverter<Runnable> converter = converters.get(0);
+        Runnable result = converter.convert("testTransitiveInterfaceMapping1");
+
+        assertThat(result, notNullValue());
+        assertThat(result, instanceOf(C.class));
+        assertThat(((C)result).getInValue(), equalTo("testTransitiveInterfaceMapping1"));
+    }
+
+    @Test
+    public void testTransitiveInterfaceMapping2(){
+        PropertyConverterManager manager = new PropertyConverterManager();
+        List<PropertyConverter<AutoCloseable>> converters = manager.getPropertyConverters(TypeLiteral.of(AutoCloseable.class));
+        assertThat(converters, hasSize(1));
+
+        PropertyConverter<AutoCloseable> converter = converters.get(0);
+        AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2");
+
+        assertThat(result, notNullValue());
+        assertThat(result, instanceOf(C.class));
+        assertThat(((C)result).getInValue(), equalTo("testTransitiveInterfaceMapping2"));
+    }
+
 }

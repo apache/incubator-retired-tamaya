@@ -22,12 +22,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
@@ -48,8 +43,23 @@ public class PropertyConverterManager {
     private static final Logger LOG = Logger.getLogger(PropertyConverterManager.class.getName());
     /** The registered converters. */
     private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
+    /** The transitive converters as evaluated based on the registered converters. */
+    private Map<TypeLiteral<?>, List<PropertyConverter<?>>> transitiveConverters = new ConcurrentHashMap<>();
     /** The lock used. */
     private StampedLock lock = new StampedLock();
+
+    private static final Comparator<Object> PRIORITY_COMPARATOR =
+            (o1,o2) -> {
+                int prio = DefaultServiceContext.getPriority(o1) - DefaultServiceContext.getPriority(o2);
+                if(prio<0){
+                    return 1;
+                } else if(prio>0){
+                    return -1;
+                } else{
+                    return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+                }
+            };
+
     /**
      * Constructor.
      */
@@ -91,7 +101,42 @@ public class PropertyConverterManager {
                 newConverters.addAll(converters);
             }
             newConverters.add(converter);
+            Collections.sort(newConverters, PRIORITY_COMPARATOR);
             this.converters.put(targetType, Collections.unmodifiableList(newConverters));
+            // evaluate transitive closure for all inherited supertypes and implemented interfaces
+            // direct implemented interfaces
+            for(Class<?> ifaceType: targetType.getRawType().getInterfaces()){
+                converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                newConverters = new ArrayList<>();
+                if (converters != null) {
+                    newConverters.addAll(converters);
+                }
+                newConverters.add(converter);
+                Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                this.transitiveConverters.put(TypeLiteral.of(ifaceType), Collections.unmodifiableList(newConverters));
+            }
+            Class<?> superClass = targetType.getRawType().getSuperclass();
+            while(superClass!=null && !superClass.equals(Object.class)){
+                converters = List.class.cast(this.transitiveConverters.get(superClass));
+                newConverters = new ArrayList<>();
+                if (converters != null) {
+                    newConverters.addAll(converters);
+                }
+                newConverters.add(converter);
+                Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                this.transitiveConverters.put(TypeLiteral.of(superClass), Collections.unmodifiableList(newConverters));
+                for(Class<?> ifaceType: superClass.getInterfaces()){
+                    converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                    newConverters = new ArrayList<>();
+                    if (converters != null) {
+                        newConverters.addAll(converters);
+                    }
+                    newConverters.add(converter);
+                    Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                    this.transitiveConverters.put(TypeLiteral.of(ifaceType), Collections.unmodifiableList(newConverters));
+                }
+                superClass = superClass.getSuperclass();
+            }
         } finally {
             writeLock.unlock();
         }
@@ -104,14 +149,17 @@ public class PropertyConverterManager {
      * @return true, if a converter for the given type is registered, or a default one can be created.
      */
     public boolean isTargetTypeSupported(TypeLiteral<?> targetType) {
-        return converters.containsKey(targetType)
-                || createDefaultPropertyConverter(targetType) != null;
+        if(converters.containsKey(targetType) || transitiveConverters.containsKey(targetType)){
+            return true;
+        }
+        return createDefaultPropertyConverter(targetType) != null;
     }
 
     /**
      * Get a map of all property converters currently registered. This will not contain the converters that
      * may be created, when an instance is adapted, which provides a String constructor or compatible
-     * factory methods taking a single String instance.
+     * factory methods taking a single String instance. <br/>
+     * This will also NOT contain any transitive converter mappings as derived from the registered converters.
      *
      * @return the current map of instantiated and registered converters.
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
@@ -129,7 +177,25 @@ public class PropertyConverterManager {
     /**
      * Get the list of all current registered converters for the given target type.
      * If not converters are registered, they component tries to create and register a dynamic
-     * converter based on String costructor or static factory methods available.
+     * converter based on String costructor or static factory methods available.<br/>
+     * The converters provided are of the following type and returned in the following order:
+     * <ul>
+     *     <li>Converters mapped explicitly to the required target type are returned first, ordered
+     *     by decreasing priority. This means, if explicit converters are registered these are used
+     *     primarly for converting a value.</li>
+     *     <li>The target type of each explicitly registered converter also can be transitively mapped to
+     *     1) all directly implemented interfaces, 2) all its superclasses (except Object), 3) all the interfaces
+     *     implemented by its superclasses. These groups of transitive converters is returned similarly in the
+     *     order as mentioned, whereas also here a priority based decreasing ordering is applied.</li>
+     *     <li>java.lang wrapper classes and native types are automatically mapped.</li>
+     *     <li>If no explicit converters are registered, for Enum types a default implementation is provided that
+     *     compares the configuration values with the different enum members defined (cases sensitive mapping).</li>
+     * </ul>
+     *
+     * So given that list above directly registered mappings always are tried first, before any transitive mapping
+     * should be used. Also in all cases @Priority annotations are honored for ordering of the converters in place.
+     * Transitive conversion is supported for all directly implemented interfaces (including inherited ones) and
+     * the inheritance hierarchy (exception Object). Superinterfaces of implemented interfaces are ignored.
      *
      * @param targetType the target type, not null.
      * @param <T>        the type class
@@ -137,8 +203,10 @@ public class PropertyConverterManager {
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
     public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
+        List<PropertyConverter<T>> converterList = new ArrayList<>();
         Lock readLock = lock.asReadLock();
         List<PropertyConverter<T>> converters;
+        // direct mapped converters
         try {
             readLock.lock();
             converters = List.class.cast(this.converters.get(targetType));
@@ -146,8 +214,19 @@ public class PropertyConverterManager {
             readLock.unlock();
         }
         if (converters != null) {
-            return converters;
+            converterList.addAll(converters);
         }
+        // transitive converter
+        try {
+            readLock.lock();
+            converters = List.class.cast(this.transitiveConverters.get(targetType));
+        } finally {
+            readLock.unlock();
+        }
+        if (converters != null) {
+            converterList.addAll(converters);
+        }
+        // handling of java.lang wrapper classes
         TypeLiteral<T> boxedType = mapBoxedType(targetType);
         if(boxedType!=null){
             try {
@@ -157,23 +236,26 @@ public class PropertyConverterManager {
                 readLock.unlock();
             }
             if (converters != null) {
-                return converters;
+                converterList.addAll(converters);
             }
         }
-        PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
-        if (defaultConverter != null) {
-            register(targetType, defaultConverter);
-            try {
-                readLock.lock();
-                converters = List.class.cast(this.converters.get(targetType));
-            } finally {
-                readLock.unlock();
+        if(converterList.isEmpty()) {
+            // adding any converters created on the fly, e.g. for enum types.
+            PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
+            if (defaultConverter != null) {
+                register(targetType, defaultConverter);
+                try {
+                    readLock.lock();
+                    converters = List.class.cast(this.converters.get(targetType));
+                } finally {
+                    readLock.unlock();
+                }
+            }
+            if (converters != null) {
+                converterList.addAll(converters);
             }
         }
-        if (converters != null) {
-            return converters;
-        }
-        return Collections.emptyList();
+        return converterList;
     }
 
     /**
@@ -303,5 +385,6 @@ public class PropertyConverterManager {
         }
         return null;
     }
+
 
 }

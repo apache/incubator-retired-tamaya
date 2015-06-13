@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,12 +46,38 @@ import org.apache.tamaya.spi.ServiceContextManager;
  * This class is thread-safe.
  */
 public class PropertyConverterManager {
-    /** The logger used. */
+    /**
+     * The logger used.
+     */
     private static final Logger LOG = Logger.getLogger(PropertyConverterManager.class.getName());
-    /** The registered converters. */
+    /**
+     * The registered converters.
+     */
     private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
-    /** The lock used. */
+    /**
+     * The transitive converters.
+     */
+    private Map<TypeLiteral<?>, List<PropertyConverter<?>>> transitiveConverters = new ConcurrentHashMap<>();
+    /**
+     * The lock used.
+     */
     private ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    private static final Comparator<Object> PRIORITY_COMPARATOR = new Comparator<Object>() {
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            int prio = DefaultServiceContext.getPriority(o1) - DefaultServiceContext.getPriority(o2);
+            if (prio < 0) {
+                return 1;
+            } else if (prio > 0) {
+                return -1;
+            } else {
+                return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+            }
+        }
+    };
+
     /**
      * Constructor.
      */
@@ -68,7 +95,7 @@ public class PropertyConverterManager {
      * Registers the default converters provided out of the box.
      */
     protected void initConverters() {
-        for(PropertyConverter conv: ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)){
+        for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)) {
             Type type = TypeLiteral.getGenericInterfaceTypeParameters(conv.getClass(), PropertyConverter.class)[0];
             register(TypeLiteral.of(type), conv);
         }
@@ -86,13 +113,48 @@ public class PropertyConverterManager {
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-            List<PropertyConverter<T>> converters = List.class.cast(this.converters.get(targetType));
+            List converters = List.class.cast(this.converters.get(targetType));
             List<PropertyConverter<?>> newConverters = new ArrayList<>();
             if (converters != null) {
                 newConverters.addAll(converters);
             }
             newConverters.add(converter);
+            Collections.sort(newConverters, PRIORITY_COMPARATOR);
             this.converters.put(targetType, Collections.unmodifiableList(newConverters));
+            // evaluate transitive closure for all inherited supertypes and implemented interfaces
+            // direct implemented interfaces
+            for (Class<?> ifaceType : targetType.getRawType().getInterfaces()) {
+                converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                newConverters = new ArrayList<>();
+                if (converters != null) {
+                    newConverters.addAll(converters);
+                }
+                newConverters.add(converter);
+                Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                this.transitiveConverters.put(TypeLiteral.of(ifaceType), Collections.unmodifiableList(newConverters));
+            }
+            Class<?> superClass = targetType.getRawType().getSuperclass();
+            while (superClass != null && !superClass.equals(Object.class)) {
+                converters = List.class.cast(this.transitiveConverters.get(superClass));
+                newConverters = new ArrayList<>();
+                if (converters != null) {
+                    newConverters.addAll(converters);
+                }
+                newConverters.add(converter);
+                Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                this.transitiveConverters.put(TypeLiteral.of(superClass), Collections.unmodifiableList(newConverters));
+                for (Class<?> ifaceType : superClass.getInterfaces()) {
+                    converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                    newConverters = new ArrayList<>();
+                    if (converters != null) {
+                        newConverters.addAll(converters);
+                    }
+                    newConverters.add(converter);
+                    Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                    this.transitiveConverters.put(TypeLiteral.of(ifaceType), Collections.unmodifiableList(newConverters));
+                }
+                superClass = superClass.getSuperclass();
+            }
         } finally {
             writeLock.unlock();
         }
@@ -105,8 +167,10 @@ public class PropertyConverterManager {
      * @return true, if a converter for the given type is registered, or a default one can be created.
      */
     public boolean isTargetTypeSupported(TypeLiteral<?> targetType) {
-        return converters.containsKey(targetType)
-                || createDefaultPropertyConverter(targetType) != null;
+        if (converters.containsKey(targetType) || transitiveConverters.containsKey(targetType)) {
+            return true;
+        }
+        return createDefaultPropertyConverter(targetType) != null;
     }
 
     /**
@@ -130,7 +194,26 @@ public class PropertyConverterManager {
     /**
      * Get the list of all current registered converters for the given target type.
      * If not converters are registered, they component tries to create and register a dynamic
-     * converter based on String costructor or static factory methods available.
+     * converter based on String costructor or static factory methods available.<br/>
+     * The converters provided are of the following type and returned in the following order:
+     * <ul>
+     *     <li>Converters mapped explicitly to the required target type are returned first, ordered
+     *     by decreasing priority. This means, if explicit converters are registered these are used
+     *     primarly for converting a value.</li>
+     *     <li>The target type of each explicitly registered converter also can be transitively mapped to
+     *     1) all directly implemented interfaces, 2) all its superclasses (except Object), 3) all the interfaces
+     *     implemented by its superclasses. These groups of transitive converters is returned similarly in the
+     *     order as mentioned, whereas also here a priority based decreasing ordering is applied.</li>
+     *     <li>java.lang wrapper classes and native types are automatically mapped.</li>
+     *     <li>If no explicit converters are registered, for Enum types a default implementation is provided that
+     *     compares the configuration values with the different enum members defined (cases sensitive mapping).</li>
+     * </ul>
+     *
+     * So given that list above directly registered mappings always are tried first, before any transitive mapping
+     * should be used. Also in all cases @Priority annotations are honored for ordering of the converters in place.
+     * Transitive conversion is supported for all directly implemented interfaces (including inherited ones) and
+     * the inheritance hierarchy (exception Object). Superinterfaces of implemented interfaces are ignored.
+     *
      *
      * @param targetType the target type, not null.
      * @param <T>        the type class
@@ -139,7 +222,9 @@ public class PropertyConverterManager {
      */
     public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
         Lock readLock = lock.readLock();
+        List<PropertyConverter<T>> converterList = new ArrayList<>();
         List<PropertyConverter<T>> converters;
+        // direct mapped converters
         try {
             readLock.lock();
             converters = List.class.cast(this.converters.get(targetType));
@@ -147,10 +232,21 @@ public class PropertyConverterManager {
             readLock.unlock();
         }
         if (converters != null) {
-            return converters;
+            converterList.addAll(converters);
         }
+        // transitive converter
+        try {
+            readLock.lock();
+            converters = List.class.cast(this.transitiveConverters.get(targetType));
+        } finally {
+            readLock.unlock();
+        }
+        if (converters != null) {
+            converterList.addAll(converters);
+        }
+        // handling of java.lang wrapper classes
         TypeLiteral<T> boxedType = mapBoxedType(targetType);
-        if(boxedType!=null){
+        if (boxedType != null) {
             try {
                 readLock.lock();
                 converters = List.class.cast(this.converters.get(boxedType));
@@ -158,79 +254,83 @@ public class PropertyConverterManager {
                 readLock.unlock();
             }
             if (converters != null) {
-                return converters;
+                converterList.addAll(converters);
             }
         }
-        PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
-        if (defaultConverter != null) {
-            register(targetType, defaultConverter);
-            try {
-                readLock.lock();
-                converters = List.class.cast(this.converters.get(targetType));
-            } finally {
-                readLock.unlock();
+        if (converterList.isEmpty()) {
+            // adding any converters created on the fly, e.g. for enum types.
+            PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
+            if (defaultConverter != null) {
+                register(targetType, defaultConverter);
+                try {
+                    readLock.lock();
+                    converters = List.class.cast(this.converters.get(targetType));
+                } finally {
+                    readLock.unlock();
+                }
+            }
+            if (converters != null) {
+                converterList.addAll(converters);
             }
         }
-        if (converters != null) {
-            return converters;
-        }
-        return Collections.emptyList();
+        return converterList;
     }
 
     /**
      * Maps native types to the corresponding boxed types.
+     *
      * @param targetType the native type.
-     * @param <T> the type
+     * @param <T>        the type
      * @return the boxed type, or null.
      */
     private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
         Type parameterType = targetType.getType();
-        if(parameterType == int.class){
+        if (parameterType == int.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Integer.class));
         }
-        if(parameterType == short.class){
+        if (parameterType == short.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Short.class));
         }
-        if(parameterType == byte.class){
+        if (parameterType == byte.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Byte.class));
         }
-        if(parameterType == long.class){
+        if (parameterType == long.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Long.class));
         }
-        if(parameterType == boolean.class){
+        if (parameterType == boolean.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Boolean.class));
         }
-        if(parameterType == char.class){
+        if (parameterType == char.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Character.class));
         }
-        if(parameterType == float.class){
+        if (parameterType == float.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Float.class));
         }
-        if(parameterType == double.class){
+        if (parameterType == double.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Double.class));
         }
-        if(parameterType == int[].class){
+        if (parameterType == int[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Integer[].class));
         }
-        if(parameterType == short[].class){
+        if (parameterType == short[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Short[].class));
         }
-        if(parameterType == byte[].class){
+        if (parameterType == byte[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Byte[].class));
         }
-        if(parameterType == long[].class){
+        if (parameterType == long[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Long[].class));
         }
-        if(parameterType == boolean.class){
+        if (parameterType == boolean.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Boolean.class));
         }
-        if(parameterType == char[].class){
+        if (parameterType == char[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Character[].class));
         }
-        if(parameterType == float[].class){
+        if (parameterType == float[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Float[].class));
         }
-        if(parameterType == double[].class){
+        if (parameterType == double[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Double[].class));
         }
         return null;
@@ -244,7 +344,7 @@ public class PropertyConverterManager {
      * @return a new converter, or null.
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(final TypeLiteral<T> targetType) {
-        if(Enum.class.isAssignableFrom(targetType.getRawType())){
+        if (Enum.class.isAssignableFrom(targetType.getRawType())) {
             return new EnumConverter<T>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
@@ -285,7 +385,7 @@ public class PropertyConverterManager {
                     }
                 };
             } catch (Exception e) {
-                LOG.finest("Failed to construct instance of type: " + targetType.getRawType().getName()+": " + e);
+                LOG.finest("Failed to construct instance of type: " + targetType.getRawType().getName() + ": " + e);
             }
         }
         return converter;
@@ -305,7 +405,7 @@ public class PropertyConverterManager {
                 m = type.getDeclaredMethod(name, String.class);
                 return m;
             } catch (NoSuchMethodException | RuntimeException e) {
-                LOG.finest("No such factory method found on type: " + type.getName()+", methodName: " + name);
+                LOG.finest("No such factory method found on type: " + type.getName() + ", methodName: " + name);
             }
         }
         return null;

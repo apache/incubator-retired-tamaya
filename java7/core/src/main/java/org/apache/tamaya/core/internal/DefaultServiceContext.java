@@ -90,6 +90,20 @@ public final class DefaultServiceContext implements ServiceContext {
         return previousServices != null ? previousServices : services;
     }
 
+    /**
+     * Checks the given instance for a @Priority annotation. If present the annotation's value s evaluated. If no such
+     * annotation is present, a default priority is returned (1);
+     * @param o the instance, not null.
+     * @return a priority, by default 1.
+     */
+    public static int getPriority(Object o){
+        int prio = 1; //X TODO discuss default priority
+        Priority priority = o.getClass().getAnnotation(Priority.class);
+        if (priority != null) {
+            prio = priority.value();
+        }
+        return prio;
+    }
 
     /**
      * @param services to scan
@@ -111,12 +125,7 @@ public final class DefaultServiceContext implements ServiceContext {
         T highestService = null;
 
         for (T service : services) {
-            int prio = 1; //X TODO discuss default priority
-            Priority priority = service.getClass().getAnnotation(Priority.class);
-            if (priority != null) {
-                prio = priority.value();
-            }
-
+            int prio = getPriority(service);
             if (highestPriority == null || highestPriority < prio) {
                 highestService = service;
                 highestPriorityServiceCount = 1;
