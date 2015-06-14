@@ -34,20 +34,36 @@ under the License.
                 <include>org.apache.tamaya:tamaya-java7-api</include>
                 <include>org.apache.tamaya:tamaya-java7-core</include>
             </includes>
+            <excludes>
+                <exclude>*:*:*:sources</exclude>
+            </excludes>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>java7/sources</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya:tamaya-java7-api:*:sources</include>
+                <include>org.apache.tamaya:tamaya-java7-core:*:sources</include>
+            </includes>
+        </dependencySet>
+
         <dependencySet>
             <outputDirectory>java8/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya:tamaya-api</include>
                 <include>org.apache.tamaya:tamaya-core</include>
             </includes>
+            <excludes>
+                <exclude>*:*:sources</exclude>
+            </excludes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>java8/sources</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya:tamaya-api:*:sources</include>
+                <include>org.apache.tamaya:tamaya-core:*:sources</include>
+            </includes>
         </dependencySet>
     </dependencySets>
 
-    <!--<moduleSets>-->
-        <!--<moduleSet>-->
-            <!--<-->
-        <!--</moduleSet>-->
-    <!--</moduleSets>-->
 
 </assembly>

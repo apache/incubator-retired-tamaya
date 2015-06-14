@@ -42,8 +42,21 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-java7-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-java7-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-java7-core</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
         </dependency>
 
         <!-- Java 8 related artifacts -->
@@ -54,8 +67,21 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-core</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
         </dependency>
 
     </dependencies>
