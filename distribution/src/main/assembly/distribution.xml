@@ -36,6 +36,7 @@ under the License.
             </includes>
             <excludes>
                 <exclude>*:*:*:sources</exclude>
+                <exclude>*:*:*:javadoc</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -43,6 +44,13 @@ under the License.
             <includes>
                 <include>org.apache.tamaya:tamaya-java7-api:*:sources</include>
                 <include>org.apache.tamaya:tamaya-java7-core:*:sources</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>java7/javadoc</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya:tamaya-java7-api:*:javadoc</include>
+                <include>org.apache.tamaya:tamaya-java7-core:*:javadoc</include>
             </includes>
         </dependencySet>
 
@@ -54,6 +62,7 @@ under the License.
             </includes>
             <excludes>
                 <exclude>*:*:sources</exclude>
+                <exclude>*:*:javadoc</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -61,6 +70,13 @@ under the License.
             <includes>
                 <include>org.apache.tamaya:tamaya-api:*:sources</include>
                 <include>org.apache.tamaya:tamaya-core:*:sources</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>java8/javadoc</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya:tamaya-api:*:javadoc</include>
+                <include>org.apache.tamaya:tamaya-core:*:javadoc</include>
             </includes>
         </dependencySet>
     </dependencySets>
