@@ -55,7 +55,7 @@ public final class ConfigurationProvider {
      *
      * @return the current ConfigurationContext, never null.
      */
-    public static ConfigurationContext getConfigurationContext(){
+    public static ConfigurationContext getConfigurationContext() {
         return PROVIDER_SPI.getConfigurationContext();
     }
 
