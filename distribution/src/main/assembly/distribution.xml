@@ -79,6 +79,16 @@ under the License.
                 <include>org.apache.tamaya:tamaya-core:*:javadoc</include>
             </includes>
         </dependencySet>
+
+        <!-- Tamaya module -->
+
+        <dependencySet>
+            <outputDirectory>java8/modules</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-builder</include>
+            </includes>
+        </dependencySet>
+
     </dependencySets>
 
 
