@@ -34,7 +34,17 @@ under the License.
 
     <dependencies>
 
-         <!--Java 7 related artifacts-->
+        <!-- The documentation of Tamaya -->
+
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-docs</artifactId>
+            <version>${project.version}</version>
+            <classifier>documentation</classifier>
+            <type>zip</type>
+        </dependency>
+
+         <!-- Java 7 related artifacts-->
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-java7-api</artifactId>
@@ -135,6 +145,27 @@ under the License.
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-asciidoc</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-documentation</outputDirectory>
+                            <includeTypes>zip</includeTypes>
+                            <includeClassifiers>documentation</includeClassifiers>
+                            <stripVersion>true</stripVersion>
+                            <stripClassifier>true</stripClassifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

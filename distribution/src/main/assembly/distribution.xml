@@ -23,6 +23,7 @@ under the License.
 
     <id>distribution</id>
     <formats>
+        <format>dir</format>
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
@@ -90,6 +91,13 @@ under the License.
         </dependencySet>
 
     </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>${project.build.directory}/generated-documentation/apache-tamaya-docs-${project.version}</directory>
+        </fileSet>
+    </fileSets>
 
 
 </assembly>
