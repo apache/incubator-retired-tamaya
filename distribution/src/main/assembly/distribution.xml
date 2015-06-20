@@ -23,6 +23,7 @@ under the License.
 
     <id>distribution</id>
     <formats>
+        <format>dir</format>
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
@@ -36,6 +37,7 @@ under the License.
             </includes>
             <excludes>
                 <exclude>*:*:*:sources</exclude>
+                <exclude>*:*:*:javadoc</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -43,6 +45,13 @@ under the License.
             <includes>
                 <include>org.apache.tamaya:tamaya-java7-api:*:sources</include>
                 <include>org.apache.tamaya:tamaya-java7-core:*:sources</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>java7/javadoc</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya:tamaya-java7-api:*:javadoc</include>
+                <include>org.apache.tamaya:tamaya-java7-core:*:javadoc</include>
             </includes>
         </dependencySet>
 
@@ -54,6 +63,7 @@ under the License.
             </includes>
             <excludes>
                 <exclude>*:*:sources</exclude>
+                <exclude>*:*:javadoc</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -63,7 +73,31 @@ under the License.
                 <include>org.apache.tamaya:tamaya-core:*:sources</include>
             </includes>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>java8/javadoc</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya:tamaya-api:*:javadoc</include>
+                <include>org.apache.tamaya:tamaya-core:*:javadoc</include>
+            </includes>
+        </dependencySet>
+
+        <!-- Tamaya module -->
+
+        <dependencySet>
+            <outputDirectory>java8/modules</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-builder</include>
+            </includes>
+        </dependencySet>
+
     </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>${project.build.directory}/generated-documentation/apache-tamaya-docs-${project.version}</directory>
+        </fileSet>
+    </fileSets>
 
 
 </assembly>

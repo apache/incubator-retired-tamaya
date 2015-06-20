@@ -51,7 +51,7 @@ under the License.
         <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jackson.version>2.5.1</jackson.version>
@@ -528,7 +528,6 @@ under the License.
                     </execution>
                 </executions>
                 <configuration>
-                    <additionalparam>-Xdoclint:none</additionalparam>
                     <detectLinks>false</detectLinks>
                     <keywords>true</keywords>
                     <linksource>false</linksource>
@@ -670,6 +669,9 @@ under the License.
                 <checkstyle.skip>true</checkstyle.skip>
                 <findbugs.skip>true</findbugs.skip>
                 <rat.skip>true</rat.skip>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <source.skip>true</source.skip>
+                <assembly.skipAssembly>true</assembly.skipAssembly>
             </properties>
         </profile>
 
