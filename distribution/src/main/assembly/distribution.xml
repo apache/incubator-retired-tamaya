@@ -84,10 +84,11 @@ under the License.
         <!-- Tamaya module -->
 
         <dependencySet>
-            <outputDirectory>java8/modules</outputDirectory>
+            <outputDirectory>modules/builder</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-builder</include>
             </includes>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
         </dependencySet>
 
     </dependencySets>
