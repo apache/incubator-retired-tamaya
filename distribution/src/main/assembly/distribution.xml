@@ -85,12 +85,19 @@ under the License.
 
         <!-->>> Builder module -->
         <dependencySet>
-            <outputDirectory>modules/builder</outputDirectory>
+            <outputDirectory>modules/builder/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-builder</include>
             </includes>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/builder/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-builder:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+
         <!--<<< Builder module -->
 
         <!-->>> JSON module -->
