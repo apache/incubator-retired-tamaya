@@ -83,6 +83,7 @@ under the License.
 
         <!-- Tamaya modules -->
 
+        <!-->>> Builder module -->
         <dependencySet>
             <outputDirectory>modules/builder</outputDirectory>
             <includes>
@@ -90,14 +91,25 @@ under the License.
             </includes>
             <useTransitiveDependencies>true</useTransitiveDependencies>
         </dependencySet>
+        <!--<<< Builder module -->
 
+        <!-->>> JSON module -->
         <dependencySet>
-            <outputDirectory>modules/json</outputDirectory>
+            <outputDirectory>modules/json/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-json</include>
                 <include>com.fasterxml.jackson.core:*</include>
             </includes>
         </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>modules/json/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-json:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--<<< JSON module -->
 
     </dependencySets>
 
