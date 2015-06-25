@@ -271,20 +271,20 @@ In code this is done easily as follows:
 Configuration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
 --------------------------------------------------
 
- ... and similarly for a +PropertySource+:
+... and similarly for a +PropertySource+:
 
- [source,java]
- .Freezing the current Configuration
- --------------------------------------------------
- PropertySource frozenSource = FrozenPropertySource.of(ConfigurationProvider.getConfiguration());
- --------------------------------------------------
+[source,java]
+.Freezing the current Configuration
+--------------------------------------------------
+PropertySource frozenSource = FrozenPropertySource.of(ConfigurationProvider.getConfiguration());
+--------------------------------------------------
 
 
- === SPIs
+=== SPIs
 
- This component also defines an additional SPI, which allows to implement/adapt the mechanism how events are forwarded/
- received and how +ConfigEventListeners+ are managed. This enables to use external eventing systems, such as CDI,
- instead of the simple SE, fully synchronized implementation provided by default.
+This component also defines an additional SPI, which allows to implement/adapt the mechanism how events are forwarded/
+received and how +ConfigEventListeners+ are managed. This enables to use external eventing systems, such as CDI,
+instead of the simple SE, fully synchronized implementation provided by default.
 
 [source,java]
 .SPI: ConfigEventSpi
