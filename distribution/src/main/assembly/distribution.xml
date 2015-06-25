@@ -81,14 +81,42 @@ under the License.
             </includes>
         </dependencySet>
 
-        <!-- Tamaya module -->
+        <!-- Tamaya modules -->
 
+        <!-->>> Builder module -->
         <dependencySet>
-            <outputDirectory>java8/modules</outputDirectory>
+            <outputDirectory>modules/builder/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-builder</include>
             </includes>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/builder/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-builder:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+
+        <!--<<< Builder module -->
+
+        <!-->>> JSON module -->
+        <dependencySet>
+            <outputDirectory>modules/json/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-json</include>
+                <include>com.fasterxml.jackson.core:*</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>modules/json/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-json:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--<<< JSON module -->
 
     </dependencySets>
 
