@@ -63,35 +63,6 @@ which then can be extended or adapted for use in different runtime scenarios, su
 and more. Similarly additional modules may be provided that help also existing solution to be plugged into
 {name}, so you can start right away using {name} without having to rebuild/change your existing application.
 
-== Main Features of {name}
-
-The main features of {name} currently are
-
-* *A simple key/value store*, named +PropertyProvider+ (simply called "provider").
-* Simple *built-in meta-data model*, that allows to easily attach metadata to a provider or single property keys.
-* Support for *different configuration formats*.
-* Support for *different configuration locations*, including remote locations.
-* Powerful and flexible *options to combine providers to new composite providers* using different combination policies.
-* The *Configuration model* adds additional features:
-** *Type Adapters* allow to convert configuration into any required target type.
-** *Built-in support* for all basic Java types.
-* *Contextual, hierarchical and multi-layered environment model*. The model is rather simple, but nevertheless
-  powerful enough to map complex layered runtime environments such as Java EE or multi-tenant SaaS solutions.
-* *Configurable System Properties* allow to tweak system properties to behave contextually.
-* *Templates* provide a type safe configuration mechanism where an annotated interface is implemented by the
-  configuration system, providing data from an underlying configuration.
-* *Configuration Injection* allows configured values to be directly injected into the bean's configured.
-* *Loading Policies* allow to control how configuration changes are reflected on the configured beans.
-* *Configuration Operators and Queries* can be used to easily implement advanced features such as *Views,
-  Security Constraints and Filters*.
-* Provider and configuration changes can be observed by registering *PropertyChangeListeners*.
-* Configurations are *versioned*, so remote pull scenarios can be implemented very efficiently.
-* The system supports *multiple configurations* identified by name.
-* The configuration system provides a powerful management console for reading and updating of configuration.
-* The system also supports distributed configuration scenarios by leveraging existing solutions, such as Memcached,
-  Hazelcast or Zookeper.
-* The system is built on "Java 8 features*.
-* A *Java 7 Backport* is provided.
 
 === Purpose of this Document
 
@@ -99,28 +70,6 @@ The document should help to organize people and ideas around the Apache Tamaya L
 ideas and tasks that need to be done. Everybody can have a look at and see, where hos contribution and capabilities
 would fit best.
 
-== Basics
-
-=== Styles, Logo
-
-The project requires
-
-* a good Apache styled logo and
-* CSS styles as needed,
-* an initial web page,
-* a twitter account
-* ...
-
-=== Infrastructure
-
-We should setup all needed infrastructure
-* code repos
-* project modules (including module sites)
-* coding and documentation guidelines
-* automatic builds (CI), included automatic coverage and sonar quality checks.
-* a docker image or appliance, with everything setup, so contributors can easily
-  start contributing...
-* ...
 
 == Main Features
 
@@ -216,11 +165,6 @@ myTypedMap=[CHF:CHF 10.20, EUR:EUR 12.20, BTC:BTC 0.002]
 ----------------------------------------------------------------
 
 
-=== Management Service
-
-A JMX/Restful API should be designed and built that exposes configuration information. Access should be secured, e.g.
-using OAuth or other security mechasnisms.
-
 === Management Client
 
 A nice web-based client to manage configuration data would be nice as well. This also includes a UI for creating new
@@ -234,6 +178,7 @@ storing/retreiving/managing configuration:
 * JPA, Hibernate
 * MongoDB
 * ...
+
 
 === Integration with OSGI
 
@@ -253,20 +198,12 @@ A configuration server should be implemented that provides access to configurati
 clients (push). Similarly a poull model should be supported, where clients can asl for the current version id of a certain
 configuration and reload it if necessary.
 
+
 === Configuration Distribution Policies
 
 Different configuration distribution policies should be defined any implemented, e.g. distributed cache, restful services,
 web services, EJB/RMI calls, asynchronous queues, publish/subsribe models, ...
 
-=== Dynamic Service Lookup
-
-Configuration Servers and Clients should bea ble to locate each other in different ways:
-
-* with fixed configured IPs, or IP ranges
-* using a dynamic service location protocol like
-** SLP
-** Distributed Maps/Datagrids
-** Apache Zookeeper
 
 === Configuration Client
 
@@ -274,9 +211,11 @@ A subset of the API would be created that exposes only a well defined subset, of
 to a certain instance, VM or whatever. The client should be connectable to a server in different ways (see configuration
 distributiont policies).
 
+
 === Preferences Support
 
 Write a +PreferencesFactory+ for +java.util.preferences+.
+
 
 == Third Party Integration
 
@@ -312,16 +251,6 @@ deployments based on the configuration service, server to be considered maybe
 * Weblogic
 * Glassfish
 * Apache Geronimo
-
-==== Configuration of CDI
-
-Implement a CDI extension that controls CDI based on configuration:
-* Add beans
-* Remove (veto) beans
-* Add/remove interceptors
-* Add/remove decorators
-* Activate alternatives
-* ...
 
 ==== Configuration of Bean Validation
 

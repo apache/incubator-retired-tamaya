@@ -214,6 +214,7 @@ under the License.
         <module>java7</module>
         <module>java8</module>
         <module>modules</module>
+        <module>docs</module>
         <module>distribution</module>
     </modules>
 
