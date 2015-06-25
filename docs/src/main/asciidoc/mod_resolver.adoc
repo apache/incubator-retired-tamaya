@@ -52,13 +52,13 @@ cycles to loop endlessly.
 To benefit from dynamic value resolution you only must add the corresponding dependency to your module:
 
 [source, xml]
-===============================================
+-----------------------------------------------
 <dependency>
   <groupId>org.apache.tamaya.ext</groupId>
   <artifactId>tamaya-resolver</artifactId>
   <version>{tamayaVersion}</version>
 </dependency>
-===============================================
+-----------------------------------------------
 
 The module automatically registers an according +PropertyFilter+ that is automatically called, whenever a value
 is accessed.
@@ -83,7 +83,7 @@ first and most important thing to do is implementing the +ExpressionResolver+ in
 
 .Implementing a Custom Resolver
 [source, java]
-================================================================
+-----------------------------------------------
 public class PwdDecrypter implements ExpressionResolver {
 
   @Override
@@ -100,17 +100,17 @@ public class PwdDecrypter implements ExpressionResolver {
     ...
   }
 }
-================================================================
+-----------------------------------------------
 
 Basically that is all you must do, after having registered the class with the +ServiceLoader+ it will be found
 and loaded by the implementation. With that all expressions that start with the given prefix are passed to the
 resolver, so all the following expressions will be sent to the implementation:
 
 [source,listing]
-=============================================================================
+-----------------------------------------------
 blabla ${decrypt:myname}
 blabla ${decrypt:myname} foo blabla ${decrypt:myname}
-=============================================================================
+-----------------------------------------------
 
 Hereby evaluation is repeasted until no further change of values could be detetced. In case of a endless loop
 the evaluation is broken after a (configurable) number of cycles.
