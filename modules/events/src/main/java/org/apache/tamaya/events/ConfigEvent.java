@@ -19,26 +19,26 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.events.spi.EventSupportSpi;
+import org.apache.tamaya.events.spi.ConfigEventSpi;
 import org.apache.tamaya.spi.ServiceContext;
 
 /**
  * Singleton accessor for accessing the event support component that distributes change events of
  * {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.Configuration}.
  */
-public class ConfigEventSupport {
+public final class ConfigEvent {
     /**
      * The backing SPI.
      */
-    private static final EventSupportSpi SPI = ServiceContext.getInstance()
-            .getService(EventSupportSpi.class)
+    private static final ConfigEventSpi SPI = ServiceContext.getInstance()
+            .getService(ConfigEventSpi.class)
             .orElseThrow(() -> new ConfigException("No SPI registered for " +
-                    ConfigEventSupport.class.getName()));
+                    ConfigEvent.class.getName()));
 
     /**
      * Private singleton constructor.
      */
-    private ConfigEventSupport() {
+    private ConfigEvent() {
     }
 
     /**
@@ -47,7 +47,7 @@ public class ConfigEventSupport {
      *
      * @param l the listener not null.
      */
-    public static <T> void addListener(Listener<T> l) {
+    public static <T> void addListener(ConfigEventListener<T> l) {
         SPI.addListener(l);
     }
 
@@ -57,7 +57,7 @@ public class ConfigEventSupport {
      *
      * @param l the listener not null.
      */
-    public static <T> void removeListener(Listener<T> l) {
+    public static <T> void removeListener(ConfigEventListener<T> l) {
         SPI.removeListener(l);
     }
 

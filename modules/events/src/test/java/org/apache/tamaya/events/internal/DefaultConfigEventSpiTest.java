@@ -16,48 +16,50 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events;
+package org.apache.tamaya.events.internal;
 
+import org.apache.tamaya.events.ConfigEventListener;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for {@link org.apache.tamaya.events.ConfigEventSupport}.
+ * Tests for {@link DefaultConfigEventSpi}.
  */
-public class ConfigEventSupportTest {
+public class DefaultConfigEventSpiTest {
 
+    private DefaultConfigEventSpi spi = new DefaultConfigEventSpi();
     private String testAddListenerValue;
 
     @Test
-    public void testAddRemoveListener() throws Exception {
-        Listener<String> testListener = new Listener<String>() {
+    public void testAddListener() throws Exception {
+        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
+
             @Override
-            public void onEvent(String event) {
+            public void onConfigEvent(String event) {
                 testAddListenerValue = event;
             }
         };
-        ConfigEventSupport.addListener(testListener);
-        ConfigEventSupport.fireEvent("Event1", String.class);
+        spi.addListener(testListener);
+        spi.fireEvent("Event1", String.class);
         assertEquals(testAddListenerValue, "Event1");
-        ConfigEventSupport.removeListener(testListener);
-        ConfigEventSupport.fireEvent("Event2", String.class);
+        spi.removeListener(testListener);
+        spi.fireEvent("Event2", String.class);
         assertEquals(testAddListenerValue, "Event1");
+
     }
 
     @Test
-    public void testFireEvent() throws Exception {
-        Listener<String> testListener = new Listener<String>() {
+    public void testRemoveListener() throws Exception {
+        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
+
             @Override
-            public void onEvent(String event) {
+            public void onConfigEvent(String event) {
                 testAddListenerValue = event;
             }
         };
-        ConfigEventSupport.addListener(testListener);
-        ConfigEventSupport.fireEvent("Event1");
-        assertEquals(testAddListenerValue, "Event1");
-        ConfigEventSupport.removeListener(testListener);
-        ConfigEventSupport.fireEvent("Event2");
-        assertEquals(testAddListenerValue, "Event1");
+        spi.removeListener(testListener);
+        spi.removeListener(testListener);
     }
+
 }

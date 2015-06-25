@@ -18,22 +18,23 @@
  */
 package org.apache.tamaya.events.spi;
 
-import org.apache.tamaya.events.Listener;
+import org.apache.tamaya.events.ConfigEvent;
+import org.apache.tamaya.events.ConfigEventListener;
 
 /**
- * SPI interface to implement the {@link org.apache.tamaya.events.ConfigEventSupport} singleton.
+ * SPI interface to implement the {@link ConfigEvent} singleton.
  * Implementations of this interface must be registered with the current {@link org.apache.tamaya.spi.ServiceContext},
  * by default this equals to registering it with {@link java.util.ServiceLoader}. Add {@link javax.annotation.Priority}
  * annotations for overriding (higher values overriden lower values).
  */
-public interface EventSupportSpi {
+public interface ConfigEventSpi {
     /**
      * Add a listener for observing events. References of this
      * component to the listeners must be managed as weak references.
      *
      * @param l the listener not null.
      */
-    <T> void addListener(Listener<T> l);
+    <T> void addListener(ConfigEventListener<T> l);
 
 
     /**
@@ -41,7 +42,7 @@ public interface EventSupportSpi {
      *
      * @param l the listener not null.
      */
-    <T> void removeListener(Listener<T> l);
+    <T> void removeListener(ConfigEventListener<T> l);
 
     /**
      * Publishes an event to all interested listeners.

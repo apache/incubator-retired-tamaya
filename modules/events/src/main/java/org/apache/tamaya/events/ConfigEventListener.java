@@ -23,11 +23,11 @@ package org.apache.tamaya.events;
  * @param <T> the type listened to.
  */
 @FunctionalInterface
-public interface Listener<T> {
+public interface ConfigEventListener<T> {
     /**
      * Called if an event occurred.
      * @param event the event, not null.
      */
-    void onEvent(T event);
+    void onConfigEvent(T event);
 
 }

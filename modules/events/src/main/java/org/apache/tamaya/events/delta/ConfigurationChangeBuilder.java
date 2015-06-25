@@ -171,7 +171,7 @@ public final class ConfigurationChangeBuilder {
      * @param otherKeys additional keys to be removed (convenience), not null.
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder remove(String key, String... otherKeys) {
+    public ConfigurationChangeBuilder removeKey(String key, String... otherKeys) {
         String oldValue = this.source.get(key);
         if (oldValue == null) {
             this.delta.remove(key);
@@ -209,7 +209,7 @@ public final class ConfigurationChangeBuilder {
      *
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder deleteAll() {
+    public ConfigurationChangeBuilder removeAllKeys() {
         this.delta.clear();
         this.source.getProperties().forEach((k, v) ->
                 this.delta.put(k, new PropertyChangeEvent(this.source, k, v, null)));

@@ -19,7 +19,7 @@
 package org.apache.tamaya.events.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.events.Listener;
+import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.delta.ConfigurationContextChange;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
@@ -31,15 +31,15 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Default Listener for ConfigurationContextChange events that updates the current context, if resources were
+ * Default ConfigEventListener for ConfigurationContextChange events that updates the current context, if resources were
  * affected.
  */
-public class DefaultConfigurationContextChangeListener implements Listener<ConfigurationContextChange> {
+public class DefaultConfigurationContextChangeListener implements ConfigEventListener<ConfigurationContextChange> {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContextChangeListener.class.getName());
 
     @Override
-    public void onEvent(ConfigurationContextChange event) {
+    public void onConfigEvent(ConfigurationContextChange event) {
         ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
         Collection<PropertySource> affectedPropertySources = context.getPropertySources(ps ->
                 event.isAffected(ps));

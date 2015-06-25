@@ -73,7 +73,7 @@ public class ConfigurationChangeTest {
     @Test
     public void testGetEvents() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        ConfigurationChange change = ConfigurationChangeBuilder.of(config).remove("key1", "key2").build();
+        ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("key1", "key2").build();
         assertTrue(change.getEvents().size() == 2);
         change = ConfigurationChangeBuilder.of(config).addChange("key1Added", "value1Added").build();
         assertTrue(change.getEvents().size() == 1);
@@ -82,7 +82,7 @@ public class ConfigurationChangeTest {
     @Test
     public void testGetRemovedSize() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        ConfigurationChange change = ConfigurationChangeBuilder.of(config).remove("java.version", "key2").build();
+        ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("java.version", "key2").build();
         assertTrue(change.getRemovedSize() == 2);
         assertTrue(change.getAddedSize() == 0);
     }
@@ -105,7 +105,7 @@ public class ConfigurationChangeTest {
     @Test
     public void testIsRemoved() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        ConfigurationChange change = ConfigurationChangeBuilder.of(config).remove("java.version").build();
+        ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
         assertTrue(change.isRemoved("java.version"));
     }
 
@@ -129,7 +129,7 @@ public class ConfigurationChangeTest {
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("key1", "key2").build();
         assertTrue(change.containsKey("key1"));
         assertFalse(change.containsKey("key2"));
-        change = ConfigurationChangeBuilder.of(config).remove("java.version").build();
+        change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
         assertFalse(change.containsKey("java.version"));
         assertFalse(change.containsKey("key2"));
     }
@@ -145,7 +145,7 @@ public class ConfigurationChangeTest {
     public void testToString() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("key1", "key2").build();
-        change = ConfigurationChangeBuilder.of(config).remove("java.version").build();
+        change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
         assertTrue(change.toString().contains("timestamp"));
         assertTrue(change.toString().contains("version"));
         assertTrue(change.toString().contains("configuration"));

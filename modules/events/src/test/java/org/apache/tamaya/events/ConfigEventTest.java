@@ -16,50 +16,48 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events.internal;
+package org.apache.tamaya.events;
 
-import org.apache.tamaya.events.Listener;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
- * Tests for {@link org.apache.tamaya.events.internal.DefaultEventSupportSpi}.
+ * Tests for {@link ConfigEvent}.
  */
-public class DefaultEventSupportSpiTest {
+public class ConfigEventTest {
 
-    private DefaultEventSupportSpi spi = new DefaultEventSupportSpi();
     private String testAddListenerValue;
 
     @Test
-    public void testAddListener() throws Exception {
-        Listener<String> testListener = new Listener<String>() {
-
+    public void testAddRemoveListener() throws Exception {
+        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
             @Override
-            public void onEvent(String event) {
+            public void onConfigEvent(String event) {
                 testAddListenerValue = event;
             }
         };
-        spi.addListener(testListener);
-        spi.fireEvent("Event1", String.class);
+        ConfigEvent.addListener(testListener);
+        ConfigEvent.fireEvent("Event1", String.class);
         assertEquals(testAddListenerValue, "Event1");
-        spi.removeListener(testListener);
-        spi.fireEvent("Event2", String.class);
+        ConfigEvent.removeListener(testListener);
+        ConfigEvent.fireEvent("Event2", String.class);
         assertEquals(testAddListenerValue, "Event1");
-
     }
 
     @Test
-    public void testRemoveListener() throws Exception {
-        Listener<String> testListener = new Listener<String>() {
-
+    public void testFireEvent() throws Exception {
+        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
             @Override
-            public void onEvent(String event) {
+            public void onConfigEvent(String event) {
                 testAddListenerValue = event;
             }
         };
-        spi.removeListener(testListener);
-        spi.removeListener(testListener);
+        ConfigEvent.addListener(testListener);
+        ConfigEvent.fireEvent("Event1");
+        assertEquals(testAddListenerValue, "Event1");
+        ConfigEvent.removeListener(testListener);
+        ConfigEvent.fireEvent("Event2");
+        assertEquals(testAddListenerValue, "Event1");
     }
-
 }

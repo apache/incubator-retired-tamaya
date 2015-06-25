@@ -19,7 +19,7 @@
 package org.apache.tamaya.events.folderobserver;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.events.ConfigEventSupport;
+import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.delta.ConfigurationContextChange;
 import org.apache.tamaya.events.delta.ConfigurationContextChangeBuilder;
 import org.apache.tamaya.format.ConfigurationData;
@@ -212,7 +212,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
         }
         ConfigurationContextChange changeEvent = b.build();
         LOG.fine(() -> "Trigger Config Context Change: " + changeEvent);
-        ConfigEventSupport.fireEvent(changeEvent);
+        ConfigEvent.fireEvent(changeEvent);
     }
 
     @Override
