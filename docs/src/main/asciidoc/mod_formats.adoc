@@ -58,4 +58,64 @@ Tamaya Formats provides an abstraction for configuration formats provding the fo
   frameworks that provide logic for reading configuration files, such as Apache commons.configuration.
 
 
-tbc...
+=== The Idea
+
+Formats should be reusable, meaning you should have to write a format parser only once and then be able to map the data read into whatever
+data structure (in our cases: property sources).
+
+Configuration formats can be very different. Some are simpley key/value pairs, whereas other also consist of multiple sections (e.g. ini-files) or
+hierarchical data (e.g. yaml, xml). This is solved in Tamaya by mapping the configuration read into a normalized intermediary format called
++ConfigurationData+:
+
+[source,java]
+.ConfigurationData
+-------------------------------------------------------
+public final class ConfigurationData {
+
+    /**
+     * Name of a section that should be written by every format implementation if possible, hereby mapping the
+     * complete configuration structure to one flattened key/value layer. This section is used for creating
+     * default PropertySource for a ConfigurationData instance.
+     */
+    public static final String FLATTENED_SECTION_NAME = "_flattened";
+
+    public ConfigurationFormat getFormat();
+    public String getResource();
+    public Set<String> getSections();
+    public Map<String,String> getSection(String name);
+    public Map<String,String> getDefaultSection();
+}
+-------------------------------------------------------
+
+In detail the data read from a file is organized into _sections_ as follows:
+
+* with +get>Resource()+ and +getFormat()+ the underlying resource and the format that read this data can be accessed.
+* a section contains a set of properties.
+* it could be mapped to one single section, or to multiple sections. The method +getSections()+ returns a set of all
+  section names present.
+* it can have a _default_ section, which basically contains data that may be not part of any section.
+* With +getSection(String name)+ a section can be accessed by name.
+
+Now for the conversion of +ConfigurationData+ into a +PropertySource+ different default approaches are used:
+
+. The +ConfigurationFormat+ that read the data can provide a flattened
+  section that is accessible under +FLATTENED_SECTION_NAME+, which defines the default +PropertySource+ contents.
+. If no flattened section is present, but only a default section is present this can be directly mapped into a
+  +PropertySource+.
+. In all other cases a +PropertySource+ can be constructed, by prefixing all keys of each section
+  present with the (unique) section name and a '.' separator. The resulting +Map+ then can be used as input
+  for the final +PropertySource+.
+
+Nevertheless, depending on the context, where a configuration source was read (classloader, time, source etc.) the
+resulting +PropertySource+ can have different semnatics, especially for the +PropertySources+ ordinal. Also section
+names may be mapped into different ordinals instead of using them as key prefixes (e.g. imagine configuration formats
+with a 'default', 'main', and 'overrides' sections). For such more complex or custom cases no useful default mapping
+can be defined. In such cases this functionality must be implemented in a _map_ method, which converts
+the normalized +ConfigData+ read to the appropriate collection of +PropertySource+ instances:
+
+[source,java]
+-------------------------------------------------------
+Collection<PropertySource> mapConfigData(ConfigData data);
+-------------------------------------------------------
+
+tbc
