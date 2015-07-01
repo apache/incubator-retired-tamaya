@@ -198,7 +198,7 @@ under the License.
                         </goals>
                         <configuration>
                             <finalName>apache-tamaya-${project.version}</finalName>
-                            <descriptor>src/main/assembly/distribution.xml</descriptor>
+                            <descriptor>src/main/assembly/distribution-bin.xml</descriptor>
                         </configuration>
                     </execution>
                 </executions>
