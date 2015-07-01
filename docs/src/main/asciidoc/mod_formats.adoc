@@ -63,6 +63,8 @@ Tamaya Formats provides an abstraction for configuration formats provding the fo
 Formats should be reusable, meaning you should have to write a format parser only once and then be able to map the data read into whatever
 data structure (in our cases: property sources).
 
+==== ConfigurationData
+
 Configuration formats can be very different. Some are simpley key/value pairs, whereas other also consist of multiple sections (e.g. ini-files) or
 hierarchical data (e.g. yaml, xml). This is solved in Tamaya by mapping the configuration read into a normalized intermediary format called
 +ConfigurationData+:
@@ -72,50 +74,77 @@ hierarchical data (e.g. yaml, xml). This is solved in Tamaya by mapping the conf
 -------------------------------------------------------
 public final class ConfigurationData {
 
-    /**
-     * Name of a section that should be written by every format implementation if possible, hereby mapping the
-     * complete configuration structure to one flattened key/value layer. This section is used for creating
-     * default PropertySource for a ConfigurationData instance.
-     */
-    public static final String FLATTENED_SECTION_NAME = "_flattened";
-
     public ConfigurationFormat getFormat();
     public String getResource();
-    public Set<String> getSections();
+
+    public boolean hasSections();
+    public Set<String> getSectionNames();
     public Map<String,String> getSection(String name);
-    public Map<String,String> getDefaultSection();
+    public Map<String,Map<String,String>> getSections();
+
+    public boolean hasDefaultProperties();
+    public Map<String,String> getDefaultProperties();
+
+    public Map<String,String> getProperties();
+    public boolean hasCombinedProperties();
+
+    public boolean isEmpty();
 }
 -------------------------------------------------------
 
 In detail the data read from a file is organized into _sections_ as follows:
 
-* with +get>Resource()+ and +getFormat()+ the underlying resource and the format that read this data can be accessed.
+* with +getResource()+ and +getFormat()+ the underlying resource and the format that read this data can be accessed.
 * a section contains a set of properties.
-* it could be mapped to one single section, or to multiple sections. The method +getSections()+ returns a set of all
-  section names present.
-* it can have a _default_ section, which basically contains data that may be not part of any section.
+* it could be mapped to one single section, or to multiple sections. The method +getSectionNames()+ returns a set of all
+  section names.
+* it can have a _default_ properties, which basically contain data that may be not part of any section.
 * With +getSection(String name)+ a section can be accessed by name.
 
 Now for the conversion of +ConfigurationData+ into a +PropertySource+ different default approaches are used:
 
-. The +ConfigurationFormat+ that read the data can provide a flattened
-  section that is accessible under +FLATTENED_SECTION_NAME+, which defines the default +PropertySource+ contents.
-. If no flattened section is present, but only a default section is present this can be directly mapped into a
-  +PropertySource+.
-. In all other cases a +PropertySource+ can be constructed, by prefixing all keys of each section
-  present with the (unique) section name and a '.' separator. The resulting +Map+ then can be used as input
-  for the final +PropertySource+.
+. The +ConfigurationFormat+ that read the data can provide the (combined) properties accessible from
+  +getProperties()+ explcitly, which can be used to initialize a single +PropertySource+ containing the data read.
+. If the format did not set the final properties, but only a default section is present this default section
+  can be directly returned as combined properties.
+. In all other cases a properties can be uniqiely mapped into one single properties Map, by prefixing all keys of each
+  section present with the (unique) section name and a '.' separator.
 
 Nevertheless, depending on the context, where a configuration source was read (classloader, time, source etc.) the
 resulting +PropertySource+ can have different semnatics, especially for the +PropertySources+ ordinal. Also section
 names may be mapped into different ordinals instead of using them as key prefixes (e.g. imagine configuration formats
 with a 'default', 'main', and 'overrides' sections). For such more complex or custom cases no useful default mapping
-can be defined. In such cases this functionality must be implemented in a _map_ method, which converts
+can be defined. In such cases this functionality must be implemented in a _mapData_ method, which converts
 the normalized +ConfigData+ read to the appropriate collection of +PropertySource+ instances:
+
+
+==== ConfigurationFormat
+
+A ConfigurationFormat is basically an abstraction that reads a configuration resource (modelled by an InputStream) and
+creates a corresponding +ConfigurationData+ instance.
 
 [source,java]
 -------------------------------------------------------
-Collection<PropertySource> mapConfigData(ConfigData data);
+public interface ConfigurationFormat {
+
+    public String getName();
+    boolean accepts(URL url);
+    ConfigurationData readConfiguration(String resource, InputStream inputStream);
+}
 -------------------------------------------------------
 
-tbc
+Normally you need to map the resulting +ConfigurationData+ to one or multiple +PropertySources+. In case, where the
+properties provided match exactly the extected properties a +FlattenedDefaultPropertySource+ is provided out-of-the-box.
+If the exact mapping must be overridden, you can simply override the property source's initialize method to adapt the
+mapping:
+
+[source,java]
+-------------------------------------------------------
+ConfigurationData data = ...;
+FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(data){
+  protected Map<String, String> populateData(ConfigurationData data) {
+    ...
+  }
+};
+-------------------------------------------------------
+
