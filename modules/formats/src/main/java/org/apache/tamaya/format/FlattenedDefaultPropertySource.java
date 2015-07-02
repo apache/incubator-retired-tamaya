@@ -56,16 +56,16 @@ public class FlattenedDefaultPropertySource implements PropertySource {
         this.defaultOrdinal = defaultOrdinal;
     }
 
-    private Map<String, String> populateData(ConfigurationData data) {
-        Map<String, String> result = data.getSection(ConfigurationData.FLATTENED_SECTION_NAME);
-        if (result == null) {
-            result = data.getDefaultSection();
+    protected Map<String, String> populateData(ConfigurationData data) {
+        Map<String, String> result = data.getCombinedProperties();
+        if (result.isEmpty()) {
+            result = data.getDefaultProperties();
         }
-        if (result == null) {
+        if (result.isEmpty()) {
             result = new HashMap<>();
         }
         if(result.isEmpty()){
-            for(String section:data.getSections()){
+            for (String section : data.getSectionNames()) {
                 Map<String,String> sectionMap = data.getSection(section);
                 for(Map.Entry<String,String> en: sectionMap.entrySet()){
                     result.put(section + '.' + en.getKey(), en.getValue());

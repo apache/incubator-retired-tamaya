@@ -55,8 +55,6 @@ public class ConfigurationFormatsTest {
         assertNotNull(data);
         data = ConfigurationFormats.readConfigurationData(getClass().getResource("/Test.properties"));
         assertNotNull(data);
-//        data = ConfigurationFormats.readConfigurationData(getClass().getResource("/Test.xml"));
-//        assertNotNull(data);
     }
 
     @org.junit.Test

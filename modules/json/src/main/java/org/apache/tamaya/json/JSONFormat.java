@@ -25,7 +25,6 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
-import org.apache.tamaya.format.InputStreamCloser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,10 +53,9 @@ public class JSONFormat implements ConfigurationFormat {
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
 
-        try (InputStream is = new InputStreamCloser(inputStream)){
+        try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(is);
-
+            JsonNode root = mapper.readTree(inputStream);
             HashMap<String, String> values = new HashMap<>();
             JSONVisitor visitor = new JSONVisitor((ObjectNode) root, values);
             visitor.run();

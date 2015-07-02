@@ -79,8 +79,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                     String key = line.substring(0, sep);
                     String value = line.substring(sep + 1);
                     if (section != null) {
-                        builder.addProperty(ConfigurationData.FLATTENED_SECTION_NAME, section + '.' + key, value);
-                        builder.addProperty(section, key, value);
+                        builder.addSectionProperty(section, key, value);
                     } else {
                         builder.addProperty(key, value);
                     }

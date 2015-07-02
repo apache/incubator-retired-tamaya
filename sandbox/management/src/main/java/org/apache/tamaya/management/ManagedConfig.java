@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.se;
+package org.apache.tamaya.management;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.AggregationPolicy;
+
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 
 import java.util.Map;
 import java.util.Set;
@@ -29,67 +30,33 @@ import java.util.Set;
  */
 public class ManagedConfig implements ManagedConfigMBean{
     @Override
-    public Set<String> getConfigurationNames() {
+    public String getConfigurationInfo() {
         return null;
     }
 
     @Override
-    public String getConfigurationInfo(String configName) {
-        return null;
+    public Map<String, String> getConfiguration() {
+        return ConfigurationProvider.getConfiguration().getProperties();
     }
 
     @Override
-    public boolean isConfigurationAvailable(String configName, String envType, String context) {
-        return false;
+    public Map<String, String> getConfigurationArea(String area, boolean recursive) {
+        return ConfigurationProvider.getConfiguration().with(ConfiguationFunctions.getArea(area, recursive);
     }
 
     @Override
-    public boolean isConfigurationLoaded(String configName, String envType, String context) {
-        return false;
+    public Set<String> getAreas() {
+        return ConfigurationProvider.getConfiguration().with(ConfiguationFunctions.getAreas();
     }
 
     @Override
-    public Map<String, String> getConfiguration(String configName, String envType, String context) throws ConfigException {
-        return null;
+    public Set<String> getTransitiveAreas() {
+        return ConfigurationProvider.getConfiguration().with(ConfiguationFunctions.getTransitiveAreas();
     }
 
     @Override
-    public Map<String, String> getRecursiveConfigValues(String area, String configName, String envType, String context) throws ConfigException {
-        return null;
-    }
-
-    @Override
-    public Map<String, String> getConfigValues(String area, String configName, String envType, String context) throws ConfigException {
-        return null;
-    }
-
-    @Override
-    public Map<String, String> updateConfiguration(String configName, String envType, String context, Map<String, String> values, AggregationPolicy aggregationPolicy) throws ConfigException {
-        return null;
-    }
-
-    @Override
-    public String getConfigurationInfo(String configName, String envType, String context) {
-        return null;
-    }
-
-    @Override
-    public Set<String> getAreas(String configName, String envType, String context) {
-        return null;
-    }
-
-    @Override
-    public Set<String> getTransitiveAreas(String configName, String envType, String context) {
-        return null;
-    }
-
-    @Override
-    public boolean isAreaExisting(String area, String configName, String envType, String context) {
-        return false;
-    }
-
-    @Override
-    public boolean isAreaEmpty(String area, String configName, String envType, String context) {
+    public boolean isAreaExisting(String area) {
         return false;
     }
 }
+

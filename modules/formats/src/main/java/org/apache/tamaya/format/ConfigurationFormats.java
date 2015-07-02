@@ -69,7 +69,7 @@ public final class ConfigurationFormats {
      */
     public static List<ConfigurationFormat> getFormats(String... formatNames) {
         Set<String> names = new HashSet<>(Arrays.asList(formatNames));
-        return getFormats(f -> names.contains(f));
+        return getFormats(names::contains);
     }
 
     /**
@@ -152,25 +152,10 @@ public final class ConfigurationFormats {
                                                           ConfigurationFormat... formats) throws IOException {
         Objects.requireNonNull(inputStream);
         Objects.requireNonNull(resource);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] bytes = new byte[256];
-        try {
-            int read = inputStream.read(bytes);
-            while (read > 0) {
-                bos.write(bytes, 0, read);
-                read = inputStream.read(bytes);
-            }
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                LOG.log(Level.FINEST, e, () -> "Error closing stream: " + inputStream);
-            }
-        }
-        ConfigurationData data;
+        InputStreamFactory isFactory = new InputStreamFactory(inputStream);
         for (ConfigurationFormat format : formats) {
-            try (ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray())) {
-                data = format.readConfiguration(resource, bis);
+            try (InputStream is = isFactory.createInputStream()) {
+                ConfigurationData data = format.readConfiguration(resource, is);
                 if (data != null) {
                     return data;
                 }

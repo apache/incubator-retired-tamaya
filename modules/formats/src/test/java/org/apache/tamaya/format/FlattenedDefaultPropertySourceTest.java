@@ -39,23 +39,23 @@ public class FlattenedDefaultPropertySourceTest {
 
     private ConfigurationData createConfigurationData(String sourceName) {
         return ConfigurationDataBuilder.of(sourceName, new PropertiesFormat())
-                .addProperty("a", "aValue").addProperty("section1", "sectionKey1", "sectionValue11")
+                .addProperty("a", "aValue").addSectionProperty("section1", "sectionKey1", "sectionValue11")
                 .addSections("section1", "section12")
-                .addProperty("section2", "sectionKey1", "sectionValue21").build();
+                .addSectionProperty("section2", "sectionKey1", "sectionValue21").build();
     }
 
     private ConfigurationData createConfigurationData(String sourceName, int ordinal) {
         return ConfigurationDataBuilder.of(sourceName, new PropertiesFormat())
-                .addProperty("a", "aValue").addProperty("section1", "sectionKey1", "sectionValue11")
+                .addProperty("a", "aValue").addSectionProperty("section1", "sectionKey1", "sectionValue11")
                 .addSections("section1", "section12").addProperty(PropertySource.TAMAYA_ORDINAL, String.valueOf(ordinal))
-                .addProperty("section2", "sectionKey1", "sectionValue21").build();
+                .addSectionProperty("section2", "sectionKey1", "sectionValue21").build();
     }
 
     private ConfigurationData createConfigurationDataNoDefault(String sourceName) {
         return ConfigurationDataBuilder.of(sourceName, new PropertiesFormat())
-                .addProperty("section1", "sectionKey1", "sectionValue11")
+                .addSectionProperty("section1", "sectionKey1", "sectionValue11")
                 .addSections("section1", "section12")
-                .addProperty("section2", "sectionKey1", "sectionValue21").build();
+                .addSectionProperty("section2", "sectionKey1", "sectionValue21").build();
     }
 
     @Test
@@ -68,8 +68,10 @@ public class FlattenedDefaultPropertySourceTest {
     public void testGet() throws Exception {
         FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(createConfigurationData("test2"));
         assertEquals("aValue", ps.get("a"));
-        assertNull(ps.get("section1.sectionKey1"));
-        assertNull(ps.get("section2.sectionKey1"));
+        assertNotNull(ps.get("section1.sectionKey1"));
+        assertNotNull(ps.get("section2.sectionKey1"));
+        assertNull(ps.get("sectionKey1"));
+        assertNull(ps.get("sectionKey1"));
         ps = new FlattenedDefaultPropertySource(createConfigurationDataNoDefault("test2"));
         assertEquals("sectionValue11", ps.get("section1.sectionKey1"));
         assertEquals("sectionValue21", ps.get("section2.sectionKey1"));
@@ -82,8 +84,12 @@ public class FlattenedDefaultPropertySourceTest {
         FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(createConfigurationData("test3"));
         assertNotNull(ps.getProperties());
         assertEquals("aValue", ps.getProperties().get("a"));
-        assertNull(ps.getProperties().get("section1.sectionKey1"));
-        assertNull(ps.getProperties().get("section2.sectionKey1"));
+        assertNotNull(ps.getProperties().get("section1.sectionKey1"));
+        assertNotNull(ps.getProperties().get("section2.sectionKey1"));
+        assertNull(ps.getProperties().get("section1.sectionKey2"));
+        assertNull(ps.getProperties().get("section2.sectionKey2"));
+        assertNull(ps.getProperties().get("sectionKey1"));
+        assertNull(ps.getProperties().get("sectionKey2"));
         ps = new FlattenedDefaultPropertySource(createConfigurationDataNoDefault("test3"));
         assertNotNull(ps.getProperties());
         assertEquals("sectionValue11", ps.getProperties().get("section1.sectionKey1"));

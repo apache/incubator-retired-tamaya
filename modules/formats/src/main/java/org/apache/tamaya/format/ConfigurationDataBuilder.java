@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.format;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -32,8 +30,18 @@ public final class ConfigurationDataBuilder {
     ConfigurationFormat format;
     /** The resource read. */
     String resource;
-    /** The data read. */
-    Map<String,Map<String,String>> data = new HashMap<>();
+    /**
+     * The properties of the default section (no name).
+     */
+    Map<String, String> defaultProperties;
+    /**
+     * A normalized flattened set of this configuration data.
+     */
+    Map<String, String> combinedProperties;
+    /**
+     * The sections read.
+     */
+    Map<String, Map<String, String>> namedSections;
 
     /**
      * Private constructor.
@@ -60,7 +68,15 @@ public final class ConfigurationDataBuilder {
      */
     public static ConfigurationDataBuilder of(ConfigurationData data){
         ConfigurationDataBuilder b = new ConfigurationDataBuilder(data.getResource(), data.getFormat());
-        b.data.putAll(data.getData());
+        if (data.hasDefaultProperties()) {
+            b.getDefaultProperties().putAll(data.getDefaultProperties());
+        }
+        if (data.hasCombinedProperties()) {
+            b.getCombinedProperties().putAll(data.getCombinedProperties());
+        }
+        if (data.hasSections()) {
+            b.getSections().putAll(data.getSections());
+        }
         return b;
     }
 
@@ -70,8 +86,8 @@ public final class ConfigurationDataBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSections(String... sections){
-        for(String section:sections) {
-            this.data.computeIfAbsent(section, (k) -> new HashMap<>());
+        for (String section : sections) {
+            getSections().computeIfAbsent(section, (k) -> new HashMap<>());
         }
         return this;
     }
@@ -83,8 +99,8 @@ public final class ConfigurationDataBuilder {
      * @param value the entry's value
      * @return the builder for chaining.
      */
-    public ConfigurationDataBuilder addProperty(String section, String key, String value){
-        Map<String,String> map = this.data.computeIfAbsent(section, (k) -> new HashMap<>());
+    public ConfigurationDataBuilder addSectionProperty(String section, String key, String value) {
+        Map<String, String> map = getSections().computeIfAbsent(section, (k) -> new HashMap<>());
         map.put(key, value);
         return this;
     }
@@ -95,8 +111,9 @@ public final class ConfigurationDataBuilder {
      * @param value the entry's value
      * @return the builder for chaining.
      */
-    public ConfigurationDataBuilder addProperty(String key, String value){
-        return addProperty(ConfigurationData.DEFAULT_SECTION_NAME, key, value);
+    public ConfigurationDataBuilder addProperty(String key, String value) {
+        getDefaultProperties().put(key, value);
+        return this;
     }
 
     /**
@@ -105,8 +122,8 @@ public final class ConfigurationDataBuilder {
      * @param properties the entry's data
      * @return the builder for chaining.
      */
-    public ConfigurationDataBuilder addProperties(String section, Map<String,String> properties){
-        Map<String,String> map = this.data.computeIfAbsent(section, (k) -> new HashMap<>());
+    public ConfigurationDataBuilder addSectionProperties(String section, Map<String, String> properties) {
+        Map<String, String> map = getSections().computeIfAbsent(section, (k) -> new HashMap<>());
         map.putAll(properties);
         return this;
     }
@@ -116,8 +133,57 @@ public final class ConfigurationDataBuilder {
      * @param properties the entry's data
      * @return the builder for chaining.
      */
-    public ConfigurationDataBuilder addProperties( Map<String,String> properties){
-        return addProperties(ConfigurationData.DEFAULT_SECTION_NAME, properties);
+    public ConfigurationDataBuilder addProperties(Map<String, String> properties) {
+        getDefaultProperties().putAll(properties);
+        return this;
+    }
+
+    /**
+     * Sets the given entries as the <i>combined</i> properties map, all existing properties of the
+     * combined map will be overridden.
+     *
+     * @param properties the entry's data
+     * @return the builder for chaining.
+     */
+    public ConfigurationDataBuilder setCombinedProperties(Map<String, String> properties) {
+        this.combinedProperties = new HashMap<>(properties);
+        return this;
+    }
+
+    /**
+     * Access the current default section, if not present a new instance is initialized.
+     *
+     * @return the current default section, never null.
+     */
+    public Map<String, String> getDefaultProperties() {
+        if (defaultProperties == null) {
+            defaultProperties = new HashMap<>();
+        }
+        return defaultProperties;
+    }
+
+    /**
+     * Access the current combined properties, if not present a new instance is initialized.
+     *
+     * @return the current combined properties, never null.
+     */
+    public Map<String, String> getCombinedProperties() {
+        if (combinedProperties == null) {
+            combinedProperties = new HashMap<>();
+        }
+        return combinedProperties;
+    }
+
+    /**
+     * Access the current named sections, if not present a new instance is initialized.
+     *
+     * @return the current named sections, never null.
+     */
+    public Map<String, Map<String, String>> getSections() {
+        if (namedSections == null) {
+            namedSections = new HashMap<>();
+        }
+        return namedSections;
     }
 
     /**
@@ -132,7 +198,9 @@ public final class ConfigurationDataBuilder {
     public String toString() {
         return "ConfigurationDataBuilder{" +
                 "format=" + format +
-                ", data=" + data +
+                ", default properties=" + defaultProperties +
+                ", sections=" + namedSections +
+                ", combined properties=" + combinedProperties +
                 ", resource=" + resource +
                 '}';
     }

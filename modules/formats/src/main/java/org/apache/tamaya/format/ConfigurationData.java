@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.format;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Data that abstracts the data read from a configuration resources using a certain format. The data can be divided
@@ -35,24 +33,23 @@ import java.util.Set;
  * </ul>
  */
 public final class ConfigurationData {
-
     /**
-     * The default entry type returned if a format implementation does not support any explicit entry types.
+     * The properties of the default section (no name).
      */
-    public static final String DEFAULT_SECTION_NAME = "default";
-
+    private Map<String, String> defaultProperties;
     /**
-     * Name of a section that should be written by every format implementation if possible, hereby mapping the
-     * complete configuration structure to one flattened key/value layer. This section is used for creating
-     * default PropertySource for a ConfigurationData instance.
+     * A normalized flattened set of this configuration data.
      */
-    public static final String FLATTENED_SECTION_NAME = "_flattened";
+    private Map<String, String> combinedProperties;
+    /**
+     * The sections read.
+     */
+    private Map<String, Map<String, String>> namedSections;
     /** The format instance used to read this instance. */
     private ConfigurationFormat format;
     /** The resource read. */
     private String resource;
-    /** The data read. */
-    private Map<String,Map<String,String>> data = new HashMap<>();
+
 
     /**
      * COnstructor used by builder.
@@ -60,8 +57,31 @@ public final class ConfigurationData {
      */
     ConfigurationData(ConfigurationDataBuilder builder){
         this.format = builder.format;
-        this.data.putAll(builder.data);
         this.resource = builder.resource;
+        if (builder.defaultProperties != null) {
+            this.defaultProperties = new HashMap<>();
+            this.defaultProperties.putAll(builder.defaultProperties);
+        }
+        if (builder.combinedProperties != null) {
+            this.combinedProperties = new HashMap<>();
+            this.combinedProperties.putAll(builder.combinedProperties);
+        }
+        if (builder.namedSections != null) {
+            this.namedSections = new HashMap<>();
+            this.namedSections.putAll(builder.namedSections);
+        }
+        if (this.combinedProperties == null || this.combinedProperties.isEmpty()) {
+            this.combinedProperties = new HashMap<>();
+            this.combinedProperties.putAll(getDefaultProperties());
+            // popuilate it with sections...
+            for (String sectionName : getSectionNames()) {
+                Map<String, String> section = getSection(sectionName);
+                for (Map.Entry<String, String> en : section.entrySet()) {
+                    String key = sectionName + '.' + en.getKey();
+                    combinedProperties.put(key, en.getValue());
+                }
+            }
+        }
     }
 
     /**
@@ -84,8 +104,11 @@ public final class ConfigurationData {
      * Access an immutable Set of all present section names, including the default section (if any).
      * @return the set of present section names, never null.
      */
-    public Set<String> getSections(){
-        return data.keySet();
+    public Set<String> getSectionNames() {
+        if (namedSections == null) {
+            return Collections.emptySet();
+        }
+        return namedSections.keySet();
     }
 
     /**
@@ -93,32 +116,82 @@ public final class ConfigurationData {
      * @param name the section name, not null.
      * @return the data of this section, or null, if no such section exists.
      */
-    public Map<String,String> getSection(String name){
-        return this.data.get(name);
+    public Map<String, String> getSection(String name) {
+        return this.namedSections.get(name);
     }
 
     /**
      * Convenience accessor for accessing the default section.
      * @return the default section's data, or null, if no such section exists.
      */
-    public Map<String,String> getDefaultSection(){
-        return getSection(DEFAULT_SECTION_NAME);
+    public Map<String, String> getDefaultProperties() {
+        return Optional.ofNullable(defaultProperties).orElse(Collections.emptyMap());
+    }
+
+    /**
+     * Get combined properties for this config data instance. If
+     *
+     * @return the normalized properties.
+     */
+    public Map<String, String> getCombinedProperties() {
+        return Optional.ofNullable(combinedProperties).orElse(Collections.emptyMap());
+    }
+
+    /**
+     * Accessor used for easily creating a new builder based on a given data instance.
+     *
+     * @return the data contained, never null.
+     */
+    public Map<String, Map<String, String>> getSections() {
+        return Optional.ofNullable(namedSections).orElse(Collections.emptyMap());
+    }
+
+    /**
+     * Immutable accessor to ckeck, if there are default properties present.
+     *
+     * @return true, if default properties are present.
+     */
+    public boolean hasDefaultProperties() {
+        return this.defaultProperties != null && !this.defaultProperties.isEmpty();
+    }
+
+    /**
+     * Immutable accessor to ckeck, if there are combined properties set.
+     *
+     * @return true, if combined properties are set.
+     */
+    public boolean hasCombinedProperties() {
+        return this.combinedProperties != null && !this.combinedProperties.isEmpty();
+    }
+
+    /**
+     * Immutable accessor to ckeck, if there are named sections present.
+     *
+     * @return true, if at least one named section is present.
+     */
+    public boolean hasSections() {
+        return this.namedSections != null && !this.namedSections.isEmpty();
+    }
+
+    /**
+     * Checks if no properties are contained in this data item.
+     *
+     * @return true, if no properties are contained in this data item.
+     */
+    public boolean isEmpty() {
+        return !hasCombinedProperties() && !hasDefaultProperties() && !hasSections();
     }
 
     @Override
     public String toString() {
         return "ConfigurationData{" +
                 "format=" + format +
-                ", data=" + data +
+                ", default properties=" + defaultProperties +
+                ", combined properties=" + combinedProperties +
+                ", sections=" + namedSections +
                 ", resource=" + resource +
                 '}';
     }
 
-    /**
-     * Accessor used for easily creating a new builder based on a given data instance.
-     * @return the data contained, never null.
-     */
-    Map<String,Map<String,String>> getData() {
-        return data;
-    }
+
 }

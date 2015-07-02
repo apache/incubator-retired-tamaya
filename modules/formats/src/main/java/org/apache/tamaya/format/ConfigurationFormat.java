@@ -39,9 +39,9 @@ public interface ConfigurationFormat {
 
     /**
      * Get a unique name of the format. This name can be used to access the format.
-     * @return
+     * @return the (unique) format's name, never null and not empty.
      */
-    public String getName();
+    String getName();
 
     /**
      * Allows the format to examine the given resource, e.g. for a matching file ending. Only, if a format accepts an
@@ -61,9 +61,9 @@ public interface ConfigurationFormat {
      *     hierarchies. This is the case for properties and xml properties.</li>
      *     <li>Hierarchical formats such as INI, XML and JSON can map each node to a section. Each section
      *     can have its own key/value pairs. This allows to map also complex formats in a generic way. A
-     *     format implementation should then additionally flatten the whole data and store it in a section
-     *     identified by {@link ConfigurationData#FLATTENED_SECTION_NAME}. This allows to use the flattened
-     *     section as inout to a default mapping, which is always appropriate as long as no other semnatics
+     *     format implementation should then additionally flatten the whole data and store it in a accessible as
+     *     {@link ConfigurationData#getCombinedProperties()}. This allows to use the properties as inout to a default mapping,
+     *     which is always appropriate as long as no other semnatics
      *     are defined in the concrete target scenario.</li>
      *     <li>More complex custom scenarios should map their configuration data read into different
      *     sections. Typically the data will be mapped into different {@link org.apache.tamaya.spi.PropertySource}
