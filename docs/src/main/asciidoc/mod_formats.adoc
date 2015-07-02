@@ -85,7 +85,7 @@ public final class ConfigurationData {
     public boolean hasDefaultProperties();
     public Map<String,String> getDefaultProperties();
 
-    public Map<String,String> getProperties();
+    public Map<String,String> getCombinedProperties();
     public boolean hasCombinedProperties();
 
     public boolean isEmpty();
@@ -133,6 +133,7 @@ public interface ConfigurationFormat {
 }
 -------------------------------------------------------
 
+
 Normally you need to map the resulting +ConfigurationData+ to one or multiple +PropertySources+. In case, where the
 properties provided match exactly the extected properties a +FlattenedDefaultPropertySource+ is provided out-of-the-box.
 If the exact mapping must be overridden, you can simply override the property source's initialize method to adapt the
@@ -148,3 +149,24 @@ FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(data){
 };
 -------------------------------------------------------
 
+
+=== How to tranform ConfigurationData into a PropertySource
+
+The Tamaya main building block for configuration properties is the +PropertySource+ interface. You have several
+options to implement this tranformation:
+
+. You can simply map the properties returned by +getCombinedProperties()+ and use them as properties returned by a
+  wrapping property source. Since this use case is common for all kind of non hierarchic configuration formats it
+  is directly supported by the +FlattenedDefaultPropertySource+ class.
+. When the +ConfigurationFormat+ is more complex, multiple 'sections' are common. What a section exactly is depends on
+  the concrete format only. The +ConfigurationFormat+ should provide detailed information how the data read is
+  mapped to default properties and sections and how it is assembled into the +combinedProperties+ map. Also here
+  the +FlattenedDefaultPropertySource+ class can help you with its default mapping. Nevertheless in some cases it is
+  necessary to write an explicit mapping, e.g. when
+  . different sections must be mapped to multiple +PropertySources+, with optionally fixed ordinals.
+  . sections must be cross-checked and combined into new properties, or into several +PropertySources+.
+  . other complex mapping requirements apply.
+
+=== Examples
+
+tbd
