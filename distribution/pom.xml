@@ -199,6 +199,7 @@ under the License.
                         <configuration>
                             <finalName>apache-tamaya-${project.version}</finalName>
                             <descriptor>src/main/assembly/distribution-bin.xml</descriptor>
+                            <descriptor>src/main/assembly/distribution-src.xml</descriptor>
                         </configuration>
                     </execution>
                 </executions>
