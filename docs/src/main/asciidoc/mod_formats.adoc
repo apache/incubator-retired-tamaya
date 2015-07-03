@@ -169,4 +169,71 @@ options to implement this tranformation:
 
 === Examples
 
-tbd
+==== Mapping ini-Files
+
+Consider the following ini-file:
+
+[source,listing]
+.Example.ini
+-------------------------------------------------------
+a=valA
+a.b=valB
+
+[section1]
+aa=sectionValA
+aa.b.c=SectionValC
+
+[section2]
+a=val2Section2
+-------------------------------------------------------
+
+This file content coud be mapped to the following structure:
+
+[source,listing]
+.Mapping of Example.ini
+-------------------------------------------------------
+a=valA
+a.b=valB
+section1.valA=sectionValA
+section1.a.b.c=SectionValC
+section2.a=val2Section2
+-------------------------------------------------------
+
+Nevertheless from the +ConfigurationData+ instance a more complex algorithm can access all the different parts:
+
+* the_default_ properties (a, a.b)
+* the section +section1+, with properties +aa, aa.b.c+
+* the section +section2+, qith properties +a+
+
+
+==== Mapping xml-Files
+
+The same principal can also be applied to xml-files. Consider the following configuration file:
+
+[source,xml]
+.Example.conf
+-------------------------------------------------------
+<config>
+  <default>
+    <a>valA</a>
+    <a.b>valB</a.B>
+  </default>
+
+  <section id="section1">
+    <param id="aa">sectionValA</aa>
+    <param id="aa.b.c">SectionValC</aa.b.c>
+  </section>
+  <section id="section2">
+    <param id="a">val2Section2</aa>
+  </section>
+</config>
+-------------------------------------------------------
+
+This file basically describes the same configuration as the ini-based version we have seen before. The formats
+module hereby ships with 3 format classes:
+
+* +PropertiesFormat+ providing support for .properties files.
+* +PropertiesXmlFormat+ providing support for xml.property files.
+* +IniConfiguratonFormat+ providing support for xml.property files.
+
+
