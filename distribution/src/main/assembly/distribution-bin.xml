@@ -100,6 +100,24 @@ under the License.
 
         <!--<<< Builder module -->
 
+        <!-->>> Events module -->
+        <dependencySet>
+            <outputDirectory>modules/events/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-events</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>modules/events/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-events:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+
+        <!--<<< Events module -->
+
         <!-->>> JSON module -->
         <dependencySet>
             <outputDirectory>modules/json/lib</outputDirectory>
@@ -117,6 +135,8 @@ under the License.
             <unpack>true</unpack>
         </dependencySet>
         <!--<<< JSON module -->
+
+
 
     </dependencySets>
 

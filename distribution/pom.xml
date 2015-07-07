@@ -160,6 +160,28 @@ under the License.
 
         <!-- JSON module -->
 
+        <!-- Events module -->
+
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-events</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-events</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-events</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+
+        <!-- Events module -->
+
     </dependencies>
 
 
