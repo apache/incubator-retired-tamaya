@@ -22,10 +22,11 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-extensions</artifactId>
+        <artifactId>tamaya-sandbox</artifactId>
         <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
+
     <groupId>org.apache.tamaya.ext.metamodels</groupId>
     <artifactId>tamaya-metamodels</artifactId>
     <name>Apache Tamaya Extension Modules: Metamodels</name>

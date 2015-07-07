@@ -39,7 +39,6 @@ under the License.
         <module>formats</module>
         <module>injection</module>
         <module>json</module>
-        <module>metamodels</module>
         <module>resolver</module>
         <module>resources</module>
     </modules>
