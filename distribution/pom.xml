@@ -191,7 +191,7 @@ under the License.
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-distribution</id>
+                        <id>attach-distribution-src</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -199,6 +199,16 @@ under the License.
                         <configuration>
                             <finalName>apache-tamaya-${project.version}</finalName>
                             <descriptor>src/main/assembly/distribution-bin.xml</descriptor>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>attach-distribution-bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>apache-tamaya-${project.version}</finalName>
                             <descriptor>src/main/assembly/distribution-src.xml</descriptor>
                         </configuration>
                     </execution>
