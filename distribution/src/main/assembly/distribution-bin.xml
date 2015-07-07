@@ -177,6 +177,28 @@ under the License.
         </dependencySet>
         <!--<<< JSON module -->
 
+        <!-->>> Resolver module -->
+        <dependencySet>
+            <outputDirectory>modules/resolver/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-resolver</include>
+                <include>org.apache.tamaya.ext:tamaya-resources</include>
+            </includes>
+            <excludes>
+                <exclude>org.apache.tamaya.ext:tamaya-resources:*:javadoc</exclude>
+                <exclude>org.apache.tamaya.ext:tamaya-resources:*:sources</exclude>
+            </excludes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>modules/resolver/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-resolver:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--<<< Resolver module -->
+
         <!-->>> Resources module -->
         <dependencySet>
             <outputDirectory>modules/resources/lib</outputDirectory>
