@@ -97,7 +97,6 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-
         <!--<<< Builder module -->
 
         <!-->>> Events module -->
@@ -134,7 +133,7 @@ under the License.
         </dependencySet>
         <!--<<< Formats module -->
 
-        <!-->>> Formats module -->
+        <!-->>> Injection module -->
         <dependencySet>
             <outputDirectory>modules/injection/lib</outputDirectory>
             <includes>
@@ -157,7 +156,7 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< Formats module -->
+        <!--<<< Injection module -->
 
         <!-->>> JSON module -->
         <dependencySet>
