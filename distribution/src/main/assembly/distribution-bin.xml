@@ -134,6 +134,31 @@ under the License.
         </dependencySet>
         <!--<<< Formats module -->
 
+        <!-->>> Formats module -->
+        <dependencySet>
+            <outputDirectory>modules/injection/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-injection</include>
+                <include>org.apache.tamaya.ext:tamaya-events</include>
+                <include>org.apache.tamaya.ext:tamaya-resolver</include>
+            </includes>
+            <excludes>
+                <exclude>org.apache.tamaya.ext:tamaya-events:*:javadoc</exclude>
+                <exclude>org.apache.tamaya.ext:tamaya-events:*:sources</exclude>
+                <exclude>org.apache.tamaya.ext:tamaya-resolver:*:javadoc</exclude>
+                <exclude>org.apache.tamaya.ext:tamaya-resolver:*:sources</exclude>
+            </excludes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>modules/injection/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-injection:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--<<< Formats module -->
+
         <!-->>> JSON module -->
         <dependencySet>
             <outputDirectory>modules/json/lib</outputDirectory>

@@ -204,6 +204,34 @@ under the License.
 
         <!-- Formats module -->
 
+        <!-- Injection module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- Injection module -->
+
+        <!-- Resolver module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-resolver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Resolver module -->
+
     </dependencies>
 
 
