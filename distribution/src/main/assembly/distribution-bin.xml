@@ -177,7 +177,22 @@ under the License.
         </dependencySet>
         <!--<<< JSON module -->
 
+        <!-->>> Resources module -->
+        <dependencySet>
+            <outputDirectory>modules/resources/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-resources</include>
+            </includes>
+        </dependencySet>
 
+        <dependencySet>
+            <outputDirectory>modules/resources/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-resources:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--<<< Resources module -->
 
     </dependencySets>
 
