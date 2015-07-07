@@ -28,7 +28,6 @@ under the License.
     </parent>
     <artifactId>tamaya-formats</artifactId>
     <name>Apache Tamaya Format Services</name>
-    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
