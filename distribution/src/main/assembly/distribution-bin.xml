@@ -115,8 +115,24 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-
         <!--<<< Events module -->
+
+        <!-->>> Formats module -->
+        <dependencySet>
+            <outputDirectory>modules/formats/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-formats</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>modules/formats/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-formats:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--<<< Formats module -->
 
         <!-->>> JSON module -->
         <dependencySet>
