@@ -45,6 +45,7 @@ under the License.
     </prerequisites>
 
     <properties>
+        <commons-io.version>2.4</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
         <jdkVersion>1.8</jdkVersion>
         <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
@@ -220,6 +221,13 @@ under the License.
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
