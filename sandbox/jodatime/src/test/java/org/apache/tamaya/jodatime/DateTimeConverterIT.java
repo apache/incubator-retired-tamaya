@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class DateTimeConverterIT {
     @Test
-    public void bla() {
+    public void dateTimeConverterCanBeFoundAsServiceProvider() {
         List<PropertyConverter> formats = ServiceContext.getInstance()
                                                         .getServices(PropertyConverter.class);
 
