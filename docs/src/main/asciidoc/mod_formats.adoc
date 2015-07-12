@@ -208,7 +208,7 @@ Nevertheless from the +ConfigurationData+ instance a more complex algorithm can 
 
 ==== Mapping xml-Files
 
-The same principal can also be applied to xml-files. Consider the following configuration file:
+The same concept can also be applied to xml-files. Consider the following configuration file:
 
 [source,xml]
 .Example.conf

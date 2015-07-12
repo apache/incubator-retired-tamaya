@@ -97,6 +97,24 @@ Nevertheless there are a few things that are not part of Tamaya:
   your enterprise context, such as supported file locations, formats, overriding and filter rules etc.
 
 
+[[WhatCanIDoEithTamaya]]
+=== And what can I do with Apache Tamaya?
+
+There are basically two main usage scenarios, which are synergetic:
+
+* In an enterprise context you can easily implement a configuration architecture for your whole company and deploy the
+  logic as an extension module. All application development teams in your company can then depend on this module (and the
+  basic Tamaya core implementation). As a result all applications/modules in your company follow the same configuration
+  policy, which makes it much more simpler to move people between your teams. Similarly additional tooling functionality
+  can help you to manage configuration on application as well as on enterprise level, e.g. providing command line or
+  REST support to access the supported configuration entries, types and values, configuration validation and more.
+* If you are writing an application, application component or library you can support configuration using Tamaya by
+  adding it as an optional dependency. If done so your users/customers can use Tamaya to connect their current enterprise
+  configuration infrastructure transparently to your code. As an example you can use Tamaya to read your default
+  configuration files, but since Tamaya is so easily extendable, customers can deploy an additional jar, which then
+  allows them to add their own configuration mechanisms such as databases, datagrids or REST services.
+
+
 [[WorkingGroup]]
 === Working Group
 This work is being conducted as part of a community lead joint effort under the Apache Software Foundation. This
@@ -191,5 +209,3 @@ Javadoc of the current Extension Modules
 === Examples
 
 A comprehensive set of examples can be found link:../examples.html[here].
-
-
