@@ -263,7 +263,8 @@ present that loads all .properties files found at +META-INF/javaconfiguration.pr
 == Adding Extensions
 
 The Core module only implements the link:API.html[API]. Many users require/wish additional functionality from a
-configuration system. Fortunately there are numerous extensions available, that add different functionality.
+configuration system. Fortunately there are numerous extensions available that add further functionality
+(most of them are compatible with Java 7 and 8, so you can use regardless which version of the API you are using).
 Loading extensions hereby is trivial: you only are required to add the corresponding dependency to the classpath.
 
 For detailed information on the extensions available refer to the link:modules.html[extensions documentation].

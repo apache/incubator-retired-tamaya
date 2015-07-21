@@ -37,9 +37,21 @@ toc::[]
 
 == Mature Extensions
 
-N/A
+Mature extensions have a stable API and SPI, similar to the API and Implementations provided.
+
+[width="100%",frame="1",options="header",grid="all"]
+|=======
+|_Artifact_                                 |_Description_                                |_Links_
+|                                           | N/A: currently no extensions have reached that maturity level.  | -
+|=======
+
 
 == Draft Extensions
+
+Extensions in _draft state_ are tested well and normally should have rather stable APIs. Nevertheless API changes may
+still occurr, but we try to prevent such changes if possible.
+
+NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 7 as well as on Java 8.
 
 [width="100%",frame="1",options="header",grid="all"]
 |=======
@@ -54,6 +66,9 @@ N/A
 
 
 == Extensions in Experimental Stage
+
+Extensions in _experimental mode_ may still be under discussions. API changes may still happen, so use them
+very carefully and especially give us feedback, so we can improve them before progressing to _draft_ state.
 
 [width="100%",frame="1",options="header",grid="all"]
 |=======
