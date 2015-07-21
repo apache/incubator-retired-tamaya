@@ -20,7 +20,7 @@ package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.util.logging.Logger;
@@ -35,7 +35,7 @@ public class ExpressionResolutionFilter implements PropertyFilter {
 
     private static final Logger LOG = Logger.getLogger(ExpressionResolutionFilter.class.getName());
 
-    private ExpressionEvaluator evaluator = ServiceContext.getInstance().getService(ExpressionEvaluator.class).get();
+    private ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
 
     /**
      * Resolves an expression in the form current <code>${resolverId:expression}</code> or
@@ -77,7 +77,7 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      */
     @Override
     public String filterProperty(String key, String valueToBeFiltered){
-        LOG.finest(() -> "Resolving " + valueToBeFiltered + "(key="+key+")");
+        LOG.finest("Resolving " + valueToBeFiltered + "(key=" + key + ")");
         return evaluator.evaluateExpression(key, valueToBeFiltered);
     }
 

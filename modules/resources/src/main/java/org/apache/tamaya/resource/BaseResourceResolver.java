@@ -19,15 +19,16 @@
 package org.apache.tamaya.resource;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * Interface to be implemented by modules. It supports loading of files or classpath resources either directly or by
  * defining a Ant-styled resource pattern:
  * <ul>
- *     <li>'*' is a placeholder for any character (0..n)</li>
- *     <li>'**' is a placeholder for any number of subdirectories going down a directory structure recursively.</li>
- *     <li>'?' is a placeholder for exact one character</li>
+ * <li>'*' is a placeholder for any character (0..n)</li>
+ * <li>'**' is a placeholder for any number of subdirectories going down a directory structure recursively.</li>
+ * <li>'?' is a placeholder for exact one character</li>
  * </ul>
  * Given that the following expressions are valid expressions:
  * <pre>
@@ -41,7 +42,7 @@ import java.util.Collection;
  *     /var/logs&#47;**&#47;*.log
  * </pre>
  */
-public interface ResourceResolver {
+public abstract class BaseResourceResolver implements ResourceResolver {
 
     /**
      * Resolves resource expressions to a list of {@link URL}s. Hereby
@@ -53,7 +54,14 @@ public interface ResourceResolver {
      * null.
      * .
      */
-    Collection<URL> getResources(Collection<String> expressions);
+    @Override
+    public Collection<URL> getResources(Collection<String> expressions) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if (cl == null) {
+            cl = getClass().getClassLoader();
+        }
+        return getResources(cl, expressions);
+    }
 
     /**
      * Resolves resource expressions to a list of {@link URL}s. Hereby
@@ -65,7 +73,10 @@ public interface ResourceResolver {
      * null.
      * .
      */
-    Collection<URL> getResources(String... expressions);
+    @Override
+    public Collection<URL> getResources(String... expressions) {
+        return getResources(Arrays.asList(expressions));
+    }
 
     /**
      * Resolves resource expressions to a list of {@link URL}s, considerubg
@@ -78,7 +89,10 @@ public interface ResourceResolver {
      * null.
      * .
      */
-    Collection<URL> getResources(ClassLoader classLoader, String... expressions);
+    @Override
+    public Collection<URL> getResources(ClassLoader classLoader, String... expressions) {
+        return getResources(classLoader, Arrays.asList(expressions));
+    }
 
     /**
      * Resolves resource expressions to a list of {@link URL}s, considerubg
@@ -91,6 +105,7 @@ public interface ResourceResolver {
      * null.
      * .
      */
-    Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
+    @Override
+    public abstract Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
 
 }

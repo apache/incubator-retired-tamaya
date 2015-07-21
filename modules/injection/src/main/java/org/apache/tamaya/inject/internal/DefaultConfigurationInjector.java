@@ -26,7 +26,8 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
+
+import org.apache.tamaya.inject.Supplier;
 
 /**
  * Simple injector singleton that also registers instances configured using weak references.
@@ -43,7 +44,13 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      * @return the configured type registered.
      */
     public ConfiguredType registerTypeInternal(Class<?> type) {
-        return configuredTypes.computeIfAbsent(type, ConfiguredType::new);
+        ConfiguredType confType = configuredTypes.get(type);
+        if (confType == null) {
+            confType = new ConfiguredType(type);
+            configuredTypes.put(type, confType);
+        }
+        return confType;
+//        return configuredTypes.computeIfAbsent(type, ConfiguredType::new);
     }
 
     void registerType(Class<?> type) {
@@ -81,7 +88,11 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
 
 
     @Override
-    public <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier) {
-        return () -> configure(supplier.get());
+    public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier) {
+        return new Supplier<T>() {
+            public T get() {
+                return supplier.get();
+            }
+        };
     }
 }

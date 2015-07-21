@@ -20,12 +20,14 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.inject.Supplier;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.inject.WithPropertyConverter;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,9 +42,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -93,15 +92,15 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
     /**
      * The current value, never null.
      */
-    private transient Optional<T> value;
+    private transient T value;
     /**
      * The new value, or null.
      */
-    private transient Optional<T> newValue;
+    private transient T newValue;
     /**
      * List of listeners that listen for changes.
      */
-    private transient WeakList<Consumer<PropertyChangeEvent>> listeners;
+    private transient WeakList<PropertyChangeListener> listeners;
 
     /**
      * Constructor.
@@ -119,7 +118,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
         this.configuration = Objects.requireNonNull(configuration);
         this.propertyConverter = propertyConverter;
         this.targetType = targetType;
-        this.value = Optional.ofNullable(evaluateValue());
+        this.value = evaluateValue();
     }
 
     public static DynamicValue of(Field annotatedField, Configuration configuration){
@@ -203,15 +202,13 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      */
     public void commit() {
         synchronized (this) {
-            if (newValue != null) {
-                PropertyChangeEvent evt = new PropertyChangeEvent(this, propertyName, value.orElse(null),
-                        newValue.orElse(null));
-                value = newValue;
-                newValue = null;
-                if(listeners!=null) {
-                    for (Consumer<PropertyChangeEvent> consumer : listeners.get()) {
-                        consumer.accept(evt);
-                    }
+            PropertyChangeEvent evt = new PropertyChangeEvent(this, propertyName, value,
+                    newValue);
+            value = newValue;
+            newValue = null;
+            if (listeners != null) {
+                for (PropertyChangeListener consumer : listeners.get()) {
+                    consumer.propertyChange(evt);
                 }
             }
         }
@@ -248,7 +245,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      *
      * @param l the listener, not null
      */
-    public void addListener(Consumer<PropertyChangeEvent> l) {
+    public void addListener(PropertyChangeListener l) {
         if (listeners == null) {
             listeners = new WeakList<>();
         }
@@ -260,7 +257,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      *
      * @param l the listner to be removed, not null
      */
-    public void removeListener(Consumer<PropertyChangeEvent> l) {
+    public void removeListener(PropertyChangeListener l) {
         if (listeners != null) {
             listeners.remove(l);
         }
@@ -275,7 +272,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * @see DefaultDynamicValue#isPresent()
      */
     public T get() {
-        return value.get();
+        return value;
     }
 
     /**
@@ -287,12 +284,12 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      */
     public boolean updateValue() {
         T newValue = evaluateValue();
-        if (Objects.equals(newValue, this.value.orElse(null))) {
+        if (Objects.equals(newValue, this.value)) {
             return false;
         }
         switch (this.updatePolicy) {
             case IMMEDIATE:
-                this.newValue = Optional.ofNullable(newValue);
+                this.newValue = newValue;
                 commit();
                 break;
             case LOG_AND_DISCARD:
@@ -304,7 +301,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
                 break;
             case EXPLCIT:
             default:
-                this.newValue = Optional.ofNullable(newValue);
+                this.newValue = newValue;
                 break;
         }
         return true;
@@ -340,9 +337,9 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * @return the uncommitted new value, or null.
      */
     public T getNewValue() {
-        Optional<T> nv = newValue;
+        T nv = newValue;
         if (nv != null) {
-            return nv.orElse(null);
+            return nv;
         }
         return null;
     }
@@ -353,20 +350,9 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * @return {@code true} if there is a value present, otherwise {@code false}
      */
     public boolean isPresent() {
-        return value.isPresent();
+        return value != null;
     }
 
-    /**
-     * If a value is present, invoke the specified consumer with the value,
-     * otherwise do nothing.
-     *
-     * @param consumer block to be executed if a value is present
-     * @throws NullPointerException if value is present and {@code consumer} is
-     *                              null
-     */
-    public void ifPresent(Consumer<? super T> consumer) {
-        value.ifPresent(consumer);
-    }
 
     /**
      * Return the value if present, otherwise return {@code other}.
@@ -376,7 +362,10 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * @return the value, if present, otherwise {@code other}
      */
     public T orElse(T other) {
-        return value.orElse(other);
+        if (value == null) {
+            return other;
+        }
+        return value;
     }
 
     /**
@@ -390,7 +379,10 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      *                              null
      */
     public T orElseGet(Supplier<? extends T> other) {
-        return value.orElseGet(other);
+        if (value == null) {
+            return other.get();
+        }
+        return value;
     }
 
     /**
@@ -410,15 +402,9 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      *                              {@code exceptionSupplier} is null
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        return value.orElseThrow(exceptionSupplier);
-    }
-
-    /**
-     * Converts the instance to an {@link java.util.Optional} instance.
-     *
-     * @return the corresponding Optional value.
-     */
-    public Optional<T> toOptional() {
+        if (value == null) {
+            throw exceptionSupplier.get();
+        }
         return value;
     }
 
@@ -431,7 +417,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.writeObject(updatePolicy);
         if (isPresent()) {
-            oos.writeObject(this.value.get());
+            oos.writeObject(this.value);
         } else {
             oos.writeObject(null);
         }
@@ -447,7 +433,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         this.updatePolicy = (UpdatePolicy) ois.readObject();
         if (isPresent()) {
-            this.value = Optional.of((T) ois.readObject());
+            this.value = (T) ois.readObject();
         }
         newValue = null;
     }
@@ -511,5 +497,6 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
             }
         }
     }
+
 
 }

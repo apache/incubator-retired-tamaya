@@ -19,6 +19,8 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
@@ -68,6 +70,16 @@ public final class FrozenConfiguration implements Configuration, Serializable {
         return new FrozenConfiguration(config);
     }
 
+    @Override
+    public String get(String key) {
+        return this.properties.get(key);
+    }
+
+    @Override
+    public <T> T get(String key, Class<T> type) {
+        return (T) get(key, TypeLiteral.of(type));
+    }
+
     /**
      * Accesses the current String value for the given key and tries to convert it
      * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
@@ -106,6 +118,16 @@ public final class FrozenConfiguration implements Configuration, Serializable {
     @Override
     public Map<String, String> getProperties() {
         return properties;
+    }
+
+    @Override
+    public Configuration with(ConfigOperator operator) {
+        return operator.operate(this);
+    }
+
+    @Override
+    public <T> T query(ConfigQuery<T> query) {
+        return query.query(this);
     }
 
     @Override

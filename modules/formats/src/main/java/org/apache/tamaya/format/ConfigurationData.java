@@ -125,7 +125,10 @@ public final class ConfigurationData {
      * @return the default section's data, or null, if no such section exists.
      */
     public Map<String, String> getDefaultProperties() {
-        return Optional.ofNullable(defaultProperties).orElse(Collections.emptyMap());
+        if (defaultProperties == null) {
+            return Collections.emptyMap();
+        }
+        return defaultProperties;
     }
 
     /**
@@ -134,7 +137,10 @@ public final class ConfigurationData {
      * @return the normalized properties.
      */
     public Map<String, String> getCombinedProperties() {
-        return Optional.ofNullable(combinedProperties).orElse(Collections.emptyMap());
+        if (combinedProperties == null) {
+            return Collections.emptyMap();
+        }
+        return combinedProperties;
     }
 
     /**
@@ -143,7 +149,10 @@ public final class ConfigurationData {
      * @return the data contained, never null.
      */
     public Map<String, Map<String, String>> getSections() {
-        return Optional.ofNullable(namedSections).orElse(Collections.emptyMap());
+        if (namedSections == null) {
+            return Collections.emptyMap();
+        }
+        return namedSections;
     }
 
     /**

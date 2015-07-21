@@ -33,13 +33,13 @@ public class TamayaInjectionTest {
 
     @Test
     public void testInjectionClass(){
-        assertNotNull(ConfigurationInjector.getInstance());
+        assertNotNull(ConfigurationInjection.getConfigurationInjector());
         AnnotatedConfigBean testInstance = new AnnotatedConfigBean();
         assertEquals(testInstance.getHostName(), null);
         assertEquals(testInstance.getAnotherValue(), null);
         assertEquals(testInstance.myParameter, null);
         assertEquals(testInstance.simpleValue, null);
-        ConfigurationInjector.getInstance().configure(testInstance);
+        ConfigurationInjection.getConfigurationInjector().configure(testInstance);
         assertEquals(testInstance.getHostName(), "tamaya01.incubator.apache.org");
         assertEquals(testInstance.getAnotherValue(), "HALLO!");
         assertEquals(testInstance.myParameter, "ET");
@@ -53,8 +53,8 @@ public class TamayaInjectionTest {
 
     @Test
     public void testConfigTemplate(){
-        assertNotNull(ConfigurationInjector.getInstance());
-        AnnotatedConfigTemplate testInstance = ConfigurationInjector.getInstance()
+        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        AnnotatedConfigTemplate testInstance = ConfigurationInjection.getConfigurationInjector()
                 .createTemplate(AnnotatedConfigTemplate.class);
         assertEquals(testInstance.hostName(), "tamaya01.incubator.apache.org");
         assertEquals(testInstance.myParameter(), "ET");

@@ -72,24 +72,24 @@ public class ConfiguredType {
     private void initFields(Class type) {
         for (Field f : type.getDeclaredFields()) {
             if (f.isAnnotationPresent(NoConfig.class)) {
-                LOG.finest(() -> "Ignored @NoConfig annotated field " +f.getClass().getName() + "#" +
+                LOG.finest("Ignored @NoConfig annotated field " + f.getClass().getName() + "#" +
                         f.toGenericString());
                 continue;
             }
             if (Modifier.isFinal(f.getModifiers())) {
-                LOG.finest(() -> "Ignored final field " +f.getClass().getName() + "#" +
+                LOG.finest("Ignored final field " + f.getClass().getName() + "#" +
                         f.toGenericString());
                 continue;
             }
             if (f.isSynthetic()) {
-                LOG.finest(() -> "Ignored synthetic field " +f.getClass().getName() + "#" +
+                LOG.finest("Ignored synthetic field " + f.getClass().getName() + "#" +
                         f.toGenericString());
                 continue;
             }
             try {
                 ConfiguredField configuredField = new ConfiguredField(f);
                 configuredFields.add(configuredField);
-                LOG.finer(() -> "Registered field " +f.getClass().getName() + "#" +
+                LOG.finer("Registered field " + f.getClass().getName() + "#" +
                         f.toGenericString());
             } catch (Exception e) {
                 throw new ConfigException("Failed to initialized configured field: " +
@@ -102,12 +102,12 @@ public class ConfiguredType {
         // TODO revisit this logic here...
         for (Method m : type.getDeclaredMethods()) {
             if (m.isAnnotationPresent(NoConfig.class)) {
-                LOG.finest(() -> "Ignored @NoConfig annotated method " +m.getClass().getName() + "#" +
+                LOG.finest("Ignored @NoConfig annotated method " + m.getClass().getName() + "#" +
                         m.toGenericString());
                 continue;
             }
             if (m.isSynthetic()) {
-                LOG.finest(() -> "Ignored synthetic method " +m.getClass().getName() + "#" +
+                LOG.finest("Ignored synthetic method " + m.getClass().getName() + "#" +
                         m.toGenericString());
                 continue;
             }
@@ -117,19 +117,19 @@ public class ConfiguredType {
                 // it is a template
                 if (observesAnnot != null && m.isDefault()) {
                     if(addObserverMethod(m)){
-                        LOG.finer(() -> "Added configured observer for template: " + m.getClass().getName() + "#" +
+                        LOG.finer("Added configured observer for template: " + m.getClass().getName() + "#" +
                                 m.toGenericString());
                     }
                 }
             } else {
                 if (observesAnnot != null) {
                     if(addObserverMethod(m)){
-                        LOG.finer(() -> "Added configured observer: " + m.getClass().getName() + "#" +
+                        LOG.finer("Added configured observer: " + m.getClass().getName() + "#" +
                                 m.toGenericString());
                     }
                 } else {
                     if (addPropertySetter(m, propAnnot)) {
-                        LOG.finer(() -> "Added configured setter: " + m.getClass().getName() + "#"+
+                        LOG.finer("Added configured setter: " + m.getClass().getName() + "#" +
                                 m.toGenericString());
                     }
                 }

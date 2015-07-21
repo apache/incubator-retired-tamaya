@@ -42,7 +42,7 @@ public interface AnnotatedConfigTemplate {
     String simpleValue();
 
     @ConfiguredProperty
-    default String simplestValue(){return "HALLO!";}
+    String simplestValue();
 
     @ConfiguredProperty(keys = "host.name")
     String hostName();

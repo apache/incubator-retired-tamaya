@@ -18,11 +18,14 @@
  */
 package org.apache.tamaya.events.delta;
 
-import org.apache.tamaya.builder.PropertySourceBuilder;
 import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
+import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -99,10 +102,14 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsRemoved() throws Exception {
-        PropertySource ps1 = PropertySourceBuilder.of("test").put("key1", "value1")
-                .put("key2", "value2").build();
-        PropertySource ps2 = PropertySourceBuilder.of("test").put("key1", "value2")
-                .put("key3", "value3").build();
+        Map<String, String> testData = new HashMap<>();
+        testData.put("key1", "value1");
+        testData.put("key2", "value2");
+        PropertySource ps1 = new SimplePropertySource("test", testData);
+        testData = new HashMap<>();
+        testData.put("key1", "value2");
+        testData.put("key3", "value3");
+        PropertySource ps2 = new SimplePropertySource("test", testData);
         PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
                 .addChanges(
                         ps2
@@ -114,10 +121,14 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsAdded() throws Exception {
-        PropertySource ps1 = PropertySourceBuilder.of("test").put("key1", "value1")
-                .put("key2", "value2").build();
-        PropertySource ps2 = PropertySourceBuilder.of("test").put("key1", "value2")
-                .put("key3", "value3").build();
+        Map<String, String> testData = new HashMap<>();
+        testData.put("key1", "value1");
+        testData.put("key2", "value2");
+        PropertySource ps1 = new SimplePropertySource("test", testData);
+        testData = new HashMap<>();
+        testData.put("key1", "value2");
+        testData.put("key3", "value3");
+        PropertySource ps2 = new SimplePropertySource("test", testData);
         PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
                 .addChanges(
                         ps2
@@ -129,10 +140,14 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsUpdated() throws Exception {
-        PropertySource ps1 = PropertySourceBuilder.of("test").put("key1", "value1")
-                .put("key2", "value2").build();
-        PropertySource ps2 = PropertySourceBuilder.of("test").put("key1", "value2")
-                .put("key3", "value3").build();
+        Map<String, String> testData = new HashMap<>();
+        testData.put("key1", "value1");
+        testData.put("key2", "value2");
+        PropertySource ps1 = new SimplePropertySource("test", testData);
+        testData = new HashMap<>();
+        testData.put("key1", "value2");
+        testData.put("key3", "value3");
+        PropertySource ps2 = new SimplePropertySource("test", testData);
         PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
                 .addChanges(
                         ps2

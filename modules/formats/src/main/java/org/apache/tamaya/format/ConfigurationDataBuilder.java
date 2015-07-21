@@ -87,7 +87,9 @@ public final class ConfigurationDataBuilder {
      */
     public ConfigurationDataBuilder addSections(String... sections){
         for (String section : sections) {
-            getSections().computeIfAbsent(section, (k) -> new HashMap<>());
+            if (!getSections().containsKey(section)) {
+                getSections().put(section, new HashMap<String, String>());
+            }
         }
         return this;
     }
@@ -100,7 +102,11 @@ public final class ConfigurationDataBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSectionProperty(String section, String key, String value) {
-        Map<String, String> map = getSections().computeIfAbsent(section, (k) -> new HashMap<>());
+        Map<String, String> map = getSections().get(section);
+        if (map == null) {
+            map = new HashMap<String, String>();
+            getSections().put(section, map);
+        }
         map.put(key, value);
         return this;
     }
@@ -123,7 +129,11 @@ public final class ConfigurationDataBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSectionProperties(String section, Map<String, String> properties) {
-        Map<String, String> map = getSections().computeIfAbsent(section, (k) -> new HashMap<>());
+        Map<String, String> map = getSections().get(section);
+        if (map == null) {
+            map = new HashMap<String, String>();
+            getSections().put(section, map);
+        }
         map.putAll(properties);
         return this;
     }

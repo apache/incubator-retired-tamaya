@@ -56,4 +56,9 @@ public class TestPropertySource implements PropertySource {
     public Map<String, String> getProperties() {
         return properties;
     }
+
+    @Override
+    public boolean isScannable() {
+        return true;
+    }
 }

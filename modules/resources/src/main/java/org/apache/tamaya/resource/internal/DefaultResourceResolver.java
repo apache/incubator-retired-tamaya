@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.resource.ResourceResolver;
+import org.apache.tamaya.resource.BaseResourceResolver;
 
 import javax.annotation.Priority;
 import java.io.File;
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * Simple default implementation of the resource loader, which does only support direct references to files.
  */
 @Priority(0)
-public class DefaultResourceResolver implements ResourceResolver {
+public class DefaultResourceResolver extends BaseResourceResolver {
 
     private static final Logger LOG = Logger.getLogger(DefaultResourceResolver.class.getName());
 
@@ -68,7 +68,7 @@ public class DefaultResourceResolver implements ResourceResolver {
             resources.addAll(found);
             return !found.isEmpty();
         } catch (RuntimeException e) {
-            LOG.finest(() -> "Failed to load resource from CP: " + expression);
+            LOG.finest("Failed to load resource from CP: " + expression);
         }
         return false;
     }
@@ -89,7 +89,7 @@ public class DefaultResourceResolver implements ResourceResolver {
             }
             return !resources.isEmpty();
         } catch (IOException | RuntimeException e) {
-            LOG.finest(() -> "Failed to load resource from CP: " + expression);
+            LOG.finest("Failed to load resource from CP: " + expression);
         }
         return false;
     }
@@ -108,7 +108,7 @@ public class DefaultResourceResolver implements ResourceResolver {
                 return true;
             }
         } catch (IOException | RuntimeException e) {
-            LOG.finest(() -> "Failed to load resource from file: " + expression);
+            LOG.finest("Failed to load resource from file: " + expression);
         }
         return false;
     }
@@ -125,7 +125,7 @@ public class DefaultResourceResolver implements ResourceResolver {
             resources.add(url);
             return true;
         } catch (IOException | RuntimeException e) {
-            LOG.finest(() -> "Failed to load resource from file: " + expression);
+            LOG.finest("Failed to load resource from file: " + expression);
         }
         return false;
     }

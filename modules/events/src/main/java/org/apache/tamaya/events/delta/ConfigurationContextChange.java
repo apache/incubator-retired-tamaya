@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Event that contains a set current changes that were applied or could be applied.
@@ -97,8 +96,15 @@ public final class ConfigurationContextChange implements Serializable{
      * @return the recorded changes, never null.
      */
     public Collection<PropertySourceChange> getPropertySourceUpdates(){
-        return Collections.unmodifiableCollection(this.changedPropertySources).stream()
-                .filter(pc -> pc.getChangeType()==ChangeType.UPDATED).collect(Collectors.toList());
+        List<PropertySourceChange> result = new ArrayList<>();
+        for (PropertySourceChange pc : this.changedPropertySources) {
+            if (pc.getChangeType() == ChangeType.UPDATED) {
+                result.add(pc);
+            }
+        }
+        return result;
+//        return Collections.unmodifiableCollection(this.changedPropertySources).stream()
+//                .filter(pc -> pc.getChangeType()==ChangeType.UPDATED).collect(Collectors.toList());
     }
 
     /**
@@ -106,8 +112,15 @@ public final class ConfigurationContextChange implements Serializable{
      * @return the recorded changes, never null.
      */
     public Collection<PropertySource> getRemovedPropertySources(){
-        return getPropertySourceChanges().stream().filter(pc -> pc.getChangeType()==ChangeType.DELETED).
-                map(ps -> ps.getPropertySource()).collect(Collectors.toList());
+        List<PropertySource> result = new ArrayList<>();
+        for (PropertySourceChange pc : this.changedPropertySources) {
+            if (pc.getChangeType() == ChangeType.DELETED) {
+                result.add(pc.getPropertySource());
+            }
+        }
+        return result;
+//        return getPropertySourceChanges().stream().filter(pc -> pc.getChangeType()==ChangeType.DELETED).
+//                map(ps -> ps.getPropertySource()).collect(Collectors.toList());
     }
 
     /**
@@ -115,8 +128,15 @@ public final class ConfigurationContextChange implements Serializable{
      * @return the recorded changes, never null.
      */
     public Collection<PropertySource> getAddedPropertySources(){
-        return getPropertySourceChanges().stream().filter(pc -> pc.getChangeType()==ChangeType.NEW).
-                map(ps -> ps.getPropertySource()).collect(Collectors.toList());
+        List<PropertySource> result = new ArrayList<>();
+        for (PropertySourceChange pc : this.changedPropertySources) {
+            if (pc.getChangeType() == ChangeType.NEW) {
+                result.add(pc.getPropertySource());
+            }
+        }
+        return result;
+//        return getPropertySourceChanges().stream().filter(pc -> pc.getChangeType()==ChangeType.NEW).
+//                map(ps -> ps.getPropertySource()).collect(Collectors.toList());
     }
 
     /**
@@ -124,8 +144,15 @@ public final class ConfigurationContextChange implements Serializable{
      * @return the recorded changes, never null.
      */
     public Collection<PropertySource> getUpdatedPropertySources(){
-        return getPropertySourceChanges().stream().filter(pc -> pc.getChangeType()==ChangeType.UPDATED).
-                map(ps -> ps.getPropertySource()).collect(Collectors.toList());
+        List<PropertySource> result = new ArrayList<>();
+        for (PropertySourceChange pc : this.changedPropertySources) {
+            if (pc.getChangeType() == ChangeType.UPDATED) {
+                result.add(pc.getPropertySource());
+            }
+        }
+        return result;
+//        return getPropertySourceChanges().stream().filter(pc -> pc.getChangeType()==ChangeType.UPDATED).
+//                map(ps -> ps.getPropertySource()).collect(Collectors.toList());
     }
 
     /**
@@ -134,8 +161,15 @@ public final class ConfigurationContextChange implements Serializable{
      * @return true, if the given propertySource ia affected.
      */
     public boolean isAffected(PropertySource propertySource) {
-        return this.changedPropertySources.stream().filter(ps ->  ps.getPropertySource()==propertySource ||
-                ps.getPropertySource().getName().equals(propertySource.getName())).findAny().isPresent();
+        for (PropertySourceChange ps : this.changedPropertySources) {
+            if (ps.getPropertySource() == propertySource ||
+                    ps.getPropertySource().getName().equals(propertySource.getName())) {
+                return true;
+            }
+        }
+        return false;
+//        return this.changedPropertySources.stream().filter(ps ->  ps.getPropertySource()==propertySource ||
+//                ps.getPropertySource().getName().equals(propertySource.getName())).findAny().isPresent();
     }
 
     /**

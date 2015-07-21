@@ -38,7 +38,7 @@ public final class Resolver {
      * @return the filtered/evaluated value, including null.
      */
     public static String evaluateExpression(String key, String value){
-        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class).get()
+        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class)
                 .evaluateExpression(key, value);
     }
 
@@ -48,7 +48,7 @@ public final class Resolver {
      * @return the filtered/evaluated value, including null.
      */
     public static String evaluateExpression(String value){
-        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class).get()
+        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class)
                 .evaluateExpression(null, value);
     }
 }

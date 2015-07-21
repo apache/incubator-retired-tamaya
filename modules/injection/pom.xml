@@ -30,15 +30,20 @@ under the License.
     <name>Apache Tamaya Injection Support</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <jdkVersion>1.7</jdkVersion>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
+            <artifactId>tamaya-java7-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
+            <artifactId>tamaya-java7-core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

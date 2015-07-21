@@ -91,6 +91,11 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     }
 
     @Override
+    public boolean isScannable() {
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

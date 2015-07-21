@@ -16,31 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.resource;
+package org.apache.tamaya.inject;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
- * Singleton Accessor for accessing the current {@link org.apache.tamaya.resource.ResourceResolver} instance.
+ * Singleton accessor class for accessing {@link ConfigurationInjector} instances.
  */
-public final class ConfigResources {
+public final class ConfigurationInjection {
 
     /**
      * Singleton constructor.
      */
-    private ConfigResources(){}
+    private ConfigurationInjection() {
+    }
 
     /**
-     * Access the current ResourceResolver.
-     * @return the current ResourceResolver instance, never null.
-     * @throws org.apache.tamaya.ConfigException, if no ResourceResolver is available (should not happen).
+     * Get the current injector instance.
+     *
+     * @return the current injector, not null.
      */
-    public static ResourceResolver getResourceResolver(){
-        ResourceResolver resolver = ServiceContextManager.getServiceContext().getService(ResourceResolver.class);
-        if (resolver == null) {
-            throw new ConfigException("ResourceResolver not available.");
-        }
-        return resolver;
+    public static ConfigurationInjector getConfigurationInjector() {
+        return ServiceContextManager.getServiceContext().getService(ConfigurationInjector.class);
     }
 }

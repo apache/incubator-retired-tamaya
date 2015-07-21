@@ -33,12 +33,12 @@ import java.util.TreeMap;
  * Models a set current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
  * can observing changes to property sources and
  * <ol>
- *     <li>Check if their current configuration instance ({@link org.apache.tamaya.spi.ConfigurationContext}
- *     contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference tova property source is never affected by a
- *     change, its only the data of the property source).</li>
- *     <li>If so corresponding action may be taken, such as reevaluating the configuration values (depending on
- *     the update policy) or reevaluating the complete {@link org.apache.tamaya.Configuration} to create a change
- *     event on configuration level.
+ * <li>Check if their current configuration instance ({@link org.apache.tamaya.spi.ConfigurationContext}
+ * contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference tova property source is never affected by a
+ * change, its only the data of the property source).</li>
+ * <li>If so corresponding action may be taken, such as reevaluating the configuration values (depending on
+ * the update policy) or reevaluating the complete {@link org.apache.tamaya.Configuration} to create a change
+ * event on configuration level.
  * </ol>
  */
 public final class ConfigurationChangeBuilder {
@@ -135,13 +135,16 @@ public final class ConfigurationChangeBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationChangeBuilder addChanges(Configuration newState) {
-        compare(newState, this.source).forEach((c) -> this.delta.put(c.getPropertyName(), c));
+        for (PropertyChangeEvent c : compare(newState, this.source)) {
+            this.delta.put(c.getPropertyName(), c);
+        }
         return this;
     }
 
     /**
      * Applies a single key/value change.
-     * @param key the changed key
+     *
+     * @param key   the changed key
      * @param value the new value.
      * @return this instance for chining.
      */
@@ -211,8 +214,11 @@ public final class ConfigurationChangeBuilder {
      */
     public ConfigurationChangeBuilder removeAllKeys() {
         this.delta.clear();
-        this.source.getProperties().forEach((k, v) ->
-                this.delta.put(k, new PropertyChangeEvent(this.source, k, v, null)));
+        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
+            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), en.getValue(), null));
+        }
+//        this.source.getProperties().forEach((k, v) ->
+//                this.delta.put(k, new PropertyChangeEvent(this.source, k, v, null)));
         return this;
     }
 

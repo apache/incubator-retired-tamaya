@@ -22,6 +22,8 @@ import org.apache.tamaya.core.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -55,9 +57,9 @@ public class FrozenPropertySourceTest {
     public void testGet() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
         assertNotNull(ps);
-        myPS.getProperties().entrySet().forEach(
-                e -> assertEquals(ps.get(e.getKey()), e.getValue())
-        );
+        for (Map.Entry<String, String> e : myPS.getProperties().entrySet()) {
+            assertEquals(ps.get(e.getKey()), e.getValue());
+        }
     }
 
     @Test

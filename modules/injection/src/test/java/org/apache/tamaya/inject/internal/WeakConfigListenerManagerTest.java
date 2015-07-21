@@ -23,13 +23,16 @@ import org.apache.tamaya.event.PropertyChangeSet;
 import org.apache.tamaya.event.PropertyChangeSetBuilder;
 import org.junit.Test;
 
-import java.util.function.Consumer;
-
 import static org.junit.Assert.*;
 
 public class WeakConfigListenerManagerTest {
 
-    private Consumer<PropertyChangeSet> consumer = s -> loggedSet = s;
+    private PropertyChangeSetListener consumer = new PropertyChangeSetListener() {
+        @Override
+        public void propertyChange(PropertyChangeSet set) {
+            loggedSet = set;
+        }
+    };
     private PropertyChangeSet loggedSet;
 
     @Test
@@ -40,8 +43,12 @@ public class WeakConfigListenerManagerTest {
     @Test
     public void testRegisterConsumer() throws Exception {
         SystemPropertySource sysSrc = new SystemPropertySource();
-        WeakConfigListenerManager.of().registerConsumer(this,
-                s -> loggedSet = s);
+        WeakConfigListenerManager.of().registerConsumer(this, new PropertyChangeSetListener() {
+            @Override
+            public void propertyChange(PropertyChangeSet set) {
+                loggedSet = set;
+            }
+        });
         PropertyChangeSet change = PropertyChangeSetBuilder.of(sysSrc).add("aaa", "aaaValue").build();
         WeakConfigListenerManager.of().registerConsumer(this, consumer);
         WeakConfigListenerManager.of().publishChangeEvent(change);
@@ -54,7 +61,12 @@ public class WeakConfigListenerManagerTest {
     public void testUnregisterConsumer() throws Exception {
         SystemPropertySource sysSrc = new SystemPropertySource();
         PropertyChangeSet change = PropertyChangeSetBuilder.of(sysSrc).add("aaa", "aaaValue").build();
-        Consumer<PropertyChangeSet> tempConsumer = s -> loggedSet = s;
+        PropertyChangeSetListener tempConsumer = new PropertyChangeSetListener() {
+            @Override
+            public void propertyChange(PropertyChangeSet set) {
+                loggedSet = set;
+            }
+        };
         WeakConfigListenerManager.of().registerConsumer(this, tempConsumer);
         WeakConfigListenerManager.of().publishChangeEvent(change);
         assertNotNull(loggedSet);

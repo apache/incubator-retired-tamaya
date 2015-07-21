@@ -18,10 +18,8 @@
  */
 package org.apache.tamaya.inject;
 
-import java.beans.PropertyChangeEvent;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.beans.PropertyChangeListener;
+
 
 /**
  * A accessor for a single configured value. This can be used to support values that may change during runtime,
@@ -68,10 +66,7 @@ public interface DynamicValue<T> {
      *
      * @see DynamicValue#isPresent()
      */
-    default T commitAndGet(){
-        commit();
-        return get();
-    }
+    T commitAndGet();
 
     /**
      * Commits a new value that has not been committed yet, make it the new value of the instance. On change any
@@ -94,13 +89,13 @@ public interface DynamicValue<T> {
      * Add a listener to be called as weak reference, when this value has been changed.
      * @param l the listener, not null
      */
-    void addListener(Consumer<PropertyChangeEvent> l);
+    void addListener(PropertyChangeListener l);
 
     /**
      * Removes a listener to be called, when this value has been changed.
      * @param l the listner to be removed, not null
      */
-    void removeListener(Consumer<PropertyChangeEvent> l);
+    void removeListener(PropertyChangeListener l);
 
     /**
      * If a value is present in this {@code DynamicValue}, returns the value,
@@ -147,32 +142,13 @@ public interface DynamicValue<T> {
     boolean isPresent();
 
     /**
-     * If a value is present, invoke the specified consumer with the value,
-     * otherwise do nothing.
-     *
-     * @param consumer block to be executed if a value is present
-     * @throws NullPointerException if value is present and {@code consumer} is
-     * null
-     */
-    default void ifPresent(Consumer<? super T> consumer){
-        if(isPresent()){
-            consumer.accept(get());
-        }
-    }
-
-    /**
      * Return the value if present, otherwise return {@code other}.
      *
      * @param other the value to be returned if there is no value present, may
      * be null
      * @return the value, if present, otherwise {@code other}
      */
-   default T orElse(T other){
-       if(isPresent()){
-           return get();
-       }
-       return other;
-   }
+    T orElse(T other);
 
     /**
      * Return the value if present, otherwise invoke {@code other} and return
@@ -184,12 +160,7 @@ public interface DynamicValue<T> {
      * @throws NullPointerException if value is not present and {@code other} is
      * null
      */
-    default T orElseGet(Supplier<? extends T> other){
-        if(isPresent()){
-            return get();
-        }
-        return other.get();
-    }
+    T orElseGet(Supplier<? extends T> other);
 
     /**
      * Return the contained value, if present, otherwise throw an exception
@@ -207,22 +178,6 @@ public interface DynamicValue<T> {
      * @throws NullPointerException if no value is present and
      * {@code exceptionSupplier} is null
      */
-    default <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X{
-        if(isPresent()){
-            return  get();
-        }
-        throw exceptionSupplier.get();
-    }
-
-    /**
-     * Converts the instance to an {@link java.util.Optional} instance.
-     * @return the corresponding Optional value.
-     */
-    default Optional<T> toOptional(){
-        if(isPresent()){
-            return Optional.of(get());
-        }
-        return Optional.empty();
-    }
+    <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
 
 }

@@ -94,7 +94,7 @@ public class FlattenedDefaultPropertySource implements PropertySource {
             try {
                 return Integer.parseInt(ordinalValue.trim());
             } catch (Exception e) {
-                LOG.log(Level.WARNING, e, () -> "Failed to parse Tamaya ordinal from " + data.getResource());
+                LOG.log(Level.WARNING, "Failed to parse Tamaya ordinal from " + data.getResource(), e);
             }
         }
         return defaultOrdinal;
@@ -108,5 +108,10 @@ public class FlattenedDefaultPropertySource implements PropertySource {
     @Override
     public Map<String, String> getProperties() {
         return properties;
+    }
+
+    @Override
+    public boolean isScannable() {
+        return true;
     }
 }

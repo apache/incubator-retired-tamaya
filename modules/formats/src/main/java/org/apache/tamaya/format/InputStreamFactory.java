@@ -63,7 +63,7 @@ public class InputStreamFactory implements Closeable {
             try {
                 original.close();
             } catch (IOException e) {
-                LOG.log(Level.FINEST, e, () -> "Error closing stream: " + original);
+                LOG.log(Level.FINEST, "Error closing stream: " + original, e);
             }
         }
     }

@@ -62,7 +62,7 @@ public class PropertiesXmlFormat implements ConfigurationFormat {
             p.loadFromXML(inputStream);
             return ConfigurationDataBuilder.of(resource, this).addProperties(Map.class.cast(p)).build();
         } catch (Exception e) {
-            LOG.log(Level.FINEST, e, () -> "Failed to read config from resource: " + resource);
+            LOG.log(Level.FINEST, "Failed to read config from resource: " + resource, e);
         }
         return null;
     }

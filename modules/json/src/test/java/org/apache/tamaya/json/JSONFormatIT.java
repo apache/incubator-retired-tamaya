@@ -20,6 +20,7 @@ package org.apache.tamaya.json;
 
 import org.apache.tamaya.format.ConfigurationFormat;
 import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
 import java.util.List;
@@ -34,13 +35,16 @@ import static org.hamcrest.Matchers.notNullValue;
 public class JSONFormatIT {
     @Test
     public void jsonFormatCanBeFoundViaServiceLoader() throws Exception {
-        List<ConfigurationFormat> formats = ServiceContext.getInstance()
+        List<ConfigurationFormat> formats = ServiceContextManager.getServiceContext()
                                                           .getServices(ConfigurationFormat.class);
 
-        ConfigurationFormat format = formats.stream()
-                                            .filter(s -> s instanceof JSONFormat)
-                                            .findFirst().get();
-
+        ConfigurationFormat format = null;
+        for (ConfigurationFormat f : formats) {
+            if (format instanceof JSONFormat) {
+                format = f;
+                break;
+            }
+        }
         assertThat(format, notNullValue());
         assertThat(format, instanceOf(JSONFormat.class));
     }

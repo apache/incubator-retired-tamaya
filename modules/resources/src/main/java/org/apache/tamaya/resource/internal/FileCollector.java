@@ -123,7 +123,7 @@ public class FileCollector {
                     try {
                         result.add(getURL(childFile));
                     } catch (Exception e) {
-                        LOG.warning(() -> "File not convertible to URL: " + childFile);
+                        LOG.warning("File not convertible to URL: " + childFile);
                     }
                 }
             } else if (childFile.isDirectory()) {

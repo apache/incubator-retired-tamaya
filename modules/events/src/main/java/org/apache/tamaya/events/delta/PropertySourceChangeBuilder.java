@@ -139,7 +139,10 @@ public final class PropertySourceChangeBuilder {
      * @return the builder for chaining.
      */
     public PropertySourceChangeBuilder addChanges(PropertySource newState) {
-        compare(newState, this.source).forEach((c) -> this.delta.put(c.getPropertyName(), c));
+        Collection<PropertyChangeEvent> events = PropertySourceChangeBuilder.compare(newState, this.source);
+        for (PropertyChangeEvent c : events) {
+            this.delta.put(c.getPropertyName(), c);
+        }
         return this;
     }
 
@@ -204,8 +207,9 @@ public final class PropertySourceChangeBuilder {
      */
     public PropertySourceChangeBuilder deleteAll() {
         this.delta.clear();
-        this.source.getProperties().forEach((k, v) ->
-                this.delta.put(k, new PropertyChangeEvent(this.source, k, v, null)));
+        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
+            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), en.getValue(), null));
+        }
         return this;
     }
 

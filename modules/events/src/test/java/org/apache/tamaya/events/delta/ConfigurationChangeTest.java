@@ -22,6 +22,8 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -42,13 +44,11 @@ public class ConfigurationChangeTest {
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
         assertNotNull(change);
         assertTrue(change.isEmpty());
-        config.getProperties().entrySet().forEach(
-                en -> {
-                    if (!"[meta]frozenAt".equals(en.getKey())) {
-                        assertEquals("Error for " + en.getKey(), en.getValue(), change.getConfiguration().get(en.getKey()));
-                    }
-                }
-        );
+        for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
+            if (!"[meta]frozenAt".equals(en.getKey())) {
+                assertEquals("Error for " + en.getKey(), en.getValue(), change.getConfiguration().get(en.getKey()));
+            }
+        }
     }
 
     @Test

@@ -165,7 +165,7 @@ public class DefaultConfiguration implements Configuration {
      * @return the filtered map.
      */
     private Map<String, String> applyFilters(Map<String, String> inputMap) {
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>(inputMap);
         // Apply filters to values, prevent values filtered to null!
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             AtomicInteger changes = new AtomicInteger();

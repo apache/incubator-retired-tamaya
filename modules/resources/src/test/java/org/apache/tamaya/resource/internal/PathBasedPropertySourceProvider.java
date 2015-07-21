@@ -62,7 +62,14 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
 
         public PropertiesBasedPropertySource(String name, Properties props) {
             this.name = name;
-            props.forEach((k,v) -> this.properties.put(k.toString(), v.toString()));
+            for (Map.Entry en : props.entrySet()) {
+                this.properties.put(en.getKey().toString(), String.valueOf(en.getValue()));
+            }
+        }
+
+        @Override
+        public int getOrdinal() {
+            return 0;
         }
 
         @Override
@@ -78,6 +85,11 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
         @Override
         public Map<String, String> getProperties() {
             return properties;
+        }
+
+        @Override
+        public boolean isScannable() {
+            return false;
         }
     }
 }

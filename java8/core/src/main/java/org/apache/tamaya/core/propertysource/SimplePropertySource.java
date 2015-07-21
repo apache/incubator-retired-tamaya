@@ -71,6 +71,17 @@ public class SimplePropertySource implements PropertySource{
         this.name = Objects.requireNonNull(name);
     }
 
+    /**
+     * Creates a new Properties based PropertySource based on the given properties map.
+     *
+     * @param name       the name, not null.
+     * @param properties the properties, not null.
+     */
+    public SimplePropertySource(String name, Map<String, String> properties) {
+        this.properties = new HashMap<>(properties);
+        this.name = Objects.requireNonNull(name);
+    }
+
     @Override
     public String getName() {
         return name;

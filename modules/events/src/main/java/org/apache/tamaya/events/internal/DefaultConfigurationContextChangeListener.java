@@ -25,10 +25,9 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertySource;
 
-import java.util.Collection;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Default ConfigEventListener for ConfigurationContextChange events that updates the current context, if resources were
@@ -41,12 +40,20 @@ public class DefaultConfigurationContextChangeListener implements ConfigEventLis
     @Override
     public void onConfigEvent(ConfigurationContextChange event) {
         ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
-        Collection<PropertySource> affectedPropertySources = context.getPropertySources(ps ->
-                event.isAffected(ps));
-        ConfigurationContextBuilder newContextBuilder = context.toBuilder();
+        List<PropertySource> affectedPropertySources = new ArrayList<>();
+        for (PropertySource ps : context.getPropertySources()) {
+            if (event.isAffected(ps)) {
+                affectedPropertySources.add(ps);
+            }
+        }
+        ConfigurationContextBuilder newContextBuilder = ConfigurationProvider.getConfigurationContextBuilder()
+                .setContext(context);
         if (!affectedPropertySources.isEmpty()) {
-            newContextBuilder.removePropertySources(event.getRemovedPropertySources().stream()
-                            .map(ps -> ps.getName()).collect(Collectors.toSet()));
+            Set<String> propertySourceNames = new HashSet<>();
+            for (PropertySource removed : event.getRemovedPropertySources()) {
+                propertySourceNames.add(removed.getName());
+            }
+            newContextBuilder.removePropertySources(propertySourceNames);
         }
         newContextBuilder.addPropertySources(event.getAddedPropertySources());
         newContextBuilder.addPropertySources(event.getUpdatedPropertySources());

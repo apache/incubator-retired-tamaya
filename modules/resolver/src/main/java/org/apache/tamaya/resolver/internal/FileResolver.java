@@ -20,7 +20,7 @@ package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 import org.apache.tamaya.resource.ResourceResolver;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.io.BufferedReader;
@@ -93,7 +93,7 @@ public final class FileResolver implements ExpressionResolver {
 
     private URL getUrl(String expression) {
         if (IS_RESOURCE_MODULE_AVAILABLE) {
-            ResourceResolver resolver = ServiceContext.getInstance().getService(ResourceResolver.class).get();
+            ResourceResolver resolver = ServiceContextManager.getServiceContext().getService(ResourceResolver.class);
             Collection<URL> resources = resolver.getResources("file:" + expression);
             if (!resources.isEmpty()) {
                 if (resources.size() != 1) {

@@ -124,7 +124,9 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
          */
         public PropertiesBasedPropertySource(String name, Properties props) {
             this.name = name;
-            props.forEach((k,v) -> this.properties.put(k.toString(), v.toString()));
+            for (Map.Entry en : props.entrySet()) {
+                this.properties.put(en.getKey().toString(), String.valueOf(en.getValue()));
+            }
         }
 
         /**
@@ -135,6 +137,29 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         public PropertiesBasedPropertySource(String name, Map<String,String> props) {
             this.name = Objects.requireNonNull(name);
             this.properties.putAll(props);
+        }
+
+        @Override
+        public int getOrdinal() {
+            String configuredOrdinal = get(TAMAYA_ORDINAL);
+            if (configuredOrdinal != null) {
+                try {
+                    return Integer.parseInt(configuredOrdinal);
+                } catch (Exception e) {
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                            "Configured Ordinal is not an int number: " + configuredOrdinal, e);
+                }
+            }
+            return getDefaultOrdinal();
+        }
+
+        /**
+         * Returns the  default ordinal used, when no ordinal is set, or the ordinal was not parseable to an int value.
+         *
+         * @return the  default ordinal used, by default 0.
+         */
+        public int getDefaultOrdinal() {
+            return 0;
         }
 
         @Override
@@ -150,6 +175,11 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         @Override
         public Map<String, String> getProperties() {
             return properties;
+        }
+
+        @Override
+        public boolean isScannable() {
+            return false;
         }
 
         @Override

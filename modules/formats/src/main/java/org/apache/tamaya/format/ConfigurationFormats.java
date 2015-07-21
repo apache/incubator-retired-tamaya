@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +30,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Small accessor and management class dealing with {@link org.apache.tamaya.format.ConfigurationFormat}
@@ -57,7 +55,7 @@ public final class ConfigurationFormats {
      * @return the currently available formats, never null.
      */
     public static List<ConfigurationFormat> getFormats() {
-        return ServiceContext.getInstance().getServices(ConfigurationFormat.class);
+        return ServiceContextManager.getServiceContext().getServices(ConfigurationFormat.class);
     }
 
     /**
@@ -66,19 +64,31 @@ public final class ConfigurationFormats {
      * @return the currently available formats, never null.
      */
     public static List<ConfigurationFormat> getFormats(String... formatNames) {
+        List<ConfigurationFormat> result = new ArrayList<>();
         Set<String> names = new HashSet<>(Arrays.asList(formatNames));
-        return getFormats(names::contains);
+        for (ConfigurationFormat f : getFormats()) {
+            if (names.contains(f.getName())) {
+                result.add(f);
+            }
+        }
+        return result;
     }
 
-    /**
-     * Get all currently available formats, ordered by priority.
-     *
-     * @return the currently available formats, never null.
-     */
-    public static List<ConfigurationFormat> getFormats(Predicate<String> namePredicate) {
-        return getFormats().stream().filter(f -> namePredicate.test(f.getName()))
-                .collect(Collectors.toList());
-    }
+    // Activate for JDK 8...
+//    /**
+//     * Get all currently available formats, ordered by priority.
+//     *
+//     * @return the currently available formats, never null.
+//     */
+//    public static List<ConfigurationFormat> getFormats(Predicate<String> namePredicate) {
+//        List<ConfigurationFormat> result = new ArrayList<>();
+//        for(ConfigurationFormat f:getFormats()){
+//            if(namePredicate.test(f.getName()){
+//                result.add(f);
+//            }
+//        }
+//        return result;
+//    }
 
     /**
      * Get all currently available formats, ordered by priority.
@@ -87,7 +97,13 @@ public final class ConfigurationFormats {
      */
     public static List<ConfigurationFormat> getFormats(URL url) {
         List<ConfigurationFormat> formats = getFormats();
-        return formats.stream().filter(f -> f.accepts(url)).collect(Collectors.toList());
+        List<ConfigurationFormat> result = new ArrayList<>();
+        for (ConfigurationFormat f : formats) {
+            if (f.accepts(url)) {
+                result.add(f);
+            }
+        }
+        return result;
     }
 
     /**
@@ -158,8 +174,8 @@ public final class ConfigurationFormats {
                     return data;
                 }
             } catch (Exception e) {
-                LOG.log(Level.INFO, e,
-                        () -> "Format " + format.getClass().getName() + " failed to read resource " + resource);
+                LOG.log(Level.INFO,
+                        "Format " + format.getClass().getName() + " failed to read resource " + resource, e);
             }
         }
         return null;

@@ -19,7 +19,7 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.io.BufferedReader;
@@ -105,7 +105,8 @@ public final class ResourceResolver implements ExpressionResolver {
 
     private URL getUrl(String expression, List<ClassLoader> classLoaders) {
         if (IS_RESOURCE_MODULE_AVAILABLE) {
-            org.apache.tamaya.resource.ResourceResolver resolver = ServiceContext.getInstance().getService(org.apache.tamaya.resource.ResourceResolver.class).get();
+            org.apache.tamaya.resource.ResourceResolver resolver = ServiceContextManager.getServiceContext()
+                    .getService(org.apache.tamaya.resource.ResourceResolver.class);
             for (ClassLoader cl : classLoaders) {
                 Collection<URL> resources = resolver.getResources(cl, expression);
                 if (!resources.isEmpty()) {
@@ -138,7 +139,7 @@ public final class ResourceResolver implements ExpressionResolver {
                 }
             }
             if (expression.contains("*") || expression.contains("?")) {
-                LOG.warning(() -> "Rouse not found: " + expression + "(Hint: expression contains expression" +
+                LOG.warning("Rouse not found: " + expression + "(Hint: expression contains expression" +
                         " placeholders, but resource module is not loaded.");
             }
         }

@@ -78,9 +78,12 @@ public class ConfiguredField {
     private void applyDynamicValue(Object target) throws ConfigException {
         Objects.requireNonNull(target);
         try {
-            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
-                annotatedField.setAccessible(true);
-                return annotatedField;
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+                @Override
+                public Object run() throws Exception {
+                    annotatedField.setAccessible(true);
+                    return annotatedField;
+                }
             });
             annotatedField.set(target,
                     DefaultDynamicValue.of(annotatedField, ConfigurationProvider.getConfiguration()));
@@ -108,9 +111,12 @@ public class ConfiguredField {
 
             // Check for adapter/filter
             Object value = InjectionUtils.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), evaluatedValue);
-            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
-                annotatedField.setAccessible(true);
-                return annotatedField;
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+                @Override
+                public Object run() throws Exception {
+                    annotatedField.setAccessible(true);
+                    return annotatedField;
+                }
             });
             annotatedField.set(target, value);
         } catch (Exception e) {

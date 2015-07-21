@@ -63,7 +63,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     /**
      * The current active property sources of this provider.
      */
-    private final List<PropertySource> propertySources = Collections.synchronizedList(new LinkedList<>());
+    private final List<PropertySource> propertySources = Collections.synchronizedList(new LinkedList<PropertySource>());
     /**
      * The supported configuration formats of this provider.
      */
@@ -120,7 +120,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
                 return result;
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e, () -> "Failed to read configuration from dir: " + directory);
+            LOG.log(Level.WARNING, "Failed to read configuration from dir: " + directory, e);
         }
         return result;
     }
@@ -147,19 +147,19 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
                     }
                 }
             } catch (IOException e) {
-                LOG.log(Level.INFO, e, () -> "Error reading file: " + file.toString() +
-                        ", using format: " + format);
+                LOG.log(Level.INFO, "Error reading file: " + file.toString() +
+                        ", using format: " + format, e);
             } finally {
                 if (is != null) {
                     try {
                         is.close();
                     } catch (IOException ioe) {
-                        LOG.log(Level.SEVERE, ioe, () -> "Failed to rea data...");
+                        LOG.log(Level.SEVERE, "Failed to rea data...", ioe);
                     }
                 }
             }
         }
-        LOG.warning(() -> "Error reading file: " + file.toString());
+        LOG.warning("Error reading file: " + file.toString());
         return null;
     }
 
@@ -211,7 +211,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
             b.newPropertySource(ps);
         }
         ConfigurationContextChange changeEvent = b.build();
-        LOG.fine(() -> "Trigger Config Context Change: " + changeEvent);
+        LOG.fine("Trigger Config Context Change: " + changeEvent);
         ConfigEvent.fireEvent(changeEvent);
     }
 

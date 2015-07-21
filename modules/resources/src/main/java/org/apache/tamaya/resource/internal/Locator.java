@@ -19,10 +19,8 @@
 package org.apache.tamaya.resource.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 /**
  * Small helper class that manages the path parts of a location expression.
@@ -49,7 +47,11 @@ final class Locator {
      * @return the tokenized instance.
      */
     public static Locator of(String expression) {
-        return new Locator(Arrays.asList(expression.split("/")).stream().collect(Collectors.toList()));
+        List<String> expressions = new ArrayList<>();
+        for (String expr : expression.split("/")) {
+            expressions.add(expr);
+        }
+        return new Locator(expressions);
     }
 
     /**

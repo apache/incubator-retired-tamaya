@@ -63,7 +63,9 @@ public final class ConfigurationChange implements Serializable{
      */
     ConfigurationChange(ConfigurationChangeBuilder builder) {
         this.configuration = FrozenConfiguration.of(builder.source);
-        builder.delta.values().forEach((c) -> this.changes.put(c.getPropertyName(), c));
+        for(PropertyChangeEvent ev:builder.delta.values()){
+            this.changes.put(ev.getPropertyName(), ev);
+        }
         if(builder.version!=null){
             this.version = builder.version;
         }
@@ -110,7 +112,14 @@ public final class ConfigurationChange implements Serializable{
      * @return the number current removed entries.
      */
     public int getRemovedSize() {
-        return (int) this.changes.values().stream().filter((e) -> e.getNewValue() == null).count();
+        int removedCount = 0;
+        for(PropertyChangeEvent ev:this.changes.values()){
+            if(ev.getNewValue() == null){
+                removedCount++;
+            }
+        }
+        return removedCount;
+//        return (int) this.changes.values().stream().filter((e) -> e.getNewValue() == null).count();
     }
 
     /**
@@ -118,8 +127,16 @@ public final class ConfigurationChange implements Serializable{
      * @return the number current added entries.
      */
     public int getAddedSize() {
-        return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null &&
-                e.getNewValue() != null).count();
+        int addedCount = 0;
+        for(PropertyChangeEvent ev:this.changes.values()){
+            if(ev.getOldValue() == null &&
+                    ev.getNewValue() != null){
+                addedCount++;
+            }
+        }
+        return addedCount;
+//        return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null &&
+//                e.getNewValue() != null).count();
     }
 
     /**
@@ -127,7 +144,14 @@ public final class ConfigurationChange implements Serializable{
      * @return the number current updated entries.
      */
     public int getUpdatedSize() {
-        return (int) this.changes.values().stream().filter((e) -> e.getOldValue()!=null && e.getNewValue()!=null).count();
+        int updatedCount = 0;
+        for(PropertyChangeEvent ev:this.changes.values()){
+            if( ev.getOldValue()!=null && ev.getNewValue()!=null){
+                updatedCount++;
+            }
+        }
+        return updatedCount;
+//        return (int) this.changes.values().stream().filter((e) -> e.getOldValue()!=null && e.getNewValue()!=null).count();
     }
 
 

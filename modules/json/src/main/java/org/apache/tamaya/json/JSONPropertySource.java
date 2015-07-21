@@ -76,8 +76,8 @@ public class JSONPropertySource implements PropertySource {
             try{
                 return Integer.parseInt(configuredOrdinal);
             } catch(Exception e){
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, e,
-                        () -> "Configured Ordinal is not an int number: " + configuredOrdinal);
+                Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                        "Configured Ordinal is not an int number: " + configuredOrdinal, e);
             }
         }
         return ordinal;
@@ -86,6 +86,11 @@ public class JSONPropertySource implements PropertySource {
     @Override
     public String getName() {
         return urlResource.toExternalForm();
+    }
+
+    @Override
+    public String get(String key) {
+        return getProperties().get(key);
     }
 
     @Override

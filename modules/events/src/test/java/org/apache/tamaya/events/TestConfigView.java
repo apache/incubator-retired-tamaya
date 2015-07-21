@@ -20,11 +20,13 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -45,13 +47,41 @@ public class TestConfigView implements ConfigOperator{
     }
 
     @Override
-    public Configuration operate(Configuration config) {
+    public Configuration operate(final Configuration config) {
         return new Configuration() {
             @Override
             public Map<String, String> getProperties() {
-                return config.getProperties().entrySet().stream().filter(e -> e.getKey().startsWith("test")).collect(
-                        Collectors.toMap(en -> en.getKey(), en -> en.getValue()));
+                Map<String, String> result = new HashMap<>();
+                for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
+                    if (en.getKey().startsWith("test")) {
+                        result.put(en.getKey(), en.getValue());
+                    }
+                }
+                return result;
+//                return config.getProperties().entrySet().stream().filter(e -> e.getKey().startsWith("test")).collect(
+//                        Collectors.toMap(en -> en.getKey(), en -> en.getValue()));
             }
+
+            @Override
+            public Configuration with(ConfigOperator operator) {
+                return null;
+            }
+
+            @Override
+            public <T> T query(ConfigQuery<T> query) {
+                return null;
+            }
+
+            @Override
+            public String get(String key) {
+                return getProperties().get(key);
+            }
+
+            @Override
+            public <T> T get(String key, Class<T> type) {
+                return (T) get(key, TypeLiteral.of(type));
+            }
+
             /**
              * Accesses the current String value for the given key and tries to convert it
              * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current

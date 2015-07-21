@@ -146,4 +146,10 @@ public interface ConfigurationContext {
      * @return the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used, never null.
      */
     PropertyValueCombinationPolicy getPropertyValueCombinationPolicy();
+
+    /**
+     * Creates a {@link ConfigurationContextBuilder} preinitialized with the data from this instance.
+     * @return a new builder instance, never null.
+     */
+    ConfigurationContextBuilder toBuilder();
 }

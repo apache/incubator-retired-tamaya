@@ -20,7 +20,7 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.events.spi.ConfigEventSpi;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Singleton accessor for accessing the event support component that distributes change events of
@@ -30,10 +30,8 @@ public final class ConfigEvent {
     /**
      * The backing SPI.
      */
-    private static final ConfigEventSpi SPI = ServiceContext.getInstance()
-            .getService(ConfigEventSpi.class)
-            .orElseThrow(() -> new ConfigException("No SPI registered for " +
-                    ConfigEvent.class.getName()));
+    private static final ConfigEventSpi SPI = ServiceContextManager.getServiceContext()
+            .getService(ConfigEventSpi.class);
 
     /**
      * Private singleton constructor.
@@ -48,6 +46,10 @@ public final class ConfigEvent {
      * @param l the listener not null.
      */
     public static <T> void addListener(ConfigEventListener<T> l) {
+        if (SPI == null) {
+            throw new ConfigException("No SPI registered for " +
+                    ConfigEvent.class.getName());
+        }
         SPI.addListener(l);
     }
 
@@ -58,6 +60,10 @@ public final class ConfigEvent {
      * @param l the listener not null.
      */
     public static <T> void removeListener(ConfigEventListener<T> l) {
+        if (SPI == null) {
+            throw new ConfigException("No SPI registered for " +
+                    ConfigEvent.class.getName());
+        }
         SPI.removeListener(l);
     }
 
@@ -77,6 +83,10 @@ public final class ConfigEvent {
      *              @param eventType the event type, the vent may be a subclass.
      */
     public static <T> void fireEvent(T event, Class<T> eventType) {
+        if (SPI == null) {
+            throw new ConfigException("No SPI registered for " +
+                    ConfigEvent.class.getName());
+        }
         SPI.fireEvent(event, eventType);
     }
 

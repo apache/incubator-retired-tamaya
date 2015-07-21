@@ -21,8 +21,6 @@ package org.apache.tamaya.inject.internal;
 import org.apache.tamaya.event.PropertyChangeSet;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,16 +34,20 @@ public final class ConfigChangeCallbackMethod {
 
     private Method callbackMethod;
 
-    public ConfigChangeCallbackMethod(Method callbackMethod) {
-        this.callbackMethod = Optional.of(callbackMethod).filter(
-                (m) -> void.class.equals(m.getReturnType()) &&
-                        m.getParameterCount() == 1 &&
-                        m.getParameterTypes()[0].equals(PropertyChangeSet.class)).get();
+    public ConfigChangeCallbackMethod(Method methodCandidate) {
+        if (void.class.equals(methodCandidate.getReturnType()) &&
+                methodCandidate.getParameterCount() == 1 &&
+                methodCandidate.getParameterTypes()[0].equals(PropertyChangeSet.class)) {
+            this.callbackMethod = methodCandidate;
+        }
     }
 
-    public Consumer<PropertyChangeSet> createConsumer(Object instance){
-        return event -> {
-            call(instance, event);
+    public PropertyChangeSetListener createConsumer(final Object instance) {
+        return new PropertyChangeSetListener() {
+            @Override
+            public void propertyChange(PropertyChangeSet propertyChangeSet) {
+                call(instance, propertyChangeSet);
+            }
         };
     }
 
@@ -54,8 +56,9 @@ public final class ConfigChangeCallbackMethod {
             callbackMethod.setAccessible(true);
             callbackMethod.invoke(instance, configChangeEvent);
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, e, () -> "Error calling ConfigChange callback method " +
-                    callbackMethod.getDeclaringClass().getName() + '.' + callbackMethod.getName() + " on " + instance);
+            LOG.log(Level.SEVERE, "Error calling ConfigChange callback method " +
+                            callbackMethod.getDeclaringClass().getName() + '.' + callbackMethod.getName() + " on " + instance,
+                    e);
         }
     }
 }

@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
@@ -45,9 +44,10 @@ public class ConfiguredSetterMethod {
      * @param method the method instance.
      */
     public ConfiguredSetterMethod(Method method) {
-        this.setterMethod = Optional.of(method).filter(
-                (m) -> void.class.equals(m.getReturnType()) &&
-                        m.getParameterCount() == 1).get();
+        if (void.class.equals(method.getReturnType()) &&
+                method.getParameterCount() == 1) {
+            this.setterMethod = method;
+        }
     }
 
     /**
@@ -67,9 +67,12 @@ public class ConfiguredSetterMethod {
             // Check for adapter/filter
             Object value = InjectionUtils.adaptValue(this.setterMethod,  TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), evaluatedString);
 
-            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
-                setterMethod.setAccessible(true);
-                return setterMethod;
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+                @Override
+                public Object run() throws Exception {
+                    setterMethod.setAccessible(true);
+                    return setterMethod;
+                }
             });
 
             setterMethod.invoke(target, value);

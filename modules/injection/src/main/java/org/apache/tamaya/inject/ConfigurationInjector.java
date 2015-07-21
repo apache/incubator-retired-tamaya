@@ -18,10 +18,6 @@
  */
 package org.apache.tamaya.inject;
 
-import org.apache.tamaya.spi.ServiceContext;
-
-import java.util.function.Supplier;
-
 
 /**
  * Accessor interface for injection of configuration and configuration templates.
@@ -52,14 +48,5 @@ public interface ConfigurationInjector {
      * @return a supplier creating configured instances of {@code T}.
      */
     <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier);
-
-    /**
-     * Get the current injector instance.
-     *
-     * @return the current injector, not null.
-     */
-    public static ConfigurationInjector getInstance() {
-        return ServiceContext.getInstance().getService(ConfigurationInjector.class).get();
-    }
 
 }

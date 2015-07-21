@@ -18,8 +18,10 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
@@ -263,6 +265,11 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     @Override
     public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy(){
         return propertyValueCombinationPolicy;
+    }
+
+    @Override
+    public ConfigurationContextBuilder toBuilder() {
+        return ConfigurationProvider.getConfigurationContextBuilder().setContext(this);
     }
 
 }

@@ -39,7 +39,7 @@ import org.apache.tamaya.inject.WithLoadPolicy;
 import org.apache.tamaya.inject.WithPropertyConverter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 
 /**
@@ -253,7 +253,7 @@ final class InjectionUtils {
         if (!RESOLUTION_MODULE_LOADED) {
             return value;
         }
-        ExpressionEvaluator evaluator = ServiceContext.getInstance().getService(ExpressionEvaluator.class).orElse(null);
+        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
         if (evaluator != null) {
             return evaluator.evaluateExpression("<injection>", value);
         }

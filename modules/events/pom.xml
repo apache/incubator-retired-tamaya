@@ -31,11 +31,16 @@ under the License.
     <artifactId>tamaya-events</artifactId>
     <name>Apache Tamaya Event and dynamic Update Extensions</name>
 
+    <properties>
+        <jdkVersion>1.7</jdkVersion>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
+            <artifactId>tamaya-java7-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
@@ -43,13 +48,8 @@ under the License.
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-builder</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
+            <artifactId>tamaya-java7-core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

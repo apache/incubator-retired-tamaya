@@ -88,7 +88,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
             }
             return builder.build();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, e, () -> "Could not read configuration: " + resource);
+            LOG.log(Level.SEVERE, "Could not read configuration: " + resource, e);
         }
         return null;
     }

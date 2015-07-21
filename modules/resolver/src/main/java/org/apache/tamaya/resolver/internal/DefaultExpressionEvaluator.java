@@ -19,12 +19,13 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -42,11 +43,24 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     private List<ExpressionResolver> resolvers = new ArrayList<>();
 
+    /**
+     * Comparator used (not needed with Java8).
+     */
+    private static final Comparator<ExpressionResolver> RESOLVER_COMPARATOR = new Comparator<ExpressionResolver>() {
+        @Override
+        public int compare(ExpressionResolver o1, ExpressionResolver o2) {
+            return compareExpressionResolver(o1, o2);
+        }
+    };
+
+    /**
+     * Default constructor.
+     */
     public DefaultExpressionEvaluator() {
-        for(ExpressionResolver resolver: ServiceContext.getInstance().getServices(ExpressionResolver.class)){
+        for (ExpressionResolver resolver : ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class)) {
             resolvers.add(resolver);
         }
-        Collections.sort(resolvers, this::compareExpressionResolver);
+        Collections.sort(resolvers, RESOLVER_COMPARATOR);
     }
 
     /**
@@ -56,7 +70,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * @param res2 the second ExpressionResolver
      * @return the comparison result.
      */
-    private int compareExpressionResolver(ExpressionResolver res1, ExpressionResolver res2) {
+    private static int compareExpressionResolver(ExpressionResolver res1, ExpressionResolver res2) {
         Priority prio1 = res1.getClass().getAnnotation(Priority.class);
         Priority prio2 = res2.getClass().getAnnotation(Priority.class);
         int ord1 = prio1 != null ? prio1.value() : 0;

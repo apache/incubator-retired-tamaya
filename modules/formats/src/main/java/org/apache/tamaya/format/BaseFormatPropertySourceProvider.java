@@ -90,7 +90,7 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
             try {
                 urls = cl.getResources(path);
             } catch (IOException e) {
-                LOG.log(Level.WARNING, e, () -> "Failed to read resource: " + path);
+                LOG.log(Level.WARNING, "Failed to read resource: " + path, e);
                 continue;
             }
             while(urls.hasMoreElements()) {
@@ -115,7 +115,7 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
             try {
                 urls = classLoader.getResources(path);
             } catch (IOException e) {
-                LOG.log(Level.WARNING, e, () -> "Failed to read resource: " + path);
+                LOG.log(Level.WARNING, "Failed to read resource: " + path, e);
                 continue;
             }
             while(urls.hasMoreElements()) {
@@ -143,7 +143,7 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
     @Override
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
-        this.paths.forEach(res -> {
+        for (URL res : this.paths) {
             try(InputStream is = res.openStream()) {
                 for (ConfigurationFormat format : configFormats) {
                     ConfigurationData data = format.readConfiguration(res.toString(), is);
@@ -152,7 +152,7 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
             } catch (Exception e) {
                 LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
             }
-        });
+        }
         return propertySources;
     }
 

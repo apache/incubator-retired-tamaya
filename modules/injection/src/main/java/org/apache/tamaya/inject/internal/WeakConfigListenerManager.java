@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +36,7 @@ public final class WeakConfigListenerManager {
 
     private static final Logger LOG = Logger.getLogger(WeakConfigListenerManager.class.getName());
     private StampedLock lock = new StampedLock();
-    private Map<Object, Consumer<PropertyChangeSet>> listenerReferences = new WeakHashMap<>();
+    private Map<Object, PropertyChangeSetListener> listenerReferences = new WeakHashMap<>();
 
     /**
      * Private singleton constructor.
@@ -56,15 +55,21 @@ public final class WeakConfigListenerManager {
      * @param instance the instance, not null.
      * @param listener the consumer.
      */
-    public void registerConsumer(Object instance, Consumer<PropertyChangeSet> listener) {
+    public void registerConsumer(Object instance, final PropertyChangeSetListener listener) {
         Lock writeLock = lock.asWriteLock();
         try {
             writeLock.lock();
-            Consumer<PropertyChangeSet> l = listenerReferences.get(instance);
+            final PropertyChangeSetListener l = listenerReferences.get(instance);
             if (l == null) {
                 listenerReferences.put(instance, listener);
             } else {
-                listenerReferences.put(instance, l.andThen(listener));
+                listenerReferences.put(instance, new PropertyChangeSetListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeSet evt) {
+                        l.propertyChange(evt);
+                        listener.propertyChange(evt);
+                    }
+                });
             }
         } finally {
             writeLock.unlock();
@@ -95,13 +100,13 @@ public final class WeakConfigListenerManager {
         Lock readLock = lock.asReadLock();
         try {
             readLock.lock();
-            listenerReferences.values().parallelStream().forEach(l -> {
+            for (PropertyChangeSetListener l : listenerReferences.values()) {
                 try {
-                    l.accept(change);
+                    l.propertyChange(change);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "ConfigChangeListener failed: " + l.getClass().getName(), e);
                 }
-            });
+            }
         } finally {
             readLock.unlock();
         }

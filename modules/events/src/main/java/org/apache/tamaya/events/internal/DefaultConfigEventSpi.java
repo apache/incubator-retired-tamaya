@@ -21,7 +21,7 @@ package org.apache.tamaya.events.internal;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.spi.ConfigEventSpi;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -48,23 +48,26 @@ public class DefaultConfigEventSpi implements ConfigEventSpi {
      */
     public DefaultConfigEventSpi() {
         try {
-            for (ConfigEventListener<?> l : ServiceContext.getInstance().getServices(ConfigEventListener.class)) {
+            for (ConfigEventListener<?> l : ServiceContextManager.getServiceContext().getServices(ConfigEventListener.class)) {
                 try {
                     addListener(l);
                 } catch (Exception e) {
-                    LOG.log(Level.WARNING, e, () -> "Failed to load configured listener: " + l.getClass().getName());
+                    LOG.log(Level.WARNING, "Failed to load configured listener: " + l.getClass().getName(), e);
                 }
             }
         } catch (Exception e) {
-            LOG.log(Level.WARNING, e, () -> "Failed to load configured listeners.");
+            LOG.log(Level.WARNING, "Failed to load configured listeners.", e);
         }
     }
 
     @Override
     public <T> void addListener(ConfigEventListener<T> l) {
         Type type = TypeLiteral.getGenericInterfaceTypeParameters(l.getClass(), ConfigEventListener.class)[0];
-        List<ConfigEventListener> listeners = listenerMap.computeIfAbsent(type,
-                (k) -> Collections.synchronizedList(new ArrayList<>()));
+        List<ConfigEventListener> listeners = listenerMap.get(type);
+        if (listeners == null) {
+            listeners = Collections.synchronizedList(new ArrayList<ConfigEventListener>());
+            listenerMap.put(type, listeners);
+        }
         synchronized (listeners) {
             if (!listeners.contains(l)) {
                 listeners.add(l);

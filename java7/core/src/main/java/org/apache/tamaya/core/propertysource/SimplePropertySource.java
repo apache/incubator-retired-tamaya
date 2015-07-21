@@ -32,29 +32,34 @@ import java.util.Properties;
 /**
  * Simple implementation of a {@link org.apache.tamaya.spi.PropertySource} for properties-files.
  */
-public class SimplePropertySource extends BasePropertySource{
-    /** The property source name. */
+public class SimplePropertySource extends BasePropertySource {
+    /**
+     * The property source name.
+     */
     private String name;
-    /** The current properties. */
-    private Map<String,String> properties;
+    /**
+     * The current properties.
+     */
+    private Map<String, String> properties;
 
     /**
      * Creates a new Properties based PropertySource based on the given URL.
+     *
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(File propertiesLocation) {
         super(0);
-        try{
+        try {
             this.properties = load(propertiesLocation.toURI().toURL());
             this.name = propertiesLocation.toString();
-        }
-        catch(IOException e){
-            throw new ConfigException("Failed to load properties from " + propertiesLocation,e);
+        } catch (IOException e) {
+            throw new ConfigException("Failed to load properties from " + propertiesLocation, e);
         }
     }
 
     /**
      * Creates a new Properties based PropertySource based on the given URL.
+     *
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(URL propertiesLocation) {
@@ -64,8 +69,21 @@ public class SimplePropertySource extends BasePropertySource{
     }
 
     /**
+     * Creates a new Properties based PropertySource based on the given properties map.
+     *
+     * @param name       the name, not null.
+     * @param properties the properties, not null.
+     */
+    public SimplePropertySource(String name, Map<String, String> properties) {
+        super(0);
+        this.properties = new HashMap<>(properties);
+        this.name = Objects.requireNonNull(name);
+    }
+
+    /**
      * Creates a new Properties based PropertySource based on the given URL.
-     * @param name The property source name
+     *
+     * @param name               The property source name
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(String name, URL propertiesLocation) {
@@ -88,20 +106,18 @@ public class SimplePropertySource extends BasePropertySource{
      * loads the Properties from the given URL
      *
      * @param propertiesFile {@link java.net.URL} to load Properties from
-     *
      * @return loaded {@link java.util.Properties}
-     *
      * @throws IllegalStateException in case of an error while reading properties-file
      */
-    private Map<String,String> load(URL propertiesFile) {
-        Map<String,String> properties = new HashMap<>();
+    private Map<String, String> load(URL propertiesFile) {
+        Map<String, String> properties = new HashMap<>();
         try (InputStream stream = propertiesFile.openStream()) {
             Properties props = new Properties();
             if (stream != null) {
                 props.load(stream);
             }
-            for(String key:props.stringPropertyNames()){
-                 properties.put(key, props.getProperty(key));
+            for (String key : props.stringPropertyNames()) {
+                properties.put(key, props.getProperty(key));
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties " + propertiesFile, e);
