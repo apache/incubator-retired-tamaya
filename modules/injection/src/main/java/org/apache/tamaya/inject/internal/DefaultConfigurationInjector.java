@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.tamaya.inject.Supplier;
+import org.apache.tamaya.inject.ConfiguredItemSupplier;
 
 /**
  * Simple injector singleton that also registers instances configured using weak references.
@@ -82,14 +82,14 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
         if(cl==null){
             cl = this.getClass().getClassLoader();
         }
-        return (T)Proxy.newProxyInstance(cl,new Class[]{Supplier.class, Objects.requireNonNull(templateType)},
+        return (T) Proxy.newProxyInstance(cl, new Class[]{ConfiguredItemSupplier.class, Objects.requireNonNull(templateType)},
                 new ConfigTemplateInvocationHandler(templateType, ConfigurationProvider.getConfiguration()));
     }
 
 
     @Override
-    public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier) {
-        return new Supplier<T>() {
+    public <T> ConfiguredItemSupplier<T> getConfiguredSupplier(final ConfiguredItemSupplier<T> supplier) {
+        return new ConfiguredItemSupplier<T>() {
             public T get() {
                 return supplier.get();
             }

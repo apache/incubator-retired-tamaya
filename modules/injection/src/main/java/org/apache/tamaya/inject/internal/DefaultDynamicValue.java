@@ -20,7 +20,7 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.inject.Supplier;
+import org.apache.tamaya.inject.ConfiguredItemSupplier;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.DynamicValue;
@@ -372,13 +372,13 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * Return the value if present, otherwise invoke {@code other} and return
      * the result of that invocation.
      *
-     * @param other a {@code Supplier} whose result is returned if no value
+     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
      *              is present
      * @return the value if present otherwise the result of {@code other.get()}
      * @throws NullPointerException if value is not present and {@code other} is
      *                              null
      */
-    public T orElseGet(Supplier<? extends T> other) {
+    public T orElseGet(ConfiguredItemSupplier<? extends T> other) {
         if (value == null) {
             return other.get();
         }
@@ -401,7 +401,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
      * @throws NullPointerException if no value is present and
      *                              {@code exceptionSupplier} is null
      */
-    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
+    public <X extends Throwable> T orElseThrow(ConfiguredItemSupplier<? extends X> exceptionSupplier) throws X {
         if (value == null) {
             throw exceptionSupplier.get();
         }

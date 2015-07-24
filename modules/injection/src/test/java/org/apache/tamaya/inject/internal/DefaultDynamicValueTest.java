@@ -21,11 +21,9 @@ package org.apache.tamaya.inject.internal;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.builder.ConfigurationBuilder;
-import org.apache.tamaya.core.internal.converters.DoubleConverter;
+import org.apache.tamaya.inject.ConfiguredItemSupplier;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DynamicValue;
-import org.apache.tamaya.inject.Supplier;
-import org.apache.tamaya.inject.WithPropertyConverter;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
@@ -283,7 +281,7 @@ public class DefaultDynamicValueTest {
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(DynamicValue.UpdatePolicy.IMMEDIATE);
-        assertEquals("bla", val.orElseGet(new Supplier() {
+        assertEquals("bla", val.orElseGet(new ConfiguredItemSupplier() {
             @Override
             public Object get() {
                 return "bla";
@@ -291,7 +289,7 @@ public class DefaultDynamicValueTest {
         }));
         properties.put("a", "aValue");
         val.updateValue();
-        assertEquals("aValue", val.orElseGet(new Supplier() {
+        assertEquals("aValue", val.orElseGet(new ConfiguredItemSupplier() {
             @Override
             public Object get() {
                 return "bla";
@@ -305,7 +303,7 @@ public class DefaultDynamicValueTest {
                 config);
         val.setUpdatePolicy(DynamicValue.UpdatePolicy.EXPLCIT);
         properties.put("a", "aValue");
-        assertEquals("aValue", val.orElseThrow(new Supplier() {
+        assertEquals("aValue", val.orElseThrow(new ConfiguredItemSupplier() {
             @Override
             public ConfigException get() {
                 return new ConfigException("bla");
@@ -313,7 +311,7 @@ public class DefaultDynamicValueTest {
         }));
         properties.remove("a");
         val.updateValue();
-        assertEquals("aValue", val.orElseThrow(new Supplier() {
+        assertEquals("aValue", val.orElseThrow(new ConfiguredItemSupplier() {
             @Override
             public ConfigException get() {
                 return new ConfigException("bla");

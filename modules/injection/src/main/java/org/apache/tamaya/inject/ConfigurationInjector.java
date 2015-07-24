@@ -47,6 +47,6 @@ public interface ConfigurationInjector {
      * @param <T> the target type.
      * @return a supplier creating configured instances of {@code T}.
      */
-    <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier);
+    <T> ConfiguredItemSupplier<T> getConfiguredSupplier(ConfiguredItemSupplier<T> supplier);
 
 }

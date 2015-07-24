@@ -154,13 +154,13 @@ public interface DynamicValue<T> {
      * Return the value if present, otherwise invoke {@code other} and return
      * the result of that invocation.
      *
-     * @param other a {@code Supplier} whose result is returned if no value
+     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
      * is present
      * @return the value if present otherwise the result of {@code other.get()}
      * @throws NullPointerException if value is not present and {@code other} is
      * null
      */
-    T orElseGet(Supplier<? extends T> other);
+    T orElseGet(ConfiguredItemSupplier<? extends T> other);
 
     /**
      * Return the contained value, if present, otherwise throw an exception
@@ -178,6 +178,6 @@ public interface DynamicValue<T> {
      * @throws NullPointerException if no value is present and
      * {@code exceptionSupplier} is null
      */
-    <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
+    <X extends Throwable> T orElseThrow(ConfiguredItemSupplier<? extends X> exceptionSupplier) throws X;
 
 }

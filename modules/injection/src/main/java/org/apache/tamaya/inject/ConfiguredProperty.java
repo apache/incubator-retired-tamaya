@@ -54,9 +54,8 @@ import java.lang.annotation.Target;
  * pubic class ConfiguredItem{
  *
  *   @ConfiguredProperty
- *   @ConfiguredProperty({"a.b.value", "a.b.deprecated.keys", "${env:java.version}"})
- *   @ConfiguredProperty(configuration={"a", "b"}
- *   @ConfiguredProperty(configuration={"a", "b", keys={"a.b.keys", "a.b.deprecated.keys", "${env:java.version}"}}
+ *   @ConfiguredProperty(keys={"a.b.value", "a.b.deprecated.keys"})
+ *   @ConfiguredProperty(keys="a")
  *   private String aValue;
  * }
  *

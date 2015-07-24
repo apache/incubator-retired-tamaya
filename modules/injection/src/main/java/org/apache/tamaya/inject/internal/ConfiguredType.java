@@ -25,7 +25,6 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.NoConfig;
 import org.apache.tamaya.event.ObservesConfigChange;
@@ -200,7 +199,7 @@ public class ConfiguredType {
 
 
     public static boolean isConfigured(Class type) {
-        if (type.getAnnotation(ConfigRoot.class) != null) {
+        if (type.getAnnotation(org.apache.tamaya.inject.ConfiguredType.class) != null) {
             return true;
         }
         // if no class level annotation is there we might have field level annotations only

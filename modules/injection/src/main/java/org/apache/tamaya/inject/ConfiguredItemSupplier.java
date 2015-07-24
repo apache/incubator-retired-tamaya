@@ -18,26 +18,24 @@
  */
 package org.apache.tamaya.inject;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Annotation to control injection and resolution current a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link ConfiguredProperty}
- * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
- * to define a configuration area that is prefixed to all relative configuration keys within the
- * corresponding class/template interface.
+ * Represents a supplier of results.
+ * <p>
+ * <p>There is no requirement that a new or distinct result be returned each
+ * time the supplier is invoked.
+ * <p>
+ * <p>This is a functional interface,
+ * whose functional method is {@link #get()}.
+ *
+ * @param <T> the type of results supplied by this supplier
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE })
-public @interface ConfigRoot {
+//@FunctionalInterface
+public interface ConfiguredItemSupplier<T> {
 
     /**
-     * Allows to declare an operator that should be applied before injecting values into the bean.
-     * @return the operator class to be used.
+     * Gets a result.
+     *
+     * @return a result
      */
-    String[] value();
-
+    T get();
 }
