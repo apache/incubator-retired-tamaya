@@ -178,7 +178,7 @@ public final class ConfigurationData {
      *
      * @return true, if at least one named section is present.
      */
-    public boolean hasSections() {
+    private boolean hasSections() {
         return this.namedSections != null && !this.namedSections.isEmpty();
     }
 
