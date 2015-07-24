@@ -35,7 +35,6 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.ConfiguredType;
 import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultValue;
-import org.apache.tamaya.inject.WithLoadPolicy;
 import org.apache.tamaya.inject.WithPropertyConverter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -91,7 +90,7 @@ final class InjectionUtils {
                     // Remove original entry, since it will be replaced with prefixed entries
                     iterator.remove();
                     // Add prefixed entries, including absolute (root) entry for "" area keys.
-                    for (String area : areasAnnot.value()) {
+                    for (String area : areasAnnot.defaultSections()) {
                         iterator.add(area.isEmpty() ? next : area + '.' + next);
                     }
                 }
@@ -118,7 +117,7 @@ final class InjectionUtils {
         keys.add(mainKey);
         if (areasAnnot != null) {
             // Add prefixed entries, including absolute (root) entry for "" area keys.
-            for (String area : areasAnnot.value()) {
+            for (String area : areasAnnot.defaultSections()) {
                 if (!area.isEmpty()) {
                     keys.add(area + '.' + mainKey);
                 }
@@ -136,8 +135,7 @@ final class InjectionUtils {
      */
     public static String getConfigValue(Method method) {
         ConfiguredType areasAnnot = method.getDeclaringClass().getAnnotation(ConfiguredType.class);
-        WithLoadPolicy loadPolicy = Utils.getAnnotation(WithLoadPolicy.class, method, method.getDeclaringClass());
-        return getConfigValueInternal(method, areasAnnot, loadPolicy);
+        return getConfigValueInternal(method, areasAnnot);
     }
 
 
@@ -148,8 +146,7 @@ final class InjectionUtils {
      */
     public static String getConfigValue(Field field) {
         ConfiguredType areasAnnot = field.getDeclaringClass().getAnnotation(ConfiguredType.class);
-        WithLoadPolicy loadPolicy = Utils.getAnnotation(WithLoadPolicy.class, field, field.getDeclaringClass());
-        return getConfigValueInternal(field, areasAnnot, loadPolicy);
+        return getConfigValueInternal(field, areasAnnot);
     }
 
     /**
@@ -157,17 +154,16 @@ final class InjectionUtils {
      *
      * @return the keys to be returned, or null.
      */
-    private static String getConfigValueInternal(AnnotatedElement element, ConfiguredType areasAnnot, WithLoadPolicy loadPolicy) {
+    private static String getConfigValueInternal(AnnotatedElement element, ConfiguredType areasAnnot) {
         ConfiguredProperty prop = element.getAnnotation(ConfiguredProperty.class);
         DefaultValue defaultAnnot = element.getAnnotation(DefaultValue.class);
-        String configValue = null;
-        List<String> keys = null;
+        List<String> keys;
         if (prop == null) {
             keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
         } else {
             keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
         }
-        configValue = evaluteConfigValue(keys);
+        String configValue = evaluteConfigValue(keys);
         if (configValue == null && defaultAnnot != null) {
             return defaultAnnot.value();
         }
@@ -182,7 +178,7 @@ final class InjectionUtils {
      */
     public static List<String> getKeys(Field field) {
         ConfiguredType areasAnnot = field.getDeclaringClass().getAnnotation(ConfiguredType.class);
-        return InjectionUtils.evaluateKeys((Member) field, areasAnnot, field.getAnnotation(ConfiguredProperty.class));
+        return InjectionUtils.evaluateKeys(field, areasAnnot, field.getAnnotation(ConfiguredProperty.class));
     }
 
     /**
@@ -193,7 +189,7 @@ final class InjectionUtils {
      */
     public static List<String> getKeys(Method method) {
         ConfiguredType areasAnnot = method.getDeclaringClass().getAnnotation(ConfiguredType.class);
-        return InjectionUtils.evaluateKeys((Member) method, areasAnnot, method.getAnnotation(ConfiguredProperty.class));
+        return InjectionUtils.evaluateKeys(method, areasAnnot, method.getAnnotation(ConfiguredProperty.class));
     }
 
     private static String evaluteConfigValue(List<String> keys) {
@@ -220,7 +216,7 @@ final class InjectionUtils {
                 try {
                     // TODO cache here...
                     PropertyConverter<T> converter = PropertyConverter.class.cast(converterType.newInstance());
-                    adaptedValue = (T) converter.convert(configValue);
+                    adaptedValue = converter.convert(configValue);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element +
                             ", trying default conversion.", e);
@@ -236,7 +232,7 @@ final class InjectionUtils {
             List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                     .getPropertyConverters(targetType);
             for (PropertyConverter<T> converter : converters) {
-                adaptedValue = (T) converter.convert(configValue);
+                adaptedValue = converter.convert(configValue);
                 if (adaptedValue != null) {
                     return adaptedValue;
                 }
@@ -245,19 +241,31 @@ final class InjectionUtils {
         }
     }
 
+    /**
+     * Method that allows to statically check, if the resolver module is loaded. If the module is loaded
+     * value expressions are automatically forwarded to the resolver module for resolution.
+     *
+     * @return true, if the resolver module is on the classpath.
+     */
     public static boolean isResolutionModuleLoaded() {
         return RESOLUTION_MODULE_LOADED;
     }
 
-    public static String evaluateValue(String value) {
+    /**
+     * Evaluates the given expression.
+     *
+     * @param expression the expression, not null.
+     * @return
+     */
+    public static String evaluateValue(String expression) {
         if (!RESOLUTION_MODULE_LOADED) {
-            return value;
+            return expression;
         }
         ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
         if (evaluator != null) {
-            return evaluator.evaluateExpression("<injection>", value);
+            return evaluator.evaluateExpression("<injection>", expression);
         }
-        return value;
+        return expression;
     }
 
 
