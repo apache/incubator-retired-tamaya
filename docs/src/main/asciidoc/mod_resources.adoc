@@ -63,15 +63,20 @@ ant-styled resource patterns. To use this module add the following dependency:
 -----------------------------------------------
 
 
-The module's main entry point is the singleton class +org.apache.tamaya.resource.Resources+. This class provides
-access to a +ResourceResolver+ instance:
+The module's main entry point is the singleton class +org.apache.tamaya.resource.ConfigResources+. This class
+provides access to a +ResourceResolver+ instance:
+
+[source,java]
+-----------------------------------------------
+ResourceResolver resolver = ConfigResources.getResourceResolver();
+-----------------------------------------------
 
 [source,java]
 -----------------------------------------------
 public interface ResourceResolver {
-    default Collection<URL> getResources(Collection<String> expressions) {...}
-    default Collection<URL> getResources(String... expressions) {...}
-    default Collection<URL> getResources(ClassLoader classLoader, String... expressions){...}
+    Collection<URL> getResources(Collection<String> expressions) {...}
+    Collection<URL> getResources(String... expressions) {...}
+    Collection<URL> getResources(ClassLoader classLoader, String... expressions){...}
     Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
 }
 -----------------------------------------------
@@ -79,10 +84,16 @@ public interface ResourceResolver {
 Hereby the methods allow to resolve expressions to a collection of URLs. In case the expression is also targeting the
 current classpath the target +ClassLoader+ to be used can be passed additionally.
 
+The default implementation provides resource resolution mechanism similar to the functionality offered by Spring.
+So by default resources can be looked up
+
+* from files
+* from the classpath
+* optionally ant-styled expressions can be used.
 
 === Valid Expression Examples
 
-There are numerous ways how a resource pattern can be defined, Following the most important variants
+There are numerous ways how a resource pattern can be defined. Following the most important variants
 are listed:
 
 [source,listing]
@@ -172,4 +183,14 @@ public class PathBasedPropertySourceProvider implements PropertySourceProvider{
 
 }
 -------------------------------------------------------------
+
+
+=== SPI
+
+The +ResourceResolver+ that is returned by the +ConfigResources+ singleton is determined by the
+current +ServiceContext+, by default you can replace the default implementation by registering an
+alternate implemenetation with an overriding +@Priority+ annotation added using the +ServiceLoader+.
+
+Additionally a +BaseResourceResolver+ class can be used to reduce the amount of code to be written
+on your own.
 

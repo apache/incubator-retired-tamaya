@@ -56,7 +56,28 @@ template instances.
 Inversion of Control (aka IoC/the Hollywood Principle) has proven to be very useful and effective in avoiding boilerplate
 code. In Java there are different frameworks available that all provide IoC mechanisms. Unfortunately IoC is not a
 built-in language feature. So for a portable solution that works also in Java SE Tamaya itself has to provide the
-according injection services. This module adds this functionality to Tamaya. As an example refer to the following
+according injection services. This module adds this functionality to Tamaya.
+
+=== Compatibility
+
+The module is based on Java 7, so it can be used with Java 7 and beyond.
+
+=== Installation
+
+To benefit from configuration event support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-injection</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+=== Core Concepts
+
+As an example refer to the following
 code snippet:
 
 [source,java]
@@ -88,7 +109,7 @@ public class ConfiguredClass{
 
     // Overriding the String -> BigDecimal converter with a custom implementation.
     @ConfiguredProperty(keys="BD")
-    @WithAdapter(MyBigDecimalRoundingAdapter.class)
+    @WithPropertyConverter(MyBigDecimalRoundingAdapter.class)
     private BigDecimal bigNumber;
 
     ...
@@ -106,7 +127,8 @@ ConfiguredClass classInstance = new ConfiguredClass();
 ConfigurationInjector.configure(configuredClass);
 --------------------------------------------
 
-==== The Annotations in detail
+=== The Annotations in detail
+==== The ConfigurationInjector
 
 The +ConfigurationInjector+ interface provides methods that allow any kind of instances to be configured
 by passing the instances to +T ConfigurationInjector.getInstance().configure(T);+. The classes passed
@@ -139,6 +161,7 @@ The following bean can be configured as follows:
 --------------------------------------------
 package a.b;
 
+@ConfiguredType(autoConfigure=true)
 public final class Tenant{
   private int id;
   private String name;
@@ -158,19 +181,33 @@ public final class Tenant{
 Tenant tenant = ConfigurationInjector.getInstance().configure(new Tenant());
 --------------------------------------------
 
+==== Accessing ConfiguredItemSupplier instances
+
 In many cases you want to create a supplier that simply creates instances that are correctly configured as defined
 by the current context. This can be done using +Suppliers+:
 
 [source, java]
 --------------------------------------------
-Supplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(Tenant::new);
+ConfiguredItemSupplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(
+  new ConfiguredItemSupplier<Tenant>(){
+     public Tenant get(){
+       return new Tenant();
+     }
+});
 --------------------------------------------
 
+With Java 8 it's even more simpler:
 
+[source, java]
+--------------------------------------------
+ConfiguredItemSupplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(
+  Tenant::new);
+--------------------------------------------
 
-Hereby this annotation can be
-used in multiple ways and combined with other annotations such as +@DefaultValue+,
-+@WithLoadPolicy+, +@WithConfig+, +@WithConfigOperator+, +@WithPropertyAdapter+.
+Hereby this annotation can be used in multiple ways and combined with other annotations such as +@DefaultValue+,
++@WithLoadPolicy+, +@WithConfigOperator+, +@WithPropertyConverter+.
+
+==== Minimal Example
 
 To illustrate the mechanism below the most simple variant of a configured class is given:
 
@@ -194,21 +231,167 @@ the following is happening:
   configuration, so future config changes can be propagated (controllable by applying the
   +@WithLoadPolicy+ annotation).
 
+==== Using @DefaultValue
+
 In the next example we explicitly define the property value:
 [source,java]
 --------------------------------------------
 pubic class ConfiguredItem{
 
-  @ConfiguredProperty
-  @ConfiguredProperty("a.b.value")
-  @configuredProperty("a.b.deprecated.value")
+  @ConfiguredProperty(keys={"aValue", "a.b.value","a.b.deprecated.value"})
   @DefaultValue("${env:java.version}")
   private String aValue;
 }
 --------------------------------------------
 
-Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
-resolved. Hereby the ordering of the annotations define the ordering of resolution, so in the example above
-resolution equals to +"aValue", "a.b.value", "a.b.deprecated.value"+. If no value could be read
-from the configuration, it uses the value from the +@DefaultValue+ annotation. Interesting here
-is that this value is not static, it is evaluated by calling +Configuration.evaluateValue(Configuration, String)+.
+==== Inject a DynamicValue Property
+
+Within this example we evaluate a dynamic value. This mechanism allows you to listen for configuration changes and to
+commit new values exactly, when convenient for you.
+
+[source,java]
+--------------------------------------------
+pubic class ConfiguredItem{
+
+  @ConfiguredProperty(keys={"aValue", "a.b.value","a.b.deprecated.value"})
+  @DefaultValue("${env:java.version}")
+  private DynamicValue aValue;
+}
+--------------------------------------------
+
+The +DynamicValue+ provides you the following functionality:
+
+[source,java]
+--------------------------------------------
+public interface DynamicValue<T> {
+
+    enum UpdatePolicy{
+        IMMEDIATE,
+        EXPLCIT,
+        NEVER,
+        LOG_AND_DISCARD
+    }
+
+    T get();
+    T getNewValue();
+    T evaluateValue();
+    T commitAndGet();
+    void commit();
+    void discard();
+    boolean updateValue();
+
+    void setUpdatePolicy(UpdatePolicy updatePolicy);
+    UpdatePolicy getUpdatePolicy();
+    void addListener(PropertyChangeListener l);
+    void removeListener(PropertyChangeListener l);
+
+    boolean isPresent();
+    T orElse(T other);
+    T orElseGet(ConfiguredItemSupplier<? extends T> other);
+    <X extends Throwable> T orElseThrow(ConfiguredItemSupplier<? extends X> exceptionSupplier) throws X;
+
+}
+--------------------------------------------
+
+Summarizing this class looks somehow similar to the new +Optional+ class added with Java 8. It provides
+a wrapper class around a configured instance. Additionally this class provides functionality that gives
+active control, to manage a configured value based on a ++LoadingPolicy+:
+
+* +IMMEDEATE+ means that when the configuration system detects a change on the underlying value, the new value
+  is automatically applied without any further notice.
+* +EXPLICIT+ means that a new configuration value is signalled by setting the +newValue+ property. if +getNewValue()+
+  returns a non null value, the new value can be applied by calling +commit()+. You can always access the newest value,
+  hereby implicitly applying it, by accessing it via +commitAndGet()+. Also it is possible ti ignore a change by calling
+  +discard()+.
+* +NEVER+ means the configured value is evaluated once and never updated. All changes are silently discarded.
+* +LOG_AND_DISCARD+ similar to +NEVER+, but changes are logged before they are discarded.
+
+Summarizing a +DynamicValue+ allows you
+
+* to reload actively updates of configured values.
+* update implicitly or explicitly all changes on the value.
+* add listeners that observe changes of a certain value.
+
+Dynamic values also allow on-the-fly reevaluation of the value by calling +evaluateValue()+. Hereby the value of the
+instance is not changed.
+
+
+==== Ommitting Injection using @NoConfig
+
+Adding the @NoConfig annotation prevents a field or method to be selected (mostly auto-selected) for
+configuration. This is especially useful, if a type is annotated as @ConfiguredType with auto-confiuration
+turned on as follows:
+
+[source,java]
+--------------------------------------------
+@ConfiguredType(autoConfigure=true)
+pubic class ConfiguredItem{
+
+  @NoConfig
+  private transient int sum;
+
+  private String a;
+  private String b;
+  Private String c;
+}
+--------------------------------------------
+
+In this case the fields +a,b,c+ are configured, whereas the field +sum+ is ignored regarding
+configuration.
+
+==== Adding custom operators using @WithConfigOperator
+
+The @WithConfigOperator annotation allows you define a class of type +ConfigOperator+, to being applied
+to the final +Configuration+, BEFORE the value is injected. This can be used for various use cases, e.g.
+filtering or validating the visible properties for a certain use case.
+
+[source,java]
+--------------------------------------------
+
+@WithConfigOperator(MyConfigView.class)
+pubic class ConfiguredItem{
+
+  @ConfiguredProperty
+  private String a;
+
+}
+--------------------------------------------
+
+
+==== Adding custom property converters using @WithPropertyConverter
+
+The @WithPropertyConverter annotation allows you to define a class of type +PropertyConverter+, to be applied
+on a property configured to convert the String value to the expected injected type. This can be used for
+various use cases, e.g. adding custom formats, validation, decryption.
+
+[source,java]
+--------------------------------------------
+
+pubic class ConfiguredItem{
+
+  @WithPropertyConverter(MyPropertyConverter.class)
+  @ConfiguredProperty
+  private String a;
+
+}
+--------------------------------------------
+
+
+==== Defining the loading policy to be applied to configured values using @WithLoadPolicy
+
+The @WithLoadPolicy annotation allows to define the loading behaviour to be applied. The +LoadPolicy+
+enum hereby defines the various loading modes.
+
+[source,java]
+--------------------------------------------
+
+@WithLoadPolicy(LoadPolicy.NEVER)
+pubic class BootTimeStableConfig{
+
+  @WithPropertyConverter(MyPropertyConverter.class)
+  @ConfiguredProperty
+  private String a;
+
+}
+--------------------------------------------
+

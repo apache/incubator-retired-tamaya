@@ -47,6 +47,10 @@ Tamaya Resolver provides a dynamic resolution mechanism, which allows to use UNI
 expressions in your configuration values. The resolver hereby supports transitive resolution and also prevents
 cycles to loop endlessly.
 
+=== Compatibility
+
+The module is based on Java 7, so it can be used with Java 7 and beyond.
+
 === Installation
 
 To benefit from dynamic value resolution you only must add the corresponding dependency to your module:
@@ -114,3 +118,23 @@ blabla ${decrypt:myname} foo blabla ${decrypt:myname}
 
 Hereby evaluation is repeasted until no further change of values could be detetced. In case of a endless loop
 the evaluation is broken after a (configurable) number of cycles.
+
+
+Under the hood instances of +ExpressionResolver+ are managed by an implementation of the +ExpressionEvaluator+
+interface:
+
+[source, java]
+-----------------------------------------------
+public interface ExpressionEvaluator {
+    /**
+     * Evaluates the current expression.
+     * @param key the key, not null.
+     * @param value the value to be filtered/evaluated.
+     * @return the filtered/evaluated value, including null.
+     */
+    String evaluateExpression(String key, String value);
+}
+-----------------------------------------------
+
+Implementing and registering this interface gives you full control, but in most cases yhou should be fine with
+the default implementation in place.

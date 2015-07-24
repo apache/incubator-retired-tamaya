@@ -57,6 +57,25 @@ Tamaya Formats provides an abstraction for configuration formats provding the fo
 * Similarly the configuration abstraction can also be used as an interface for integrating Tamaya with alternate
   frameworks that provide logic for reading configuration files, such as Apache commons.configuration.
 
+=== Compatibility
+
+The module is based on Java 7, so it can be used with Java 7 and beyond.
+
+=== Installation
+
+To benefit from dynamic value resolution you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-formats</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+The module automatically registers an according +PropertyFilter+ that is automatically called, whenever a value
+is accessed.
 
 === The Idea
 
@@ -77,7 +96,6 @@ public final class ConfigurationData {
     public ConfigurationFormat getFormat();
     public String getResource();
 
-    public boolean hasSections();
     public Set<String> getSectionNames();
     public Map<String,String> getSection(String name);
     public Map<String,Map<String,String>> getSections();
@@ -95,11 +113,20 @@ public final class ConfigurationData {
 In detail the data read from a file is organized into _sections_ as follows:
 
 * with +getResource()+ and +getFormat()+ the underlying resource and the format that read this data can be accessed.
-* a section contains a set of properties.
-* it could be mapped to one single section, or to multiple sections. The method +getSectionNames()+ returns a set of all
-  section names.
-* it can have a _default_ properties, which basically contain data that may be not part of any section.
-* With +getSection(String name)+ a section can be accessed by name.
+* properties can be owned by
+  ** named sections
+  ** an (unnamed) default section
+* each section section contains a map of properties. Hereby the same key can be part of the default section and multiple
+  named sections, depending on the configuration format.
+* The method +getSectionNames()+ returns a set of all section names.
+* With +getSection(String name)+ a named section can be accessed.
+* With +getDefaultSection()+ the default section can be accessed.
+* With +getCombinedProperties()+ a flattened entry map can be accessed built up (by default) out of
+  ** all entries from the default section, without any changes.
+  ** all entries from named sections, where the key for each entry is prefix with the section name and a dot separator.
+* The configuration format used determines the mapping of configuration data read into this structure. The format
+  implementation can as well provide alternate implementations of how the data read should be mapped into the
+  combined properties map.
 
 Now for the conversion of +ConfigurationData+ into a +PropertySource+ different default approaches are used:
 
@@ -107,7 +134,7 @@ Now for the conversion of +ConfigurationData+ into a +PropertySource+ different 
   +getProperties()+ explcitly, which can be used to initialize a single +PropertySource+ containing the data read.
 . If the format did not set the final properties, but only a default section is present this default section
   can be directly returned as combined properties.
-. In all other cases a properties can be uniqiely mapped into one single properties Map, by prefixing all keys of each
+. In all other cases a properties can be uniquely mapped into one single properties Map, by prefixing all keys of each
   section present with the (unique) section name and a '.' separator.
 
 Nevertheless, depending on the context, where a configuration source was read (classloader, time, source etc.) the

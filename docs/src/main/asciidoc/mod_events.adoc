@@ -52,6 +52,25 @@ about modules.
 
 Tamaya Events provides an abstraction for events like change events, when configuration has bee changed.
 
+=== Compatibility
+
+The module is based on Java 7, so it can be used with Java 7 and beyond.
+
+=== Installation
+
+To benefit from configuration event support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-events</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+=== Core Architecture
+
 The core of the module are the +ConfigEventListener+ interface and the +ConfigEvent+ class, which defines an abstraction
 for event handling and observation:
 
@@ -70,7 +89,7 @@ public final class ConfigEvent {
 
 }
 
-@FunctionalInterface
+// @FunctionalInterface
 public interface ConfigEventListener<T> {
     /**
      * Called if an event occurred.
