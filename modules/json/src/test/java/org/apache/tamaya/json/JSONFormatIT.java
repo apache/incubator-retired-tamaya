@@ -40,12 +40,11 @@ public class JSONFormatIT {
 
         ConfigurationFormat format = null;
         for (ConfigurationFormat f : formats) {
-            if (format instanceof JSONFormat) {
+            if (f instanceof JSONFormat) {
                 format = f;
                 break;
             }
         }
         assertThat(format, notNullValue());
-        assertThat(format, instanceOf(JSONFormat.class));
     }
 }
