@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-docs</artifactId>
-    <name>Apache Tamaya - Documentation</name>
+    <name>Apache Tamaya Documentation</name>
     <description>The Documentation projects keeps together the documentation files in asciidoc and other formats
         for the Apache Tamaya project.
     </description>
