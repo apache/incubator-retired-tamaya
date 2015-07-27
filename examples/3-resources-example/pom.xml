@@ -27,6 +27,18 @@ under the License.
     <description>This project contains a simple example using the resource location module.</description>
     <packaging>jar</packaging>
 
+    <scm>
+        <connection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </connection>
+        <developerConnection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </developerConnection>
+        <url>
+            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
+        </url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>

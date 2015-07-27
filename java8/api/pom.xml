@@ -33,6 +33,18 @@ under the License.
         The API defines a complete SE based API for reading of configuration data.
     </description>
 
+    <scm>
+        <connection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </connection>
+        <developerConnection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </developerConnection>
+        <url>
+            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
+        </url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

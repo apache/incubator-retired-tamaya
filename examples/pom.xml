@@ -33,6 +33,18 @@ under the License.
     <description>This project contains several examples that illustrate usage of Tamaya.</description>
     <packaging>pom</packaging>
 
+    <scm>
+        <connection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </connection>
+        <developerConnection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </developerConnection>
+        <url>
+            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
+        </url>
+    </scm>
+
     <modules>
         <module>1-minimal-example</module>
         <module>2-simple-propertysource-example</module>

@@ -23,6 +23,8 @@ import org.apache.tamaya.spi.PropertySource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
 * Simple property source implementation using a map.
@@ -39,13 +41,41 @@ public class SimplePropertySource implements PropertySource {
     }
 
     @Override
+    public int getOrdinal(){
+        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        if(configuredOrdinal!=null){
+            try{
+                return Integer.parseInt(configuredOrdinal);
+            } catch(Exception e){
+                Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                        "Configured Ordinal is not an int number: " + configuredOrdinal, e);
+            }
+        }
+        return getDefaultOrdinal();
+    }
+
+    public int getDefaultOrdinal(){
+        return 0;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
     @Override
+    public String get(String key) {
+        return null;
+    }
+
+    @Override
     public Map<String, String> getProperties() {
         return this.properties;
+    }
+
+    @Override
+    public boolean isScannable() {
+        return false;
     }
 
     @Override

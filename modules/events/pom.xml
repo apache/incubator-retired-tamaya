@@ -35,6 +35,18 @@ under the License.
         <jdkVersion>1.7</jdkVersion>
     </properties>
 
+    <scm>
+        <connection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </connection>
+        <developerConnection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </developerConnection>
+        <url>
+            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
+        </url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>

@@ -74,7 +74,7 @@ public final class ConfigurationDataBuilder {
         if (data.hasCombinedProperties()) {
             b.getCombinedProperties().putAll(data.getCombinedProperties());
         }
-        if (data.hasSections()) {
+        if (!data.getSections().isEmpty()) {
             b.getSections().putAll(data.getSections());
         }
         return b;

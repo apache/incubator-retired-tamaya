@@ -30,8 +30,17 @@ under the License.
     <name>Apache Tamaya - Configured Java SE System Properties</name>
     <packaging>jar</packaging>
 
-    <properties>
-    </properties>
+    <scm>
+        <connection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </connection>
+        <developerConnection>
+            scm:git://git.apache.org/incubator-tamaya.git
+        </developerConnection>
+        <url>
+            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
+        </url>
+    </scm>
 
     <build>
         <plugins>
