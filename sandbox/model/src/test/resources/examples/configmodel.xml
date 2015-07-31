@@ -1,0 +1,68 @@
+<!--################################################################################
+# Example of a configuration metamodel expressed via YAML(tm).
+#   Structure is shown through indentation (one or more spaces).
+#   Sequence items are denoted by a dash,
+#   key value pairs within a map are separated by a colon.
+#################################################################################-->
+
+<!--################################################################################
+# Metamodel information
+#################################################################################-->
+
+<model>
+    <meta-model>
+        <name>testmodel</name>
+        <provider>ConfigModel Extension</provider>
+        <version>1.0</version>
+        <release-date>2001-01-23</release-date>
+        <author>Anatole Tresch</author>
+        <!-- model-format>alternate format reader type</model-format -->
+        <comments>Late afternoon is best.
+            Backup contact is Nancy.
+        </comments>
+    </meta-model>
+
+    <!--################################################################################
+    # Description of Configuration Sections (minimal, can be extended by other modules).
+    #################################################################################-->
+    <section name="a">
+        <param name="params2" type="String" validators="required">a required parameter</param>
+        <param name="paramInt" type="Integer" validators="required">an optional parameter (default)</param>
+        <section name="b.c">
+            <desc>Just a test section.</desc>
+        </section>
+    </section>
+    <section name="a.b.c.aRequiredSection" validators="required">
+        <desc>A section containing required parameters is called a required section.
+            Sections can also explicitly be defined to be required, but without
+            specifying the paramteres to be contained.
+        </desc>
+    </section>
+</model>
+        <!--
+                a.b.c.aRequiredSection.subsection: {
+                # Paramname   Type         Validations   Description
+                param0:    'String',                   'a minmally documented String parameter}',
+                param00:   'String',                                 # A minmally defined String parameter
+                param1:    'String',     'required',   'a required parameter',
+                intParam:  'Integer',                  'an optional parameter (default)'
+                }
+                ...
+
+                ---
+                a.b.c.aRequiredSection.nonempty-subsection: {
+                __validations: 'required'
+                }
+                ...
+
+                ---
+                a.b.c.aRequiredSection.optional-subsection: {}
+                ...
+
+                ---
+                a.b.c.aRequiredSection.aValidatedSection: {
+                __desc: 'A validated section.',
+                __validations: 'org.apache.tamaya.model.validation.MaxItemValidator?max=3'
+                }
+        -->
+
