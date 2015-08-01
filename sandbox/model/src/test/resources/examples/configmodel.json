@@ -9,7 +9,7 @@
 // Metamodel information
 //##################################################################################
 {
-  "__meta-model": {
+  "model:Metamodel": {
     "name": "testmodel",
     "provider": "ConfigModel Extension",
     "version": "1.0",
@@ -18,81 +18,71 @@
     // "modelformat": "alternate format reader type"
     "comments": "Late afternoon is best. Backup contact is Nancy."
   },
+  // reusable parameter definition
+  "MyNumber:Parameter": {
+    "type": "Integer",
+    "description": "an (reusable) number type parameter (optional)"
+  },
   //##################################################################################
   // Description of Configuration Sections (minimal, can be extended by other modules).
   //##################################################################################
-  "a": {
-    // Paramname Type         Validations    Description
-    "params2": [
-      "String",
-      "required",
-      "a required parameter"
-    ],
-    "paramInt": [
-      "Integer",
-      "an optional parameter (default)"
-    ],
-    "sections": [
-      "b.c"
-      :
-      {
-        "__desc": "Just a test section."
-      }
-    ],
+  "a:Section": {
+    // required, default is parameter!
+    "params2": {
+      "required": true,
+      "description": "a required parameter"
+    },
+    "paramInt": {
+      // references a shared parameter definition.
+      "ref": "MyNumber",
+      "description": "an optional parameter (default)"
+    },
+    "_number": {
+      "type": "Integer",
+      "deprecated": true,
+      // references a deprecated parameter, now mapped to 'a.paramInt'.
+      "mappedto": "a.paramInt"
+    }
   },
-  "a.b.c.aRequiredSection": {
-    "__validations": "required",
-    "__desc": "A section containing required parameters is called a required section.
-    Sections
-    can
-    also
-    explicitly
-    be
-    defined
-    to
-    be
-    required,
-    but
-    without
-    specifying
-    the
-    paramteres
-    to
-    be
-    contained
-    .
-    "
+  "a.b.c:Section": {
+    "description": "Just a test section."
+    // a subsection, directly configured as child element.
+    "aRequiredSection": {
+      "class": "Section",
+      "required": true,
+      "description": "A section containing required parameters is called a required section."
+    }
   },
-  "a.b.c.aRequiredSection.subsection": {
-    // Paramname   Type         Validations   Description
-    "param0": [
-      "String",
-      "a minmally documented String parameter"
-    ],
+  // a subsection, configured in its own section.
+  "a.b.c.aRequiredSection.subsection:Section": {
+    "param0": {
+      "type": "String",
+      "description": "a minmally documented String parameter"
+    },
     // A minmally defined String parameter
-    "param00": [
-      "String"
-    ],
-    "param1": [
-      "String",
-      "required",
-      "a required parameter"
-    ],
-    "intParam": [
-      "Integer",
-      "an optional parameter (default)"
-    ]
+    "param00": {},
+    "param1": {
+      "type": "String",
+      "required": true,
+      "description": "a required parameter"
+    },
+    "intParam": {
+      "type": "Integer",
+      "required": true,
+      "description": "an optional parameter (default)"
+    }
   },
-  "a.b.c.aRequiredSection.nonempty-subsection": {
-    "__validations": "required"
+  "a.b.c.aRequiredSection.nonempty-subsection:Section": {
+    "required": true
   },
-  "a.b.c.aRequiredSection.optional-subsection": {},
-  "a.b.c.aRequiredSection.aValidatedSection": {
-    "__desc": "A validated section.",
-    "__validations": [
+  "a.b.c.aRequiredSection.optional-subsection:Section": {
+  },
+  "a.b.c.aRequiredSection.aValidatedSection:Section": {
+    "description": "A validated section.",
+    "validations": [
       "org.apache.tamaya.model.validation.MaxItemValidator?max=3"
-    ]
-  }
-}
+      }
+    }
+    }
 
 
