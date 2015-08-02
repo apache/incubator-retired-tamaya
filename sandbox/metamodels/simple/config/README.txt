@@ -16,5 +16,5 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.metamodel.simple.internal.ConfigDirPropertySourceProvider
-org.apache.tamaya.metamodel.simple.internal.MetainfConfigPropertySourceProvider
+This folder is for testing only. It contains some config files that are to be included by the
+ConfigDirPropertySourceProvider config provider.

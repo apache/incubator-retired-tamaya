@@ -26,12 +26,18 @@ under the License.
         <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-metamodel-simple</artifactId>
+    <artifactId>tamaya-metamodels-simple</artifactId>
     <name>Apache Tamaya Modules Metamodels - Simple</name>
     <description>Simple Tamaya Metamodel, e.g. feasible for SE commandline tools and simple use cases.</description>
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-java7-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-api</artifactId>

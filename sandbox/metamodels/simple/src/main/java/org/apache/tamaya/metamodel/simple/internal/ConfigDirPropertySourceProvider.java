@@ -52,7 +52,7 @@ public class ConfigDirPropertySourceProvider extends AbstractPathPropertySourceP
             location += "/";
         }
         if (!location.startsWith("file:")) {
-            location += "file:";
+            location = "file:" + location;
         }
         return location + "**/*.*";
     }
@@ -61,6 +61,11 @@ public class ConfigDirPropertySourceProvider extends AbstractPathPropertySourceP
     protected Collection<PropertySource> getPropertySources(URL url) {
         try {
             ConfigurationData config = ConfigurationFormats.readConfigurationData(url);
+            if (config == null) {
+                Logger.getLogger(getClass().getName()).log(Level.INFO,
+                        "Failed to read configuration from " + url);
+                return Collections.emptySet();
+            }
             return asCollection(new FlattenedDefaultPropertySource(config));
         } catch (Exception e) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE,
