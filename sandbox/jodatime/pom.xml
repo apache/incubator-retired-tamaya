@@ -43,18 +43,6 @@ under the License.
         <jodatime.version>2.3</jodatime.version>
     </properties>
 
-    <scm>
-        <connection>
-            scm:git://git.apache.org/incubator-tamaya.git
-        </connection>
-        <developerConnection>
-            scm:git://git.apache.org/incubator-tamaya.git
-        </developerConnection>
-        <url>
-            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
-        </url>
-    </scm>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>

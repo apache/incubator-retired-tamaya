@@ -39,18 +39,6 @@ under the License.
         <ds.version>1.1.0</ds.version>
     </properties>
 
-    <scm>
-        <connection>
-            scm:git://git.apache.org/incubator-tamaya.git
-        </connection>
-        <developerConnection>
-            scm:git://git.apache.org/incubator-tamaya.git
-        </developerConnection>
-        <url>
-            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
-        </url>
-    </scm>
-
     <build>
         <plugins>
             <plugin>

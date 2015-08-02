@@ -30,18 +30,6 @@ under the License.
     <artifactId>tamaya-core</artifactId>
     <name>Apache Tamaya Java 8 Core</name>
 
-    <scm>
-        <connection>
-            scm:git://git.apache.org/incubator-tamaya.git
-        </connection>
-        <developerConnection>
-            scm:git://git.apache.org/incubator-tamaya.git
-        </developerConnection>
-        <url>
-            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
-        </url>
-    </scm>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
@@ -57,35 +45,6 @@ under the License.
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
-
-        <!-- dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-container-managed</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-container-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-main</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-protocol-arquillian</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-protocol-wire</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-        </dependency-->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>

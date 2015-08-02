@@ -108,7 +108,7 @@ under the License.
     <mailingLists>
         <mailingList>
             <name>Tamaya Development List</name>
-            <post>tamaya-dev@incubator.apache.org</post>
+            <post>dev@tamaya.incubator.apache.org</post>
             <subscribe>dev-subscribe@tamaya.incubator.apache.org</subscribe>
             <unsubscribe>dev-unsubscribe@tamaya.incubator.apache.org</unsubscribe>
             <archive>http://mail-archives.apache.org/mod_mbox/incubator-tamaya-dev/</archive>
@@ -130,18 +130,6 @@ under the License.
     </mailingLists>
 
     <distributionManagement>
-        <repository>
-            <id>apache.releases.https</id>
-            <name>Apache Release Distribution Repository</name>
-            <url>
-                https://repository.apache.org/service/local/staging/deploy/maven2
-            </url>
-        </repository>
-        <snapshotRepository>
-            <id>apache.snapshots.https</id>
-            <name>${distMgmtSnapshotsName}</name>
-            <url>${distMgmtSnapshotsUrl}</url>
-        </snapshotRepository>
         <site>
             <id>apache-tamaya-website</id>
             <name>Apache Tamaya Website</name>
@@ -206,8 +194,6 @@ under the License.
             <email>plexus@apache.org</email>
             <timezone>-1</timezone>
         </developer>
-
-
     </developers>
 
     <modules>
@@ -791,20 +777,4 @@ under the License.
             </plugin>
         </plugins>
     </reporting>
-
-    <!--
-    <repositories>
-        <repository>
-            <id>org.apache.people</id>
-            <name>Apache Snapshot Repository</name>
-            <url>http://repository.apache.org/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
-   -->
 </project>
