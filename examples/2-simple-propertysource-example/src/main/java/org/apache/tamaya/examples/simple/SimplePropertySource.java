@@ -20,7 +20,6 @@ package org.apache.tamaya.examples.simple;
 
 import org.apache.tamaya.spi.PropertySource;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
