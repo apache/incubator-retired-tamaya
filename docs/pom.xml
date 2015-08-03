@@ -92,7 +92,7 @@ under the License.
                             <sourceHighlighter>coderay</sourceHighlighter>
                             <backend>html</backend>
                             <embedAssets>true</embedAssets>
-                            <imagesDir>${project.basedir}/images/icons</imagesDir>
+                            <!-- imagesDir>${project.basedir}/images/icons</imagesDir -->
                             <preserveDirectories>true</preserveDirectories>
                         </configuration>
                     </execution>

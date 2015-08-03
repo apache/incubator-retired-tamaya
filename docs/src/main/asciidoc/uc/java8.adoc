@@ -5,6 +5,7 @@ should provide extension points for different aspects, where additional code can
 In short: were possible functional interfaces should be modelled.
 
 Examples:
+
 * code that converts a configuration to another kind of configuration: +UnaryOperator<Configuration>+
 * code that creates any kind of result based on a configuration: +Function<Configuration,T>+
 * Adapters for type conversion are defined as +Function<String,T>+

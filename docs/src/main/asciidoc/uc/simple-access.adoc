@@ -5,7 +5,10 @@ mechanism, such as injection, but the SE mechanisms should work as well, so any 
 portable to EE as well.
 This can only be achieved by providing a static accessor, e.g.
 
+[source,java]
+------------------------------------------------------------
 Configuration config = Configuration.current();
+------------------------------------------------------------
 
 The call above should work exactly the same in EE. To enable this the static call must be delegated in the
 internals of the singleton, depending on the runtime. In EE the executing component can behave contextually,
@@ -14,5 +17,9 @@ or even be loaded within the CDI environment (at least for post loading, applica
 Additionally in EE it should also be possible to inject Configuration, which gives you the same results as the call
 above:
 
+[source,java]
+------------------------------------------------------------
 @Inject
 private Configuration cfg;
+------------------------------------------------------------
+

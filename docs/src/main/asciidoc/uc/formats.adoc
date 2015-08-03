@@ -1,6 +1,7 @@
 === Configuration Formats
 
 Users want to be able to use the format they prefer.
+
 * properties, xml-properties and ini-format should be supported by default
 * Other/custom formats should be easily addable by registering or providing the format on configuration evaluation (read).
 * When possible Tamaya should figure out which format to be used and how the InputStream should be correctly

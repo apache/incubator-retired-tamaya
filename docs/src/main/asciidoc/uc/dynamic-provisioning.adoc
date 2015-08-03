@@ -3,6 +3,7 @@
 In Cloud Computing, especially the PaaS and SaaS areas a typical use case would be that an application (or server)
 is deployed, configured and started dynamically. Typically things are controlled by some "active controller components",
 which are capable of
+
 * creating new nodes (using IaaS services)
 * deploying and starting the required runtime platform , e.g. as part of a PaaS solution.
 * deploying and starting the application modules.

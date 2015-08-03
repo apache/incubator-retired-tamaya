@@ -3,6 +3,7 @@
 Tamaya should support an adaptable +ServiceContext+ to resolve any kind of implememntation services, both API services as core
 framework services. The +ServiceContext+ should be dynamically replecable by configuring an alternate instance of
 using the Java *ServiceContet+.
+
 This decouples component usage from its load and management part and als greatly simplifies integration with
 new/alternate runtime environments.
 The service context is exptected to provide

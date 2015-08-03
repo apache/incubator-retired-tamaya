@@ -9,3 +9,4 @@ or register listeners to DynamicValue instances returned.
 Templates hereby can easily be managed, but provide a excellent mechanism to provide type-safe configuration
 to clients in a very transparent way. Details can be controlled by using the same annotations as for
 normal configuration injection.
+

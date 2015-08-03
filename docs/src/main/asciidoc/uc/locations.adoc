@@ -1,6 +1,7 @@
 === Configuration Locations
 
 Users want to be able to
+
 * read configuration from different locations.
 * By default classpath and file resources are
   supported. But similarly remote access using a JSON ReST call should be possible.
