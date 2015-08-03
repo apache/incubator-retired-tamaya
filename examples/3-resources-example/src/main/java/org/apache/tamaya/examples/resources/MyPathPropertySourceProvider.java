@@ -1,4 +1,4 @@
-package org.apache.tamaya.examples.resources;/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,6 +16,7 @@ package org.apache.tamaya.examples.resources;/*
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.tamaya.examples.resources;
 
 import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;

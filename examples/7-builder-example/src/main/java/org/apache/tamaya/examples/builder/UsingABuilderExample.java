@@ -19,6 +19,7 @@
 package org.apache.tamaya.examples.builder;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.builder.ConfigurationBuilder;
 import org.apache.tamaya.resource.ConfigResources;
 

@@ -31,6 +31,9 @@ import java.util.TreeMap;
  */
 public class ExampleMain {
 
+    private ExampleMain() {
+    }
+
     public static void main(String... args){
         System.out.println("*****************************************************");
         System.out.println("Simple Example (with a PropertySource and a Provider)");

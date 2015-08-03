@@ -20,6 +20,7 @@ package org.apache.tamaya.examples.injection;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.inject.ConfigurationInjection;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import java.util.Map;
@@ -30,19 +31,23 @@ import java.util.TreeMap;
  */
 public class ExampleMain {
 
+    private ExampleMain() {
+    }
+
     public static void main(String... args){
         System.out.println("****************************************************");
         System.out.println("Injection and TemplatesExample");
         System.out.println("****************************************************");
         System.out.println();
         Example example = new Example();
-        ConfigurationInjector.getInstance().configure(example);
+        ConfigurationInjector injector = ConfigurationInjection.getConfigurationInjector();
+        injector.configure(example);
         System.out.println("Injected:");
         System.out.println("---------");
         System.out.println(example);
         System.out.println("Template:");
         System.out.println("---------");
-        ExampleTemplate template = ConfigurationInjector.getInstance().createTemplate(ExampleTemplate.class);
+        ExampleTemplate template = injector.createTemplate(ExampleTemplate.class);
         System.out.println(template);
         System.out.println();
     }

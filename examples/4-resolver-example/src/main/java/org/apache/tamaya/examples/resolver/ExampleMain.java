@@ -29,6 +29,9 @@ import java.util.TreeMap;
  */
 public class ExampleMain {
 
+    private ExampleMain() {
+    }
+
     public static void main(String... args){
         System.out.println("****************************************************");
         System.out.println("Resolver Example");

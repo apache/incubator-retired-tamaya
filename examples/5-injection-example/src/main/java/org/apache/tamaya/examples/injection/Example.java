@@ -18,14 +18,14 @@
  */
 package org.apache.tamaya.examples.injection;
 
-import org.apache.tamaya.inject.ConfigRoot;
 import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.ConfiguredType;
 import org.apache.tamaya.inject.DefaultValue;
 
 /**
  * Simple example bean, mapped by default names mostly.
  */
-@ConfigRoot("example")
+@ConfiguredType(defaultSections = "example")
 public class Example {
 
     private String type;
