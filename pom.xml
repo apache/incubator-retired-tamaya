@@ -202,6 +202,7 @@ under the License.
         <module>java8</module>
         <module>modules</module>
         <module>docs</module>
+        <module>examples</module>
         <module>distribution</module>
     </modules>
 
