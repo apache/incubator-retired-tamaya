@@ -12,9 +12,7 @@
 :email: <anatole@apache.org>
 :source-highlighter: coderay
 :website: http://tamaya.incubator.apache.org/
-:iconsdir: {imagesdir}/icons
 :toc:
-:icons:
 :encoding: UTF-8
 :numbered:
 

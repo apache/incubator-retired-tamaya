@@ -12,10 +12,8 @@ Apache Tamaya -- High Level Design
 :email: <anatole@apache.org>
 :source-highlighter: coderay
 :website: http://tamaya.incubator.apache.org/
-:iconsdir: {imagesdir}/icons
 :toc:
 :toc-placement: manual
-:icons:
 :encoding: UTF-8
 :numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
@@ -101,7 +99,7 @@ functionality you want. E.g. modules are providing features such as
 All the mentioned artifacts are used to organize configuration in a higly flexible and extendable way. Hereby the
 +PropertySource+ is the key artifact. In general Tamaya organizes Configuration as follows:
 
-image::images/CoreDesign.png[]
+image::CoreDesign.png[]
 
 Key abstraction hereby is the +ConfigurationContext+, which basically
 

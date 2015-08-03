@@ -12,10 +12,8 @@ Apache Tamaya - Possible Tasks
 :email: <atsticks@gmail.com>
 :source-highlighter: coderay
 :website: http://tamaya.apache.org/
-:iconsdir: {imagesdir}/icons
 :toc:
 :toc-placement: manual
-:icons:
 :encoding: UTF-8
 :numbered:
 

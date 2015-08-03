@@ -13,7 +13,6 @@
 :website: http://tamaya.incubator.apache.org/
 :toc:
 :toc-placement: manual
-:icons:
 :encoding: UTF-8
 :numbered:
 // Licensed to the Apache Software Foundation (ASF) under one

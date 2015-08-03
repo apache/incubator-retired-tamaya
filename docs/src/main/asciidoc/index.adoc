@@ -12,10 +12,8 @@ Apache Tamaya -- Documentation
 :email: <anatole@apache.org>
 :source-highlighter: coderay
 :website: http://tamaya.incubator.apache.org/
-:iconsdir: {imagesdir}/icons
 :toc:
 :toc-placement: manual
-:icons:
 :encoding: UTF-8
 :numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
