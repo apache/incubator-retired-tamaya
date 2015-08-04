@@ -35,4 +35,18 @@ under the License.
     </description>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-java7-api</artifactId>
+            <version>0.1-incubating-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-java7-core</artifactId>
+            <version>0.1-incubating-SNAPSHOT</version>
+            <scope>Test</scope>
+        </dependency>
+    </dependencies>
+
 </project>
