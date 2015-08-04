@@ -37,23 +37,43 @@ toc::[]
 == Tamaya Examples
 
 === Minimal
-tbc
+
+This example shows the basic functionality that is available when Tamaya is used without any further extensions.
+It shows how configuration can be added to the classpath and how it can be accessed.
 
 === Simple PropertySource
-tbc
+
+This example shows how to write and register an additional +PropertySource+ and +PropertySourceProvider+, which is
+the SPI to add your own configuration data and locations. For a more advanced example you may also have a look at
+the provided default metamodels, e.g. the simple metamodel (currently in the experimental part and not shipped with
+the current release).
 
 === Resources
-tbc
+
+This example shows how resources can be located using ANT-styled paths and this feature can help you to implement
++PropertySourceProvider+ instances that provide configuration for a set of files/folders at a certain (searchable)
+location, as provided by the resource extension_.
 
 === Resolver
-tbc
+
+The resolver example defines a configuration file that illustrates the usage of placeholders that are resolved on
+configuration access, as provided by the _resolver extension_.
 
 === Injection
-tbc
+
+The injection sample shows how to inject configuration into a created object instance, or how to instantiate a proxied
+configuration template, which provides a type-safe configuration access mechanism. This functionality is provided
+by the _injection extension_. Hereby neither JSR 330 nor 299 are used, so it is pure and minimal SE based
+implementation.
 
 === FileObserver
-tbc
+
+This example shows how the +event extension+ can be used to automatically adapt the current configuration when
+the underlying configuration data is changing, e.g. when new configuration is added to a file folder, or removed or
+adapted.
 
 === Builder
-tbc
+
+This example shows how to build a +Configuration+ using a simple pure SE builder API as provided by the
+_builder extension_.
 
