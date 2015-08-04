@@ -24,12 +24,11 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-sandbox</artifactId>
-        <version>0.1-incubating-SNAPSHOT-SNAPSHOT</version>
+        <version>0.1-incubating-SNAPSHOT</version>
     </parent>
 
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.tamaya.ext</groupId>
     <artifactId>tamaya-integrations</artifactId>
 
     <modules>

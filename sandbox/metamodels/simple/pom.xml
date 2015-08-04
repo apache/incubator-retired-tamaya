@@ -23,7 +23,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext.metamodels</groupId>
         <artifactId>tamaya-metamodels</artifactId>
-        <version>0.1-incubating-SNAPSHOT-SNAPSHOT</version>
+        <version>0.1-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-metamodels-simple</artifactId>
