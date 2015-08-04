@@ -21,7 +21,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-examples</artifactId>
-        <version>0.1-incubating</version>
+        <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-example-simple-propertysource</artifactId>
@@ -34,7 +34,7 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
-            <version>0.1-incubating</version>
+            <version>0.2-incubating-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
