@@ -26,6 +26,7 @@ import org.apache.tamaya.inject.DefaultValue;
  * Simple example bean, mapped by default names mostly.
  */
 @ConfiguredType(defaultSections = "example")
+@SuppressWarnings("all")
 public class Example {
 
     private String type;

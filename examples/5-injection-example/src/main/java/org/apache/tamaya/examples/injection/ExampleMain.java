@@ -18,13 +18,9 @@
  */
 package org.apache.tamaya.examples.injection;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Example illustrating the functionality of injecting configuration and defining configuration templates.

@@ -29,7 +29,8 @@ tbd (adapt to others...)
 ####################################################################################
 # Metamodel information
 ####################################################################################
-__meta-model: {
+model: {
+  class          :  "Metamodel",
   name           :  'testmodel',
   provider       :  'ConfigModel Extension',
   version        :  '1.0',

@@ -19,7 +19,6 @@
 package org.apache.tamaya.examples.builder;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.builder.ConfigurationBuilder;
 import org.apache.tamaya.resource.ConfigResources;
 
@@ -29,6 +28,9 @@ import org.apache.tamaya.resource.ConfigResources;
  */
 public class UsingABuilderExample {
 
+    private UsingABuilderExample() {
+    }
+
     public static void main(String... args) {
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -37,6 +39,7 @@ public class UsingABuilderExample {
                 .enableProvidedPropertyConverters()
                 .enabledProvidedPropertyFilters()
                 .build();
+        System.out.println(config);
     }
 
 }

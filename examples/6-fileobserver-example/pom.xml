@@ -36,7 +36,7 @@ under the License.
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
+            <artifactId>tamaya-java7-core</artifactId>
             <version>0.1-incubating-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -54,6 +54,7 @@ under the License.
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+            <scope>Test</scope>
         </dependency>
     </dependencies>
 

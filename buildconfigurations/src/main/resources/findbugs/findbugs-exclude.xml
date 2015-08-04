@@ -69,6 +69,11 @@ under the License.
         <Class name="org.apache.tamaya.core.internal.converters.BooleanConverter"/>
     </Match>
 
+    <!-- False positive: example class used for config demo. -->
+    <Match>
+        <Class name="org.apache.tamaya.examples.injection.Example"/>
+    </Match>
+
     <!--
      * findBugs does not detect usage via method references
      * should be removed after see TODO ProgrammaticConfigurationContext:131

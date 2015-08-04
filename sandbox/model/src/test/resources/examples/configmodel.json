@@ -28,7 +28,8 @@
 // Metamodel information
 //##################################################################################
 {
-  "model:Metamodel": {
+  "model": {
+    "class": "Metamodel",
     "name": "testmodel",
     "provider": "ConfigModel Extension",
     "version": "1.0",
@@ -38,14 +39,16 @@
     "comments": "Late afternoon is best. Backup contact is Nancy."
   },
   // reusable parameter definition
-  "MyNumber:Parameter": {
+  "MyNumber": {
+    "class": "Parameter",
     "type": "Integer",
     "description": "an (reusable) number type parameter (optional)"
   },
   //##################################################################################
   // Description of Configuration Sections (minimal, can be extended by other modules).
   //##################################################################################
-  "a:Section": {
+  "a": {
+    "class": "Section",
     // required, default is parameter!
     "params2": {
       "required": true,
@@ -63,7 +66,8 @@
       "mappedto": "a.paramInt"
     }
   },
-  "a.b.c:Section": {
+  "a.b.c": {
+    "class": "Section",
     "description": "Just a test section."
     // a subsection, directly configured as child element.
     "aRequiredSection": {
@@ -73,7 +77,8 @@
     }
   },
   // a subsection, configured in its own section.
-  "a.b.c.aRequiredSection.subsection:Section": {
+  "a.b.c.aRequiredSection.subsection": {
+    "class": "Section",
     "param0": {
       "type": "String",
       "description": "a minmally documented String parameter"
@@ -91,17 +96,19 @@
       "description": "an optional parameter (default)"
     }
   },
-  "a.b.c.aRequiredSection.nonempty-subsection:Section": {
+  "a.b.c.aRequiredSection.nonempty-subsection": {
+    "class": "Section",
     "required": true
   },
-  "a.b.c.aRequiredSection.optional-subsection:Section": {
+  "a.b.c.aRequiredSection.optional-subsection": {
+    "class": "Section"
   },
-  "a.b.c.aRequiredSection.aValidatedSection:Section": {
+  "a.b.c.aRequiredSection.aValidatedSection": {
+    "class": "Section",
     "description": "A validated section.",
-    "validations": [
+    "validations":
       "org.apache.tamaya.model.validation.MaxItemValidator?max=3"
-      }
     }
-    }
+}
 
 
