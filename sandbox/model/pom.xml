@@ -23,7 +23,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-sandbox</artifactId>
-        <version>0.1-incubating-SNAPSHOT</version>
+        <version>0.1-incubating-SNAPSHOT-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -39,12 +39,12 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-java7-api</artifactId>
-            <version>0.1-incubating-SNAPSHOT</version>
+            <version>0.1-incubating-SNAPSHOT-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-java7-core</artifactId>
-            <version>0.1-incubating-SNAPSHOT</version>
+            <version>0.1-incubating-SNAPSHOT-SNAPSHOT</version>
             <scope>Test</scope>
         </dependency>
     </dependencies>
