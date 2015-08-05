@@ -41,8 +41,79 @@ toc::[]
 <<<
 :numbered!:
 <<<
-[[Core]]
+[[BuilderCore]]
 == Tamaya Builder (Extension Module)
 === Overview
 
-TBW
+The Tamaya builder module provides a generic (one time) builder for creating +Configuration+ instances,
+e.g. as follows:
+
+[source,java]
+---------------------------------------------------------------
+ConfigurationBuilder builder = new ConfigurationBuilder();
+// do something
+Configuration config = builder.build();
+---------------------------------------------------------------
+
+Basically the builder allows to create configuration instances completely independent of the current configuration
+setup. This gives you full control on the +Configuration+ setup.
+
+=== Compatibility
+
+The module is based on Java 8, so it will not run on Java 7. This might be not that bad, since the
++ConfigurationProvider+ as defined by the API, provides a builder instance for +ConfigurationContext+
+in a similar way. A +Configuration+ can also be created by passing an instance of a +ConfigurationContext+:
+
+
+=== Installation
+
+To benefit from configuration builder support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-builder</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+=== Supported Functionality
+
+The builder allows you to add +PropertySource+ instances:
+
+[source,java]
+----------------------------------------------------------------
+ConfigurationBuilder builder = new ConfigurationBuilder();
+builder.addPropertySources(sourceOne).addPropertySources(sourceTwo);
+Configuration config = builder.build();
+----------------------------------------------------------------
+
+Similarly you can add filters:
+
+[source,java]
+----------------------------------------------------------------
+builder.addPropertyFilters(new MyConfigFilter());
+----------------------------------------------------------------
+
+...or +PropertySourceProvider+ instances:
+
+[source,java]
+----------------------------------------------------------------
+builder.addPropertySourceProvider(new MyPropertySourceProvider());
+----------------------------------------------------------------
+
+Also the builder module allows to include/exclude any filters and property source already known to the current
++ConfigurationContext+:
+
+[source,java]
+----------------------------------------------------------------
+builder.disableProvidedPropertyConverters();
+builder.enableProvidedPropertyConverters();
+
+builder.disableProvidedPropertyFilters();
+builder.enableProvidedPropertyFilters();
+
+builder.disableProvidedPropertySources();
+builder.enableProvidedPropertySources();
+----------------------------------------------------------------
