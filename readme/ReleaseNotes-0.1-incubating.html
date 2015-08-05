@@ -1,0 +1,167 @@
+<html>
+<head>
+    <title>Apache Tamaya 0.1-incubating Release Notes</title>
+</head>
+<body>
+<h1>Apache Tamaya 0.1-incubating Release Notes</h1>
+
+<h2>Release Summary (6th August 2015)</h2>
+
+<p>This is the first release of Apache Tamaya. It contains basically a rather complete base set of functionality for
+    use of Apache Tamaya in a Java SE context. Further support for Java EE is planned to be added within the next
+    releases.
+    Summarizing this release provides:
+<ul>
+    <li>A complete SE based API for Java 7 and Java 8</li>
+    <li>An implementation of the API for Java 7 and Java 8.</li>
+    <li>Numerous extension modules that mainly depend on the Java 7 API only. So they are usable in both usage
+        environments.
+    </li>
+    <li>A set of documentation.</li>
+    <li>A couple of simple examples for usage and extension.</li>
+</ul>
+Feel free to give any kind of feedback to our team. Visit our project site <a
+        href="http://tamaya.incubator.apache.org">http://tamaya.incubator.apache.org</a>
+for further details.
+</p>
+<h2> Sub-task
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-12'>TAMAYA-12</a>] - Integrate Tamaya in Apache&#39;s
+        Sonarcube instance
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-13'>TAMAYA-13</a>] - Integrate FindBugs in Tamaya&#39;s
+        build chain
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-17'>TAMAYA-17</a>] - Integrate RAT in Tamaya&#39;s
+        build chain
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-78'>TAMAYA-78</a>] - Adapt the jQAssistant rules for
+        services and service providers
+    </li>
+</ul>
+
+<h2> Bug
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-8'>TAMAYA-8</a>] - Add missing JavaDoc.
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-14'>TAMAYA-14</a>] - Resource resolution does not
+        support ant path style
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-15'>TAMAYA-15</a>] - Move PropertyProviders into API
+        part and add SPI
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-16'>TAMAYA-16</a>] - Change AggregationPolicy to
+        functional interface
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-26'>TAMAYA-26</a>] - PropertySourceBuilder creation
+        methods should be named &#39;of&#39;
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-27'>TAMAYA-27</a>] - Problem when the OptionalBoolean
+        is used
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-53'>TAMAYA-53</a>] - Build fails because of issues
+        found by FindBugs
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-55'>TAMAYA-55</a>] - Parent POM should not assume
+        Java 8
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-57'>TAMAYA-57</a>] - Store URLs in a Collection may
+        result in performance issue
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-64'>TAMAYA-64</a>] - JSON format module introduces
+        its own InputResource model
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-68'>TAMAYA-68</a>] - Add ConfigurationContextBuilder
+        to being able to apply context changes.
+    </li>
+</ul>
+
+<h2> Improvement
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-1'>TAMAYA-1</a>] - Initial code dump
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-5'>TAMAYA-5</a>] - Remove hard dependency on weld.
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-6'>TAMAYA-6</a>] - Update to Apache Parent POM
+        version 16
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-7'>TAMAYA-7</a>] - Update Asciidoctor to version
+        1.5.0
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-10'>TAMAYA-10</a>] - Enable Asciidoctor&#39;s
+        diagramm support for all documents
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-25'>TAMAYA-25</a>] - Simplify Component Loading
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-30'>TAMAYA-30</a>] - Introduce Codecs Feature
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-32'>TAMAYA-32</a>] - Reorganized and removed unused
+        imports
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-33'>TAMAYA-33</a>] - remove unused methods and fields
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-34'>TAMAYA-34</a>] - Enabling overriding
+        configurations
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-36'>TAMAYA-36</a>] - Enable direct mapped properties
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-37'>TAMAYA-37</a>] - Add PropertyFilter to
+        ConfigurationContext
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-61'>TAMAYA-61</a>] - Add SPI interface for adapting
+        value combination policy
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-62'>TAMAYA-62</a>] - Unifiy Access to COnfiguration
+        by ConfigurationProvider
+    </li>
+</ul>
+
+<h2> New Feature
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-31'>TAMAYA-31</a>] - Reduce number of annotations
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-39'>TAMAYA-39</a>] - Support JSON as configuration
+        format
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-74'>TAMAYA-74</a>] - Support for type narrowing
+    </li>
+</ul>
+
+<h2> Task
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-19'>TAMAYA-19</a>] - Cleanup implementation code
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-21'>TAMAYA-21</a>] - Setup initial Homepage.
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-29'>TAMAYA-29</a>] - Remove Stage from the
+        Environment model
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-43'>TAMAYA-43</a>] - Enable path based file loading
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-44'>TAMAYA-44</a>] - Provide abstraction for
+        ConfigurationFormat compatible with current design
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-77'>TAMAYA-77</a>] - Clearify the usage of the
+        ConfigurationContextBuilder
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-80'>TAMAYA-80</a>] - Create a release archive for
+        each release of Tamaya
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-81'>TAMAYA-81</a>] - Finish Examples Documentation
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-82'>TAMAYA-82</a>] - Document builder module
+        documentation
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-83'>TAMAYA-83</a>] - Finish formats module docs
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-85'>TAMAYA-85</a>] - Fix asciidoc doc for injection
+        module.
+    </li>
+</ul>
+</body>
+</html>
