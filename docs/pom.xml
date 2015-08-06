@@ -57,7 +57,7 @@ under the License.
         <url>
             https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
         </url>
-        <tag>tamaya-all-0.1-incubating</tag>
+        <tag>0.1-incubating</tag>
     </scm>
 
     <build>
