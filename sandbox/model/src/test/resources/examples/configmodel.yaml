@@ -32,7 +32,7 @@ tbd (adapt to others...)
 model: {
   class          :  "Metamodel",
   name           :  'testmodel',
-  provider       :  'ConfigModel Extension',
+  provider       :  'ValidationProviderSpi Extension',
   version        :  '1.0',
   release-date   :  2001-01-23,
   author         :  'Anatole Tresch',
@@ -85,7 +85,7 @@ a.b.c.aRequiredSection.optional-subsection: {}
 
 ---
 a.b.c.aRequiredSection.aValidatedSection: {
-  __desc: 'A validated section.',
+  __desc: 'A validation section.',
   __validations: 'org.apache.tamaya.model.validation.MaxItemValidator?max=3'
 }
 

@@ -94,6 +94,6 @@ under the License.
     <a.b.c.aRequiredSection.optional-subsection class="Section"/>
     <a.b.c.aRequiredSection.aValidatedSection>
         <validations>org.apache.tamaya.model.validation.MaxItemValidator?max=3"</validations>
-        <description>A validated section.</description>
+        <description>A validation section.</description>
     </a.b.c.aRequiredSection.aValidatedSection>
 </model>

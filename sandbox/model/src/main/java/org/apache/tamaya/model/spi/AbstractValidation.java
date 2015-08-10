@@ -16,22 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.model;
+package org.apache.tamaya.model.spi;
 
-import java.util.Collection;
+import org.apache.tamaya.model.Validation;
+
+import java.util.Objects;
 
 /**
- * Model of a configuration state. A model can be a full model, or a partial model, validating only
- * a configuration subset. This allows better user feedback because big configurations can be grouped
- * and validated by multiple (partial) models.
+ * Default configuration Model for a configuration area.
  */
-public interface ConfigModel extends Validated {
+public abstract class AbstractValidation implements Validation {
 
-    /**
-     * Get the sections defined.
-     *
-     * @return the sections defined, never null.
-     */
-    Collection<ConfigSection> getSections();
+    private String name;
+    private String description;
+
+    protected AbstractValidation(String name, String description) {
+        this.name = Objects.requireNonNull(name);
+        this.description = description;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
 }

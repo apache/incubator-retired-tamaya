@@ -18,42 +18,174 @@
  */
 package org.apache.tamaya.model;
 
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.model.spi.AbstractValidation;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+
 /**
- * Enum type describing the different validation results supported.
+ * Models a partial configuration validation result.
  */
-public enum ValidationResult {
+public final class ValidationResult {
     /**
-     * The validated item is valid
+     * the config section.
      */
-    VALID,
+    private Validation validation;
     /**
-     * The validated item is deprecated.
+     * The validation result.
      */
-    DEPRECATED,
+    private ValidationState result;
     /**
-     * The validated item is correct, but the value is worth a warning.
+     * The validation message.
      */
-    WARNING,
-    /**
-     * The given section or parameter is not a defined/validated item. It may be still valid, but typically,
-     * when validation is fully implemented, such a parametr or section should be removed.
-     */
-    UNDEFIEND,
-    /**
-     * A required parameter or section is missing.
-     */
-    MISSING,
-    /**
-     * The validated item has an invalid value.
-     */
-    ERROR;
+    private String message;
 
     /**
-     * Method to quickly evaluate if the current state is an error state.
+     * Creates a new ValidationResult.
      *
-     * @return true, if the state is not ERROR or MISSING.
+     * @param validation the validation item, not null.
      */
-    boolean isError() {
-        return this.ordinal() == MISSING.ordinal() || this.ordinal() == ERROR.ordinal();
+    public static ValidationResult ofValid(Validation validation) {
+        return new ValidationResult(validation, ValidationState.VALID, null);
+    }
+
+    /**
+     * Creates a new ValidationResult.
+     *
+     * @param validation the validation item, not null.
+     */
+    public static ValidationResult ofMissing(Validation validation) {
+        return new ValidationResult(validation, ValidationState.MISSING, null);
+    }
+
+
+    /**
+     * Creates a new ValidationResult.
+     *
+     * @param validation the validation item, not null.
+     *                   @param message Additional message to be shown (optional).
+     */
+    public static ValidationResult ofMissing(Validation validation, String message) {
+        return new ValidationResult(validation, ValidationState.MISSING, message);
+    }
+
+    /**
+     * Creates a new ValidationResult.
+     *
+     * @param validation the validation item, not null.
+     */
+    public static ValidationResult ofError(Validation validation, String error) {
+        return new ValidationResult(validation, ValidationState.ERROR, error);
+    }
+
+    /**
+     * Creates a new ValidationResult.
+     *
+     * @param validation the validation item, not null.
+     */
+    public static ValidationResult ofWarning(Validation validation, String warning) {
+        return new ValidationResult(validation, ValidationState.WARNING, warning);
+    }
+
+    /**
+     * Creates a new ValidationResult.
+     *
+     * @param validation the validation item, not null.
+     */
+    public static ValidationResult ofDeprecated(Validation validation, String alternateUsage) {
+        return new ValidationResult(validation, ValidationState.DEPRECATED, alternateUsage != null ? "Use instead: " + alternateUsage : null);
+    }
+
+    /**
+     * Creates a new ValidationResult.
+     *
+     * @param validation the validation item, not null.
+     */
+    public static ValidationResult ofDeprecated(Validation validation) {
+        return new ValidationResult(validation, ValidationState.DEPRECATED, null);
+    }
+
+    /**
+     * Creates a new ValidationResult.
+     *
+     * @param key the name/key
+     * @return a corresponding validation item
+     */
+    public static ValidationResult ofUndefined(final String key) {
+        return new ValidationResult(new AbstractValidation(key, "Undefined key: " + key) {
+
+            @Override
+            public String getType() {
+                return "<undefined>";
+            }
+
+            @Override
+            public Collection<ValidationResult> validate(Configuration config) {
+                return Collections.emptySet();
+            }
+        }, ValidationState.UNDEFINED, null);
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param validation the validation item, not null.
+     * @param result     the validation result, not null.
+     * @param message    the detail message.
+     */
+    public static ValidationResult of(Validation validation, ValidationState result, String message) {
+        return new ValidationResult(validation, result, message);
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param validation the validation item, not null.
+     * @param result     the validation result, not null.
+     * @param message    the detail message.
+     */
+    private ValidationResult(Validation validation, ValidationState result, String message) {
+        this.message = message;
+        this.validation = Objects.requireNonNull(validation);
+        this.result = Objects.requireNonNull(result);
+    }
+
+    /**
+     * Get the validation section.
+     *
+     * @return the section, never null.
+     */
+    public Validation getValidation() {
+        return validation;
+    }
+
+    /**
+     * Get the validation result.
+     *
+     * @return the result, never null.
+     */
+    public ValidationState getResult() {
+        return result;
+    }
+
+    /**
+     * Get the detail message.
+     *
+     * @return the detail message, or null.
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        if (message != null) {
+            return result + ": " + validation.getName() + " (" + validation.getType() + ") -> " + message + '\n';
+        }
+        return result + ": " + validation.getName() + " (" + validation.getType() + ")";
     }
 }

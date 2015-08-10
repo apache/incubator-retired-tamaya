@@ -20,11 +20,14 @@ package org.apache.tamaya.model;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.model.spi.ValidationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Validator accessor to validate the current configuration.
@@ -38,12 +41,34 @@ public final class ConfigValidator {
     }
 
     /**
+     * Get the sections defined.
+     *
+     * @return the sections defined, never null.
+     */
+    public static Collection<Validation> getValidations() {
+        List<Validation> result = new ArrayList<>();
+        for (ValidationProviderSpi model : ServiceContextManager.getServiceContext().getServices(ValidationProviderSpi.class)) {
+            result.addAll(model.getValidations());
+        }
+        return result;
+    }
+
+    /**
      * Validates the current configuration.
      *
      * @return the validation results, never null.
      */
-    public static Collection<ConfigValidationResult> validate() {
-        return validate(ConfigurationProvider.getConfiguration());
+    public static Collection<ValidationResult> validate() {
+        return validate(false);
+    }
+
+    /**
+     * Validates the current configuration.
+     * @param showUndefined show any unknown parameters.
+     * @return the validation results, never null.
+     */
+    public static Collection<ValidationResult> validate(boolean showUndefined) {
+        return validate(ConfigurationProvider.getConfiguration(), showUndefined);
     }
 
     /**
@@ -52,10 +77,31 @@ public final class ConfigValidator {
      * @param config the configuration to be validated against, not null.
      * @return the validation results, never null.
      */
-    public static Collection<ConfigValidationResult> validate(Configuration config) {
-        List<ConfigValidationResult> result = new ArrayList<>();
-        for (ConfigModel model : ServiceContextManager.getServiceContext().getServices(ConfigModel.class)) {
-            result.addAll(model.validate(config));
+    public static Collection<ValidationResult> validate(Configuration config) {
+        return validate(config, false);
+    }
+
+    /**
+     * Validates the given configuration.
+     *
+     * @param config the configuration to be validated against, not null.
+     * @return the validation results, never null.
+     */
+    public static Collection<ValidationResult> validate(Configuration config, boolean showUndefined) {
+        List<ValidationResult> result = new ArrayList<>();
+        for (Validation defConf : getValidations()) {
+            result.addAll(defConf.validate(config));
+        }
+        if(showUndefined){
+            Map<String,String> map = new HashMap<>(config.getProperties());
+            for (Validation defConf : getValidations()) {
+                if("Parameter".equals(defConf.getType())){
+                    map.remove(defConf.getName());
+                }
+            }
+            for(Map.Entry<String,String> entry:map.entrySet()){
+                result.add(ValidationResult.ofUndefined(entry.getKey()));
+            }
         }
         return result;
     }

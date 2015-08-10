@@ -47,6 +47,10 @@ under the License.
             <version>0.1-incubating-SNAPSHOT</version>
             <scope>Test</scope>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

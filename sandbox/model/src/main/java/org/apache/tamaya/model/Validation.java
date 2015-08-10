@@ -25,32 +25,35 @@ import java.util.Collection;
 /**
  * Basis structure describing a validated item, by default a parameter or a section.
  */
-public interface Validated {
+public interface Validation {
+
+
     /**
-     * Get the item's type.
-     *
-     * @return the type, never null.
+     * Get the type of item that is validated by a validation.
+     * @return the validted type, never null.
      */
     String getType();
 
     /**
-     * Get the item's fully qualified name. This name is - in combination with the {@link getType()} - unique.
+     * Get the item's name, it should minimally describe the validation. Examples are:
+     * <pre>
+     *     Area: a.b.c
+     *     Params: a.b.c:paramName
+     *     Filter: a.b.c.FilterImplClass
+     *     Dependency: mydep
+     *     CombinationPolicy: a.b.c.MyCombinationPolicyClass
+     * </pre>
      */
     String getName();
 
     /**
-     * Get an optional description of the item, using the default locale.
+     * Get an description of the item, using the default locale. The description is basically optional
+     * though it is higly recommended to provide a description, so the validation issues is well
+     * resolvable.
      *
      * @return the description required, or null.
      */
     String getDescription();
-
-    /**
-     * Validates the item and all its children against the current configuration.
-     *
-     * @return the validation results, never null.
-     */
-    Collection<ConfigValidationResult> validate();
 
     /**
      * Validates the item and all its children against the given configuration.
@@ -58,6 +61,6 @@ public interface Validated {
      * @param config the configuration to be validated against, not null.
      * @return the validation results, never null.
      */
-    Collection<ConfigValidationResult> validate(Configuration config);
+    Collection<ValidationResult> validate(Configuration config);
 
 }

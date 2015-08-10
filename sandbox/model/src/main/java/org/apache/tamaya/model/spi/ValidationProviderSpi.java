@@ -16,25 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.model;
+package org.apache.tamaya.model.spi;
 
+import org.apache.tamaya.model.Validation;
+
+import java.util.Collection;
 
 /**
- * Interface describing a configuration parameter.
+ * Model of a configuration state. A model can be a full model, or a partial model, validating only
+ * a configuration subset. This allows better user feedback because big configurations can be grouped
+ * and validated by multiple (partial) models.
  */
-public interface ConfigParameter extends Validated {
+public interface ValidationProviderSpi {
 
     /**
-     * Flag if the item is required.
+     * Get the validation defined.
      *
-     * @return true, if the item is required.
+     * @return the sections defined, never null.
      */
-    boolean isRequired();
+    Collection<Validation> getValidations();
 
-    /**
-     * Get the containing parent section.
-     *
-     * @return the parent secion, or null, if there is no parent.
-     */
-    ConfigSection getParent();
 }
