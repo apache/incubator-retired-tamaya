@@ -1,0 +1,132 @@
+= Apache Tamaya -- Extension: Model Documentation and Validation
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.model
+:title: Apache Tamaya Extension: Model Documentation and Validation
+:revnumber: 0.1
+:revremark: Incubator
+:revdate: August 2015
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[ExtModel]]
+== Tamaya Model Documentation and Validation (Extension Module)
+=== Overview
+
+The Tamaya model module provides support for documenting configuration and validating configuration read and processed
+against this model. Documentation and validation can be provided in different ways:
+
+* as separate meta-model documents
+* by providers that check classes/packages for configuration annotations (planned)
+
+
+=== Compatibility
+
+The module is based on Java 7, so it will not run on Java 7 and beyond.
+
+
+=== Installation
+
+To benefit from configuration builder support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-model</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+
+=== Describing Meta-Configuration
+
+Basically configuration is modelled using key, valuje-pairs of Strings. Looking at a keys
++a.b.c.param1+ and +a.b.c.param2+ the following concepts can be used to defined/describe
+configuration:
+
+. the _configuration section:_ In our case this equals to +a.b.c+, which itself also includes the
+ tranitive entries +a.b+ and +a+.
+. the _configuration parameter:_ Basically parameters are adressed using their fully qualified names,
+ which equals to the containing section name and the relative parameter name, separated by the dor separator.
+ In the above example +a.b.c.param1+ and +a.b.c.param2+ are the fully qualified parameter names.
+
+Now with only these 2 concepts a simple meta-model can be defined as
+
+* a meta-model's name, used just for grouping different meta-models and entries to better separate
+  descriptions, e.g. in a management console or generated configuration documentation site.
+* a set of sections.
+* a set of parameters.
+* Both, sections as well as parameters,
+  ** are identified by their _fully qualified names_, where '.' is used as
+     a separator character.
+  ** may be required, or optional
+  ** may have an optional description
+  ** may have additional custom validations configured.
+* Parameters additionally have
+  ** a _type_, described by the fully qualified class name, into which any configured (String) value must be
+     convertable into. If no type is configured +java.lang.String+ should be assumed as default.
+  ** an optional regular expression that can be used to validate the +String+ values returned from a
+     configuration.
+
+Given these concepts a configuration can be fully described. Entries that are not contained in one of the given
+sections (or its children), or parameters not described or marked as valid (e.g. for dynamic validations of
+a section), are called _undefined_. Undefined parameters should be grouped with its parent section. Each section, as
+well as all parent sections, including transitive) of any parametet read, should similarly marked as undefined, if and
+only if
+
+. the section itself is (directly) undefined
+. the section is not a _super section_ of a defined section.
+
+As en example the section definition of +a.b.c+ also implicitly includes the sections +a.b+ and +a+ to be defined
+sections, despite the fact that section properties, such as description and custom validations are not inherited to
+its parent, or child section.
+
+
+=== Providing Meta-Configuration using .properties files
+
+tbd
+
+=== Providing Meta-Configuration using .json files
+
+tbd
+
+=== Providing Meta-Configuration using .yaml files
+
+tbd
+
+=== Providing Meta-Configuration using .xml files
+
+tbd

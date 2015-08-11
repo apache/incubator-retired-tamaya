@@ -61,7 +61,7 @@ NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 
 |+org.apache.tamaya.ext:tamaya-events+        |Provides support for publishing configuration changes  |link:mod_events.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-formats+       |Provides an abstract model for configuration formats   |link:mod_formats.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-injection+     |Provides configuration injection services and congiruation template support.  |link:mod_injection.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:json.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:modjson.html[Documentation]
 |=======
 
 
@@ -74,4 +74,5 @@ very carefully and especially give us feedback, so we can improve them before pr
 |=======
 |_Artifact_                                 |_Description_                                |_Links_
 |+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.   | link:mod_jodatime.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-model+         |Provides support documenting ang validating configuration during runtime.  |link:mod_model.html[Documentation]
 |=======
