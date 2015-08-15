@@ -18,19 +18,19 @@
  */
 package org.apache.tamaya.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
+
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
 
 /**
  * Implementation of the {@link org.apache.tamaya.format.ConfigurationFormat}
@@ -54,16 +54,15 @@ public class JSONFormat implements ConfigurationFormat {
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(inputStream);
+            JsonObject root = Json.createReader(inputStream).readObject();
             HashMap<String, String> values = new HashMap<>();
-            JSONVisitor visitor = new JSONVisitor((ObjectNode) root, values);
+            JSONVisitor visitor = new JSONVisitor(root, values);
             visitor.run();
 
             return ConfigurationDataBuilder.of(resource, this).addProperties(values)
                                            .build();
-        } catch (IOException e) {
-            throw new ConfigException("Failed to read data from " + resource);
+        } catch (JsonException e) {
+            throw new ConfigException("Failed to read data from " + resource, e);
         }
     }
 }
