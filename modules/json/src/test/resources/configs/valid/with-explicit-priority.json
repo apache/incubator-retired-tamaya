@@ -1,4 +1,7 @@
 {
+  /*
+     some useful comment here
+  */
   "tamaya.ordinal" : 16784,
-  "a" : "A"
+  "a" : "A" // another comment
 }

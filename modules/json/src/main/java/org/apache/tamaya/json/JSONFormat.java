@@ -31,6 +31,7 @@ import java.util.Objects;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonReaderFactory;
 
 /**
  * Implementation of the {@link org.apache.tamaya.format.ConfigurationFormat}
@@ -39,6 +40,11 @@ import javax.json.JsonObject;
  * @see <a href="http://www.json.org">JSON format specification</a>
  */
 public class JSONFormat implements ConfigurationFormat {
+
+    private JsonReaderFactory readerFactory = Json.createReaderFactory(
+            new HashMap<String, Object>() {{
+               put("org.apache.johnzon.supports-comments", true);
+            }});
 
     @Override
     public String getName() {
@@ -54,7 +60,7 @@ public class JSONFormat implements ConfigurationFormat {
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
 
         try {
-            JsonObject root = Json.createReader(inputStream).readObject();
+            JsonObject root = readerFactory.createReader(inputStream).readObject();
             HashMap<String, String> values = new HashMap<>();
             JSONVisitor visitor = new JSONVisitor(root, values);
             visitor.run();

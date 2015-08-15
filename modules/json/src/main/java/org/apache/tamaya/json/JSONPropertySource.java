@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReaderFactory;
 import javax.json.JsonStructure;
 
 import static java.lang.String.format;
@@ -46,6 +47,11 @@ public class JSONPropertySource implements PropertySource {
     private Map<String, String> values;
     /** The evaluated ordinal. */
     private int ordinal;
+
+    private JsonReaderFactory readerFactory = Json.createReaderFactory(
+            new HashMap<String, Object>() {{
+               put("org.apache.johnzon.supports-comments", true);
+            }});
 
     /**
      * Constructor, hereby using 0 as the default ordinal.
@@ -104,7 +110,7 @@ public class JSONPropertySource implements PropertySource {
      */
     protected Map<String, String> readConfig(URL urlResource) {
         try (InputStream is = urlResource.openStream()) {
-            JsonStructure root = Json.createReader(is).read();
+            JsonStructure root = readerFactory.createReader(is).read();
 
             // Test added. H. Saly, 15. Aug. 2015
             if (!(root instanceof JsonObject)) {
