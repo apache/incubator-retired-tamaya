@@ -18,9 +18,11 @@
  */
 package org.apache.tamaya.jodatime;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 
@@ -43,5 +45,22 @@ public class FullStackIT {
         assertThat(dateTimeString, equalTo("2010-08-08T14:00:15.5+10:00"));
         assertThat(dateTimeValue, notNullValue());
         assertThat(dateTimeValue, equalTo(dateTime().parseDateTime("2010-08-08T14:00:15.5+10:00")));
+    }
+
+    @Test
+    public void retrieveDateTimeZoneValueFromConfiguration() {
+        Configuration configuration = ConfigurationProvider.getConfiguration();
+
+        String zoneAAsString = configuration.get("dateTimeZoneValueA");
+        DateTimeZone zoneA = configuration.get("dateTimeZoneValueA", DateTimeZone.class);
+
+        assertThat(zoneAAsString, equalTo("UTC"));
+        assertThat(zoneA, equalTo(DateTimeZone.forID("UTC")));
+
+        String zoneBAsString = configuration.get("dateTimeZoneValueB");
+        DateTimeZone zoneB = configuration.get("dateTimeZoneValueB", DateTimeZone.class);
+
+        assertThat(zoneBAsString, equalTo("+01:00"));
+        assertThat(zoneB, equalTo(DateTimeZone.forOffsetHours(1)));
     }
 }
