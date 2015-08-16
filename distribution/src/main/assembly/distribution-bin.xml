@@ -222,6 +222,20 @@ under the License.
             <outputDirectory>/</outputDirectory>
             <directory>${project.build.directory}/generated-documentation/apache-tamaya-docs-${project.version}</directory>
         </fileSet>
+        <fileSet>
+            <directory>${project.parent.basedir}</directory>
+
+            <excludes>
+                <exclude>**/target/**</exclude>
+            </excludes>
+
+            <includes>
+                <include>DISCLAIMER</include>
+                <include>NOTICE</include>
+                <include>LICENSE</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
     </fileSets>
 
 
