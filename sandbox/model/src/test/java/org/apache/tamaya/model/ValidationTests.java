@@ -19,6 +19,6 @@ public class ValidationTests {
 
     @Test
     public void testAllValidationsInclUndefined(){
-        System.err.println("Inclusing UNDEFINED: \n" + ConfigValidator.validate(true));
+        System.err.println("Including UNDEFINED: \n" + ConfigValidator.validate(true));
     }
 }

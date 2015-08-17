@@ -1,5 +1,6 @@
 package org.apache.tamaya.model.internal;
 
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.model.Validation;
 import org.apache.tamaya.model.spi.AreaValidation;
 import org.apache.tamaya.model.spi.ConfigValidationsReader;
@@ -97,11 +98,20 @@ public class ConfiguredPropertiesValidationProviderSpi implements ValidationProv
 
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(ConfiguredPropertiesValidationProviderSpi.class.getName());
+    /** parameter to disable this provider. By default the provider is active. */
+    private static final String MODEL_EANABLED_PARAM = "org.apache.tamaya.model.default.enabled";
     /** The validations read. */
     private List<Validation> validations = new ArrayList<>();
 
     public ConfiguredPropertiesValidationProviderSpi() {
+        String enabledVal = ConfigurationProvider.getConfiguration().get(MODEL_EANABLED_PARAM);
+        boolean enabled = enabledVal==null? true: "true".equalsIgnoreCase(enabledVal);
+        if(!enabled){
+            LOG.info("Reading model data from META-INF/configmodel.properties has been disabled.");
+            return;
+        }
         try {
+            LOG.info("Reading model data from META-INF/configmodel.properties...");
             Enumeration<URL> configs = getClass().getClassLoader().getResources("META-INF/configmodel.properties");
             while (configs.hasMoreElements()) {
                 URL config = configs.nextElement();

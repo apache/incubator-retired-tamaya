@@ -50,8 +50,8 @@ public class ConfiguredInlineModelProviderSpi implements ValidationProviderSpi {
      */
     public ConfiguredInlineModelProviderSpi() {
         String enabledVal = ConfigurationProvider.getConfiguration().get(MODEL_EANABLED_PARAM);
-        boolean disabled = enabledVal==null? true: "false".equalsIgnoreCase(enabledVal);
-        if (!disabled) {
+        boolean enabled = enabledVal==null? true: "true".equalsIgnoreCase(enabledVal);
+        if (enabled) {
             LOG.info("Reading model configuration from config...");
             Map<String,String> config = ConfigurationProvider.getConfiguration().getProperties();
             validations.addAll(ConfigValidationsReader.loadValidations(config,
