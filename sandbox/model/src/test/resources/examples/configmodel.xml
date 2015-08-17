@@ -28,72 +28,70 @@ under the License.
 # Metamodel information
 #################################################################################-->
 
-<model class="Metamodel">
-    <name>testmodel</name>
-    <provider>ConfigModel Extension</provider>
-    <version>1.0</version>
-    <release-date>2001-01-23</release-date>
-    <author>Anatole Tresch</author>
-    <!-- model-format>alternate format reader type</model-format -->
-    <comments>Late afternoon is best.
-        Backup contact is Nancy.
-    </comments>
+<configuration>
+    <section name="{model}" __provider="ConfigModel Extension" version="1.0" __release-date="2001-01-23"
+            author="Anatole Tresch">
+        <!-- model-format>alternate format reader type</model-format -->
+        <__description>Late afternoon is best.
+            Backup contact is Nancy.
+        </__description>
 
-    <!--################################################################################
-    # Description of Configuration Sections (minimal, can be extended by other modules).
-    #################################################################################-->
-    <a class="Section">
-        <params class="Parameter">
-            <type>String</type>
-            <required>true</required>
-            <description>a required parameter</description>
-        </params>
-        <paramInt>
-            <ref>MyNumber</ref>
-            <required>true</required>
-            <description>an optional parameter (default)</description>
-        </paramInt>
-        <_number>
-            <type>Integer</type>
-            <deprecated>true</deprecated>
-            <mappedto>a.paramInt</mappedto>
-        </_number>
-        <b.c class="Section">
-            <description>Just a test section.</description>
-            <aRequiredSection class="Section">
-                <description>A section containing required parameters is called a required section.
-                    Sections can also explicitly be defined to be required, but without
-                    specifying the paramteres to be contained.
-                </description>
-            </aRequiredSection>
-        </b.c>
-    </a>
+        <!--################################################################################
+        # Description of Configuration Sections (minimal, can be extended by other modules).
+        #################################################################################-->
+        <section name="a">
+            <param name="params">
+                <type>String</type>
+                <required>true</required>
+                <description>a required parameter</description>
+            </param>
+            <param name="paramInt">
+                <ref>MyNumber</ref>
+                <required>true</required>
+                <description>an optional parameter (default)</description>
+            </param>
+            <param name="_number">
+                <type>Integer</type>
+                <deprecated>true</deprecated>
+                <mappedto>a.paramInt</mappedto>
+            </param>
+            <section name="b.c">
+                <description>Just a test section.</description>
+                <section name="aRequiredSection">
+                    <description>A section containing required parameters is called a required section.
+                        Sections can also explicitly be defined to be required, but without
+                        specifying the paramteres to be contained.
+                    </description>
+                </section>
+            </section>
+        </section>
 
-    <a.b.c.aRequiredSection.subsection class="Section">
-        <param name="param0" type="String">a minmally documented String parameter</param>
-        <!-- # A minmally defined String parameter -->
-        <param00>
-            <type>String</type>
-        </param00>
-        <param1>
-            <type>String</type>
+        <section name="a.b.c.aRequiredSection.subsection">
+            <param name="param0" type="String">a minmally documented String parameter</param>
+            <!-- # A minmally defined String parameter -->
+            <param name="param00">
+                <type>String</type>
+            </param>
+            <param name="param1">
+                <type>String</type>
+                <required>true</required>
+                <description>a required parameter</description>description>
+            </param>
+            <param name="intParam">
+                <type>Integer</type>
+                <description>an optional parameter (default)</description>
+            </param>
+            <section name="b.c">
+                <description>Just a test section.</description>
+            </section>
+        </section>
+        <section name="a.b.c.aRequiredSection.nonempty-subsection">
             <required>true</required>
-            <description>a required parameter</description>description>
-        </param1>
-        <intParam>
-            <type>Integer</type>
-            <description>an optional parameter (default)</description>
-        </intParam>
-        <b.c class="Section">
-            <description>Just a test section.</description>
-        </b.c>
-    </a.b.c.aRequiredSection.subsection>
-    <a.b.c.aRequiredSection.nonempty-subsection>
-        <required>true</required>
-    </a.b.c.aRequiredSection.nonempty-subsection>
-    <a.b.c.aRequiredSection.optional-subsection class="Section"/>
-    <a.b.c.aRequiredSection.aValidatedSection>
-        <validations>org.apache.tamaya.model.validation.MaxItemValidator?max=3"</validations>
-        <description>A validation section.</description>
-    </a.b.c.aRequiredSection.aValidatedSection>
-</model>
+        </section>
+        <section name="a.b.c.aRequiredSection.optional-subsection"/>
+        <section name="a.b.c.aRequiredSection.aValidatedSection">
+            <validations>org.apache.tamaya.model.validation.MaxItemValidator?max=3"</validations>
+            <description>A validation section.</description>
+        </section>
+    </section>
+</configuration>

@@ -17,27 +17,24 @@
 # under the License.
 #
 
-
 ##################################################################################
 # Example of a configuration metamodel expressed via YAML(tm).
 #   Structure is shown through indentation (one or more spaces).
 #   Sequence items are denoted by a dash,
 #   key value pairs within a map are separated by a colon.
 ####################################################################################
-tbd (adapt to others...)
 
 ####################################################################################
 # Metamodel information
 ####################################################################################
-model: {
-  class          :  "Metamodel",
-  name           :  'testmodel',
-  provider       :  'ValidationProviderSpi Extension',
-  version        :  '1.0',
-  release-date   :  2001-01-23,
-  author         :  'Anatole Tresch',
+{model}: {
+  __name           :  'testmodel',
+  __provider       :  'ValidationProviderSpi Extension',
+  __version        :  '1.0',
+  __release-date   :  2001-01-23,
+  __author         :  'Anatole Tresch',
   # model-format: 'alternate format reader type'
-  comments: >
+  __description: >
     Late afternoon is best.
     Backup contact is Nancy.
 }
@@ -46,47 +43,64 @@ model: {
 # Description of Configuration Sections (minimal, can be extended by other modules).
 ####################################################################################
 ---
-a: {
-# Paramname Type         Validations    Description
-  params2:  'String',    'required',   'a required parameter',
+{model}.a.params2: {
+  type          : 'String',
+  required      : true,
+  description   : 'a required parameter',
   paramInt: 'Integer',                 'an optional parameter (default)',
 }
 ---
-a.b.c: {
-  __desc:  'Just a test section.'
+{model}.a.paramInt: {
+  type          : 'Integer',
+  description   : 'an optional parameter (default)',
 }
 ---
-a.b.c.aRequiredSection: {
-  __validations: 'required',
-  __desc: |
+{model}.a.b.c: {
+  description:  'Just a test section.'
+}
+---
+{model}.a.b.c.aRequiredSection: {
+  required: true,
+  description: |
              A section containing required parameters is called a required section.
              Sections can also explicitly be defined to be required, but without
              specifying the paramteres to be contained.,
 }
 ---
-a.b.c.aRequiredSection.subsection: {
-# Paramname   Type         Validations   Description
-  param0:    'String',                   'a minmally documented String parameter}',
-  param00:   'String',                                 # A minmally defined String parameter
-  param1:    'String',     'required',   'a required parameter',
-  intParam:  'Integer',                  'an optional parameter (default)'
+{model}.a.b.c.aRequiredSection.subsection: {
+  param0: {
+    type: 'String',
+    description: 'a minmally documented String parameter}'
+  },                 ,
+  param00:{
+    type: 'String'        # A minmally defined String parameter
+  },
+  param1: {
+    tpye: 'String',
+    required: true,
+    description: 'a required parameter'
+  },
+  intParam: {
+    type: 'Integer',
+    description: 'an optional parameter (default)'
+  }
 }
 ...
 
 ---
-a.b.c.aRequiredSection.nonempty-subsection: {
-  __validations: 'required'
+{model}.a.b.c.aRequiredSection.nonempty-subsection: {
+  required: true
 }
 ...
 
 ---
-a.b.c.aRequiredSection.optional-subsection: {}
+{model}.a.b.c.aRequiredSection.optional-subsection: {}
 ...
 
 ---
-a.b.c.aRequiredSection.aValidatedSection: {
-  __desc: 'A validation section.',
-  __validations: 'org.apache.tamaya.model.validation.MaxItemValidator?max=3'
+{model}.a.b.c.aRequiredSection.aValidatedSection: {
+  description: 'A validation section.',
+  validations: 'org.apache.tamaya.model.validation.MaxItemValidator?max=3'
 }
 
 
