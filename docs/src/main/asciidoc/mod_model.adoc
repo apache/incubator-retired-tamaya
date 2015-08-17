@@ -71,7 +71,7 @@ To benefit from configuration builder support you only must add the correspondin
 -----------------------------------------------
 
 
-=== Describing Meta-Configuration
+=== Describing the Configuration Meta-Model
 
 Basically configuration is modelled using key, valuje-pairs of Strings. Looking at a keys
 +a.b.c.param1+ and +a.b.c.param2+ the following concepts can be used to defined/describe
@@ -83,13 +83,14 @@ configuration:
  which equals to the containing section name and the relative parameter name, separated by the dor separator.
  In the above example +a.b.c.param1+ and +a.b.c.param2+ are the fully qualified parameter names.
 
-Now with only these 2 concepts a simple meta-model can be defined as
+Now with only these 2 concepts a simple configuration meta-model can be defined as
 
 * a meta-model's name, used just for grouping different meta-models and entries to better separate
   descriptions, e.g. in a management console or generated configuration documentation site.
 * a set of sections.
 * a set of parameters.
 * Both, sections as well as parameters,
+  ** are prefixed with the meta-model selector, by default +{model}.+.
   ** are identified by their _fully qualified names_, where '.' is used as
      a separator character.
   ** may be required, or optional
@@ -115,18 +116,187 @@ sections, despite the fact that section properties, such as description and cust
 its parent, or child section.
 
 
-=== Providing Meta-Configuration using .properties files
+=== Defining Meta-Configuration Model
 
-tbd
+The configuration meta-model is defined by simple configuration entries. The root section for all model configuration
+by default is called +{model}+. Within this section fully qualified configuration keys defines which part of the
+configuration is targeted by certain entries.
 
-=== Providing Meta-Configuration using .json files
+==== Defining Sections
 
-tbd
+First we start to define some configuration sections, the example below starts with the most important
+variants supported:
 
-=== Providing Meta-Configuration using .yaml files
+[source,listing]
+-------------------------------------------------------------------------------
+# Metamodel information
+{model}.provider=ConfigModel Extension
 
-tbd
+# org.mycompany.root (optional section)
+{model}.org.mycompany.root.class=Section
+{model}.org.mycompany.root.description=Root section defining my company configuration.
 
-=== Providing Meta-Configuration using .xml files
+# org.mycompany.security (required section)
+{model}.org.mycompany.security.class=Section
+{model}.org.mycompany.security.required=true
+{model}.org.mycompany.security.description=Security related settings.\
+         refer for further details to XXX.
 
-tbd
+# minmal section
+{model}.minimal.class=Section
+
+# custom validated section
+{model}.validated.class=Section
+{model}.validated.validations=org.apache.tamaya.model.TestValidator
+-------------------------------------------------------------------------------
+
+Above +org.mycompany.root+ transitively defines 3 sections:
+
+* org
+* org.mycompany
+* org.mycompany.root
+
+All sections are optional. Additionally the model above also defines a required section +org.mycompany.security+.
+Required sections are checked so the section is not empty. It is not checked for any specific parameter hereby,
+only the existance of any child parameter is validated.
+
+The _class_ attribute has to be defined for any section definition, because if not set a model entry is, by default,
+defined to be a parameter validation entry. Given above the entry for the section +minimal+ shows such a minimal
+entry.
+
++validated+ defines a section, which is validated through a customizable validator. Hereby an ordered list of validators
+can be provided, separated by commas.
+
+
+==== Defining Parameters
+
+Similarly parameters also can be defined:
+
+[source,listing]
+-------------------------------------------------------------------------------
+# org.mycompany.root.name (required parameter)
+{model}.org.mycompany.root.name.class=Parameter
+{model}.org.mycompany.root.name.required=true
+{model}.org.mycompany.root.name.description=The company's name, also used in the application's main header.
+
+# org.mycompany.security (required parameters)
+{model}.org.mycompany.security.uid.required=true
+{model}.org.mycompany.security.uid.description=The user id.
+{model}.org.mycompany.security.realm.required=true
+{model}.org.mycompany.security.realm.validations=org.apache.tamaya.model.RealmValidator
+{model}.org.mycompany.security.real.description=The security realm required.
+{model}.org.mycompany.security.tokenid.description=The token id, if the token service is used (optional).
+
+# A minmal parameter
+{model}.minimalClass.class.type=Class
+-------------------------------------------------------------------------------
+
+Similarly as when defining section also parameter entries define transitively its containing sections. E.g.
+the entry above for +org.mycompany.security.realm+ also defines the following sections (as optional).
+
+* org
+* org.mycompany
+* org.mycompany.security
+
+Additional entries for section, e.g. validations to be done, can be added as described in the previous section,
+but are optional.
+
+Since the parameter is the default type for model entries, a minmal parameter model entry only only needs it's
+parameter type to be defined. In the example above we define a parameter +minimalClass+ of type +Class+.
+Types hereby are fully qualified class names, whereas as 'java.lang' for built-in language types can be
+ommitted.
+
+==== Model Locations
+
+By default the configuration model can be defined at the following locations:
+
+* +classpath*:META-INF/configmodel.properties+, separate to the current +Configuration+. This functionality is enabled
+  by default, but can be disabled by adding +org.apache.tamaya.model.default.enabled=false+ to your current
+  +Configuration+.
+* +implicitly as part of the current +Configuration+. THis can be disabled by setting
+  the +org.apache.tamaya.model.integrated.enabled+ configuration poarameter to +false+.
+* customized by configuring the +org.apache.tamaya.model.resources+ in the current +Configuration+. This
+  parameter allows to define the locations from where the model extension is trying to read the
+  model configuration. If the _resources extension_ is available in your system it is used to
+  evaluate the locations. If not the default +Classloader.getResources+ command is issued. Also it
+  is required that the _formats extension_ is available, since this is used to effectively read the
+  data. This extension also allows you to use alternate representation formats such as +ini, xml, yml, json+.
+
+
+
+==== Programmatic API
+
+Basically the validation module provides a simple API to evaluate the current +Configuration+ by as follows:
+
+[source,java]
+-----------------------------------------------------------
+public final class ConfigValidator {
+
+    private ConfigValidator() {}
+
+    public static Collection<ValidationResult> validate();
+    public static Collection<ValidationResult> validate(boolean showUndefined);
+    public static Collection<ValidationResult> validate(Configuration config);
+    public static Collection<ValidationResult> validate(Configuration config, boolean showUndefined);
+
+    public static Collection<Validation> getValidations();
+}
+-----------------------------------------------------------
+
+This singleton allows to validate the current or any +Configuration+ instance. All the validations read also are
+available from the +getValidations+ method, which returns you not less than a instance of the current
+configuration model. This instance can be used to provide documentation, e.g. as part of a CLI interface or
+shown on a documentation web server.
+
+A +Validation+ hereby is defined as:
+
+[source,java]
+-----------------------------------------------------------
+public interface Validation {
+
+    String getType();
+    String getName();
+    String getDescription();
+    Collection<ValidationResult> validate(Configuration config);
+}
+-----------------------------------------------------------
+
+Similarly a +ValidationResult+ is modelled as:
+
+[source,java]
+-----------------------------------------------------------
+public final class ValidationResult {
+
+    public static ValidationResult ofValid(Validation validation);
+    public static ValidationResult ofMissing(Validation validation);
+    public static ValidationResult ofMissing(Validation validation, String message);
+    public static ValidationResult ofError(Validation validation, String error);
+    public static ValidationResult ofWarning(Validation validation, String warning);
+    public static ValidationResult ofDeprecated(Validation validation, String alternateUsage);
+    public static ValidationResult ofDeprecated(Validation validation);
+    public static ValidationResult ofUndefined(final String key);
+    public static ValidationResult of(Validation validation, ValidationState result, String message);
+
+    public Validation getValidation();
+    public ValidationState getResult();
+    public String getMessage(),
+}
+-----------------------------------------------------------
+
+
+== Model SPI
+
+The model extension also provides an SPI where customized functionality can be added. The main abstraction hereby is
+the +ValidationProviderSpi+ interface, which allows any kind of additional validations to be added to the system:
+
+[source,java]
+-----------------------------------------------------------
+public interface ValidationProviderSpi {
+
+    Collection<Validation> getValidations();
+
+}
+-----------------------------------------------------------
+
+New instances implementing this interface must be registered into the current +ServiceContext+, by default the
++ServiceLoader+ is used.
