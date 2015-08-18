@@ -55,7 +55,7 @@ under the License.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <json.spec.version>1.0-alpha-1</json.spec.version>
-        <johnzon.version>0.8-incubating</johnzon.version>
+        <johnzon.version>0.9-incubating</johnzon.version>
         <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
