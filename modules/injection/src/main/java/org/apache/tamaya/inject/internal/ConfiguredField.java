@@ -26,6 +26,7 @@ import org.apache.tamaya.inject.DynamicValue;
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -53,6 +54,7 @@ public class ConfiguredField {
         Objects.requireNonNull(field);
         this.annotatedField = field;
     }
+
 
     /**
      * Evaluate the initial keys fromMap the configuration and applyChanges it to the field.
@@ -125,10 +127,27 @@ public class ConfiguredField {
         }
     }
 
+    /**
+     * Get the field's type.
+     * @return the field's type, not null.
+     */
+    public Class<?> getType(){
+        return this.annotatedField.getType();
+    }
+
+    /**
+     * Access the applyable configuration keys for this field.
+     * @return the configuration keys, never null.
+     */
+    public Collection<String> getConfiguredKeys(){
+        return InjectionUtils.getKeys(this.annotatedField);
+    }
+
     @Override
     public String toString() {
         return "ConfiguredField{" +
                 annotatedField.getName() + ": " +
                 " " + annotatedField.getAnnotatedType().getType().getTypeName() + '}';
     }
+
 }

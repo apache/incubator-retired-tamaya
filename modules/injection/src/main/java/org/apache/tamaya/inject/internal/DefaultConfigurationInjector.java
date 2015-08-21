@@ -43,18 +43,15 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      * @param type the type to be configured.
      * @return the configured type registered.
      */
-    public ConfiguredType registerTypeInternal(Class<?> type) {
+    public ConfiguredType registerType(Class<?> type) {
         ConfiguredType confType = configuredTypes.get(type);
         if (confType == null) {
             confType = new ConfiguredType(type);
+            ModelPopulator.register(confType);
             configuredTypes.put(type, confType);
         }
         return confType;
 //        return configuredTypes.computeIfAbsent(type, ConfiguredType::new);
-    }
-
-    void registerType(Class<?> type) {
-        registerTypeInternal(type);
     }
 
     /**
@@ -66,7 +63,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
     @Override
     public <T> T configure(T instance) {
         Class type = Objects.requireNonNull(instance).getClass();
-        ConfiguredType configuredType = registerTypeInternal(type);
+        ConfiguredType configuredType = registerType(type);
         Objects.requireNonNull(configuredType).configure(instance);
         return instance;
     }

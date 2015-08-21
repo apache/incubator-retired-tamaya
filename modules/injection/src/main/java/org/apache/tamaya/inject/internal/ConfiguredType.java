@@ -221,6 +221,30 @@ public class ConfiguredType {
         return this.type;
     }
 
+    /**
+     * Get the registered configured fields.
+     * @return the registered configured fields, never null.
+     */
+    public Collection<ConfiguredField> getConfiguredFields(){
+        return configuredFields;
+    }
+
+    /**
+     * Get the registered annotated setter methods.
+     * @return the registered annotated setter methods, never null.
+     */
+    public Collection<ConfiguredSetterMethod> getConfiguredSetterMethods(){
+        return configuredSetterMethods;
+    }
+
+    /**
+     * Get the registered annotated callback methods.
+     * @return the registered annotated callback methods, never null.
+     */
+    public Collection<ConfigChangeCallbackMethod> getObserverMethods(){
+        return callbackMethods;
+    }
+
     @Override
     public String toString() {
         return "ConfiguredType{"+ this.getType().getName() + '}';

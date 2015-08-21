@@ -59,6 +59,12 @@ under the License.
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.tamaya.ext.model</groupId>
+            <artifactId>tamaya-model</artifactId>
+            <version>0.1-incubating-SNAPSHOT</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>

@@ -18,13 +18,14 @@
  */
 package org.apache.tamaya.inject.internal;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
+
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
 import java.util.Objects;
-
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.TypeLiteral;
 
 /**
  * Small class that contains and manages all information and access to a configured field and a concrete instance current
@@ -37,6 +38,7 @@ public class ConfiguredSetterMethod {
      * The configured field instance.
      */
     private Method setterMethod;
+    private Collection<String> configuredKeys;
 
     /**
      * Models a configured field and provides mechanisms for injection.
@@ -65,7 +67,7 @@ public class ConfiguredSetterMethod {
                     : configValue;
 
             // Check for adapter/filter
-            Object value = InjectionUtils.adaptValue(this.setterMethod,  TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), evaluatedString);
+            Object value = InjectionUtils.adaptValue(this.setterMethod, TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), evaluatedString);
 
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override
@@ -83,4 +85,28 @@ public class ConfiguredSetterMethod {
     }
 
 
+    /**
+     * Access the applyable configuration keys for this field.
+     *
+     * @return the configuration keys, never null.
+     */
+    public Collection<String> getConfiguredKeys() {
+        return InjectionUtils.getKeys(this.setterMethod);
+    }
+
+    /**
+     * Get the type to be set on the setter method.
+     * @return
+     */
+    public Class<?> getParameterType() {
+        return this.setterMethod.getParameterTypes()[0];
+    }
+
+    /**
+     * Access the annotated method.
+     * @return the annotated method, not null.
+     */
+    public Method getAnnotatedMethod() {
+        return this.setterMethod;
+    }
 }
