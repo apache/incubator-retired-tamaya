@@ -42,7 +42,7 @@ public class ManagedConfig implements ManagedConfigMBean{
 
     @Override
     public String getConfigurationInfo() {
-        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.info());
+        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.jsonInfo());
     }
 
     @Override
@@ -52,23 +52,23 @@ public class ManagedConfig implements ManagedConfigMBean{
 
     @Override
     public Map<String, String> getConfigurationArea(String area, boolean recursive) {
-        return ConfigurationProvider.getConfiguration().with(ConfigurationFunctions.area(area, recursive)).getProperties();
+        return ConfigurationProvider.getConfiguration().with(ConfigurationFunctions.section(area, recursive)).getProperties();
     }
 
     @Override
     public Set<String> getAreas() {
-        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.areas());
+        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.sections());
     }
 
     @Override
     public Set<String> getTransitiveAreas() {
-        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.transitiveAreas());
+        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.transitiveSections());
     }
 
     @Override
     public boolean isAreaExisting(String area) {
         return !ConfigurationProvider.getConfiguration().with(
-                  ConfigurationFunctions.area(area)).getProperties().isEmpty();
+                  ConfigurationFunctions.section(area)).getProperties().isEmpty();
     }
 
     /**

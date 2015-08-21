@@ -68,11 +68,10 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (non recursive). Hereby
-     * the area key is stripped away fromMap the resulting key.
+     * that are selected by the given {@link BiPredicate}.
      *
      * @param filter the filter, not null
-     * @return the area configuration, with the areaKey stripped away.
+     * @return the section configuration, with the areaKey stripped away.
      */
     public static ConfigOperator filter(final BiPredicate<String, String> filter) {
         return new ConfigOperator() {
@@ -88,7 +87,7 @@ public final class ConfigurationFunctions {
      * defined by the given keyMapper.
      *
      * @param keyMapper the keyMapper, not null
-     * @return the area configuration, with the areaKey stripped away.
+     * @return the section configuration, with the areaKey stripped away.
      */
     public static ConfigOperator map(final Function<String, String> keyMapper) {
         return new ConfigOperator() {
@@ -102,25 +101,25 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (non recursive). Hereby
-     * the area key is stripped away fromMap the resulting key.
+     * that are contained in the given section (non recursive). Hereby
+     * the section key is stripped away fromMap the resulting key.
      *
-     * @param areaKey the area key, not null
-     * @return the area configuration, with the areaKey stripped away.
+     * @param areaKey the section key, not null
+     * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator area(String areaKey) {
-        return area(areaKey, true);
+    public static ConfigOperator section(String areaKey) {
+        return section(areaKey, false);
     }
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (non recursive).
+     * that are contained in the given section (non recursive).
      *
-     * @param areaKey   the area key, not null
-     * @param stripKeys if set to true, the area key is stripped away fromMap the resulting key.
-     * @return the area configuration, with the areaKey stripped away.
+     * @param areaKey   the section key, not null
+     * @param stripKeys if set to true, the section key is stripped away fromMap the resulting key.
+     * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator area(final String areaKey, final boolean stripKeys) {
+    public static ConfigOperator section(final String areaKey, final boolean stripKeys) {
         return new ConfigOperator() {
             @Override
             public Configuration operate(Configuration config) {
@@ -128,9 +127,9 @@ public final class ConfigurationFunctions {
                         new BiPredicate<String, String>() {
                             @Override
                             public boolean test(String k, String v) {
-                                return isKeyInArea(k, areaKey);
+                                return isKeyInSection(k, areaKey);
                             }
-                        }, "area: " + areaKey);
+                        }, "section: " + areaKey);
                 if(stripKeys){
                     return new MappedConfiguration(filtered, new Function<String, String>() {
                         @Override
@@ -145,28 +144,28 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Calculates the current area key and compares it with the given key.
+     * Calculates the current section key and compares it with the given key.
      *
      * @param key     the fully qualified entry key, not null
-     * @param areaKey the area key, not null
-     * @return true, if the entry is exact in this area
+     * @param sectionKey the section key, not null
+     * @return true, if the entry is exact in this section
      */
-    public static boolean isKeyInArea(String key, String areaKey) {
+    public static boolean isKeyInSection(String key, String sectionKey) {
         int lastIndex = key.lastIndexOf('.');
         String curAreaKey = lastIndex > 0 ? key.substring(0, lastIndex) : "";
-        return curAreaKey.equals(areaKey);
+        return curAreaKey.equals(sectionKey);
     }
 
     /**
-     * Calculates the current area key and compares it with the given area keys.
+     * Calculates the current section key and compares it with the given section keys.
      *
      * @param key     the fully qualified entry key, not null
-     * @param areaKeys the area keys, not null
-     * @return true, if the entry is exact in this area
+     * @param sectionKeys the section keys, not null
+     * @return true, if the entry is exact in this section
      */
-    public static boolean isKeyInAreas(String key, String... areaKeys) {
-        for(String areaKey:areaKeys){
-            if(isKeyInArea(key, areaKey)){
+    public static boolean isKeyInSections(String key, String... sectionKeys) {
+        for(String areaKey:sectionKeys){
+            if(isKeyInSection(key, areaKey)){
                 return true;
             }
         }
@@ -174,13 +173,13 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualifies area names. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * Return a query to evaluate the set with all fully qualifies section names. This method should return the sections as accurate as possible,
+     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @return s set with all areas, never {@code null}.
+     * @return s set with all sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> areas() {
+    public static ConfigQuery<Set<String>> sections() {
         return new ConfigQuery<Set<String>>() {
             @Override
             public Set<String> query(Configuration config) {
@@ -199,19 +198,19 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate
-     * as possible, but may not provide a complete set of areas that are finally accessible, especially when the
+     * Return a query to evaluate the set with all fully qualified section names, containing the transitive closure also including all
+     * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate
+     * as possible, but may not provide a complete set of sections that are finally accessible, especially when the
      * underlying storage does not support key iteration.
      *
-     * @return s set with all transitive areas, never {@code null}.
+     * @return s set with all transitive sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> transitiveAreas() {
+    public static ConfigQuery<Set<String>> transitiveSections() {
         return new ConfigQuery<Set<String>>() {
             @Override
             public Set<String> query(Configuration config) {
                 final Set<String> transitiveAreas = new HashSet<>();
-                for (String s : config.query(areas())) {
+                for (String s : config.query(sections())) {
                     int index = s.lastIndexOf('.');
                     if (index < 0) {
                         transitiveAreas.add("<root>");
@@ -229,20 +228,20 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified area names, containing only the
-     * areas that match the predicate and have properties attached. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * Return a query to evaluate the set with all fully qualified section names, containing only the
+     * sections that match the predicate and have properties attached. This method should return the sections as accurate as possible,
+     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
-     * @return s set with all areas, never {@code null}.
+     * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
+     * @return s set with all sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> areas(final Predicate<String> predicate) {
+    public static ConfigQuery<Set<String>> sections(final Predicate<String> predicate) {
         return new ConfigQuery<Set<String>>(){
             @Override
             public Set<String> query(Configuration config) {
                 Set<String> result = new TreeSet<>();
-                for(String s: areas().query(config)){
+                for(String s: sections().query(config)){
                     if(predicate.test(s)){
                         result.add(s);
                     }
@@ -254,20 +253,20 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * Return a query to evaluate the set with all fully qualified section names, containing the transitive closure also including all
+     * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate as possible,
+     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
-     * @return s set with all transitive areas, never {@code null}.
+     * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
+     * @return s set with all transitive sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> transitiveAreas(final Predicate<String> predicate) {
+    public static ConfigQuery<Set<String>> transitiveSections(final Predicate<String> predicate) {
         return new ConfigQuery<Set<String>>(){
             @Override
             public Set<String> query(Configuration config) {
                 Set<String> result = new TreeSet<>();
-                for(String s: transitiveAreas().query(config)){
+                for(String s: transitiveSections().query(config)){
                     if(predicate.test(s)){
                         result.add(s);
                     }
@@ -280,39 +279,38 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (recursive). Hereby
-     * the area key is stripped away fromMap the resulting key.
+     * that are contained in the given section (recursive).
      *
-     * @param areaKeys the area keys, not null
-     * @return the area configuration, with the areaKey stripped away.
+     * @param sectionKeys the section keys, not null
+     * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator areasRecursive(String... areaKeys) {
-        return areaRecursive(true, areaKeys);
+    public static ConfigOperator sectionsRecursive(String... sectionKeys) {
+        return sectionRecursive(false, sectionKeys);
     }
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (recursive).
+     * that are contained in the given section (recursive).
      *
-     * @param areaKeys   the area keys, not null
-     * @param stripKeys if set to true, the area key is stripped away fromMap the resulting key.
-     * @return the area configuration, with the areaKey stripped away.
+     * @param sectionKeys   the section keys, not null
+     * @param stripKeys if set to true, the section key is stripped away fromMap the resulting key.
+     * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator areaRecursive(final boolean stripKeys, final String... areaKeys) {
+    public static ConfigOperator sectionRecursive(final boolean stripKeys, final String... sectionKeys) {
         return new ConfigOperator(){
             @Override
             public Configuration operate(Configuration config) {
                 Configuration filtered = new FilteredConfiguration(config, new BiPredicate<String, String>() {
                     @Override
                     public boolean test(final String k, String v) {
-                        return isKeyInAreas(k, areaKeys);
+                        return isKeyInSections(k, sectionKeys);
                     }
-                } , "areas: " + Arrays.toString(areaKeys));
+                } , "sections: " + Arrays.toString(sectionKeys));
                 if(stripKeys){
                     return new MappedConfiguration(filtered, new Function<String, String>() {
                         @Override
                         public String apply(String s) {
-                            return PropertySourceFunctions.stripAreaKeys(s, areaKeys);
+                            return PropertySourceFunctions.stripSectionKeys(s, sectionKeys);
                         }
                     }, "stripped");
                 }
@@ -325,7 +323,7 @@ public final class ConfigurationFunctions {
      * Creates a ConfigQuery that creates a JSON formatted ouitput of all properties in the given configuration.
      * @return the given query.
      */
-    public static ConfigQuery<String> info() {
+    public static ConfigQuery<String> jsonInfo() {
         return INFO_QUERY;
     }
 

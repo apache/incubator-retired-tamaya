@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 /**
- * PropertySource implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate areas.
+ * PropertySource implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate sections.
  */
 class MappedPropertySource implements PropertySource {
 

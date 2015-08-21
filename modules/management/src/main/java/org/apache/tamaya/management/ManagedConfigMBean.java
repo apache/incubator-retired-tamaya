@@ -56,39 +56,39 @@ public interface ManagedConfigMBean {
     Map<String, String> getConfiguration();
 
     /**
-     * Accesses a configuration values for current a given config area as Map.
-     * @param area the target area key, not null.
-     * @param recursive if set to false only direct child keys of the given area are returned.
+     * Accesses a configuration values for current a given config section as Map.
+     * @param area the target section key, not null.
+     * @param recursive if set to false only direct child keys of the given section are returned.
      * @return the key/values found, including the recursive child values.
      * @throws org.apache.tamaya.ConfigException If the configuration is not yet loaded.
      */
     Map<String, String> getConfigurationArea(String area, boolean recursive);
 
     /**
-     * Access the defined areas for a given configuration.
-     * @return the areas defined (only returning the areas that contain properties).
+     * Access the defined sections for a given configuration.
+     * @return the sections defined (only returning the sections that contain properties).
      * @throws org.apache.tamaya.ConfigException If the configuration is not yet loaded
      */
     Set<String> getAreas();
 
     /**
-     * Access the transitive areas for the current configuration.
-     * @return the transitive areas defined.
+     * Access the transitive sections for the current configuration.
+     * @return the transitive sections defined.
      * @throws org.apache.tamaya.ConfigException If the configuration is not yet loaded
      */
     Set<String> getTransitiveAreas();
 
     /**
-     * Allows to determine if an area is existing.
-     * @param area the target area key, not null.
-     * @return true, if such an area exists (the area may be empty).
+     * Allows to determine if an section is existing.
+     * @param area the target section key, not null.
+     * @return true, if such an section exists (the section may be empty).
      */
     boolean isAreaExisting(String area);
 
     /**
-     * Allows to determine if an area is empty.
-     * @param area the target area key, not null.
-     * @return true, if such an area exists and is not empty.
+     * Allows to determine if an section is empty.
+     * @param area the target section key, not null.
+     * @return true, if such an section exists and is not empty.
      */
     default boolean isAreaEmpty(String area){
         return getConfigurationArea(area, true).isEmpty();

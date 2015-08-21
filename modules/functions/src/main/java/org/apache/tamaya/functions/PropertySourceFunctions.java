@@ -38,8 +38,8 @@ public final class PropertySourceFunctions {
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (non recursive). Hereby
-     * the area key is stripped away fromMap the resulting key.
+     * that are contained in the given section (non recursive). Hereby
+     * the section key is stripped away fromMap the resulting key.
      * <p>
      * Metadata is added only for keys that are present on the original configuration.
      * They are added in the following format:
@@ -71,28 +71,28 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Calculates the current area key and compares it with the given key.
+     * Calculates the current section key and compares it with the given key.
      *
      * @param key     the fully qualified entry key, not null
-     * @param areaKey the area key, not null
-     * @return true, if the entry is exact in this area
+     * @param sectionKey the section key, not null
+     * @return true, if the entry is exact in this section
      */
-    public static boolean isKeyInArea(String key, String areaKey) {
+    public static boolean isKeyInSection(String key, String sectionKey) {
         int lastIndex = key.lastIndexOf('.');
         String curAreaKey = lastIndex > 0 ? key.substring(0, lastIndex) : "";
-        return curAreaKey.equals(areaKey);
+        return curAreaKey.equals(sectionKey);
     }
 
     /**
-     * Calculates the current area key and compares it with the given area keys.
+     * Calculates the current section key and compares it with the given section keys.
      *
      * @param key     the fully qualified entry key, not null
-     * @param areaKeys the area keys, not null
-     * @return true, if the entry is exact in this area
+     * @param sectionKeys the section keys, not null
+     * @return true, if the entry is exact in this section
      */
-    public static boolean isKeyInAreas(String key, String... areaKeys) {
-        for(String areaKey:areaKeys){
-            if(isKeyInArea(key, areaKey)){
+    public static boolean isKeyInSections(String key, String... sectionKeys) {
+        for(String areaKey:sectionKeys){
+            if(isKeyInSection(key, areaKey)){
                 return true;
             }
         }
@@ -100,15 +100,15 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualifies area names. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * Return a query to evaluate the set with all fully qualifies section names. This method should return the sections as accurate as possible,
+     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @return s set with all areas, never {@code null}.
+     * @return s set with all sections, never {@code null}.
      */
-    public static Set<String> areas(Map<String,String> map) {
+    public static Set<String> sections(Map<String, String> properties) {
             final Set<String> areas = new HashSet<>();
-            for(String s: map.keySet()) {
+            for(String s: properties.keySet()) {
                 int index = s.lastIndexOf('.');
                 if (index > 0) {
                     areas.add(s.substring(0, index));
@@ -120,16 +120,16 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate
-     * as possible, but may not provide a complete set of areas that are finally accessible, especially when the
+     * Return a query to evaluate the set with all fully qualified section names, containing the transitive closure also including all
+     * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate
+     * as possible, but may not provide a complete set of sections that are finally accessible, especially when the
      * underlying storage does not support key iteration.
      *
-     * @return s set with all transitive areas, never {@code null}.
+     * @return s set with all transitive sections, never {@code null}.
      */
-    public static Set<String> transitiveAreas(Map<String,String> map) {
+    public static Set<String> transitiveSections(Map<String, String> properties) {
             final Set<String> transitiveAreas = new HashSet<>();
-            for(String s:areas(map)) {
+            for(String s: sections(properties)) {
                 int index = s.lastIndexOf('.');
                 if (index < 0) {
                     transitiveAreas.add("<root>");
@@ -145,17 +145,17 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified area names, containing only the
-     * areas that match the predicate and have properties attached. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * Return a query to evaluate the set with all fully qualified section names, containing only the
+     * sections that match the predicate and have properties attached. This method should return the sections as accurate as possible,
+     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
-     * @return s set with all areas, never {@code null}.
+     * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
+     * @return s set with all sections, never {@code null}.
      */
-    public static Set<String> areas(Map<String,String> map, final Predicate<String> predicate) {
+    public static Set<String> sections(Map<String, String> properties, final Predicate<String> predicate) {
         Set<String> treeSet = new TreeSet<>();
-        for(String area: areas(map)){
+        for(String area: sections(properties)){
             if(predicate.test(area)){
                 treeSet.add(area);
             }
@@ -164,17 +164,17 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified area names, containing the transitive closure also including all
-     * subarea names, regardless if properties are accessible or not. This method should return the areas as accurate as possible,
-     * but may not provide a complete set of areas that are finally accessible, especially when the underlying storage
+     * Return a query to evaluate the set with all fully qualified section names, containing the transitive closure also including all
+     * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate as possible,
+     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @param predicate A predicate to deternine, which areas should be returned, not {@code null}.
-     * @return s set with all transitive areas, never {@code null}.
+     * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
+     * @return s set with all transitive sections, never {@code null}.
      */
-    public static Set<String> transitiveAreas(Map<String,String> map, Predicate<String> predicate) {
+    public static Set<String> transitiveSections(Map<String, String> properties, Predicate<String> predicate) {
         Set<String> treeSet = new TreeSet<>();
-        for(String area: transitiveAreas(map)){
+        for(String area: transitiveSections(properties)){
             if(predicate.test(area)){
                 treeSet.add(area);
             }
@@ -185,36 +185,36 @@ public final class PropertySourceFunctions {
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (recursive). Hereby
-     * the area key is stripped away fromMap the resulting key.
+     * that are contained in the given section (recursive). Hereby
+     * the section key is stripped away fromMap the resulting key.
      *
-     * @param areaKeys the area keys, not null
-     * @return the area configuration, with the areaKey stripped away.
+     * @param sectionKeys the section keys, not null
+     * @return the section configuration, with the areaKey stripped away.
      */
-    public static Map<String,String> areasRecursive(Map<String,String> map, String... areaKeys) {
-        return areaRecursive(map, true, areaKeys);
+    public static Map<String,String> sectionsRecursive(Map<String, String> properties, String... sectionKeys) {
+        return sectionRecursive(properties, true, sectionKeys);
     }
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given area (recursive).
+     * that are contained in the given section (recursive).
      *
-     * @param areaKeys   the area keys, not null
-     * @param stripKeys if set to true, the area key is stripped away fromMap the resulting key.
-     * @return the area configuration, with the areaKey stripped away.
+     * @param sectionKeys   the section keys, not null
+     * @param stripKeys if set to true, the section key is stripped away fromMap the resulting key.
+     * @return the section configuration, with the areaKey stripped away.
      */
-    public static Map<String,String> areaRecursive(Map<String,String> map, boolean stripKeys, String... areaKeys) {
-        Map<String,String> result = new HashMap<>(map.size());
+    public static Map<String,String> sectionRecursive(Map<String, String> properties, boolean stripKeys, String... sectionKeys) {
+        Map<String,String> result = new HashMap<>(properties.size());
         if(stripKeys) {
-            for(Map.Entry<String,String> en: map.entrySet()){
-                if(isKeyInAreas(en.getKey(), areaKeys)){
+            for(Map.Entry<String,String> en: properties.entrySet()){
+                if(isKeyInSections(en.getKey(), sectionKeys)){
                     result.put(en.getKey(), en.getValue());
                 }
             }
         } else {
-            for(Map.Entry<String,String> en: map.entrySet()){
-                if(isKeyInAreas(en.getKey(), areaKeys)){
-                    result.put(stripAreaKeys(en.getKey(), areaKeys), en.getValue());
+            for(Map.Entry<String,String> en: properties.entrySet()){
+                if(isKeyInSections(en.getKey(), sectionKeys)){
+                    result.put(stripSectionKeys(en.getKey(), sectionKeys), en.getValue());
                 }
             }
         }
@@ -222,12 +222,12 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Strips the area key of the given absolute key, if it is one of the areaKeys passed.
+     * Strips the section key of the given absolute key, if it is one of the areaKeys passed.
      * @param key the current key, not null.
      * @param areaKeys the areaKeys, not null.
-     * @return the stripped key, or the original key (if no area was matching).
+     * @return the stripped key, or the original key (if no section was matching).
      */
-    static String stripAreaKeys(String key, String... areaKeys) {
+    static String stripSectionKeys(String key, String... areaKeys) {
         for(String areaKey:areaKeys) {
             if(key.startsWith(areaKey+'.')) {
                 return key.substring(areaKey.length() + 1);
