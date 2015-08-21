@@ -40,6 +40,9 @@ under the License.
         <module>json</module>
         <module>resolver</module>
         <module>resources</module>
+        <module>functions</module>
+        <module>model</module>
+        <module>management</module>
     </modules>
 
     <build>
