@@ -36,10 +36,8 @@ under the License.
 
     <modules>
         <module>integration</module>
-        <module>management</module>
         <module>metamodels</module>
         <module>jodatime</module>
-        <module>functions</module>
         <module>sysprops</module>
         <module>environment</module>
         <module>remote</module>
