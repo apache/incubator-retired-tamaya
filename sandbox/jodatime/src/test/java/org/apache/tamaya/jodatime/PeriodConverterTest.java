@@ -18,5 +18,50 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.joda.time.Period;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 public class PeriodConverterTest {
+
+    private static PeriodConverter converter = new PeriodConverter();
+
+    private static PeriodFormatter FORMATTER = ISOPeriodFormat.standard();
+
+    @Test
+    public void canConvertPropertiesInAllSupportedFormats() {
+        Object[][] inputResultPairs = {
+             // ISO format
+             {"P0007Y", FORMATTER.parsePeriod("P7Y0M0W0DT0H0M0S")},
+             {"P7Y", FORMATTER.parsePeriod("P7Y0M0W0DT0H0M0S")},
+             {"P7891Y", FORMATTER.parsePeriod("P7891Y0M0W0DT0H0M0S")},
+             {"P7891Y", FORMATTER.parsePeriod("P7891Y0M0W0DT0H0M0S")},
+
+             {"P1Y1M", FORMATTER.parsePeriod("P1Y1M0W0DT0H0M0S")},
+             {"P1Y9M", FORMATTER.parsePeriod("P1Y9M0W0DT0H0M0S")},
+
+             {"P1Y1D", FORMATTER.parsePeriod("P1Y0M0W1DT0H0M0S")},
+             {"P1YT1S", FORMATTER.parsePeriod("P1Y0M0W0DT0H0M1S")},
+
+             // Alternative format
+             {"P0002-03-00T00:00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")},
+             {"P0002-03T00:00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")},
+             {"P0002T00:00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")},
+             {"P0002T00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")}
+
+        };
+
+        for (Object[] pair : inputResultPairs) {
+            Period period = converter.convert((String) pair[0]);
+
+            assertThat("Converter failed to convert input value " + pair[0], period, notNullValue());
+            assertThat(period, equalTo((Period)pair[1]));
+        }
+    }
 }
