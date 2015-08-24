@@ -29,6 +29,31 @@ public interface ManagedConfigMBean {
     /**
      * Get a general description of the configuration (context) in place, in JSON format:
      * <pre>
+     * Configuration: {
+     *   "class": "org.apache.tamaya.core.internal.DefaultConfiguration",
+     *   "timestamp": 1440426409388,
+     *   "data": {
+     *     "ALLUSERSPROFILE": "C:\ProgramData",
+     *     "APPDATA": "C:\Users\Anatole\AppData\Roaming",
+     *     "COMPUTERNAME": "DEVBOX-WIN",
+     *     "ComSpec": "C:\Windows\system32\cmd.exe",
+     *     "CommonProgramFiles": "C:\Program Files\Common Files",
+     *     "CommonProgramFiles(x86)": "C:\Program Files (x86)\Common Files",
+     *     "CommonProgramW6432": "C:\Program Files\Common Files",
+     *     "FP_NO_HOST_CHECK": "NO",
+     *     "HOMEDRIVE": "C:",
+     *     // ...
+     *   }
+     * }
+     * </pre>
+     *
+     * @return a JSON formatted meta-information.
+     */
+    String getJsonConfigurationInfo();
+
+    /**
+     * Get a general description of the configuration (context) in place, in JSON format:
+     * <pre>
      *     ConfigurationContext[gqContextClassName] {
      *         version = 2345-34334-2333-3434,
      *         config {
@@ -44,8 +69,7 @@ public interface ManagedConfigMBean {
      *
      * @return a JSON formatted meta-information.
      */
-    String getConfigurationInfo();
-
+    String getXmlConfigurationInfo();
 
     /**
      * Accesses a configuration current a given type as Map.
@@ -62,21 +86,21 @@ public interface ManagedConfigMBean {
      * @return the key/values found, including the recursive child values.
      * @throws org.apache.tamaya.ConfigException If the configuration is not yet loaded.
      */
-    Map<String, String> getConfigurationArea(String area, boolean recursive);
+    Map<String, String> getSection(String area, boolean recursive);
 
     /**
      * Access the defined sections for a given configuration.
      * @return the sections defined (only returning the sections that contain properties).
      * @throws org.apache.tamaya.ConfigException If the configuration is not yet loaded
      */
-    Set<String> getAreas();
+    Set<String> getSections();
 
     /**
      * Access the transitive sections for the current configuration.
      * @return the transitive sections defined.
      * @throws org.apache.tamaya.ConfigException If the configuration is not yet loaded
      */
-    Set<String> getTransitiveAreas();
+    Set<String> getTransitiveSections();
 
     /**
      * Allows to determine if an section is existing.
@@ -91,7 +115,7 @@ public interface ManagedConfigMBean {
      * @return true, if such an section exists and is not empty.
      */
     default boolean isAreaEmpty(String area){
-        return getConfigurationArea(area, true).isEmpty();
+        return getSection(area, true).isEmpty();
     }
 
 }

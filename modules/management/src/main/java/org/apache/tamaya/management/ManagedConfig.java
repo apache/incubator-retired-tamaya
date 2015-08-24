@@ -19,88 +19,93 @@
 package org.apache.tamaya.management;
 
 
-import org.apache.tamaya.functions.ConfigurationFunctions;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.functions.ConfigurationFunctions;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 24.11.2014.
+ * Default implementation of the {@link ManagedConfigMBean} interface. Each bean binds to the
+ * current Configuration instance on creation.
  */
-public class ManagedConfig implements ManagedConfigMBean{
+public class ManagedConfig implements ManagedConfigMBean {
 
-    /** The logger used. */
+    /**
+     * The logger used.
+     */
     private final static Logger LOG = Logger.getLogger(ManagedConfig.class.getName());
 
+    /**
+     * Classloader that was active when this instance was created.
+     */
+    private ClassLoader classLoader;
+
+    /**
+     * Constructor, which binds this instance to the current TCCL. In the rare cases where
+     * the TCCL is null, this class's classloader is used.
+     */
+    public ManagedConfig() {
+        this.classLoader = Thread.currentThread().getContextClassLoader();
+        if (this.classLoader == null) {
+            this.classLoader = ManagedConfigMBean.class.getClassLoader();
+        }
+    }
+
     @Override
-    public String getConfigurationInfo() {
-        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.jsonInfo());
+    public String getJsonConfigurationInfo() {
+        return getConfigurationInternal().query(ConfigurationFunctions.jsonInfo());
+    }
+
+    @Override
+    public String getXmlConfigurationInfo() {
+        return getConfigurationInternal().query(ConfigurationFunctions.xmlInfo());
     }
 
     @Override
     public Map<String, String> getConfiguration() {
-        return ConfigurationProvider.getConfiguration().getProperties();
+        return getConfigurationInternal().getProperties();
     }
 
     @Override
-    public Map<String, String> getConfigurationArea(String area, boolean recursive) {
-        return ConfigurationProvider.getConfiguration().with(ConfigurationFunctions.section(area, recursive)).getProperties();
+    public Map<String, String> getSection(String area, boolean recursive) {
+        return getConfigurationInternal().with(ConfigurationFunctions.section(area, recursive)).getProperties();
     }
 
     @Override
-    public Set<String> getAreas() {
-        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.sections());
+    public Set<String> getSections() {
+        return getConfigurationInternal().query(ConfigurationFunctions.sections());
     }
 
     @Override
-    public Set<String> getTransitiveAreas() {
-        return ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.transitiveSections());
+    public Set<String> getTransitiveSections() {
+        return getConfigurationInternal().query(ConfigurationFunctions.transitiveSections());
     }
 
     @Override
     public boolean isAreaExisting(String area) {
-        return !ConfigurationProvider.getConfiguration().with(
-                  ConfigurationFunctions.section(area)).getProperties().isEmpty();
+        return !getConfigurationInternal().with(
+                ConfigurationFunctions.section(area)).getProperties().isEmpty();
     }
 
     /**
-     * Registers the {@link ManagedConfigMBean} mbean for accessing config documentation into the local platform
-     * mbean server.
+     * Evaluate the current configuration. By default this class is temporarely setting the
+     * TCCL to the instance active on bean creation and then calls {@link ConfigurationProvider#getConfiguration()}.
+     *
+     * @return the configuration instance to be used.
      */
-    public static void registerMBean() {
-        registerMBean(null);
-    }
-
-    /**
-     * Registers the {@link ManagedConfigMBean} mbean for accessing config documentation into the local platform
-     * mbean server.
-     */
-    public static void registerMBean(String context) {
+    protected Configuration getConfigurationInternal() {
+        ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
         try{
-            ManagedConfigMBean configMbean = ServiceContextManager.getServiceContext()
-                    .getService(ManagedConfigMBean.class);
-            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-            ObjectName on = context==null?new ObjectName("org.apache.tamaya.managemet:type=ManagedConfigMBean"):
-                    new ObjectName("org.apache.tamaya.management:type=ManagedConfigMBean,context="+context);
-            try{
-                mbs.getMBeanInfo(on);
-                LOG.warning("Cannot register mbean " + on + ": already existing.");
-            } catch(InstanceNotFoundException e) {
-                LOG.info("Registering mbean " + on + "...");
-                mbs.registerMBean(configMbean, on);
-            }
-        } catch(Exception e){
-            Logger.getLogger(ManagedConfig.class.getName()).log(Level.WARNING,
-                    "Failed to register ManagedConfigMBean.", e);
+            Thread.currentThread().setContextClassLoader(this.classLoader);
+            return ConfigurationProvider.getConfiguration();
+        }
+        finally{
+            Thread.currentThread().setContextClassLoader(currentCL);
         }
     }
+
 }
 
