@@ -1,7 +1,7 @@
-= Apache Tamaya -- Extension: Formats
+= Apache Tamaya -- Extension: Functions
 
 :name: Tamaya
-:rootpackage: org.apache.tamaya.ext.formats
+:rootpackage: org.apache.tamaya.functions
 :title: Apache Tamaya Extension: Functions
 :revnumber: 0.1.1
 :revremark: Incubator
@@ -58,7 +58,8 @@ import static org.apache.tamaya.functions.ConfigurationFunctions.*;
 Set<String> sections = ConfigurationProvider.getConfiguration().with(areas("a", false).with(transitiveAreas());
 -------------------------------------------------------------------
 
-The expression above returns all section that are child sections of the root section 'a'.
+The expression above returns all fully qualified section names that are child sections of the root section 'a'.
+So given the entries +a.b.entry1, a.b.entry2, a.a.entry3, a.b.c.entry4+ the reult would be +a, a.a, a.b, a.b.c+.
 
 === Compatibility
 
@@ -66,7 +67,7 @@ The module is based on Java 7, so it can be used with Java 7 and beyond.
 
 === Installation
 
-To benefit from dynamic value resolution you only must add the corresponding dependency to your module:
+For using the functionality shown in this document you only must add the corresponding dependency to your module:
 
 [source, xml]
 -----------------------------------------------
