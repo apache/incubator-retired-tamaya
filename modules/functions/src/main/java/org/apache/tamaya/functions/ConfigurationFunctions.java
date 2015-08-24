@@ -227,12 +227,10 @@ public final class ConfigurationFunctions {
                 for (String s : config.query(sections())) {
                     transitiveAreas.add(s);
                     int index = s.lastIndexOf('.');
-                    if (index > 0) {
-                        while (index > 0) {
-                            s = s.substring(0, index);
-                            transitiveAreas.add(s);
-                            index = s.lastIndexOf('.');
-                        }
+                    while (index > 0) {
+                        s = s.substring(0, index);
+                        transitiveAreas.add(s);
+                        index = s.lastIndexOf('.');
                     }
                 }
                 return transitiveAreas;
