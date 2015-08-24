@@ -38,7 +38,7 @@ public interface ServiceContext {
      * the one with the highest {@link javax.annotation.Priority} will be used.
      *
      * @param serviceType the service type.
-     * @return The instance to be used, never {@code null}
+     * @return The instance to be used, or {@code null}
      * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
      */
     <T> T getService(Class<T> serviceType);

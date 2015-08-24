@@ -64,6 +64,7 @@ NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 
 |+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:modjson.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-model+         |Provides support documenting ang validating configuration during runtime.  |link:mod_model.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-functions+     |Provides several functional extension points.          |link:mod_functions.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-management+    |Provides JMX support for inspecting configuration.     |link:mod_management.html[Documentation]
 |=======
 
 
