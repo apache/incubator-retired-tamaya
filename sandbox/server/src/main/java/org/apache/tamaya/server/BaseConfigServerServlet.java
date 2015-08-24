@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.remote;
+package org.apache.tamaya.server;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
