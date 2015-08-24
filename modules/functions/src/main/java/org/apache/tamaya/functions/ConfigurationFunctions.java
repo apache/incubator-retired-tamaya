@@ -23,7 +23,6 @@ import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -34,18 +33,35 @@ import java.util.TreeSet;
  */
 public final class ConfigurationFunctions {
 
-    private static final ConfigQuery<String> INFO_QUERY = new ConfigQuery<String>(){
+    private static final ConfigQuery<String> INFO_JSON_QUERY = new ConfigQuery<String>(){
         @Override
         public String query(Configuration config) {
             StringBuilder builder = new StringBuilder();
             Map<String,String> props = new TreeMap<>(config.getProperties());
-            builder.append("Configuration: {\n")
-                    .append("  \"class\": \n"+ config.getClass().getName() + ",\n")
-                    .append("  \"properties\": {\n");
+            builder.append("\"configuration\": {\n")
+                    .append("  \"class\": \""+ config.getClass().getName() + "\",\n")
+                    .append("  \"timestamp\": " + System.currentTimeMillis() + ",\n")
+                    .append("  \"data\": {\n");
             for(Map.Entry<String,String> en: props.entrySet()){
                 builder.append("     \"" + escape(en.getKey()) +"\": \""+escape(en.getValue())+"\",\n");
             }
             builder.append("    }\n}");
+            return builder.toString();
+        }
+    };
+    private static final ConfigQuery<String> INFO_XML_QUERY = new ConfigQuery<String>(){
+        @Override
+        public String query(Configuration config) {
+            StringBuilder builder = new StringBuilder();
+            Map<String,String> props = new TreeMap<>(config.getProperties());
+            builder.append("<configuration>\n")
+                    .append("  <class>"+ config.getClass().getName() + "</class>\n")
+                    .append("  <timestamp>" + System.currentTimeMillis() + "</timestamp>\n")
+                    .append("  <data>\n");
+            for(Map.Entry<String,String> en: props.entrySet()){
+                builder.append("     <entry key=\"" + escape(en.getKey()) +"\">"+escape(en.getValue())+"</entry>\n");
+            }
+            builder.append("   </data>\n</configuration>\n");
             return builder.toString();
         }
     };
@@ -183,13 +199,11 @@ public final class ConfigurationFunctions {
         return new ConfigQuery<Set<String>>() {
             @Override
             public Set<String> query(Configuration config) {
-                final Set<String> areas = new HashSet<>();
+                final Set<String> areas = new TreeSet<>();
                 for(String s: config.getProperties().keySet()) {
                     int index = s.lastIndexOf('.');
                     if (index > 0) {
                         areas.add(s.substring(0, index));
-                    } else {
-                        areas.add("<root>");
                     }
                 }
                 return areas;
@@ -209,12 +223,11 @@ public final class ConfigurationFunctions {
         return new ConfigQuery<Set<String>>() {
             @Override
             public Set<String> query(Configuration config) {
-                final Set<String> transitiveAreas = new HashSet<>();
+                final Set<String> transitiveAreas = new TreeSet<>();
                 for (String s : config.query(sections())) {
+                    transitiveAreas.add(s);
                     int index = s.lastIndexOf('.');
-                    if (index < 0) {
-                        transitiveAreas.add("<root>");
-                    } else {
+                    if (index > 0) {
                         while (index > 0) {
                             s = s.substring(0, index);
                             transitiveAreas.add(s);
@@ -241,7 +254,7 @@ public final class ConfigurationFunctions {
             @Override
             public Set<String> query(Configuration config) {
                 Set<String> result = new TreeSet<>();
-                for(String s: sections().query(config)){
+                for(String s : sections().query(config)){
                     if(predicate.test(s)){
                         result.add(s);
                     }
@@ -324,7 +337,15 @@ public final class ConfigurationFunctions {
      * @return the given query.
      */
     public static ConfigQuery<String> jsonInfo() {
-        return INFO_QUERY;
+        return INFO_JSON_QUERY;
+    }
+
+    /**
+     * Creates a ConfigQuery that creates a XML formatted ouitput of all properties in the given configuration.
+     * @return the given query.
+     */
+    public static ConfigQuery<String> xmlInfo() {
+        return INFO_XML_QUERY;
     }
 
 }

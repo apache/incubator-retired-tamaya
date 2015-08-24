@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * PropertySource implementation that stores all current values of a given (possibly dynamic, contextual and non remote
+ * PropertySource implementation that stores all current values of a given (possibly dynamic, contextual and non server
  * capable instance) and is fully serializable. Note that hereby only the scannable key/value pairs are considered.
  */
 public final class FrozenPropertySource implements PropertySource, Serializable {

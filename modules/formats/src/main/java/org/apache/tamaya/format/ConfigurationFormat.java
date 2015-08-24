@@ -46,7 +46,7 @@ public interface ConfigurationFormat {
     /**
      * Allows the format to examine the given resource, e.g. for a matching file ending. Only, if a format accepts an
      * URL, it will be tried for reading the configuration.
-     * @param url the url to read the configuration data from (could be a file, a remote location, a classpath
+     * @param url the url to read the configuration data from (could be a file, a server location, a classpath
      *            resource or something else, not null.
      * @return true, if this format accepts the given URL for reading.
      */
@@ -89,7 +89,7 @@ public interface ConfigurationFormat {
      * entries.
      * @see org.apache.tamaya.spi.PropertySource
      * @param resource a descriptive name for the resource, since an InputStream does not have any)
-     * @param inputStream the inputStream to read the configuration data from (could be a file, a remote location, a classpath
+     * @param inputStream the inputStream to read the configuration data from (could be a file, a server location, a classpath
      *            resource or something else.
      * @return the corresponding {@link ConfigurationData} containing sections/properties read, never {@code null}.
      * @throws org.apache.tamaya.ConfigException if parsing of the input fails.
