@@ -24,11 +24,14 @@ import org.joda.time.format.PeriodFormatter;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class PeriodConverterTest {
+    /*
+     * I am aware of the 'Parameterized tests' feature of JUnit but
+     * decided not to use it. Oliver B. Fischer, 3th April 2015
+     */
 
     private static PeriodConverter converter = new PeriodConverter();
 
