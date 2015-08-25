@@ -101,8 +101,7 @@ public class ManagedConfig implements ManagedConfigMBean {
         try{
             Thread.currentThread().setContextClassLoader(this.classLoader);
             return ConfigurationProvider.getConfiguration();
-        }
-        finally{
+        } finally{
             Thread.currentThread().setContextClassLoader(currentCL);
         }
     }
