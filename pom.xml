@@ -54,7 +54,8 @@ under the License.
         <maven.javadoc.skip>false</maven.javadoc.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jackson.version>2.5.1</jackson.version>
+        <json.spec.version>1.0-alpha-1</json.spec.version>
+        <johnzon.version>0.9-incubating</johnzon.version>
         <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
@@ -301,20 +302,17 @@ under the License.
             </dependency>
 
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-json_1.0_spec</artifactId>
+                <version>${json.spec.version}</version>
             </dependency>
+
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
+                <groupId>org.apache.johnzon</groupId>
+                <artifactId>johnzon-core</artifactId>
+                <version>${johnzon.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
