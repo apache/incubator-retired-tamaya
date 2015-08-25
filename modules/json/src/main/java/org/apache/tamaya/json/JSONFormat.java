@@ -18,19 +18,23 @@
  */
 package org.apache.tamaya.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
 
 /**
  * Implementation of the {@link org.apache.tamaya.format.ConfigurationFormat}
@@ -39,6 +43,19 @@ import java.util.Objects;
  * @see <a href="http://www.json.org">JSON format specification</a>
  */
 public class JSONFormat implements ConfigurationFormat {
+    /** Property that make Johnzon accept commentc. */
+    public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
+    /** The reader factory used. */
+    private JsonReaderFactory readerFactory;
+
+    /**
+     * Constructor, itniaitlizing zhe JSON reader factory.
+     */
+    public JSONFormat(){
+        Map<String, Object> config = new HashMap<String, Object>();
+        config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
+        this.readerFactory = Json.createReaderFactory(config);
+    }
 
     @Override
     public String getName() {
@@ -54,16 +71,15 @@ public class JSONFormat implements ConfigurationFormat {
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(inputStream);
+            final JsonReader reader = this.readerFactory.createReader(inputStream, Charset.forName("UTF-8"));
+            JsonObject root = reader.readObject();
             HashMap<String, String> values = new HashMap<>();
-            JSONVisitor visitor = new JSONVisitor((ObjectNode) root, values);
+            JSONVisitor visitor = new JSONVisitor(root, values);
             visitor.run();
-
             return ConfigurationDataBuilder.of(resource, this).addProperties(values)
                                            .build();
-        } catch (IOException e) {
-            throw new ConfigException("Failed to read data from " + resource);
+        } catch (JsonException e) {
+            throw new ConfigException("Failed to read data from " + resource, e);
         }
     }
 }

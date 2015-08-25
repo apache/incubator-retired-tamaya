@@ -18,14 +18,12 @@
  */
 package org.apache.tamaya.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,18 +31,35 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReaderFactory;
+import javax.json.JsonStructure;
+
 import static java.lang.String.format;
 
 /**
  * Property source based on a JSON file.
  */
 public class JSONPropertySource implements PropertySource {
+    /** Constant for enabling comments in Johnzon. */
+    public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
+
     /** The underlying resource. */
     private URL urlResource;
     /** The values read. */
     private Map<String, String> values;
     /** The evaluated ordinal. */
     private int ordinal;
+    /** The JSON reader factory used. */
+    private JsonReaderFactory readerFactory = initReaderFactory();
+
+    /** Initializes the factory to be used for creating readers. */
+    private JsonReaderFactory initReaderFactory() {
+        Map<String, Object> config = new HashMap<String, Object>();
+        config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
+       return Json.createReaderFactory(config);
+    }
 
     /**
      * Constructor, hereby using 0 as the default ordinal.
@@ -66,6 +81,9 @@ public class JSONPropertySource implements PropertySource {
         if (this.values.containsKey(TAMAYA_ORDINAL)) {
             this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
         }
+        Map<String, Object> config = new HashMap<String, Object>();
+        config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
+        this.readerFactory = Json.createReaderFactory(config);
     }
 
 
@@ -103,16 +121,15 @@ public class JSONPropertySource implements PropertySource {
      */
     protected Map<String, String> readConfig(URL urlResource) {
         try (InputStream is = urlResource.openStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(is);
+            JsonStructure root = this.readerFactory.createReader(is, Charset.forName("UTF-8")).read();
 
-            // @todo Add test for this. Oliver B. Fischer, 5. Jan. 2015
-            if (!(root instanceof ObjectNode)) {
+            // Test added. H. Saly, 15. Aug. 2015
+            if (!(root instanceof JsonObject)) {
                 throw new ConfigException("Currently only JSON objects are supported");
             }
 
             Map<String, String> values = new HashMap<>();
-            JSONVisitor visitor = new JSONVisitor((ObjectNode) root, values);
+            JSONVisitor visitor = new JSONVisitor((JsonObject)root, values);
             visitor.run();
             return values;
         }

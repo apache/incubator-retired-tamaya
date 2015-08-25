@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.json;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -37,6 +38,15 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
         JSONPropertySource source = new JSONPropertySource(configURL, 4);
         assertEquals(source.get(PropertySource.TAMAYA_ORDINAL), "16784");
+    }
+    
+    @Test(expected=ConfigException.class)
+    public void testDoNotAcceptJsonArrays() throws Exception {
+        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/array.json");
+
+        assertThat(configURL, CoreMatchers.notNullValue());
+
+        new JSONPropertySource(configURL);
     }
 
     @Override

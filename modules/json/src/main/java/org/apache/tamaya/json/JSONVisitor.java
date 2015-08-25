@@ -18,22 +18,24 @@
  */
 package org.apache.tamaya.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 import org.apache.tamaya.ConfigException;
 
 import java.util.*;
 
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
+
 /**
  * Visitor implementation to read a JSON formatted input source.
  */
-public class JSONVisitor {
-    private final ObjectNode rootNode;
+class JSONVisitor {
+    private final JsonObject rootNode;
     private final Map<String, String> targetStore;
 
-    public JSONVisitor(ObjectNode startNode, Map<String, String> target) {
+    JSONVisitor(JsonObject startNode, Map<String, String> target) {
         rootNode = startNode;
         targetStore = target;
     }
@@ -46,17 +48,28 @@ public class JSONVisitor {
 
         if (goOn) {
             do {
-                Map.Entry<String, JsonNode> current = stack.peek().nextElement();
+                Map.Entry<String, JsonValue> current = stack.peek().nextElement();
 
-                if (current.getValue() instanceof ValueNode) {
+                if (!(current.getValue() instanceof JsonStructure)) {
                     String key = stack.peek().getNSPrefix() + current.getKey();
-                    String value = current.getValue().asText();
+                    String value = null;
+                    JsonValue jsonValue = current.getValue();
+                    switch(jsonValue.getValueType()) {
+                        case NULL: value = null; break;
+                        case FALSE: value = Boolean.FALSE.toString(); break;
+                        case TRUE: Boolean.TRUE.toString(); break;
+                        case NUMBER: value = jsonValue.toString(); break;
+                        case STRING: value = ((JsonString) jsonValue).getString(); break;
+                        default:
+                            throw new ConfigException("Internal failure while processing JSON document.");
+                    }
+                    
                     targetStore.put(key, value);
-                } else if (current.getValue() instanceof ObjectNode) {
+                } else if (current.getValue() instanceof JsonObject) {
                     String key = stack.peek().getNSPrefix() + current.getKey();
-                    ObjectNode node = (ObjectNode) current.getValue();
+                    JsonObject node = (JsonObject) current.getValue();
                     stack.push(new VisitingContext(node, key));
-                } else if (current.getValue() instanceof ArrayNode) {
+                } else if (current.getValue() instanceof JsonArray) {
                     throw new ConfigException("Arrays are not supported at the moment.");
                 } else {
                     throw new ConfigException("Internal failure while processing JSON document.");
@@ -77,20 +90,20 @@ public class JSONVisitor {
      */
     private static class VisitingContext {
         private String namespace;
-        private final ObjectNode node;
-        private final Iterator<Map.Entry<String, JsonNode>> elements;
+        private final JsonObject node;
+        private final Iterator<Map.Entry<String, JsonValue>> elements;
 
-        public VisitingContext(ObjectNode node) {
+        public VisitingContext(JsonObject node) {
             this(node, "");
         }
 
-        public VisitingContext(ObjectNode rootNode, String currentNamespace) {
+        public VisitingContext(JsonObject rootNode, String currentNamespace) {
             namespace = currentNamespace;
             node = rootNode;
-            elements = node.fields();
+            elements = node.entrySet().iterator();
         }
 
-        public Map.Entry<String, JsonNode> nextElement() {
+        public Map.Entry<String, JsonValue> nextElement() {
             return elements.next();
         }
 
