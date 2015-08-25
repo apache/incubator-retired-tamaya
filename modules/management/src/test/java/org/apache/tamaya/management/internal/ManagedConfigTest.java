@@ -77,8 +77,6 @@ public class ManagedConfigTest {
         Set<String> sections = (bean.getSections());
         assertNotNull(sections);
         assertTrue(sections.contains("java"));
-        assertTrue(sections.contains("sun"));
-        assertTrue(sections.contains("os"));
         assertTrue(sections.contains("file"));
     }
 
