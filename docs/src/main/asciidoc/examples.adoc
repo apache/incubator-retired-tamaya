@@ -1,5 +1,5 @@
-Apache Tamaya -- Extension Modules
-==================================
+Apache Tamaya -- Examples
+=========================
 :name: Tamaya
 :rootpackage: org.apache.tamaya
 :title: Apache Tamaya Examples
