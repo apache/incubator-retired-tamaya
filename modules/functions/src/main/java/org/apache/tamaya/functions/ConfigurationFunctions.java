@@ -24,7 +24,6 @@ import org.apache.tamaya.Configuration;
 
 import java.net.Inet4Address;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
