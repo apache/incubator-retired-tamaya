@@ -22,58 +22,54 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 
+import java.net.Inet4Address;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Accessor that provides useful functions along with configuration.
  */
 public final class ConfigurationFunctions {
 
-    private static final ConfigQuery<String> INFO_JSON_QUERY = new ConfigQuery<String>(){
-        @Override
-        public String query(Configuration config) {
-            StringBuilder builder = new StringBuilder();
-            Map<String,String> props = new TreeMap<>(config.getProperties());
-            builder.append("\"configuration\": {\n")
-                    .append("  \"class\": \""+ config.getClass().getName() + "\",\n")
-                    .append("  \"timestamp\": " + System.currentTimeMillis() + ",\n")
-                    .append("  \"data\": {\n");
-            for(Map.Entry<String,String> en: props.entrySet()){
-                builder.append("     \"" + escape(en.getKey()) +"\": \""+escape(en.getValue())+"\",\n");
-            }
-            builder.append("    }\n}");
-            return builder.toString();
-        }
-    };
-    private static final ConfigQuery<String> INFO_XML_QUERY = new ConfigQuery<String>(){
-        @Override
-        public String query(Configuration config) {
-            StringBuilder builder = new StringBuilder();
-            Map<String,String> props = new TreeMap<>(config.getProperties());
-            builder.append("<configuration>\n")
-                    .append("  <class>"+ config.getClass().getName() + "</class>\n")
-                    .append("  <timestamp>" + System.currentTimeMillis() + "</timestamp>\n")
-                    .append("  <data>\n");
-            for(Map.Entry<String,String> en: props.entrySet()){
-                builder.append("     <entry key=\"" + escape(en.getKey()) +"\">"+escape(en.getValue())+"</entry>\n");
-            }
-            builder.append("   </data>\n</configuration>\n");
-            return builder.toString();
-        }
-    };
+    /**
+     * The Logger used.
+     */
+    private static final Logger LOG = Logger.getLogger(ConfigurationFunctions.class.getName());
 
+
+    private static void addFooter(StringBuilder b) {
+        b.append("</body>\n</html>\n");
+    }
+
+    private static void addHeader(StringBuilder b) {
+        String host = "unknown";
+        try {
+            host = Inet4Address.getLocalHost().getHostName();
+        } catch (Exception e) {
+            LOG.log(Level.INFO, "Failed to lookup hostname.", e);
+        }
+        b.append("<html>\n<head><title>System Configuration</title></head>\n" +
+                "<body>\n" +
+                "<h1>Sysem Configuration</h1>\n" +
+                "<p>This view shows the system configuration of " + host + " at " + new Date() + ".</p>");
+
+    }
 
     /**
      * Replaces new lines, returns, tabs and '"' with escaped variants.
+     *
      * @param text the input text, not null
      * @return the escaped text.
      */
-    private static String escape(String text){
-        return text.replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").replace("\"", "\\\"");
+    private static String escape(String text) {
+        return text.replace("\t", "\\t").replace("\"", "\\\"");
     }
 
     /**
@@ -146,7 +142,7 @@ public final class ConfigurationFunctions {
                                 return isKeyInSection(k, areaKey);
                             }
                         }, "section: " + areaKey);
-                if(stripKeys){
+                if (stripKeys) {
                     return new MappedConfiguration(filtered, new Function<String, String>() {
                         @Override
                         public String apply(String k) {
@@ -162,26 +158,32 @@ public final class ConfigurationFunctions {
     /**
      * Calculates the current section key and compares it with the given key.
      *
-     * @param key     the fully qualified entry key, not null
+     * @param key        the fully qualified entry key, not null
      * @param sectionKey the section key, not null
      * @return true, if the entry is exact in this section
      */
     public static boolean isKeyInSection(String key, String sectionKey) {
         int lastIndex = key.lastIndexOf('.');
-        String curAreaKey = lastIndex > 0 ? key.substring(0, lastIndex) : "";
-        return curAreaKey.equals(sectionKey);
+        if(lastIndex<0){
+            return false;
+        }
+        String curAreaKey = key.substring(0, lastIndex);
+        if(curAreaKey.startsWith(sectionKey)){
+            return true;
+        }
+        return false;
     }
 
     /**
      * Calculates the current section key and compares it with the given section keys.
      *
-     * @param key     the fully qualified entry key, not null
+     * @param key         the fully qualified entry key, not null
      * @param sectionKeys the section keys, not null
      * @return true, if the entry is exact in this section
      */
     public static boolean isKeyInSections(String key, String... sectionKeys) {
-        for(String areaKey:sectionKeys){
-            if(isKeyInSection(key, areaKey)){
+        for (String areaKey : sectionKeys) {
+            if (isKeyInSection(key, areaKey)) {
                 return true;
             }
         }
@@ -200,7 +202,7 @@ public final class ConfigurationFunctions {
             @Override
             public Set<String> query(Configuration config) {
                 final Set<String> areas = new TreeSet<>();
-                for(String s: config.getProperties().keySet()) {
+                for (String s : config.getProperties().keySet()) {
                     int index = s.lastIndexOf('.');
                     if (index > 0) {
                         areas.add(s.substring(0, index));
@@ -248,12 +250,12 @@ public final class ConfigurationFunctions {
      * @return s set with all sections, never {@code null}.
      */
     public static ConfigQuery<Set<String>> sections(final Predicate<String> predicate) {
-        return new ConfigQuery<Set<String>>(){
+        return new ConfigQuery<Set<String>>() {
             @Override
             public Set<String> query(Configuration config) {
                 Set<String> result = new TreeSet<>();
-                for(String s : sections().query(config)){
-                    if(predicate.test(s)){
+                for (String s : sections().query(config)) {
+                    if (predicate.test(s)) {
                         result.add(s);
                     }
                 }
@@ -273,12 +275,12 @@ public final class ConfigurationFunctions {
      * @return s set with all transitive sections, never {@code null}.
      */
     public static ConfigQuery<Set<String>> transitiveSections(final Predicate<String> predicate) {
-        return new ConfigQuery<Set<String>>(){
+        return new ConfigQuery<Set<String>>() {
             @Override
             public Set<String> query(Configuration config) {
                 Set<String> result = new TreeSet<>();
-                for(String s: transitiveSections().query(config)){
-                    if(predicate.test(s)){
+                for (String s : transitiveSections().query(config)) {
+                    if (predicate.test(s)) {
                         result.add(s);
                     }
                 }
@@ -303,12 +305,12 @@ public final class ConfigurationFunctions {
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given section (recursive).
      *
-     * @param sectionKeys   the section keys, not null
-     * @param stripKeys if set to true, the section key is stripped away fromMap the resulting key.
+     * @param sectionKeys the section keys, not null
+     * @param stripKeys   if set to true, the section key is stripped away fromMap the resulting key.
      * @return the section configuration, with the areaKey stripped away.
      */
     public static ConfigOperator sectionRecursive(final boolean stripKeys, final String... sectionKeys) {
-        return new ConfigOperator(){
+        return new ConfigOperator() {
             @Override
             public Configuration operate(Configuration config) {
                 Configuration filtered = new FilteredConfiguration(config, new BiPredicate<String, String>() {
@@ -316,8 +318,8 @@ public final class ConfigurationFunctions {
                     public boolean test(final String k, String v) {
                         return isKeyInSections(k, sectionKeys);
                     }
-                } , "sections: " + Arrays.toString(sectionKeys));
-                if(stripKeys){
+                }, "sections: " + Arrays.toString(sectionKeys));
+                if (stripKeys) {
                     return new MappedConfiguration(filtered, new Function<String, String>() {
                         @Override
                         public String apply(String s) {
@@ -335,15 +337,146 @@ public final class ConfigurationFunctions {
      * @return the given query.
      */
     public static ConfigQuery<String> jsonInfo() {
-        return INFO_JSON_QUERY;
+        return jsonInfo(null);
+    }
+
+    /**
+     * Creates a ConfigQuery that creates a JSON formatted ouitput of all properties in the given configuration.
+     * @param info the additional information attributes to be added to the output, e.g. the original request
+     *             parameters.
+     * @return the given query.
+     */
+    public static ConfigQuery<String> jsonInfo(final Map<String,String> info) {
+        return new ConfigQuery<String>() {
+            @Override
+            public String query(Configuration config) {
+                StringBuilder builder = new StringBuilder();
+                Map<String, String> props = new TreeMap<>(config.getProperties());
+                builder.append("\"configuration\": {\n")
+                        .append("  \"class\": \"" + config.getClass().getName() + "\",\n")
+                        .append("  \"timestamp\": " + System.currentTimeMillis() + ",\n");
+                if (info!=null && !info.isEmpty()) {
+                    builder.append("  \"info\": {\n");
+                    for (Map.Entry<String, String> en : info.entrySet()) {
+                        builder.append("     \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
+                    }
+                    builder.append("  },\n");
+                }
+                builder.append("  \"data\": {\n");
+                for (Map.Entry<String, String> en : props.entrySet()) {
+                    builder.append("     \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
+                }
+                builder.append("    }\n}");
+                return builder.toString();
+            }
+        };
     }
 
     /**
      * Creates a ConfigQuery that creates a XML formatted ouitput of all properties in the given configuration.
+     *
      * @return the given query.
      */
     public static ConfigQuery<String> xmlInfo() {
-        return INFO_XML_QUERY;
+        return xmlInfo(null);
+    }
+
+    /**
+     * Creates a ConfigQuery that creates a XML formatted ouitput of all properties in the given configuration.
+     * @param info the additional information attributes to be added to the output, e.g. the original request
+     *             parameters.
+     * @return the given query.
+     */
+    public static ConfigQuery<String> xmlInfo(final Map<String,String> info) {
+        return new ConfigQuery<String>() {
+            @Override
+            public String query(Configuration config) {
+                StringBuilder builder = new StringBuilder();
+                Map<String, String> props = new TreeMap<>(config.getProperties());
+                builder.append("<configuration>\n")
+                        .append("  <class>" + config.getClass().getName() + "</class>\n")
+                        .append("  <timestamp>" + System.currentTimeMillis() + "</timestamp>\n");
+                if (info!=null && !info.isEmpty()) {
+                    builder.append("  <info>\n");
+                    for (Map.Entry<String, String> en : info.entrySet()) {
+                        builder.append("     <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
+                    }
+                    builder.append("  </info>\n");
+                }
+                builder.append("  <data>\n");
+                for (Map.Entry<String, String> en : props.entrySet()) {
+                    builder.append("     <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
+                }
+                builder.append("   </data>\n</configuration>\n");
+                return builder.toString();
+            }
+        };
+    }
+
+    /**
+     * Creates a ConfigQuery that creates a plain text formatted ouitput of all properties in the given configuration.
+     *
+     * @return the given query.
+     */
+    public static ConfigQuery<String> textInfo() {
+        return textInfo(null);
+    }
+
+    /**
+     * Creates a ConfigQuery that creates a plain text formatted ouitput of all properties in the given configuration.
+     *
+     * @return the given query.
+     */
+    public static ConfigQuery<String> textInfo(final Map<String,String> info) {
+        return new ConfigQuery<String>() {
+            @Override
+            public String query(Configuration config) {
+                StringBuilder builder = new StringBuilder();
+                Map<String, String> props = new TreeMap<>(config.getProperties());
+                builder.append("configuration:\n")
+                        .append("  class     : " + config.getClass().getName() + "\n")
+                        .append("  timestamp : " + System.currentTimeMillis() + "\n");
+                if (info != null && !info.isEmpty()) {
+                    builder.append("  info:\n");
+                    for (Map.Entry<String, String> en : info.entrySet()) {
+                        builder.append("    " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + "\n");
+                    }
+                }
+                builder.append("  data:\n");
+                for (Map.Entry<String, String> en : props.entrySet()) {
+                    builder.append("    " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + ",\n");
+                }
+                builder.append("\n");
+                return builder.toString();
+            }
+        };
+    }
+
+    /**
+     * Creates a ConfigQuery that creates a html formatted ouitput of all properties in the given configuration.
+     *
+     * @return the given query.
+     */
+    public static ConfigQuery<String> htmlInfo() {
+        return htmlInfo(null);
+    }
+
+    /**
+     * Creates a ConfigQuery that creates a html formatted ouitput of all properties in the given configuration.
+     *
+     * @return the given query.
+     */
+    public static ConfigQuery<String> htmlInfo(final Map<String,String> info) {
+        return new ConfigQuery<String>() {
+            @Override
+            public String query(Configuration config) {
+                StringBuilder builder = new StringBuilder();
+                addHeader(builder);
+                builder.append("<pre>\n").append(textInfo(info).query(config)).append("</pre>\n");
+                addFooter(builder);
+                return builder.toString();
+            }
+        };
     }
 
 }

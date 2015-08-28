@@ -90,6 +90,12 @@ public class ManagedConfig implements ManagedConfigMBean {
                 ConfigurationFunctions.section(area)).getProperties().isEmpty();
     }
 
+    @Override
+    public boolean isAreaEmpty(String area) {
+        return getSection(area, true).isEmpty();
+    }
+
+
     /**
      * Evaluate the current configuration. By default this class is temporarely setting the
      * TCCL to the instance active on bean creation and then calls {@link ConfigurationProvider#getConfiguration()}.

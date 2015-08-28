@@ -68,6 +68,11 @@ class ValueFilteredPropertySource implements PropertySource{
     }
 
     @Override
+    public boolean isScannable() {
+        return source.isScannable();
+    }
+
+    @Override
     public String toString() {
         return "ValueFilteredPropertySource{" +
                 "source=" + source.getName() +

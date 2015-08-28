@@ -53,6 +53,11 @@ class FilteredPropertySource implements PropertySource {
     }
 
     @Override
+    public String get(String key) {
+        return getProperties().get(key);
+    }
+
+    @Override
     public Map<String,String> getProperties(){
         final Map<String,String> result = new HashMap<>();
         for(Map.Entry<String,String> en: this.baseSource.getProperties().entrySet()) {
@@ -61,6 +66,11 @@ class FilteredPropertySource implements PropertySource {
             }
         }
         return result;
+    }
+
+    @Override
+    public boolean isScannable() {
+        return baseSource.isScannable();
     }
 
     @Override

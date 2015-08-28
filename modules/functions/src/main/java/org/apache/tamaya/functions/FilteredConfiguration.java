@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.functions;
 
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 
@@ -42,6 +44,16 @@ class FilteredConfiguration implements Configuration {
     }
 
     @Override
+    public String get(String key) {
+        return get(key, String.class);
+    }
+
+    @Override
+    public <T> T get(String key, Class<T> type) {
+        return (T)get(key, TypeLiteral.of(type));
+    }
+
+    @Override
     public <T> T get(String key, TypeLiteral<T> type) {
         String value = baseConfiguration.get(key);
         if (filter.test(key, value)) {
@@ -59,6 +71,16 @@ class FilteredConfiguration implements Configuration {
             }
         }
         return result;
+    }
+
+    @Override
+    public Configuration with(ConfigOperator operator) {
+        return null;
+    }
+
+    @Override
+    public <T> T query(ConfigQuery<T> query) {
+        return query.query(this);
     }
 
     @Override

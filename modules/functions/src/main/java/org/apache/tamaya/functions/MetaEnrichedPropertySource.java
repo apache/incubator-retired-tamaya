@@ -54,6 +54,11 @@ class MetaEnrichedPropertySource implements PropertySource {
     }
 
     @Override
+    public int getOrdinal() {
+        return basePropertySource.getOrdinal();
+    }
+
+    @Override
     public String getName() {
         return basePropertySource.getName();
     }
@@ -68,6 +73,11 @@ class MetaEnrichedPropertySource implements PropertySource {
             }
         }
         return allProperties;
+    }
+
+    @Override
+    public boolean isScannable() {
+        return basePropertySource.isScannable();
     }
 
     @Override

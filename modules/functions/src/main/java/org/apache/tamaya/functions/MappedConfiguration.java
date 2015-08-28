@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.functions;
 
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 
@@ -42,6 +44,16 @@ class MappedConfiguration implements Configuration {
     }
 
     @Override
+    public String get(String key) {
+        return get(key, String.class);
+    }
+
+    @Override
+    public <T> T get(String key, Class<T> type) {
+        return (T)get(key, TypeLiteral.of(type));
+    }
+
+    @Override
     public <T> T get(String key, TypeLiteral<T> type) {
         return baseConfiguration.get(this.keyMapper.apply(key), type);
     }
@@ -54,6 +66,16 @@ class MappedConfiguration implements Configuration {
             props.put(keyMapper.apply(en.getKey()), en.getValue());
         }
         return props;
+    }
+
+    @Override
+    public Configuration with(ConfigOperator operator) {
+        return operator.operate(this);
+    }
+
+    @Override
+    public <T> T query(ConfigQuery<T> query) {
+        return query.query(this);
     }
 
     @Override

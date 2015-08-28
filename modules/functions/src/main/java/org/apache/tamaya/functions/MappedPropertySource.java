@@ -76,6 +76,11 @@ class MappedPropertySource implements PropertySource {
     }
 
     @Override
+    public boolean isScannable() {
+        return propertySource.isScannable();
+    }
+
+    @Override
     public String get(String key) {
         return getProperties().get(key);
     }

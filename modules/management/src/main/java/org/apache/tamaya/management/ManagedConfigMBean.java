@@ -114,8 +114,6 @@ public interface ManagedConfigMBean {
      * @param area the target section key, not null.
      * @return true, if such an section exists and is not empty.
      */
-    default boolean isAreaEmpty(String area){
-        return getSection(area, true).isEmpty();
-    }
+    boolean isAreaEmpty(String area);
 
 }
