@@ -21,18 +21,14 @@ package org.aspache.tamaya.examples.fileobserver;
 import org.apache.commons.io.FileUtils;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
@@ -137,9 +133,4 @@ public class ObservedConfigExampleTest {
         assertThat(props.get("testValue2"), is("anotherValue"));
     }
 
-    private static String dump(Map<String, String> properties) {
-        StringBuilder b = new StringBuilder();
-        new TreeMap<>(properties).forEach((k,v)->b.append("  " + k + " = " + v + '\n'));
-        return b.toString();
-    }
 }

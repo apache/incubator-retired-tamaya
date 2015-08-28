@@ -28,7 +28,6 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 /**
  * Small class that contains and manages all information anc access to a configured field and a concrete instance current
@@ -36,10 +35,6 @@ import java.util.logging.Logger;
  * final keys by reflection.
  */
 public class ConfiguredField {
-    /**
-     * The logger used.
-     */
-    private static final Logger LOG = Logger.getLogger(ConfiguredField.class.getName());
     /**
      * The configured field instance.
      */

@@ -57,9 +57,7 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
 
     @Override
     public void setConfigurationContext(ConfigurationContext context){
-        Configuration oldConfig = this.config;
-        Configuration newConfig = new DefaultConfiguration(context);
-        this.config = newConfig;
+        this.config = new DefaultConfiguration(context);
         this.context = context;
     }
 }

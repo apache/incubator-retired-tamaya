@@ -18,14 +18,15 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.junit.Test;
 
 /**
  * Tests conversion of the {@link org.apache.tamaya.core.internal.converters.CharConverter}.

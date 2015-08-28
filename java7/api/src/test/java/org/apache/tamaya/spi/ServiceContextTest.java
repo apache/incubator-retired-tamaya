@@ -18,15 +18,18 @@
  */
 package org.apache.tamaya.spi;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class ServiceContextTest {
 
@@ -52,7 +55,7 @@ public class ServiceContextTest {
                 list.add("ServiceContextTest");
                 return List.class.cast(list);
             }
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     };
 

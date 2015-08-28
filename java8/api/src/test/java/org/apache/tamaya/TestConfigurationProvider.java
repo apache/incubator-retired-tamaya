@@ -22,9 +22,6 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Test Configuration class, that is used to testdata the default methods provided by the API.
  */

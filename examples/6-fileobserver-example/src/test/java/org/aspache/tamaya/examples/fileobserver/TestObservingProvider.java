@@ -22,7 +22,6 @@ import org.apache.tamaya.events.folderobserver.ObservingPropertySourceProvider;
 import org.apache.tamaya.format.formats.PropertiesFormat;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Test configuration property source provider that observes a directory and updated the config if necessary.

@@ -135,7 +135,7 @@ public final class DefaultDynamicValue<T> implements DynamicValue<T>, Serializab
                 throw new ConfigException("Failed to evaluate target type for " + annotatedField.getAnnotatedType().getType().getTypeName()
                         + '.' + annotatedField.getName());
             }
-            targetType = (Class) types[0];
+            targetType = (Type) types[0];
         }
         PropertyConverter<?> propertyConverter = null;
         WithPropertyConverter annot = annotatedField.getAnnotation(WithPropertyConverter.class);

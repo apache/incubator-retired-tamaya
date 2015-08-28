@@ -26,7 +26,6 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;

@@ -20,9 +20,6 @@ package org.apache.tamaya.core;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.core.internal.DefaultConfiguration;
-import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,7 +27,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**

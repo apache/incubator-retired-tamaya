@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,10 +25,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertySourceProvider;
 
 /**
  * Abstract base class that uses a descriptive resource path to define the locations of configuration files to be
@@ -124,7 +125,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
          */
         public PropertiesBasedPropertySource(String name, Properties props) {
             this.name = name;
-            for (Map.Entry en : props.entrySet()) {
+            for (Entry<Object, Object> en : props.entrySet()) {
                 this.properties.put(en.getKey().toString(), String.valueOf(en.getValue()));
             }
         }

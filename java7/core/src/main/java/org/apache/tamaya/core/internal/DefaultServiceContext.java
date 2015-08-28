@@ -40,11 +40,11 @@ public final class DefaultServiceContext implements ServiceContext {
     /**
      * List current services loaded, per class.
      */
-    private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
     /**
      * Singletons.
      */
-    private final Map<Class, Object> singletons = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
 
     @Override
     public <T> T getService(Class<T> serviceType) {
@@ -60,7 +60,7 @@ public final class DefaultServiceContext implements ServiceContext {
                 singletons.put(serviceType, cached);
             }
         }
-        return (T)cached;
+        return serviceType.cast(cached);
     }
 
     /**

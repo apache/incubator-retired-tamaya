@@ -36,11 +36,11 @@ public final class TestServiceContext implements ServiceContext {
     /**
      * List current services loaded, per class.
      */
-    private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
     /**
      * Singletons.
      */
-    private final Map<Class, Optional<?>> singletons = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Optional<?>> singletons = new ConcurrentHashMap<>();
 
     @Override
     public <T> Optional<T> getService(Class<T> serviceType) {
@@ -77,7 +77,7 @@ public final class TestServiceContext implements ServiceContext {
         } catch (Exception e) {
             Logger.getLogger(TestServiceContext.class.getName()).log(Level.WARNING,
                     "Error loading services current type " + serviceType, e);
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 

@@ -25,18 +25,12 @@ import org.apache.tamaya.functions.ConfigurationFunctions;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Default implementation of the {@link ManagedConfigMBean} interface. Each bean binds to the
  * current Configuration instance on creation.
  */
 public class ManagedConfig implements ManagedConfigMBean {
-
-    /**
-     * The logger used.
-     */
-    private final static Logger LOG = Logger.getLogger(ManagedConfig.class.getName());
 
     /**
      * Classloader that was active when this instance was created.

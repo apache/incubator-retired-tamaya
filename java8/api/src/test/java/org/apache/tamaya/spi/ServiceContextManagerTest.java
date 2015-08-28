@@ -32,7 +32,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ServiceContextManagerTest {

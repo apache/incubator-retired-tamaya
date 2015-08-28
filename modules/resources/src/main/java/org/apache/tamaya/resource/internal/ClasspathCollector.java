@@ -194,8 +194,8 @@ public class ClasspathCollector {
                 rootEntryPath = rootEntryPath + '/';
             }
             Collection<URL> result = new ArrayList<>(10);
-            for (Enumeration entries = jarFile.entries(); entries.hasMoreElements(); ) {
-                JarEntry entry = (JarEntry) entries.nextElement();
+            for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements(); ) {
+                JarEntry entry = entries.nextElement();
                 String entryPath = entry.getName();
                 if (entryPath.startsWith(rootEntryPath)) {
                     String relativePath = entryPath.substring(rootEntryPath.length());

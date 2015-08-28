@@ -18,12 +18,14 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the default converter for bytes.

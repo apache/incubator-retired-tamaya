@@ -93,7 +93,7 @@ public final class ConfigValidator {
         for (ValidationProviderSpi model : ServiceContextManager.getServiceContext().getServices(ValidationProviderSpi.class)) {
             for(Validation validation: model.getValidations()) {
                 if(validation.getName().equals(name) && validation.getClass().equals(validationType)) {
-                    return (T)validation;
+                    return validationType.cast(validation);
                 }
             }
         }

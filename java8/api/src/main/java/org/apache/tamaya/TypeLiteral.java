@@ -71,23 +71,6 @@ public class TypeLiteral<T> implements Serializable {
     }
 
     /**
-     * Evaluates the subclass of a TypeLiteral instance.
-     *
-     * @param clazz the typeliteral class (could be an anonymous class).
-     * @return the subclass implemented by the TypeLiteral.
-     */
-    private static Class<?> getTypeLiteralSubclass(Class<?> clazz) {
-        Class<?> superclass = clazz.getSuperclass();
-        if (superclass.equals(TypeLiteral.class)) {
-            return clazz;
-        } else if (superclass.equals(Object.class)) {
-            return null;
-        } else {
-            return (getTypeLiteralSubclass(superclass));
-        }
-    }
-
-    /**
      * Checks the current implemented generic interfaces and evaluates the given single type parameter.
      *
      * @param clazz         the class to check, not null.

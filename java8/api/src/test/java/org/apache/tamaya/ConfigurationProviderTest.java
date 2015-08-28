@@ -18,12 +18,9 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Simple tests for the }@link ConfigurationProvider} singleton class.

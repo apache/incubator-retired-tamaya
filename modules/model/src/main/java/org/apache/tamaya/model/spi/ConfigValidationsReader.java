@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.model.spi;
 
-import org.apache.tamaya.model.Validation;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Logger;
+
+import org.apache.tamaya.model.Validation;
 
 /**
  * Utility class to read metamodel information from properties. Hereby these properties can be part of a
@@ -36,9 +35,6 @@ import java.util.logging.Logger;
  * from any kind of source.
  */
 public final class ConfigValidationsReader {
-
-    /** The logger used. */
-    private static final Logger LOGGER =  Logger.getLogger(ConfigValidationsReader.class.getName());
 
     /** The default model entries selector. */
     private static final String DEFAULT_META_INFO_SELECTOR = "{model}";

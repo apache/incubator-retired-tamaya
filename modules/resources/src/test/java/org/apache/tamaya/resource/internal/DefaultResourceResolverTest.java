@@ -18,15 +18,14 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 /**
  * Tests the {@link org.apache.tamaya.resource.internal.DefaultResourceResolver} using CP and FS path expressions.

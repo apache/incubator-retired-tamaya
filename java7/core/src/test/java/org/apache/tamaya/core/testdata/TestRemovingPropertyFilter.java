@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertyFilter;
 

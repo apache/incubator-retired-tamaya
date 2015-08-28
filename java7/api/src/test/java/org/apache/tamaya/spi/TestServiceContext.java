@@ -33,9 +33,9 @@ import java.util.logging.Logger;
  */
 public final class TestServiceContext implements ServiceContext {
     /** List current services loaded, per class. */
-    private final ConcurrentHashMap<Class, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
 
-    private final Map<Class, Object> singletons = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
 
     @Override
     public int ordinal() {
@@ -44,7 +44,7 @@ public final class TestServiceContext implements ServiceContext {
 
     @Override
     public <T> T getService(Class<T> serviceType) {
-        T cached = (T) singletons.get(serviceType);
+        T cached = serviceType.cast(singletons.get(serviceType));
         if(cached==null) {
             List<? extends T> services = getServices(serviceType);
             if (services.isEmpty()) {
@@ -82,7 +82,7 @@ public final class TestServiceContext implements ServiceContext {
         } catch (Exception e) {
             Logger.getLogger(TestServiceContext.class.getName()).log(Level.WARNING,
                                       "Error loading services current type " + serviceType, e);
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 

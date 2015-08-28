@@ -37,7 +37,7 @@ public class ParameterValidation extends AbstractValidation {
     /** Optional regular expression for validating the value. */
     private String regEx;
     /** The target type into which the value must be convertible. */
-    private Class type;
+    private Class<?> type;
 
     /**
      * Internal constructor.
@@ -59,7 +59,7 @@ public class ParameterValidation extends AbstractValidation {
      *
      * @return the type.
      */
-    public Class getParameterType() {
+    public Class<?> getParameterType() {
         return type;
     }
 
@@ -137,7 +137,7 @@ public class ParameterValidation extends AbstractValidation {
      */
     public static class Builder {
         /** The parameter's target type. */
-        private Class type;
+        private Class<?> type;
         /** The fully qualified parameter name. */
         private String name;
         /** The optional provider. */

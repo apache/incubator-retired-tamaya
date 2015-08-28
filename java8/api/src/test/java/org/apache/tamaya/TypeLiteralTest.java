@@ -20,7 +20,6 @@ package org.apache.tamaya;
 
 import org.junit.Test;
 
-import javax.annotation.Priority;
 import java.util.ArrayList;
 import java.util.List;
 

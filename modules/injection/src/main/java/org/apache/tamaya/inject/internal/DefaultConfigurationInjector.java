@@ -35,7 +35,7 @@ import org.apache.tamaya.inject.ConfiguredItemSupplier;
 @Priority(0)
 public final class DefaultConfigurationInjector implements ConfigurationInjector {
 
-    private Map<Class, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
+    private Map<Class<?>, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
     /**
      * Extract the configuration annotation config and registers it per class, for later reuse.
@@ -62,7 +62,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      */
     @Override
     public <T> T configure(T instance) {
-        Class type = Objects.requireNonNull(instance).getClass();
+        Class<?> type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerType(type);
         Objects.requireNonNull(configuredType).configure(instance);
         return instance;
@@ -79,8 +79,8 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
         if(cl==null){
             cl = this.getClass().getClassLoader();
         }
-        return (T) Proxy.newProxyInstance(cl, new Class[]{ConfiguredItemSupplier.class, Objects.requireNonNull(templateType)},
-                new ConfigTemplateInvocationHandler(templateType, ConfigurationProvider.getConfiguration()));
+        return templateType.cast(Proxy.newProxyInstance(cl, new Class[]{ConfiguredItemSupplier.class, Objects.requireNonNull(templateType)},
+                new ConfigTemplateInvocationHandler(templateType, ConfigurationProvider.getConfiguration())));
     }
 
 
