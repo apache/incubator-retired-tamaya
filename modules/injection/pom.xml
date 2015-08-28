@@ -22,7 +22,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-extensions</artifactId>
-        <version>0.1-incubating-SNAPSHOT</version>
+        <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-injection</artifactId>
@@ -61,7 +61,7 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya.ext.model</groupId>
             <artifactId>tamaya-model</artifactId>
-            <version>0.1-incubating-SNAPSHOT</version>
+            <version>0.2-incubating-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
         <dependency>
