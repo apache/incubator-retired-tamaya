@@ -35,7 +35,7 @@ public class DateTimeConverterIT {
         List<PropertyConverter> formats = ServiceContext.getInstance()
                                                         .getServices(PropertyConverter.class);
 
-        PropertyConverter converter = formats.stream()
+        PropertyConverter<?> converter = formats.stream()
                                              .filter(s -> s instanceof DateTimeConverter)
                                              .findFirst().get();
 

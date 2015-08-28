@@ -60,16 +60,31 @@ public abstract class BaseRemotePropertySource implements PropertySource{
      * stay untouched.
      */
     public void reload(){
-        Map newProperties;
+        Map readProperties;
         ConfigurationFormat format = getConfigurationFormat();
         for(URL url:getAccessURLs()) {
             try(InputStream is = url.openStream()) {
                 ConfigurationData data = format.readConfiguration(url.toExternalForm(), is);
                 if(data!=null){
-                    newProperties = data.getDefaultSection();
-                    if(newProperties!=null){
+                    readProperties = data.getDefaultSection();
+                    if(readProperties!=null){
+                        Map<String,String> newProperties = new HashMap<>();
+                        for(Map.Entry<String,String> en:readProperties.entrySet()){
+                            // filter data entries
+                            if(en.getKey().startsWith("data.")) {
+                                newProperties.put(en.getKey().substring(5), en.getValue());
+                            }
+                        }
+                        // the configs served by the tamaya server module has a 'data' root section containing the
+                        // config  entries. if not present, we assume an alternate format, which is sued as is...
+                        if(newProperties.isEmpty()){
+                            Logger.getLogger(getClass().getName()).info(
+                                    "Loaded remote config from: " + url + ", does not have a data section, using as is...");
+                            newProperties = readProperties;
+                        }
                         this.properties = newProperties;
-                        Logger.getLogger(getClass().getName()).info("Reloaded remote config from: " + url);
+                        Logger.getLogger(getClass().getName()).info(
+                                "Reloaded remote config from: " + url + ", entriea read: " + this.properties.size());
                     }
                 }
             }

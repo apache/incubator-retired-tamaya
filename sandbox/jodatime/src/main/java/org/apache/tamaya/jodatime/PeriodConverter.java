@@ -21,13 +21,11 @@ package org.apache.tamaya.jodatime;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.joda.time.MutablePeriod;
 import org.joda.time.Period;
-import org.joda.time.ReadWritablePeriod;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodParser;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**

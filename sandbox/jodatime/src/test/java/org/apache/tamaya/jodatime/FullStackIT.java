@@ -18,18 +18,15 @@
  */
 package org.apache.tamaya.jodatime;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.joda.time.format.ISODateTimeFormat.basicDateTime;
 import static org.joda.time.format.ISODateTimeFormat.dateTime;
 
 public class FullStackIT {
