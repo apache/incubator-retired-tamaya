@@ -31,6 +31,10 @@ under the License.
     <name>Apache Tamaya Configuration: Server Extension</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <jdkVersion>1.7</jdkVersion>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>

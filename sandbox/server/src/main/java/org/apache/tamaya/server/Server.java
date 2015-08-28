@@ -18,23 +18,29 @@
  */
 package org.apache.tamaya.server;
 
-import org.apache.tamaya.spi.ServiceContextManager;
-
 /**
  * Simple abstraction of the Server interface.
  */
-public final class ConfigServer {
+public interface Server {
+    /**
+     * Starts the server on the given port-
+     * @param port the target port.
+     */
+    void start(int port);
 
     /**
-     * Creates a new server instance.
-     * @return a new server instance.
+     * Checks if the server us started.
+     * @return true if the server us started.
      */
-    public static Server createServer(){
-        return ServiceContextManager.getServiceContext().getService(Server.class);
-    }
+    boolean isStarted();
 
-    public static void main(String... args){
-        createServer().start(8888);
-    }
+    /**
+     * Stops the server, but does not destroy it, so it might be restarted.
+     */
+    void stop();
 
+    /**
+     * Destroy the server instance.
+     */
+    void destroy();
 }

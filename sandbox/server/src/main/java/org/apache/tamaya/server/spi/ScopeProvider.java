@@ -16,25 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.server;
+package org.apache.tamaya.server.spi;
 
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.ConfigOperator;
+
+import java.util.Map;
 
 /**
- * Simple abstraction of the Server interface.
+ * Simple registratable provider class to register scopes for the server extension.
  */
-public final class ConfigServer {
+public interface ScopeProvider {
 
     /**
-     * Creates a new server instance.
-     * @return a new server instance.
+     * Return the scopes to be registered.
+     * @return the scope map. The keys are the scope ids that identify the scope operators to be used.
      */
-    public static Server createServer(){
-        return ServiceContextManager.getServiceContext().getService(Server.class);
-    }
-
-    public static void main(String... args){
-        createServer().start(8888);
-    }
-
+    Map<String,ConfigOperator> getScopes();
 }
