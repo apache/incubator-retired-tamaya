@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -21,6 +22,11 @@ under the License.
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd"
          name="Apache Tamaya">
 
+    <!-- Position of publishing date and version information -->
+    <publishDate position="bottom" format="yyyy-MM-dd"/>
+    <version position="bottom"/>
+
+    <!-- We use the Reflow Skin for Tamaya -->
     <skin>
         <groupId>lt.velykis.maven.skins</groupId>
         <artifactId>reflow-maven-skin</artifactId>
@@ -43,6 +49,17 @@ under the License.
                 <name>Apache Tamaya</name>
                 <href>index.html</href>
             </brand>
+
+            <pages>
+                <index>
+                    <sections>
+                        <columns>3</columns>
+                        <columns>2</columns>
+                        <body/>
+                        <!--<sidebar/>-->
+                    </sections>
+                </index>
+            </pages>
 
             <theme>bootswatch-cosmo</theme>
         </reflowSkin>
