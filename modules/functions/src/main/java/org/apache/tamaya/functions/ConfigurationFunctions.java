@@ -21,6 +21,7 @@ package org.apache.tamaya.functions;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.PropertySource;
 
 import java.net.Inet4Address;
 import java.util.Arrays;
@@ -43,33 +44,6 @@ public final class ConfigurationFunctions {
     private static final Logger LOG = Logger.getLogger(ConfigurationFunctions.class.getName());
 
 
-    private static void addFooter(StringBuilder b) {
-        b.append("</body>\n</html>\n");
-    }
-
-    private static void addHeader(StringBuilder b) {
-        String host = "unknown";
-        try {
-            host = Inet4Address.getLocalHost().getHostName();
-        } catch (Exception e) {
-            LOG.log(Level.INFO, "Failed to lookup hostname.", e);
-        }
-        b.append("<html>\n<head><title>System Configuration</title></head>\n" +
-                "<body>\n" +
-                "<h1>Sysem Configuration</h1>\n" +
-                "<p>This view shows the system configuration of " + host + " at " + new Date() + ".</p>");
-
-    }
-
-    /**
-     * Replaces new lines, returns, tabs and '"' with escaped variants.
-     *
-     * @param text the input text, not null
-     * @return the escaped text.
-     */
-    private static String escape(String text) {
-        return text.replace("\t", "\\t").replace("\"", "\\\"");
-    }
 
     /**
      * Private singleton constructor.
@@ -163,11 +137,11 @@ public final class ConfigurationFunctions {
      */
     public static boolean isKeyInSection(String key, String sectionKey) {
         int lastIndex = key.lastIndexOf('.');
-        if(lastIndex<0){
+        if (lastIndex < 0) {
             return false;
         }
         String curAreaKey = key.substring(0, lastIndex);
-        if(curAreaKey.startsWith(sectionKey)){
+        if (curAreaKey.startsWith(sectionKey)) {
             return true;
         }
         return false;
@@ -301,6 +275,30 @@ public final class ConfigurationFunctions {
     }
 
     /**
+     * Creates a Configuration that creates a new instance using the configuration instances provided. Hereby
+     * values from higher instances override previous values..
+     *
+     * @param configName the new config name
+     * @param configs    the configs to be combined. The entries of the first config are overwritten
+     *                   by entries of the later instances.
+     * @return the resulting configuration instance.
+     */
+    public static Configuration combine(String configName, Configuration... configs) {
+        return new CombinedConfiguration(configName, configs);
+    }
+
+    /**
+     * Creates a {@link PropertySource}, based on the given {@link Configuration}. The keys and propertx map
+     * are dynamically calculated, so the returned PropertySource is a real dynamic wrapper.
+     * @param name the name of the property source, not null.
+     * @param config the config to be mapped, not null.
+     * @return a property source wrapping the configuration.
+     */
+    public static PropertySource propertySourceFrom(final String name, final int ordinal, final Configuration config){
+        return new ConfigWrappingPropertySource(name, ordinal, config);
+    }
+
+    /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given section (recursive).
      *
@@ -333,6 +331,7 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigQuery that creates a JSON formatted ouitput of all properties in the given configuration.
+     *
      * @return the given query.
      */
     public static ConfigQuery<String> jsonInfo() {
@@ -341,29 +340,39 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigQuery that creates a JSON formatted ouitput of all properties in the given configuration.
+     *
      * @param info the additional information attributes to be added to the output, e.g. the original request
      *             parameters.
      * @return the given query.
      */
-    public static ConfigQuery<String> jsonInfo(final Map<String,String> info) {
+    public static ConfigQuery<String> jsonInfo(final Map<String, String> info) {
         return new ConfigQuery<String>() {
             @Override
             public String query(Configuration config) {
                 StringBuilder builder = new StringBuilder();
                 Map<String, String> props = new TreeMap<>(config.getProperties());
-                builder.append("\"configuration\": {\n")
+                builder.append("{\n")
+                        .append("  \"type\": \"Configuration\",\n")
                         .append("  \"class\": \"" + config.getClass().getName() + "\",\n")
                         .append("  \"timestamp\": " + System.currentTimeMillis() + ",\n");
-                if (info!=null && !info.isEmpty()) {
+                if (info != null && !info.isEmpty()) {
                     builder.append("  \"info\": {\n");
                     for (Map.Entry<String, String> en : info.entrySet()) {
                         builder.append("     \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
+                    }
+                    if(builder.toString().endsWith("\",\n") || builder.toString().endsWith(",\n")){
+                        builder.setLength(builder.length()-2);
+                        builder.append('\n');
                     }
                     builder.append("  },\n");
                 }
                 builder.append("  \"data\": {\n");
                 for (Map.Entry<String, String> en : props.entrySet()) {
                     builder.append("     \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
+                }
+                if(builder.toString().endsWith(",\n")){
+                    builder.setLength(builder.length()-2);
+                    builder.append('\n');
                 }
                 builder.append("    }\n}");
                 return builder.toString();
@@ -382,11 +391,12 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigQuery that creates a XML formatted ouitput of all properties in the given configuration.
+     *
      * @param info the additional information attributes to be added to the output, e.g. the original request
      *             parameters.
      * @return the given query.
      */
-    public static ConfigQuery<String> xmlInfo(final Map<String,String> info) {
+    public static ConfigQuery<String> xmlInfo(final Map<String, String> info) {
         return new ConfigQuery<String>() {
             @Override
             public String query(Configuration config) {
@@ -395,7 +405,7 @@ public final class ConfigurationFunctions {
                 builder.append("<configuration>\n")
                         .append("  <class>" + config.getClass().getName() + "</class>\n")
                         .append("  <timestamp>" + System.currentTimeMillis() + "</timestamp>\n");
-                if (info!=null && !info.isEmpty()) {
+                if (info != null && !info.isEmpty()) {
                     builder.append("  <info>\n");
                     for (Map.Entry<String, String> en : info.entrySet()) {
                         builder.append("     <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
@@ -426,7 +436,7 @@ public final class ConfigurationFunctions {
      *
      * @return the given query.
      */
-    public static ConfigQuery<String> textInfo(final Map<String,String> info) {
+    public static ConfigQuery<String> textInfo(final Map<String, String> info) {
         return new ConfigQuery<String>() {
             @Override
             public String query(Configuration config) {
@@ -465,7 +475,7 @@ public final class ConfigurationFunctions {
      *
      * @return the given query.
      */
-    public static ConfigQuery<String> htmlInfo(final Map<String,String> info) {
+    public static ConfigQuery<String> htmlInfo(final Map<String, String> info) {
         return new ConfigQuery<String>() {
             @Override
             public String query(Configuration config) {
@@ -477,5 +487,34 @@ public final class ConfigurationFunctions {
             }
         };
     }
+
+    private static void addFooter(StringBuilder b) {
+        b.append("</body>\n</html>\n");
+    }
+
+    private static void addHeader(StringBuilder b) {
+        String host = "unknown";
+        try {
+            host = Inet4Address.getLocalHost().getHostName();
+        } catch (Exception e) {
+            LOG.log(Level.INFO, "Failed to lookup hostname.", e);
+        }
+        b.append("<html>\n<head><title>System Configuration</title></head>\n" +
+                "<body>\n" +
+                "<h1>Sysem Configuration</h1>\n" +
+                "<p>This view shows the system configuration of " + host + " at " + new Date() + ".</p>");
+
+    }
+
+    /**
+     * Replaces new lines, returns, tabs and '"' with escaped variants.
+     *
+     * @param text the input text, not null
+     * @return the escaped text.
+     */
+    private static String escape(String text) {
+        return text.replace("\t", "\\t").replace("\"", "\\\"");
+    }
+
 
 }

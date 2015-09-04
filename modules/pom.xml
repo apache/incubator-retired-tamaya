@@ -43,6 +43,8 @@ under the License.
         <module>functions</module>
         <module>model</module>
         <module>management</module>
+        <module>server</module>
+        <module>remote</module>
     </modules>
 
     <build>

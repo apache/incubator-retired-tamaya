@@ -40,7 +40,7 @@ under the License.
         <module>6-fileobserver-example</module>
         <module>5-injection-example</module>
         <module>7-builder-example</module>
-        <!-- module>server-example</module -->
+        <module>8-remote-example</module>
     </modules>
 
     <build>

@@ -43,7 +43,6 @@ public class ManagedConfigTest {
         assertNotNull(info);
         assertTrue(info.contains("java.version"));
         System.out.println(bean.getJsonConfigurationInfo());
-        assertTrue(info.contains("\"configuration\": "));
     }
 
     @org.junit.Test
