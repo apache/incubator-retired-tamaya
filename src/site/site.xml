@@ -37,6 +37,10 @@ under the License.
         <menu ref="parent"  inherit="top" />
         <menu ref="reports" inherit="bottom"/>
         <menu ref="modules" inherit="bottom"/>
+
+        <menu name="Documentation">
+            <item name="Release Guide" href="release-guide.html"/>
+        </menu>
     </body>
 
 
@@ -60,6 +64,10 @@ under the License.
                     </sections>
                 </index>
             </pages>
+
+            <bottomNav>
+                <column>Documentation</column>
+            </bottomNav>
 
             <theme>bootswatch-cosmo</theme>
         </reflowSkin>
