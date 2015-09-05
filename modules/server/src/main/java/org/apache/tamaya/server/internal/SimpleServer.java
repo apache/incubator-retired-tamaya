@@ -23,9 +23,9 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.tamaya.server.Server;
 
 /**
- * CXF based implementation of a JAX-RS server, serving the {@link DefaultConfigService} service.
+ * CXF based implementation of a JAX-RS server, serving the {@link DefaultConfigProviderService} service.
  */
-public class CXFServer implements Server {
+public class SimpleServer implements Server {
     /** The CXF endpoint. */
     private org.apache.cxf.endpoint.Server cxfEndpoint;
 
@@ -41,8 +41,7 @@ public class CXFServer implements Server {
             // start it at the end...
         } else {
             JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
-            DefaultConfigService confService = new DefaultConfigService();
-            sf.setServiceBeanObjects(confService);
+            sf.setServiceBeanObjects(new DefaultRestService());
             sf.setAddress("http://localhost:" + port + "/");
             cxfEndpoint = sf.create();
         }

@@ -72,7 +72,7 @@ public abstract class BaseRemotePropertySource implements PropertySource{
                     if(!newProperties.isEmpty()){
                         this.properties = newProperties;
                         Logger.getLogger(getClass().getName()).info(
-                                "Reloaded remote config from: " + url + ", entriea read: " + this.properties.size());
+                                "Reloaded remote config from: " + url + ", entries read: " + this.properties.size());
                     }
                 }
             }
@@ -96,9 +96,7 @@ public abstract class BaseRemotePropertySource implements PropertySource{
                 Map<String,String> newProperties = new HashMap<>();
                 for(Map.Entry<String,String> en:readProperties.entrySet()){
                     // filter data entries
-                    if(en.getKey().startsWith("data.")) {
-                        newProperties.put(en.getKey().substring(5), en.getValue());
-                    }
+                    newProperties.put(en.getKey(), en.getValue());
                 }
                 // the configs served by the tamaya server module has a 'data' root section containing the
                 // config  entries. if not present, we assume an alternate format, which is sued as is...

@@ -349,32 +349,24 @@ public final class ConfigurationFunctions {
         return new ConfigQuery<String>() {
             @Override
             public String query(Configuration config) {
-                StringBuilder builder = new StringBuilder();
                 Map<String, String> props = new TreeMap<>(config.getProperties());
-                builder.append("{\n")
-                        .append("  \"type\": \"Configuration\",\n")
-                        .append("  \"class\": \"" + config.getClass().getName() + "\",\n")
-                        .append("  \"timestamp\": " + System.currentTimeMillis() + ",\n");
-                if (info != null && !info.isEmpty()) {
-                    builder.append("  \"info\": {\n");
+                props.put("{meta}type", "Configuration");
+                props.put("{meta}class", config.getClass().getName());
+                props.put("{meta}timestamp", String.valueOf(System.currentTimeMillis()));
+                if(info!=null) {
                     for (Map.Entry<String, String> en : info.entrySet()) {
-                        builder.append("     \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
+                        props.put("{meta}info." + escape(en.getKey()), escape(en.getValue()));
                     }
-                    if(builder.toString().endsWith("\",\n") || builder.toString().endsWith(",\n")){
-                        builder.setLength(builder.length()-2);
-                        builder.append('\n');
-                    }
-                    builder.append("  },\n");
                 }
-                builder.append("  \"data\": {\n");
+                StringBuilder builder = new StringBuilder(400).append("{\n");
                 for (Map.Entry<String, String> en : props.entrySet()) {
-                    builder.append("     \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
+                    builder.append("  \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
                 }
                 if(builder.toString().endsWith(",\n")){
                     builder.setLength(builder.length()-2);
                     builder.append('\n');
                 }
-                builder.append("    }\n}");
+                builder.append("}\n");
                 return builder.toString();
             }
         };
@@ -400,23 +392,21 @@ public final class ConfigurationFunctions {
         return new ConfigQuery<String>() {
             @Override
             public String query(Configuration config) {
-                StringBuilder builder = new StringBuilder();
                 Map<String, String> props = new TreeMap<>(config.getProperties());
-                builder.append("<configuration>\n")
-                        .append("  <class>" + config.getClass().getName() + "</class>\n")
-                        .append("  <timestamp>" + System.currentTimeMillis() + "</timestamp>\n");
-                if (info != null && !info.isEmpty()) {
-                    builder.append("  <info>\n");
+                props.put("{meta}type", "Configuration");
+                props.put("{meta}class", config.getClass().getName());
+                props.put("{meta}timestamp", String.valueOf(System.currentTimeMillis()));
+                if(info!=null) {
                     for (Map.Entry<String, String> en : info.entrySet()) {
-                        builder.append("     <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
+                        props.put("{meta}info." + escape(en.getKey()), escape(en.getValue()));
                     }
-                    builder.append("  </info>\n");
                 }
-                builder.append("  <data>\n");
+                StringBuilder builder = new StringBuilder(400);
+                builder.append("<configuration>\n");
                 for (Map.Entry<String, String> en : props.entrySet()) {
-                    builder.append("     <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
+                    builder.append("  <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
                 }
-                builder.append("   </data>\n</configuration>\n");
+                builder.append("</configuration>\n");
                 return builder.toString();
             }
         };
@@ -440,20 +430,21 @@ public final class ConfigurationFunctions {
         return new ConfigQuery<String>() {
             @Override
             public String query(Configuration config) {
-                StringBuilder builder = new StringBuilder();
                 Map<String, String> props = new TreeMap<>(config.getProperties());
-                builder.append("configuration:\n")
-                        .append("  class     : " + config.getClass().getName() + "\n")
-                        .append("  timestamp : " + System.currentTimeMillis() + "\n");
-                if (info != null && !info.isEmpty()) {
-                    builder.append("  info:\n");
+                props.put("{meta}type", "Configuration");
+                props.put("{meta}class", config.getClass().getName());
+                props.put("{meta}timestamp", String.valueOf(System.currentTimeMillis()));
+                if(info!=null) {
                     for (Map.Entry<String, String> en : info.entrySet()) {
-                        builder.append("    " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + "\n");
+                        props.put("{meta}info." + escape(en.getKey()), escape(en.getValue()));
                     }
                 }
-                builder.append("  data:\n");
+                StringBuilder builder = new StringBuilder(400).append("Configuration:\n");
                 for (Map.Entry<String, String> en : props.entrySet()) {
-                    builder.append("    " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + ",\n");
+                    builder.append("  " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + ",\n");
+                }
+                if(builder.toString().endsWith(",\n")){
+                    builder.setLength(builder.length() - 2);
                 }
                 builder.append("\n");
                 return builder.toString();
@@ -501,7 +492,7 @@ public final class ConfigurationFunctions {
         }
         b.append("<html>\n<head><title>System Configuration</title></head>\n" +
                 "<body>\n" +
-                "<h1>Sysem Configuration</h1>\n" +
+                "<h1>System Configuration</h1>\n" +
                 "<p>This view shows the system configuration of " + host + " at " + new Date() + ".</p>");
 
     }

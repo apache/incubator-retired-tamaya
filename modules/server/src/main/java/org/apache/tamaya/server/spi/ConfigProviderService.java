@@ -19,38 +19,45 @@
 package org.apache.tamaya.server.spi;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 /**
- * Configuration serving RESTful service interface.
+ * Configuration backend used by the Tamaya server module.
  */
 public interface ConfigProviderService {
 
-    @GET
-    @Path("/config/filtered/{path}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML, MediaType.TEXT_PLAIN,MediaType.WILDCARD})
-    String getConfigurationWithPath(@PathParam("path") String path,
-                                        @Context HttpServletRequest request);
+    /**
+     * Accessor to get a filtered configuration representation.
+     * @param path the comma separated paths to be filtered, e.g. {@code java,sub}.
+     * @param format the MIME type required, or the client's ACCEPT header field contents.
+     * @param scope the target scope, or null.
+     * @param scopeId the target scopeId, or null.
+     * @param request the current HTTP request.
+     * @return the output String to be returned to the caller.
+     */
+    String getConfigurationWithPath(String path, String format, String scope, String scopeId, HttpServletRequest request);
 
-    @GET
-    @Path("/config")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML, MediaType.TEXT_PLAIN,MediaType.WILDCARD })
-    String getConfiguration(@Context HttpServletRequest request);
+    /**
+     * Accessor to get a unfiltered configuration representation.
+     * @param format the MIME type required, or the client's ACCEPT header field contents.
+     * @param scope the target scope, or null.
+     * @param scopeId the target scopeId, or null.
+     * @param request the current HTTP request.
+     * @return the output String to be returned to the caller.
+     */
+    String getConfiguration(String format, String scope, String scopeId, HttpServletRequest request);
 
-    @PUT
-    @Path("/config")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    String updateConfiguration(@Context HttpServletRequest request);
+    /**
+     * Update the current configuration.
+     * @param payload the payload containing the config entries to be updated.
+     * @param request the current HTTP request.
+     */
+    void updateConfiguration(String payload, HttpServletRequest request);
 
-    @DELETE
-    @Path("/config/{paths}")
-    String deleteConfiguration(@PathParam("paths") String paths, @Context HttpServletRequest request);
+    /**
+     * Deletes the current configuration.
+     * @param paths the (multiple) comma seperated keys, or paths to be deleted. Paths can be fully qualified keys
+     *              or regular expressions identifying the keys to be removed, e.g. {@code DEL /config/a.b.*,a.c}.
+     * @param request the current HTTP request.
+     */
+    void deleteConfiguration(String paths, HttpServletRequest request);
 }

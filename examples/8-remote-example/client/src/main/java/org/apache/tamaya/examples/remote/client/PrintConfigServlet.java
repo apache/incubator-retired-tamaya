@@ -61,11 +61,14 @@ public class PrintConfigServlet extends HttpServlet {
         Map<String,String> info = new HashMap<>();
         info.put("clientId", clientId);
         resp.setStatus(HttpServletResponse.SC_OK);
-        String filter = req.getContextPath();
+        String filter = req.getPathInfo();
         if (filter != null) {
+            if(filter.startsWith("/")){
+                filter = filter.substring(1);
+            }
             info.put("filter", filter);
             resp.getWriter().append(ConfigurationProvider.getConfiguration().with(ConfigurationFunctions
-                    .sectionRecursive(false, filter)).query(ConfigurationFunctions.htmlInfo(info)));
+                    .sectionRecursive(false, filter.split(","))).query(ConfigurationFunctions.htmlInfo(info)));
         } else {
             info.put("filter", ".*");
             resp.getWriter().append(ConfigurationProvider.getConfiguration().query(ConfigurationFunctions.htmlInfo(info)));

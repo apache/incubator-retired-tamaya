@@ -52,14 +52,19 @@ public class Client {
 
         String portValue = System.getProperty("port");
         if(portValue==null){
-            portValue = ConfigurationProvider.getConfiguration().get("port");
+            portValue = ConfigurationProvider.getConfiguration().get("client.port");
         }
         int port = portValue!=null?Integer.parseInt(portValue):8080;
         tomcat.setPort(port);
-        File base = new File(System.getProperty("java.io.tmpdir"));
+        File base = new File(System.getProperty("java.io.tmpdir")+"/"+getClientId());
+        if(!base.exists()){
+            if(!base.mkdirs()){
+                System.err.println("Could not instantiate Tomcat working dir: " + base);
+            }
+        }
         Context rootCtx = tomcat.addContext("/client", base.getAbsolutePath());
         Tomcat.addServlet(rootCtx, "printConfigServlet", new PrintConfigServlet());
-        rootCtx.addServletMapping("/config", "printConfigServlet");
+        rootCtx.addServletMapping("/config/*", "printConfigServlet", true);
         try {
             System.out.println("Starting client: " + getClientId() + " with port " + port);
             tomcat.start();

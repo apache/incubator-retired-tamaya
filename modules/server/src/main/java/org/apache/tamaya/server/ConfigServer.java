@@ -21,7 +21,7 @@ package org.apache.tamaya.server;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
- * Simple abstraction of the Server interface.
+ * Simple Server singleton for starting the built-in simple configuration server.
  */
 public final class ConfigServer {
     /**
@@ -37,8 +37,14 @@ public final class ConfigServer {
         return ServiceContextManager.getServiceContext().getService(Server.class);
     }
 
+    /**
+     * Main method to start the simple config server as a main method.
+     * @param args the args provided.
+     */
     public static void main(String... args){
-        createServer().start(8888);
+        String portVal = System.getProperty("port");
+        int port = portVal==null?8888:Integer.parseInt(portVal);
+        createServer().start(port);
     }
 
 }
