@@ -46,6 +46,15 @@ under the License.
         <menu name="JavaDoc">
             <item name="${project.version} JavaDoc" href="apidocs/index.html"/>
         </menu>
+
+        <menu name="Reports">
+
+        </menu>
+
+        <menu name="Releases">
+
+        </menu>
+
     </body>
 
 
@@ -73,6 +82,8 @@ under the License.
             <bottomNav>
                 <column>Documentation</column>
                 <column>JavaDoc</column>
+                <column>Releases</column>
+                <column>Reports</column>
             </bottomNav>
 
             <theme>bootswatch-cosmo</theme>
