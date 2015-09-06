@@ -104,9 +104,9 @@ parameters:
   required client configuration (for client1). Refer to the scopes section for more details.
 
 
-=== Using the Configuration Servlet
+=== Using the Configuration Servlets
 
-Additionally to the fully built-in solution, it is also possible to integrate the server module with a standard
+Additionally to the fully built-in solution, it is also possible to integrate the Tamaya server module with a standard
 Java EE servlet container. Tamaya provides 2 servlet implementations:
 
 * the servlet +org.apache.tamaya.server.FilteredConfigServlet+ can be used to register access to configurations
@@ -139,7 +139,7 @@ where
 
 The server module formats the configuration returned by default in thw following variants:
 
-.Formatting for text/json
+.Formatting for +text/json+
 
 [source, json]
 -----------------------------------------------
@@ -175,7 +175,7 @@ The server module formats the configuration returned by default in thw following
 -----------------------------------------------
 
 
-.Formatting for application/xml
+.Formatting for +application/xml+
 
 [source, xml]
 -----------------------------------------------
@@ -211,7 +211,7 @@ The server module formats the configuration returned by default in thw following
 -----------------------------------------------
 
 
-.Formatting for text/plain
+.Formatting for +text/plain+
 
 [source, text]
 -----------------------------------------------
@@ -247,7 +247,7 @@ Configuration:
 -----------------------------------------------
 
 
-.Formatting for application/html
+.Formatting for +application/html+
 
 [source, html]
 -----------------------------------------------
@@ -329,8 +329,10 @@ have to add the following to +META-INF/services/org.apache.tamaya.server.spi.Sco
 my.full.packagename.ClientScopeProvider
 -----------------------------------------------
 
-=== Finally the effective readong and configuration handlinh logic can also be replaced or improved. This can be
-done by registering your own implementation of the interface ++:
+==== Adapting the Way Configuration is Derived
+
+Finally the effective readong and configuration handling logic can also be replaced or improved. This can be
+done by registering your own implementation of the interface +ConfigProviderService+:
 
 [source, java]
 ------------------------------------------------
@@ -346,7 +348,7 @@ By default the +ServiceContextManager+ uses the +java.util.ServiceLoader+ for co
 default server code you must register a higher +@Priority+ implementation.
 
 
-==== Default Server
+==== Replacing the Built-In Server
 
 We have seen earlier that starting a configuration server is pretty easy:
 
@@ -369,6 +371,7 @@ public interface Server {
 }
 -----------------------------------------------
 
+==== The ScopeManager Singleton
 
 Finally whe implementing your own server, you might also benefit from the +ScopeManager+ singleton. Basically this
 class loads all registered +ScopeProvider+ and manages the configured scope instances:
