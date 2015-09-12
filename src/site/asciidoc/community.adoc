@@ -1,0 +1,144 @@
+//
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+// .
+//   http://www.apache.org/licenses/LICENSE-2.0
+// .
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+//
+
+
+= Community
+:toc:
+:sectnums:
+
+// Document properties
+:twitterhandle: tamayaconf
+
+== Users
+
+// todo Fix the links when finishing the new homepage, Oliver B. Fischer, 2015-09-12
+If you are a new user and you would like to participate in Tamaya
+(would be great!), you can have a look at the current
+[Project Documentation](documentation.html). Apache Tamaya currently does
+not yet have a users mailing list. If you want discuss your use cases
+we encourage you to mailto:dev-subscribe@tamaya.incubator.apache.org[subscribe]
+to our mailto:dev@tamaya.incubator.apache.org[mailing list for developers].
+Furthermore, you can check our xref:a_mailing_lists[mail-archives].
+
+Before you file a ticket in our https://issues.apache.org/jira/browse/TAMAYA[Jira^]
+please ask on the mailing list if it's a known issue in case of a
+bug or if there is an ongoing discussion in case of a feature.
+
+You are very welcome to follow our twitter account
+http://twitter.com/{twitterhandle}[@{twitterhandle}^] and spread the word
+of Tamaya with tweets, blog entries,...
+
+== Getting Involved
+
+Everybody is welcome to get involved with our community. You can find general
+information at http://apache.org/foundation/getinvolved.html and
+http://apache.org/foundation/how-it-works.html.
+The following sections provides some details about the different levels of getting involved.
+
+// todo Fix the link when finishing the new homepage, Oliver B. Fischer, 2015-09-12
+If you want to contribute to the
+link:/documentation/[Tamaya documentation], please
+read the
+documentation.html[instructions about the Documentation]
+that addresses how to contribute, render and publish it.
+
+
+=== Contributors
+
+Before you get a committer you have to contribute to our effort.
+E.g. you can help users, participate in discussions on the dev list,
+submit patches,... . Therefore, it's essential to file
+a http://www.apache.org/licenses/icla.txt[Individual Contributor License Agreement (ICLA)^]
+or http://www.apache.org/licenses/cla-corporate.txt[Software Grant and Corporate Contributor License Agreement (CCLA)^]
+and send it to secretary at apache dot org (or fax it) as early as possible.
+
+If you would like to submit a patch through Jira, you can have a look at the
+link:devguide/050-gitworkflow.html[suggested Git approach].
+
+// todo Fix the link when finishing the new homepage, Oliver B. Fischer, 2015-09-12
+The lists of current contributors and committers can be found
+on the link:contributors.html[contributers page^].
+
+
+=== Committers
+
+Before you read this section, please ensure that you have read
+the contributor section. All of you are welcome to join our development effort.
+mailto:dev-subscribe@tamaya.incubator.apache.org[Subscribe] to our
+mailto:dev@tamaya.incubator.apache.org[mailing list for developers] and
+start contributing and help users.
+
+// todo Fix the link when finishing the new homepage, Oliver B. Fischer, 2015-09-12
+Optionally mailto:commits-subscribe@tamaya.incubator.apache.org[subscribe] to our
+mailto:commits@tamaya.incubator.apache.org[mailing list for commits].
+Furthermore, you can check our link:community.html#mailing-lists[mail-archives].
+
+Further details are available at http://www.apache.org/dev/[http://www.apache.org/dev/^].
+
+==== Mailing lists
+
+The table below lists all mailings used by the Tamaya project.
+
+[cols="5*.<", options="header"]
+|===
+| List
+| Subscribe
+| Unsubscribe
+| Archive
+| Mirrors
+//-- next row
+| Developer List
+| mailto:dev-subscribe@tamaya.incubator.apache.org[Subscribe]
+| mailto:dev-unsubscribe@tamaya.incubator.apache.org[Unsubscribe]
+| http://mail-archives.apache.org/mod_mbox/incubator-tamaya-dev/[Archive^]
+|
+//-- next row
+| Committer List
+| mailto:commits-subscribe@tamaya.incubator.apache.org[Subscribe]
+| mailto:commits-unsubscribe@tamaya.incubator.apache.org[Unsubscribe]
+| http://mail-archives.apache.org/mod_mbox/incubator-tamaya-commits/[Archive^]
+|
+|===
+
+==== JIRA
+
+Any kind of issue has to be filed in our
+https://issues.apache.org/jira/browse/TAMAYA[issue tracker^].
+If you have any question, you can ask us
+(e.g. via the mailing list for developers).
+
+==== Spread the word
+
+You are very welcome e.g. to write blog entries, mention our twitter handle
+ @{twitterhandle} if you tweet about the project or just follow our twitter
+account http://twitter.com/{twitterhandle}[@{twitterhandle}^]
+
+==== IRC
+
+Usually discussions happen on the mailing list. Some informal discussions take
+place in our IRC-Channel irc://irc.freenode.net/apache-tamaya.
+
+----
+// with the irssi command-line client:
+$ irssi
+
+> /connect irc.freenode.net
+> /join #apache-tamaya
+----
+

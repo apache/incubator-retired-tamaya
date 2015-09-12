@@ -41,6 +41,7 @@ under the License.
         <menu name="Documentation">
             <item name="Release Guide" href="release-guide.html"/>
             <item name="Development Guide" href="devguide/"/>
+            <item name="Community" href="community.html"/>
         </menu>
 
         <menu name="JavaDoc">
