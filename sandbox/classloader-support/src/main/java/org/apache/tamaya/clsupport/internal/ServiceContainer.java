@@ -56,6 +56,8 @@ class ServiceContainer {
      * List current services loaded using this classloader, per class.
      */
     private final Map<Class<?>, Map<String, Object>> servicesLoaded = new ConcurrentHashMap<>();
+    /** The cached singletons for the given classloader. */
+    private final Map<Class, Object> singletons = new ConcurrentHashMap<>();
 
     /**
      * List current services loaded using this classloader, per class.
@@ -283,5 +285,15 @@ class ServiceContainer {
     private static void fail(Class<?> service, URL u, int line, String msg)
             throws ServiceConfigurationError {
         fail(service, u + ":" + line + ": " + msg);
+    }
+
+    public <T> T getSingleton(Class<T> serviceType) {
+        return (T)this.singletons.get(serviceType);
+    }
+
+    <T> void setSingleton(Class<T> type, T instance){
+        LOG.info("Caching singleton for " + type.getName() + " and classloader: " +
+                getClassLoader().toString() + ": " + instance);
+        this.singletons.put(type, instance);
     }
 }

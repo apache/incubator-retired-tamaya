@@ -27,37 +27,51 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
- * Created by Anatole on 06.09.2015.
+ * This class implements a {@link ServiceContext}, which basically provides a similar loading mechanism as used
+ * by the {@link java.util.ServiceLoader}. Whereas the {@link java.util.ServiceLoader} only loads configurations
+ * and instances from one classloader, this loader manages configs found and the related instances for each
+ * classloader along the classloader hierarchies individually. It ensures instances are loaded on the classloader
+ * level, where they first are visible. Additionally it ensures the same configuration resource (and its
+ * declared services) are loaded multiple times, when going up the classloader hierarchy.<p/>
+ * Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
+ * Refer also the inherited parent class for further details.<p/>
+ * This class uses an ordinal of {@code 10}, so it overrides any default {@link ServiceContext} implementations
+ * provided with the Tamaya core modules.
  */
-@Priority(250)
+@Priority(10)
 public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<ServiceContainer>
         implements ServiceContext{
-
-    public static final String PREFIX = "META-INF/services/";
+    /**
+     * Default location for service loader files.
+     */
+    private static final String PREFIX = "META-INF/services/";
 
     /**
-     * Singletons as valid for this classloader. Other classloaders or parent contexts may have alternate
-     * singleton instances being active.
+     * Constructor, using the current default classloader as defined by
+     * {@link AbstractClassloaderAwareItemLoader#getDefaultClassLoader()}.
      */
-    private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
-
     public CLAwareServiceContext(){
         super();
     }
 
-    public CLAwareServiceContext(String resourceLocation) {
-        super();
-    }
-
-    public CLAwareServiceContext(String resourceLocation, ClassLoader classLoader) {
+    /**
+     * Constructor, using the given classloader.
+     * @param classLoader the target classloader for initializing of services, not null.
+     */
+    public CLAwareServiceContext(ClassLoader classLoader) {
         super(classLoader);
     }
 
 
+    /**
+     * Implementation that creates a {@link ServiceContainer}, which manages all configs and instances loaded
+     * for a given classloader.
+     * @param classLoader the classloader, not null.
+     * @return a new empty, {@link ServiceContainer} instance.
+     */
     @Override
     protected ServiceContainer createItem(ClassLoader classLoader) {
         return new ServiceContainer(classLoader);
@@ -65,50 +79,72 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
 
     @Override
     protected void updateItem(ServiceContainer currentContainer, ClassLoader classLoader) {
-
+        // nothing to be done here, since we dont have a specific target type.
     }
 
     @Override
     public int ordinal() {
-        return 100;
+        return 10;
     }
 
+    /**
+     * This method tries to evaluate the current singleton from the {@link ServiceContainer} attached to the
+     * current classloader. If not found the singleton instance is evaluated based on the priorities
+     * assigned for all known providers. The resulting instance is then cached and always returned as
+     * singleton instance fomr this loader, when the same current classloader instance is active.
+     * @param serviceType the service type.
+     * @param <T> the type
+     * @return the item found, or null.
+     */
     @Override
     public <T> T getService(Class<T> serviceType) {
-        Object cached = singletons.get(serviceType);
-        if (cached == null) {
-            Collection<? extends T> services = getServices(serviceType);
-            if (services.isEmpty()) {
-                cached = null;
-            } else {
-                cached = getServiceWithHighestPriority(services, serviceType);
-            }
-            if(cached!=null) {
-                singletons.put(serviceType, cached);
-            }
-        }
-        return serviceType.cast(cached);
+        return getService(serviceType, getDefaultClassLoader());
     }
 
+    /**
+     * Evaluates the current singleton instance using the given classloader context.
+     * @param serviceType the service type.
+     * @param classLoader the classloader, not null.
+     * @param <T> the type
+     * @return the item found, or null.
+     */
     public <T> T getService(Class<T> serviceType, ClassLoader classLoader) {
-        ClassLoader cl = classLoader;
-        List<T> services = new ArrayList<>();
-        while(cl!=null) {
-            ServiceContainer container = getItemNoParent(classLoader, true);
-            services.addAll(container.getServices(serviceType));
+        ServiceContainer container = getItemNoParent(classLoader, true);
+        T singleton = container.getSingleton(serviceType);
+        if(singleton!=null){
+            return singleton;
         }
-        return select(services, serviceType);
+        Collection<? extends T> services = getServices(serviceType, classLoader);
+        if (services.isEmpty()) {
+            singleton = null;
+        } else {
+            singleton = getServiceWithHighestPriority(services, serviceType);
+        }
+        if(singleton!=null) {
+            container.setSingleton(serviceType, singleton);
+        }
+        return singleton;
     }
 
-    private <T> T select(Collection<T> services, Class<T> serviceType) {
-        return getServiceWithHighestPriority(services, serviceType);
-    }
-
+    /**
+     * Gets the services visible.
+     * @param serviceType
+     *            the service type.
+     * @param <T> the type param
+     * @return the services visible for the current classloader.
+     */
     @Override
     public <T> Collection<T> getServices(Class<T> serviceType) {
         return getServices(serviceType, AbstractClassloaderAwareItemLoader.getDefaultClassLoader());
     }
 
+    /**
+     * Gets the services visible.
+     * @param serviceType the service type.
+     * @param classLoader the classloader
+     * @param <T> the type param
+     * @return the services visible for the current classloader.
+     */
     public <T> Collection<T> getServices(Class<T> serviceType, ClassLoader classLoader) {
         List<T> services = new ArrayList<>();
         ClassLoader cl = classLoader;
@@ -123,12 +159,10 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
         for(ServiceContainer container: containers) {
             if (!container.isTypeLoaded(serviceType)) {
                 container.loadServices(serviceType, prevContainers);
-                prevContainers.add(container);
-                services.addAll(container.getServices(serviceType));
             }
+            services.addAll(container.getServices(serviceType));
+            prevContainers.add(container);
         }
-        // TODO Sort services
-        // TODO Get first
         return services;
     }
 
@@ -161,7 +195,6 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
                 highestPriorityServiceCount++;
             }
         }
-
         if (highestPriorityServiceCount > 1) {
             throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
                     highestPriorityServiceCount,
@@ -169,7 +202,6 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
                     highestPriority,
                     services));
         }
-
         return highestService;
     }
 
