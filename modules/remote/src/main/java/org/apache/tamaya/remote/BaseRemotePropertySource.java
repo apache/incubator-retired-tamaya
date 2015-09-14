@@ -130,8 +130,8 @@ public abstract class BaseRemotePropertySource implements PropertySource{
             try{
                 return Integer.parseInt(configuredOrdinal);
             } catch(Exception e){
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, e,
-                        () -> "Configured Ordinal is not an int number: " + configuredOrdinal);
+                Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                        "Configured Ordinal is not an int number: " + configuredOrdinal, e);
             }
         }
         return getDefaultOrdinal();

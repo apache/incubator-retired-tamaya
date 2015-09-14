@@ -65,8 +65,9 @@ NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 
 |+org.apache.tamaya.ext:tamaya-model+         |Provides support documenting ang validating configuration during runtime.  |link:mod_model.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-functions+     |Provides several functional extension points.          |link:mod_functions.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-management+    |Provides JMX support for inspecting configuration.     |link:mod_management.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a http service.     |link:mod_server.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-remote+        |Provides remote configuration support.                 |link:mod_remote.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a http service.     |link:mod_server.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:mod_optional.html[Documentation]
 |=======
 
 

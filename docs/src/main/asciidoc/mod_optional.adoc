@@ -1,0 +1,90 @@
+= Apache Tamaya -- Extension: Optional Tamaya Configuration
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.optional
+:title: Apache Tamaya Extension: Optional Tamaya Configuration
+:revnumber: 0.1.1
+:revremark: Incubator
+:revdate: March 2015
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Optional]]
+== Tamaya Optional Configuration (Extension Module)
+=== Overview
+
+The Tamaya optional module provides contains three types only. It is for projects that want to benefit from Tamaya
+configuration optionally only. E.g. doing an OSS project you can declare to support configuration with Tamaya as
+an optional extension. This module can be added as a hard dependency to your code, hereby adding only three artofacts.
+It automatically checks the availability of Tamaya on the classpath and only if available tries to access it for
+configuration evaluation. Additionally an EvaluationPolicy lets you define the precedence of configured values
+(yours, or Tamaya ones if present).
+
+
+=== Compatibility
+
+The module is based on Java 7, so it will not run on Java 7 and beyond.
+
+
+=== Installation
+
+To benefit from configuration builder support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-optional</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+
+=== Reading configuration using the Tamaya Optional Module
+
+The optional module allows reading configuration with a small subset of functionality only. For extended of full
+featured config please consider using the Apache Tamaya as a full configuration backend.
+
+[source, java]
+-----------------------------------------------
+BigDecimal interestRate =
+                 OptionalConfiguration.of(
+                    EvaluationPolicy.TAMAYA_OVERRIDES_OTHER,
+                    (k) -> MyConfigMechanism.get(k) // String get(String key);
+                 )
+                .get("com.mycomp.ratecalculator.rate", BigDecimal.class))
+                .orElse(BigDecimal.of(0.05d));
+-----------------------------------------------
+

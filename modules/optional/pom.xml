@@ -27,8 +27,11 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>tamaya-remote</artifactId>
-    <name>Apache Tamaya Remote PropertySource</name>
+    <artifactId>tamaya-optional</artifactId>
+    <name>Apache Tamaya Optional Configuration Backend</name>
+    <description>This module provides a simple class that can be used as a single dependency for evaluating
+    configuration. It runs basically without Tamaya being on the classpath, but if available it
+    considers/uses Tamaya functionality.</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -40,16 +43,15 @@ under the License.
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-java7-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>tamaya-json</artifactId>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-java7-core</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
