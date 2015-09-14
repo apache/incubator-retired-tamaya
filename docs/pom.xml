@@ -91,7 +91,7 @@ under the License.
                 <executions>
                     <execution>
                         <id>output-html-design</id>
-                        <phase>generate-items</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
