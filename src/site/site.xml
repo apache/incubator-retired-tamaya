@@ -46,6 +46,7 @@ under the License.
             <item name="Release Guide" href="release-guide.html"/>
             <item name="Development Guide" href="devguide/"/>
             <item name="Community" href="community.html"/>
+            <item name="Issues" href="https://issues.apache.org/jira/browse/TAMAYA" target="_blank"/>
         </menu>
 
         <menu name="Reports">
