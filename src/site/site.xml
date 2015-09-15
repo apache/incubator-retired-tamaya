@@ -40,6 +40,9 @@ under the License.
 
         <menu name="Documentation">
             <item name="${project.version} JavaDoc" target="" href="apidocs/index.html"/>
+        </menu>
+
+        <menu name="Development">
             <item name="Release Guide" href="release-guide.html"/>
             <item name="Development Guide" href="devguide/"/>
             <item name="Community" href="community.html"/>
@@ -77,9 +80,10 @@ under the License.
                 </index>
             </pages>
 
-            <topNav>Documentation|Releases|Reports</topNav>
+            <topNav>Documentation|Development|Releases|Reports</topNav>
             <bottomNav>
                 <column>Documentation</column>
+                <column>Development</column>
                 <column>Releases</column>
                 <column>Reports</column>
             </bottomNav>
