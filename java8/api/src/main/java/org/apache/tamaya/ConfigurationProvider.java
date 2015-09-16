@@ -23,13 +23,15 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.util.Objects;
+
 /**
  * Static access to the {@link org.apache.tamaya.Configuration} for the very application.
  */
 public final class ConfigurationProvider {
 
-    private static final ConfigurationProviderSpi PROVIDER_SPI = ServiceContextManager.getServiceContext()
-            .getService(ConfigurationProviderSpi.class).get();
+    private static final ConfigurationProviderSpi PROVIDER_SPI = Objects.requireNonNull(ServiceContextManager.getServiceContext()
+            .getService(ConfigurationProviderSpi.class));
 
     private ConfigurationProvider() {
         // just to prevent initialisation

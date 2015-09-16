@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -45,17 +44,15 @@ public final class DefaultServiceContext implements ServiceContext {
     /**
      * Singletons.
      */
-    private final Map<Class<?>, Optional<?>> singletons = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
 
     @Override
-    public <T> Optional<T> getService(Class<T> serviceType) {
-        Optional<T> cached = Optional.class.cast(singletons.get(serviceType));
+    public <T> T getService(Class<T> serviceType) {
+        T cached = serviceType.cast(singletons.get(serviceType));
         if (cached == null) {
             List<? extends T> services = getServices(serviceType);
-            if (services.isEmpty()) {
-                cached = Optional.empty();
-            } else {
-                cached = Optional.of(getServiceWithHighestPriority(services, serviceType));
+            if (!services.isEmpty()) {
+                cached = getServiceWithHighestPriority(services, serviceType);
             }
             singletons.put(serviceType, cached);
         }

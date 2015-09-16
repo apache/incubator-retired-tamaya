@@ -32,6 +32,10 @@ import java.util.logging.Logger;
  * services.
  */
 public final class ServiceContextManager {
+
+    /** The logger used. */
+    private static final Logger LOG = Logger.getLogger(ServiceContextManager.class.getName());
+
     /**
      * The ServiceProvider used.
      */
@@ -63,6 +67,7 @@ public final class ServiceContextManager {
         if (highestServiceContext == null) {
             throw new ConfigException("No ServiceContext found");
         }
+        LOG.info("Using Service Context of type: " + highestServiceContext.getClass().getName());
         return highestServiceContext;
     }
 

@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -95,8 +94,10 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         LOG.info(() -> "Registered " + immutablePropertyFilters.size() + " property filters: " +
                 createStringList(immutablePropertyFilters,f -> f.getClass().getName()));
 
-        propertyValueCombinationPolicy = ServiceContext.getInstance().getService(PropertyValueCombinationPolicy.class)
-                .orElse(PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR);
+        propertyValueCombinationPolicy = ServiceContext.getInstance().getService(PropertyValueCombinationPolicy.class);
+        if(propertyValueCombinationPolicy==null) {
+            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        }
         LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
@@ -118,8 +119,10 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         LOG.info(() -> "Registered " + immutablePropertyFilters.size() + " property filters: " +
                 createStringList(immutablePropertyFilters,f -> f.getClass().getName()));
 
-        propertyValueCombinationPolicy = ServiceContext.getInstance().getService(PropertyValueCombinationPolicy.class)
-                .orElse(PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR);
+        propertyValueCombinationPolicy = ServiceContext.getInstance().getService(PropertyValueCombinationPolicy.class);
+        if(propertyValueCombinationPolicy==null){
+            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        }
         LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
@@ -129,7 +132,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      */
     private Collection<? extends PropertySource> evaluatePropertySourcesFromProviders() {
         List<PropertySource> propertySources = new ArrayList<>();
-        List<PropertySourceProvider> propertySourceProviders = ServiceContext.getInstance().getServices(PropertySourceProvider.class);
+        Collection<PropertySourceProvider> propertySourceProviders = ServiceContext.getInstance().getServices(PropertySourceProvider.class);
         for (PropertySourceProvider propertySourceProvider : propertySourceProviders) {
             Collection<PropertySource> sources = propertySourceProvider.getPropertySources();
                 LOG.finer(() -> "PropertySourceProvider " + propertySourceProvider.getClass().getName() +
@@ -199,12 +202,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         return immutablePropertySources;
     }
 
-//    @Override
-//    public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
-//        propertyConverterManager.register(typeToConvert, propertyConverter);
-//        LOG.info(() -> "Added PropertyConverter: " + propertyConverter.getClass().getName());
-//    }
-
     @Override
     public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
         return propertyConverterManager.getPropertyConverters();
@@ -228,11 +225,11 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     @Override
     public ConfigurationContextBuilder toBuilder() {
         ServiceContext serviceContext = ServiceContextManager.getServiceContext();
-        Optional<ConfigurationContextBuilder> service = serviceContext.getService(ConfigurationContextBuilder.class);
+        ConfigurationContextBuilder service = serviceContext.getService(ConfigurationContextBuilder.class);
 
-        service.get().setContext(this);
+        service.setContext(this);
 
-        return service.get();
+        return service;
     }
 
     private <T> String createStringList(Collection<T> propertySources, Function<T,String> mapper){

@@ -19,7 +19,6 @@
 package org.apache.tamaya.spi;
 
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -53,7 +52,7 @@ public interface ServiceContext {
      * @return The instance to be used, never {@code null}
      * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
      */
-    <T> Optional<T> getService(Class<T> serviceType);
+    <T> T getService(Class<T> serviceType);
 
     /**
      * Access a list current services, given its type. The bootstrap mechanism should

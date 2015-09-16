@@ -30,7 +30,6 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
@@ -76,8 +75,8 @@ public class ServiceContextManagerTest {
     public void testSetServiceContext(){
         ServiceContext ctx = new ServiceContext() {
             @Override
-            public <T> Optional<T> getService(Class<T> serviceType) {
-                return Optional.empty();
+            public <T> T getService(Class<T> serviceType) {
+                return null;
             }
 
             @Override
@@ -102,8 +101,8 @@ public class ServiceContextManagerTest {
         }
 
         @Override
-        public <T> Optional<T> getService(Class<T> serviceType) {
-            return Optional.empty();
+        public <T> T getService(Class<T> serviceType) {
+            return null;
         }
 
         @Override

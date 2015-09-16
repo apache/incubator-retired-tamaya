@@ -33,11 +33,11 @@ public class ServiceContextTest {
     private ServiceContext serviceContext = new ServiceContext() {
 
         @Override
-        public <T> Optional<T> getService(Class<T> serviceType) {
+        public <T> T getService(Class<T> serviceType) {
             if (String.class.equals(serviceType)) {
-                return Optional.of(serviceType.cast("ServiceContextTest"));
+                return serviceType.cast("ServiceContextTest");
             }
-            return Optional.empty();
+            return null;
         }
 
         @Override
@@ -58,19 +58,18 @@ public class ServiceContextTest {
 
     @Test
     public void testgetService() throws Exception {
-        assertEquals("ServiceContextTest", serviceContext.getService(String.class).get());
-        assertFalse(serviceContext.getService(Integer.class).isPresent());
+        assertEquals("ServiceContextTest", serviceContext.getService(String.class));
+        assertTrue(serviceContext.getService(Integer.class)==null);
     }
 
     @Test
     public void testGetService() throws Exception {
-        Optional<String> service = serviceContext.getService(String.class);
+        String service = serviceContext.getService(String.class);
         assertNotNull(service);
-        assertTrue(service.isPresent());
-        assertEquals("ServiceContextTest", service.get());
-        Optional<Integer> intService = serviceContext.getService(Integer.class);
-        assertNotNull(intService);
-        assertFalse(intService.isPresent());
+        assertTrue(service!=null);
+        assertEquals("ServiceContextTest", service);
+        Integer intService = serviceContext.getService(Integer.class);
+        assertNull(intService);
     }
 
     @Test
@@ -79,7 +78,7 @@ public class ServiceContextTest {
         assertNotNull(services);
         assertFalse(services.isEmpty());
         assertEquals("ServiceContextTest", services.iterator().next());
-        Collection<Integer> intServices = serviceContext.getServices(Integer.class);
+        List<Integer> intServices = serviceContext.getServices(Integer.class);
         assertNotNull(intServices);
         assertTrue(intServices.isEmpty());
     }
