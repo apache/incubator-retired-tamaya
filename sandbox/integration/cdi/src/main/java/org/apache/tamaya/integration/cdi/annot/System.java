@@ -16,15 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.clsupport.internal;
+package org.apache.tamaya.integration.cdi.annot;
 
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.List;
+import javax.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Created by Anatole on 08.09.2015.
+ * Qualifier used to inject the SE default Configuration instance.
  */
-public interface Item<T extends Item<T>> {
-    <T> void update(ClassLoader classLoader, Enumeration<URL> resources, List<T> itemsMatching);
+@Target(value={ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE})
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface System {
+
 }

@@ -16,12 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.integration.cdi.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,23 +32,35 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
- * This class implements the (default) {@link org.apache.tamaya.spi.ServiceContext} interface and hereby uses the JDK
- * {@link java.util.ServiceLoader} to load the services required.
+ * This class implements a {@link ServiceContext}, which basically provides a similar loading mechanism as used
+ * by the {@link java.util.ServiceLoader}. Whereas the {@link java.util.ServiceLoader} only loads configurations
+ * and instances from one classloader, this loader manages configs found and the related instances for each
+ * classloader along the classloader hierarchies individually. It ensures instances are loaded on the classloader
+ * level, where they first are visible. Additionally it ensures the same configuration resource (and its
+ * declared services) are loaded multiple times, when going up the classloader hierarchy.<p/>
+ * Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
+ * Refer also the inherited parent class for further details.<p/>
+ * This class uses an ordinal of {@code 10}, so it overrides any default {@link ServiceContext} implementations
+ * provided with the Tamaya core modules.
  */
-public final class DefaultServiceContext implements ServiceContext {
+public class CDIAwareServiceContext implements ServiceContext {
     /**
      * List current services loaded, per class.
      */
-    private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoadedFromCP = new ConcurrentHashMap<>();
+
     /**
      * Singletons.
      */
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
+
 
     @Override
     public <T> T getService(Class<T> serviceType) {
@@ -73,8 +88,19 @@ public final class DefaultServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = (List<T>) servicesLoaded.get(serviceType);
+        List<T> found = (List<T>) servicesLoadedFromCP.get(serviceType);
+        BeanManager beanManager = TamayaCDIIntegrationExtension.getBeanManager();
+        Instance<T> cdiInstances = null;
+        if(beanManager!=null){
+            Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
+            cdiInstances = (Instance<T>)beanManager.getReference(instanceBeans.iterator().next(), Instance.class, null);
+        }
         if (found != null) {
+            if(cdiInstances!=null){
+                for(T t:cdiInstances.select(serviceType)){
+                    found.add(t);
+                }
+            }
             return found;
         }
         List<T> services = new ArrayList<>();
@@ -84,10 +110,15 @@ public final class DefaultServiceContext implements ServiceContext {
             }
             services = Collections.unmodifiableList(services);
         } catch (Exception e) {
-            Logger.getLogger(DefaultServiceContext.class.getName()).log(Level.WARNING,
+            Logger.getLogger(CDIAwareServiceContext.class.getName()).log(Level.WARNING,
                     "Error loading services current type " + serviceType, e);
         }
-        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
+        if(cdiInstances!=null){
+            for(T t:cdiInstances.select(serviceType)){
+                services.add(t);
+            }
+        }
+        final List<T> previousServices = List.class.cast(servicesLoadedFromCP.putIfAbsent(serviceType, (List<Object>) services));
         return previousServices != null ? previousServices : services;
     }
 
@@ -138,10 +169,10 @@ public final class DefaultServiceContext implements ServiceContext {
 
         if (highestPriorityServiceCount > 1) {
             throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
-                                                           highestPriorityServiceCount,
-                                                           serviceType.getName(),
-                                                           highestPriority,
-                                                           services));
+                    highestPriorityServiceCount,
+                    serviceType.getName(),
+                    highestPriority,
+                    services));
         }
 
         return highestService;
@@ -149,8 +180,7 @@ public final class DefaultServiceContext implements ServiceContext {
 
     @Override
     public int ordinal() {
-        return 1;
+        return 20;
     }
-
 
 }

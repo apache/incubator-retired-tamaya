@@ -76,6 +76,8 @@ public class PropertyConverterManagerTest {
         PropertyConverterManager manager = new PropertyConverterManager();
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters, hasSize(1));
+        converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
+        assertThat(converters, hasSize(1));
 
         PropertyConverter<B> converter = converters.get(0);
         B result = converter.convert("testDirectSuperclassConverterMapping");
@@ -83,6 +85,16 @@ public class PropertyConverterManagerTest {
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
         assertThat(((C)result).getInValue(), equalTo("testDirectSuperclassConverterMapping"));
+    }
+
+    @Test
+    public void testMultipleConverterLoad(){
+        PropertyConverterManager manager = new PropertyConverterManager();
+        List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
+        assertThat(converters, hasSize(1));
+        manager = new PropertyConverterManager();
+        converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
+        assertThat(converters, hasSize(1));
     }
 
     @Test

@@ -45,6 +45,7 @@ under the License.
         <module>management</module>
         <module>server</module>
         <module>remote</module>
+        <module>optional</module>
     </modules>
 
     <build>

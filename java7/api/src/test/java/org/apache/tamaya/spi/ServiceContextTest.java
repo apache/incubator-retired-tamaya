@@ -85,7 +85,7 @@ public class ServiceContextTest {
         assertNotNull(services);
         assertFalse(services.isEmpty());
         assertEquals("ServiceContextTest", services.iterator().next());
-        Collection<Integer> intServices = serviceContext.getServices(Integer.class);
+        List<Integer> intServices = serviceContext.getServices(Integer.class);
         assertNotNull(intServices);
         assertTrue(intServices.isEmpty());
     }

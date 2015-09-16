@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.clsupport.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
@@ -49,17 +49,17 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /** The logger used. */
     private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
+     * Cubcomponent handling {@link PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
     /**
-     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+     * The current unmodifiable list of loaded {@link PropertySource} instances.
      */
     private List<PropertySource> immutablePropertySources;
 
     /**
-     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
+     * The current unmodifiable list of loaded {@link PropertyFilter} instances.
      */
     private List<PropertyFilter> immutablePropertyFilters;
 
@@ -83,8 +83,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     /**
      * The first time the Configuration system gets invoked we do initialize
-     * all our {@link org.apache.tamaya.spi.PropertySource}s and
-     * {@link org.apache.tamaya.spi.PropertyFilter}s which are known at startup.
+     * all our {@link PropertySource}s and
+     * {@link PropertyFilter}s which are known at startup.
      */
     public DefaultConfigurationContext() {
         List<PropertySource> propertySources = new ArrayList<>();
@@ -120,34 +120,9 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
-    DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
-        List<PropertySource> propertySources = new ArrayList<>();
-        // first we load all PropertySources which got registered via java.util.ServiceLoader
-        propertySources.addAll(builder.propertySources.values());
-        // now sort them according to their ordinal values
-        Collections.sort(propertySources, propertySourceComparator);
-        immutablePropertySources = Collections.unmodifiableList(propertySources);
-        LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
-                immutablePropertySources);
-
-        // as next step we pick up the PropertyFilters pretty much the same way
-        List<PropertyFilter> propertyFilters = new ArrayList<>();
-        propertyFilters.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
-        Collections.sort(propertyFilters, propertyFilterComparator);
-        immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
-        LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
-                immutablePropertyFilters);
-
-        propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
-        if(propertyValueCombinationPolicy==null){
-            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
-        }
-        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
-    }
-
     /**
-     * Pick up all {@link org.apache.tamaya.spi.PropertySourceProvider}s and return all the
-     * {@link org.apache.tamaya.spi.PropertySource}s they like to register.
+     * Pick up all {@link PropertySourceProvider}s and return all the
+     * {@link PropertySource}s they like to register.
      */
     private Collection<? extends PropertySource> evaluatePropertySourcesFromProviders() {
         List<PropertySource> propertySources = new ArrayList<>();

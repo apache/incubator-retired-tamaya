@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.integration.cdi.internal;
 
-import org.apache.tamaya.core.internal.inject.ConfigurationInjector;
-import org.apache.tamaya.core.internal.inject.ConfiguredType;
+
+import org.apache.tamaya.inject.ConfigurationInjection;
+import org.apache.tamaya.inject.internal.ConfiguredType;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
@@ -28,11 +29,11 @@ import javax.enterprise.inject.spi.*;
 import java.util.*;
 
 /**
- * CDI portable extension that integrates {@link org.apache.tamaya.core.internal.inject.ConfigurationInjector}
+ * CDI portable extension that integrates {@link org.apache.tamaya.inject.ConfigurationInjector}
  * with CDI by adding configuration features to CDI (config enable CDI beans).
  */
 @Vetoed
-public final class ConfigurationExtension implements Extension {
+public final class SEInjectorCDIExtension implements Extension {
 
     public <T> void initializeConfiguredFields(final @Observes ProcessInjectionTarget<T> pit) {
         final AnnotatedType<T> at = pit.getAnnotatedType();
@@ -44,7 +45,7 @@ public final class ConfigurationExtension implements Extension {
             @Override
             public void inject(T instance, CreationalContext<T> ctx) {
                 it.inject(instance, ctx);
-                ConfigurationInjector.configure(instance);
+                ConfigurationInjection.getConfigurationInjector().configure(instance);
             }
 
             @Override

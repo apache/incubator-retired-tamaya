@@ -32,6 +32,10 @@ import org.apache.tamaya.ConfigException;
  * services.
  */
 public final class ServiceContextManager {
+
+    /** The logger used. */
+    private static final Logger LOG = Logger.getLogger(ServiceContextManager.class.getName());
+
     /**
      * The ServiceProvider used.
      */
@@ -64,7 +68,7 @@ public final class ServiceContextManager {
         if (highestServiceContext==null){
             throw new ConfigException("No ServiceContext found");
         }
-
+        LOG.info("Using Service Context of type: " + highestServiceContext.getClass().getName());
         return highestServiceContext;
     }
 
@@ -80,11 +84,9 @@ public final class ServiceContextManager {
         synchronized (ServiceContextManager.class) {
             if (ServiceContextManager.serviceContextProviderDelegate == null) {
                 ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
-                Logger.getLogger(ServiceContextManager.class.getName())
-                        .log(Level.INFO, "Using ServiceProvider: " + serviceContextProvider.getClass().getName());
+                LOG.log(Level.INFO, "Using ServiceProvider: " + serviceContextProvider.getClass().getName());
             } else {
-                Logger.getLogger(ServiceContextManager.class.getName())
-                        .log(Level.WARNING, "Replacing ServiceProvider " +
+                LOG.log(Level.WARNING, "Replacing ServiceProvider " +
                                 ServiceContextManager.serviceContextProviderDelegate.getClass().getName() +
                                 " with: " + serviceContextProvider.getClass().getName());
                 ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
@@ -107,7 +109,6 @@ public final class ServiceContextManager {
                 }
             }
         }
-
         return serviceContextProviderDelegate;
     }
 

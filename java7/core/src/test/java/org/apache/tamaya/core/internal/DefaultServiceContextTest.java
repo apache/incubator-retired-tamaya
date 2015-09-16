@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Priority;
+import java.util.Collection;
 import java.util.List;
 
 public class DefaultServiceContextTest {
@@ -64,7 +65,7 @@ public class DefaultServiceContextTest {
     @Test
     public void testGetServices_shouldReturnServices() {
         {
-            List<InvalidPriorityInterface> services = context.getServices(InvalidPriorityInterface.class);
+            Collection<InvalidPriorityInterface> services = context.getServices(InvalidPriorityInterface.class);
             Assert.assertNotNull(services);
             Assert.assertEquals(2, services.size());
 
@@ -74,7 +75,7 @@ public class DefaultServiceContextTest {
         }
 
         {
-            List<MultiImplsInterface> services = context.getServices(MultiImplsInterface.class);
+            Collection<MultiImplsInterface> services = context.getServices(MultiImplsInterface.class);
             Assert.assertNotNull(services);
             Assert.assertEquals(3, services.size());
 
@@ -87,8 +88,20 @@ public class DefaultServiceContextTest {
     }
 
     @Test
+    public void testGetServices_redundantAccessToServices() {
+        for(int i=0;i<10;i++){
+            Collection<InvalidPriorityInterface> services = context.getServices(InvalidPriorityInterface.class);
+            Assert.assertNotNull(services);
+            Assert.assertEquals(2, services.size());
+            for (InvalidPriorityInterface service : services) {
+                Assert.assertTrue(service instanceof InvalidPriorityImpl1 || service instanceof InvalidPriorityImpl2);
+            }
+        }
+    }
+
+    @Test
     public void testGetServices_noImpl_shouldReturnEmptyList() {
-        List<NoImplInterface> services = context.getServices(NoImplInterface.class);
+        Collection<NoImplInterface> services = context.getServices(NoImplInterface.class);
         Assert.assertNotNull(services);
         Assert.assertTrue(services.isEmpty());
     }

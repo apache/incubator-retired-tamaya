@@ -19,6 +19,7 @@
 package org.apache.tamaya.clsupport.internal;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.clsupport.AbstractClassloaderAwareItemLoader;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
@@ -134,7 +135,7 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
      * @return the services visible for the current classloader.
      */
     @Override
-    public <T> Collection<T> getServices(Class<T> serviceType) {
+    public <T> List<T> getServices(Class<T> serviceType) {
         return getServices(serviceType, AbstractClassloaderAwareItemLoader.getDefaultClassLoader());
     }
 
@@ -145,7 +146,7 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
      * @param <T> the type param
      * @return the services visible for the current classloader.
      */
-    public <T> Collection<T> getServices(Class<T> serviceType, ClassLoader classLoader) {
+    public <T> List<T> getServices(Class<T> serviceType, ClassLoader classLoader) {
         List<T> services = new ArrayList<>();
         ClassLoader cl = classLoader;
         List<ServiceContainer> containers = new ArrayList<>();

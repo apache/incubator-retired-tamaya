@@ -19,6 +19,7 @@
 package org.apache.tamaya.spi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,12 +47,12 @@ public final class TestServiceContext implements ServiceContext {
     public <T> T getService(Class<T> serviceType) {
         T cached = serviceType.cast(singletons.get(serviceType));
         if(cached==null) {
-            List<? extends T> services = getServices(serviceType);
+            Collection<T> services = getServices(serviceType);
             if (services.isEmpty()) {
                 cached = (T) Object.class; // as marker for 'nothing here'
             }
             else{
-                cached = services.get(0);
+                cached = services.iterator().next();
             }
             singletons.put((Class)serviceType, cached);
         }
@@ -64,9 +65,9 @@ public final class TestServiceContext implements ServiceContext {
     /**
      * Loads and registers services.
      *
-     * @param   serviceType  The service type.
      * @param   <T>          the concrete type.
      *
+     * @param   serviceType  The service type.
      * @return  the items found, never {@code null}.
      */
     @Override
