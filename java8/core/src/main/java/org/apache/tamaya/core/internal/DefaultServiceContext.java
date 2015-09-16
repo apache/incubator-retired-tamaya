@@ -54,7 +54,9 @@ public final class DefaultServiceContext implements ServiceContext {
             if (!services.isEmpty()) {
                 cached = getServiceWithHighestPriority(services, serviceType);
             }
-            singletons.put(serviceType, cached);
+            if(cached!=null){
+                singletons.put(serviceType, cached);
+            }
         }
         return cached;
     }
