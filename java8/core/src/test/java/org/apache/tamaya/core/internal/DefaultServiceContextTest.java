@@ -25,7 +25,6 @@ import org.junit.Test;
 
 import javax.annotation.Priority;
 import java.util.List;
-import java.util.Optional;
 
 public class DefaultServiceContextTest {
 
@@ -37,10 +36,9 @@ public class DefaultServiceContextTest {
 
     @Test
     public void testGetService() {
-        Optional<ConfigurationProviderSpi> providerSpi = context.getService(ConfigurationProviderSpi.class);
+        ConfigurationProviderSpi providerSpi = context.getService(ConfigurationProviderSpi.class);
         Assert.assertNotNull(providerSpi);
-        Assert.assertTrue(providerSpi.isPresent());
-        Assert.assertTrue(providerSpi.get() instanceof DefaultConfigurationProvider);
+        Assert.assertTrue(providerSpi instanceof DefaultConfigurationProvider);
     }
 
     @Test(expected = ConfigException.class)
@@ -50,16 +48,16 @@ public class DefaultServiceContextTest {
 
     @Test
     public void testGetService_multipleService_shouldReturnServiceWithHighestPriority() {
-        Optional<MultiImplsInterface> service = context.getService(MultiImplsInterface.class);
+        MultiImplsInterface service = context.getService(MultiImplsInterface.class);
 
-        Assert.assertTrue(service.isPresent());
-        Assert.assertTrue(service.get() instanceof MultiImpl2);
+        Assert.assertNotNull(service);
+        Assert.assertTrue(service instanceof MultiImpl2);
     }
 
     @Test
     public void testGetService_noImpl_shouldReturnEmptyOpional() {
-        Optional<NoImplInterface> service = context.getService(NoImplInterface.class);
-        Assert.assertFalse(service.isPresent());
+        NoImplInterface service = context.getService(NoImplInterface.class);
+        Assert.assertNull(service);
     }
 
 
