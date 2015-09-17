@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.clsupport.internal;
+package org.apache.tamaya.clsupport.internal.ctx;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to tge given enum type.
  */
-public class EnumConverter<T> implements PropertyConverter<T> {
+class EnumConverter<T> implements PropertyConverter<T> {
     private Logger LOG = Logger.getLogger(EnumConverter.class.getName());
     private Class<T> enumType;
     private Method factory;
