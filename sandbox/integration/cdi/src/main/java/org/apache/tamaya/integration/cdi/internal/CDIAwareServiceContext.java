@@ -19,6 +19,7 @@
 package org.apache.tamaya.integration.cdi.internal;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.clsupport.internal.CLAwareServiceContext;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
@@ -52,9 +53,9 @@ import java.util.logging.Logger;
  */
 public class CDIAwareServiceContext implements ServiceContext {
     /**
-     * List current services loaded, per class.
+     * List current services loaded, per classloader.
      */
-    private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoadedFromCP = new ConcurrentHashMap<>();
+    private final CLAwareServiceContext clAwareServiceContext = new CLAwareServiceContext();
 
     /**
      * Singletons.
@@ -88,38 +89,19 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = (List<T>) servicesLoadedFromCP.get(serviceType);
+        List<T> found = (List<T>) clAwareServiceContext.getService(serviceType);
         BeanManager beanManager = TamayaCDIIntegration.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){
             Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
             cdiInstances = (Instance<T>)beanManager.getReference(instanceBeans.iterator().next(), Instance.class, null);
         }
-        if (found != null) {
-            if(cdiInstances!=null){
-                for(T t:cdiInstances.select(serviceType)){
-                    found.add(t);
-                }
-            }
-            return found;
-        }
-        List<T> services = new ArrayList<>();
-        try {
-            for (T t : ServiceLoader.load(serviceType)) {
-                services.add(t);
-            }
-            services = Collections.unmodifiableList(services);
-        } catch (Exception e) {
-            Logger.getLogger(CDIAwareServiceContext.class.getName()).log(Level.WARNING,
-                    "Error loading services current type " + serviceType, e);
-        }
         if(cdiInstances!=null){
             for(T t:cdiInstances.select(serviceType)){
-                services.add(t);
+                found.add(t);
             }
         }
-        final List<T> previousServices = List.class.cast(servicesLoadedFromCP.putIfAbsent(serviceType, (List<Object>) services));
-        return previousServices != null ? previousServices : services;
+        return found;
     }
 
     /**
