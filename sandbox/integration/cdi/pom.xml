@@ -30,7 +30,7 @@ under the License.
     <name>Apache Tamaya Modules Integration - CDI</name>
 
     <properties>
-        <owb.version>1.5.0-SNAPSHOT</owb.version>
+        <owb.version>1.6.2</owb.version>
         <weld.version>2.2.7.Final</weld.version>
         <geronimo-jcdi-1.1-spec.version>1.0</geronimo-jcdi-1.1-spec.version>
         <geronimo-interceptor-1.2-spec.version>1.0</geronimo-interceptor-1.2-spec.version>
