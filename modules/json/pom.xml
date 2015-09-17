@@ -57,7 +57,7 @@ under the License.
 
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-resources</artifactId>
+            <artifactId>tamaya-items</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -121,7 +121,7 @@ under the License.
                 <executions>
                     <execution>
                         <id>copyMain</id>
-                        <phase>process-test-resources</phase>
+                        <phase>process-test-items</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>

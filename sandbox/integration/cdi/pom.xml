@@ -74,8 +74,15 @@ under the License.
 
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
+            <artifactId>tamaya-java7-core</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-java7-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>

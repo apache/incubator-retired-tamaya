@@ -89,7 +89,7 @@ public class CDIAwareServiceContext implements ServiceContext {
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
         List<T> found = (List<T>) servicesLoadedFromCP.get(serviceType);
-        BeanManager beanManager = TamayaCDIIntegrationExtension.getBeanManager();
+        BeanManager beanManager = TamayaCDIIntegration.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){
             Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);

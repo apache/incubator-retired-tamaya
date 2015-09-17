@@ -25,9 +25,9 @@ import java.math.BigDecimal;
 
 import javax.inject.Singleton;
 
-import org.apache.tamaya.annotation.ConfiguredProperty;
-import org.apache.tamaya.annotation.DefaultValue;
-import org.apache.tamaya.annotation.ObservesConfigChange;
+import org.apache.tamaya.event.ObservesConfigChange;
+import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.DefaultValue;
 
 /**
  * Created by Anatole on 08.09.2014.
@@ -39,15 +39,12 @@ public class ConfiguredClass{
     @ConfiguredProperty
     private String testProperty;
 
-    @ConfiguredProperty(keys = "a.b.c.key1")
-    @ConfiguredProperty(keys = "a.b.c.key2")
-    @ConfiguredProperty(keys = "a.b.c.key3")
+    @ConfiguredProperty(keys = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
 //    @WithConfig("testdata")
-    @ConfiguredProperty(keys = "foo")
-    @ConfiguredProperty(keys = "a.b.c.key2")
+    @ConfiguredProperty(keys = {"foo","a.b.c.key2"})
     private String value2;
 
     @ConfiguredProperty

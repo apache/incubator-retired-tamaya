@@ -16,37 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.cdi.internal;
+package org.apache.tamaya.integration.cdi.config;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.integration.cdi.annot.System;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
 
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 /**
  * CDI Extension that can be used to veto on beans by configuring the fully qualified class names (as reges expression)
  * to {@code javax.enterprise.inject.vetoed}.
  */
-public class ConfigurationProducer {
+public class ConfiguredVetoExtension {
 
-    @Produces @System
-    public Configuration getSystemConfig(){
-        return ConfigurationProvider.getConfiguration();
-    }
-
-    @Produces @System
-    public ConfigurationContext getSystemConfigContext(){
-        return ConfigurationProvider.getConfigurationContext();
-    }
-
-    @Produces @System
-    public ConfigurationContextBuilder getSystemConfigContextBuilder(){
-        return ConfigurationProvider.getConfigurationContextBuilder();
+    public void observesBean(@Observes ProcessAnnotatedType<?> type){
+        String vetoedTypesVal = ConfigurationProvider.getConfiguration().get("javax.enterprise.inject.vetoed");
+        String[] vetoedTypes = vetoedTypesVal.split(",");
+        for(String typeExpr:vetoedTypes){
+            if(type.getAnnotatedType().getJavaClass().getName().matches(typeExpr)){
+                type.veto();
+            }
+        }
     }
 
 }

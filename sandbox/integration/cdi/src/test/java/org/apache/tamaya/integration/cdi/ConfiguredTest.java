@@ -17,16 +17,18 @@
  * under the License.
  *
  */
-
 package org.apache.tamaya.integration.cdi;
 
+import org.apache.deltaspike.testcontrol.api.TestControl;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.hamcrest.MatcherAssert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Singleton;
 
 import static org.hamcrest.core.Is.is;
 
@@ -34,9 +36,9 @@ import static org.hamcrest.core.Is.is;
  * Created by Anatole on 08.09.2014.
  */
 @RunWith(CdiTestRunner.class)
+@TestControl(startScopes = {ApplicationScoped.class, Singleton.class}, startExternalContainers = true)
 public class ConfiguredTest{
 
-    @Ignore
     @Test
     public void testInjection(){
         ConfiguredClass item = CDI.current().select(ConfiguredClass.class).get();
