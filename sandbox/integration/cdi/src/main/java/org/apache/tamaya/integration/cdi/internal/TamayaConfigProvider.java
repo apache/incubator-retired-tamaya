@@ -18,40 +18,36 @@
  */
 package org.apache.tamaya.integration.cdi.internal;
 
+
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.AfterDeploymentValidation;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Extension;
+import javax.inject.Singleton;
 
 /**
- * Tamaya main integreation with CDI, storing the BeanManager reference for implementation, where no
- * JNDI is available or {@code java:comp/env/BeanManager} is not set correctly.
+ * Tamaya main integreation with CDI (singleton) serving producers for Configuration, ConfigurationContext and
+ * ConfigurationContextBuilder.
  */
-public class TamayaCDIIntegration implements Extension{
-    /** The BeanManager references stored. */
-    private static BeanManager beanManager;
+@Singleton
+public class TamayaConfigProvider{
 
-    /**
-     * Initializes the current BeanMaanager with the instance passed.
-     * @param validation the event
-     * @param beanManager the BeanManager instance
-     */
-    public void initBeanManager(@Observes AfterDeploymentValidation validation, BeanManager beanManager){
-        TamayaCDIIntegration.beanManager = beanManager;
+    @Produces
+    @ApplicationScoped
+    public Configuration getConfiguration(ConfigurationContext context){
+        return new DefaultConfiguration(context);
     }
 
-    /**
-     * Get the current {@link  BeanManager} instance.
-     * @return
-     */
-    public static BeanManager getBeanManager(){
-        return beanManager;
+    @Produces @ApplicationScoped
+    public ConfigurationContext getConfigurationContext(){
+        return new DefaultConfigurationContext();
+    }
+
+    @Produces
+    public ConfigurationContextBuilder getConfigurationContextBuilder(){
+        return new DefaultConfigurationContextBuilder();
     }
 
 }

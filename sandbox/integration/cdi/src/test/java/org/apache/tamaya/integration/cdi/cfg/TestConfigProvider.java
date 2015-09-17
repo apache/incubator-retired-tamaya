@@ -18,18 +18,13 @@
  */
 package org.apache.tamaya.integration.cdi.cfg;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
-import org.junit.Test;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Anatole on 29.09.2014.

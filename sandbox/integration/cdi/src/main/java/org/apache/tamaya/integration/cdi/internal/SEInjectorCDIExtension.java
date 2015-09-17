@@ -35,6 +35,12 @@ import java.util.*;
 @Vetoed
 public final class SEInjectorCDIExtension implements Extension {
 
+    /**
+     * Method that injects the values into any configured fields, by wrapping the given
+     * InjectionTarget.
+     * @param pit the injection target
+     * @param <T> the target type
+     */
     public <T> void initializeConfiguredFields(final @Observes ProcessInjectionTarget<T> pit) {
         final AnnotatedType<T> at = pit.getAnnotatedType();
         if (!ConfiguredType.isConfigured(at.getJavaClass())) {

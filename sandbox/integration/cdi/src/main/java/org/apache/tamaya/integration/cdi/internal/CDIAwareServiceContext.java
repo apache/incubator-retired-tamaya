@@ -89,7 +89,7 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = (List<T>) clAwareServiceContext.getService(serviceType);
+        List<T> found = (List<T>) clAwareServiceContext.getServices(serviceType);
         BeanManager beanManager = TamayaCDIIntegration.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){
@@ -160,6 +160,11 @@ public class CDIAwareServiceContext implements ServiceContext {
         return highestService;
     }
 
+    /**
+     * Returns ordinal of 20, overriding defaults as well as the inherited (internally used) CLAwareServiceContext
+     * instance.
+     * @return ordinal of 20.
+     */
     @Override
     public int ordinal() {
         return 20;

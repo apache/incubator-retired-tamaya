@@ -30,12 +30,11 @@ import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DefaultValue;
 
 /**
- * Created by Anatole on 08.09.2014.
+ * Class to be loaded from CDI to ensure fields are correctly configured using CDI injection mechanisms.
  */
 @Singleton
 public class ConfiguredClass{
 
-//    @WithConfig("testdata")
     @ConfiguredProperty
     private String testProperty;
 
@@ -43,7 +42,6 @@ public class ConfiguredClass{
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-//    @WithConfig("testdata")
     @ConfiguredProperty(keys = {"foo","a.b.c.key2"})
     private String value2;
 
@@ -59,19 +57,15 @@ public class ConfiguredClass{
     @DefaultValue("5")
     private Integer int1;
 
-//    @WithConfig("testdata")
     @ConfiguredProperty
     private int int2;
 
-//    @WithConfig("testdata")
     @ConfiguredProperty
     private boolean booleanT;
 
-//    @WithConfig("testdata")
     @ConfiguredProperty(keys = "BD")
     private BigDecimal bigNumber;
 
-//    @WithConfig("testdata")
     @ConfiguredProperty(keys = "double1")
     private double doubleValue;
 

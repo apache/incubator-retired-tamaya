@@ -47,9 +47,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
     PropertyValueCombinationPolicy combinationPolicy;
 
-    public DefaultConfigurationContextBuilder(){
-    }
-
     @Override
     public ConfigurationContextBuilder setContext(ConfigurationContext context) {
         this.propertySources.clear();

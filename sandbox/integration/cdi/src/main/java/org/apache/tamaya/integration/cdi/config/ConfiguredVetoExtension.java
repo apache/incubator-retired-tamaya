@@ -24,8 +24,8 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 /**
- * CDI Extension that can be used to veto on beans by configuring the fully qualified class names (as reges expression)
- * to {@code javax.enterprise.inject.vetoed}.
+ * CDI Extension that can be used to veto on beans by configuring the fully qualified class names (as regex expression)
+ * under {@code javax.enterprise.inject.vetoed}. Multiple expression can be added as comma separated values.
  */
 public class ConfiguredVetoExtension {
 
