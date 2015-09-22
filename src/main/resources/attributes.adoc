@@ -1,0 +1,8 @@
+//
+// This file is used to export Maven properties to a file
+// which will be included by various Asciidoctor documents
+// to share global properties/attributes.
+//
+// see https://github.com/asciidoctor/asciidoctor-maven-plugin/issues/170
+//
+tamaya_version_current=${project.version}

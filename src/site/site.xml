@@ -49,8 +49,7 @@ under the License.
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAMAYA" target="_blank"/>
         </menu>
 
-        <menu name="Reports">
-
+        <menu name="Reports" ref="reports">
         </menu>
 
         <menu name="Releases">
