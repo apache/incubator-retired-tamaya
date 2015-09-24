@@ -19,15 +19,21 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.event.ObservesConfigChange;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import org.apache.tamaya.inject.ConfiguredItemSupplier;
+import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.NoConfig;
 
 /**
  * Simple injector singleton that also registers instances configured using weak references.
@@ -37,6 +43,8 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
 
     private Map<Class<?>, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
+    private static final Logger LOG = Logger.getLogger(DefaultConfigurationInjector.class.getName());
+
     /**
      * Extract the configuration annotation config and registers it per class, for later reuse.
      *
@@ -45,13 +53,41 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      */
     public ConfiguredType registerType(Class<?> type) {
         ConfiguredType confType = configuredTypes.get(type);
-        if (confType == null) {
+        if (confType == null && isConfigured(type)) {
             confType = new ConfiguredType(type);
             ModelPopulator.register(confType);
             configuredTypes.put(type, confType);
         }
         return confType;
 //        return configuredTypes.computeIfAbsent(type, ConfiguredType::new);
+    }
+
+    /**
+     * CHecks if type is eligible for configuration injection.
+     * @param type the target type, not null.
+     * @return true, if the type, a method or field has Tamaya config annotation on it.
+     */
+    private boolean isConfigured(Class<?> type) {
+        if(type.getClass().isAnnotationPresent(org.apache.tamaya.inject.ConfiguredType.class)){
+            return true;
+        }
+        for (Field f : type.getDeclaredFields()) {
+            if (f.isAnnotationPresent(NoConfig.class)) {
+                return true;
+            }
+            if (f.isAnnotationPresent(ObservesConfigChange.class) || f.isAnnotationPresent(ConfiguredProperty.class)) {
+                return true;
+            }
+        }
+        for (Method m : type.getDeclaredMethods()) {
+            if (m.isAnnotationPresent(NoConfig.class)) {
+                return true;
+            }
+            if (m.isAnnotationPresent(ObservesConfigChange.class) || m.isAnnotationPresent(ConfiguredProperty.class)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -64,7 +100,12 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
     public <T> T configure(T instance) {
         Class<?> type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerType(type);
-        Objects.requireNonNull(configuredType).configure(instance);
+        if(configuredType!=null){
+            configuredType.configure(instance);
+        }
+        else{
+            LOG.info("Instance passed is not annotated for configuration: " + instance);
+        }
         return instance;
     }
 

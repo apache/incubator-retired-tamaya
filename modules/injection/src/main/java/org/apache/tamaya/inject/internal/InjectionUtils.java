@@ -86,7 +86,7 @@ final class InjectionUtils {
                 // absolute key, strip away brackets, take key as is
                 iterator.set(next.substring(1, next.length() - 1));
             } else {
-                if (areasAnnot != null) {
+                if (areasAnnot != null && areasAnnot.defaultSections().length>0) {
                     // Remove original entry, since it will be replaced with prefixed entries
                     iterator.remove();
                     // Add prefixed entries, including absolute (root) entry for "" area keys.

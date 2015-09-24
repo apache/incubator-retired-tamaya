@@ -64,11 +64,19 @@ public class ConfiguredType {
 
     public ConfiguredType(Class type) {
         this.type = Objects.requireNonNull(type);
-        initFields(type);
-        initMethods(type);
+        org.apache.tamaya.inject.ConfiguredType confType = (org.apache.tamaya.inject.ConfiguredType)
+                type.getAnnotation(org.apache.tamaya.inject.ConfiguredType.class);
+        if(confType!=null){
+            initFields(type, confType.autoConfigure());
+            initMethods(type, confType.autoConfigure());
+        }
+        else{
+            initFields(type, false);
+            initMethods(type, false);
+        }
     }
 
-    private void initFields(Class type) {
+    private void initFields(Class type, boolean autoConfigure) {
         for (Field f : type.getDeclaredFields()) {
             if (f.isAnnotationPresent(NoConfig.class)) {
                 LOG.finest("Ignored @NoConfig annotated field " + f.getClass().getName() + "#" +
@@ -86,10 +94,12 @@ public class ConfiguredType {
                 continue;
             }
             try {
-                ConfiguredField configuredField = new ConfiguredField(f);
-                configuredFields.add(configuredField);
-                LOG.finer("Registered field " + f.getClass().getName() + "#" +
-                        f.toGenericString());
+                if(isConfiguredField(f) || autoConfigure) {
+                    ConfiguredField configuredField = new ConfiguredField(f);
+                    configuredFields.add(configuredField);
+                    LOG.finer("Registered field " + f.getClass().getName() + "#" +
+                            f.toGenericString());
+                }
             } catch (Exception e) {
                 throw new ConfigException("Failed to initialized configured field: " +
                         f.getDeclaringClass().getName() + '.' + f.getName(), e);
@@ -97,7 +107,7 @@ public class ConfiguredType {
         }
     }
 
-    private void initMethods(Class type) {
+    private void initMethods(Class type, boolean autoConfigure) {
         // TODO revisit this logic here...
         for (Method m : type.getDeclaredMethods()) {
             if (m.isAnnotationPresent(NoConfig.class)) {
@@ -110,26 +120,28 @@ public class ConfiguredType {
                         m.toGenericString());
                 continue;
             }
-            ObservesConfigChange observesAnnot = m.getAnnotation(ObservesConfigChange.class);
-            ConfiguredProperty propAnnot = m.getAnnotation(ConfiguredProperty.class);
-            if (type.isInterface()) {
-                // it is a template
-                if (observesAnnot != null && m.isDefault()) {
-                    if(addObserverMethod(m)){
-                        LOG.finer("Added configured observer for template: " + m.getClass().getName() + "#" +
-                                m.toGenericString());
-                    }
-                }
-            } else {
-                if (observesAnnot != null) {
-                    if(addObserverMethod(m)){
-                        LOG.finer("Added configured observer: " + m.getClass().getName() + "#" +
-                                m.toGenericString());
+            if(isConfiguredMethod(m) || autoConfigure) {
+                ObservesConfigChange observesAnnot = m.getAnnotation(ObservesConfigChange.class);
+                ConfiguredProperty propAnnot = m.getAnnotation(ConfiguredProperty.class);
+                if (type.isInterface()) {
+                    // it is a template
+                    if (observesAnnot != null && m.isDefault()) {
+                        if (addObserverMethod(m)) {
+                            LOG.finer("Added configured observer for template: " + m.getClass().getName() + "#" +
+                                    m.toGenericString());
+                        }
                     }
                 } else {
-                    if (addPropertySetter(m, propAnnot)) {
-                        LOG.finer("Added configured setter: " + m.getClass().getName() + "#" +
-                                m.toGenericString());
+                    if (observesAnnot != null) {
+                        if (addObserverMethod(m)) {
+                            LOG.finer("Added configured observer: " + m.getClass().getName() + "#" +
+                                    m.toGenericString());
+                        }
+                    } else {
+                        if (addPropertySetter(m, propAnnot)) {
+                            LOG.finer("Added configured setter: " + m.getClass().getName() + "#" +
+                                    m.toGenericString());
+                        }
                     }
                 }
             }
@@ -204,17 +216,25 @@ public class ConfiguredType {
         }
         // if no class level annotation is there we might have field level annotations only
         for (Field field : type.getDeclaredFields()) {
-            if (field.isAnnotationPresent(ConfiguredProperty.class)) {
+            if (isConfiguredField(field)) {
                 return true;
             }
         }
         // if no class level annotation is there we might have method level annotations only
         for (Method method : type.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(ConfiguredProperty.class)) {
+            if(isConfiguredMethod(method)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static boolean isConfiguredField(Field field) {
+        return field.isAnnotationPresent(ConfiguredProperty.class);
+    }
+
+    public static boolean isConfiguredMethod(Method method) {
+        return method.isAnnotationPresent(ConfiguredProperty.class);
     }
 
     public Class getType() {
