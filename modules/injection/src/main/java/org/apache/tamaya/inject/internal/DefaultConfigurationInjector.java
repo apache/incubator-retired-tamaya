@@ -102,8 +102,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
         ConfiguredType configuredType = registerType(type);
         if(configuredType!=null){
             configuredType.configure(instance);
-        }
-        else{
+        }else{
             LOG.info("Instance passed is not annotated for configuration: " + instance);
         }
         return instance;

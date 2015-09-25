@@ -69,8 +69,7 @@ public class ConfiguredType {
         if(confType!=null){
             initFields(type, confType.autoConfigure());
             initMethods(type, confType.autoConfigure());
-        }
-        else{
+        }else{
             initFields(type, false);
             initMethods(type, false);
         }
