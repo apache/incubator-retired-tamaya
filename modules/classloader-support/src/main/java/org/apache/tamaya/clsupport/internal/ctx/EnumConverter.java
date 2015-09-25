@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to tge given enum type.
+ * @param <T> the enum type.
  */
 class EnumConverter<T> implements PropertyConverter<T> {
     private Logger LOG = Logger.getLogger(EnumConverter.class.getName());

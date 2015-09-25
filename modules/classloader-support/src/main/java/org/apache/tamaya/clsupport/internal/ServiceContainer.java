@@ -56,7 +56,9 @@ class ServiceContainer {
      * List current services loaded using this classloader, per class.
      */
     private final Map<Class<?>, Map<String, Object>> servicesLoaded = new ConcurrentHashMap<>();
-    /** The cached singletons for the given classloader. */
+    /**
+     * The cached singletons for the given classloader.
+     */
     private final Map<Class, Object> singletons = new ConcurrentHashMap<>();
 
     /**
@@ -64,14 +66,14 @@ class ServiceContainer {
      */
     private final Map<Class, List<URL>> configsLoaded = new ConcurrentHashMap<>();
 
-    ServiceContainer(ClassLoader classLoader){
+    ServiceContainer(ClassLoader classLoader) {
         acc = (System.getSecurityManager() != null) ? AccessController.getContext() : null;
         this.classLoaderRef = new WeakReference<>(classLoader);
     }
 
-    public ClassLoader getClassLoader(){
+    public ClassLoader getClassLoader() {
         ClassLoader cl = classLoaderRef.get();
-        if(cl==null){
+        if (cl == null) {
             throw new IllegalStateException("Classloader reference removed, not active anynire.");
         }
         return cl;
@@ -79,13 +81,14 @@ class ServiceContainer {
 
 
     public <T> void loadServices(Class<?> type,
-                                 Collection<ServiceContainer> preceedingContainers){
-        Map<String, Object> services = (Map<String, Object>)this.servicesLoaded.get(type);
-        if(services==null) {
+                                 Collection<ServiceContainer> preceedingContainers) {
+        Map<String, Object> services = (Map<String, Object>) this.servicesLoaded.get(type);
+        if (services == null) {
             services = new LinkedHashMap<>();
             this.servicesLoaded.put(type, services);
         }
-        loop:for(URL config:getConfigs(type)) {
+        loop:
+        for (URL config : getConfigs(type)) {
             for (ServiceContainer cont : preceedingContainers) {
                 if (cont.getConfigs(type).contains(config)) {
                     LOG.finer("Ignoring already loaded config: " + config);
@@ -106,11 +109,11 @@ class ServiceContainer {
         }
     }
 
-    private Collection<URL> getConfigs(Class<?> type){
+    private Collection<URL> getConfigs(Class<?> type) {
         List<URL> result = this.configsLoaded.get(type);
-        if(result==null){
+        if (result == null) {
             ClassLoader cl = this.classLoaderRef.get();
-            if(cl==null){
+            if (cl == null) {
                 throw new IllegalStateException("CLassLoader dereferenced already.");
             }
             result = new ArrayList<>();
@@ -119,9 +122,8 @@ class ServiceContainer {
                 while (resources.hasMoreElements()) {
                     result.add(resources.nextElement());
                 }
-            }
-            catch(Exception e){
-                LOG.log(Level.WARNING, "Failed to read service config for " + type.getName()+" from " + cl, e);
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to read service config for " + type.getName() + " from " + cl, e);
             }
             this.configsLoaded.put(type, result);
             LOG.log(Level.FINE, "Found service config for " + type.getName() + ": " + result);
@@ -130,8 +132,8 @@ class ServiceContainer {
     }
 
     private boolean containsService(Class<?> type, String serviceClassName) {
-        Map<String,Object> services = servicesLoaded.get(type);
-        if(services==null){
+        Map<String, Object> services = servicesLoaded.get(type);
+        if (services == null) {
             return false;
         }
         return services.containsKey(serviceClassName);
@@ -164,13 +166,13 @@ class ServiceContainer {
 
     public <T> Collection<T> getServices(Class<T> serviceType) {
         Map<String, Object> services = this.servicesLoaded.get(serviceType);
-        if(services!=null) {
-            return (Collection<T>)services.values();
+        if (services != null) {
+            return (Collection<T>) services.values();
         }
         return Collections.emptySet();
     }
 
-    public boolean isTypeLoaded(Class<?> serviceType){
+    public boolean isTypeLoaded(Class<?> serviceType) {
         return this.servicesLoaded.containsKey(serviceType);
     }
 
@@ -180,22 +182,20 @@ class ServiceContainer {
 
     public Collection<URL> load(Class<?> serviceType, Collection<URL> configsLoaded) {
         List<URL> result = new ArrayList<>();
-        try{
+        try {
             Enumeration<URL> resources = getClassLoader().getResources(PREFIX + serviceType.getName());
-            while(resources.hasMoreElements()){
+            while (resources.hasMoreElements()) {
                 URL res = resources.nextElement();
-                if(!configsLoaded.contains(res)){
+                if (!configsLoaded.contains(res)) {
                     result.add(res);
                 }
             }
             return result;
-        }
-        catch(Exception e){
-            fail(serviceType, "Failed to load service config: " + PREFIX+serviceType.getName(), e);
+        } catch (Exception e) {
+            fail(serviceType, "Failed to load service config: " + PREFIX + serviceType.getName(), e);
         }
         return result;
     }
-
 
 
     // Parse a single line from the given configuration file, adding the name
@@ -209,23 +209,29 @@ class ServiceContainer {
             return -1;
         }
         int ci = ln.indexOf('#');
-        if (ci >= 0) ln = ln.substring(0, ci);
+        if (ci >= 0) {
+            ln = ln.substring(0, ci);
+        }
         ln = ln.trim();
         int n = ln.length();
         if (n != 0) {
-            if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0))
+            if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0)) {
                 fail(serviceType, u, lc, "Illegal configuration-file syntax");
+            }
             int cp = ln.codePointAt(0);
-            if (!Character.isJavaIdentifierStart(cp))
+            if (!Character.isJavaIdentifierStart(cp)) {
                 fail(serviceType, u, lc, "Illegal provider-class name: " + ln);
+            }
             for (int i = Character.charCount(cp); i < n; i += Character.charCount(cp)) {
                 cp = ln.codePointAt(i);
-                if (!Character.isJavaIdentifierPart(cp) && (cp != '.'))
+                if (!Character.isJavaIdentifierPart(cp) && (cp != '.')) {
                     fail(serviceType, u, lc, "Illegal provider-class name: " + ln);
+                }
             }
             Map<String, Object> services = this.servicesLoaded.get(serviceType);
-            if (services == null || !services.containsKey(ln) && !names.contains(ln))
+            if (services == null || !services.containsKey(ln) && !names.contains(ln)) {
                 names.add(ln);
+            }
         }
         return lc + 1;
     }
@@ -257,13 +263,19 @@ class ServiceContainer {
             in = u.openStream();
             r = new BufferedReader(new InputStreamReader(in, "utf-8"));
             int lc = 1;
-            while ((lc = parseLine(service, u, r, lc, names)) >= 0) ;
+            while ((lc = parseLine(service, u, r, lc, names)) >= 0) {
+                // go ahead
+            }
         } catch (IOException x) {
             fail(service, "Error reading configuration file", x);
         } finally {
             try {
-                if (r != null) r.close();
-                if (in != null) in.close();
+                if (r != null) {
+                    r.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException y) {
                 fail(service, "Error closing configuration file", y);
             }
@@ -288,10 +300,10 @@ class ServiceContainer {
     }
 
     public <T> T getSingleton(Class<T> serviceType) {
-        return (T)this.singletons.get(serviceType);
+        return (T) this.singletons.get(serviceType);
     }
 
-    <T> void setSingleton(Class<T> type, T instance){
+    <T> void setSingleton(Class<T> type, T instance) {
         LOG.info("Caching singleton for " + type.getName() + " and classloader: " +
                 getClassLoader().toString() + ": " + instance);
         this.singletons.put(type, instance);

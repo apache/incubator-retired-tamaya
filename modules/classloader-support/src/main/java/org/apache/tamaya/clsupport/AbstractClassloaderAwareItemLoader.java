@@ -37,6 +37,7 @@ import java.util.logging.Logger;
  * Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
  * Instead this class uses the fully qualified class name of the loader and the corresponsing hashCode as returned
  * by {@link Objects#hashCode(Object)}.
+ * @param <T> the managed item type.
  */
 public abstract class AbstractClassloaderAwareItemLoader<T> {
     /**

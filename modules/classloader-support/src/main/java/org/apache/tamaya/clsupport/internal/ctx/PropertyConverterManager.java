@@ -28,6 +28,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -139,7 +141,7 @@ class PropertyConverterManager {
             // evaluate transitive closure for all inherited supertypes and implemented interfaces
             // direct implemented interfaces
             for (Class<?> ifaceType : targetType.getRawType().getInterfaces()) {
-                converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                converters = List.class.cast(this.transitiveConverters.get(TypeLiteral.of(ifaceType)));
                 newConverters = new ArrayList<>();
                 if (converters != null) {
                     newConverters.addAll(converters);
@@ -150,7 +152,7 @@ class PropertyConverterManager {
             }
             Class<?> superClass = targetType.getRawType().getSuperclass();
             while (superClass != null && !superClass.equals(Object.class)) {
-                converters = List.class.cast(this.transitiveConverters.get(superClass));
+                converters = List.class.cast(this.transitiveConverters.get(TypeLiteral.of(superClass)));
                 newConverters = new ArrayList<>();
                 if (converters != null) {
                     newConverters.addAll(converters);
@@ -159,7 +161,7 @@ class PropertyConverterManager {
                 Collections.sort(newConverters, PRIORITY_COMPARATOR);
                 this.transitiveConverters.put(TypeLiteral.of(superClass), Collections.unmodifiableList(newConverters));
                 for (Class<?> ifaceType : superClass.getInterfaces()) {
-                    converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                    converters = List.class.cast(this.transitiveConverters.get(TypeLiteral.of(ifaceType)));
                     newConverters = new ArrayList<>();
                     if (converters != null) {
                         newConverters.addAll(converters);
@@ -374,9 +376,12 @@ class PropertyConverterManager {
                                     " is not a static method. Only static " +
                                     "methods can be used as factory methods.");
                         }
-
-                        factoryMethod.setAccessible(true);
-
+                        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                            public Object run() {
+                                factoryMethod.setAccessible(true);
+                                return null;
+                            }
+                        });
                         Object invoke = factoryMethod.invoke(null, value);
                         return targetType.getRawType().cast(invoke);
                     } catch (Exception e) {

@@ -152,6 +152,9 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         }
     }
 
+    /**
+     * Comparator used for comparing PropertySources.
+     */
     private static class PropertySourceComparator implements Comparator<PropertySource>, Serializable {
 
         private static final long serialVersionUID = 1L;
@@ -179,6 +182,9 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         }
     }
 
+    /**
+     * Comparator used for comparing PropertyFilters.
+     */
     private static class PropertyFilterComparator implements Comparator<PropertyFilter>, Serializable{
 
         private static final long serialVersionUID = 1L;
