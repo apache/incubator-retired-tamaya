@@ -46,6 +46,8 @@ under the License.
         <module>server</module>
         <module>remote</module>
         <module>optional</module>
+        <module>classloader-support</module>
+        <module>integration</module>
     </modules>
 
     <build>
