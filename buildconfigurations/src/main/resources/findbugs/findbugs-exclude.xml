@@ -52,6 +52,11 @@ under the License.
     </Match>
 
     <Match>
+        <Class name='org.apache.tamaya.integration.cdi.internal.TamayaCDIIntegration'/>
+        <Method name="initBeanManager"/>
+    </Match>
+
+    <Match>
         <!-- Note:
              Intended. See the inline comment on this issue in the source file
              in revision ae66299e25b41167008021ffe95cad236f6e2bd3
