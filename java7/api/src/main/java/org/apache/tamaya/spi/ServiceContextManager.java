@@ -59,6 +59,7 @@ public final class ServiceContextManager {
             for (ServiceContext serviceContext : ServiceLoader.load(ServiceContext.class)) {
                 if (serviceContext.ordinal() > highestOrdinal) {
                     highestServiceContext = serviceContext;
+                    highestOrdinal = serviceContext.ordinal();
                 }
             }
         } catch (Exception e) {
