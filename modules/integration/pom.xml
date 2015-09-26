@@ -32,7 +32,6 @@ under the License.
     <artifactId>tamaya-integration</artifactId>
 
     <modules>
-        <module>cdi</module>
         <module>spring</module>
     </modules>
 
