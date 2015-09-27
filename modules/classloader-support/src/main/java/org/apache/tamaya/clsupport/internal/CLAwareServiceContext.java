@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -45,6 +47,9 @@ import java.util.List;
 @Priority(10)
 public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<ServiceContainer>
         implements ServiceContext{
+
+    private static final Logger LOG = Logger.getLogger(CLAwareServiceContext.class.getName());
+
     /**
      * Default location for service loader files.
      */
@@ -75,6 +80,9 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
      */
     @Override
     protected ServiceContainer createItem(ClassLoader classLoader) {
+        if(LOG.isLoggable(Level.INFO)) {
+            LOG.info("Loading services for classloader: " + classLoader);
+        }
         return new ServiceContainer(classLoader);
     }
 
@@ -110,9 +118,15 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
      * @return the item found, or null.
      */
     public <T> T getService(Class<T> serviceType, ClassLoader classLoader) {
+        if(LOG.isLoggable(Level.INFO)) {
+            LOG.info("Evaluating services for classloader: " + classLoader);
+        }
         ServiceContainer container = getItemNoParent(classLoader, true);
         T singleton = container.getSingleton(serviceType);
         if(singleton!=null){
+            if(LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("Evaluated singleton of type " + serviceType.getName() + " to " + singleton);
+            }
             return singleton;
         }
         Collection<? extends T> services = getServices(serviceType, classLoader);
@@ -123,6 +137,9 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
         }
         if(singleton!=null) {
             container.setSingleton(serviceType, singleton);
+        }
+        if(LOG.isLoggable(Level.FINEST)) {
+            LOG.finest("Evaluated singleton of type " + serviceType.getName() + " to " + singleton);
         }
         return singleton;
     }
@@ -163,6 +180,9 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
             }
             services.addAll(container.getServices(serviceType));
             prevContainers.add(container);
+        }
+        if(LOG.isLoggable(Level.FINEST)) {
+            LOG.finest("Evaluated services of type " + serviceType.getName() + " to " + services);
         }
         return services;
     }
@@ -217,6 +237,9 @@ public class CLAwareServiceContext extends AbstractClassloaderAwareItemLoader<Se
         Priority priority = o.getClass().getAnnotation(Priority.class);
         if (priority != null) {
             prio = priority.value();
+        }
+        if(LOG.isLoggable(Level.FINEST)) {
+            LOG.finest("Evaluated priority for " + o.getClass().getName() + " to " + prio);
         }
         return prio;
     }
