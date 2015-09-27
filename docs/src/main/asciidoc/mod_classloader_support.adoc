@@ -1,0 +1,109 @@
+= Apache Tamaya -- Extension: Classloader Isolation Support
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.clsupport
+:title: Apache Tamaya Extension: Classloader Isolation Support
+:revdate: September 2015
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Remote]]
+== Tamaya Classloader Aware ServiceContext (Extension Module)
+=== Overview
+
+The Tamaya classloader support provides an alternative implementation of +java.util.ServiceLoader+, which is aware
+of classloaders, hereby preventing multiple loading of components within a classloader hierarchy.
+
+
+=== Compatibility
+
+The module is based on Java 7, so it will not run on Java 7 and beyond.
+
+
+=== Installation
+
+To benefit from configuration server support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-classloader-support</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+The component will auto.register its components and override the default +ServicceContext+ in use by default
+with an instance of type +org.apache.tamaya.clsupport.internal.CLAwareServiceContext+. This implementation returns
+a priority of +10+.
+
+=== How it Works
+
+Basically the component manages a +Map+ of all classloaders encountered. When services are accessed, the component
+will evaluate the services as follows:
+
+* the component walks up the class loader hierarchy.
+* in a next step the hierarchy is traversed down from the parent to the current classloader. Hereby it is checked
+  if the service list for the required type has been loaded already. If not the service configuration files are
+  evaluated.
+* This configuration file evaluation will ignore all resources already loaded by any of the already traversed parent
+  classloaders.
+* For each configuration file newly visible to the classloader currently traversed, the corresponding services are
+  loaded unleyy, the same service class already has been loaded by one its parent classloaders or another file
+  loaded with this classloader.
+* Finally all services found are returned as the full collection of services valid for the given context (classloader).
+
+This ensures no service is loaded multiple times, even when it is referenced multiple times in several service
+configurations. Additionally every service is loaded on the classloader where it is also declared the first time.
+
+
+=== Control Logging
+
+The service component by default only logs errors. But it is possible to change this by reconfiguring the logging
+levels on the following logging names/path: +org.apache.tamaya.clsupport.internal.CLAwareServiceContext+
+
+* _INFO_ logs additional info on the services accessed.
+* _FINEST_ logs additional info on the services scanned and selected.
+
+
+=== Classloader Aware Configuration
+
+The mechanism above is used to provide a classloader aware implementation of +ConfigurationContext+
+(+org.apache.tamaya.clsupport.internal.CLAwareConfigurationContext+). Similarly to the service variants
+this class provides a context implementation that manages the core configuration aspects considering classloading
+hierarchies:
+
+* +PropertySource+, +PropertySourceProviders+
+* +PropertyFilters+, +PropertyCombinationPolicy+
+
