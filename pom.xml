@@ -46,7 +46,7 @@ under the License.
     <properties>
         <commons-io.version>2.4</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
-        <jdkVersion>1.8</jdkVersion>
+        <jdkVersion>1.7</jdkVersion>
         <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
         <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
@@ -203,8 +203,8 @@ under the License.
 
     <modules>
         <module>buildconfigurations</module>
-        <module>java7</module>
-        <module>java8</module>
+        <module>api</module>
+        <module>core</module>
         <module>modules</module>
         <module>docs</module>
         <module>examples</module>
@@ -355,9 +355,15 @@ under the License.
                     </executions>
                     <configuration>
                         <logViolationsToConsole>true</logViolationsToConsole>
+                        <configLocation>checkstyle/style.xml</configLocation>
                     </configuration>
 
                     <dependencies>
+                        <dependency>
+                            <groupId>org.apache.tamaya</groupId>
+                            <artifactId>buildconfigurations</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
@@ -402,7 +408,15 @@ under the License.
                         <effort>Max</effort>
                         <threshold>Low</threshold>
                         <failOnError>true</failOnError>
+                        <excludeFilterFile>findbugs/findbugs-exclude.xml</excludeFilterFile>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.tamaya</groupId>
+                            <artifactId>buildconfigurations</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <plugin>

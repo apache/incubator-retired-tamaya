@@ -18,10 +18,18 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.core.internal.converters.EnumConverter;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.ServiceContextManager;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,13 +41,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.core.internal.converters.EnumConverter;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Manager that deals with {@link org.apache.tamaya.spi.PropertyConverter} instances.
@@ -124,7 +127,7 @@ public class PropertyConverterManager {
             // evaluate transitive closure for all inherited supertypes and implemented interfaces
             // direct implemented interfaces
             for (Class<?> ifaceType : targetType.getRawType().getInterfaces()) {
-                converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                converters = List.class.cast(this.transitiveConverters.get(TypeLiteral.of(ifaceType)));
                 newConverters = new ArrayList<>();
                 if (converters != null) {
                     newConverters.addAll(converters);
@@ -135,7 +138,7 @@ public class PropertyConverterManager {
             }
             Class<?> superClass = targetType.getRawType().getSuperclass();
             while (superClass != null && !superClass.equals(Object.class)) {
-                converters = List.class.cast(this.transitiveConverters.get(superClass));
+                converters = List.class.cast(this.transitiveConverters.get(TypeLiteral.of(superClass)));
                 newConverters = new ArrayList<>();
                 if (converters != null) {
                     newConverters.addAll(converters);
@@ -144,7 +147,7 @@ public class PropertyConverterManager {
                 Collections.sort(newConverters, PRIORITY_COMPARATOR);
                 this.transitiveConverters.put(TypeLiteral.of(superClass), Collections.unmodifiableList(newConverters));
                 for (Class<?> ifaceType : superClass.getInterfaces()) {
-                    converters = List.class.cast(this.transitiveConverters.get(ifaceType));
+                    converters = List.class.cast(this.transitiveConverters.get(TypeLiteral.of(ifaceType)));
                     newConverters = new ArrayList<>();
                     if (converters != null) {
                         newConverters.addAll(converters);
@@ -197,23 +200,22 @@ public class PropertyConverterManager {
      * converter based on String costructor or static factory methods available.<br/>
      * The converters provided are of the following type and returned in the following order:
      * <ul>
-     *     <li>Converters mapped explicitly to the required target type are returned first, ordered
-     *     by decreasing priority. This means, if explicit converters are registered these are used
-     *     primarly for converting a value.</li>
-     *     <li>The target type of each explicitly registered converter also can be transitively mapped to
-     *     1) all directly implemented interfaces, 2) all its superclasses (except Object), 3) all the interfaces
-     *     implemented by its superclasses. These groups of transitive converters is returned similarly in the
-     *     order as mentioned, whereas also here a priority based decreasing ordering is applied.</li>
-     *     <li>java.lang wrapper classes and native types are automatically mapped.</li>
-     *     <li>If no explicit converters are registered, for Enum types a default implementation is provided that
-     *     compares the configuration values with the different enum members defined (cases sensitive mapping).</li>
+     * <li>Converters mapped explicitly to the required target type are returned first, ordered
+     * by decreasing priority. This means, if explicit converters are registered these are used
+     * primarly for converting a value.</li>
+     * <li>The target type of each explicitly registered converter also can be transitively mapped to
+     * 1) all directly implemented interfaces, 2) all its superclasses (except Object), 3) all the interfaces
+     * implemented by its superclasses. These groups of transitive converters is returned similarly in the
+     * order as mentioned, whereas also here a priority based decreasing ordering is applied.</li>
+     * <li>java.lang wrapper classes and native types are automatically mapped.</li>
+     * <li>If no explicit converters are registered, for Enum types a default implementation is provided that
+     * compares the configuration values with the different enum members defined (cases sensitive mapping).</li>
      * </ul>
-     *
+     * <p>
      * So given that list above directly registered mappings always are tried first, before any transitive mapping
      * should be used. Also in all cases @Priority annotations are honored for ordering of the converters in place.
      * Transitive conversion is supported for all directly implemented interfaces (including inherited ones) and
      * the inheritance hierarchy (exception Object). Superinterfaces of implemented interfaces are ignored.
-     *
      *
      * @param targetType the target type, not null.
      * @param <T>        the type class
@@ -345,48 +347,45 @@ public class PropertyConverterManager {
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(final TypeLiteral<T> targetType) {
         if (Enum.class.isAssignableFrom(targetType.getRawType())) {
-            return new EnumConverter<T>(targetType.getRawType());
+            return new EnumConverter<>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
         final Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
-            converter = new PropertyConverter<T>() {
-                @Override
-                public T convert(String value) {
-                    try {
-                        if (!Modifier.isStatic(factoryMethod.getModifiers())) {
-                            throw new ConfigException(factoryMethod.toGenericString() +
-                                    " is not a static method. Only static " +
-                                    "methods can be used as factory methods.");
-                        }
-
-                        factoryMethod.setAccessible(true);
-
-                        Object invoke = factoryMethod.invoke(null, value);
-                        return targetType.getRawType().cast(invoke);
-                    } catch (Exception e) {
-                        throw new ConfigException("Failed to decode '" + value + "'", e);
-                    }
-                }
-            };
+            converter = new DefaultPropertyConverter<>(factoryMethod, targetType.getRawType());
         }
         if (converter == null) {
+            final Constructor<T> constr;
             try {
-                final Constructor<T> constr = targetType.getRawType().getDeclaredConstructor(String.class);
-                converter = new PropertyConverter<T>() {
+                constr = targetType.getRawType().getDeclaredConstructor(String.class);
+            } catch (NoSuchMethodException e) {
+                LOG.log(Level.FINEST, "No matching constrctor for " + targetType, e);
+                return null;
+            }
+            converter = new PropertyConverter<T>() {
                     @Override
                     public T convert(String value) {
+                        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                            @Override
+                            public Object run() {
+                                AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                                    @Override
+                                    public Object run() {
+                                        constr.setAccessible(true);
+                                        return null;
+                                    }
+                                });
+                                return null;
+                            }
+                        });
                         try {
-                            constr.setAccessible(true);
                             return constr.newInstance(value);
                         } catch (Exception e) {
-                            throw new ConfigException("Failed to decode '" + value + "'", e);
+                            LOG.log(Level.SEVERE, "Error creating new PropertyConverter instance " + targetType, e);
                         }
+                        return null;
                     }
                 };
-            } catch (Exception e) {
-                LOG.finest("Failed to construct instance of type: " + targetType.getRawType().getName() + ": " + e);
-            }
         }
         return converter;
     }
@@ -411,4 +410,36 @@ public class PropertyConverterManager {
         return null;
     }
 
+    private static class DefaultPropertyConverter<T> implements PropertyConverter<T> {
+
+        private Method factoryMethod;
+        private Class<T> targetType;
+
+        DefaultPropertyConverter(Method factoryMethod, Class<T> targetType){
+            this.factoryMethod = Objects.requireNonNull(factoryMethod);
+            this.targetType =  Objects.requireNonNull(targetType);
+        }
+
+        @Override
+        public T convert(String value) {
+            if (!Modifier.isStatic(factoryMethod.getModifiers())) {
+                throw new ConfigException(factoryMethod.toGenericString() +
+                        " is not a static method. Only static " +
+                        "methods can be used as factory methods.");
+            }
+            try {
+                AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                    @Override
+                    public Object run() {
+                        factoryMethod.setAccessible(true);
+                        return null;
+                    }
+                });
+                Object invoke = factoryMethod.invoke(null, value);
+                return targetType.cast(invoke);
+            } catch (Exception e) {
+                throw new ConfigException("Failed to decode '" + value + "'", e);
+            }
+        }
+    }
 }

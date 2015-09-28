@@ -38,7 +38,7 @@ under the License.
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-java7-api</artifactId>
+            <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -48,7 +48,7 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-java7-core</artifactId>
+            <artifactId>tamaya-core</artifactId>
             <version>0.2-incubating-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>

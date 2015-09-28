@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.examples.resources.MyPathPropertySourceProvider
+org.apache.tamaya.examples.items.MyPathPropertySourceProvider

@@ -21,16 +21,16 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-java7</artifactId>
+        <artifactId>tamaya-all</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>tamaya-java7-api</artifactId>
-    <name>Apache Tamaya Java 7 API</name>
+    <artifactId>tamaya-api</artifactId>
+    <name>Apache Tamaya API</name>
 
     <description>
-        The API defines a complete Java7 based API for reading of configuration data.
+        The API for accessing configuration data.
     </description>
 
     <dependencies>

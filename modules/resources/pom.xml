@@ -36,7 +36,7 @@ under the License.
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-java7-api</artifactId>
+            <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

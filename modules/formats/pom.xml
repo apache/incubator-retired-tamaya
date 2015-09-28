@@ -35,7 +35,7 @@ under the License.
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-java7-api</artifactId>
+            <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -47,7 +47,7 @@ under the License.
         <!-- Test scope only, do not create a code dependency! -->
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-java7-core</artifactId>
+            <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

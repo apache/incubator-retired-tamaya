@@ -138,7 +138,10 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
                 immutablePropertyFilters);
 
-        propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
+        propertyValueCombinationPolicy = builder.combinationPolicy;
+        if(propertyValueCombinationPolicy==null){
+            propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
+        }
         if(propertyValueCombinationPolicy==null){
             propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
         }

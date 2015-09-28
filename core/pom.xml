@@ -21,18 +21,18 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-java7</artifactId>
+        <artifactId>tamaya-all</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>tamaya-java7-core</artifactId>
-    <name>Apache Tamaya Java 7 Core</name>
+    <artifactId>tamaya-core</artifactId>
+    <name>Apache Tamaya Core Implementation</name>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-java7-api</artifactId>
+            <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

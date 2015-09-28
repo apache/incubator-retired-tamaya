@@ -33,7 +33,7 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
-        <module>builder</module>
+        <!-- module>builder</module -->
         <module>events</module>
         <module>formats</module>
         <module>injection</module>
