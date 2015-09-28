@@ -31,6 +31,10 @@ under the License.
     <description>This project contains a simple illustrating how configuration values can be injected.</description>
     <packaging>jar</packaging>
 
+    <properties>
+        <jdkVersion>1.8</jdkVersion>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>

@@ -33,10 +33,6 @@ under the License.
     </description>
     <packaging>pom</packaging>
 
-    <properties>
-        <jdk.verion>1.7</jdk.verion>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
