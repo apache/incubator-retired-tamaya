@@ -58,14 +58,14 @@ public class MinimalTests {
     public void getNumberValueTooLong() {
         String value = config.get("example.number");
         System.err.println("**** example.number(String)=" + value);
-        int number = config.getInteger("example.number").getAsInt();
+        int number = config.get("example.number",int.class);
         System.out.println("----\n   example.number(int)=" + number);
     }
 
     @Test
     public void getNumberValueAsInt_BadCase() {
         String value = config.get("example.numberAsHex");
-        int number = config.getInteger("example.numberAsHex").getAsInt();
+        int number = config.get("example.numberAsHex",int.class);
         print("example.numberAsHex", number);
     }
 
@@ -79,7 +79,7 @@ public class MinimalTests {
     @Test(expected = ConfigException.class)
     public void getNumberValueAsLongHex() {
         String value = config.get("example.numberAsLongHex");
-        long number = config.getInteger("example.numberAsLongHex").getAsInt();
+        long number = config.get("example.numberAsLongHex",int.class);
         print("example.numberAsLongHex", number);
     }
 

@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.examples.simple;
 
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.core.propertysource.BasePropertySource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * Created by Anatole on 20.03.2015.
  */
-public class SimplePropertySource implements PropertySource{
+public class SimplePropertySource extends BasePropertySource{
 
     private Map<String,String> props = new HashMap<>();
 

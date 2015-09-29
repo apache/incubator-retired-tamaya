@@ -33,11 +33,6 @@ import java.util.List;
  */
 public class SimplePropertySourceProvider implements PropertySourceProvider {
 
-    //    @Override
-//    public Collection<PropertySource> getPropertySources() {
-//        return null;
-//    }
-
     @Override
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();

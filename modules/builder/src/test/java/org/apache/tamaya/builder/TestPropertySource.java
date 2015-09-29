@@ -18,14 +18,14 @@
  */
 package org.apache.tamaya.builder;
 
+import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class TestPropertySource
-    implements PropertySource
+public class TestPropertySource  extends BasePropertySource
 {
     private Map<String, String> properties;
 

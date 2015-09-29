@@ -28,7 +28,7 @@ import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.util.ArrayList;
@@ -128,7 +128,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
     private List<PropertyFilter> getPropertyFilters(Builder builder) {
         List<PropertyFilter> provided = builder.loadProvidedPropertyFilters
-                ? ServiceContext.getInstance().getServices(PropertyFilter.class)
+                ? ServiceContextManager.getServiceContext().getServices(PropertyFilter.class)
                 : new ArrayList<>(0);
 
         List<PropertyFilter> configured = builder.propertyFilters;
@@ -139,11 +139,11 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
     private List<PropertySource> getAllPropertySources(Builder builder) {
         List<PropertySource> provided = builder.loadProvidedPropertySources
-                ? ServiceContext.getInstance().getServices(PropertySource.class)
+                ? ServiceContextManager.getServiceContext().getServices(PropertySource.class)
                 : new ArrayList<>(0);
 
         if (builder.loadProvidedPropertySourceProviders) {
-            List<PropertySourceProvider> providers = ServiceContext.getInstance()
+            List<PropertySourceProvider> providers = ServiceContextManager.getServiceContext()
                                                                   .getServices(PropertySourceProvider.class);
             for (PropertySourceProvider provider : providers) {
                 Collection<PropertySource> sources = provider.getPropertySources();
@@ -260,7 +260,6 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         throw new RuntimeException("This method is currently not supported.");
     }
 
-    @Override
     public Collection<PropertySource> getPropertySources(Predicate<PropertySource> selector) {
         // @todo Check if it could be useful to support this method, Oliver B. Fischer
         throw new RuntimeException("This method is currently not supported.");

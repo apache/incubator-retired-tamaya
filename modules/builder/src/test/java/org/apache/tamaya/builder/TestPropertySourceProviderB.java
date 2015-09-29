@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.builder;
 
+import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
@@ -39,7 +40,7 @@ public class TestPropertySourceProviderB
         return sources;
     }
 
-    private class BProvidingPropertySource implements PropertySource {
+    private class BProvidingPropertySource extends BasePropertySource {
         private Map<String, String> props = Collections.singletonMap("tpsp_b", "B");
 
         @Override
@@ -63,7 +64,7 @@ public class TestPropertySourceProviderB
         }
     }
 
-    private class AProvidingPropertySource implements PropertySource {
+    private class AProvidingPropertySource extends BasePropertySource {
         private Map<String, String> props = Collections.singletonMap("tpsp_a", "A");
 
         @Override
