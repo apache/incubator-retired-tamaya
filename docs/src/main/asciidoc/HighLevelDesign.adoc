@@ -90,6 +90,8 @@ functionality you want. E.g. modules are providing features such as
 * _Dynamic placeholders_ and resolution mechanism for configuration values
 * Abstractions for reusable _configuration formats_
 * Dynamic configuration updates and change events
+* Support for OSGI/Java EE Classloading
+* A configuration server/client
 * and more...
 
 
@@ -199,8 +201,7 @@ of the +ServiceContext+ interface, annotating it with a +@Priority+ annotation a
 
 == Compatibility
 
-The Tamaya API basically is compatible with Java 7 and Java 8. Java 8 additionally introduces additional methods
-hereby leveraging the newly added Java 8 +Optional+ features and _default_ methods.
+The Tamaya API is compatible with Java 7 and beyond.
 
 == Further Documentation
 

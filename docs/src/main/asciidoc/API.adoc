@@ -177,15 +177,10 @@ Nevertheless most of these advantages can be mitigated easily, hereby still keep
 === Configuration
 
 +Configuration+ is the main API provided by Tamaya. It allows reading of single property values or the whole
-property map, but also supports type safe access.
-
-
-==== Configuration (Java 7)
-
-The minimal API defined for Java version earlier than Java 8 looks as follows:
+property map, but also supports type safe access:
 
 [source,java]
-.Interface Configuration in Java 7
+.Interface Configuration
 --------------------------------------------
 public interface Configuration{
     String get(String key);
@@ -242,57 +237,6 @@ Configuration config = ConfigurationProvider.getConfiguration();
 --------------------------------------------
 
 Hereby the singleton is backed up by an instance of +ConfigurationProviderSpi+.
-
-==== Configuration (Java 8)
-
-The API for Java 8 adds additional support for +Optional+:
-
-[source,java]
-.Interface Configuration in Java 8
---------------------------------------------
-public interface Configuration{
-    // methods also defined in Java 7
-    String get(String key);
-    <T> T get(String key, Class<T> type);
-    <T> T get(String key, TypeLiteral<T> type);
-    Map<String,String> getProperties();
-    Configuration with(ConfigOperator operator);
-    <T> T query(ConfigQuery<T> query);
-
-    // new java 8 optional support
-    default Optional<String> getOptional(String key){...}
-    default <T> Optional<T> getOptional(String key, Class<T> type){...}
-    default <T> Optional<T> getOptional(String key, TypeLiteral<T> type){...}
-
-    default Boolean getBoolean(String key){...}
-    default OptionalInt getInteger(String key){...}
-    default OptionalLong getLong(String key){...}
-    default OptionalDouble getDouble(String key){...}
-}
---------------------------------------------
-
-Hereby
-
-* +get(String)+ and +getOptional(String)+ provide easy access to any kind of configuration properties in their
-  String format.
-* +get(String, TypeLiteral)+, +getOptional(String, TypeLiteral)+, +get(String, Class)+ and
-  +getOptional(String, Class)+ provide type safe access to configuration properties.
-  +PropertyConverter+ instances can be registered for a given
-  target type. The are managed in an ordered list, whereas the ordering is defined by +@Priority+ annotations
-  on the converters.
-* +getProperties()+ gives access to all known (=scannable) properties.
-* +with, query+ provide the extension points for adding additional functionality modelled by +ConfigOperator,
-  ConfigQuery+.
-
-Instances of +Configuration+ can be accessed, exactly like in Java 7, from the +ConfigurationProvider+ singleton:
-
-[source,java]
-.Accessing Configuration
---------------------------------------------
-Configuration config = ConfigurationProvider.getConfiguration();
---------------------------------------------
-
-Hereby the +ConfigurationProvider+ singleton is backed up by an instance of +<<ConfigurationProviderSpi>>+.
 
 
 [[PropertyConverter]]
@@ -458,7 +402,7 @@ A +PropertyFilter+ is defined as follows:
 
 [source,java]
 --------------------------------------------
-// @FunctionalInterface in Java 8
+// Functional Interface
 public interface PropertyConverter{
     String filterProperty(String key, String valueToBeFiltered);
 }
@@ -485,7 +429,7 @@ new value.
 
 [source,java]
 --------------------------------------------
-@FunctionalInterface
+// FunctionalInterface
 public interface PropertyValueCombinationPolicy{
 
    public final PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR =
