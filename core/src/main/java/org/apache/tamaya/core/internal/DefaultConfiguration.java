@@ -89,6 +89,24 @@ public class DefaultConfiguration implements Configuration {
         return applyFilter(key, unfilteredValue);
     }
 
+    @Override
+    public String getOrDefault(String key, String defaultValue) {
+        String val = get(key);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
+    }
+
+    @Override
+    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+        T val = get(key, type);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
+    }
+
     /**
      * Apply filters to a single property value.
      *
@@ -254,6 +272,15 @@ public class DefaultConfiguration implements Configuration {
         }
 
         return null;
+    }
+
+    @Override
+    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+        T val = get(key, type);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
     }
 
     public Configuration with(ConfigOperator operator) {

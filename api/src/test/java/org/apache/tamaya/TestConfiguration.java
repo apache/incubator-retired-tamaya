@@ -46,6 +46,24 @@ public class TestConfiguration implements Configuration{
     }
 
     @Override
+    public String getOrDefault(String key, String defaultValue) {
+        String val = get(key);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
+    }
+
+    @Override
+    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+        T val = get(key, type);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
+    }
+
+    @Override
     public <T> T get(String key, Class<T> type) {
         if(type.equals(Long.class)){
             return (T)(Object)Long.MAX_VALUE;
@@ -82,6 +100,15 @@ public class TestConfiguration implements Configuration{
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
         throw new RuntimeException("Method not implemented yet.");
+    }
+
+    @Override
+    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+        T val = get(key, type);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
     }
 
     @Override

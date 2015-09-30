@@ -49,6 +49,29 @@ public interface Configuration {
     String get(String key);
 
     /**
+     * Access a property.
+     *
+     * @param key the property's key, not null.
+     * @param defaultValue value to be returned, if no value is present.
+     * @return the property's keys.
+     */
+    String getOrDefault(String key, String defaultValue);
+
+    /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
+     * fromMap the given String keys.
+     *
+     * @param key          the property's absolute, or relative path, e.g. @code
+     *                     a/b/c/d.myProperty}.
+     * @param type         The target type required, not null.
+     * @param defaultValue value to be returned, if no value is present.
+     * @return the property value, never null..
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    <T> T getOrDefault(String key, Class<T> type, T defaultValue);
+
+    /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
@@ -73,6 +96,20 @@ public interface Configuration {
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T get(String key, TypeLiteral<T> type);
+
+    /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
+     * fromMap the given String keys.
+     *
+     * @param key          the property's absolute, or relative path, e.g. @code
+     *                     a/b/c/d.myProperty}.
+     * @param type         The target type required, not null.
+     * @param defaultValue value to be returned, if no value is present.
+     * @return the property value, never null..
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue);
 
     /**
      * Access all current known Configuration properties as a full {@code Map<String,String>}.
