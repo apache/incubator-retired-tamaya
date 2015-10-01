@@ -60,6 +60,24 @@ class CombinedConfiguration implements Configuration{
     }
 
     @Override
+    public String getOrDefault(String key, String defaultValue) {
+        String val = get(key);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
+    }
+
+    @Override
+    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+        T val = get(key, type);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
+    }
+
+    @Override
     public <T> T get(String key, Class<T> type) {
         T curValue = null;
         for(Configuration config: configurations){
@@ -81,6 +99,15 @@ class CombinedConfiguration implements Configuration{
             }
         }
         return curValue;
+    }
+
+    @Override
+    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+        T val = get(key, type);
+        if(val==null){
+            return defaultValue;
+        }
+        return val;
     }
 
     @Override
