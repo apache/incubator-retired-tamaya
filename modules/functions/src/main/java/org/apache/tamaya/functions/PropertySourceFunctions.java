@@ -18,8 +18,12 @@
  */
 package org.apache.tamaya.functions;
 
+import com.oracle.webservices.internal.api.message.PropertySet;
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertySource;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,6 +34,41 @@ import java.util.TreeSet;
  * Accessor that provides useful functions along with configuration.
  */
 public final class PropertySourceFunctions {
+    /**
+     * Implementation of an empty propertySource.
+     */
+    private static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource() {
+        @Override
+        public int getOrdinal() {
+            return 0;
+        }
+
+        @Override
+        public String getName() {
+            return "<empty>";
+        }
+
+        @Override
+        public String get(String key) {
+            return null;
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public boolean isScannable() {
+            return true;
+        }
+
+        @Override
+        public String toString(){
+            return "PropertySource<empty>";
+        }
+    };
+
     /**
      * Private singleton constructor.
      */
@@ -236,5 +275,40 @@ public final class PropertySourceFunctions {
         return key;
     }
 
+    /**
+     * Creates a ConfigOperator that adds the given items.
+     * @param items the items to be added/replaced.
+     * @param override if true, all items existing are overridden by the new ones passed.
+     * @return the ConfigOperator, never null.
+     */
+    public static PropertySource addItems(PropertySource propertySource, final Map<String,String> items, final boolean override){
+        return new EnrichedPropertySource(propertySource, items, override);
+    }
+
+    /**
+     * Creates an operator that adds items to the instance.
+     * @param items the items, not null.
+     * @return the operator, never null.
+     */
+    public static PropertySource addItems(PropertySource propertySource, Map<String,String> items){
+        return addItems(propertySource, items, false);
+    }
+
+    /**
+     * Creates an operator that replaces the given items.
+     * @param items the items.
+     * @return the operator for replacing the items.
+     */
+    public static PropertySource replaceItems(PropertySource propertySource, Map<String,String> items){
+        return addItems(propertySource, items, true);
+    }
+
+    /**
+     * Accesses an empty PropertySource.
+     * @return an empty PropertySource, never null.
+     */
+    public static PropertySource emptyPropertySource(){
+        return EMPTY_PROPERTYSOURCE;
+    }
 
 }

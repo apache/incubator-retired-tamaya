@@ -21,10 +21,12 @@ package org.apache.tamaya.functions;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.net.Inet4Address;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +45,61 @@ public final class ConfigurationFunctions {
      */
     private static final Logger LOG = Logger.getLogger(ConfigurationFunctions.class.getName());
 
+    /**
+     * Implementation of an empty propertySource.
+     */
+    private static final Configuration EMPTY_CONFIGURATION = new Configuration() {
+
+        @Override
+        public String get(String key) {
+            return null;
+        }
+
+        @Override
+        public String getOrDefault(String key, String defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public <T> T get(String key, Class<T> type) {
+            return null;
+        }
+
+        @Override
+        public <T> T get(String key, TypeLiteral<T> type) {
+            return null;
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public Configuration with(ConfigOperator operator) {
+            return operator.operate(this);
+        }
+
+        @Override
+        public <T> T query(ConfigQuery<T> query) {
+            return query.query(this);
+        }
+
+        @Override
+        public String toString(){
+            return "Configuration<empty>";
+        }
+    };
 
 
     /**
@@ -453,6 +510,39 @@ public final class ConfigurationFunctions {
     }
 
     /**
+     * Creates a ConfigOperator that adds the given items.
+     * @param items the items to be added/replaced.
+     * @param override if true, all items existing are overridden by the new ones passed.
+     * @return the ConfigOperator, never null.
+     */
+    public static ConfigOperator addItems(final Map<String,Object> items, final boolean override){
+        return new ConfigOperator() {
+            @Override
+            public Configuration operate(Configuration config) {
+                return new EnrichedConfiguration(config,items, override);
+            }
+        };
+    }
+
+    /**
+     * Creates an operator that adds items to the instance.
+     * @param items the items, not null.
+     * @return the operator, never null.
+     */
+    public static ConfigOperator addItems(Map<String,Object> items){
+        return addItems(items, false);
+    }
+
+    /**
+     * Creates an operator that replaces the given items.
+     * @param items the items.
+     * @return the operator for replacing the items.
+     */
+    public static ConfigOperator replaceItems(Map<String,Object> items){
+        return addItems(items, true);
+    }
+
+    /**
      * Creates a ConfigQuery that creates a html formatted ouitput of all properties in the given configuration.
      *
      * @return the given query.
@@ -507,5 +597,12 @@ public final class ConfigurationFunctions {
         return text.replace("\t", "\\t").replace("\"", "\\\"");
     }
 
+    /**
+     * Accesses an empty PropertySource.
+     * @return an empty PropertySource, never null.
+     */
+    public static Configuration emptyConfiguration(){
+        return EMPTY_CONFIGURATION;
+    }
 
 }
