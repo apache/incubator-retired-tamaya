@@ -78,6 +78,24 @@ public class TestConfigView implements ConfigOperator{
             }
 
             @Override
+            public String getOrDefault(String key, String defaultValue) {
+                String val = get(key);
+                if(val==null){
+                    return defaultValue;
+                }
+                return val;
+            }
+
+            @Override
+            public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+                T val = get(key, type);
+                if(val==null){
+                    return defaultValue;
+                }
+                return val;
+            }
+
+            @Override
             public <T> T get(String key, Class<T> type) {
                 return (T) get(key, TypeLiteral.of(type));
             }
@@ -114,6 +132,15 @@ public class TestConfigView implements ConfigOperator{
                     throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key);
                 }
                 return null;
+            }
+
+            @Override
+            public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+                T val = get(key, type);
+                if(val==null){
+                    return defaultValue;
+                }
+                return val;
             }
         };
     }
