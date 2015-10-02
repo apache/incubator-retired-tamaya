@@ -1,0 +1,109 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+// .
+//   http://www.apache.org/licenses/LICENSE-2.0
+// .
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+//:source-highlighter: coderay
+
+include::temp-properties-files-for-site/attributes.adoc[]
+:linkattrs: true
+
+= Downloading Apache Tamaya
+
+// @todo Is a ToC here really required? :toc:
+
+The latest release is Apache Tamaya {tamaya_version_current}.
+You can download it it from the
+http://www.apache.org/dist/incubator/[Apache Software Foundation Distribution Directory^].
+
+// @todo The release notes are available [here][4].
+// http://www.apache.org/dist/incubator/tamaya/0.1-incubating/ReleaseNotes-0.1-incubating.html
+
+== Current Source Code
+
+Downloading of the the current state of the project can be done by
+
+* cloning the https://github.com/apache/incubator-tamaya[GitHub mirror^]
+* Github also provides an easy way to dowload the current project source as zip archive.
+// @todo * Cloning the Apache source tree, see link:3[source section]. source.html
+
+
+== Maven Dependencies
+
+// @todo
+// @todo Details are available <a href="documentation/#_project_configuration_without_maven">here</a>.
+
+
+// @todo Source highlighting does not work currently.
+//
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>{tamaya_mvn_group_id}</groupId>
+    <artifactId>tamaya-api</artifactId>
+    <version>{tamaya_version_current}</version>
+</dependency>
+<dependency>
+    <groupId>{tamaya_mvn_group_id}</groupId>
+    <artifactId>tamaya-core</artifactId>
+    <version>{tamaya_version_current}</version>
+</dependency>
+----
+
+
+== Previous Releases
+
+All previous releases can also be found at the
+http://www.apache.org/dist/incubator/tamaya/[Apache Software Foundation Distribution Directory^].
+
+== Verifying Releases
+
+It is essential that you verify the integrity of any downloaded files using
+the PGP or MD5 signatures.  For more information on signing artifacts and
+why we do it, check out the
+http://www.apache.org/dev/release-signing.html[Release Signing FAQ^].
+
+The PGP signatures can be verified using PGP or GPG. First download the
+http://www.apache.org/dist/incubator/tamaya/KEYS[KEYS file^]
+as well as the asc signature file for the artifact. Make sure you get
+these files from the
+http://www.apache.org/dist/incubator/tamaya/[main distribution directory^]
+rather than from a
+http://www.apache.org/dyn/closer.cgi/tamaya/[mirror^].
+Then verify the signatures using e.g.:
+
+[source,shell]
+----
+$ pgpk -a KEYS
+$ pgpv tamaya-project-1.2.0-source-release.zip.asc
+----
+
+or
+[source,shell]
+----
+$ pgp -ka KEYS
+$ pgp tamaya-project-1.2.0-source-release.zip.asc
+----
+
+or
+
+[source,shell]
+----
+$ gpg --import KEYS
+$ gpg --verify tamaya-project-1.2.0-source-release.zip.asc
+----
+
+
+

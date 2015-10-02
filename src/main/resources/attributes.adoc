@@ -5,4 +5,6 @@
 //
 // see https://github.com/asciidoctor/asciidoctor-maven-plugin/issues/170
 //
-tamaya_version_current=${project.version}
+:tamaya_version_current: ${project.version}
+:tamaya_mvn_group_id: ${project.groupId}
+
