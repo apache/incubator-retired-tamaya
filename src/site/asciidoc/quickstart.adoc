@@ -1,0 +1,97 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+// .
+//   http://www.apache.org/licenses/LICENSE-2.0
+// .
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+include::temp-properties-files-for-site/attributes.adoc[]
+
+= Apache Tamaya Quickstart
+
+
+
+
+// @todo By default you can provide multiple javaconfig.properties files, e.g. as part of multiple jars loaded into your system.
+//The system internally creates one PropertySource for each file found on the classpath. All PropertySources created
+//are ordered by their ordinal value (an int). These ordinal values can be either hardcoded, or be dynamically
+//configurable as key within each file. The ladder can be done by defining a special Tamaya ordinal value as follows:
+//
+//    #override ordinal
+//    tamaya.ordinal=123
+//
+//This assigns an ordinal of 123 to each entry in that configuration resource. Tamaya Core defines the following default
+//ordinals (used, if no custom ordinal is defined):
+//
+//* System Properties -> 400
+//* javaconfiguration.properties -> 100
+//
+//If you want to add additional file locations or formats or other functionality you miss, have a look at the numerous
+//Tamaya extension modules (see below). Or just implement a PropertySource (or PropertySourceProvider) on your own and register
+//it using the Java ServiceLoader.
+
+
+//# Adding additional features
+
+
+The fastest way to start with Tamaya is just using the _Core_ implementation,
+implementing the **API** in small, minimalistic way. For that add the following
+Maven dependency to your project:
+
+
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>{tamaya_mvn_group_id}</groupId>
+    <artifactId>tamaya-core</artifactId>
+    <version>{tamaya_version_current}</version>
+</dependency>
+----
+
+Given that you can add your configuration properties to the following locations in your classpath:
+
+[source]
+----
+META-INF/javaconfiguration.properties
+----
+
+Additionally also system properties are taken into account, hereby overriding the default properties. Overall
+Tamaya by default defines the following configuration model per default (most significant first):
+
+    . System Properties
+    . META-INF/javaconfiguration.properties
+
+There many modules that extend the capabilities of Tamaya.
+These modules doe not depend on core, so alternative
+implementations of the Tamaya API should work similarly.
+Basically all modules can be simply added by adding their
+Maven settings.
+
+## Dynamic Resolution and Value Placeholders
+
+
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+    <artifactId>org.apache.tamaya.ext</id>
+    <artifactId>tamaya-resolver</artifactId>
+    <version>{tamaya_version_current}</version>
+</dependency>
+----
+
+
+// @todo
+Look [here][1] For further documentation on available extension modules.
+
+
+  [1]: documentation/modules.html

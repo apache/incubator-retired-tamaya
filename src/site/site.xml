@@ -39,6 +39,7 @@ under the License.
         <menu ref="modules" inherit="bottom"/>
 
         <menu name="Documentation">
+            <item name="Quickstart" href="quickstart.html"/>
             <item name="${project.version} JavaDoc" target="" href="apidocs/index.html"/>
         </menu>
 
