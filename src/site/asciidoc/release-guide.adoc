@@ -3,3 +3,5 @@
 This document contains the guidelines for Tamaya.
 
 TDB
+
+// Add an instruction to always add the release to the release overview page

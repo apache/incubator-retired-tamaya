@@ -67,6 +67,7 @@ Downloading of the the current state of the project can be done by
 
 All previous releases can also be found at the
 http://www.apache.org/dist/incubator/tamaya/[Apache Software Foundation Distribution Directory^].
+In our link:history.html[release history overview] you can find all previous releases of Tamaya.
 
 == Verifying Releases
 

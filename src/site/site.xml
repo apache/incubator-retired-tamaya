@@ -54,6 +54,7 @@ under the License.
 
         <menu name="Releases">
             <item name="Download" href="download.html"/>
+            <item name="Release History" href="history.html"/>
 
         </menu>
 
