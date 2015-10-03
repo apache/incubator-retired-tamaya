@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.functions;
 
-import com.oracle.webservices.internal.api.message.PropertySet;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collections;
