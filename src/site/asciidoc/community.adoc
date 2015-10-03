@@ -95,6 +95,7 @@ Further details are available at http://www.apache.org/dev/[http://www.apache.or
 
 The table below lists all mailings used by the Tamaya project.
 
+[width="70"]
 [cols="5*.<", options="header"]
 |===
 | List
