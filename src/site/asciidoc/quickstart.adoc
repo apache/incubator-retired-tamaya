@@ -19,31 +19,6 @@ include::temp-properties-files-for-site/attributes.adoc[]
 
 = Apache Tamaya Quickstart
 
-
-
-
-// @todo By default you can provide multiple javaconfig.properties files, e.g. as part of multiple jars loaded into your system.
-//The system internally creates one PropertySource for each file found on the classpath. All PropertySources created
-//are ordered by their ordinal value (an int). These ordinal values can be either hardcoded, or be dynamically
-//configurable as key within each file. The ladder can be done by defining a special Tamaya ordinal value as follows:
-//
-//    #override ordinal
-//    tamaya.ordinal=123
-//
-//This assigns an ordinal of 123 to each entry in that configuration resource. Tamaya Core defines the following default
-//ordinals (used, if no custom ordinal is defined):
-//
-//* System Properties -> 400
-//* javaconfiguration.properties -> 100
-//
-//If you want to add additional file locations or formats or other functionality you miss, have a look at the numerous
-//Tamaya extension modules (see below). Or just implement a PropertySource (or PropertySourceProvider) on your own and register
-//it using the Java ServiceLoader.
-
-
-//# Adding additional features
-
-
 The fastest way to start with Tamaya is just using the _Core_ implementation,
 implementing the **API** in small, minimalistic way. For that add the following
 Maven dependency to your project:
@@ -68,30 +43,168 @@ META-INF/javaconfiguration.properties
 Additionally also system properties are taken into account, hereby overriding the default properties. Overall
 Tamaya by default defines the following configuration model per default (most significant first):
 
-    . System Properties
-    . META-INF/javaconfiguration.properties
+. System Properties
+. `META-INF/javaconfiguration.properties`
 
 There many modules that extend the capabilities of Tamaya.
 These modules doe not depend on core, so alternative
 implementations of the Tamaya API should work similarly.
-Basically all modules can be simply added by adding their
-Maven settings.
 
-## Dynamic Resolution and Value Placeholders
 
+== Multiple configuration files
+
+By default you can provide multiple `javaconfig.properties` files, e.g. as part
+of multiple jars loaded into your system. The system internally creates one
+`PropertySource` for each file found on the classpath. All `PropertySource`
+instances created are ordered by their ordinal value (an int).
+
+Tamaya Core defines the following default ordinals (used, if no custom ordinal is defined):
+
+[width=70]
+[cols="3,1", option="headers"]
+|===
+| Source                            | Ordinal
+| System Properties                 | 400
+| Java Configuration Properties     | 100
+|===
+
+That means that the value of a configuration variable `x` overhanded via `-Dx=yes` has
+a higher precedence then the entry for configuration variable `x` specified in a `javaconfig.properties`
+as `x=no`.
+
+These ordinal values can be either hardcoded, or be dynamically
+configurable as key within each configuration resource. The ladder can be done by defining a special
+Tamaya ordinal value as follows:
+
+
+[source]
+----
+# override default Tamaya ordinal for property files
+tamaya.ordinal=123
+----
+
+This assigns an ordinal of 123 to each entry in that configuration resource.
+
+== Using additional features of Tamaya
+
+There many modules that extend the capabilities of
+Tamaya. These modules doe not depend on core, so alternative
+implementations of the Tamaya API should work similarly. Following a
+small extract of most important modules available (or available soon):
+
+=== Dynamic Resolution and Value Placeholders
 
 [source,xml,subs="verbatim,attributes"]
 ----
 <dependency>
-    <artifactId>org.apache.tamaya.ext</id>
-    <artifactId>tamaya-resolver</artifactId>
-    <version>{tamaya_version_current}</version>
+  <artifactId>org.apache.tamaya.ext</id>
+  <artifactId>tamaya-resolver</artifactId>
+  <version>{tamaya_version_current}</version>
 </dependency>
 ----
 
+// @todo Auf Modulliste verweisen für vollständigen Überblick
+With that it is possible to define values with Unix styled placeholders that are
+resolved on configuration access, e.g.
+`mykey=my${dynamicValue}´. For further details refer to the module documentation.
+This module also provides a `Resolver` singleton:
+
+[source,java]
+----
+String myExpression = ...;
+String resolved = Resolver.evaluateExpression(myExpression);
+----
+
+
+=== Ant-styled Path Resolution of Resources
+
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+  <artifactId>org.apache.tamaya.ext</id>
+  <artifactId>tamaya-resolution</artifactId>
+  <version>{tamaya_version_current}</version>
+</dependency>
+----
+
+This module provides a `Resolver` singleton that allows to
+resolve configuration resources using a ant-styled resource
+description, e.g.
+
+
+[source,xml,subs="verbatim,attributes"]
+----
+Collection<URL> urls = ResourceResolver.getResources("META-INF/cfg/**/*.properties");
+----
+
+For further details refer to the module documentation.
+
+
+=== Configuration Injection
+
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+  <artifactId>org.apache.tamaya.ext</id>
+  <artifactId>tamaya-inject</artifactId>
+  <version>{tamaya_version_current}</version>
+</dependency>
+----
+
+With this extension you can let Tamaya inject configuration into instances of
+annotated classes or let Tamaya implement a configuration template.
+
+Corresponding configuration:
+
+[source,xml,subs="verbatim,attributes"]
+----
+public class MyType {
+   @ConfiguredProperty("name")
+   private String typeName;
+
+   public String getName() {
+      return name;
+   }
+}
+
+MyType type = new MyType();
+ConfigurationInjector.configure(type);
+----
+
+Or the same as template:
+
+[source,xml,subs="verbatim,attributes"]
+----
+public interface MyTypeTemplate {
+   @ConfiguredProperty("name")
+   public String getName();
+}
+
+MyTypeTemplate type = ConfigurationInjector.createTemplate(MyTypeTemplate.class);
+----
+
+Currently the following resolvers are available:
+
+[width="60"]
+[cols="1,4"]
+|===
+| Conf
+| Cross-reference to another configuration entry
+
+| URL
+| Referencing a resource addressable by an URL.
+
+| File
+| Reference to a  file, replacing the expression with the file's text value.
+
+| Resource
+| Reference to classpath resource, replacing the expression with the resource's text value.
+
+|===
+
 
 // @todo
-Look [here][1] For further documentation on available extension modules.
+//Look [here][1] For further documentation on available extension modules.
 
 
-  [1]: documentation/modules.html
+//  [1]: documentation/modules.html
