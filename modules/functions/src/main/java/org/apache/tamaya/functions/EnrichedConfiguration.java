@@ -82,7 +82,7 @@ class EnrichedConfiguration implements Configuration{
     @Override
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
         T val = get(key, type);
-        if(val==null){
+        if(val==null) {
             return defaultValue;
         }
         return val;
@@ -130,8 +130,7 @@ class EnrichedConfiguration implements Configuration{
             for(Map.Entry<String,Object> en:addedProperties.entrySet()){
                 allProps.put(en.getKey(), en.getValue().toString());
             }
-        }
-        else{
+        } else {
             for(Map.Entry<String,Object> en:addedProperties.entrySet()){
                 allProps.put(en.getKey(), en.getValue().toString());
             }

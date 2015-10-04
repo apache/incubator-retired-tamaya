@@ -81,8 +81,7 @@ class EnrichedPropertySource implements PropertySource{
         if(overriding) {
             allProps = new HashMap<>(basePropertySource.getProperties());
             allProps.putAll(addedProperties);
-        }
-        else{
+        } else {
             allProps = new HashMap<>(addedProperties);
             allProps.putAll(basePropertySource.getProperties());
         }
