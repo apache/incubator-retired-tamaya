@@ -65,6 +65,7 @@ Tamaya Core defines the following default ordinals (used, if no custom ordinal i
 |===
 | Source                            | Ordinal
 | System Properties                 | 400
+| Environment Variables             | 300
 | Java Configuration Properties     | 100
 |===
 
