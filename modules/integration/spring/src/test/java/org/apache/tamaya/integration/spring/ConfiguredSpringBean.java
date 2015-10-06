@@ -18,28 +18,26 @@
  */
 package org.apache.tamaya.integration.spring;
 
-import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.ConfiguredType;
-import org.apache.tamaya.inject.DefaultValue;
-import org.apache.tamaya.inject.NoConfig;
+import org.apache.tamaya.inject.ConfigDefaultSections;
+import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.ConfigDefault;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
 /**
  * Created by Anatole on 25.09.2015.
  */
-@ConfiguredType
+@ConfigDefaultSections
 public class ConfiguredSpringBean {
 
     @Autowired
     private Environment env;
 
-    @ConfiguredProperty(keys = "java.version")
+    @ConfigProperty(keys = "java.version")
     private String javaVersion;
 
-    @ConfiguredProperty
-    @DefaultValue("23")
+    @ConfigProperty
+    @ConfigDefault("23")
     private int testNumber;
 
     public String getJavaVersion(){

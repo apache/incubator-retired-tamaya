@@ -33,6 +33,7 @@ under the License.
 
     <modules>
         <module>spring</module>
+        <module>cdi</module>
     </modules>
 
 </project>
