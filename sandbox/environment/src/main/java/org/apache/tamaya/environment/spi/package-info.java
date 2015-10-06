@@ -17,6 +17,7 @@
  * under the License.
  */
 /**
- * Defines the SPI of the environment module.
+ * Main API of the environment module, containing the base class for implementing adapted
+ * environment parts in your configuration.
  */
-package org.apache.tamaya.resource.internal;
+package org.apache.tamaya.environment.spi;

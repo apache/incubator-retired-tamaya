@@ -19,4 +19,4 @@
 /**
  * Contains the provided implementation classes for the environment module.
  */
-package org.apache.tamaya.resource.internal;
+package org.apache.tamaya.environment.internal;

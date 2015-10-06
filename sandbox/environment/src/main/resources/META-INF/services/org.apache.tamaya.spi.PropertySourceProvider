@@ -16,8 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.environment.internal.ClassLoaderDependentAppEnvironmentProvider
-org.apache.tamaya.environment.internal.ClassLoaderDependentEarEnvironmentProvider
-org.apache.tamaya.environment.internal.InitialEnvironmentProviderSpi
-org.apache.tamaya.environment.internal.SystemClassLoaderEnvironmentProviderSpi
-org.apache.tamaya.metamodel.environment.TestEnvironmentProvider
+org.apache.tamaya.environment.internal.ClasspathPropertiesEnvironmentProvider
