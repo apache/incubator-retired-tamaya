@@ -65,7 +65,7 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
-     * @param defaultValue value to be returned, if no value is present.
+     * @param defaultValue value to be used, if no value is present.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
@@ -105,7 +105,7 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
-     * @param defaultValue value to be returned, if no value is present.
+     * @param defaultValue default value to be used, if no value is present.
      * @return the property value, never null..
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
