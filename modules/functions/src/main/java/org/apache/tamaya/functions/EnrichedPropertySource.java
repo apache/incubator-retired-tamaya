@@ -27,21 +27,22 @@ import java.util.Objects;
 /**
  * PropertySource, that has values added or overridden.
  */
-class EnrichedPropertySource implements PropertySource{
+class EnrichedPropertySource implements PropertySource {
 
     private PropertySource basePropertySource;
 
-    private Map<String,String> addedProperties;
+    private Map<String, String> addedProperties;
 
     private boolean overriding;
 
     /**
      * Constructor.
+     *
      * @param propertySource
      * @param properties
      * @param overriding
      */
-    EnrichedPropertySource(PropertySource propertySource, Map<String,String> properties, boolean overriding){
+    EnrichedPropertySource(PropertySource propertySource, Map<String, String> properties, boolean overriding) {
         this.basePropertySource = Objects.requireNonNull(propertySource);
         this.addedProperties = Objects.requireNonNull(properties);
         this.overriding = overriding;
@@ -60,15 +61,15 @@ class EnrichedPropertySource implements PropertySource{
 
     @Override
     public String get(String key) {
-        if(overriding){
+        if (overriding) {
             String val = addedProperties.get(key);
-            if(val!=null){
+            if (val != null) {
                 return val;
             }
             return basePropertySource.get(key);
         }
         String val = basePropertySource.get(key);
-        if(val!=null){
+        if (val != null) {
             return val;
         }
         return addedProperties.get(key);
@@ -78,7 +79,7 @@ class EnrichedPropertySource implements PropertySource{
     @Override
     public Map<String, String> getProperties() {
         Map<String, String> allProps;
-        if(overriding) {
+        if (overriding) {
             allProps = new HashMap<>(basePropertySource.getProperties());
             allProps.putAll(addedProperties);
         } else {

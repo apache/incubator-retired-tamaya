@@ -30,21 +30,22 @@ import java.util.Objects;
 /**
  * Configuration, that has values added or overridden.
  */
-class EnrichedConfiguration implements Configuration{
+class EnrichedConfiguration implements Configuration {
 
     private Configuration baseConfiguration;
 
-    private Map<String,Object> addedProperties = new HashMap<>();
+    private Map<String, Object> addedProperties = new HashMap<>();
 
     private boolean overriding;
 
     /**
      * Constructor.
+     *
      * @param configuration
      * @param properties
      * @param overriding
      */
-    EnrichedConfiguration(Configuration configuration, Map<String, Object> properties, boolean overriding){
+    EnrichedConfiguration(Configuration configuration, Map<String, Object> properties, boolean overriding) {
         this.baseConfiguration = Objects.requireNonNull(configuration);
         this.addedProperties.putAll(addedProperties);
         this.overriding = overriding;
@@ -52,19 +53,19 @@ class EnrichedConfiguration implements Configuration{
 
     @Override
     public String get(String key) {
-        if(overriding){
+        if (overriding) {
             Object val = addedProperties.get(key);
-            if(val!=null){
+            if (val != null) {
                 return val.toString();
             }
             return baseConfiguration.get(key);
         }
         String val = baseConfiguration.get(key);
-        if(val!=null){
+        if (val != null) {
             return val;
         }
         Object val2 = addedProperties.get(key);
-        if(val2!=null){
+        if (val2 != null) {
             return val2.toString();
         }
         return null;
@@ -73,7 +74,7 @@ class EnrichedConfiguration implements Configuration{
     @Override
     public String getOrDefault(String key, String defaultValue) {
         String val = get(key);
-        if(val==null){
+        if (val == null) {
             return defaultValue;
         }
         return val;
@@ -82,7 +83,7 @@ class EnrichedConfiguration implements Configuration{
     @Override
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
         T val = get(key, type);
-        if(val==null) {
+        if (val == null) {
             return defaultValue;
         }
         return val;
@@ -90,25 +91,25 @@ class EnrichedConfiguration implements Configuration{
 
     @Override
     public <T> T get(String key, Class<T> type) {
-        return (T)get(key, TypeLiteral.of(type));
+        return (T) get(key, TypeLiteral.of(type));
     }
 
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
-        if(overriding){
+        if (overriding) {
             Object val = addedProperties.get(key);
-            if(val!=null && type.getRawType().isAssignableFrom(val.getClass())){
-                return (T)val;
+            if (val != null && type.getRawType().isAssignableFrom(val.getClass())) {
+                return (T) val;
             }
             return baseConfiguration.get(key, type);
         }
         T val = baseConfiguration.get(key, type);
-        if(val!=null){
+        if (val != null) {
             return val;
         }
         Object val2 = addedProperties.get(key);
-        if(val2!=null && type.getRawType().isAssignableFrom(val2.getClass())){
-            return (T)val2;
+        if (val2 != null && type.getRawType().isAssignableFrom(val2.getClass())) {
+            return (T) val2;
         }
         return null;
     }
@@ -116,7 +117,7 @@ class EnrichedConfiguration implements Configuration{
     @Override
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
         T val = get(key, type);
-        if(val==null){
+        if (val == null) {
             return defaultValue;
         }
         return val;
@@ -125,13 +126,13 @@ class EnrichedConfiguration implements Configuration{
     @Override
     public Map<String, String> getProperties() {
         Map<String, String> allProps = new HashMap<>();
-        if(overriding) {
+        if (overriding) {
             allProps.putAll(baseConfiguration.getProperties());
-            for(Map.Entry<String,Object> en:addedProperties.entrySet()){
+            for (Map.Entry<String, Object> en : addedProperties.entrySet()) {
                 allProps.put(en.getKey(), en.getValue().toString());
             }
         } else {
-            for(Map.Entry<String,Object> en:addedProperties.entrySet()){
+            for (Map.Entry<String, Object> en : addedProperties.entrySet()) {
                 allProps.put(en.getKey(), en.getValue().toString());
             }
             allProps.putAll(baseConfiguration.getProperties());
