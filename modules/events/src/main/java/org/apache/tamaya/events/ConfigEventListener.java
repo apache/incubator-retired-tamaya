@@ -22,7 +22,7 @@ package org.apache.tamaya.events;
  * Interface to be implemented for listening on changes on {@link org.apache.tamaya.Configuration} instances.
  * @param <T> the type listened to.
  */
-@FunctionalInterface
+//@FunctionalInterface
 public interface ConfigEventListener<T> {
     /**
      * Called if an event occurred.

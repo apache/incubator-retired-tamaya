@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.events.delta;
 
+import org.apache.tamaya.events.ChangeNotification;
 import org.apache.tamaya.events.FrozenPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 
@@ -36,7 +37,7 @@ import java.util.UUID;
  *
  * Created by Anatole on 22.10.2014.
  */
-public final class PropertySourceChange implements Serializable{
+public final class PropertySourceChange implements ChangeNotification<PropertySource>, Serializable{
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
@@ -80,7 +81,7 @@ public final class PropertySourceChange implements Serializable{
      * Get the underlying property provider/configuration.
      * @return the underlying property provider/configuration, or null, if the change instance was deserialized.
      */
-    public PropertySource getPropertySource(){
+    public PropertySource getResource(){
         return this.propertySource;
     }
 
@@ -105,7 +106,7 @@ public final class PropertySourceChange implements Serializable{
      * Get the changes recorded.
      * @return the recorded changes, never null.
      */
-    public Collection<PropertyChangeEvent> getEvents(){
+    public Collection<PropertyChangeEvent> getChanges(){
         return Collections.unmodifiableCollection(this.changes.values());
     }
 
@@ -191,7 +192,7 @@ public final class PropertySourceChange implements Serializable{
      * @param key the target key, not null.
      * @return true, if the given key was added, or updated BUT NOT removed.
      */
-    public boolean containsKey(String key) {
+    public boolean isKeyAffected(String key) {
         PropertyChangeEvent change = this.changes.get(key);
         return change != null && change.getNewValue() != null;
     }

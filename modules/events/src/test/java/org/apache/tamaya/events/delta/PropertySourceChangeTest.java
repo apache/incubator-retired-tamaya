@@ -47,7 +47,7 @@ public class PropertySourceChangeTest {
     @Test
     public void testGetPropertySource() throws Exception {
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED).build();
-        assertEquals(change.getPropertySource().getName(), myPS.getName());
+        assertEquals(change.getResource().getName(), myPS.getName());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
-        assertTrue(change.getEvents().size()>0);
+        assertTrue(change.getChanges().size()>0);
     }
 
     @Test
@@ -163,7 +163,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         myPS
                 ).build();
-        assertTrue(change.containsKey("java.version"));
+        assertTrue(change.isKeyAffected("java.version"));
     }
 
     @Test

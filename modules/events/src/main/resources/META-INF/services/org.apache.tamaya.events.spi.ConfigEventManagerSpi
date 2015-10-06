@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.environment.internal.SingleEnvironmentManager
+org.apache.tamaya.events.internal.DefaultConfigEventManagerSpi

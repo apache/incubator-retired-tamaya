@@ -46,7 +46,7 @@ public class ConfigurationChangeTest {
         assertTrue(change.isEmpty());
         for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
             if (!"[meta]frozenAt".equals(en.getKey())) {
-                assertEquals("Error for " + en.getKey(), en.getValue(), change.getConfiguration().get(en.getKey()));
+                assertEquals("Error for " + en.getKey(), en.getValue(), change.getResource().get(en.getKey()));
             }
         }
     }
@@ -74,9 +74,9 @@ public class ConfigurationChangeTest {
     public void testGetEvents() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("key1", "key2").build();
-        assertTrue(change.getEvents().size() == 2);
+        assertTrue(change.getChanges().size() == 2);
         change = ConfigurationChangeBuilder.of(config).addChange("key1Added", "value1Added").build();
-        assertTrue(change.getEvents().size() == 1);
+        assertTrue(change.getChanges().size() == 1);
     }
 
     @Test
@@ -127,11 +127,11 @@ public class ConfigurationChangeTest {
     public void testContainsKey() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("key1", "key2").build();
-        assertTrue(change.containsKey("key1"));
-        assertFalse(change.containsKey("key2"));
+        assertTrue(change.isKeyAffected("key1"));
+        assertFalse(change.isKeyAffected("key2"));
         change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
-        assertFalse(change.containsKey("java.version"));
-        assertFalse(change.containsKey("key2"));
+        assertFalse(change.isKeyAffected("java.version"));
+        assertFalse(change.isKeyAffected("key2"));
     }
 
     @Test

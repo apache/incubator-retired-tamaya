@@ -18,6 +18,6 @@
  */
 /**
  * This package contains the SPI to implement the
- * {@link org.apache.tamaya.events.ConfigEvent} singleton.
+ * {@link org.apache.tamaya.events.ConfigEventManager} singleton.
  */
 package org.apache.tamaya.events.spi;

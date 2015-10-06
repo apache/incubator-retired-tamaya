@@ -115,7 +115,7 @@ public final class ConfigurationContextChange implements Serializable{
         List<PropertySource> result = new ArrayList<>();
         for (PropertySourceChange pc : this.changedPropertySources) {
             if (pc.getChangeType() == ChangeType.DELETED) {
-                result.add(pc.getPropertySource());
+                result.add(pc.getResource());
             }
         }
         return result;
@@ -131,7 +131,7 @@ public final class ConfigurationContextChange implements Serializable{
         List<PropertySource> result = new ArrayList<>();
         for (PropertySourceChange pc : this.changedPropertySources) {
             if (pc.getChangeType() == ChangeType.NEW) {
-                result.add(pc.getPropertySource());
+                result.add(pc.getResource());
             }
         }
         return result;
@@ -147,7 +147,7 @@ public final class ConfigurationContextChange implements Serializable{
         List<PropertySource> result = new ArrayList<>();
         for (PropertySourceChange pc : this.changedPropertySources) {
             if (pc.getChangeType() == ChangeType.UPDATED) {
-                result.add(pc.getPropertySource());
+                result.add(pc.getResource());
             }
         }
         return result;
@@ -162,8 +162,8 @@ public final class ConfigurationContextChange implements Serializable{
      */
     public boolean isAffected(PropertySource propertySource) {
         for (PropertySourceChange ps : this.changedPropertySources) {
-            if (ps.getPropertySource() == propertySource ||
-                    ps.getPropertySource().getName().equals(propertySource.getName())) {
+            if (ps.getResource() == propertySource ||
+                    ps.getResource().getName().equals(propertySource.getName())) {
                 return true;
             }
         }

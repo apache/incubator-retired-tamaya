@@ -16,8 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * This package provides the main building blocks for handling configuration changes, such as
- * {@link org.apache.tamaya.events.ConfigEventManager}, {@link org.apache.tamaya.events.ConfigEventListener}.
- */
 package org.apache.tamaya.events;
+
+import org.apache.tamaya.Configuration;
+
+/**
+ * Simple observer interface that can be registered using the current {@code ServiceContext}.
+ * This class will be called on each configuration change detected in the current environment.
+ */
+public interface ConfigListener
+        extends ConfigEventListener<ChangeNotification<Configuration>> {
+
+        /**
+         * Get a regular expression to define, which keys this listener is interested in.
+         * @return
+         */
+        String getKeyExpression();
+
+}

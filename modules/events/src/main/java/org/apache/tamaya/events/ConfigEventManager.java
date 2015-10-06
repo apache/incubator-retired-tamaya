@@ -19,24 +19,26 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.events.spi.ConfigEventSpi;
+import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
+
+import java.util.Collection;
 
 /**
  * Singleton accessor for accessing the event support component that distributes change events of
  * {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.Configuration}.
  */
-public final class ConfigEvent {
+public final class ConfigEventManager {
     /**
      * The backing SPI.
      */
-    private static final ConfigEventSpi SPI = ServiceContextManager.getServiceContext()
-            .getService(ConfigEventSpi.class);
+    private static final ConfigEventManagerSpi SPI = ServiceContextManager.getServiceContext()
+            .getService(ConfigEventManagerSpi.class);
 
     /**
      * Private singleton constructor.
      */
-    private ConfigEvent() {
+    private ConfigEventManager() {
     }
 
     /**
@@ -48,7 +50,7 @@ public final class ConfigEvent {
     public static <T> void addListener(ConfigEventListener<T> l) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
-                    ConfigEvent.class.getName());
+                    ConfigEventManager.class.getName());
         }
         SPI.addListener(l);
     }
@@ -62,10 +64,22 @@ public final class ConfigEvent {
     public static <T> void removeListener(ConfigEventListener<T> l) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
-                    ConfigEvent.class.getName());
+                    ConfigEventManager.class.getName());
         }
         SPI.removeListener(l);
     }
+
+    /**
+     * Access all registered ConfigEventListeners listening to the given event type.
+     * @param type the event type
+     * @param <T> type param
+     * @return a list with the listeners found, never null.
+     */
+    public static <T>
+        Collection<? extends ConfigEventListener<T>> getListeneters(Class<T> type) {
+        return SPI.getListeners(type);
+    }
+
 
     /**
      * Publishes sn event to all interested listeners.
@@ -85,7 +99,7 @@ public final class ConfigEvent {
     public static <T> void fireEvent(T event, Class<T> eventType) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
-                    ConfigEvent.class.getName());
+                    ConfigEventManager.class.getName());
         }
         SPI.fireEvent(event, eventType);
     }

@@ -20,11 +20,12 @@ package org.apache.tamaya.events.internal;
 
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.events.ConfigEventListener;
-import org.apache.tamaya.events.spi.ConfigEventSpi;
+import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,20 +34,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Default implementation of {@link DefaultConfigEventSpi} just forwarding all
+ * Default implementation of {@link DefaultConfigEventManagerSpi} just forwarding all
  * events synchronously to the listeners.
  */
-public class DefaultConfigEventSpi implements ConfigEventSpi {
+public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
 
-    private static final Logger LOG = Logger.getLogger(DefaultConfigEventSpi.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultConfigEventManagerSpi.class.getName());
 
-    private Map<Type, List<ConfigEventListener>> listenerMap = new ConcurrentHashMap<>();
-
+    private Map<Type, List<ConfigEventListener<?>>> listenerMap = new ConcurrentHashMap<>();
 
     /**
      * Constructor. Also loads all registered listeners.
      */
-    public DefaultConfigEventSpi() {
+    public DefaultConfigEventManagerSpi() {
         try {
             for (ConfigEventListener<?> l : ServiceContextManager.getServiceContext().getServices(ConfigEventListener.class)) {
                 try {
@@ -63,9 +63,9 @@ public class DefaultConfigEventSpi implements ConfigEventSpi {
     @Override
     public <T> void addListener(ConfigEventListener<T> l) {
         Type type = TypeLiteral.getGenericInterfaceTypeParameters(l.getClass(), ConfigEventListener.class)[0];
-        List<ConfigEventListener> listeners = listenerMap.get(type);
+        List<ConfigEventListener<?>> listeners = listenerMap.get(type);
         if (listeners == null) {
-            listeners = Collections.synchronizedList(new ArrayList<ConfigEventListener>());
+            listeners = Collections.synchronizedList(new ArrayList<ConfigEventListener<?>>());
             listenerMap.put(type, listeners);
         }
         synchronized (listeners) {
@@ -78,7 +78,7 @@ public class DefaultConfigEventSpi implements ConfigEventSpi {
     @Override
     public <T> void removeListener(ConfigEventListener<T> l) {
         Type type = TypeLiteral.getGenericInterfaceTypeParameters(l.getClass(), ConfigEventListener.class)[0];
-        List<ConfigEventListener> listeners = listenerMap.get(type);
+        List<ConfigEventListener<?>> listeners = listenerMap.get(type);
         if (listeners != null) {
             synchronized (listeners) {
                 listeners.remove(l);
@@ -88,7 +88,7 @@ public class DefaultConfigEventSpi implements ConfigEventSpi {
 
     @Override
     public <T> void fireEvent(T event, Class<T> eventType) {
-        List<ConfigEventListener> listeners = listenerMap.get(eventType);
+        List<ConfigEventListener<?>> listeners = listenerMap.get(eventType);
         if (listeners != null) {
             synchronized (listeners) {
                 for (ConfigEventListener l : listeners) {
@@ -96,5 +96,15 @@ public class DefaultConfigEventSpi implements ConfigEventSpi {
                 }
             }
         }
+    }
+
+    @Override
+    public <T> Collection<ConfigEventListener<T>> getListeners(Class<T> eventType) {
+        List<ConfigEventListener<?>> listeners =
+                listenerMap.get(eventType);
+        if (listeners != null) {
+            return Collection.class.cast(listeners);
+        }
+        return Collections.emptyList();
     }
 }

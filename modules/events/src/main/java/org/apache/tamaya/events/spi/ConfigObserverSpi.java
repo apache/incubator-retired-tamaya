@@ -18,22 +18,24 @@
  */
 package org.apache.tamaya.events.spi;
 
-import org.apache.tamaya.events.ConfigEventListener;
+import org.apache.tamaya.events.ConfigListener;
+
+import java.util.Collection;
 
 /**
- * SPI interface to implement the {@link org.apache.tamaya.events.ConfigEvent} singleton.
+ * SPI interface to implement the {@link org.apache.tamaya.events.ConfigurationObserver} singleton.
  * Implementations of this interface must be registered with the current {@link org.apache.tamaya.spi.ServiceContext},
  * by default this equals to registering it with {@link java.util.ServiceLoader}. Add {@link javax.annotation.Priority}
  * annotations for overriding (higher values overriden lower values).
  */
-public interface ConfigEventSpi {
+public interface ConfigObserverSpi {
     /**
      * Add a listener for observing events. References of this
      * component to the listeners must be managed as weak references.
      *
      * @param l the listener not null.
      */
-    <T> void addListener(ConfigEventListener<T> l);
+    <T> void addListener(ConfigListener l);
 
 
     /**
@@ -41,14 +43,32 @@ public interface ConfigEventSpi {
      *
      * @param l the listener not null.
      */
-    <T> void removeListener(ConfigEventListener<T> l);
+    <T> void removeListener(ConfigListener l);
 
     /**
-     * Publishes an event to all interested listeners.
+     * Access all registered ConfigEventListeners listening to the given event type.
      *
-     * @param event     the event, not null.
-     * @param eventType the event type.
+     * @return a list with the listeners found, never null.
      */
-    <T> void fireEvent(T event, Class<T> eventType);
+    Collection<ConfigListener> getListeners(Collection<String> keys);
+
+    /**
+     * Get the current check period to check for configuration changes.
+     *
+     * @return the check period in ms.
+     */
+    long getCheckPeriod();
+
+    /**
+     * Check if the observer is running currently.
+     *
+     * @return true, if the observer is running.
+     */
+    boolean isRunning();
+
+    /**
+     * Start/Stop the observer container.
+     */
+    void enableObservation(boolean enable);
 
 }

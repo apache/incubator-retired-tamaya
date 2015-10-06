@@ -16,7 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.tamaya.events.internal;
+
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.events.ChangeNotification;
+import org.apache.tamaya.events.ConfigListener;
+
+import java.util.logging.Logger;
+
 /**
- * Main API of the environment module.
+ * Simple ConfigListener that simply logs any detected config changes to INFO level.
  */
-package org.apache.tamaya.resource.internal;
+public class LoggingConfigListener implements ConfigListener{
+
+    private static final Logger LOG = Logger.getLogger(LoggingConfigListener.class.getName());
+
+    @Override
+    public String getKeyExpression() {
+        return ".*";
+    }
+
+    @Override
+    public void onConfigEvent(ChangeNotification<Configuration> event) {
+        LOG.info("Configuration changed: " + event);
+    }
+}
