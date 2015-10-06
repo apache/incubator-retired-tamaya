@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.event;
+package org.apache.tamaya.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,15 +24,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to annotate a method on a class to be informed on config changes.
- * The exact behaviour, when configuration change events are sent can be configured
- * on each configured property/method by adding the {@link org.apache.tamaya.inject.WithLoadPolicy}
- * annotation. By default listeners are informed on all changes of configurations that were used as
- * input configurations for configuring a class/instance. Additionally {@link org.apache.tamaya.inject.ConfigProperty}
- * annotations can be added that allows to constrain changes to some limited properties.
+ * Annotation to control injection of a configured bean. The configuration keys
+ * to be resolved are basically determined by the {@link ConfigProperty}
+ * annotation(s). When this annotation is added the injection systems tries to inject all
+ * fields found, also including fields not annotated with {@code @ConfigProperty}.
+ * Fields not to be injected ccan be annotated with {@code @NoConfig} to exclude them
+ * being eleceted for injection.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.METHOD })
-public @interface ObservesConfigChange {
-
-}
+@Target(value = { ElementType.TYPE })
+public @interface ConfigAutoInject {}

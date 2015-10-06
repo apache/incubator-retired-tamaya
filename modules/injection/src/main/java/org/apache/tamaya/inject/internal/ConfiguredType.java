@@ -25,7 +25,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.inject.ConfiguredProperty;
+import org.apache.tamaya.inject.ConfigAutoInject;
+import org.apache.tamaya.inject.ConfigDefaultSections;
+import org.apache.tamaya.inject.ConfigProperty;
 import org.apache.tamaya.inject.NoConfig;
 import org.apache.tamaya.event.ObservesConfigChange;
 import org.apache.tamaya.event.PropertyChangeSet;
@@ -64,11 +66,12 @@ public class ConfiguredType {
 
     public ConfiguredType(Class type) {
         this.type = Objects.requireNonNull(type);
-        org.apache.tamaya.inject.ConfiguredType confType = (org.apache.tamaya.inject.ConfiguredType)
-                type.getAnnotation(org.apache.tamaya.inject.ConfiguredType.class);
+        ConfigDefaultSections confType = (ConfigDefaultSections)
+                type.getAnnotation(ConfigDefaultSections.class);
+        ConfigAutoInject autoInject = (ConfigAutoInject)type.getAnnotation(ConfigAutoInject.class);
         if(confType!=null){
-            initFields(type, confType.autoConfigure());
-            initMethods(type, confType.autoConfigure());
+            initFields(type, autoInject!=null);
+            initMethods(type, autoInject!=null);
         }else{
             initFields(type, false);
             initMethods(type, false);
@@ -121,7 +124,7 @@ public class ConfiguredType {
             }
             if(isConfiguredMethod(m) || autoConfigure) {
                 ObservesConfigChange observesAnnot = m.getAnnotation(ObservesConfigChange.class);
-                ConfiguredProperty propAnnot = m.getAnnotation(ConfiguredProperty.class);
+                ConfigProperty propAnnot = m.getAnnotation(ConfigProperty.class);
                 if (type.isInterface()) {
                     // it is a template
                     if (observesAnnot != null && m.isDefault()) {
@@ -147,7 +150,7 @@ public class ConfiguredType {
         }
     }
 
-    private boolean addPropertySetter(Method m, ConfiguredProperty prop) {
+    private boolean addPropertySetter(Method m, ConfigProperty prop) {
         if (prop!=null) {
             if (m.getParameterTypes().length == 1) {
                 // getter method
@@ -210,7 +213,7 @@ public class ConfiguredType {
 
 
     public static boolean isConfigured(Class type) {
-        if (type.getAnnotation(org.apache.tamaya.inject.ConfiguredType.class) != null) {
+        if (type.getAnnotation(ConfigDefaultSections.class) != null) {
             return true;
         }
         // if no class level annotation is there we might have field level annotations only
@@ -229,11 +232,11 @@ public class ConfiguredType {
     }
 
     public static boolean isConfiguredField(Field field) {
-        return field.isAnnotationPresent(ConfiguredProperty.class);
+        return field.isAnnotationPresent(ConfigProperty.class);
     }
 
     public static boolean isConfiguredMethod(Method method) {
-        return method.isAnnotationPresent(ConfiguredProperty.class);
+        return method.isAnnotationPresent(ConfigProperty.class);
     }
 
     public Class getType() {
@@ -266,6 +269,6 @@ public class ConfiguredType {
 
     @Override
     public String toString() {
-        return "ConfiguredType{"+ this.getType().getName() + '}';
+        return "ConfigDefaultSections{"+ this.getType().getName() + '}';
     }
 }

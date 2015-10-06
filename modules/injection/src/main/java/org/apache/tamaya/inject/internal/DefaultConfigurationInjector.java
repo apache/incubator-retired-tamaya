@@ -20,6 +20,8 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.event.ObservesConfigChange;
+import org.apache.tamaya.inject.ConfigDefaultSections;
+import org.apache.tamaya.inject.ConfigProperty;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
@@ -32,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.inject.ConfiguredItemSupplier;
-import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.NoConfig;
 
 /**
@@ -59,7 +60,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
             configuredTypes.put(type, confType);
         }
         return confType;
-//        return configuredTypes.computeIfAbsent(type, ConfiguredType::new);
+//        return configuredTypes.computeIfAbsent(type, ConfigDefaultSections::new);
     }
 
     /**
@@ -68,14 +69,14 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      * @return true, if the type, a method or field has Tamaya config annotation on it.
      */
     private boolean isConfigured(Class<?> type) {
-        if(type.getClass().isAnnotationPresent(org.apache.tamaya.inject.ConfiguredType.class)){
+        if(type.getClass().isAnnotationPresent(ConfigDefaultSections.class)){
             return true;
         }
         for (Field f : type.getDeclaredFields()) {
             if (f.isAnnotationPresent(NoConfig.class)) {
                 return true;
             }
-            if (f.isAnnotationPresent(ObservesConfigChange.class) || f.isAnnotationPresent(ConfiguredProperty.class)) {
+            if (f.isAnnotationPresent(ObservesConfigChange.class) || f.isAnnotationPresent(ConfigProperty.class)) {
                 return true;
             }
         }
@@ -83,7 +84,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
             if (m.isAnnotationPresent(NoConfig.class)) {
                 return true;
             }
-            if (m.isAnnotationPresent(ObservesConfigChange.class) || m.isAnnotationPresent(ConfiguredProperty.class)) {
+            if (m.isAnnotationPresent(ObservesConfigChange.class) || m.isAnnotationPresent(ConfigProperty.class)) {
                 return true;
             }
         }

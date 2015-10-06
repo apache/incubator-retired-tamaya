@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })
-public @interface DefaultValue {
+public @interface ConfigDefault {
 
     /**
      * The default keys to be injected, if no such configuration entry was found. If keys was found and no default

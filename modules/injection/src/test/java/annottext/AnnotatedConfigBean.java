@@ -20,8 +20,8 @@ package annottext;
 
 import org.apache.tamaya.event.ObservesConfigChange;
 import org.apache.tamaya.event.PropertyChangeSet;
-import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.DefaultValue;
+import org.apache.tamaya.inject.ConfigDefault;
+import org.apache.tamaya.inject.ConfigProperty;
 import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.inject.LoadPolicy;
 import org.apache.tamaya.inject.NoConfig;
@@ -38,22 +38,22 @@ import java.util.List;
 @WithLoadPolicy(LoadPolicy.INITIAL)
 public class AnnotatedConfigBean {
 
-    @ConfiguredProperty(keys = {"foo.bar.myprop", "mp", "common.testdata.myProperty"})
-    @DefaultValue("ET")
+    @ConfigProperty(keys = {"foo.bar.myprop", "mp", "common.testdata.myProperty"})
+    @ConfigDefault("ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     public String myParameter;
 
-    @ConfiguredProperty(keys = "simple_value")
+    @ConfigProperty(keys = "simple_value")
     @WithLoadPolicy(LoadPolicy.LAZY)
     public String simpleValue;
 
-    @ConfiguredProperty
+    @ConfigProperty
     String anotherValue;
 
-    @ConfiguredProperty(keys = "host.name")
+    @ConfigProperty(keys = "host.name")
     private String hostName;
 
-    @ConfiguredProperty(keys = "host.name")
+    @ConfigProperty(keys = "host.name")
     private DynamicValue<String> dynamicHostname;
 
     @NoConfig
@@ -78,12 +78,12 @@ public class AnnotatedConfigBean {
     public static final String CONSTANT = "a constant";
 
 
-    @ConfiguredProperty(keys = "java.version")
+    @ConfigProperty(keys = "java.version")
     void setJavaVersion(String version){
         this.javaVersion = version;
     }
 
-    @ConfiguredProperty(keys="b")
+    @ConfigProperty(keys="b")
     @ObservesConfigChange
     public void callBackTest(PropertyChangeSet value){
         this.events.add(value.toString());

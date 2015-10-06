@@ -25,27 +25,19 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to control injection and resolution current a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link ConfiguredProperty}
+ * to be resolved are basically determined by the {@link ConfigProperty}
  * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
  * to define a configuration area that is prefixed to all relative configuration keys within the
  * corresponding class/template interface.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })
-public @interface ConfiguredType {
+public @interface ConfigDefaultSections {
 
     /**
      * Allows to declare an section names that are prepended to resolve relative configuration keys.
      * @return the section names to used for key resolution.
      */
-    String[] defaultSections() default {};
-
-    /**
-     * Property that can be used to let Tamaya automatically configure all matching fields and setter methods.
-     * By default the configuration keys are built using the field's or method's name.
-     *
-     * @return true, for letting Tamaya utomatically configure a type.
-     */
-    boolean autoConfigure() default false;
+    String[] value() default {};
 
 }

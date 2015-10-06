@@ -21,8 +21,8 @@ package org.apache.tamaya.inject.internal;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.builder.ConfigurationBuilder;
+import org.apache.tamaya.inject.ConfigProperty;
 import org.apache.tamaya.inject.ConfiguredItemSupplier;
-import org.apache.tamaya.inject.ConfiguredProperty;
 import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
@@ -42,13 +42,13 @@ import static org.junit.Assert.*;
  */
 public class DefaultDynamicValueTest {
 
-    @ConfiguredProperty(keys="a")
+    @ConfigProperty(keys="a")
     String myValue;
 
-    @ConfiguredProperty(keys="a")
+    @ConfigProperty(keys="a")
     String myValue2;
 
-    @ConfiguredProperty(keys="a")
+    @ConfigProperty(keys="a")
     void setterMethod(String value){
 
     }

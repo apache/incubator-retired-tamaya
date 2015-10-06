@@ -32,9 +32,9 @@ import java.util.logging.Logger;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.ConfiguredType;
-import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.DefaultValue;
+import org.apache.tamaya.inject.ConfigDefaultSections;
+import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.ConfigDefault;
 import org.apache.tamaya.inject.WithPropertyConverter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -71,7 +71,7 @@ final class InjectionUtils {
      *                           several keys to be looked up (in absolute or relative form).
      * @return the list current keys in order how they should be processed/looked up.
      */
-    public static List<String> evaluateKeys(Member member, ConfiguredType areasAnnot, ConfiguredProperty propertyAnnotation) {
+    public static List<String> evaluateKeys(Member member, ConfigDefaultSections areasAnnot, ConfigProperty propertyAnnotation) {
         if(propertyAnnotation==null){
             return evaluateKeys(member, areasAnnot);
         }
@@ -86,11 +86,11 @@ final class InjectionUtils {
                 // absolute key, strip away brackets, take key as is
                 iterator.set(next.substring(1, next.length() - 1));
             } else {
-                if (areasAnnot != null && areasAnnot.defaultSections().length>0) {
+                if (areasAnnot != null && areasAnnot.value().length>0) {
                     // Remove original entry, since it will be replaced with prefixed entries
                     iterator.remove();
                     // Add prefixed entries, including absolute (root) entry for "" area keys.
-                    for (String area : areasAnnot.defaultSections()) {
+                    for (String area : areasAnnot.value()) {
                         iterator.add(area.isEmpty() ? next : area + '.' + next);
                     }
                 }
@@ -105,7 +105,7 @@ final class InjectionUtils {
      * @param areasAnnot the (optional) annotation definining areas to be looked up.
      * @return the list current keys in order how they should be processed/looked up.
      */
-    public static List<String> evaluateKeys(Member member, ConfiguredType areasAnnot) {
+    public static List<String> evaluateKeys(Member member, ConfigDefaultSections areasAnnot) {
         List<String> keys = new ArrayList<>();
         String name = member.getName();
         String mainKey;
@@ -117,7 +117,7 @@ final class InjectionUtils {
         keys.add(mainKey);
         if (areasAnnot != null) {
             // Add prefixed entries, including absolute (root) entry for "" area keys.
-            for (String area : areasAnnot.defaultSections()) {
+            for (String area : areasAnnot.value()) {
                 if (!area.isEmpty()) {
                     keys.add(area + '.' + mainKey);
                 }
@@ -134,7 +134,7 @@ final class InjectionUtils {
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Method method) {
-        ConfiguredType areasAnnot = method.getDeclaringClass().getAnnotation(ConfiguredType.class);
+        ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
         return getConfigValueInternal(method, areasAnnot);
     }
 
@@ -145,7 +145,7 @@ final class InjectionUtils {
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Field field) {
-        ConfiguredType areasAnnot = field.getDeclaringClass().getAnnotation(ConfiguredType.class);
+        ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
         return getConfigValueInternal(field, areasAnnot);
     }
 
@@ -154,9 +154,9 @@ final class InjectionUtils {
      *
      * @return the keys to be returned, or null.
      */
-    private static String getConfigValueInternal(AnnotatedElement element, ConfiguredType areasAnnot) {
-        ConfiguredProperty prop = element.getAnnotation(ConfiguredProperty.class);
-        DefaultValue defaultAnnot = element.getAnnotation(DefaultValue.class);
+    private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot) {
+        ConfigProperty prop = element.getAnnotation(ConfigProperty.class);
+        ConfigDefault defaultAnnot = element.getAnnotation(ConfigDefault.class);
         List<String> keys;
         if (prop == null) {
             keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
@@ -172,24 +172,24 @@ final class InjectionUtils {
 
     /**
      * Collects all keys to be be accessed as defined by any annotations of type
-     * {@link ConfiguredType}, {@link org.apache.tamaya.inject.ConfiguredProperty}.
+     * {@link ConfigDefaultSections}, {@link ConfigProperty}.
      * @param field the (optionally) annotated field instance
      * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Field field) {
-        ConfiguredType areasAnnot = field.getDeclaringClass().getAnnotation(ConfiguredType.class);
-        return InjectionUtils.evaluateKeys(field, areasAnnot, field.getAnnotation(ConfiguredProperty.class));
+        ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
+        return InjectionUtils.evaluateKeys(field, areasAnnot, field.getAnnotation(ConfigProperty.class));
     }
 
     /**
      * Collects all keys to be be accessed as defined by any annotations of type
-     * {@link ConfiguredType}, {@link org.apache.tamaya.inject.ConfiguredProperty}.
+     * {@link ConfigDefaultSections}, {@link ConfigProperty}.
      * @param method the (optionally) annotated method instance
      * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Method method) {
-        ConfiguredType areasAnnot = method.getDeclaringClass().getAnnotation(ConfiguredType.class);
-        return InjectionUtils.evaluateKeys(method, areasAnnot, method.getAnnotation(ConfiguredProperty.class));
+        ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
+        return InjectionUtils.evaluateKeys(method, areasAnnot, method.getAnnotation(ConfigProperty.class));
     }
 
     private static String evaluteConfigValue(List<String> keys) {

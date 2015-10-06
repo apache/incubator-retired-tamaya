@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation to enable injection current a configured property or define the returned data for
  * a configuration template method. Hereby this annotation can be used in multiple ways and combined
- * with other annotations such as {@link DefaultValue},
+ * with other annotations such as {@link ConfigDefault},
  * {@link WithLoadPolicy},  {@link WithConfigOperator}, {@link WithPropertyConverter}.
  *
  * Below the most simple variant current a configured class is given:
@@ -62,12 +62,12 @@ import java.lang.annotation.Target;
  * Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
  * resolved. Hereby the ordering current the annotations define the ordering current resolution, so in the example above
  * resolution equals to {@code "aValue", "a.b.keys", "a.b.deprecated.keys"}. If no keys could be read
- * fromMap the configuration, it uses the keys fromMap the {@code DefaultValue} annotation. Interesting here
+ * fromMap the configuration, it uses the keys fromMap the {@code ConfigDefault} annotation. Interesting here
  * is that this keys is not static, it is evaluated.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD })
-public @interface ConfiguredProperty {
+public @interface ConfigProperty {
 
     /**
      * Get the property names to be used. Hereby the first non null keys evaluated is injected as property keys.
