@@ -29,10 +29,10 @@ under the License.
 
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>tamaya-integrations</artifactId>
+    <artifactId>tamaya-integration-sandbox</artifactId>
 
     <modules>
-        <module>cdi</module>
+        <module>cdi2</module>
         <module>commons</module>
     </modules>
 

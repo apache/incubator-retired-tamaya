@@ -106,4 +106,9 @@ under the License.
         <Class name="org.apache.tamaya.inject.internal.ConfigChangeCallbackMethod" />
     </Match>
 
+    <Match>
+        <Class name="org.apache.tamaya.events.internal.DefaultConfigObserverSpi" />
+        <Method name="checkConfigurationUpdate" />
+    </Match>
+
 </FindBugsFilter>

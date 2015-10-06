@@ -16,26 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.environment.spi;
+package org.apache.tamaya.integration.cdi2;
 
-
-import org.apache.tamaya.environment.RuntimeContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Service for accessing the current ids that identify a runtime environment. Environments are used to
- * access/determine configurations.<br/>
- * <h3>Implementation PropertyMapSpec</h3> This class is
- * <ul>
- * <li>thread safe,
- * <li>and behaves contextual.
- * </ul>
+ * Annotation to define a default keys to be returned, when no configured keys could be
+ * determined for a property/template accessor. The keys hereby can also contain a
+ * dynamic expression that is evaluated by the configuration system.
  */
-public interface ContextSpi {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+public @interface ConfigDefault {
 
     /**
-     * Get the current environment id.
-     * @return the corresponding environment id, never null.
+     * The default keys to be injected, if no such configuration entry was found. If keys was found and no default
+     * is defined, it is handled as a deployment error.
      */
-    RuntimeContext getCurrentContext();
+    String value() default "";
 
 }

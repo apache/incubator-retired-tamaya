@@ -18,24 +18,24 @@
  */
 package org.apache.tamaya.examples.injection;
 
-import org.apache.tamaya.inject.ConfiguredProperty;
-import org.apache.tamaya.inject.ConfiguredType;
-import org.apache.tamaya.inject.DefaultValue;
+import org.apache.tamaya.inject.ConfigDefault;
+import org.apache.tamaya.inject.ConfigDefaultSections;
+import org.apache.tamaya.inject.ConfigProperty;
 
 /**
  * Simple example bean, mapped by default names mostly.
  */
-@ConfiguredType(defaultSections = "example")
+@ConfigDefaultSections("example")
 public interface ExampleTemplate {
 
     String getType();
 
     String getName();
-    @DefaultValue("No description available.")
+    @ConfigDefault("No description available.")
     String getDescription();
 
     int getVersion();
-    @ConfiguredProperty(keys = "author")
+    @ConfigProperty(keys = "author")
     String getExampleAuthor();
 
 }
