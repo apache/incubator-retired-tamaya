@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tamaya.environment.spi;
+package org.apache.tamaya.staged.spi;
 
 
 import org.apache.tamaya.ConfigException;
@@ -28,86 +28,88 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Implements a base property source that defines a multilayered environment setup.
+ * Implements a base property source provider that defines a multilayered
+ * stage setup.
  */
-public abstract class BaseEnvironmentPropertySourceProvider implements PropertySourceProvider {
+public abstract class BaseStagedPropertySourceProvider implements PropertySourceProvider {
 
-    private static final Logger LOGGER = Logger.getLogger(BaseEnvironmentPropertySourceProvider.class.getName());
+    /** The logger used. */
+    private static final Logger LOGGER = Logger.getLogger(BaseStagedPropertySourceProvider.class.getName());
 
-    private int basePriority;
+    /** the current environment stages in order of precedence (weakest first). */
+    private List<String> contextIds = new ArrayList<>();
 
-    private int priorityIncrease;
+    /** Optional root context of the environment in the config tree. All entries loaded will be mapped into
+     * this root conztext.
+     */
+    private String rootContext;
 
-    private List<String> environmentIds = new ArrayList<>();
-
-    private String environmentRootContext;
-
+    /** List of PropertySources evaluated and returned to the current ConfigurationContext on load. */
     private List<PropertySource> propertySources = new ArrayList<>();
 
 
     /**
      * Creates a new Environment provider, hereby using 10 for basePriority and priorityIncrease.
-     * @param environmentRootContext the environment target root context, e.g. ENV. or null
+     * @param rootContext the environment target root context, e.g. ENV. or null
      *                               for not remapping the environment properties.
-     * @param environmentIds the context ids, that build up the environment.
+     * @param contextIds the context ids, that build up the environment.
      */
-    public BaseEnvironmentPropertySourceProvider(String environmentRootContext,
-                                                 String... environmentIds) {
-        this(environmentRootContext, 10,10,environmentIds);
+    public BaseStagedPropertySourceProvider(String rootContext,
+                                            String... contextIds) {
+        this(rootContext, 10,10, contextIds);
     }
         /**
          * Creates a new Environment provider.
-         * @param environmentRootContext the environment target root context, e.g. ENV. or null
+         * @param rootContext the environment target root context, e.g. ENV. or null
          *                               for not remapping the environment properties.
          * @param basePriority the base priority used for the weakest environment properties set.
          * @param priorityIncrease the value the property source's priority should be increased with each
          *                         environment context level added.
-         * @param environmentIds the context ids, that build up the environment.
+         * @param contextIds the context ids, that build up the environment.
          */
-    public BaseEnvironmentPropertySourceProvider(String environmentRootContext, int basePriority, int priorityIncrease,
-                                                 String... environmentIds) {
-        this.basePriority = basePriority;
-        this.priorityIncrease = priorityIncrease;
-        if (environmentIds.length == 0) {
+    public BaseStagedPropertySourceProvider(String rootContext, int basePriority, int priorityIncrease,
+                                            String... contextIds) {
+        if (contextIds.length == 0) {
             throw new ConfigException("At least one environment context id must be defined.");
         }
-        if (environmentRootContext == null) {
+        if (rootContext == null) {
             LOGGER.finest("No environment mapping is applied.");
         }
-        this.environmentRootContext = environmentRootContext;
-        this.environmentIds.addAll(Arrays.asList(environmentIds));
+        this.rootContext = rootContext;
+        this.contextIds.addAll(Arrays.asList(contextIds));
         int priority = basePriority;
-        for (String contextId : environmentIds) {
-            propertySources.addAll(loadEnvProperties(environmentRootContext, contextId, priority));
+        for (String contextId : contextIds) {
+            propertySources.addAll(loadStageProperties(rootContext, contextId, priority));
             priority += priorityIncrease;
         }
     }
 
     /**
      * Method that loads the environment properties for the given contextId.
-     * @param environmentRootContext the root context, where entries should be mapped to.
+     * @param rootContext the root context, where entries read should be mapped to.
      * @param contextId the contextId.
-     * @param priority  the target priority the created PropertySource should have. This priority is important, since it reflects the
-     *                  environment context overriding rules for the environment part created.
+     * @param priority  the target priority the created PropertySource should have. This priority is
+     *                  important, since it reflects the order as defined
+     *                  when configuring this class. Therefore it should not be overridden normally.
      * @return the corresponding PrioritySources to be added, never null.
      */
-    protected abstract Collection<PropertySource> loadEnvProperties(
-            String environmentRootContext, String contextId, int priority);
+    protected abstract Collection<PropertySource> loadStageProperties(
+            String rootContext, String contextId, int priority);
 
     /**
      * Get the environment context ids that define how this environment configuration
-     * is setup, in order of priority increasing.
+     * is setup, in order of their increasing priority.
      * @return the ordered list of context ids.
      */
-    public List<String> getEnvironmentIds() {
-        return environmentIds;
+    public List<String> getContextIds() {
+        return contextIds;
     }
 
     @Override
     public String toString() {
         return "EnvironmentPropertySourceProvider{" +
-                "environmentIds=" + environmentIds +
-                ", environmentRootContext='" + environmentRootContext + '\'' +
+                "contextIds=" + contextIds +
+                ", rootContext='" + rootContext + '\'' +
                 '}';
     }
 

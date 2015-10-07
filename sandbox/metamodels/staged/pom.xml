@@ -21,14 +21,14 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-sandbox</artifactId>
+        <groupId>org.apache.tamaya.ext.metamodels</groupId>
+        <artifactId>tamaya-metamodels</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>tamaya-environment</artifactId>
-    <name>Apache Tamaya Modules - Environment Manager</name>
+    <artifactId>tamaya-metamodel-staged</artifactId>
+    <name>Apache Tamaya Modules - Staged Configuration</name>
     <packaging>jar</packaging>
 
     <dependencies>

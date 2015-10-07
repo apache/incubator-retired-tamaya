@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.environment.internal.ClasspathPropertiesEnvironmentProvider
+org.apache.tamaya.staged.spi.StagedConfigPropertiesProvider
