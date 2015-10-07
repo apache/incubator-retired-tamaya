@@ -69,7 +69,8 @@ NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 
 |+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a http service.     |link:mod_server.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:mod_optional.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-classloader-support+      |Manages Tamaya configuration and services considering classloading hierarchies.  |link:mod_classloader_support.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-cdi+           |Tamaya integration module for CDI.                      |link:mod_cdi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-cdi-se+        |Tamaya integration module for CDI.                     |link:mod_cdi-se.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-spi-support+   |Tamaya support module for SPI implementation.          |link:mod_spi-support.html[Documentation]
 |=======
 
 
@@ -82,4 +83,6 @@ very carefully and especially give us feedback, so we can improve them before pr
 |=======
 |_Artifact_                                 |_Description_                                |_Links_
 |+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.   | link:mod_jodatime.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-cdi+         |Java EE compliant CDI extension for Tamaya.            |link:mod_cdi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-staged+      |Simple configuration extension to add staged config.   |link:mod_metamodel-staged.html[Documentation]
 |=======

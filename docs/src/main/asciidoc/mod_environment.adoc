@@ -1,0 +1,75 @@
+= Apache Tamaya -- Extension: Classloader Isolation Support
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.environment
+:title: Apache Tamaya Extension: Environment
+:revdate: September 2015
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Remote]]
+== Tamaya Environment Model (Extension Module)
+=== Overview
+
+The Tamaya Environment extension adds a simple PropertySourceProvider that evaluates a List of environment context and
+combines them in the given order into an (optional) root context within the system's configuration.
+
+
+=== Compatibility
+
+The module is based on Java 7, so it will not run on Java 7 and beyond.
+
+
+=== Installation
+
+To benefit from Tamaya Environment Model you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-envionment</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+
+=== How it Works
+
+tbd
+
+=== Reusable Base Classes
+
+tbd
+

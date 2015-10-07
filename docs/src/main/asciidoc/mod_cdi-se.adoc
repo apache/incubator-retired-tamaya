@@ -1,0 +1,162 @@
+= Apache Tamaya -- Extension: Classloader Isolation Support
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.integration.cdi
+:title: Apache Tamaya Extension: CDI Integration of tamaya-injection (SE)
+:revdate: September 2015
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Remote]]
+== Tamaya CDI Integration of tamaya-injection (Extension Module)
+=== Overview
+
+The Tamaya CDI injection Integration provides CDI extensions implementing the following functionality:
+
+* Loading of CDI managed components as configuration extensions such as +PropertySources, PropertySourceProvieders,
+  PropertyFilters, etc+.
+* Enable Tamaya's Java SE based configuration injection services with CDI. As a consequence injection and config lifecycle is managed
+  by thos module and not the CDI context.
+
+
+=== Compatibility
+
+The module is based on Java 7, so it will not run on Java 7 and beyond.
+
+
+=== Installation
+
+To benefit from Tamaya CDI integration you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-cdi-se</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+The component will auto-register its components and override the default +ServicceContext+ in use. Additionally it
+registers CDI extensions that implement Configuration injection based on Tamaya's +tamaya-injection+ and
++tamaya-classloader-support+ modules.
+
+IMPORTANT: Dont install Tamaya's +cdi+ at the same time.
+
+=== How it Works
+
+This module registers as +ServiceContext+ and integrates CDI for component loading as well as configuration injection.
+All types injected by this module are injected using _dependent scope_. So with this module you can define/deploy
+your +PropertySources+ and other artifacts simply by adding corresponding CDI managed beans:
+
+[source, java]
+--------------------------------------------------------
+@Singleton
+public class TestPropertySource implements PropertySource{
+
+    final Map<String,String> config = new HashMap<>();
+
+    public TestPropertySource(){
+        config.put("a.b.c.key1", "keys current a.b.c.key1");
+        config.put("a.b.c.key2", "keys current a.b.c.key2");
+        config.put("{"+getName()+"}source", getClass().getName());
+    }
+
+    @Override
+    public int getOrdinal() {
+        return 10;
+    }
+
+    @Override
+    public String getName() {
+        return getClass().getName();
+    }
+
+    @Override
+    public String get(String key) {
+        return config.get(key);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return config;
+    }
+
+    @Override
+    public boolean isScannable() {
+        return true;
+    }
+}
+--------------------------------------------------------
+
+The +ServiceContext+ implementation hereby combines the components registered using the +ServiceLoader+ mechanism
+hereby considering classloaser hierarchies.
+
+
+=== Injecting Configuration
+
+This component also allows to inject configuration using Tamaya's type-safe injection mechanism:
+
+[source, java]
+--------------------------------------------------------
+@RequestScoped
+public class ConfiguredClass{
+
+    @ConfigProperty
+    private String testProperty;
+
+    @ConfigProperty({"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
+    @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    String value1;
+
+    @ConfigProperty({"foo","a.b.c.key2"})
+    private String value2;
+
+    @ConfigProperty
+    @DefaultValue("N/A")
+    private String runtimeVersion;
+
+    @ConfigProperty
+    @DefaultValue("${sys:java.version}")
+    private String javaVersion2;
+
+    @ConfigProperty
+    @DefaultValue("5")
+    private Integer int1;
+
+    ...
+
+}
+--------------------------------------------------------
+

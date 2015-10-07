@@ -44,9 +44,10 @@ toc::[]
 
 The Tamaya CDI Integration provides CDI extensions implementing the following functionality:
 
-* Configuration of classes to be vetoed based on regular expressions of the fully qualified classnames.
 * Loading of CDI managed components as configuration extensions such as +PropertySources, PropertySourceProvieders,
   PropertyFilters, etc+.
+* Enable Configuration Injection similar to Tamaya's Java SE based configuration injection services, but implemented
+  as a portable, Java EE compliant CDI extension.
 
 
 === Compatibility
@@ -68,8 +69,10 @@ To benefit from Tamaya CDI integration you only must add the corresponding depen
 -----------------------------------------------
 
 The component will auto-register its components and override the default +ServicceContext+ in use. Additionally it
-registers CDI extensions that implement Configuration injection based on Tamaya's +tamaya-injection+ and
-+tamaya-classloader-support+ modules.
+registers CDI extensions that implement Configuration injection based on Tamaya's +Configuration+ present in the
+system/runtime context.
+
+IMPORTANT: Dont install Tamaya's +cdi-se+ module at the same time.
 
 === How it Works
 
@@ -130,25 +133,25 @@ This component also allows to inject configuration using Tamaya's type-safe inje
 @RequestScoped
 public class ConfiguredClass{
 
-    @ConfiguredProperty
+    @ConfigProperty
     private String testProperty;
 
-    @ConfiguredProperty(keys = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
+    @ConfigProperty({"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    @ConfiguredProperty(keys = {"foo","a.b.c.key2"})
+    @ConfigProperty({"foo","a.b.c.key2"})
     private String value2;
 
-    @ConfiguredProperty
+    @ConfigProperty
     @DefaultValue("N/A")
     private String runtimeVersion;
 
-    @ConfiguredProperty
+    @ConfigProperty
     @DefaultValue("${sys:java.version}")
     private String javaVersion2;
 
-    @ConfiguredProperty
+    @ConfigProperty
     @DefaultValue("5")
     private Integer int1;
 
