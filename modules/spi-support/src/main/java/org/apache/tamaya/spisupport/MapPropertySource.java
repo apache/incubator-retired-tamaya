@@ -129,7 +129,10 @@ public class MapPropertySource extends BasePropertySource {
 
     @Override
     public int getOrdinal() {
-        return priority;
+        if(priority!=null) {
+            return priority;
+        }
+        return super.getOrdinal();
     }
 
     @Override
