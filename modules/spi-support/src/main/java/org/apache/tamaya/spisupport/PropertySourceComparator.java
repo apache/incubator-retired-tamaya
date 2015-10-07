@@ -27,7 +27,7 @@ import java.util.Comparator;
  * Comparator for ordering of PropertySources based on their ordinal method and class name.
  */
 public class PropertySourceComparator implements Comparator<PropertySource>, Serializable {
-
+    /** serial version UID. */
     private static final long serialVersionUID = 1L;
 
     /**

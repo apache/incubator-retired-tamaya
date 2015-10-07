@@ -22,61 +22,57 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Simple PropertySource, with a fixed ordinal that reads a .properties file.
+ * Simple PropertySource, with a fixed ordinal that reads a .properties file from a given URL.
  */
-public final class SimplePropertiesPropertySource extends BasePropertySource {
-
-    private static final Logger LOGGER = Logger.getLogger(SimplePropertiesPropertySource.class.getName());
+public class PropertiesResourcePropertySource extends MapPropertySource {
+    /** The logger used. */
+    private static final Logger LOGGER = Logger.getLogger(PropertiesResourcePropertySource.class.getName());
+    /** The resource loaded. */
     private URL url;
-    private Map<String, String> properties = new HashMap<>();
-    private final int priority;
 
-    public SimplePropertiesPropertySource(URL url, int priority){
+    /**
+     * Creates a new instance.
+     * @param url the resource URL, not null.
+     * @param priority the optional (fixed) priority ordinal.
+     */
+    public PropertiesResourcePropertySource(URL url, Integer priority){
         this(null, url, priority);
     }
 
-    public SimplePropertiesPropertySource(String rootContext, URL url, int priority){
-        this.priority = priority;
-        this.url = Objects.requireNonNull(url);
+    /**
+     * Creates a new instance.
+     * @param rootContext the (optional) root context for mapping (prefixing) the properties loaded.
+     * @param url the resource URL, not null.
+     * @param priority the optional (fixed) priority ordinal.
+     */
+    public PropertiesResourcePropertySource(String rootContext, URL url, Integer priority){
+        super(url.toExternalForm(), loadProps(url), rootContext, priority);
+        this.url = url;
+    }
+
+    /**
+     * Loads the properties using the JDK's Property loading mechanism.
+     * @param url the resource URL, not null.
+     * @return the loaded properties.
+     */
+    private static Map<String, String> loadProps(URL url) {
+        Map<String,String> result = new HashMap<>();
         try(InputStream is = url.openStream();){
             Properties props = new Properties();
             props.load(is);
             for(Map.Entry en: props.entrySet()){
-                if(rootContext!=null){
-                    String prefix = rootContext;
-                    if(!prefix.endsWith(".")){
-                        prefix += ".";
-                    }
-                    this.properties.put(prefix + en.getKey().toString(), en.getValue().toString());
-                } else{
-                    this.properties.put(en.getKey().toString(), en.getValue().toString());
-                }
+                result.put(en.getKey().toString(), en.getValue().toString());
             }
         }
         catch(Exception e){
             LOGGER.log(Level.WARNING, "Failed to read properties from " + url, e);
         }
-    }
-
-    @Override
-    public int getOrdinal(){
-        return priority;
-    }
-
-    @Override
-    public String getName() {
-        return url.toExternalForm();
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
-        return properties;
+        return result;
     }
 
 }

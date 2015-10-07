@@ -29,6 +29,7 @@ import java.util.Comparator;
  */
 public class PropertyFilterComparator implements Comparator<PropertyFilter>, Serializable {
 
+    /** serial version UID. */
     private static final long serialVersionUID = 1L;
 
     /**
