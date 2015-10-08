@@ -49,7 +49,7 @@ under the License.
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>0.2-incubating-SNAPSHOT</version>
-            <scope>Test</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
