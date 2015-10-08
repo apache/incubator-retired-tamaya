@@ -357,7 +357,6 @@ public final class PropertySourceFunctions {
      * @return the list of all {@link PropertySource} instances matching, never null.
      */
     public static <T> T getPropertySource(Class<T> type) {
-        List<T> result = new ArrayList<>();
         for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
             if (type.isAssignableFrom(src.getClass())) {
                 return (T) src;
