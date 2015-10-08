@@ -18,14 +18,21 @@
  */
 package org.apache.tamaya.functions;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 /**
  * Accessor that provides useful functions along with configuration.
@@ -265,7 +272,7 @@ public final class PropertySourceFunctions {
      */
     static String stripSectionKeys(String key, String... areaKeys) {
         for(String areaKey:areaKeys) {
-            if(key.startsWith(areaKey+'.')) {
+            if(key.startsWith(areaKey + '.')) {
                 return key.substring(areaKey.length() + 1);
             }
         }
@@ -306,6 +313,36 @@ public final class PropertySourceFunctions {
      */
     public static PropertySource emptyPropertySource(){
         return EMPTY_PROPERTYSOURCE;
+    }
+
+    /**
+     * Get a list of all {@link PropertySource} instances managed by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     * @return the list of all {@link PropertySource} instances matching, never null.
+     */
+    public static <T> Collection<T> getPropertySources(Class<T> type) {
+        List<T> result = new ArrayList<>();
+        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+            if (type.isAssignableFrom(src.getClass())) {
+                result.add((T) src);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get a list of all {@link PropertySource} instances managed by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     * @return the list of all {@link PropertySource} instances matching, never null.
+     */
+    public static <T> T getPropertySource(Class<T> type) {
+        List<T> result = new ArrayList<>();
+        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+            if (type.isAssignableFrom(src.getClass())) {
+                return (T)src;
+            }
+        }
+        return null;
     }
 
 }
