@@ -90,7 +90,7 @@ Finally you can push your changes to the ASF git repo
 $ git push
 ----
 
-
+[[contributing-workflow]]
 == Contribution workflow
 
 === Creating patches
