@@ -18,10 +18,8 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 /**
  * Accessor that provides useful functions along with configuration.
@@ -68,7 +65,7 @@ public final class PropertySourceFunctions {
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return "PropertySource<empty>";
         }
     };
@@ -100,23 +97,23 @@ public final class PropertySourceFunctions {
      *     [meta:metaKey1]entry2=metaValue1
      *     [meta:metaKey2]entry2=metaValue2
      * </pre>
-     *
+     * <p>
      * This mechanism allows to add meta information such as origin, sensitivity, to all keys of a current
      * PropertySource or Configuration. If done on multiple PropertySources that are combined the corresponding
      * values are visible in synch with the values visible.
      *
      * @param propertySource the base propertySource, not null.
-     * @param metaData the metaData to be added, not null
+     * @param metaData       the metaData to be added, not null
      * @return the metadata enriched configuration, not null.
      */
-    public static PropertySource addMetaData(PropertySource propertySource, Map<String,String> metaData) {
+    public static PropertySource addMetaData(PropertySource propertySource, Map<String, String> metaData) {
         return new MetaEnrichedPropertySource(propertySource, metaData);
     }
 
     /**
      * Calculates the current section key and compares it with the given key.
      *
-     * @param key     the fully qualified entry key, not null
+     * @param key        the fully qualified entry key, not null
      * @param sectionKey the section key, not null
      * @return true, if the entry is exact in this section
      */
@@ -129,13 +126,13 @@ public final class PropertySourceFunctions {
     /**
      * Calculates the current section key and compares it with the given section keys.
      *
-     * @param key     the fully qualified entry key, not null
+     * @param key         the fully qualified entry key, not null
      * @param sectionKeys the section keys, not null
      * @return true, if the entry is exact in this section
      */
     public static boolean isKeyInSections(String key, String... sectionKeys) {
-        for(String areaKey:sectionKeys){
-            if(isKeyInSection(key, areaKey)){
+        for (String areaKey : sectionKeys) {
+            if (isKeyInSection(key, areaKey)) {
                 return true;
             }
         }
@@ -150,16 +147,16 @@ public final class PropertySourceFunctions {
      * @return s set with all sections, never {@code null}.
      */
     public static Set<String> sections(Map<String, String> properties) {
-            final Set<String> areas = new HashSet<>();
-            for(String s: properties.keySet()) {
-                int index = s.lastIndexOf('.');
-                if (index > 0) {
-                    areas.add(s.substring(0, index));
-                } else {
-                    areas.add("<root>");
-                }
+        final Set<String> areas = new HashSet<>();
+        for (String s : properties.keySet()) {
+            int index = s.lastIndexOf('.');
+            if (index > 0) {
+                areas.add(s.substring(0, index));
+            } else {
+                areas.add("<root>");
             }
-            return areas;
+        }
+        return areas;
     }
 
     /**
@@ -171,20 +168,20 @@ public final class PropertySourceFunctions {
      * @return s set with all transitive sections, never {@code null}.
      */
     public static Set<String> transitiveSections(Map<String, String> properties) {
-            final Set<String> transitiveAreas = new HashSet<>();
-            for(String s: sections(properties)) {
-                int index = s.lastIndexOf('.');
-                if (index < 0) {
-                    transitiveAreas.add("<root>");
-                } else {
-                    while (index > 0) {
-                        s = s.substring(0, index);
-                        transitiveAreas.add(s);
-                        index = s.lastIndexOf('.');
-                    }
+        final Set<String> transitiveAreas = new HashSet<>();
+        for (String s : sections(properties)) {
+            int index = s.lastIndexOf('.');
+            if (index < 0) {
+                transitiveAreas.add("<root>");
+            } else {
+                while (index > 0) {
+                    s = s.substring(0, index);
+                    transitiveAreas.add(s);
+                    index = s.lastIndexOf('.');
                 }
             }
-            return transitiveAreas;
+        }
+        return transitiveAreas;
     }
 
     /**
@@ -198,8 +195,8 @@ public final class PropertySourceFunctions {
      */
     public static Set<String> sections(Map<String, String> properties, final Predicate<String> predicate) {
         Set<String> treeSet = new TreeSet<>();
-        for(String area: sections(properties)){
-            if(predicate.test(area)){
+        for (String area : sections(properties)) {
+            if (predicate.test(area)) {
                 treeSet.add(area);
             }
         }
@@ -217,8 +214,8 @@ public final class PropertySourceFunctions {
      */
     public static Set<String> transitiveSections(Map<String, String> properties, Predicate<String> predicate) {
         Set<String> treeSet = new TreeSet<>();
-        for(String area: transitiveSections(properties)){
-            if(predicate.test(area)){
+        for (String area : transitiveSections(properties)) {
+            if (predicate.test(area)) {
                 treeSet.add(area);
             }
         }
@@ -234,7 +231,7 @@ public final class PropertySourceFunctions {
      * @param sectionKeys the section keys, not null
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static Map<String,String> sectionsRecursive(Map<String, String> properties, String... sectionKeys) {
+    public static Map<String, String> sectionsRecursive(Map<String, String> properties, String... sectionKeys) {
         return sectionRecursive(properties, true, sectionKeys);
     }
 
@@ -242,21 +239,21 @@ public final class PropertySourceFunctions {
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given section (recursive).
      *
-     * @param sectionKeys   the section keys, not null
-     * @param stripKeys if set to true, the section key is stripped away fromMap the resulting key.
+     * @param sectionKeys the section keys, not null
+     * @param stripKeys   if set to true, the section key is stripped away fromMap the resulting key.
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static Map<String,String> sectionRecursive(Map<String, String> properties, boolean stripKeys, String... sectionKeys) {
-        Map<String,String> result = new HashMap<>(properties.size());
-        if(stripKeys) {
-            for(Map.Entry<String,String> en: properties.entrySet()){
-                if(isKeyInSections(en.getKey(), sectionKeys)){
+    public static Map<String, String> sectionRecursive(Map<String, String> properties, boolean stripKeys, String... sectionKeys) {
+        Map<String, String> result = new HashMap<>(properties.size());
+        if (stripKeys) {
+            for (Map.Entry<String, String> en : properties.entrySet()) {
+                if (isKeyInSections(en.getKey(), sectionKeys)) {
                     result.put(en.getKey(), en.getValue());
                 }
             }
         } else {
-            for(Map.Entry<String,String> en: properties.entrySet()){
-                if(isKeyInSections(en.getKey(), sectionKeys)){
+            for (Map.Entry<String, String> en : properties.entrySet()) {
+                if (isKeyInSections(en.getKey(), sectionKeys)) {
                     result.put(stripSectionKeys(en.getKey(), sectionKeys), en.getValue());
                 }
             }
@@ -266,13 +263,14 @@ public final class PropertySourceFunctions {
 
     /**
      * Strips the section key of the given absolute key, if it is one of the areaKeys passed.
-     * @param key the current key, not null.
+     *
+     * @param key      the current key, not null.
      * @param areaKeys the areaKeys, not null.
      * @return the stripped key, or the original key (if no section was matching).
      */
     static String stripSectionKeys(String key, String... areaKeys) {
-        for(String areaKey:areaKeys) {
-            if(key.startsWith(areaKey + '.')) {
+        for (String areaKey : areaKeys) {
+            if (key.startsWith(areaKey + '.')) {
                 return key.substring(areaKey.length() + 1);
             }
         }
@@ -281,43 +279,65 @@ public final class PropertySourceFunctions {
 
     /**
      * Creates a ConfigOperator that adds the given items.
-     * @param items the items to be added/replaced.
+     *
+     * @param items    the items to be added/replaced.
      * @param override if true, all items existing are overridden by the new ones passed.
      * @return the ConfigOperator, never null.
      */
-    public static PropertySource addItems(PropertySource propertySource, final Map<String,String> items, final boolean override){
+    public static PropertySource addItems(PropertySource propertySource, final Map<String, String> items, final boolean override) {
         return new EnrichedPropertySource(propertySource, items, override);
     }
 
     /**
      * Creates an operator that adds items to the instance.
+     *
      * @param items the items, not null.
      * @return the operator, never null.
      */
-    public static PropertySource addItems(PropertySource propertySource, Map<String,String> items){
+    public static PropertySource addItems(PropertySource propertySource, Map<String, String> items) {
         return addItems(propertySource, items, false);
     }
 
     /**
      * Creates an operator that replaces the given items.
+     *
      * @param items the items.
      * @return the operator for replacing the items.
      */
-    public static PropertySource replaceItems(PropertySource propertySource, Map<String,String> items){
+    public static PropertySource replaceItems(PropertySource propertySource, Map<String, String> items) {
         return addItems(propertySource, items, true);
     }
 
     /**
      * Accesses an empty PropertySource.
+     *
      * @return an empty PropertySource, never null.
      */
-    public static PropertySource emptyPropertySource(){
+    public static PropertySource emptyPropertySource() {
         return EMPTY_PROPERTYSOURCE;
+    }
+
+    /**
+     * Find all {@link PropertySource} instances managed by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     *
+     * @param expression the regular expression to match the source's name.
+     * @return the list of all {@link PropertySource} instances matching, never null.
+     */
+    public static Collection<? extends PropertySource> findPropertySourcesByName(String expression) {
+        List result = new ArrayList<>();
+        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+            if (src.getName().matches(expression)) {
+                result.add(src);
+            }
+        }
+        return result;
     }
 
     /**
      * Get a list of all {@link PropertySource} instances managed by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     *
      * @return the list of all {@link PropertySource} instances matching, never null.
      */
     public static <T> Collection<T> getPropertySources(Class<T> type) {
@@ -333,13 +353,14 @@ public final class PropertySourceFunctions {
     /**
      * Get a list of all {@link PropertySource} instances managed by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     *
      * @return the list of all {@link PropertySource} instances matching, never null.
      */
     public static <T> T getPropertySource(Class<T> type) {
         List<T> result = new ArrayList<>();
         for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
             if (type.isAssignableFrom(src.getClass())) {
-                return (T)src;
+                return (T) src;
             }
         }
         return null;
