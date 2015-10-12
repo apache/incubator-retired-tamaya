@@ -22,19 +22,33 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-sandbox</artifactId>
+        <artifactId>tamaya-integration-sandbox</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
+    <artifactId>tamaya-store</artifactId>
+    <name>Apache Tamaya Storage/Cache/Datagrid Integration</name>
+    <description>Integration with a Datagrid backend for distributed configuration.</description>
+    <packaging>jar</packaging>
 
-    <groupId>org.apache.tamaya.ext.metamodels</groupId>
-    <artifactId>tamaya-metamodels</artifactId>
-    <name>Apache Tamaya Extension Modules: Metamodels</name>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>simple</module>
-        <module>staged</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spisupport</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-events</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 </project>

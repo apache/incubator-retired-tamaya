@@ -76,6 +76,12 @@ IMPORTANT: Dont install Tamaya's +cdi-se+ module at the same time.
 
 === How it Works
 
+This module registers a portable CDI extension to add the Configuration injection feature to CDI. Additionally
+this module overrides the +ServiceContext+ used, os it is aware of the CDI environment ans also considering the
+current CDI +BeaManager+ when looking up components (such as SPI classes).
+
+=== Adding SPI implementations managed as CDI beans
+
 This module registers as +ServiceContext+ and integrates CDI for component loading as well as configuration injection.
 All types injected by this module are injected using _dependent scope_. So with this module you can define/deploy
 your +PropertySources+ and other artifacts simply by adding corresponding CDI managed beans:
@@ -160,3 +166,51 @@ public class ConfiguredClass{
 }
 --------------------------------------------------------
 
+=== Advanced Use Cases
+
+Beside basic configuration Tamaya also covers additional requirements:
+
+* _Reading multiple keys, where the first successful one is determining the value of the configuration, is
+  simply possible, by adding multiple keys to the +@ConfigProperty+ annotation.
+  E.g. for trying first +a.b+ and then +new.b+ you would configure it as follows:
+
+[source,java]
+--------------------------------------------------------------------------------------
+@ConfigPriority({"a.b", "new.b"}
+private String value;
+--------------------------------------------------------------------------------------
+
+* When you must apply a +ConfigOperator+ to your config, before reading the configuration, you can
+  configure one as follows:
+
+[source,java]
+--------------------------------------------------------------------------------------
+@ConfigPriority({"a.b", "new.b"}
+@WithConfigOperator(MyOperator.class)
+private String value;
+--------------------------------------------------------------------------------------
+
+* When you must apply a some special conversion, or you use a type that is not registered
+  for conversion, you can configure a custom converter to be applied as follows:
+
+[source,java]
+--------------------------------------------------------------------------------------
+@ConfigPriority({"a.b", "new.b"}
+@WithPropertyConverter(MyConverter.class)
+private MySpecialFooType value;
+--------------------------------------------------------------------------------------
+
+* Often multiple keys in a class belong to the same root section. So instead of copying this to
+  every entry you can define the most common root sections in the type's header:
+
+[source,java]
+--------------------------------------------------------------------------------------
+@ConfigDefaultSections({"aaaa", "new"});
+public class MyType{
+
+@ConfigPriority({"b", "[legacy.bKey]"} // lookups: "aaaa.b", "new.b", legacy.bKey
+private String value;
+--------------------------------------------------------------------------------------
+
+In the example above +legacy.bKey+ defines an absolute key, which is not combined with any defined
+default section parts.

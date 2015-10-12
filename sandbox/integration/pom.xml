@@ -23,7 +23,7 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-sandbox</artifactId>
+        <artifactId>tamaya-extensions</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
     </parent>
 
@@ -32,7 +32,7 @@ under the License.
     <artifactId>tamaya-integration-sandbox</artifactId>
 
     <modules>
-        <module>cdi2</module>
+        <module>store</module>
         <module>commons</module>
     </modules>
 

@@ -16,7 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.tamaya.store.spi;
+
+import org.apache.tamaya.store.PropertyStore;
+
 /**
- * Contains the provided implementation classes for the environment module.
+ * Class, that provides access to PropertyStores to be used.
  */
-package org.apache.tamaya.environment.internal;
+public interface PropertyStoreProviderSpi {
+
+    /**
+     * Access a {@link PropertyStore} using it's id.
+     * @param storeId the unique id of the store to use.
+     * @return
+     */
+    PropertyStore getPropertyStore(String storeId);
+}
