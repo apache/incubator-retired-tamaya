@@ -141,7 +141,9 @@ public class ConfigurationExtension implements Extension {
                 final ConfigProperty annotation = injectionPoint.getAnnotated().getAnnotation(ConfigProperty.class);
                 final ConfigDefault defaultAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefault.class);
                 final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
-                final List<String> keys = evaluateKeys(injectionPoint.getMember().getName(), annotation.value(), typeAnnot.value());
+                final List<String> keys = evaluateKeys(injectionPoint.getMember().getName(),
+                        annotation!=null?annotation.value():null,
+                        typeAnnot!=null?typeAnnot.value():null);
 
                 final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);
                 if(withOperatorAnnot!=null){
