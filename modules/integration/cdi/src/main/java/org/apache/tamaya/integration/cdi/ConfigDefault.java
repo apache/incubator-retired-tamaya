@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.cdi2;
+package org.apache.tamaya.integration.cdi;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

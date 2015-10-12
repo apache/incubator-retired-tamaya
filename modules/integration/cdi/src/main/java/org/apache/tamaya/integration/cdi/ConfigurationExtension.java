@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tamaya.integration.cdi2;
+package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
@@ -48,7 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @see ConfigProperty
  * @see ConfigDefault
- * @see org.apache.tamaya.integration.cdi2.ConfigDefaultSections
+ * @see org.apache.tamaya.integration.cdi.ConfigDefaultSections
  * @see ConfigException
  */
 public class ConfigurationExtension implements Extension {
@@ -56,6 +56,9 @@ public class ConfigurationExtension implements Extension {
     static final Map<Class, ConfigOperator> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
     static final Map<Class, PropertyConverter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
 
+    /**
+     * Internally used conversion bean.
+     */
     private static class ConverterBean implements Bean<Object> {
 
         private final Bean<Object> delegate;
@@ -184,8 +187,7 @@ public class ConfigurationExtension implements Extension {
             if(!CUSTOM_OPERATORS.containsKey(operatorClass)) {
                 CUSTOM_OPERATORS.put(operatorClass, operatorClass.newInstance());
             }
-        }
-        catch(Exception e){
+        } catch(Exception e){
             throw new ConfigException("Custom ConfigOperator could not be loaded: " + operatorClass.getName(), e);
         }
     }
@@ -199,8 +201,7 @@ public class ConfigurationExtension implements Extension {
             if(!CUSTOM_CONVERTERS.containsKey(converterClass)) {
                 CUSTOM_CONVERTERS.put(converterClass, converterClass.newInstance());
             }
-        }
-        catch(Exception e){
+        } catch(Exception e){
             throw new ConfigException("Custom PropertyConverter could not be loaded: " + converterClass.getName(), e);
         }
     }

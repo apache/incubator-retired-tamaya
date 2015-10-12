@@ -16,17 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-remote.wsdl.location = classpath:/service-wsdl.xml
-remote.port=1443
-remote.address=${remote.host}:${remote.port}
-remote.target.url = https://${remote.address}/remote/service/url
-remote.username = joecool
-# ciphered using built in StaticDESPasswordCipher
-remote.password = NjAq6q2agYVnvSMz+eYUZg==
-cipher=org.apache.openejb.cipher.StaticDESPasswordCipher
-
-string.value = hello
-file.value = ./conf
-duration.value = 10 minutes and 57 seconds
-boolean.value = true
-integer.value = 123
+org.apache.tamaya.integration.cdi.internal.CDIAwareServiceContext

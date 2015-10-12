@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.cdi2;
+package org.apache.tamaya.integration.cdi;
 
-
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.ConfigOperator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,19 +26,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define a type adapter to be used before injecting a configured keys, or for applying changes.
- * This will override any other adapter for performing the type conversion before
- * injecting the field keys.
+ * Annotation to define an configuration operator to be used before accessing a configured keys.
+ * This allows filtering current configuration, e.g. for realizing views or ensuring security
+ * constraints.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = {ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
-public @interface WithPropertyConverter {
+@Target(value = {ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
+public @interface WithConfigOperator {
 
     /**
-     * Define a custom adapter or codec that should be used to adapt the configuration entry injected. This overrides any
+     * Define a custom adapter that should be used to adapt the configuration entry injected. This overrides any
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
      */
-    Class<? extends PropertyConverter<?>> value();
+    Class<? extends ConfigOperator> value();
 
 }

@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tamaya.integration.cdi2;
+package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Producer bean for configuration properties.
+ */
 @ApplicationScoped
 public class ConfigurationProducer {
 
@@ -80,8 +83,7 @@ public class ConfigurationProducer {
             if(value==null){
                 value = config.get(keyFound, toType);
             }
-        }
-        else if(defaultTextValue!=null){
+        } else if(defaultTextValue!=null){
             if(customCnverter!=null) {
                 value = customCnverter.convert(defaultTextValue);
             }
