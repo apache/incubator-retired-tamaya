@@ -79,9 +79,6 @@ public class MapPropertySource extends BasePropertySource {
         } else {
             for (Map.Entry<String, String> en : props.entrySet()) {
                 String prefix = rootContext;
-                if (prefix == null) {
-                    prefix = "";
-                }
                 if (!prefix.endsWith(".") && prefix.length() > 0) {
                     prefix += ".";
                 }
