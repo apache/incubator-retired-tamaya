@@ -131,6 +131,21 @@ public final class OptionalConfiguration {
     }
 
     /**
+     * Access a String value.
+     *
+     * @param key the key, not null.
+     * @param defaultValue the default value, returned if no such key is found in the configuration.
+     * @return the value found, or null.
+     */
+    public String getOrDefault(String key, String defaultValue) {
+        String value = get(key, String.class);
+        if(value==null){
+            return defaultValue;
+        }
+        return value;
+    }
+
+    /**
      * Method that returns the corresponding value, depending on the availability of Tamaya, the
      * registered provider and evaluation policy.
      *
@@ -156,6 +171,23 @@ public final class OptionalConfiguration {
                     }
                 }
             default:
+        }
+        return value;
+    }
+
+    /**
+     * Access a String value.
+     *
+     * @param key the key, not null.
+     * @param type the target type, not null.
+     * @param <T>  the type param.
+     * @param defaultValue the default value, returned if no such key is found in the configuration.
+     * @return the value found, or null.
+     */
+    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+        T value = get(key, type);
+        if(value==null){
+            return defaultValue;
         }
         return value;
     }
