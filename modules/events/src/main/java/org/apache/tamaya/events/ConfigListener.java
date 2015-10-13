@@ -18,19 +18,14 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.events.delta.ConfigurationChange;
 
 /**
  * Simple observer interface that can be registered using the current {@code ServiceContext}.
  * This class will be called on each configuration change detected in the current environment.
  */
+// @FunctionalInterface
 public interface ConfigListener
-        extends ConfigEventListener<ChangeNotification<Configuration>> {
-
-        /**
-         * Get a regular expression to define, which keys this listener is interested in.
-         * @return
-         */
-        String getKeyExpression();
+        extends ConfigEventListener<ConfigurationChange> {
 
 }

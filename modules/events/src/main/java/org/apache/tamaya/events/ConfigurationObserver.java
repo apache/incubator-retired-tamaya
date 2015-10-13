@@ -24,9 +24,10 @@ import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 
 /**
- * Created by Anatole on 04.10.2015.
+ * Singleton accessor for managing {@link ConfigListener} instances and mappings.
  */
 public class ConfigurationObserver {
 
@@ -44,48 +45,63 @@ public class ConfigurationObserver {
 
 
     /**
-     * Add a listener for observing change events on {@link org.apache.tamaya.Configuration}. References of this
-     * component to the listeners must be managed as weak references.
+     * Add key expressions for generating ConfigurationChange events.
      *
-     * @param l the listener not null.
+     * @param keys             the keys to be observed for changes.
      */
-    public static <T> void addListener(ConfigListener l) {
+    public static <T> void addObservedKeys(Collection<String> keys) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
                     ConfigurationObserver.class.getName());
         }
-        SPI.addListener(l);
+        SPI.addObservedKeys(keys);
     }
 
     /**
-     * Add a listener for observing change events on {@link org.apache.tamaya.spi.PropertySource}. References of this
-     * component to the listeners must be managed as weak references.
+     * Add key expressions for generating ConfigurationChange events.
      *
-     * @param l the listener not null.
+     * @param keys             the keys to be observed for changes.
      */
-    public static <T> void removeListener(ConfigListener l) {
+    public static <T> void addObservedKeys(String... keys) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
                     ConfigurationObserver.class.getName());
         }
-        SPI.removeListener(l);
+        SPI.addObservedKeys(Arrays.asList(keys));
     }
 
     /**
-     * Access all registered ConfigEventListeners listening to the given event key(s).
+     * Removes key expressions for generating ConfigurationChange events.
      *
-     * @return a list with the listeners found, never null.
+     * @param keys the keys to be observed for changes.
      */
-    public static Collection<ConfigListener> getListeners(Collection<String> keys) {
-        return SPI.getListeners(keys);
+    public static <T> void removeObservedKeys(Collection<String> keys) {
+        if (SPI == null) {
+            throw new ConfigException("No SPI registered for " +
+                    ConfigurationObserver.class.getName());
+        }
+        SPI.removeObservedKeys(keys);
     }
 
     /**
-     * Access all registered ConfigEventListeners listening to the given event key(s).
+     * Removes key expressions for generating ConfigurationChange events.
      *
-     * @return a list with the listeners found, never null.
+     * @param keys the keys to be observed for changes.
      */
-    public static Collection<ConfigListener> getListeners(String... keys) {
-        return SPI.getListeners(Arrays.asList(keys));
+    public static <T> void removeObservedKeys(String... keys) {
+        if (SPI == null) {
+            throw new ConfigException("No SPI registered for " +
+                    ConfigurationObserver.class.getName());
+        }
+        SPI.removeObservedKeys(Arrays.asList(keys));
+    }
+
+    /**
+     * Get all registered key expressions for generating ConfigurationChange events.
+     *
+     * @return  set with the keys found, never null.
+     */
+    public static Set<String> getObservedKeys() {
+        return SPI.getObservedKeys();
     }
 }

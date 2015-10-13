@@ -19,6 +19,7 @@
 package org.apache.tamaya.events.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigListener;
 import org.apache.tamaya.events.FrozenConfiguration;
 import org.apache.tamaya.events.delta.ConfigurationChange;
@@ -29,6 +30,7 @@ import org.apache.tamaya.spi.ServiceContextManager;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class DefaultConfigObserverSpi implements ConfigObserverSpi {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigObserverSpi.class.getName());
 
-    private Map<String, List<ConfigListener>> listenerMap = new ConcurrentHashMap<>();
+    private Set<String> keys = new HashSet<>();
 
     private Timer timer = new Timer("ConfigurationObserver", true);
 
@@ -69,8 +71,9 @@ public class DefaultConfigObserverSpi implements ConfigObserverSpi {
      */
     public DefaultConfigObserverSpi() {
         try {
+            // Load and register ConfigListener from the current ServiceContext
             for (ConfigListener l : ServiceContextManager.getServiceContext().getServices(ConfigListener.class)) {
-                addListener(l);
+                ConfigEventManager.addListener(l);
             }
         } catch (Exception e) {
             LOG.log(Level.WARNING, "Failed to load configured listeners.", e);
@@ -98,49 +101,29 @@ public class DefaultConfigObserverSpi implements ConfigObserverSpi {
         }
         Set<ConfigListener> affected = new HashSet<>();
         for(PropertyChangeEvent evt: changes.getChanges()) {
-            for (Map.Entry<String, List<ConfigListener>> en : listenerMap.entrySet()) {
-                if (evt.getPropertyName().matches(en.getKey())) {
-                    for(ConfigListener l:en.getValue()){
-                        affected.add(l);
-                    }
+            for (String key : keys) {
+                if (evt.getPropertyName().matches(key)) {
+                    ConfigEventManager.fireEvent(changes);
+                    return;
                 }
             }
         }
-        for(ConfigListener l:affected){
-            publisher.submit(new PublishConfigChangeTask(l, changes));
-        }
     }
 
     @Override
-    public synchronized <T> void addListener(final ConfigListener l) {
-        List<ConfigListener> items = listenerMap.get(l.getKeyExpression());
-        if (items == null) {
-            items = new ArrayList<>();
-            listenerMap.put(l.getKeyExpression(), items);
-        }
-        items.add(l);
+    public synchronized <T> void addObservedKeys(Collection<String> keys) {
+        this.keys.addAll(keys);
     }
 
     @Override
-    public synchronized <T> void removeListener(ConfigListener l) {
-        List<ConfigListener> items = listenerMap.get(l.getKeyExpression());
-        if (items != null) {
-            items.remove(l);
-        }
+    public synchronized <T> void removeObservedKeys(Collection<String> keys) {
+        this.keys.removeAll(keys);
     }
 
 
     @Override
-    public synchronized Collection<ConfigListener> getListeners(Collection<String> keys) {
-        List<ConfigListener> listeners = new ArrayList<>();
-        for (String key : keys) {
-            for (Map.Entry<String, List<ConfigListener>> en : listenerMap.entrySet()) {
-                if (key.matches(en.getKey())) {
-                    listeners.addAll(en.getValue());
-                }
-            }
-        }
-        return listeners;
+    public synchronized Set<String> getObservedKeys() {
+        return Collections.unmodifiableSet(this.keys);
     }
 
     @Override

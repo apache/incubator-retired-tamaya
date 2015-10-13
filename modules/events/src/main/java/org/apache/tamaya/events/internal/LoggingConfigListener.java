@@ -18,9 +18,8 @@
  */
 package org.apache.tamaya.events.internal;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.events.ChangeNotification;
 import org.apache.tamaya.events.ConfigListener;
+import org.apache.tamaya.events.delta.ConfigurationChange;
 
 import java.util.logging.Logger;
 
@@ -32,12 +31,7 @@ public class LoggingConfigListener implements ConfigListener{
     private static final Logger LOG = Logger.getLogger(LoggingConfigListener.class.getName());
 
     @Override
-    public String getKeyExpression() {
-        return ".*";
-    }
-
-    @Override
-    public void onConfigEvent(ChangeNotification<Configuration> event) {
+    public void onConfigEvent(ConfigurationChange event) {
         LOG.info("Configuration changed: " + event);
     }
 }

@@ -18,9 +18,8 @@
  */
 package org.apache.tamaya.events.spi;
 
-import org.apache.tamaya.events.ConfigListener;
-
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * SPI interface to implement the {@link org.apache.tamaya.events.ConfigurationObserver} singleton.
@@ -30,27 +29,25 @@ import java.util.Collection;
  */
 public interface ConfigObserverSpi {
     /**
-     * Add a listener for observing events. References of this
-     * component to the listeners must be managed as weak references.
+     * Add key expressions for generating ConfigurationChange events.
      *
-     * @param l the listener not null.
+     * @param keys             the keys to be observed for changes.
      */
-    <T> void addListener(ConfigListener l);
-
+    <T> void addObservedKeys(Collection<String> keys);
 
     /**
-     * Removes a listener for observing events.
+     * Remove key expressions for generating ConfigurationChange events.
      *
-     * @param l the listener not null.
+     * @param keys the keys to be observed for changes.
      */
-    <T> void removeListener(ConfigListener l);
+    <T> void removeObservedKeys(Collection<String> keys);
 
     /**
-     * Access all registered ConfigEventListeners listening to the given event type.
+     * Get all registered key expressions for generating ConfigurationChange events.
      *
-     * @return a list with the listeners found, never null.
+     * @return a set with the keys found, never null.
      */
-    Collection<ConfigListener> getListeners(Collection<String> keys);
+    Set<String> getObservedKeys();
 
     /**
      * Get the current check period to check for configuration changes.
