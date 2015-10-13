@@ -213,14 +213,17 @@ public class ConfigurationExtension implements Extension {
      * The effective keys are then combined with the sections given (if any) and only, if the given keys are not
      * absolute keys (surrounded by brackets).
      * @param memberName the default member name, not null.
-     * @param keys the keys, may be empty, but not null.
+     * @param keys the keys, may be empty, or null.
      * @param sections the default sections, may be empty. May also be null.
      * @return the list of keys to be finally used for configuration resolution in order of
      * precedence. The first keys in the list that could be successfully resolved define the final
      * configuration value.
      */
     public static List<String> evaluateKeys(String memberName, String[] keys, String[] sections) {
-        List<String> effKeys = new ArrayList<>(Arrays.asList(keys));
+        List<String> effKeys = new ArrayList<>();
+        if(keys!=null){
+            effKeys.addAll(Arrays.asList(keys));
+        }
         if (effKeys.isEmpty()) {
             effKeys.add(memberName);
         }
