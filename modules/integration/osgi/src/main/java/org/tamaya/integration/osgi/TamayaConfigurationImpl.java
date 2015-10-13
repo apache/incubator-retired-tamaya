@@ -23,17 +23,34 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.functions.BiPredicate;
+import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.osgi.service.cm.Configuration;
 
+/**
+ * Tamaya based implementation of an OSGI {@link Configuration}.
+ */
 public class TamayaConfigurationImpl implements Configuration {
     private final String pid;
     private final String factoryPid;
-    private final Map<String, Object> properties;
+    private Map<String, String> properties;
+    private org.apache.tamaya.Configuration config;
 
-    public TamayaConfigurationImpl(String pid, String factoryPid, Map<String, Object> properties) {
-        this.pid = pid;
+    public TamayaConfigurationImpl(String confPid, String factoryPid) {
+        this.pid = confPid;
         this.factoryPid = factoryPid;
-        this.properties = properties;
+        this.config = ConfigurationProvider.getConfiguration();
+        this.properties = config.with(ConfigurationFunctions.filter(new BiPredicate<String, String>() {
+            @Override
+            public boolean test(String key, String value) {
+                // TODO define name space / SPI
+                if(key.startsWith("bundle." + pid)){
+                    return true;
+                }
+                return false;
+            }
+        })).getProperties();
     }
 
     @Override
@@ -43,7 +60,7 @@ public class TamayaConfigurationImpl implements Configuration {
 
     @Override
     public Dictionary<String, Object> getProperties() {
-        return new Hashtable<>(properties);
+        return new Hashtable<String, Object>(properties);
     }
 
     @Override
@@ -63,7 +80,14 @@ public class TamayaConfigurationImpl implements Configuration {
 
     @Override
     public void update() throws IOException {
-        throw new UnsupportedOperationException();
+        this.config = ConfigurationProvider.getConfiguration();
+        this.properties = config.with(ConfigurationFunctions.filter(new BiPredicate<String, String>() {
+            @Override
+            public boolean test(String key, String value) {
+// TODO define name space / SPI
+                return false;
+            }
+        })).getProperties();
     }
 
     @Override

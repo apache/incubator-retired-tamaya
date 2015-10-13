@@ -27,17 +27,15 @@
         <version>0.2-incubating-SNAPSHOT</version>
     </parent>
 
-    <artifactId>karaf-tamayacm</artifactId>
+    <artifactId>tamaya-osgi-config</artifactId>
     <packaging>bundle</packaging>
-    <name>Apache Karaf :: OSGi Services :: Tamaya Based ConfigAdmin</name>
+    <name>Apache Tamaya :: OSGi Services :: Tamaya Based OSGI ConfigAdmin</name>
     <description>Tamaya Based ConfigAdmin Service</description>
 
     <properties>
         <osgi.version>6.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
-        <karaf.version>4.0.0</karaf.version>
         <felix.plugin.version>2.5.4</felix.plugin.version>
-        <felix.utils.version>1.8.0</felix.utils.version>
     </properties>
 
     <build>
@@ -103,16 +101,15 @@
             <version>${osgi.compendium.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.utils</artifactId>
-            <version>${felix.utils.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>${osgi.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

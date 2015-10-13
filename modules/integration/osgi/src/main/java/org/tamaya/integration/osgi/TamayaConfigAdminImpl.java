@@ -20,7 +20,9 @@ package org.tamaya.integration.osgi;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -29,13 +31,16 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.cm.ManagedServiceFactory;
 import org.osgi.util.tracker.ServiceTracker;
 
+/**
+ * Tamaya based implementation of an OSGI {@link ConfigurationAdmin}.
+ */
 public class TamayaConfigAdminImpl implements ConfigurationAdmin {
     private final BundleContext context;
+    private Map<String,Configuration> configs = new ConcurrentHashMap<>();
 
     public TamayaConfigAdminImpl(BundleContext context) throws IOException {
         this.context = context;
@@ -117,29 +122,24 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
 
     @Override
     public Configuration getConfiguration(String pid) throws IOException {
-//        for (Configuration config : configurations) {
-//            if (config.getPid().equals(pid) && config.getFactoryPid() == null) {
-//                return config;
-//            }
-//        }
-        return null;
+        return new TamayaConfigurationImpl(pid, null);
     }
 
     @Override
     public Configuration[] listConfigurations(String filter) throws IOException, InvalidSyntaxException {
-        List<Configuration> configs;
+        Collection<Configuration> result;
         if (filter == null) {
-//            configs = configurations;
+            result = this.configs.values();
         } else {
-            configs = new ArrayList<>();
+            result = new ArrayList<>();
             Filter flt = context.createFilter(filter);
-//            for (Configuration config : configurations) {
-//                if (flt.match(config.getProperties())) {
-//                    configs.add(config);
-//                }
-//            }
+            for (Configuration config : this.configs.values()) {
+                if (flt.match(config.getProperties())) {
+                    result.add(config);
+                }
+            }
         }
-        return null; //configs.isEmpty() ? null : configs.toArray(new Configuration[configs.size()]);
+        return result.isEmpty() ? null : result.toArray(new Configuration[configs.size()]);
     }
 
 }
