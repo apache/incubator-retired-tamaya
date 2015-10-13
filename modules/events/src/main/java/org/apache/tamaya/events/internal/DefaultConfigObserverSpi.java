@@ -28,17 +28,13 @@ import org.apache.tamaya.events.spi.ConfigObserverSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
