@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.event;
 
-import org.apache.tamaya.inject.Config;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
