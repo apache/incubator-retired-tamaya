@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * The exact behaviour, when configuration change events are sent can be configured
  * on each configured property/method by adding the {@link org.apache.tamaya.inject.WithLoadPolicy}
  * annotation. By default listeners are informed on all changes of configurations that were used as
- * input configurations for configuring a class/instance. Additionally {@link Config}
+ * input configurations for configuring a class/instance. Additionally {@link org.apache.tamaya.inject.Config}
  * annotations can be added that allows to constrain changes to some limited properties.
  */
 @Retention(RetentionPolicy.RUNTIME)
