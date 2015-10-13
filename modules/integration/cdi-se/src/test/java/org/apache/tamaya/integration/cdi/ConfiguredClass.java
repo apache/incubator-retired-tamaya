@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 
 import org.apache.tamaya.event.ObservesConfigChange;
 import org.apache.tamaya.inject.ConfigDefault;
-import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.Config;
 
 /**
  * Class to be loaded from CDI to ensure fields are correctly configured using CDI injection mechanisms.
@@ -35,38 +35,38 @@ import org.apache.tamaya.inject.ConfigProperty;
 @Singleton
 public class ConfiguredClass{
 
-    @ConfigProperty
+    @Config
     private String testProperty;
 
-    @ConfigProperty(keys = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
+    @Config(keys = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
     @ConfigDefault("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    @ConfigProperty(keys = {"foo","a.b.c.key2"})
+    @Config(keys = {"foo","a.b.c.key2"})
     private String value2;
 
-    @ConfigProperty
+    @Config
     @ConfigDefault("N/A")
     private String runtimeVersion;
 
-    @ConfigProperty
+    @Config
     @ConfigDefault("${sys:java.version}")
     private String javaVersion2;
 
-    @ConfigProperty
+    @Config
     @ConfigDefault("5")
     private Integer int1;
 
-    @ConfigProperty
+    @Config
     private int int2;
 
-    @ConfigProperty
+    @Config
     private boolean booleanT;
 
-    @ConfigProperty(keys = "BD")
+    @Config(keys = "BD")
     private BigDecimal bigNumber;
 
-    @ConfigProperty(keys = "double1")
+    @Config(keys = "double1")
     private double doubleValue;
 
     @ObservesConfigChange

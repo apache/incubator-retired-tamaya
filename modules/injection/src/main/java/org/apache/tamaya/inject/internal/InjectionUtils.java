@@ -33,7 +33,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.Config;
 import org.apache.tamaya.inject.ConfigDefault;
 import org.apache.tamaya.inject.WithPropertyConverter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
@@ -71,7 +71,7 @@ final class InjectionUtils {
      *                           several keys to be looked up (in absolute or relative form).
      * @return the list current keys in order how they should be processed/looked up.
      */
-    public static List<String> evaluateKeys(Member member, ConfigDefaultSections areasAnnot, ConfigProperty propertyAnnotation) {
+    public static List<String> evaluateKeys(Member member, ConfigDefaultSections areasAnnot, Config propertyAnnotation) {
         if(propertyAnnotation==null){
             return evaluateKeys(member, areasAnnot);
         }
@@ -155,7 +155,7 @@ final class InjectionUtils {
      * @return the keys to be returned, or null.
      */
     private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot) {
-        ConfigProperty prop = element.getAnnotation(ConfigProperty.class);
+        Config prop = element.getAnnotation(Config.class);
         ConfigDefault defaultAnnot = element.getAnnotation(ConfigDefault.class);
         List<String> keys;
         if (prop == null) {
@@ -172,24 +172,24 @@ final class InjectionUtils {
 
     /**
      * Collects all keys to be be accessed as defined by any annotations of type
-     * {@link ConfigDefaultSections}, {@link ConfigProperty}.
+     * {@link ConfigDefaultSections}, {@link Config}.
      * @param field the (optionally) annotated field instance
      * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Field field) {
         ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return InjectionUtils.evaluateKeys(field, areasAnnot, field.getAnnotation(ConfigProperty.class));
+        return InjectionUtils.evaluateKeys(field, areasAnnot, field.getAnnotation(Config.class));
     }
 
     /**
      * Collects all keys to be be accessed as defined by any annotations of type
-     * {@link ConfigDefaultSections}, {@link ConfigProperty}.
+     * {@link ConfigDefaultSections}, {@link Config}.
      * @param method the (optionally) annotated method instance
      * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Method method) {
         ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return InjectionUtils.evaluateKeys(method, areasAnnot, method.getAnnotation(ConfigProperty.class));
+        return InjectionUtils.evaluateKeys(method, areasAnnot, method.getAnnotation(Config.class));
     }
 
     private static String evaluteConfigValue(List<String> keys) {

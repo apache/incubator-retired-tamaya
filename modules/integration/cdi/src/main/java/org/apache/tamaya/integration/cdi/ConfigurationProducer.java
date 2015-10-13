@@ -39,10 +39,10 @@ public class ConfigurationProducer {
     private static final Logger LOGGER = Logger.getLogger(ConfigurationProducer.class.getName());
 
     @Produces
-    @ConfigProperty
+    @Config
     public Object resolveAndConvert(final InjectionPoint injectionPoint) {
 
-        final ConfigProperty annotation = injectionPoint.getAnnotated().getAnnotation(ConfigProperty.class);
+        final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
         final ConfigDefault defaultAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefault.class);
         final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
         final List<String> keys = ConfigurationExtension.evaluateKeys(injectionPoint.getMember().getName(),

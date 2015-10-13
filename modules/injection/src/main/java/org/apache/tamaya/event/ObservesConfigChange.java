@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.event;
 
+import org.apache.tamaya.inject.Config;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,7 +30,7 @@ import java.lang.annotation.Target;
  * The exact behaviour, when configuration change events are sent can be configured
  * on each configured property/method by adding the {@link org.apache.tamaya.inject.WithLoadPolicy}
  * annotation. By default listeners are informed on all changes of configurations that were used as
- * input configurations for configuring a class/instance. Additionally {@link org.apache.tamaya.inject.ConfigProperty}
+ * input configurations for configuring a class/instance. Additionally {@link Config}
  * annotations can be added that allows to constrain changes to some limited properties.
  */
 @Retention(RetentionPolicy.RUNTIME)

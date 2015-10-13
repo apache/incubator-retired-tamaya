@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to control injection and resolution current a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link ConfigProperty}
+ * to be resolved are basically determined by the {@link Config}
  * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
  * to define a configuration area that is prefixed to all relative configuration keys within the
  * corresponding class/template interface.

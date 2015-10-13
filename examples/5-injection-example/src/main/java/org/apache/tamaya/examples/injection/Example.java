@@ -19,7 +19,7 @@
 package org.apache.tamaya.examples.injection;
 
 import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.Config;
 import org.apache.tamaya.inject.ConfigDefault;
 
 /**
@@ -34,7 +34,7 @@ public class Example {
     @ConfigDefault("No description available.")
     private String description;
     private int version;
-    @ConfigProperty(keys = "author")
+    @Config(keys = "author")
     private String exampleAuthor;
 
     @Override

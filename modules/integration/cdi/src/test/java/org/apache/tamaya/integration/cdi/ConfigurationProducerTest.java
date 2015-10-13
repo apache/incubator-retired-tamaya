@@ -66,52 +66,52 @@ public class ConfigurationProducerTest {
     static class AllTypes {
 
         @Inject
-        @ConfigProperty("string.value")
+        @Config("string.value")
         @ConfigDefault("defaultString")
         private String string;
 
         @Inject
-        @ConfigProperty("defaultString.value")
+        @Config("defaultString.value")
         @ConfigDefault("defaultString")
         private String defaultString;
 
         @Inject
-        @ConfigProperty("file.value")
+        @Config("file.value")
         @ConfigDefault("./")
         private File file;
 
         @Inject
-        @ConfigProperty("defaultFile.value")
+        @Config("defaultFile.value")
         @ConfigDefault("./")
         private File defaultFile;
 
         @Inject
-        @ConfigProperty("duration.value")
+        @Config("duration.value")
         @ConfigDefault("2 hours and 54 minutes")
         private Duration duration;
 
         @Inject
-        @ConfigProperty("defaultDuration.value")
+        @Config("defaultDuration.value")
         @ConfigDefault("2 hours and 54 minutes")
         private Duration defaultDuration;
 
         @Inject
-        @ConfigProperty("boolean.value")
+        @Config("boolean.value")
         @ConfigDefault("true")
         private Boolean aBoolean;
 
         @Inject
-        @ConfigProperty("defaultBoolean.value")
+        @Config("defaultBoolean.value")
         @ConfigDefault("true")
         private Boolean defaultBoolean;
 
         @Inject
-        @ConfigProperty("integer.value")
+        @Config("integer.value")
         @ConfigDefault("45")
         private Integer integer;
 
         @Inject
-        @ConfigProperty("defaultInteger.value")
+        @Config("defaultInteger.value")
         @ConfigDefault("45")
         private Integer defaultInteger;
 

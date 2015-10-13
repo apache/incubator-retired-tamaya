@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * CDI Extension module that adds injection mechanism for configuration.
  *
- * @see ConfigProperty
+ * @see Config
  * @see ConfigDefault
  * @see org.apache.tamaya.integration.cdi.ConfigDefaultSections
  * @see ConfigException
@@ -137,8 +137,8 @@ public class ConfigurationExtension implements Extension {
         final Set<InjectionPoint> ips = pb.getBean().getInjectionPoints();
 
         for (InjectionPoint injectionPoint : ips) {
-            if (injectionPoint.getAnnotated().isAnnotationPresent(ConfigProperty.class)) {
-                final ConfigProperty annotation = injectionPoint.getAnnotated().getAnnotation(ConfigProperty.class);
+            if (injectionPoint.getAnnotated().isAnnotationPresent(Config.class)) {
+                final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
                 final ConfigDefault defaultAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefault.class);
                 final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
                 final List<String> keys = evaluateKeys(injectionPoint.getMember().getName(),
@@ -249,7 +249,7 @@ public class ConfigurationExtension implements Extension {
 
 
     public void captureConvertBean(@Observes final ProcessProducerMethod<?, ?> ppm) {
-        if (ppm.getAnnotated().isAnnotationPresent(ConfigProperty.class)) {
+        if (ppm.getAnnotated().isAnnotationPresent(Config.class)) {
             convBean = ppm.getBean();
         }
 

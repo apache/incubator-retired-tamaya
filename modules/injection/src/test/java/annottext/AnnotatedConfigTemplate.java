@@ -19,7 +19,7 @@
 package annottext;
 
 import org.apache.tamaya.inject.ConfigDefault;
-import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.Config;
 import org.apache.tamaya.inject.DynamicValue;
 import org.apache.tamaya.inject.LoadPolicy;
 import org.apache.tamaya.inject.WithLoadPolicy;
@@ -32,22 +32,22 @@ import org.apache.tamaya.inject.WithLoadPolicy;
 @WithLoadPolicy(LoadPolicy.INITIAL)
 public interface AnnotatedConfigTemplate {
 
-    @ConfigProperty(keys = {"foo.bar.myprop", "mp","common.testdata.myProperty"})
+    @Config(keys = {"foo.bar.myprop", "mp","common.testdata.myProperty"})
     @ConfigDefault("ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     String myParameter();
 
-    @ConfigProperty(keys = "simple_value")
+    @Config(keys = "simple_value")
     @WithLoadPolicy(LoadPolicy.LAZY)
     String simpleValue();
 
-    @ConfigProperty
+    @Config
     String simplestValue();
 
-    @ConfigProperty(keys = "host.name")
+    @Config(keys = "host.name")
     String hostName();
 
-    @ConfigProperty(keys = "host.name")
+    @Config(keys = "host.name")
     DynamicValue<String> getDynamicValue();
 
 }

@@ -24,23 +24,23 @@ import java.io.File;
 public class NotFoundNoDefault {
 
         @Inject
-        @ConfigProperty("string.bla")
+        @Config("string.bla")
         private String string;
 
         @Inject
-        @ConfigProperty("file.bla")
+        @Config("file.bla")
         private File file;
 
         @Inject
-        @ConfigProperty("duration.bla")
+        @Config("duration.bla")
         private Duration duration;
 
         @Inject
-        @ConfigProperty("boolean.bla")
+        @Config("boolean.bla")
         private Boolean aBoolean;
 
         @Inject
-        @ConfigProperty("integer.bla")
+        @Config("integer.bla")
         private Integer integer;
 
         public String getString() {

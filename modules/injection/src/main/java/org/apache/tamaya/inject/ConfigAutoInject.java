@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to control injection of a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link ConfigProperty}
+ * to be resolved are basically determined by the {@link Config}
  * annotation(s). When this annotation is added the injection systems tries to inject all
  * fields found, also including fields not annotated with {@code @ConfigProperty}.
  * Fields not to be injected ccan be annotated with {@code @NoConfig} to exclude them

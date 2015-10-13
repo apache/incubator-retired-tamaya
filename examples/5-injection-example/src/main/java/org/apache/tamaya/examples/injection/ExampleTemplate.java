@@ -20,7 +20,7 @@ package org.apache.tamaya.examples.injection;
 
 import org.apache.tamaya.inject.ConfigDefault;
 import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.Config;
 
 /**
  * Simple example bean, mapped by default names mostly.
@@ -35,7 +35,7 @@ public interface ExampleTemplate {
     String getDescription();
 
     int getVersion();
-    @ConfigProperty(keys = "author")
+    @Config(keys = "author")
     String getExampleAuthor();
 
 }

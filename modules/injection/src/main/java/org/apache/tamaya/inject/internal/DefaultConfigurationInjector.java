@@ -21,7 +21,7 @@ package org.apache.tamaya.inject.internal;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.event.ObservesConfigChange;
 import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.ConfigProperty;
+import org.apache.tamaya.inject.Config;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
@@ -76,7 +76,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
             if (f.isAnnotationPresent(NoConfig.class)) {
                 return true;
             }
-            if (f.isAnnotationPresent(ObservesConfigChange.class) || f.isAnnotationPresent(ConfigProperty.class)) {
+            if (f.isAnnotationPresent(ObservesConfigChange.class) || f.isAnnotationPresent(Config.class)) {
                 return true;
             }
         }
@@ -84,7 +84,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
             if (m.isAnnotationPresent(NoConfig.class)) {
                 return true;
             }
-            if (m.isAnnotationPresent(ObservesConfigChange.class) || m.isAnnotationPresent(ConfigProperty.class)) {
+            if (m.isAnnotationPresent(ObservesConfigChange.class) || m.isAnnotationPresent(Config.class)) {
                 return true;
             }
         }
