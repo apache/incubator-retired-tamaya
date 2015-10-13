@@ -139,26 +139,26 @@ This component also allows to inject configuration using Tamaya's type-safe inje
 @RequestScoped
 public class ConfiguredClass{
 
-    @ConfigProperty
+    @Config
     private String testProperty;
 
-    @ConfigProperty({"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
-    @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    @Config({"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
+    @ConfigDefault("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    @ConfigProperty({"foo","a.b.c.key2"})
+    @Config({"foo","a.b.c.key2"})
     private String value2;
 
-    @ConfigProperty
-    @DefaultValue("N/A")
+    @Config
+    @ConfigDefault("N/A")
     private String runtimeVersion;
 
-    @ConfigProperty
-    @DefaultValue("${sys:java.version}")
+    @Config
+    @ConfigDefault("${sys:java.version}")
     private String javaVersion2;
 
-    @ConfigProperty
-    @DefaultValue("5")
+    @Config
+    @ConfigDefault("5")
     private Integer int1;
 
     ...
@@ -171,12 +171,12 @@ public class ConfiguredClass{
 Beside basic configuration Tamaya also covers additional requirements:
 
 * _Reading multiple keys, where the first successful one is determining the value of the configuration, is
-  simply possible, by adding multiple keys to the +@ConfigProperty+ annotation.
+  simply possible, by adding multiple keys to the +@Config+ annotation.
   E.g. for trying first +a.b+ and then +new.b+ you would configure it as follows:
 
 [source,java]
 --------------------------------------------------------------------------------------
-@ConfigPriority({"a.b", "new.b"}
+@Config({"a.b", "new.b"}
 private String value;
 --------------------------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ private String value;
 
 [source,java]
 --------------------------------------------------------------------------------------
-@ConfigPriority({"a.b", "new.b"}
+@Config({"a.b", "new.b"}
 @WithConfigOperator(MyOperator.class)
 private String value;
 --------------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ private String value;
 
 [source,java]
 --------------------------------------------------------------------------------------
-@ConfigPriority({"a.b", "new.b"}
+@Config({"a.b", "new.b"}
 @WithPropertyConverter(MyConverter.class)
 private MySpecialFooType value;
 --------------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ private MySpecialFooType value;
 @ConfigDefaultSections({"aaaa", "new"});
 public class MyType{
 
-@ConfigPriority({"b", "[legacy.bKey]"} // lookups: "aaaa.b", "new.b", legacy.bKey
+@Config({"b", "[legacy.bKey]"} // lookups: "aaaa.b", "new.b", legacy.bKey
 private String value;
 --------------------------------------------------------------------------------------
 
