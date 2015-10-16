@@ -19,11 +19,12 @@
 package org.apache.tamaya.server.spi;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Configuration backend used by the Tamaya server module.
  */
-public interface ConfigProviderService {
+public interface ConfigService {
 
     /**
      * Accessor to get a filtered configuration representation.
@@ -34,7 +35,7 @@ public interface ConfigProviderService {
      * @param request the current HTTP request.
      * @return the output String to be returned to the caller.
      */
-    String getConfigurationWithPath(String path, String format, String scope, String scopeId, HttpServletRequest request);
+    String getConfigurationWithPath(String path, MediaType format, String scope, String scopeId, HttpServletRequest request);
 
     /**
      * Accessor to get a unfiltered configuration representation.
@@ -44,7 +45,7 @@ public interface ConfigProviderService {
      * @param request the current HTTP request.
      * @return the output String to be returned to the caller.
      */
-    String getConfiguration(String format, String scope, String scopeId, HttpServletRequest request);
+    String getConfiguration(MediaType format, String scope, String scopeId, HttpServletRequest request);
 
     /**
      * Update the current configuration.

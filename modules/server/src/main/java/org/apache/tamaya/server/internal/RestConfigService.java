@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.server.internal;
 
-import org.apache.tamaya.server.spi.ConfigProviderService;
+import org.apache.tamaya.server.spi.ConfigService;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,43 +37,27 @@ import javax.ws.rs.core.Response;
 /**
  * Implementation of the JAX-RS interface for serving configuration.
  */
-public class DefaultRestService {
+public class RestConfigService {
 
-    private ConfigProviderService providerService = ServiceContextManager.getServiceContext()
-            .getService(ConfigProviderService.class);
+    private ConfigService configService = ServiceContextManager.getServiceContext()
+            .getService(ConfigService.class);
 
     @GET
     @Path("/config/filtered/{path}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML, MediaType.TEXT_PLAIN, MediaType.WILDCARD})
     public String getConfigurationWithPath(@PathParam("path") String path,
                                     @Context HttpServletRequest request){
-        String format = request.getParameter("format");
-        if(format==null){
-            format = request.getHeader(HttpHeaders.ACCEPT);
-        }
+        MediaType mediaType = MediaTypeUtil.getMediaType(request.getParameter("format"), request.getHeader(HttpHeaders.ACCEPT));
         String scope = request.getParameter("scope");
         String scopeId = request.getParameter("scopeId");
         try {
-            String response = providerService.getConfigurationWithPath(path, format, scope, scopeId, request);
-            Response.ResponseBuilder rb = Response.status(Response.Status.OK).header(HttpHeaders.CONTENT_ENCODING, "utf-8");
-            if(format.contains(MediaType.APPLICATION_JSON)) {
-                rb.type(MediaType.APPLICATION_JSON_TYPE);
-                return response;
+            String response = configService.getConfigurationWithPath(path, mediaType, scope, scopeId, request);
+            if(response!=null){
+                Response.status(Response.Status.OK).header(HttpHeaders.CONTENT_ENCODING, "utf-8").type(mediaType);
+            }else {
+                Response.status(Response.Status.BAD_REQUEST);
             }
-            if(format.contains(MediaType.APPLICATION_XML)) {
-                rb.type(MediaType.APPLICATION_XML_TYPE);
-                return response;
-            }
-            if(format.contains(MediaType.TEXT_HTML)) {
-                rb.type(MediaType.TEXT_HTML_TYPE);
-                return response;
-            }
-            if(format.contains(MediaType.TEXT_PLAIN)) {
-                rb.type(MediaType.TEXT_PLAIN_TYPE);
-                return response;
-            }
-            rb.status(Response.Status.BAD_REQUEST);
-            return null;
+            return response;
         } catch(Exception e){
             Response.status(Response.Status.INTERNAL_SERVER_ERROR);
             return null;
@@ -86,33 +70,17 @@ public class DefaultRestService {
     @Path("/config")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML, MediaType.TEXT_PLAIN, MediaType.WILDCARD})
     public String getConfiguration(@Context HttpServletRequest request) {
-        String format = request.getParameter("format");
-        if(format==null){
-            format = request.getHeader(HttpHeaders.ACCEPT);
-        }
+        MediaType mediaType = MediaTypeUtil.getMediaType(request.getParameter("format"), request.getHeader(HttpHeaders.ACCEPT));
         String scope = request.getParameter("scope");
         String scopeId = request.getParameter("scopeId");
         try {
-            String response = providerService.getConfiguration(format, scope, scopeId, request);
-            Response.ResponseBuilder rb = Response.status(Response.Status.OK).header(HttpHeaders.CONTENT_ENCODING, "utf-8");
-            if(format.contains(MediaType.APPLICATION_JSON)) {
-                rb.type(MediaType.APPLICATION_JSON_TYPE);
-                return response;
+            String response = configService.getConfiguration(mediaType, scope, scopeId, request);
+            if(response!=null){
+                Response.status(Response.Status.OK).header(HttpHeaders.CONTENT_ENCODING, "utf-8").type(mediaType);
+            }else {
+                Response.status(Response.Status.BAD_REQUEST);
             }
-            if(format.contains(MediaType.APPLICATION_XML)) {
-                rb.type(MediaType.APPLICATION_XML_TYPE);
-                return response;
-            }
-            if(format.contains(MediaType.TEXT_HTML)) {
-                rb.type(MediaType.TEXT_HTML_TYPE);
-                return response;
-            }
-            if(format.contains(MediaType.TEXT_PLAIN)) {
-                rb.type(MediaType.TEXT_PLAIN_TYPE);
-                return response;
-            }
-            rb.status(Response.Status.BAD_REQUEST);
-            return null;
+            return response;
         } catch(Exception e){
             Response.status(Response.Status.INTERNAL_SERVER_ERROR);
             return null;

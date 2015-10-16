@@ -19,7 +19,8 @@
 package org.apache.tamaya.server;
 
 import org.apache.http.HttpStatus;
-import org.apache.tamaya.server.spi.ConfigProviderService;
+import org.apache.tamaya.server.internal.MediaTypeUtil;
+import org.apache.tamaya.server.spi.ConfigService;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.servlet.ServletException;
@@ -48,9 +49,9 @@ public class FullConfigServlet extends HttpServlet{
     /**
      * Gets the Service delegate to provide the configuration representation in different formats and scopes.
      */
-    private ConfigProviderService getConfService(){
+    private ConfigService getConfService(){
         return ServiceContextManager.getServiceContext()
-                .getService(ConfigProviderService.class);
+                .getService(ConfigService.class);
     }
 
     /**
@@ -60,35 +61,20 @@ public class FullConfigServlet extends HttpServlet{
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse res) throws ServletException, IOException {
-        String format = request.getParameter("format");
-        if(format==null){
-            format = request.getHeader(HttpHeaders.ACCEPT);
-        }
+        MediaType mediaType = MediaTypeUtil.getMediaType(request.getParameter("format"),
+                request.getHeader(HttpHeaders.ACCEPT));
         String scope = request.getParameter("scope");
         String scopeId = request.getParameter("scopeId");
         try {
-            String response = getConfService().getConfiguration(format, scope, scopeId, request);
-            res.setStatus(HttpStatus.SC_OK);
-            res.setHeader(HttpHeaders.CONTENT_ENCODING, "utf-8");
-            if(format.contains(MediaType.APPLICATION_JSON)) {
-                res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.toString());
-                res.getOutputStream().print(response);
-                return;
-            }
-            if(format.contains(MediaType.APPLICATION_XML)) {
-                res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_TYPE.toString());
-                res.getOutputStream().print(response);
-                return;
-            }
-            if(format.contains(MediaType.TEXT_HTML)) {
-                res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_TYPE.toString());
-                res.getOutputStream().print(response);
-                return;
-            }
-            if(format.contains(MediaType.TEXT_PLAIN)) {
-                res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_TYPE.toString());
-                res.getOutputStream().print(response);
-                return;
+            String response = getConfService().getConfiguration(mediaType, scope, scopeId, request);
+            if(response!=null) {
+                res.setStatus(HttpStatus.SC_OK);
+                res.setHeader(HttpHeaders.CONTENT_ENCODING, "utf-8");
+                if (mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
+                    res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.toString());
+                    res.getOutputStream().print(response);
+                    return;
+                }
             }
             res.setStatus(HttpStatus.SC_BAD_REQUEST);
         } catch(Exception e){

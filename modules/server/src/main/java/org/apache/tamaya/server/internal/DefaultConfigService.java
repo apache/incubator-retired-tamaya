@@ -21,12 +21,11 @@ package org.apache.tamaya.server.internal;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
-import org.apache.tamaya.server.spi.ConfigProviderService;
+import org.apache.tamaya.server.spi.ConfigService;
 import org.apache.tamaya.server.spi.ScopeManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,117 +33,95 @@ import java.util.Map;
 /**
  * Implementation of the ConfigProviderService backend interface for serving configuration.
  */
-public class DefaultConfigProviderService implements ConfigProviderService {
+public class DefaultConfigService implements ConfigService {
 
     @Override
-    public String getConfigurationWithPath(String path, String format, String scope, String scopeId, HttpServletRequest request){
+    public String getConfigurationWithPath(String path, MediaType mediaType, String scope, String scopeId, HttpServletRequest request){
         Map<String,String> requestInfo = new HashMap<>();
         requestInfo.put("filter",path);
         requestInfo.put("timestamp", String.valueOf(System.currentTimeMillis()));
-        requestInfo.put("format", format);
+        requestInfo.put("format", mediaType.toString());
         if(scope!=null && scopeId!=null){
-            return getScopedConfigurationWithPath(scope, scopeId, path, request, format, requestInfo);
+            return getScopedConfigurationWithPath(scope, scopeId, path, request, mediaType, requestInfo);
         }
         Configuration config = ConfigurationProvider.getConfiguration()
                 .with(ConfigurationFunctions.sectionsRecursive(path.split(",")));
-        if(format.contains(MediaType.APPLICATION_JSON)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_JSON_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
             return config.query(ConfigurationFunctions.jsonInfo(requestInfo));
         }
-        if(format.contains(MediaType.APPLICATION_XML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_XML_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_XML_TYPE)) {
             return config.query(ConfigurationFunctions.xmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_HTML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_HTML_TYPE);
+        if(mediaType.equals(MediaType.TEXT_HTML_TYPE)) {
             return config.query(ConfigurationFunctions.htmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_PLAIN)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_PLAIN_TYPE);
+        if(mediaType.equals(MediaType.TEXT_PLAIN_TYPE)) {
             return config.query(ConfigurationFunctions.textInfo(requestInfo));
         }
-        Response.status(Response.Status.BAD_REQUEST).allow(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
-                .build();
         return null;
     }
 
     @Override
-    public String getConfiguration(String format, String scope, String scopeId, HttpServletRequest request) {
+    public String getConfiguration(MediaType mediaType, String scope, String scopeId, HttpServletRequest request) {
         Map<String,String> requestInfo = new HashMap<>();
         requestInfo.put("timestamp", String.valueOf(System.currentTimeMillis()));
         if(scope!=null && scopeId!=null){
-            return getScopedConfiguration(scope, scopeId, request, format, requestInfo);
+            return getScopedConfiguration(scope, scopeId, request, mediaType, requestInfo);
         }
         Configuration config = ConfigurationProvider.getConfiguration();
-        if(format.contains(MediaType.APPLICATION_JSON)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_JSON_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
             return config.query(ConfigurationFunctions.jsonInfo(requestInfo));
         }
-        if(format.contains(MediaType.APPLICATION_XML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_XML_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_XML_TYPE)) {
             return config.query(ConfigurationFunctions.xmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_HTML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_HTML_TYPE);
+        if(mediaType.equals(MediaType.TEXT_HTML_TYPE)) {
             return config.query(ConfigurationFunctions.htmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_PLAIN)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_PLAIN_TYPE);
+        if(mediaType.equals(MediaType.TEXT_PLAIN_TYPE)) {
             return config.query(ConfigurationFunctions.textInfo(requestInfo));
         }
-        Response.status(Response.Status.BAD_REQUEST).allow(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML);
         return null;
     }
 
     private String getScopedConfigurationWithPath(String scope, String scopeId, String path, HttpServletRequest request,
-                                                  String format, Map<String,String> requestInfo) {
+                                                  MediaType mediaType, Map<String,String> requestInfo) {
         requestInfo.put("scope", scope);
         requestInfo.put("scopeId", scopeId);
         Configuration config = ConfigurationProvider.getConfiguration()
                 .with(ScopeManager.getScope(scope, scopeId)).with(ConfigurationFunctions.sectionsRecursive(path.split(",")));
-        if(format.contains(MediaType.APPLICATION_JSON)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_JSON_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
             return config.query(ConfigurationFunctions.jsonInfo(requestInfo));
         }
-        if(format.contains(MediaType.APPLICATION_XML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_XML_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_XML_TYPE)) {
             return config.query(ConfigurationFunctions.xmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_HTML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_HTML_TYPE);
+        if(mediaType.equals(MediaType.TEXT_HTML_TYPE)) {
             return config.query(ConfigurationFunctions.htmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_PLAIN)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_PLAIN_TYPE);
+        if(mediaType.equals(MediaType.TEXT_PLAIN_TYPE)) {
             return config.query(ConfigurationFunctions.textInfo(requestInfo));
         }
-        Response.status(Response.Status.BAD_REQUEST).allow(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML);
         return null;
     }
 
-    private String getScopedConfiguration(String scope, String scopeId, HttpServletRequest request, String format,
+    private String getScopedConfiguration(String scope, String scopeId, HttpServletRequest request, MediaType mediaType,
                                           Map<String,String> requestInfo) {
         requestInfo.put("scope", scope);
         requestInfo.put("scopeId", scopeId);
         Configuration config = ConfigurationProvider.getConfiguration().with(ScopeManager.getScope(scope, scopeId));
-        if(format.contains(MediaType.APPLICATION_JSON)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_JSON_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
             return config.query(ConfigurationFunctions.jsonInfo(requestInfo));
         }
-        if(format.contains(MediaType.APPLICATION_XML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.APPLICATION_XML_TYPE);
+        if(mediaType.equals(MediaType.APPLICATION_XML_TYPE)) {
             return config.query(ConfigurationFunctions.xmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_HTML)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_HTML_TYPE);
+        if(mediaType.equals(MediaType.TEXT_HTML_TYPE)) {
             return config.query(ConfigurationFunctions.htmlInfo(requestInfo));
         }
-        if(format.contains(MediaType.TEXT_PLAIN)) {
-            Response.status(Response.Status.OK).encoding("utf-8").type(MediaType.TEXT_PLAIN_TYPE);
+        if(mediaType.equals(MediaType.TEXT_PLAIN_TYPE)) {
             return config.query(ConfigurationFunctions.textInfo(requestInfo));
         }
-        Response.status(Response.Status.BAD_REQUEST).allow(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
-                .build();
         return null;
     }
 

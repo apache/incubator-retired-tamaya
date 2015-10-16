@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.server.internal.DefaultConfigProviderService
+org.apache.tamaya.server.internal.DefaultConfigService
