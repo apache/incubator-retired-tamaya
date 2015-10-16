@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.clsupport.internal.ctx;
+package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  * Manager that deals with {@link PropertyConverter} instances.
  * This class is thread-safe.
  */
-class PropertyConverterManager {
+public class PropertyConverterManager {
     /**
      * The logger used.
      */
