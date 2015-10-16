@@ -18,6 +18,10 @@
  */
 package org.apache.tamaya.examples.injection;
 
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
+
 /**
  * Simple example bean, mapped by default names mostly.
  */
@@ -31,7 +35,7 @@ public interface ExampleTemplate {
     String getDescription();
 
     int getVersion();
-    @Config(keys = "author")
+    @Config("author")
     String getExampleAuthor();
 
 }
