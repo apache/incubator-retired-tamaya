@@ -20,7 +20,7 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.DynamicValue;
+import org.apache.tamaya.inject.api.DynamicValue;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -72,8 +72,8 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
         if (method.getReturnType() == DynamicValue.class) {
             return DefaultDynamicValue.of(method, configuration);
         }
-        String configValue = InjectionUtils.getConfigValue(method);
-        Object result = InjectionUtils.adaptValue(method, TypeLiteral.of(method.getReturnType()), configValue);
+        String configValue = InjectionHelper.getConfigValue(method);
+        Object result = InjectionHelper.adaptValue(method, TypeLiteral.of(method.getReturnType()), configValue);
         if (result == null && method.isDefault()) {
             result = method.getDefaultValue();
         }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject.internal;
+package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  *
  * @param <T> The type of the value.
  */
-public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
+final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
 
     private static final long serialVersionUID = -2071172847144537443L;
 
@@ -76,7 +76,7 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      */
     private Configuration configuration;
     /**
-     * The target type of the property used to lookup a matching {@link org.apache.tamaya.spi.PropertyConverter}.
+     * The target type of the property used to lookup a matching {@link PropertyConverter}.
      * If null, {@code propertyConverter} is set and used instead.
      */
     private TypeLiteral<T> targetType;
@@ -121,7 +121,7 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         this.value = evaluateValue();
     }
 
-    public static DynamicValue of(Field annotatedField, Configuration configuration) {
+    public static DynamicValue of(Field annotatedField, Configuration configuration){
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
         if (targetType == null) {
@@ -153,7 +153,7 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 TypeLiteral.of(targetType), propertyConverter, keys);
     }
 
-    public static DynamicValue of(Method method, Configuration configuration) {
+    public static DynamicValue of(Method method, Configuration configuration){
         // Check for adapter/filter
         Type targetType = method.getGenericReturnType();
         if (targetType == null) {
@@ -257,7 +257,7 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * otherwise throws {@code ConfigException}.
      *
      * @return the non-null value held by this {@code Optional}
-     * @throws org.apache.tamaya.ConfigException if there is no value present
+     * @throws ConfigException if there is no value present
      * @see DefaultDynamicValue#isPresent()
      */
     public T get() {
@@ -269,31 +269,29 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * the value is immediately or deferred visible (or it may even be ignored completely).
      *
      * @return true, if a new value has been detected. The value may not be visible depending on the current
-     * {@link DefaultDynamicValue.UpdatePolicy} in place.
+     * {@link UpdatePolicy} in place.
      */
     public boolean updateValue() {
         T newValue = evaluateValue();
-        synchronized (this) {
-            if (Objects.equals(newValue, this.value)) {
-                return false;
-            }
-            switch (this.updatePolicy) {
-                case IMMEDIATE:
-                    this.newValue = newValue;
-                    commit();
-                    break;
-                case LOG_AND_DISCARD:
-                    Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue=" + newValue);
-                    this.newValue = null;
-                    break;
-                case NEVER:
-                    this.newValue = null;
-                    break;
-                case EXPLCIT:
-                default:
-                    this.newValue = newValue;
-                    break;
-            }
+        if (Objects.equals(newValue, this.value)) {
+            return false;
+        }
+        switch (this.updatePolicy) {
+            case IMMEDIATE:
+                this.newValue = newValue;
+                commit();
+                break;
+            case LOG_AND_DISCARD:
+                Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue=" + newValue);
+                this.newValue = null;
+                break;
+            case NEVER:
+                this.newValue = null;
+                break;
+            case EXPLCIT:
+            default:
+                this.newValue = newValue;
+                break;
         }
         return true;
     }
@@ -340,30 +338,26 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * Serialization implementation that strips away the non serializable Optional part.
      *
      * @param oos the output stream
-     * @throws java.io.IOException if serialization fails.
+     * @throws IOException if serialization fails.
      */
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        synchronized (this) {
-            oos.writeObject(getUpdatePolicy());
-            oos.writeObject(get());
-        }
+        oos.writeObject(getUpdatePolicy());
+        oos.writeObject(get());
     }
 
     /**
      * Reads an instance from the input stream.
      *
      * @param ois the object input stream
-     * @throws java.io.IOException    if deserialization fails.
+     * @throws IOException    if deserialization fails.
      * @throws ClassNotFoundException
      */
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        synchronized (this) {
-            this.updatePolicy = (UpdatePolicy) ois.readObject();
-            if (isPresent()) {
-                this.value = (T) ois.readObject();
-            }
-            newValue = null;
+        this.updatePolicy = (UpdatePolicy) ois.readObject();
+        if (isPresent()) {
+            this.value = (T) ois.readObject();
         }
+        newValue = null;
     }
 
 

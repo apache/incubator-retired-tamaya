@@ -20,14 +20,12 @@
  */
 package org.apache.tamaya.integration.cdi;
 
-import java.beans.PropertyChangeEvent;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
+
 import java.math.BigDecimal;
 
 import javax.inject.Singleton;
-
-import org.apache.tamaya.event.ObservesConfigChange;
-import org.apache.tamaya.inject.ConfigDefault;
-import org.apache.tamaya.inject.Config;
 
 /**
  * Class to be loaded from CDI to ensure fields are correctly configured using CDI injection mechanisms.
@@ -38,11 +36,11 @@ public class ConfiguredClass{
     @Config
     private String testProperty;
 
-    @Config(keys = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
+    @Config({"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
     @ConfigDefault("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    @Config(keys = {"foo","a.b.c.key2"})
+    @Config({"foo","a.b.c.key2"})
     private String value2;
 
     @Config
@@ -63,16 +61,11 @@ public class ConfiguredClass{
     @Config
     private boolean booleanT;
 
-    @Config(keys = "BD")
+    @Config("BD")
     private BigDecimal bigNumber;
 
-    @Config(keys = "double1")
+    @Config("double1")
     private double doubleValue;
-
-    @ObservesConfigChange
-    public void changeListener1(PropertyChangeEvent configChange){
-        // will be called
-    }
 
     public String getTestProperty() {
         return testProperty;

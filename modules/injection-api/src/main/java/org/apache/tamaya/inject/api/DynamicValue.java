@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject;
+package org.apache.tamaya.inject.api;
 
 import java.beans.PropertyChangeListener;
 
@@ -112,7 +112,7 @@ public interface DynamicValue<T> {
      * Method to check for and apply a new value. Depending on the {@link  UpdatePolicy}
      * the value is immediately or deferred visible (or it may even be ignored completely).
      * @return true, if a new value has been detected. The value may not be visible depending on the current
-     * {@link org.apache.tamaya.inject.DynamicValue.UpdatePolicy} in place.
+     * {@link DynamicValue.UpdatePolicy} in place.
      */
     boolean updateValue();
 

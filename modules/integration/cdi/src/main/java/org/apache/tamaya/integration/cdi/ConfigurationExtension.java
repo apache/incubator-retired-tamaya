@@ -20,6 +20,11 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.WithConfigOperator;
+import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -46,9 +51,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * CDI Extension module that adds injection mechanism for configuration.
  *
- * @see Config
- * @see ConfigDefault
- * @see org.apache.tamaya.integration.cdi.ConfigDefaultSections
+ * @see org.apache.tamaya.inject.api.Config
+ * @see org.apache.tamaya.inject.api.ConfigDefault
+ * @see org.apache.tamaya.inject.api.ConfigDefaultSections
  * @see ConfigException
  */
 public class ConfigurationExtension implements Extension {

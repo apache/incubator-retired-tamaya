@@ -20,6 +20,7 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.inject.api.InjectionUtils;
 
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -59,15 +60,15 @@ public class ConfiguredSetterMethod {
      * @throws ConfigException if evaluation or conversion failed.
      */
     public void applyValue(Object target, boolean resolve) throws ConfigException {
-        String configValue = InjectionUtils.getConfigValue(this.setterMethod);
+        String configValue = InjectionHelper.getConfigValue(this.setterMethod);
         Objects.requireNonNull(target);
         try {
             String evaluatedString = resolve && configValue != null
-                    ? InjectionUtils.evaluateValue(configValue)
+                    ? InjectionHelper.evaluateValue(configValue)
                     : configValue;
 
             // Check for adapter/filter
-            Object value = InjectionUtils.adaptValue(this.setterMethod, TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), evaluatedString);
+            Object value = InjectionHelper.adaptValue(this.setterMethod, TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), evaluatedString);
 
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override

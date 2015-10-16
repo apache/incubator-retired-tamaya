@@ -18,36 +18,32 @@
  */
 package annottext;
 
-import org.apache.tamaya.inject.ConfigDefault;
-import org.apache.tamaya.inject.Config;
-import org.apache.tamaya.inject.DynamicValue;
-import org.apache.tamaya.inject.LoadPolicy;
-import org.apache.tamaya.inject.WithLoadPolicy;
+import org.apache.tamaya.inject.api.DynamicValue;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
 
 /**
  * An example showing some basic annotations, using an interface to be proxied by the
  * configuration system.
  * Created by Anatole on 15.02.14.
  */
-@WithLoadPolicy(LoadPolicy.INITIAL)
 public interface AnnotatedConfigTemplate {
 
-    @Config(keys = {"foo.bar.myprop", "mp","common.testdata.myProperty"})
+    @Config({"foo.bar.myprop", "mp","common.testdata.myProperty"})
     @ConfigDefault("ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     String myParameter();
 
-    @Config(keys = "simple_value")
-    @WithLoadPolicy(LoadPolicy.LAZY)
+    @Config("simple_value")
     String simpleValue();
 
     @Config
     String simplestValue();
 
-    @Config(keys = "host.name")
+    @Config("host.name")
     String hostName();
 
-    @Config(keys = "host.name")
+    @Config("host.name")
     DynamicValue<String> getDynamicValue();
 
 }

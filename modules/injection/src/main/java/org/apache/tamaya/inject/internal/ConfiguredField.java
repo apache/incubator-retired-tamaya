@@ -21,7 +21,8 @@ package org.apache.tamaya.inject.internal;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.DynamicValue;
+import org.apache.tamaya.inject.api.DynamicValue;
+import org.apache.tamaya.inject.api.InjectionUtils;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -100,14 +101,14 @@ public class ConfiguredField {
     private void applyValue(Object target,boolean resolve) throws ConfigException {
         Objects.requireNonNull(target);
         try {
-            String configValue = InjectionUtils.getConfigValue(this.annotatedField);
+            String configValue = InjectionHelper.getConfigValue(this.annotatedField);
             // Next step perform expression resolution, if any
             String evaluatedValue = resolve && configValue != null
-                    ? InjectionUtils.evaluateValue(configValue)
+                    ? InjectionHelper.evaluateValue(configValue)
                     : configValue;
 
             // Check for adapter/filter
-            Object value = InjectionUtils.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), evaluatedValue);
+            Object value = InjectionHelper.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), evaluatedValue);
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override
                 public Object run() throws Exception {

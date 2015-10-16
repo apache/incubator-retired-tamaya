@@ -21,11 +21,20 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.DynamicValue;
+import org.apache.tamaya.inject.api.WithConfigOperator;
+import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,10 +47,22 @@ public class ConfigurationProducer {
 
     private static final Logger LOGGER = Logger.getLogger(ConfigurationProducer.class.getName());
 
+    private DynamicValue createynamicValue(final InjectionPoint injectionPoint) {
+        Member member = injectionPoint.getMember();
+        if(member instanceof Field) {
+            return DefaultDynamicValue.of((Field)member, ConfigurationProvider.getConfiguration());
+        } else if(member instanceof Method) {
+            return DefaultDynamicValue.of((Method)member, ConfigurationProvider.getConfiguration());
+        }
+        return null;
+    }
+
     @Produces
     @Config
     public Object resolveAndConvert(final InjectionPoint injectionPoint) {
-
+        if(DynamicValue.class.equals(injectionPoint.getAnnotated().getBaseType())){
+            return createynamicValue(injectionPoint);
+        }
         final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
         final ConfigDefault defaultAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefault.class);
         final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);

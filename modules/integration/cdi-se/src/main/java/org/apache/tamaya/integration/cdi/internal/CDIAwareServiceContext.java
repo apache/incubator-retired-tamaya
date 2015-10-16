@@ -19,7 +19,7 @@
 package org.apache.tamaya.integration.cdi.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.clsupport.internal.CLAwareServiceContext;
+import org.apache.tamaya.clsupport.CLAwareServiceContext;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;

@@ -16,9 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject;
+package org.apache.tamaya.inject.api;
 
 
+import javax.enterprise.util.Nonbinding;
+import javax.inject.Qualifier;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,8 +29,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation to enable injection current a configured property or define the returned data for
  * a configuration template method. Hereby this annotation can be used in multiple ways and combined
- * with other annotations such as {@link ConfigDefault},
- * {@link WithLoadPolicy},  {@link WithConfigOperator}, {@link WithPropertyConverter}.
+ * with other annotations such as {@link ConfigDefault}, {@link WithConfigOperator}, {@link WithPropertyConverter}.
  *
  * Below the most simple variant current a configured class is given:
  * {@code
@@ -40,33 +41,32 @@ import java.lang.annotation.Target;
  * When this class is configured, e.g. by passing it to {@link org.apache.tamaya.Configuration#configure(Object)},
  * the following is happening:
  * <ul>
- *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.current();}</li>
- *     <li>The current property String keys is evaluated by calling {@code cfg.get("aValue");}</li>
- *     <li>if not successful, an error is thrown ({@link org.apache.tamaya.ConfigException}.</li>
- *     <li>On success, since no type conversion is involved, the keys is injected.</li>
- *     <li>The configured bean is registered as a weak change listener in the config system's underlying
- *     configuration, so future config changes can be propagated (controlled by {@link WithLoadPolicy}
- *     annotations).</li>
+ *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = ConfigurationProvider.getConfiguration();}</li>
+ *     <li>The current possible property keys are evaluated by calling {@code cfg.get("aValue");}</li>
+ *     <li>if not successful, and a @ConfigDefault annotation is present, the default value is used.
+ *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
+ *     <li>On success, since no type conversion is involved, the value is injected.</li>
  * </ul>
  *
  * In the next example we explicitly define the property keys:
  * {@code
+ * @ConfigDefaultSections("section1")
  * pubic class ConfiguredItem{
  *
- *   @ConfiguredProperty
- *   @ConfiguredProperty(keys={"a.b.value", "a.b.deprecated.keys"})
- *   @ConfiguredProperty(keys="a")
+ *   @ConfiguredProperty({"b", "[a.b.deprecated.keys]", "a"})
+ *   @ConfigDefault("myDefaultValue")
  *   private String aValue;
  * }
  *
- * Within this example we evaluate multiple possible keys. Evaluation is aborted if a key could be successfully
- * resolved. Hereby the ordering current the annotations define the ordering current resolution, so in the example above
- * resolution equals to {@code "aValue", "a.b.keys", "a.b.deprecated.keys"}. If no keys could be read
- * fromMap the configuration, it uses the keys fromMap the {@code ConfigDefault} annotation. Interesting here
- * is that this keys is not static, it is evaluated.
+ * Within this example we evaluate multiple possible keys (section1.b, a.b.deprecated.keys, section1.a). Evaluation is
+ * aborted if a key could be successfully resolved. Hereby the ordering current the annotations define the ordering
+ * current resolution, so in the example above
+ * resolution equals to {@code "section1.b", "a.b.deprecated.keys", "section1.a"}. If no value has bee found,
+ * the configured default {@code myDefaultValue} is returned.
  */
+@Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD })
+@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 public @interface Config {
 
     /**
@@ -74,6 +74,7 @@ public @interface Config {
      *
      * @return the property names, not null. If missing the field or method name being injected is used by default.
      */
-    String[] keys() default {};
+    @Nonbinding
+    String[] value() default {};
 
 }

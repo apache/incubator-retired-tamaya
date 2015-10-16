@@ -46,9 +46,7 @@ public class ConfiguredTest{
         System.out.println("********************************************");
         System.out.println(item);
         System.out.println("********************************************");
-
         double actual = 1234.5678;
-
         MatcherAssert.assertThat(item.getDoubleValue(), is(actual));
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.tamaya.integration.cdi;
 
+import org.apache.tamaya.inject.api.Config;
 import org.tomitribe.util.Duration;
 
 import javax.inject.Inject;

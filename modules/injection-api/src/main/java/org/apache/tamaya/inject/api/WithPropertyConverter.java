@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.event;
+package org.apache.tamaya.inject.api;
+
+
+import org.apache.tamaya.spi.PropertyConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,15 +27,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to annotate a method on a class to be informed on config changes.
- * The exact behaviour, when configuration change events are sent can be configured
- * on each configured property/method by adding the {@link org.apache.tamaya.inject.WithLoadPolicy}
- * annotation. By default listeners are informed on all changes of configurations that were used as
- * input configurations for configuring a class/instance. Additionally {@link org.apache.tamaya.inject.Config}
- * annotations can be added that allows to constrain changes to some limited properties.
+ * Annotation to define a type adapter to be used before injecting a configured keys, or for applying changes.
+ * This will override any other adapter for performing the type conversion before
+ * injecting the field keys.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.METHOD })
-public @interface ObservesConfigChange {
+@Target(value = {ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+public @interface WithPropertyConverter {
+
+    /**
+     * Define a custom adapter or codec that should be used to adapt the configuration entry injected. This overrides any
+     * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
+     * registered, it is handled as a deployment error.
+     */
+    Class<? extends PropertyConverter<?>> value();
 
 }

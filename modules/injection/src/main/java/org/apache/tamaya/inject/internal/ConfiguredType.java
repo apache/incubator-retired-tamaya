@@ -26,11 +26,9 @@ import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.inject.ConfigAutoInject;
-import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.Config;
 import org.apache.tamaya.inject.NoConfig;
-import org.apache.tamaya.event.ObservesConfigChange;
-import org.apache.tamaya.event.PropertyChangeSet;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
 
 /**
  * Structure that contains and manages configuration related things for a configured type registered.
@@ -48,10 +46,6 @@ public class ConfiguredType {
      * A list with all annotated methods (templates).
      */
     private List<ConfiguredSetterMethod> configuredSetterMethods = new ArrayList<>();
-    /**
-     * A list with all callback methods listening to config changes.
-     */
-    private List<ConfigChangeCallbackMethod> callbackMethods = new ArrayList<>();
     /**
      * The basic type.
      */
@@ -123,28 +117,10 @@ public class ConfiguredType {
                 continue;
             }
             if(isConfiguredMethod(m) || autoConfigure) {
-                ObservesConfigChange observesAnnot = m.getAnnotation(ObservesConfigChange.class);
                 Config propAnnot = m.getAnnotation(Config.class);
-                if (type.isInterface()) {
-                    // it is a template
-                    if (observesAnnot != null && m.isDefault()) {
-                        if (addObserverMethod(m)) {
-                            LOG.finer("Added configured observer for template: " + m.getClass().getName() + "#" +
-                                    m.toGenericString());
-                        }
-                    }
-                } else {
-                    if (observesAnnot != null) {
-                        if (addObserverMethod(m)) {
-                            LOG.finer("Added configured observer: " + m.getClass().getName() + "#" +
-                                    m.toGenericString());
-                        }
-                    } else {
-                        if (addPropertySetter(m, propAnnot)) {
-                            LOG.finer("Added configured setter: " + m.getClass().getName() + "#" +
-                                    m.toGenericString());
-                        }
-                    }
+                if (addPropertySetter(m, propAnnot)) {
+                    LOG.finer("Added configured setter: " + m.getClass().getName() + "#" +
+                            m.toGenericString());
                 }
             }
         }
@@ -170,27 +146,6 @@ public class ConfiguredType {
     }
 
 
-
-    private boolean addObserverMethod(Method m) {
-        if (m.getParameterTypes().length != 1) {
-            return false;
-        }
-        if (!m.getParameterTypes()[0].equals(PropertyChangeSet.class)) {
-            return false;
-        }
-        if (!void.class.equals(m.getReturnType())) {
-            return false;
-        }
-        try {
-            this.callbackMethods.add(new ConfigChangeCallbackMethod(m));
-            return true;
-        } catch (Exception e) {
-            throw new ConfigException("Failed to initialized configured callback method: " +
-                    m.getDeclaringClass().getName() + '.' + m.getName(), e);
-        }
-    }
-
-
     /**
      * Method called to configure an instance.
      *
@@ -203,11 +158,6 @@ public class ConfiguredType {
         for (ConfiguredSetterMethod method : configuredSetterMethods) {
             method.applyValue(instance, true);
 //            // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
-//            WeakConfigListenerManager.of().registerConsumer(instance, method.createConsumer(instance));
-        }
-        // Register callbacks for this instance (weakly)
-        for (ConfigChangeCallbackMethod callback : callbackMethods) {
-            WeakConfigListenerManager.of().registerConsumer(instance, callback.createConsumer(instance));
         }
     }
 
@@ -257,14 +207,6 @@ public class ConfiguredType {
      */
     public Collection<ConfiguredSetterMethod> getConfiguredSetterMethods(){
         return configuredSetterMethods;
-    }
-
-    /**
-     * Get the registered annotated callback methods.
-     * @return the registered annotated callback methods, never null.
-     */
-    public Collection<ConfigChangeCallbackMethod> getObserverMethods(){
-        return callbackMethods;
     }
 
     @Override

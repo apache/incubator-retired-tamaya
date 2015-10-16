@@ -111,4 +111,11 @@ under the License.
         <Method name="checkConfigurationUpdate" />
     </Match>
 
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.DefaultDynamicValue"/>
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.integration.cdi.DefaultDynamicValue"/>
+    </Match>
+
 </FindBugsFilter>

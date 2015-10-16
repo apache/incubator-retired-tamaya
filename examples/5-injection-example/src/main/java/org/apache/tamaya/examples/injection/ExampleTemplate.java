@@ -18,10 +18,6 @@
  */
 package org.apache.tamaya.examples.injection;
 
-import org.apache.tamaya.inject.ConfigDefault;
-import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.Config;
-
 /**
  * Simple example bean, mapped by default names mostly.
  */

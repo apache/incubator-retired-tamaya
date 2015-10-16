@@ -19,9 +19,6 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.event.ObservesConfigChange;
-import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.Config;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
@@ -33,8 +30,10 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.inject.ConfiguredItemSupplier;
+import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 import org.apache.tamaya.inject.NoConfig;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
 
 /**
  * Simple injector singleton that also registers instances configured using weak references.
@@ -73,18 +72,12 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
             return true;
         }
         for (Field f : type.getDeclaredFields()) {
-            if (f.isAnnotationPresent(NoConfig.class)) {
-                return true;
-            }
-            if (f.isAnnotationPresent(ObservesConfigChange.class) || f.isAnnotationPresent(Config.class)) {
+            if (f.isAnnotationPresent(NoConfig.class) || f.isAnnotationPresent(Config.class)) {
                 return true;
             }
         }
         for (Method m : type.getDeclaredMethods()) {
-            if (m.isAnnotationPresent(NoConfig.class)) {
-                return true;
-            }
-            if (m.isAnnotationPresent(ObservesConfigChange.class) || m.isAnnotationPresent(Config.class)) {
+            if (m.isAnnotationPresent(NoConfig.class) || m.isAnnotationPresent(Config.class)) {
                 return true;
             }
         }

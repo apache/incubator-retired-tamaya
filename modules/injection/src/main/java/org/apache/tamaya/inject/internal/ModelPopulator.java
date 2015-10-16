@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.inject.internal;
 
+import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.model.ConfigValidator;
 import org.apache.tamaya.model.spi.ParameterValidation;
 

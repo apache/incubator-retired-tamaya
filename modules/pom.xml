@@ -37,6 +37,7 @@ under the License.
         <module>spi-support</module>
         <module>events</module>
         <module>formats</module>
+        <module>injection-api</module>
         <module>injection</module>
         <module>json</module>
         <module>resolver</module>

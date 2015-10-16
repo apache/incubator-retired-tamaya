@@ -20,6 +20,8 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.tomitribe.util.Duration;
@@ -47,6 +49,7 @@ public class ConfigurationProducerTest {
 
     @Test
     public void defaultValues() {
+        assertNotNull(allTypes);
         assertEquals("defaultString", allTypes.getDefaultString());
         assertEquals(new File("./"), allTypes.getDefaultFile());
         assertEquals(new Duration("2 hours and 54 minutes"), allTypes.getDefaultDuration());
@@ -56,6 +59,7 @@ public class ConfigurationProducerTest {
 
     @Test
     public void actualPropertyValues() {
+        assertNotNull(allTypes);
         assertEquals("hello", allTypes.getString());
         assertEquals(new File("./conf"), allTypes.getFile());
         assertEquals(new Duration("10 minutes and 57 seconds"), allTypes.getDuration());

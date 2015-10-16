@@ -16,26 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject;
-
 /**
- * Represents a supplier of results.
- * <p>
- * <p>There is no requirement that a new or distinct result be returned each
- * time the supplier is invoked.
- * <p>
- * <p>This is a functional interface,
- * whose functional method is {@link #get()}.
- *
- * @param <T> the type of results supplied by this supplier
+ * Common njection API.
  */
-//@FunctionalInterface
-public interface ConfiguredItemSupplier<T> {
-
-    /**
-     * Gets a result.
-     *
-     * @return a result
-     */
-    T get();
-}
+package org.apache.tamaya.inject.api;

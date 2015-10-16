@@ -19,6 +19,8 @@
 package org.apache.tamaya.inject;
 
 
+import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
+
 /**
  * Accessor interface for injection of configuration and configuration templates.
  */

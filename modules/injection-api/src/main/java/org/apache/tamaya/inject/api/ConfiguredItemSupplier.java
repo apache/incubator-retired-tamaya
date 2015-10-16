@@ -16,25 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.apache.tamaya.inject.api;
 
 /**
- * Annotation to define how config changes are handled for a type or per property/template method.
- * @see LoadPolicy
+ * Represents a supplier of results.
+ * <p>
+ * <p>There is no requirement that a new or distinct result be returned each
+ * time the supplier is invoked.
+ * <p>
+ * <p>This is a functional interface,
+ * whose functional method is {@link #get()}.
+ *
+ * @param <T> the type of results supplied by this supplier
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
-public @interface WithLoadPolicy {
+//@FunctionalInterface
+public interface ConfiguredItemSupplier<T> {
 
     /**
-     * The load policy to be used. If this annotation is present a load policy must be defined.
-     * @return The load policy to be used, not null.
+     * Gets a result.
+     *
+     * @return a result
      */
-    LoadPolicy value();
-
+    T get();
 }

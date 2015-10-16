@@ -18,9 +18,9 @@
  */
 package org.apache.tamaya.examples.injection;
 
-import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.Config;
-import org.apache.tamaya.inject.ConfigDefault;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
 
 /**
  * Simple example bean, mapped by default names mostly.
@@ -34,7 +34,7 @@ public class Example {
     @ConfigDefault("No description available.")
     private String description;
     private int version;
-    @Config(keys = "author")
+    @Config("author")
     private String exampleAuthor;
 
     @Override

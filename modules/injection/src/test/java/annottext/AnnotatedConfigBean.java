@@ -18,14 +18,11 @@
  */
 package annottext;
 
-import org.apache.tamaya.event.ObservesConfigChange;
-import org.apache.tamaya.event.PropertyChangeSet;
-import org.apache.tamaya.inject.ConfigDefault;
-import org.apache.tamaya.inject.Config;
-import org.apache.tamaya.inject.DynamicValue;
-import org.apache.tamaya.inject.LoadPolicy;
+import org.apache.tamaya.inject.api.DynamicValue;
+import org.apache.tamaya.inject.api.LoadPolicy;
 import org.apache.tamaya.inject.NoConfig;
-import org.apache.tamaya.inject.WithLoadPolicy;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,25 +32,23 @@ import java.util.List;
  * configuration system, nevertheless extending the overall Configuration interface.
  * Created by Anatole on 15.02.14.
  */
-@WithLoadPolicy(LoadPolicy.INITIAL)
 public class AnnotatedConfigBean {
 
-    @Config(keys = {"foo.bar.myprop", "mp", "common.testdata.myProperty"})
+    @Config({"foo.bar.myprop", "mp", "common.testdata.myProperty"})
     @ConfigDefault("ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     public String myParameter;
 
-    @Config(keys = "simple_value")
-    @WithLoadPolicy(LoadPolicy.LAZY)
+    @Config("simple_value")
     public String simpleValue;
 
     @Config
     String anotherValue;
 
-    @Config(keys = "host.name")
+    @Config("host.name")
     private String hostName;
 
-    @Config(keys = "host.name")
+    @Config("host.name")
     private DynamicValue<String> dynamicHostname;
 
     @NoConfig
@@ -78,14 +73,9 @@ public class AnnotatedConfigBean {
     public static final String CONSTANT = "a constant";
 
 
-    @Config(keys = "java.version")
+    @Config("java.version")
     void setJavaVersion(String version){
         this.javaVersion = version;
     }
 
-    @Config(keys="b")
-    @ObservesConfigChange
-    public void callBackTest(PropertyChangeSet value){
-        this.events.add(value.toString());
-    }
 }
