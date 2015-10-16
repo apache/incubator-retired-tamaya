@@ -69,7 +69,7 @@ NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 
 |+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a http service.     |link:mod_server.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:mod_optional.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-classloader-support+      |Manages Tamaya configuration and services considering classloading hierarchies.  |link:mod_classloader_support.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-cdi-se+        |Tamaya integration module for CDI.                     |link:mod_cdi-se.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-cdi+           |Tamaya integration modules for CDI.                    |link:mod_cdi.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-spi-support+   |Tamaya support module for SPI implementation.          |link:mod_spi-support.html[Documentation]
 |=======
 
