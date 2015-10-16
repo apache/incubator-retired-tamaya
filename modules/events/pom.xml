@@ -75,7 +75,7 @@ under the License.
                             org.apache.tamaya.events,
                             org.apache.tamaya.events.delta,
                             org.apache.tamaya.events.folderobserver,
-                            org.apache.tamaya.events..spi
+                            org.apache.tamaya.events.spi
                         </Export-Package>
                         <Private-Package>
                             org.apache.tamaya.events.internal
