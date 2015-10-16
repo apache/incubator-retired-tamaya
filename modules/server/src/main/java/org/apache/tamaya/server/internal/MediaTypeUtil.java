@@ -23,16 +23,27 @@ import javax.ws.rs.core.MediaType;
 /**
  * Simple utility class.
  */
-class MediaTypeUtil {
-
+public final class MediaTypeUtil {
+    /** Singleton constructor. */
     private MediaTypeUtil(){}
 
+    /**
+     * Compares the given MIME type String and tries to evaluate the MIME type matching best.
+     * Currently it select one of application/xml, application/json, text/plain and text/html.
+     * if none is matching application/json is returned by default.
+     * @param formats the formats to check.
+     * @return the selected MediaType
+     */
     public static MediaType getMediaType(String... formats) {
         for(String format:formats) {
             if (format.equalsIgnoreCase(MediaType.APPLICATION_XML)) {
                 return MediaType.APPLICATION_XML_TYPE;
             } else if (format.equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
                 return MediaType.APPLICATION_JSON_TYPE;
+            } else if (format.equalsIgnoreCase(MediaType.TEXT_HTML)) {
+                return MediaType.TEXT_HTML_TYPE;
+            } else if (format.equalsIgnoreCase(MediaType.TEXT_PLAIN)) {
+                return MediaType.TEXT_PLAIN_TYPE;
             }
         }
         for(String format:formats) {
