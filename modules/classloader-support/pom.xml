@@ -32,7 +32,7 @@ under the License.
     <description>Apache Tamaya Classloader Support registers a ConfigurationContext that leverages
     classloader hierarchies. Also visibility of features and components is aligned with the
     corresponding hierarchy of classloaders.</description>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
@@ -45,9 +45,31 @@ under the License.
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spisupport</artifactId>
+            <version>0.2-incubating-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.tamaya.clsupport
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

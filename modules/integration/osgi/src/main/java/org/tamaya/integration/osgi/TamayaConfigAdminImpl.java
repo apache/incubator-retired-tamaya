@@ -55,8 +55,7 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
                         Configuration config = getConfiguration(pid);
                         if(config==null){
                             service.updated(null);
-                        }
-                        else{
+                        } else{
                             service.updated(config.getProperties());
                         }
                     } catch (Exception e) {

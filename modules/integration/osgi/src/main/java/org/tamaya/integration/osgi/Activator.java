@@ -45,8 +45,7 @@ public class Activator implements BundleActivator {
         String ranking = context.getProperty(SERVICE_RANKING_PROP);
         if (ranking == null) {
             props.put(Constants.SERVICE_RANKING, DEFAULT_RANKING);
-        }
-        else{
+        } else{
             props.put(Constants.SERVICE_RANKING, Integer.valueOf(ranking));
         }
         TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);

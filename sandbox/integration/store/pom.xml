@@ -28,7 +28,7 @@ under the License.
     <artifactId>tamaya-store</artifactId>
     <name>Apache Tamaya Storage/Cache/Datagrid Integration</name>
     <description>Integration with a Datagrid backend for distributed configuration.</description>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -51,4 +51,30 @@ under the License.
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.apache.tamaya,
+                            org.apache.tamaya.spi,
+                            org.apache.tamaya.events,
+                            org.apache.tamaya.spisupport
+                            javax.annotation,
+                            *
+                        </Import-Package>
+                        <Export-Package>
+                            org.apache.tamaya.integration.store,
+                            org.apache.tamaya.integration.store.spi,
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

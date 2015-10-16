@@ -28,6 +28,7 @@ under the License.
 
     <artifactId>tamaya-api</artifactId>
     <name>Apache Tamaya API</name>
+    <packaging>bundle</packaging>
 
     <description>
         The API for accessing configuration data.
@@ -40,5 +41,23 @@ under the License.
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.tamaya,
+                            org.apache.tamaya.spi
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

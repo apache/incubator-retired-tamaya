@@ -28,7 +28,7 @@ under the License.
     </parent>
     <artifactId>tamaya-sysprops</artifactId>
     <name>Apache Tamaya - Configured Java SE System Properties</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <build>
         <plugins>
@@ -43,6 +43,27 @@ under the License.
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.apache.tamaya,
+                            org.apache.tamaya.spi,
+                            org.apache.tamaya.resources,
+                            org.apache.tamaya.spisupport,
+                            org.apache.tamaya.functions,
+                            javax.annotation,
+                            *
+                        </Import-Package>
+                        <Export-Package>
+                            org.apache.tamaya.integration.se
+                        </Export-Package>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>

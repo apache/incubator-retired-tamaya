@@ -29,7 +29,7 @@ under the License.
     <artifactId>tamaya-metamodels-simple</artifactId>
     <name>Apache Tamaya Modules Metamodels - Simple</name>
     <description>Simple Tamaya Metamodel, e.g. feasible for SE commandline tools and simple use cases.</description>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -49,7 +49,7 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-items</artifactId>
+            <artifactId>tamaya-resources</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -58,5 +58,29 @@ under the License.
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.apache.tamaya,
+                            org.apache.tamaya.spi,
+                            org.apache.tamaya.format,
+                            javax.annotation,
+                            *
+                        </Import-Package>
+                        <Export-Package>
+                            org.apache.tamaya.metamodel.simple
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

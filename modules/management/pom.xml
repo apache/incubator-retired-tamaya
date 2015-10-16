@@ -29,7 +29,7 @@ under the License.
 
     <artifactId>tamaya-management</artifactId>
     <name>Apache Tamaya Modules - Java Management Extensions</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
@@ -57,5 +57,22 @@ under the License.
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.tamaya.management
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

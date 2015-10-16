@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -24,14 +23,16 @@ under the License.
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-extensions</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
-
-    <artifactId>tamaya-events</artifactId>
-    <name>Apache Tamaya Event and dynamic Update Extensions</name>
+    <artifactId>tamaya-injection-api</artifactId>
+    <name>Apache Tamaya Injection Support API</name>
     <packaging>bundle</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
+        <geronimo-atinject-1.0-spec.version>1.0</geronimo-atinject-1.0-spec.version>
+        <geronimo-jcdi-1.1-spec.version>1.0</geronimo-jcdi-1.1-spec.version>
     </properties>
 
     <dependencies>
@@ -42,24 +43,17 @@ under the License.
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-formats</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <version>${geronimo-atinject-1.0-spec.version}</version>
             <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
+            <version>${geronimo-jcdi-1.1-spec.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -72,19 +66,12 @@ under the License.
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.tamaya.events,
-                            org.apache.tamaya.events.delta,
-                            org.apache.tamaya.events.folderobserver,
-                            org.apache.tamaya.events..spi
+                            org.apache.tamaya.inject.api
                         </Export-Package>
-                        <Private-Package>
-                            org.apache.tamaya.events.internal
-                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
-    
 </project>

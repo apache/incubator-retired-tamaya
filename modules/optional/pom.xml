@@ -32,7 +32,7 @@ under the License.
     <description>This module provides a simple class that can be used as a single dependency for evaluating
     configuration. It runs basically without Tamaya being on the classpath, but if available it
     considers/uses Tamaya functionality.</description>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
@@ -58,4 +58,21 @@ under the License.
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.tamaya.optional
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

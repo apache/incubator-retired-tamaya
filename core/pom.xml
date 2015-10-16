@@ -28,6 +28,7 @@ under the License.
 
     <artifactId>tamaya-core</artifactId>
     <name>Apache Tamaya Core Implementation</name>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -48,5 +49,29 @@ under the License.
             <artifactId>hamcrest-core</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.apache.tamaya,
+                            org.apache.tamaya.spi,
+                            javax.annotation,
+                            *
+                        </Import-Package>
+                        <Private-Package>
+                            org.apache.tamaya.core.internal,
+                            org.apache.tamaya.core.internal.converters
+                        </Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

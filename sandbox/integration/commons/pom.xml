@@ -28,7 +28,7 @@ under the License.
     </parent>
     <artifactId>commons</artifactId>
     <name>Apache Tamaya Commons Configuration Integration</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -47,4 +47,29 @@ under the License.
             <version>1.10</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.apache.tamaya,
+                            org.apache.tamaya.spi,
+                            org.apache.tamaya.format,
+                            org.apache.commons,
+                            javax.annotation,
+                            *
+                        </Import-Package>
+                        <Export-Package>
+                            org.apache.tamaya.integration.commons
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

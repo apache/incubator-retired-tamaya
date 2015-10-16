@@ -28,6 +28,7 @@ under the License.
 
     <artifactId>tamaya-builder</artifactId>
     <name>Apache Tamaya Builder</name>
+    <packaging>jar</packaging> <!-- bundle -->
 
     <inceptionYear>2015</inceptionYear>
 
@@ -86,5 +87,21 @@ under the License.
 
     </dependencies>
 
+    <!--build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.tamaya.builder
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build -->
     
 </project>

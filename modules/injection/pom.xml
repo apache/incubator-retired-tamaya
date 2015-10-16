@@ -27,7 +27,7 @@ under the License.
     </parent>
     <artifactId>tamaya-injection</artifactId>
     <name>Apache Tamaya Injection Support</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
@@ -41,10 +41,20 @@ under the License.
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection-api</artifactId>
+            <version>0.2-incubating-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-events</artifactId>
+            <version>0.2-incubating-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
@@ -69,4 +79,25 @@ under the License.
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.tamaya.inject
+                        </Export-Package>
+                        <Private-Package>
+                            org.apache.tamaya.inject.internal
+                        </Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
