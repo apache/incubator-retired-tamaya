@@ -33,7 +33,6 @@
     <description>Tamaya Based ConfigAdmin Service</description>
 
     <properties>
-        <osgi.version>6.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <felix.plugin.version>2.5.4</felix.plugin.version>
     </properties>
@@ -48,47 +47,18 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>
-                            ${project.artifactId}
-                        </Bundle-SymbolicName>
                         <Bundle-Activator>
                             org.apache.tamaya.integration.karaf.Activator
                         </Bundle-Activator>
-                        <Bundle-Vendor>The Apache Software Foundation</Bundle-Vendor>
-                        <DynamicImport-Package>
-                            org.osgi.service.log;version="[1.3,2)"
-                        </DynamicImport-Package>
-                        <Import-Package>
-                            org.osgi.service.cm,
-                            org.osgi.framework,
-                            *
-                        </Import-Package>
                         <Export-Package>org.osgi.service.cm</Export-Package>
                         <Private-Package>
-                            org.tamaya.integration.osgi,
-                            org.apache.felix.utils.properties
+                            org.tamaya.integration.osgi
                         </Private-Package>
-                        <Import-Service>
-                        </Import-Service>
                         <Export-Service>
                             org.osgi.service.cm.ConfigurationAdmin
                         </Export-Service>
                     </instructions>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>cleanVersions</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>cleanVersions</goal>
-                        </goals>
-                        <configuration>
-                            <versions>
-                                <karaf.osgi.version>${osgi.version}</karaf.osgi.version>
-                            </versions>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

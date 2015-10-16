@@ -47,6 +47,7 @@ under the License.
         <commons-io.version>2.4</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
         <jdkVersion>1.7</jdkVersion>
+        <osgi.version>6.0.0</osgi.version>
         <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
         <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
@@ -81,7 +82,6 @@ under the License.
 
         <!-- Dependencies for site generation -->
         <reflow-skin.version>1.1.1</reflow-skin.version>
-
 
     </properties>
 
@@ -494,6 +494,30 @@ under the License.
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>2.3.7</version>
                     <inherited>true</inherited>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <instructions>
+                            <Bundle-DocURL>http://tamaya.incubator.apache.org</Bundle-DocURL>
+                            <Bundle-SymbolicName>
+                                ${project.groupId}.${project.artifactId}
+                            </Bundle-SymbolicName>
+                            <Bundle-Vendor>The Apache Software Foundation</Bundle-Vendor>
+                        </instructions>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>cleanVersions</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>cleanVersions</goal>
+                            </goals>
+                            <configuration>
+                                <versions>
+                                    <karaf.osgi.version>${osgi.version}</karaf.osgi.version>
+                                </versions>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
