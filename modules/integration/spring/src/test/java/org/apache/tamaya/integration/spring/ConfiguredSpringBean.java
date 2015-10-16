@@ -18,9 +18,9 @@
  */
 package org.apache.tamaya.integration.spring;
 
-import org.apache.tamaya.inject.ConfigDefaultSections;
-import org.apache.tamaya.inject.Config;
-import org.apache.tamaya.inject.ConfigDefault;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefault;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
@@ -33,7 +33,7 @@ public class ConfiguredSpringBean {
     @Autowired
     private Environment env;
 
-    @Config(keys = "java.version")
+    @Config("java.version")
     private String javaVersion;
 
     @Config
