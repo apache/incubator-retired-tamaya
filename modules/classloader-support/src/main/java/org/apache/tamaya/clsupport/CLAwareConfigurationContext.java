@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.clsupport.internal;
+package org.apache.tamaya.clsupport;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.clsupport.AbstractClassloaderAwareItemLoader;
-import org.apache.tamaya.clsupport.internal.ctx.DefaultConfigurationContext;
+import org.apache.tamaya.spisupport.DefaultConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyConverter;

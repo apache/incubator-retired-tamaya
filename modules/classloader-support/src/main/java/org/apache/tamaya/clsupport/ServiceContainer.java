@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.clsupport.internal;
+package org.apache.tamaya.clsupport;
 
 import java.io.BufferedReader;
 import java.io.IOException;
