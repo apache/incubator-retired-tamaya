@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -233,8 +232,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     }
 
     private <T> String createStringList(Collection<T> propertySources, Function<T,String> mapper){
-        StringJoiner joiner = new StringJoiner(", ");
-        propertySources.forEach(t -> joiner.add(mapper.apply(t)));
+        StringBuilder joiner = new StringBuilder(", ");
+        propertySources.forEach(t -> joiner.append(mapper.apply(t)));
         return joiner.toString();
     }
 }

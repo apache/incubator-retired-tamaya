@@ -20,7 +20,6 @@ package org.apache.tamaya.resource.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
  * Small helper class that manages the path parts of a location expression.
@@ -62,12 +61,12 @@ final class Locator {
      * @return the root path, never null.
      */
     public String getRootPath() {
-        StringJoiner sj = new StringJoiner("/");
+        StringBuilder sj = new StringBuilder("/");
         for (String token : this.tokens) {
             if (containsPlaceholder(token)) {
                 break;
             } else {
-                sj.add(token);
+                sj.append(token);
             }
         }
         return sj.toString();
@@ -80,9 +79,9 @@ final class Locator {
      * @return the sub expression part, never null.
      */
     public String getSubPath() {
-        StringJoiner sj = new StringJoiner("/");
+        StringBuilder sj = new StringBuilder("/");
         for (String token : getSubPathTokens()) {
-            sj.add(token);
+            sj.append(token);
         }
         return sj.toString();
     }
@@ -113,9 +112,9 @@ final class Locator {
      * @return the full expression path, never null.
      */
     public String getPath() {
-        StringJoiner sj = new StringJoiner("/");
+        StringBuilder sj = new StringBuilder("/");
         for (String token : tokens) {
-            sj.add(token);
+            sj.append(token);
         }
         return sj.toString();
     }

@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
@@ -249,8 +248,8 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
     }
 
     private <T> String createStringList(Collection<T> propertySources, Function<T, String> mapper) {
-        StringJoiner joiner = new StringJoiner(", ");
-        propertySources.forEach(t -> joiner.add(mapper.apply(t)));
+        StringBuilder joiner = new StringBuilder(", ");
+        propertySources.forEach(t -> joiner.append(mapper.apply(t)));
         return joiner.toString();
     }
 
