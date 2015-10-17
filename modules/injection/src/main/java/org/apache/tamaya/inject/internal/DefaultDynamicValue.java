@@ -24,6 +24,8 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.BaseDynamicValue;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.InjectionUtils;
+import org.apache.tamaya.inject.api.LoadPolicy;
+import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -58,7 +60,7 @@ import java.util.logging.Logger;
  *
  * @param <T> The type of the value.
  */
-public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
+final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
 
     private static final long serialVersionUID = -2071172847144537443L;
 
@@ -76,7 +78,7 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      */
     private Configuration configuration;
     /**
-     * The target type of the property used to lookup a matching {@link org.apache.tamaya.spi.PropertyConverter}.
+     * The target type of the property used to lookup a matching {@link PropertyConverter}.
      * If null, {@code propertyConverter} is set and used instead.
      */
     private TypeLiteral<T> targetType;
@@ -88,7 +90,12 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * Policy that defines how new values are applied, be default it is applied initially once, but never updated
      * anymore.
      */
-    private UpdatePolicy updatePolicy = UpdatePolicy.NEVER;
+    private UpdatePolicy updatePolicy;
+    /**
+     * Load policy.
+     */
+    private final LoadPolicy loadPolicy;
+
     /**
      * The current value, never null.
      */
@@ -112,16 +119,35 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @param propertyConverter the optional converter to be used.
      */
     private DefaultDynamicValue(String propertyName, Configuration configuration, TypeLiteral<T> targetType,
-                                PropertyConverter<T> propertyConverter, List<String> keys) {
+                                PropertyConverter<T> propertyConverter, List<String> keys, LoadPolicy loadPolicy,
+                                UpdatePolicy updatePolicy) {
         this.propertyName = Objects.requireNonNull(propertyName);
         this.keys = keys.toArray(new String[keys.size()]);
         this.configuration = Objects.requireNonNull(configuration);
         this.propertyConverter = propertyConverter;
         this.targetType = targetType;
-        this.value = evaluateValue();
+        this.loadPolicy = Objects.requireNonNull(loadPolicy);
+        this.updatePolicy = Objects.requireNonNull(updatePolicy);
+        switch(loadPolicy){
+            case INITIAL:
+                this.value = evaluateValue();
+                break;
+        }
     }
 
     public static DynamicValue of(Field annotatedField, Configuration configuration) {
+        return of(annotatedField, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDEATE);
+    }
+
+    public static DynamicValue of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy) {
+        return of(annotatedField, configuration, loadPolicy, UpdatePolicy.IMMEDEATE);
+    }
+
+    public static DynamicValue of(Field annotatedField, Configuration configuration, UpdatePolicy updatePolicy) {
+        return of(annotatedField, configuration, LoadPolicy.ALWAYS, updatePolicy);
+    }
+
+    public static DynamicValue of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
         if (targetType == null) {
@@ -150,10 +176,22 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         }
         List<String> keys = InjectionUtils.getKeys(annotatedField);
         return new DefaultDynamicValue(annotatedField.getName(), configuration,
-                TypeLiteral.of(targetType), propertyConverter, keys);
+                TypeLiteral.of(targetType), propertyConverter, keys, loadPolicy, updatePolicy);
     }
 
     public static DynamicValue of(Method method, Configuration configuration) {
+        return of(method, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDEATE);
+    }
+
+    public static DynamicValue of(Method method, Configuration configuration, UpdatePolicy updatePolicy) {
+        return of(method, configuration, LoadPolicy.ALWAYS, updatePolicy);
+    }
+
+    public static DynamicValue of(Method method, Configuration configuration, LoadPolicy loadPolicy) {
+        return of(method, configuration, loadPolicy, UpdatePolicy.IMMEDEATE);
+    }
+
+    public static DynamicValue of(Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = method.getGenericReturnType();
         if (targetType == null) {
@@ -181,7 +219,8 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             }
         }
         return new DefaultDynamicValue<Object>(method.getName(),
-                configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method));
+                configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method),
+                loadPolicy, updatePolicy);
     }
 
 
@@ -190,11 +229,16 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * registered listeners will be triggered.
      */
     public void commit() {
+        T oldValue = value;
+        value = newValue;
+        newValue = null;
+        informListeners(oldValue, value);
+    }
+
+    private void informListeners(T value, T newValue) {
         synchronized (this) {
             PropertyChangeEvent evt = new PropertyChangeEvent(this, propertyName, value,
                     newValue);
-            value = newValue;
-            newValue = null;
             if (listeners != null) {
                 for (PropertyChangeListener consumer : listeners.get()) {
                     consumer.propertyChange(evt);
@@ -257,10 +301,39 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * otherwise throws {@code ConfigException}.
      *
      * @return the non-null value held by this {@code Optional}
-     * @throws org.apache.tamaya.ConfigException if there is no value present
+     * @throws ConfigException if there is no value present
      * @see DefaultDynamicValue#isPresent()
      */
     public T get() {
+        switch(loadPolicy){
+            case LAZY:
+                if(this.value==null) {
+                    this.value = evaluateValue();
+                }
+                break;
+            case ALWAYS:
+                this.newValue = evaluateValue();
+                break;
+        }
+        switch (updatePolicy){
+            case IMMEDEATE:
+                if(!Objects.equals(this.value, this.newValue)){
+                    commit();
+                }
+                break;
+            case LOG_ONLY:
+                if(!Objects.equals(this.value, this.newValue)){
+                    informListeners(this.value, this.newValue);
+                    this.newValue = null;
+                }
+                break;
+            case EXPLCIT:
+                break;
+            case NEVER:
+            default:
+                this.newValue = null;
+                break;
+        }
         return value;
     }
 
@@ -269,31 +342,31 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * the value is immediately or deferred visible (or it may even be ignored completely).
      *
      * @return true, if a new value has been detected. The value may not be visible depending on the current
-     * {@link DefaultDynamicValue.UpdatePolicy} in place.
+     * {@link UpdatePolicy} in place.
      */
     public boolean updateValue() {
         T newValue = evaluateValue();
-        synchronized (this) {
-            if (Objects.equals(newValue, this.value)) {
-                return false;
-            }
-            switch (this.updatePolicy) {
-                case IMMEDIATE:
-                    this.newValue = newValue;
-                    commit();
-                    break;
-                case LOG_AND_DISCARD:
-                    Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue=" + newValue);
-                    this.newValue = null;
-                    break;
-                case NEVER:
-                    this.newValue = null;
-                    break;
-                case EXPLCIT:
-                default:
-                    this.newValue = newValue;
-                    break;
-            }
+        if (Objects.equals(newValue, this.value)) {
+            return false;
+        }
+        switch (this.updatePolicy) {
+            case IMMEDEATE:
+                informListeners(value, newValue);
+                this.newValue = newValue;
+                commit();
+                break;
+            case LOG_ONLY:
+                Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue=" + newValue);
+                informListeners(value, newValue);
+                this.newValue = null;
+                break;
+            case NEVER:
+                this.newValue = null;
+                break;
+            case EXPLCIT:
+            default:
+                this.newValue = newValue;
+                break;
         }
         return true;
     }
@@ -340,30 +413,26 @@ public final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * Serialization implementation that strips away the non serializable Optional part.
      *
      * @param oos the output stream
-     * @throws java.io.IOException if serialization fails.
+     * @throws IOException if serialization fails.
      */
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        synchronized (this) {
-            oos.writeObject(getUpdatePolicy());
-            oos.writeObject(get());
-        }
+        oos.writeObject(getUpdatePolicy());
+        oos.writeObject(get());
     }
 
     /**
      * Reads an instance from the input stream.
      *
      * @param ois the object input stream
-     * @throws java.io.IOException    if deserialization fails.
+     * @throws IOException            if deserialization fails.
      * @throws ClassNotFoundException
      */
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        synchronized (this) {
-            this.updatePolicy = (UpdatePolicy) ois.readObject();
-            if (isPresent()) {
-                this.value = (T) ois.readObject();
-            }
-            newValue = null;
+        this.updatePolicy = (UpdatePolicy) ois.readObject();
+        if (isPresent()) {
+            this.value = (T) ois.readObject();
         }
+        newValue = null;
     }
 
 

@@ -19,7 +19,8 @@
 package org.apache.tamaya.inject.api;
 
 /**
- * Available policies that describe how changes affecting configured values are published/reinjected.
+ * Available policies that describe how changes affecting configured values are published/reinjected
+ * for a {@link DynamicValue}.
  * The policy also affects the cases were any configured listeners/listener methods are called for
  * propagation current configuration changes.
  */
@@ -29,20 +30,13 @@ public enum LoadPolicy {
      */
     INITIAL,
     /**
-     * The configuration keys is evaluated exactly once on its first use lazily, but never updated later.
-     * This feature is not applicable on field injection, but only on configuration template methods.
+     * The configuration keys is evaluated exactly once on its first access/use lazily, but never updated later.
+     * @see DynamicValue#get()
+     * @see DynamicValue#commitAndGet()
      */
     LAZY,
     /**
-     * The configuration keys is evaluated once, when the owning component is loaded/configured.
-     * Later changes on this configuration entry will be reinjected/updated and additionally triggered
-     * as {@link java.beans.PropertyChangeEvent}.
+     * The configuration value is evaluated evertime it is accessed.
      */
-    MANAGED,
-    /**
-     * The configuration keys is evaluated once, when the owning component is loaded/configured.
-     * Later changes on this configuration entry will be reinjected/updated, but no {@link java.beans.PropertyChangeEvent}
-     * will be triggered.
-     */
-    SILENT
+    ALWAYS
 }

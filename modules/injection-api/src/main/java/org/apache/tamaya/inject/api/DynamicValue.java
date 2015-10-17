@@ -39,26 +39,6 @@ import java.beans.PropertyChangeListener;
 public interface DynamicValue<T> {
 
     /**
-     * Policy to control how new values are applied to this instance.
-     */
-    enum UpdatePolicy{
-        /** New values are applied immedately and registered listeners are informed about the change. */
-        IMMEDIATE,
-        /** New values or not applied, but stored in the newValue property. Explcit call to #commit
-         of #commitAndGet are required to accept the change and inform the listeners about the change.
-         */
-        EXPLCIT,
-        /**
-         * New values are always immedately discarded.
-         */
-        NEVER,
-        /**
-         * Changes are logged before the are discarded.
-         */
-        LOG_AND_DISCARD
-    }
-
-    /**
      * Performs a commit, if necessary, and returns the current value.
      *
      * @return the non-null value held by this {@code DynamicValue}
@@ -112,7 +92,7 @@ public interface DynamicValue<T> {
      * Method to check for and apply a new value. Depending on the {@link  UpdatePolicy}
      * the value is immediately or deferred visible (or it may even be ignored completely).
      * @return true, if a new value has been detected. The value may not be visible depending on the current
-     * {@link DynamicValue.UpdatePolicy} in place.
+     * {@link UpdatePolicy} in place.
      */
     boolean updateValue();
 
