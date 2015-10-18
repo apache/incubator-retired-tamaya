@@ -61,11 +61,14 @@ final class Locator {
      * @return the root path, never null.
      */
     public String getRootPath() {
-        StringBuilder sj = new StringBuilder("/");
+        StringBuilder sj = new StringBuilder();
         for (String token : this.tokens) {
             if (containsPlaceholder(token)) {
                 break;
             } else {
+                if(!(sj.length()==0)) {
+                    sj.append('/');
+                }
                 sj.append(token);
             }
         }
@@ -79,8 +82,11 @@ final class Locator {
      * @return the sub expression part, never null.
      */
     public String getSubPath() {
-        StringBuilder sj = new StringBuilder("/");
+        StringBuilder sj = new StringBuilder();
         for (String token : getSubPathTokens()) {
+            if(!(sj.length()==0)) {
+                sj.append('/');
+            }
             sj.append(token);
         }
         return sj.toString();
@@ -112,8 +118,11 @@ final class Locator {
      * @return the full expression path, never null.
      */
     public String getPath() {
-        StringBuilder sj = new StringBuilder("/");
+        StringBuilder sj = new StringBuilder();
         for (String token : tokens) {
+            if(!(sj.length()==0)) {
+                sj.append('/');
+            }
             sj.append(token);
         }
         return sj.toString();
