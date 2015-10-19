@@ -55,11 +55,6 @@ public interface DynamicValue<T> {
     void commit();
 
     /**
-     * Discards a new value that was published. No listeners will be informed.
-     */
-    void discard();
-
-    /**
      * Access the {@link UpdatePolicy} used for updating this value.
      * @return the update policy, never null.
      */
