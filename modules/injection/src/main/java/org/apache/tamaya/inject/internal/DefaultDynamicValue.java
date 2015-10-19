@@ -103,7 +103,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     /**
      * The new value, or null.
      */
-    private transient T newValue;
+    private transient Object[] newValue;
     /**
      * List of listeners that listen for changes.
      */
@@ -128,10 +128,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         this.targetType = targetType;
         this.loadPolicy = Objects.requireNonNull(loadPolicy);
         this.updatePolicy = Objects.requireNonNull(updatePolicy);
-        switch(loadPolicy){
-            case INITIAL:
-                this.value = evaluateValue();
-                break;
+        if(loadPolicy == LoadPolicy.INITIAL){
+            this.value = evaluateValue();
         }
     }
 
@@ -230,7 +228,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      */
     public void commit() {
         T oldValue = value;
-        value = newValue;
+        value = newValue==null?null:(T)newValue[0];
         newValue = null;
         informListeners(oldValue, value);
     }
@@ -305,34 +303,28 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @see DefaultDynamicValue#isPresent()
      */
     public T get() {
-        switch(loadPolicy){
-            case LAZY:
-                if(this.value==null) {
-                    this.value = evaluateValue();
+        T newLocalValue = null;
+        if(loadPolicy!=LoadPolicy.INITIAL) {
+            newLocalValue = evaluateValue();
+            if (this.value == null) {
+                this.value = newLocalValue;
+            }
+            if(!Objects.equals(this.value, newLocalValue)){
+                switch (updatePolicy){
+                    case IMMEDEATE:
+                        commit();
+                        break;
+                    case EXPLCIT:
+                        this.newValue = new Object[]{newLocalValue};
+                        break;
+                    case LOG_ONLY:
+                        informListeners(this.value, newLocalValue);
+                    case NEVER:
+                    default:
+                        this.newValue = null;
+                        break;
                 }
-                break;
-            case ALWAYS:
-                this.newValue = evaluateValue();
-                break;
-        }
-        switch (updatePolicy){
-            case IMMEDEATE:
-                if(!Objects.equals(this.value, this.newValue)){
-                    commit();
-                }
-                break;
-            case LOG_ONLY:
-                if(!Objects.equals(this.value, this.newValue)){
-                    informListeners(this.value, this.newValue);
-                    this.newValue = null;
-                }
-                break;
-            case EXPLCIT:
-                break;
-            case NEVER:
-            default:
-                this.newValue = null;
-                break;
+            }
         }
         return value;
     }
@@ -345,16 +337,15 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * {@link UpdatePolicy} in place.
      */
     public boolean updateValue() {
+        if(this.value==null && this.newValue==null){
+            this.value = evaluateValue();
+            return false;
+        }
         T newValue = evaluateValue();
         if (Objects.equals(newValue, this.value)) {
             return false;
         }
         switch (this.updatePolicy) {
-            case IMMEDEATE:
-                informListeners(value, newValue);
-                this.newValue = newValue;
-                commit();
-                break;
             case LOG_ONLY:
                 Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue=" + newValue);
                 informListeners(value, newValue);
@@ -364,8 +355,10 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 this.newValue = null;
                 break;
             case EXPLCIT:
+            case IMMEDEATE:
             default:
-                this.newValue = newValue;
+                this.newValue = new Object[]{newValue};
+                commit();
                 break;
         }
         return true;
@@ -401,7 +394,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @return the uncommitted new value, or null.
      */
     public T getNewValue() {
-        T nv = newValue;
+        T nv = newValue==null?null:(T)newValue[0];
         if (nv != null) {
             return nv;
         }
