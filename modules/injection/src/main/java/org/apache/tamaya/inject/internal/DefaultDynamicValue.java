@@ -319,7 +319,11 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                         break;
                     case LOG_ONLY:
                         informListeners(this.value, newLocalValue);
+                        this.newValue = null;
+                        break;
                     case NEVER:
+                        this.newValue = null;
+                        break;
                     default:
                         this.newValue = null;
                         break;
