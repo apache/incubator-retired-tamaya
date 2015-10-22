@@ -18,10 +18,8 @@
  */
 package org.tamaya.integration.osgi;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceRegistration;
+import org.apache.tamaya.inject.ConfigurationInjection;
+import org.osgi.framework.*;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Dictionary;
@@ -31,11 +29,13 @@ import java.util.Hashtable;
  * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
  * using a default service priority of {@code 0}.
  */
-public class Activator implements BundleActivator {
+public class Activator implements BundleActivator, ServiceListener {
 
     private static final String SERVICE_RANKING_PROP = "org.tamaya.integration.cm.ranking";
 
     private static final Integer DEFAULT_RANKING = Integer.MIN_VALUE + 100;
+
+    private BundleContext context;
 
     ServiceRegistration<ConfigurationAdmin> registration;
 
@@ -48,6 +48,7 @@ public class Activator implements BundleActivator {
         } else{
             props.put(Constants.SERVICE_RANKING, Integer.valueOf(ranking));
         }
+        this.context = context;
         TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);
         registration = context.registerService(ConfigurationAdmin.class, cm, null);
     }
@@ -57,5 +58,16 @@ public class Activator implements BundleActivator {
         if (registration != null) {
             registration.unregister();
         }
+    }
+
+    @Override
+    public void serviceChanged(ServiceEvent serviceEvent) {
+        if(ServiceEvent.MODIFIED==serviceEvent.getType() ||
+                ServiceEvent.REGISTERED==serviceEvent.getType()){
+            ServiceReference ref = serviceEvent.getServiceReference();
+            Object service = context.getService(ref);
+            ConfigurationInjection.getConfigurationInjector().configure(service);
+        }
+
     }
 }
