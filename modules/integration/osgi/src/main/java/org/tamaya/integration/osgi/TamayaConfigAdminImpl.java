@@ -23,12 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.ManagedService;
@@ -40,11 +38,16 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class TamayaConfigAdminImpl implements ConfigurationAdmin {
     private final BundleContext context;
+    private ConfigurationAdmin parent;
     private Map<String,Configuration> configs = new ConcurrentHashMap<>();
+    private static final Logger LOG = Logger.getLogger(TamayaConfigAdminImpl.class.getName());
 
     public TamayaConfigAdminImpl(BundleContext context) throws IOException {
         this.context = context;
-        ServiceTracker<ManagedService, ManagedService> serviceTracker = new ServiceTracker<ManagedService, ManagedService>(context, ManagedService.class, null) {
+        ServiceReference<ConfigurationAdmin> ref = context.getServiceReference(ConfigurationAdmin.class);
+        this.parent = context.getService(ref);
+        ServiceTracker<ManagedService, ManagedService> serviceTracker = new ServiceTracker<ManagedService,
+                ManagedService>(context, ManagedService.class, null) {
             @Override
             public ManagedService addingService(ServiceReference<ManagedService> reference) {
                 ManagedService service = context.getService(reference);
@@ -59,10 +62,10 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
                             service.updated(config.getProperties());
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOG.log(Level.WARNING, "Error configuring ManagedService: " + service, e);
                     }
                 } else {
-                    System.err.println("Unsupported pid: " + pidObj);
+                    LOG.log(Level.SEVERE, "Unsupported pid: " + pidObj);
                 }
                 return service;
             }
@@ -74,34 +77,38 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
         };
         serviceTracker.open();
 
-        ServiceTracker<ManagedServiceFactory, ManagedServiceFactory> factoryTracker
-                = new ServiceTracker<ManagedServiceFactory, ManagedServiceFactory>(context, ManagedServiceFactory.class, null) {
+        ServiceTracker<ServiceFactory, ServiceFactory> factoryTracker
+                = new ServiceTracker<ServiceFactory, ServiceFactory>(context, ServiceFactory.class, null) {
             @Override
-            public ManagedServiceFactory addingService(ServiceReference<ManagedServiceFactory> reference) {
-                ManagedServiceFactory factory = context.getService(reference);
-                Object pidObj = reference.getProperty(Constants.SERVICE_PID);
-                if (pidObj instanceof String) {
-                    String pid = (String) pidObj;
-                    try {
-                        Configuration config = getConfiguration(pid);
-                        if(config!=null){
-                            factory.updated(config.getFactoryPid(), config.getProperties());
+            public ServiceFactory addingService(ServiceReference<ServiceFactory> reference) {
+                ServiceFactory factory = context.getService(reference);
+                if(factory instanceof ManagedServiceFactory) {
+                    Object pidObj = reference.getProperty(Constants.SERVICE_PID);
+                    if (pidObj instanceof String) {
+                        String pid = (String) pidObj;
+                        try {
+                            Configuration config = getConfiguration(pid);
+                            if (config != null) {
+                                ((ManagedServiceFactory) factory).updated(config.getFactoryPid(), config.getProperties());
+                            }
+                        } catch (Exception e) {
+                            LOG.log(Level.WARNING, "Error configuring ManagedServiceFactory: " + factory, e);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else {
+                        LOG.log(Level.SEVERE, "Unsupported pid: " + pidObj);
                     }
-                } else {
-                    System.err.println("Unsupported pid: " + pidObj);
                 }
                 return factory;
             }
 
             @Override
-            public void removedService(ServiceReference<ManagedServiceFactory> reference, ManagedServiceFactory service) {
+            public void removedService(ServiceReference<ServiceFactory> reference, ServiceFactory service) {
                 super.removedService(reference, service);
             }
         };
         factoryTracker.open();
+
+
     }
 
     @Override
@@ -121,7 +128,7 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
 
     @Override
     public Configuration getConfiguration(String pid) throws IOException {
-        return new TamayaConfigurationImpl(pid, null);
+        return new TamayaConfigurationImpl(pid, null, this.parent);
     }
 
     @Override

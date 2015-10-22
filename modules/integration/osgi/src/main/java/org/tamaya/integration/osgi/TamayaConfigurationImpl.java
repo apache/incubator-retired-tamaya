@@ -19,14 +19,13 @@
 package org.tamaya.integration.osgi;
 
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.BiPredicate;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * Tamaya based implementation of an OSGI {@link Configuration}.
@@ -34,23 +33,36 @@ import org.osgi.service.cm.Configuration;
 public class TamayaConfigurationImpl implements Configuration {
     private final String pid;
     private final String factoryPid;
-    private Map<String, String> properties;
+    private Map<String, String> properties = new HashMap<>();
     private org.apache.tamaya.Configuration config;
 
-    public TamayaConfigurationImpl(String confPid, String factoryPid) {
+    public TamayaConfigurationImpl(String confPid, String factoryPid, ConfigurationAdmin parent) {
         this.pid = confPid;
         this.factoryPid = factoryPid;
-        this.config = ConfigurationProvider.getConfiguration();
-        this.properties = config.with(ConfigurationFunctions.filter(new BiPredicate<String, String>() {
-            @Override
-            public boolean test(String key, String value) {
-                // TODO define name space / SPI
-                if(key.startsWith("bundle." + pid)){
-                    return true;
+        if(parent!=null){
+            try {
+                Dictionary<String, Object> conf = parent.getConfiguration(confPid, factoryPid).getProperties();
+                Enumeration<String> keys = conf.keys();
+                while(keys.hasMoreElements()){
+                    String key = keys.nextElement();
+                    this.properties.put(key, conf.get(key).toString());
                 }
-                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        })).getProperties();
+        }
+        this.config = ConfigurationProvider.getConfiguration();
+        this.properties.putAll(
+                config.with(ConfigurationFunctions.filter(new BiPredicate<String, String>() {
+                    @Override
+                    public boolean test(String key, String value) {
+                        // TODO define name space / SPI
+                        if (key.startsWith("bundle." + pid)) {
+                            return true;
+                        }
+                        return false;
+            }
+        })).getProperties());
     }
 
     @Override
