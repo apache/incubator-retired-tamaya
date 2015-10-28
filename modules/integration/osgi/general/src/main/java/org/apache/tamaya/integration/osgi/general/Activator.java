@@ -29,7 +29,7 @@ import java.util.Hashtable;
  * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
  * using a default service priority of {@code 0}.
  */
-public class Activator implements BundleActivator, ServiceListener {
+public class Activator implements BundleActivator {
 
     private static final String SERVICE_RANKING_PROP = "org.tamaya.integration.cm.ranking";
 
@@ -60,14 +60,4 @@ public class Activator implements BundleActivator, ServiceListener {
         }
     }
 
-    @Override
-    public void serviceChanged(ServiceEvent serviceEvent) {
-        if(ServiceEvent.MODIFIED==serviceEvent.getType() ||
-                ServiceEvent.REGISTERED==serviceEvent.getType()){
-            ServiceReference ref = serviceEvent.getServiceReference();
-            Object service = context.getService(ref);
-            ConfigurationInjection.getConfigurationInjector().configure(service);
-        }
-
-    }
 }

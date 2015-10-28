@@ -24,7 +24,6 @@ import java.util.*;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.BiPredicate;
 import org.apache.tamaya.functions.ConfigurationFunctions;
-import org.apache.tamaya.mutableconfig.ConfigChangeProvider;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -78,7 +77,8 @@ public class TamayaConfigurationImpl implements Configuration {
 
     @Override
     public void update(Dictionary<String, ?> properties) throws IOException {
-                                                                                                                                                                                                                                                                                                                                                                                                                         ConfigChangeProvider.createChangeRequest(this.config)
+        throw new UnsupportedOperationException("Nuatability not yet supported.");
+         // ConfigChangeProvider.createChangeRequest(this.config)
     }
 
     @Override
