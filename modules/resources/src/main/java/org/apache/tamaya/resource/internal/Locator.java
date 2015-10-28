@@ -48,7 +48,11 @@ final class Locator {
     public static Locator of(String expression) {
         List<String> expressions = new ArrayList<>();
         for (String expr : expression.split("/")) {
-            expressions.add(expr);
+            if(expr.length()==0) {
+                expressions.add("/");
+            } else{
+                expressions.add(expr);
+            }
         }
         return new Locator(expressions);
     }

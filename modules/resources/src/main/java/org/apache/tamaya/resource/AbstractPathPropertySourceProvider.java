@@ -74,7 +74,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
                     }
                 }
             } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Invalid resource path" + resource, e);
+                LOG.log(Level.SEVERE, "Invalid resource path: " + resource, e);
             }
         }
         return propertySources;
