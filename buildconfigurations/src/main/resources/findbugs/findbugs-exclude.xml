@@ -117,5 +117,10 @@ under the License.
     <Match>
         <Class name="org.apache.tamaya.integration.cdi.DefaultDynamicValue"/>
     </Match>
+    <Match>
+        <!-- Imported from APache Felix. -->
+        <Class name="org.apache.tamaya.integration.osgi.felix.ConfigurationHandler"/>
+        <Class name="org.apache.tamaya.integration.osgi.felix.FilePersistenceManager"/>
+    </Match>
 
 </FindBugsFilter>

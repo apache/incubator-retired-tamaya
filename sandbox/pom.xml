@@ -41,6 +41,7 @@ under the License.
         <module>sysprops</module>
         <module>environment</module>
         <module>collections</module>
+        <module>mutable-config</module>
         <module>ui</module>
     </modules>
 
