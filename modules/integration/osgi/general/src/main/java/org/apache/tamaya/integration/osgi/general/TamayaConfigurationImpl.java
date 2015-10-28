@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.tamaya.integration.osgi;
+package org.apache.tamaya.integration.osgi.general;
 
 import java.io.IOException;
 import java.util.*;
@@ -24,6 +24,7 @@ import java.util.*;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.BiPredicate;
 import org.apache.tamaya.functions.ConfigurationFunctions;
+import org.apache.tamaya.mutableconfig.ConfigChangeProvider;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -77,7 +78,7 @@ public class TamayaConfigurationImpl implements Configuration {
 
     @Override
     public void update(Dictionary<String, ?> properties) throws IOException {
-        throw new UnsupportedOperationException();
+                                                                                                                                                                                                                                                                                                                                                                                                                         ConfigChangeProvider.createChangeRequest(this.config)
     }
 
     @Override

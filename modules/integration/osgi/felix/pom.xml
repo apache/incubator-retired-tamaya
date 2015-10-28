@@ -23,54 +23,53 @@
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-integration</artifactId>
+        <artifactId>tamaya-osgi</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
     </parent>
 
-    <artifactId>tamaya-osgi</artifactId>
-    <packaging>pom</packaging>
-    <name>Apache Tamaya OSGI Support Projects</name>
-    <description>Tamaya Based OSGI extensions for different OSGI providers.</description>
+    <artifactId>tamaya-osgi-felix</artifactId>
+    <packaging>bundle</packaging>
+    <name>Apache Tamaya :: OSGi Services :: Tamaya Based OSGI Felix PersistenceManager</name>
+    <description>Tamaya Based OSGI Felix PersistenceManager supporting Apache Felix and Karaf (which
+    reuses Felix).</description>
 
     <properties>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <felix.plugin.version>2.5.4</felix.plugin.version>
+        <felix.version>1.8.8</felix.version>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix.plugin.version}</version>
+                <inherited>true</inherited>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>
+                            org.apache.tamaya.integration.osgi.felix.Activator
+                        </Bundle-Activator>
+                        <Private-Package>
+                            org.apache.tamaya.integration.osgi.felix
+                        </Private-Package>
+                        <Export-Service>
+                            org.apache.felix.cm.PersistenceManager
+                        </Export-Service>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
-            <version>${osgi.compendium.version}</version>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.configadmin</artifactId>
+            <version>${felix.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>${osgi.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-functions</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-injection</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!-- dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-mutable-config</artifactId>
-            <version>${project.version}</version>
-        </dependency -->
     </dependencies>
-
-    <modules>
-        <module>felix</module>
-        <module>injection</module>
-        <module>general</module>
-    </modules>
 
 </project>

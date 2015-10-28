@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.tamaya.integration.osgi;
+package org.apache.tamaya.integration.osgi.general;
 
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.osgi.framework.*;
@@ -29,11 +29,7 @@ import java.util.Hashtable;
  * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
  * using a default service priority of {@code 0}.
  */
-public class Activator implements BundleActivator, ServiceListener {
-
-    private static final String SERVICE_RANKING_PROP = "org.tamaya.integration.cm.ranking";
-
-    private static final Integer DEFAULT_RANKING = Integer.MIN_VALUE + 100;
+public class Activator implements ServiceListener {
 
     private BundleContext context;
 
@@ -41,14 +37,6 @@ public class Activator implements BundleActivator, ServiceListener {
 
     @Override
     public void start(BundleContext context) throws Exception {
-        Dictionary<String,Object> props = new Hashtable<>();
-        String ranking = context.getProperty(SERVICE_RANKING_PROP);
-        if (ranking == null) {
-            props.put(Constants.SERVICE_RANKING, DEFAULT_RANKING);
-        } else{
-            props.put(Constants.SERVICE_RANKING, Integer.valueOf(ranking));
-        }
-        this.context = context;
         TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);
         registration = context.registerService(ConfigurationAdmin.class, cm, null);
     }
