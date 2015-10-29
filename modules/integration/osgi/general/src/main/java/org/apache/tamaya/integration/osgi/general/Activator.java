@@ -18,8 +18,10 @@
  */
 package org.apache.tamaya.integration.osgi.general;
 
-import org.apache.tamaya.inject.ConfigurationInjection;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Dictionary;

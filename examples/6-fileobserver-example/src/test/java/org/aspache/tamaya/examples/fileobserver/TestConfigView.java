@@ -24,6 +24,7 @@ import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.List;
@@ -109,9 +110,11 @@ public class TestConfigView implements ConfigOperator{
                 if (value != null) {
                     List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                             .getPropertyConverters(type);
+                    ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
+                            key, type).build();
                     for (PropertyConverter<T> converter : converters) {
                         try {
-                            T t = converter.convert(value);
+                            T t = converter.convert(value, ctx);
                             if (t != null) {
                                 return t;
                             }
