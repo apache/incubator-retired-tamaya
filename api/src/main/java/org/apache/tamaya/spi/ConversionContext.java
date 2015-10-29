@@ -21,9 +21,7 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
+import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +38,7 @@ public class ConversionContext {
     private Configuration configuration;
     private String key;
     private TypeLiteral<?> targetType;
-    private Member injectionTarget;
+    private AnnotatedElement annotatedElement;
     private List<String> supportedFormats = new ArrayList<>();
 
     /**
@@ -49,7 +47,7 @@ public class ConversionContext {
      */
     protected ConversionContext(Builder builder){
         this.key = builder.key;
-        this.injectionTarget = builder.injectionTarget;
+        this.annotatedElement = builder.annotatedElement;
         this.targetType = builder.targetType;
         this.supportedFormats.addAll(builder.supportedFormats);
         this.configuration = builder.configuration;
@@ -74,16 +72,16 @@ public class ConversionContext {
     }
 
     /**
-     * Get the injection target, if conversion is performed using injection mechanisms.
-     * @return the injection target, either a {@link Field} or {@link Method}, or null.
+     * Get the annotated element, if conversion is performed using injection mechanisms.
+     * @return the annotated element, or null..
      */
-    public Member getInjectionTarget(){
-        return injectionTarget;
+    public AnnotatedElement getAnnotatedElement(){
+        return annotatedElement;
     }
 
     /**
      * Get the configuration, which is targeted.
-     * @return the configuration instance.
+     * @return the configuration instance, or null.
      */
     public Configuration getConfiguration(){
         return configuration;
@@ -121,7 +119,7 @@ public class ConversionContext {
                 "configuration=" + configuration +
                 ", key='" + key + '\'' +
                 ", targetType=" + targetType +
-                ", injectionTarget=" + injectionTarget +
+                ", annotatedElement=" + annotatedElement +
                 ", supportedFormats=" + supportedFormats +
                 '}';
     }
@@ -137,49 +135,65 @@ public class ConversionContext {
         /** The target type. */
         private TypeLiteral<?> targetType;
         /** The injection target (only set with injection used). */
-        private Member injectionTarget;
+        private AnnotatedElement annotatedElement;
         /** The ordered list of formats tried. */
         private Set<String> supportedFormats = new HashSet<>();
+
+        /**
+         * Creates a new Builder instance.
+         * @param targetType the target type
+         */
+        public Builder(TypeLiteral<?> targetType) {
+            this(null, null, targetType);
+        }
+
+        /**
+         * Creates a new Builder instance.
+         * @param key the requested key, may be null.
+         * @param targetType the target type
+         */
+        public Builder(String key, TypeLiteral<?> targetType) {
+            this(null, key, targetType);
+        }
 
         /**
          * Creates a new Builder instance.
          * @param configuration the configuration, not null.
          * @param key the requested key, may be null.
          */
-        public Builder(Configuration configuration, String key){
+        public Builder(Configuration configuration, String key, TypeLiteral<?> targetType){
             this.key = key;
+            this.configuration = configuration;
+            this.targetType = Objects.requireNonNull(targetType);
+        }
+
+        /**
+         * Sets the key.
+         * @param key the key, not null.
+         * @return the builder instance, for chaining
+         */
+        public Builder setKey(String key){
+            this.key = Objects.requireNonNull(key);
+            return this;
+        }
+
+        /**
+         * Sets the configuration.
+         * @param configuration the configuration, not null
+         * @return the builder instance, for chaining
+         */
+        public Builder setConfiguration(Configuration configuration){
             this.configuration = Objects.requireNonNull(configuration);
-        }
-
-        /**
-         * Sets the injected field, when configuration is injected.
-         * @param field the field, not null
-         * @return the builder instance, for chaining
-         */
-        public Builder setInjectedField(Field field){
-            this.injectionTarget = Objects.requireNonNull(field);
-            this.targetType = TypeLiteral.of(field.getType());
             return this;
         }
 
         /**
-         * Sets the injected setter method, when configuration is injected.
-         * @param method the method, not null
+         * Sets the annotated element, when configuration is injected.
+         * @param annotatedElement the annotated element, not null
          * @return the builder instance, for chaining
          */
-        public Builder setInjectedMethod(Method method){
-            this.injectionTarget = Objects.requireNonNull(method);
-            this.targetType = TypeLiteral.of(method.getParameterTypes()[0]);
-            return this;
-        }
-
-        /**
-         * Sets the required target type resulting from the conversion.
-         * @param typeLiteral the target type, not null.
-         * @return the builder instance, for chaining
-         */
-        public Builder setTargetType(TypeLiteral typeLiteral){
-            this.targetType = Objects.requireNonNull(typeLiteral);
+        public Builder setAnnotatedElement(AnnotatedElement annotatedElement){
+            this.annotatedElement = Objects.requireNonNull(annotatedElement);
             return this;
         }
 
@@ -211,7 +225,7 @@ public class ConversionContext {
                     "configuration=" + configuration +
                     ", key='" + key + '\'' +
                     ", targetType=" + targetType +
-                    ", injectionTarget=" + injectionTarget +
+                    ", annotatedElement=" + annotatedElement +
                     ", supportedFormats=" + supportedFormats +
                     '}';
         }

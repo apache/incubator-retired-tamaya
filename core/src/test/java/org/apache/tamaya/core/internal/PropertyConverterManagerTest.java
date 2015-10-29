@@ -34,8 +34,8 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 public class PropertyConverterManagerTest {
 
-    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
-            "someKey").build();
+    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(
+            "someKey", TypeLiteral.of(Object.class)).build();
 
     @Test
     public void customTypeWithFactoryMethodOfIsRecognizedAsSupported() {

@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.integration.cdi;
 
+import org.apache.commons.lang3.Conversion;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
@@ -27,6 +28,7 @@ import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.inject.api.LoadPolicy;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.beans.PropertyChangeEvent;
@@ -381,7 +383,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 value = configuration.get(key, targetType);
             } else {
                 String source = configuration.get(key);
-                value = propertyConverter.convert(source);
+                ConversionContext ctx = new ConversionContext.Builder(configuration, key, targetType).build();
+                value = propertyConverter.convert(source, ctx);
             }
 
             if (value != null) {

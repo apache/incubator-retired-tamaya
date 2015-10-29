@@ -27,11 +27,13 @@ import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.WithConfigOperator;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -98,24 +100,29 @@ public class ConfigurationProducer {
                 break;
             }
         }
+        ConversionContext.Builder builder = new ConversionContext.Builder(config, keyFound, TypeLiteral.of(toType));
+        if(injectionPoint.getMember() instanceof AnnotatedElement){
+            builder.setAnnotatedElement((AnnotatedElement)injectionPoint.getMember());
+        }
+        ConversionContext conversionContext = builder.build();
         Object value = null;
         if(keyFound!=null){
             if(customCnverter!=null) {
-                value = customCnverter.convert(textValue);
+                value = customCnverter.convert(textValue, conversionContext);
             }
             if(value==null){
                 value = config.get(keyFound, toType);
             }
         } else if(defaultTextValue!=null){
             if(customCnverter!=null) {
-                value = customCnverter.convert(defaultTextValue);
+                value = customCnverter.convert(defaultTextValue, conversionContext);
             }
             if(value==null) {
                 List<PropertyConverter<Object>> converters = ConfigurationProvider.getConfigurationContext()
                         .getPropertyConverters(TypeLiteral.of(toType));
                 for (PropertyConverter<Object> converter : converters) {
                     try {
-                        value = converter.convert(defaultTextValue);
+                        value = converter.convert(defaultTextValue, conversionContext);
                         if (value != null) {
                             LOGGER.log(Level.FINEST, "Parsed default value from '" + defaultTextValue + "' into " +
                                     injectionPoint);
@@ -130,8 +137,8 @@ public class ConfigurationProducer {
         }
         if(value==null){
             throw new ConfigException(String.format(
-                    "Can't resolve any of the possible config keys: %s to the required target type: %s",
-                    keys.toString(), toType.getName()));
+                    "Can't resolve any of the possible config keys: %s to the required target type: %s, supported formats: %s",
+                    keys.toString(), toType.getName(), conversionContext.getSupportedFormats().toString()));
         }
         LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value.toString(), injectionPoint.toString()));
         return value;

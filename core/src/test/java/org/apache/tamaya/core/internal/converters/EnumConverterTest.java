@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
@@ -34,7 +35,7 @@ public class EnumConverterTest {
 
     private EnumConverter testConverter = new EnumConverter(RoundingMode.class);
 
-    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(), "someKey").build();
+    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
 
     @Test
     public void testConvert() {
