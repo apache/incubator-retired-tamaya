@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.integration.cdi;
 
-import org.apache.commons.lang3.Conversion;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
