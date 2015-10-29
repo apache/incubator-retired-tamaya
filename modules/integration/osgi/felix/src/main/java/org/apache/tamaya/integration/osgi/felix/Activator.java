@@ -21,18 +21,25 @@ package org.apache.tamaya.integration.osgi.felix;
 import org.apache.felix.cm.PersistenceManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
 import java.util.Hashtable;
 
 /**
- * Created by atsticks on 27.10.15.
+ * Activator that registers the Tamaya implementation of {@link org.apache.felix.cm.PersistenceManager},
+ * hereby overriding the version registered by felix CM by default.
  */
 public class Activator {
 
+    /**
+     * Our registration, used on stop.
+     */
     private ServiceRegistration<PersistenceManager> pmRegistration;
 
+    /**
+     * Constructor.
+     * @param bundleContext the OSGI context
+     */
     public Activator(BundleContext bundleContext){
         TamayaPersistenceManager tpm = new TamayaPersistenceManager(bundleContext);
         Hashtable props = new Hashtable();

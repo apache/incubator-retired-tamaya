@@ -48,7 +48,7 @@ import java.util.Map;
  * form a <code>java.io.InputStream</code> and writing to a
  * <code>java.io.OutputStream</code> on behalf of the
  * {@link FilePersistenceManager} class.
- *
+ * <p>
  * <pre>
  * cfg = prop &quot;=&quot; value .
  *  prop = symbolic-name . // 1.4.2 of OSGi Core Specification
@@ -61,8 +61,7 @@ import java.util.Map;
  *  stringsimple = // quoted string representation of the value .
  * </pre>
  */
-class ConfigurationHandler
-{
+class ConfigurationHandler {
     protected static final String ENCODING = "UTF-8";
 
     protected static final int TOKEN_NAME = 'N';
@@ -102,88 +101,89 @@ class ConfigurationHandler
     protected static final String INDENT = "  ";
     protected static final String COLLECTION_LINE_BREAK = " \\\r\n";
 
-    protected static final Map code2Type;
-    protected static final Map type2Code;
+    protected static final Map CODE_2_TYPE;
+    protected static final Map TYPE_2_CODE;
 
     // set of valid characters for "symblic-name"
     private static final BitSet NAME_CHARS;
     private static final BitSet TOKEN_CHARS;
 
-    static
-    {
-        type2Code = new HashMap();
+    static {
+        TYPE_2_CODE = new HashMap();
 
         // simple (exclusive String whose type code is not written)
-        type2Code.put( Integer.class, new Integer( TOKEN_SIMPLE_INTEGER ) );
-        type2Code.put( Long.class, new Integer( TOKEN_SIMPLE_LONG ) );
-        type2Code.put( Float.class, new Integer( TOKEN_SIMPLE_FLOAT ) );
-        type2Code.put( Double.class, new Integer( TOKEN_SIMPLE_DOUBLE ) );
-        type2Code.put( Byte.class, new Integer( TOKEN_SIMPLE_BYTE ) );
-        type2Code.put( Short.class, new Integer( TOKEN_SIMPLE_SHORT ) );
-        type2Code.put( Character.class, new Integer( TOKEN_SIMPLE_CHARACTER ) );
-        type2Code.put( Boolean.class, new Integer( TOKEN_SIMPLE_BOOLEAN ) );
+        TYPE_2_CODE.put(Integer.class, new Integer(TOKEN_SIMPLE_INTEGER));
+        TYPE_2_CODE.put(Long.class, new Integer(TOKEN_SIMPLE_LONG));
+        TYPE_2_CODE.put(Float.class, new Integer(TOKEN_SIMPLE_FLOAT));
+        TYPE_2_CODE.put(Double.class, new Integer(TOKEN_SIMPLE_DOUBLE));
+        TYPE_2_CODE.put(Byte.class, new Integer(TOKEN_SIMPLE_BYTE));
+        TYPE_2_CODE.put(Short.class, new Integer(TOKEN_SIMPLE_SHORT));
+        TYPE_2_CODE.put(Character.class, new Integer(TOKEN_SIMPLE_CHARACTER));
+        TYPE_2_CODE.put(Boolean.class, new Integer(TOKEN_SIMPLE_BOOLEAN));
 
         // primitives
-        type2Code.put( Integer.TYPE, new Integer( TOKEN_PRIMITIVE_INT ) );
-        type2Code.put( Long.TYPE, new Integer( TOKEN_PRIMITIVE_LONG ) );
-        type2Code.put( Float.TYPE, new Integer( TOKEN_PRIMITIVE_FLOAT ) );
-        type2Code.put( Double.TYPE, new Integer( TOKEN_PRIMITIVE_DOUBLE ) );
-        type2Code.put( Byte.TYPE, new Integer( TOKEN_PRIMITIVE_BYTE ) );
-        type2Code.put( Short.TYPE, new Integer( TOKEN_PRIMITIVE_SHORT ) );
-        type2Code.put( Character.TYPE, new Integer( TOKEN_PRIMITIVE_CHAR ) );
-        type2Code.put( Boolean.TYPE, new Integer( TOKEN_PRIMITIVE_BOOLEAN ) );
+        TYPE_2_CODE.put(Integer.TYPE, new Integer(TOKEN_PRIMITIVE_INT));
+        TYPE_2_CODE.put(Long.TYPE, new Integer(TOKEN_PRIMITIVE_LONG));
+        TYPE_2_CODE.put(Float.TYPE, new Integer(TOKEN_PRIMITIVE_FLOAT));
+        TYPE_2_CODE.put(Double.TYPE, new Integer(TOKEN_PRIMITIVE_DOUBLE));
+        TYPE_2_CODE.put(Byte.TYPE, new Integer(TOKEN_PRIMITIVE_BYTE));
+        TYPE_2_CODE.put(Short.TYPE, new Integer(TOKEN_PRIMITIVE_SHORT));
+        TYPE_2_CODE.put(Character.TYPE, new Integer(TOKEN_PRIMITIVE_CHAR));
+        TYPE_2_CODE.put(Boolean.TYPE, new Integer(TOKEN_PRIMITIVE_BOOLEAN));
 
         // reverse map to map type codes to classes, string class mapping
         // to be added manually, as the string type code is not written and
-        // hence not included in the type2Code map
-        code2Type = new HashMap();
-        for ( Iterator ti = type2Code.entrySet().iterator(); ti.hasNext(); )
-        {
-            Map.Entry entry = ( Map.Entry ) ti.next();
-            code2Type.put( entry.getValue(), entry.getKey() );
+        // hence not included in the TYPE_2_CODE map
+        CODE_2_TYPE = new HashMap();
+        for (Iterator ti = TYPE_2_CODE.entrySet().iterator(); ti.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) ti.next();
+            CODE_2_TYPE.put(entry.getValue(), entry.getKey());
         }
-        code2Type.put( new Integer( TOKEN_SIMPLE_STRING ), String.class );
+        CODE_2_TYPE.put(new Integer(TOKEN_SIMPLE_STRING), String.class);
 
         NAME_CHARS = new BitSet();
-        for ( int i = '0'; i <= '9'; i++ )
-            NAME_CHARS.set( i );
-        for ( int i = 'a'; i <= 'z'; i++ )
-            NAME_CHARS.set( i );
-        for ( int i = 'A'; i <= 'Z'; i++ )
-            NAME_CHARS.set( i );
-        NAME_CHARS.set( '_' );
-        NAME_CHARS.set( '-' );
-        NAME_CHARS.set( '.' );
-        NAME_CHARS.set( '\\' );
+        for (int i = '0'; i <= '9'; i++) {
+            NAME_CHARS.set(i);
+        }
+        for (int i = 'a'; i <= 'z'; i++) {
+            NAME_CHARS.set(i);
+        }
+        for (int i = 'A'; i <= 'Z'; i++) {
+            NAME_CHARS.set(i);
+        }
+        NAME_CHARS.set('_');
+        NAME_CHARS.set('-');
+        NAME_CHARS.set('.');
+        NAME_CHARS.set('\\');
 
         TOKEN_CHARS = new BitSet();
-        TOKEN_CHARS.set( TOKEN_EQ );
-        TOKEN_CHARS.set( TOKEN_ARR_OPEN );
-        TOKEN_CHARS.set( TOKEN_ARR_CLOS );
-        TOKEN_CHARS.set( TOKEN_VEC_OPEN );
-        TOKEN_CHARS.set( TOKEN_VEC_CLOS );
-        TOKEN_CHARS.set( TOKEN_COMMA );
-        TOKEN_CHARS.set( TOKEN_VAL_OPEN );
-        TOKEN_CHARS.set( TOKEN_VAL_CLOS );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_STRING );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_INTEGER );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_LONG );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_FLOAT );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_DOUBLE );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_BYTE );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_SHORT );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_CHARACTER );
-        TOKEN_CHARS.set( TOKEN_SIMPLE_BOOLEAN );
+        TOKEN_CHARS.set(TOKEN_EQ);
+        TOKEN_CHARS.set(TOKEN_ARR_OPEN);
+        TOKEN_CHARS.set(TOKEN_ARR_CLOS);
+        TOKEN_CHARS.set(TOKEN_VEC_OPEN);
+        TOKEN_CHARS.set(TOKEN_VEC_CLOS);
+        TOKEN_CHARS.set(TOKEN_COMMA);
+        TOKEN_CHARS.set(TOKEN_VAL_OPEN);
+        TOKEN_CHARS.set(TOKEN_VAL_CLOS);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_STRING);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_INTEGER);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_LONG);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_FLOAT);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_DOUBLE);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_BYTE);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_SHORT);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_CHARACTER);
+        TOKEN_CHARS.set(TOKEN_SIMPLE_BOOLEAN);
 
         // primitives
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_INT );
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_LONG );
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_FLOAT );
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_DOUBLE );
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_BYTE );
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_SHORT );
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_CHAR );
-        TOKEN_CHARS.set( TOKEN_PRIMITIVE_BOOLEAN );
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_INT);
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_LONG);
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_FLOAT);
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_DOUBLE);
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_BYTE);
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_SHORT);
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_CHAR);
+        TOKEN_CHARS.set(TOKEN_PRIMITIVE_BOOLEAN);
     }
 
 
@@ -194,27 +194,22 @@ class ConfigurationHandler
      * This method writes at the current location in the stream and does not
      * close the outputstream.
      *
-     * @param out
-     *            The <code>OutputStream</code> to write the configurtion data
-     *            to.
-     * @param properties
-     *            The <code>Dictionary</code> to write.
-     * @throws IOException
-     *             If an error occurrs writing to the output stream.
+     * @param out        The <code>OutputStream</code> to write the configurtion data
+     *                   to.
+     * @param properties The <code>Dictionary</code> to write.
+     * @throws IOException If an error occurrs writing to the output stream.
      */
-    public static void write( OutputStream out, Dictionary properties ) throws IOException
-    {
-        BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( out, ENCODING ) );
+    public static void write(OutputStream out, Dictionary properties) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, ENCODING));
 
-        for ( Enumeration ce = orderedKeys(properties); ce.hasMoreElements(); )
-        {
-            String key = ( String ) ce.nextElement();
+        for (Enumeration ce = orderedKeys(properties); ce.hasMoreElements(); ) {
+            String key = (String) ce.nextElement();
 
             // cfg = prop "=" value "." .
-            writeQuoted( bw, key );
-            bw.write( TOKEN_EQ );
-            writeValue( bw, properties.get( key ) );
-            bw.write( CRLF );
+            writeQuoted(bw, key);
+            bw.write(TOKEN_EQ);
+            writeValue(bw, properties.get(key));
+            bw.write(CRLF);
         }
 
         bw.flush();
@@ -225,21 +220,19 @@ class ConfigurationHandler
      * <code>Dictionary</code> where the keys of the <code>Dictionary</code>
      * are provided in sorted order.
      *
-     * @param properties
-     *                   The <code>Dictionary</code> that keys are sorted.
+     * @param properties The <code>Dictionary</code> that keys are sorted.
      * @return An <code>Enumeration</code> that provides the keys of
-     *         properties in an ordered manner.
+     * properties in an ordered manner.
      */
     private static Enumeration orderedKeys(Dictionary properties) {
         String[] keyArray = new String[properties.size()];
         int i = 0;
-        for ( Enumeration ce = properties.keys(); ce.hasMoreElements(); )
-        {
-            keyArray[i] = ( String ) ce.nextElement();
+        for (Enumeration ce = properties.keys(); ce.hasMoreElements(); ) {
+            keyArray[i] = (String) ce.nextElement();
             i++;
         }
         Arrays.sort(keyArray);
-        return Collections.enumeration( Arrays.asList( keyArray ) );
+        return Collections.enumeration(Arrays.asList(keyArray));
     }
 
 
@@ -250,26 +243,22 @@ class ConfigurationHandler
      * This method reads from the current location in the stream upto the end of
      * the stream but does not close the stream at the end.
      *
-     * @param ins
-     *            The <code>InputStream</code> from which to read the
+     * @param ins The <code>InputStream</code> from which to read the
      *            configuration data.
      * @return A <code>Dictionary</code> object containing the configuration
-     *         data. This object may be empty if the stream contains no
-     *         configuration data.
-     * @throws IOException
-     *             If an error occurrs reading from the stream. This exception
-     *             is also thrown if a syntax error is encountered.
+     * data. This object may be empty if the stream contains no
+     * configuration data.
+     * @throws IOException If an error occurrs reading from the stream. This exception
+     *                     is also thrown if a syntax error is encountered.
      */
-    public static Dictionary read( InputStream ins ) throws IOException
-    {
-        return new ConfigurationHandler().readInternal( ins );
+    public static Dictionary read(InputStream ins) throws IOException {
+        return new ConfigurationHandler().readInternal(ins);
     }
 
 
     // private constructor, this class is not to be instantiated from the
     // outside
-    private ConfigurationHandler()
-    {
+    private ConfigurationHandler() {
     }
 
     // ---------- Configuration Input Implementation ---------------------------
@@ -280,10 +269,9 @@ class ConfigurationHandler
     private int pos;
 
 
-    private Dictionary readInternal( InputStream ins ) throws IOException
-    {
-        BufferedReader br = new BufferedReader( new InputStreamReader( ins, ENCODING ) );
-        PushbackReader pr = new PushbackReader( br, 1 );
+    private Dictionary readInternal(InputStream ins) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(ins, ENCODING));
+        PushbackReader pr = new PushbackReader(br, 1);
 
         token = 0;
         tokenValue = null;
@@ -292,21 +280,18 @@ class ConfigurationHandler
 
         Hashtable configuration = new Hashtable();
         token = 0;
-        while ( nextToken( pr, true ) == TOKEN_NAME )
-        {
+        while (nextToken(pr, true) == TOKEN_NAME) {
             String key = tokenValue;
 
             // expect equal sign
-            if ( nextToken( pr, false ) != TOKEN_EQ )
-            {
-                throw readFailure( token, TOKEN_EQ );
+            if (nextToken(pr, false) != TOKEN_EQ) {
+                throw readFailure(token, TOKEN_EQ);
             }
 
             // expect the token value
-            Object value = readValue( pr );
-            if ( value != null )
-            {
-                configuration.put( key, value );
+            Object value = readValue(pr);
+            if (value != null) {
+                configuration.put(key, value);
             }
         }
 
@@ -323,34 +308,29 @@ class ConfigurationHandler
      * @return
      * @throws IOException
      */
-    private Object readValue( PushbackReader pr ) throws IOException
-    {
+    private Object readValue(PushbackReader pr) throws IOException {
         // read (optional) type code
-        int type = read( pr );
+        int type = read(pr);
 
         // read value kind code if type code is not a value kinde code
         int code;
-        if ( code2Type.containsKey( new Integer( type ) ) )
-        {
-            code = read( pr );
-        }
-        else
-        {
+        if (CODE_2_TYPE.containsKey(new Integer(type))) {
+            code = read(pr);
+        } else {
             code = type;
             type = TOKEN_SIMPLE_STRING;
         }
 
-        switch ( code )
-        {
+        switch (code) {
             case TOKEN_ARR_OPEN:
-                return readArray( type, pr );
+                return readArray(type, pr);
 
             case TOKEN_VEC_OPEN:
-                return readCollection( type, pr );
+                return readCollection(type, pr);
 
             case TOKEN_VAL_OPEN:
-                Object value = readSimple( type, pr );
-                ensureNext( pr, TOKEN_VAL_CLOS );
+                Object value = readSimple(type, pr);
+                ensureNext(pr, TOKEN_VAL_CLOS);
                 return value;
 
             default:
@@ -359,285 +339,243 @@ class ConfigurationHandler
     }
 
 
-    private Object readArray( int typeCode, PushbackReader pr ) throws IOException
-    {
+    private Object readArray(int typeCode, PushbackReader pr) throws IOException {
         List list = new ArrayList();
-        for ( ;; )
-        {
-            int c = ignorablePageBreakAndWhiteSpace( pr );
-            if ( c == TOKEN_VAL_OPEN )
-            {
-                Object value = readSimple( typeCode, pr );
-                if ( value == null )
-                {
+        for (; ; ) {
+            int c = ignorablePageBreakAndWhiteSpace(pr);
+            if (c == TOKEN_VAL_OPEN) {
+                Object value = readSimple(typeCode, pr);
+                if (value == null) {
                     // abort due to error
                     return null;
                 }
 
-                ensureNext( pr, TOKEN_VAL_CLOS );
+                ensureNext(pr, TOKEN_VAL_CLOS);
 
-                list.add( value );
+                list.add(value);
 
-                c = ignorablePageBreakAndWhiteSpace( pr );
+                c = ignorablePageBreakAndWhiteSpace(pr);
             }
 
-            if ( c == TOKEN_ARR_CLOS )
-            {
-                Class type = ( Class ) code2Type.get( new Integer( typeCode ) );
-                Object array = Array.newInstance( type, list.size() );
-                for ( int i = 0; i < list.size(); i++ )
-                {
-                    Array.set( array, i, list.get( i ) );
+            if (c == TOKEN_ARR_CLOS) {
+                Class type = (Class) CODE_2_TYPE.get(new Integer(typeCode));
+                Object array = Array.newInstance(type, list.size());
+                for (int i = 0; i < list.size(); i++) {
+                    Array.set(array, i, list.get(i));
                 }
                 return array;
-            }
-            else if ( c < 0 )
-            {
+            } else if (c < 0) {
                 return null;
-            }
-            else if ( c != TOKEN_COMMA )
-            {
+            } else if (c != TOKEN_COMMA) {
                 return null;
             }
         }
     }
 
 
-    private Collection readCollection( int typeCode, PushbackReader pr ) throws IOException
-    {
+    private Collection readCollection(int typeCode, PushbackReader pr) throws IOException {
         Collection collection = new ArrayList();
-        for ( ;; )
-        {
-            int c = ignorablePageBreakAndWhiteSpace( pr );
-            if ( c == TOKEN_VAL_OPEN )
-            {
-                Object value = readSimple( typeCode, pr );
-                if ( value == null )
-                {
+        for (; ; ) {
+            int c = ignorablePageBreakAndWhiteSpace(pr);
+            if (c == TOKEN_VAL_OPEN) {
+                Object value = readSimple(typeCode, pr);
+                if (value == null) {
                     // abort due to error
                     return null;
                 }
 
-                ensureNext( pr, TOKEN_VAL_CLOS );
+                ensureNext(pr, TOKEN_VAL_CLOS);
 
-                collection.add( value );
+                collection.add(value);
 
-                c = ignorablePageBreakAndWhiteSpace( pr );
+                c = ignorablePageBreakAndWhiteSpace(pr);
             }
 
-            if ( c == TOKEN_VEC_CLOS )
-            {
+            if (c == TOKEN_VEC_CLOS) {
                 return collection;
-            }
-            else if ( c < 0 )
-            {
+            } else if (c < 0) {
                 return null;
-            }
-            else if ( c != TOKEN_COMMA )
-            {
+            } else if (c != TOKEN_COMMA) {
                 return null;
             }
         }
     }
 
 
-    private Object readSimple( int code, PushbackReader pr ) throws IOException
-    {
-        switch ( code )
-        {
+    private Object readSimple(int code, PushbackReader pr) throws IOException {
+        switch (code) {
             case -1:
                 return null;
 
             case TOKEN_SIMPLE_STRING:
-                return readQuoted( pr );
+                return readQuoted(pr);
 
-                // Simple/Primitive, only use wrapper classes
+            // Simple/Primitive, only use wrapper classes
             case TOKEN_SIMPLE_INTEGER:
             case TOKEN_PRIMITIVE_INT:
-                return Integer.valueOf( readQuoted( pr ) );
+                return Integer.valueOf(readQuoted(pr));
 
             case TOKEN_SIMPLE_LONG:
             case TOKEN_PRIMITIVE_LONG:
-                return Long.valueOf( readQuoted( pr ) );
+                return Long.valueOf(readQuoted(pr));
 
             case TOKEN_SIMPLE_FLOAT:
             case TOKEN_PRIMITIVE_FLOAT:
-                int fBits = Integer.parseInt( readQuoted( pr ) );
-                return new Float( Float.intBitsToFloat( fBits ) );
+                int fBits = Integer.parseInt(readQuoted(pr));
+                return new Float(Float.intBitsToFloat(fBits));
 
             case TOKEN_SIMPLE_DOUBLE:
             case TOKEN_PRIMITIVE_DOUBLE:
-                long dBits = Long.parseLong( readQuoted( pr ) );
-                return new Double( Double.longBitsToDouble( dBits ) );
+                long dBits = Long.parseLong(readQuoted(pr));
+                return new Double(Double.longBitsToDouble(dBits));
 
             case TOKEN_SIMPLE_BYTE:
             case TOKEN_PRIMITIVE_BYTE:
-                return Byte.valueOf( readQuoted( pr ) );
+                return Byte.valueOf(readQuoted(pr));
 
             case TOKEN_SIMPLE_SHORT:
             case TOKEN_PRIMITIVE_SHORT:
-                return Short.valueOf( readQuoted( pr ) );
+                return Short.valueOf(readQuoted(pr));
 
             case TOKEN_SIMPLE_CHARACTER:
             case TOKEN_PRIMITIVE_CHAR:
-                String cString = readQuoted( pr );
-                if ( cString != null && cString.length() > 0 )
-                {
-                    return new Character( cString.charAt( 0 ) );
+                String cString = readQuoted(pr);
+                if (cString != null && cString.length() > 0) {
+                    return new Character(cString.charAt(0));
                 }
                 return null;
 
             case TOKEN_SIMPLE_BOOLEAN:
             case TOKEN_PRIMITIVE_BOOLEAN:
-                return Boolean.valueOf( readQuoted( pr ) );
+                return Boolean.valueOf(readQuoted(pr));
 
-                // unknown type code
+            // unknown type code
             default:
                 return null;
         }
     }
 
 
-    private void ensureNext( PushbackReader pr, int expected ) throws IOException
-    {
-        int next = read( pr );
-        if ( next != expected )
-        {
-            readFailure( next, expected );
+    private void ensureNext(PushbackReader pr, int expected) throws IOException {
+        int next = read(pr);
+        if (next != expected) {
+            readFailure(next, expected);
         }
     }
 
 
-    private String readQuoted( PushbackReader pr ) throws IOException
-    {
+    private String readQuoted(PushbackReader pr) throws IOException {
         StringBuffer buf = new StringBuffer();
-        for ( ;; )
-        {
-            int c = read( pr );
-            switch ( c )
-            {
+        for (; ; ) {
+            int c = read(pr);
+            switch (c) {
                 // escaped character
                 case '\\':
-                    c = read( pr );
-                    switch ( c )
-                    {
+                    c = read(pr);
+                    switch (c) {
                         // well known escapes
                         case 'b':
-                            buf.append( '\b' );
+                            buf.append('\b');
                             break;
                         case 't':
-                            buf.append( '\t' );
+                            buf.append('\t');
                             break;
                         case 'n':
-                            buf.append( '\n' );
+                            buf.append('\n');
                             break;
                         case 'f':
-                            buf.append( '\f' );
+                            buf.append('\f');
                             break;
                         case 'r':
-                            buf.append( '\r' );
+                            buf.append('\r');
                             break;
                         case 'u':// need 4 characters !
                             char[] cbuf = new char[4];
-                            if ( read( pr, cbuf ) == 4 )
-                            {
-                                c = Integer.parseInt( new String( cbuf ), 16 );
-                                buf.append( ( char ) c );
+                            if (read(pr, cbuf) == 4) {
+                                c = Integer.parseInt(new String(cbuf), 16);
+                                buf.append((char) c);
                             }
                             break;
 
                         // just an escaped character, unescape
                         default:
-                            buf.append( ( char ) c );
+                            buf.append((char) c);
                     }
                     break;
 
                 // eof
                 case -1: // fall through
 
-                // separator token
+                    // separator token
                 case TOKEN_EQ:
                 case TOKEN_VAL_CLOS:
-                    pr.unread( c );
+                    pr.unread(c);
                     return buf.toString();
 
                 // no escaping
                 default:
-                    buf.append( ( char ) c );
+                    buf.append((char) c);
             }
         }
     }
 
-    private int nextToken( PushbackReader pr, final boolean newLine ) throws IOException
-    {
-        int c = ignorableWhiteSpace( pr );
+    private int nextToken(PushbackReader pr, final boolean newLine) throws IOException {
+        int c = ignorableWhiteSpace(pr);
 
         // immediately return EOF
-        if ( c < 0 )
-        {
-            return ( token = c );
+        if (c < 0) {
+            return (token = c);
         }
 
         // check for comment
-        if ( newLine && c == TOKEN_COMMENT )
-        {
+        if (newLine && c == TOKEN_COMMENT) {
             // skip everything until end of line
-            do
-            {
-                c = read( pr );
-            } while ( c != -1 && c != '\n' );
-            if ( c == -1 )
-            {
-                return ( token = c);
+            do {
+                c = read(pr);
+            } while (c != -1 && c != '\n');
+            if (c == -1) {
+                return (token = c);
             }
             // and start over
-            return nextToken( pr, true );
+            return nextToken(pr, true);
         }
 
         // check whether there is a name
-        if ( NAME_CHARS.get( c ) || !TOKEN_CHARS.get( c ) )
-        {
+        if (NAME_CHARS.get(c) || !TOKEN_CHARS.get(c)) {
             // read the property name
-            pr.unread( c );
-            tokenValue = readQuoted( pr );
-            return ( token = TOKEN_NAME );
+            pr.unread(c);
+            tokenValue = readQuoted(pr);
+            return (token = TOKEN_NAME);
         }
 
         // check another token
-        if ( TOKEN_CHARS.get( c ) )
-        {
-            return ( token = c );
+        if (TOKEN_CHARS.get(c)) {
+            return (token = c);
         }
 
         // unexpected character -> so what ??
-        return ( token = -1 );
+        return (token = -1);
     }
 
 
-    private int ignorableWhiteSpace( PushbackReader pr ) throws IOException
-    {
-        int c = read( pr );
-        while ( c >= 0 && Character.isWhitespace( ( char ) c ) )
-        {
-            c = read( pr );
+    private int ignorableWhiteSpace(PushbackReader pr) throws IOException {
+        int c = read(pr);
+        while (c >= 0 && Character.isWhitespace((char) c)) {
+            c = read(pr);
         }
         return c;
     }
 
 
-    private int ignorablePageBreakAndWhiteSpace( PushbackReader pr ) throws IOException
-    {
-        int c = ignorableWhiteSpace( pr );
-        for ( ;; )
-        {
-            if ( c != '\\' )
-            {
+    private int ignorablePageBreakAndWhiteSpace(PushbackReader pr) throws IOException {
+        int c = ignorableWhiteSpace(pr);
+        for (; ; ) {
+            if (c != '\\') {
                 break;
             }
             int c1 = pr.read();
-            if ( c1 == '\r' || c1 == '\n' )
-            {
-                c = ignorableWhiteSpace( pr );
+            if (c1 == '\r' || c1 == '\n') {
+                c = ignorableWhiteSpace(pr);
             } else {
                 pr.unread(c1);
                 break;
@@ -647,26 +585,20 @@ class ConfigurationHandler
     }
 
 
-    private int read( PushbackReader pr ) throws IOException
-    {
+    private int read(PushbackReader pr) throws IOException {
         int c = pr.read();
-        if ( c == '\r' )
-        {
+        if (c == '\r') {
             int c1 = pr.read();
-            if ( c1 != '\n' )
-            {
-                pr.unread( c1 );
+            if (c1 != '\n') {
+                pr.unread(c1);
             }
             c = '\n';
         }
 
-        if ( c == '\n' )
-        {
+        if (c == '\n') {
             line++;
             pos = 0;
-        }
-        else
-        {
+        } else {
             pos++;
         }
 
@@ -674,17 +606,12 @@ class ConfigurationHandler
     }
 
 
-    private int read( PushbackReader pr, char[] buf ) throws IOException
-    {
-        for ( int i = 0; i < buf.length; i++ )
-        {
-            int c = read( pr );
-            if ( c >= 0 )
-            {
-                buf[i] = ( char ) c;
-            }
-            else
-            {
+    private int read(PushbackReader pr, char[] buf) throws IOException {
+        for (int i = 0; i < buf.length; i++) {
+            int c = read(pr);
+            if (c >= 0) {
+                buf[i] = (char) c;
+            } else {
                 return i;
             }
         }
@@ -693,163 +620,136 @@ class ConfigurationHandler
     }
 
 
-    private IOException readFailure( int current, int expected )
-    {
-        return new IOException( "Unexpected token " + current + "; expected: " + expected + " (line=" + line + ", pos="
-            + pos + ")" );
+    private IOException readFailure(int current, int expected) {
+        return new IOException("Unexpected token " + current + "; expected: " + expected + " (line=" + line + ", pos="
+                + pos + ")");
     }
 
 
     // ---------- Configuration Output Implementation --------------------------
 
-    private static void writeValue( Writer out, Object value ) throws IOException
-    {
+    private static void writeValue(Writer out, Object value) throws IOException {
         Class clazz = value.getClass();
-        if ( clazz.isArray() )
-        {
-            writeArray( out, value );
-        }
-        else if ( value instanceof Collection )
-        {
-            writeCollection( out, ( Collection ) value );
-        }
-        else
-        {
-            writeType( out, clazz );
-            writeSimple( out, value );
+        if (clazz.isArray()) {
+            writeArray(out, value);
+        } else if (value instanceof Collection) {
+            writeCollection(out, (Collection) value);
+        } else {
+            writeType(out, clazz);
+            writeSimple(out, value);
         }
     }
 
 
-    private static void writeArray( Writer out, Object arrayValue ) throws IOException
-    {
-        int size = Array.getLength( arrayValue );
-        writeType( out, arrayValue.getClass().getComponentType() );
-        out.write( TOKEN_ARR_OPEN );
-        out.write( COLLECTION_LINE_BREAK );
-        for ( int i = 0; i < size; i++ )
-        {
-            writeCollectionElement(out, Array.get( arrayValue, i ));
+    private static void writeArray(Writer out, Object arrayValue) throws IOException {
+        int size = Array.getLength(arrayValue);
+        writeType(out, arrayValue.getClass().getComponentType());
+        out.write(TOKEN_ARR_OPEN);
+        out.write(COLLECTION_LINE_BREAK);
+        for (int i = 0; i < size; i++) {
+            writeCollectionElement(out, Array.get(arrayValue, i));
         }
-        out.write( INDENT );
-        out.write( TOKEN_ARR_CLOS );
+        out.write(INDENT);
+        out.write(TOKEN_ARR_CLOS);
     }
 
 
-    private static void writeCollection( Writer out, Collection collection ) throws IOException
-    {
-        if ( collection.isEmpty() )
-        {
-            out.write( TOKEN_VEC_OPEN );
-            out.write( COLLECTION_LINE_BREAK );
-            out.write( TOKEN_VEC_CLOS );
-        }
-        else
-        {
+    private static void writeCollection(Writer out, Collection collection) throws IOException {
+        if (collection.isEmpty()) {
+            out.write(TOKEN_VEC_OPEN);
+            out.write(COLLECTION_LINE_BREAK);
+            out.write(TOKEN_VEC_CLOS);
+        } else {
             Iterator ci = collection.iterator();
             Object firstElement = ci.next();
 
-            writeType( out, firstElement.getClass() );
-            out.write( TOKEN_VEC_OPEN );
-            out.write( COLLECTION_LINE_BREAK );
+            writeType(out, firstElement.getClass());
+            out.write(TOKEN_VEC_OPEN);
+            out.write(COLLECTION_LINE_BREAK);
 
-            writeCollectionElement( out, firstElement );
+            writeCollectionElement(out, firstElement);
 
-            while ( ci.hasNext() )
-            {
-                writeCollectionElement( out, ci.next() );
+            while (ci.hasNext()) {
+                writeCollectionElement(out, ci.next());
             }
-            out.write( TOKEN_VEC_CLOS );
+            out.write(TOKEN_VEC_CLOS);
         }
     }
 
 
     private static void writeCollectionElement(Writer out, Object element) throws IOException {
-        out.write( INDENT );
-        writeSimple( out, element );
-        out.write( TOKEN_COMMA );
+        out.write(INDENT);
+        writeSimple(out, element);
+        out.write(TOKEN_COMMA);
         out.write(COLLECTION_LINE_BREAK);
     }
 
 
-    private static void writeType( Writer out, Class valueType ) throws IOException
-    {
-        Integer code = ( Integer ) type2Code.get( valueType );
-        if ( code != null )
-        {
-            out.write( ( char ) code.intValue() );
+    private static void writeType(Writer out, Class valueType) throws IOException {
+        Integer code = (Integer) TYPE_2_CODE.get(valueType);
+        if (code != null) {
+            out.write((char) code.intValue());
         }
     }
 
 
-    private static void writeSimple( Writer out, Object value ) throws IOException
-    {
-        if ( value instanceof Double )
-        {
-            double dVal = ( ( Double ) value ).doubleValue();
-            value = new Long( Double.doubleToRawLongBits( dVal ) );
-        }
-        else if ( value instanceof Float )
-        {
-            float fVal = ( ( Float ) value ).floatValue();
-            value = new Integer( Float.floatToRawIntBits( fVal ) );
+    private static void writeSimple(Writer out, Object value) throws IOException {
+        if (value instanceof Double) {
+            double dVal = ((Double) value).doubleValue();
+            value = new Long(Double.doubleToRawLongBits(dVal));
+        } else if (value instanceof Float) {
+            float fVal = ((Float) value).floatValue();
+            value = new Integer(Float.floatToRawIntBits(fVal));
         }
 
-        out.write( TOKEN_VAL_OPEN );
-        writeQuoted( out, String.valueOf( value ) );
-        out.write( TOKEN_VAL_CLOS );
+        out.write(TOKEN_VAL_OPEN);
+        writeQuoted(out, String.valueOf(value));
+        out.write(TOKEN_VAL_CLOS);
     }
 
 
-    private static void writeQuoted( Writer out, String simple ) throws IOException
-    {
-        if ( simple == null || simple.length() == 0 )
-        {
+    private static void writeQuoted(Writer out, String simple) throws IOException {
+        if (simple == null || simple.length() == 0) {
             return;
         }
 
         char c = 0;
         int len = simple.length();
-        for ( int i = 0; i < len; i++ )
-        {
-            c = simple.charAt( i );
-            switch ( c )
-            {
+        for (int i = 0; i < len; i++) {
+            c = simple.charAt(i);
+            switch (c) {
                 case '\\':
                 case TOKEN_VAL_CLOS:
                 case ' ':
                 case TOKEN_EQ:
-                    out.write( '\\' );
-                    out.write( c );
+                    out.write('\\');
+                    out.write(c);
                     break;
 
                 // well known escapes
                 case '\b':
-                    out.write( "\\b" );
+                    out.write("\\b");
                     break;
                 case '\t':
-                    out.write( "\\t" );
+                    out.write("\\t");
                     break;
                 case '\n':
-                    out.write( "\\n" );
+                    out.write("\\n");
                     break;
                 case '\f':
-                    out.write( "\\f" );
+                    out.write("\\f");
                     break;
                 case '\r':
-                    out.write( "\\r" );
+                    out.write("\\r");
                     break;
 
                 // other escaping
                 default:
-                    if ( c < ' ' )
-                    {
-                        String t = "000" + Integer.toHexString( c );
-                        out.write( "\\u" + t.substring( t.length() - 4 ) );
-                    }
-                    else
-                    {
-                        out.write( c );
+                    if (c < ' ') {
+                        String t = "000" + Integer.toHexString(c);
+                        out.write("\\u" + t.substring(t.length() - 4));
+                    } else {
+                        out.write(c);
                     }
             }
         }
