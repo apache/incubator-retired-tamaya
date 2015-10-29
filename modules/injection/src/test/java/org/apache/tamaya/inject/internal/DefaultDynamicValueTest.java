@@ -25,6 +25,7 @@ import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.UpdatePolicy;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
@@ -306,7 +307,7 @@ public class DefaultDynamicValueTest {
     private static final class DoublicatingConverter implements PropertyConverter<String>{
 
         @Override
-        public String convert(String value) {
+        public String convert(String value, ConversionContext context) {
             return value + value;
         }
     }

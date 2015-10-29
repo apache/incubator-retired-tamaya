@@ -72,8 +72,9 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
         if (method.getReturnType() == DynamicValue.class) {
             return DefaultDynamicValue.of(method, configuration);
         }
-        String configValue = InjectionHelper.getConfigValue(method);
-        Object result = InjectionHelper.adaptValue(method, TypeLiteral.of(method.getReturnType()), configValue);
+        String[] retKey = new String[1];
+        String configValue = InjectionHelper.getConfigValue(method, retKey);
+        Object result = InjectionHelper.adaptValue(method, TypeLiteral.of(method.getReturnType()), retKey[0], configValue);
         if (result == null && method.isDefault()) {
             result = method.getDefaultValue();
         }

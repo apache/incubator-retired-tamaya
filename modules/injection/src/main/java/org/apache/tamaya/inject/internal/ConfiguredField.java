@@ -101,14 +101,16 @@ public class ConfiguredField {
     private void applyValue(Object target,boolean resolve) throws ConfigException {
         Objects.requireNonNull(target);
         try {
-            String configValue = InjectionHelper.getConfigValue(this.annotatedField);
+            String[] retKey = new String[1];
+            String configValue = InjectionHelper.getConfigValue(this.annotatedField, retKey);
             // Next step perform expression resolution, if any
             String evaluatedValue = resolve && configValue != null
                     ? InjectionHelper.evaluateValue(configValue)
                     : configValue;
 
             // Check for adapter/filter
-            Object value = InjectionHelper.adaptValue(this.annotatedField, TypeLiteral.of(this.annotatedField.getType()), evaluatedValue);
+            Object value = InjectionHelper.adaptValue(this.annotatedField,
+                    TypeLiteral.of(this.annotatedField.getType()), retKey[0], evaluatedValue);
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override
                 public Object run() throws Exception {

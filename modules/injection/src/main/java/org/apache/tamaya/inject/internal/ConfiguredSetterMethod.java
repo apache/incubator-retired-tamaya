@@ -60,7 +60,8 @@ public class ConfiguredSetterMethod {
      * @throws ConfigException if evaluation or conversion failed.
      */
     public void applyValue(Object target, boolean resolve) throws ConfigException {
-        String configValue = InjectionHelper.getConfigValue(this.setterMethod);
+        String[] retKey = new String[1];
+        String configValue = InjectionHelper.getConfigValue(this.setterMethod, retKey);
         Objects.requireNonNull(target);
         try {
             String evaluatedString = resolve && configValue != null
@@ -68,7 +69,9 @@ public class ConfiguredSetterMethod {
                     : configValue;
 
             // Check for adapter/filter
-            Object value = InjectionHelper.adaptValue(this.setterMethod, TypeLiteral.of(this.setterMethod.getParameterTypes()[0]), evaluatedString);
+            Object value = InjectionHelper.adaptValue(
+                    this.setterMethod, TypeLiteral.of(this.setterMethod.getParameterTypes()[0]),
+                    retKey[0], evaluatedString);
 
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override

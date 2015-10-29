@@ -35,6 +35,7 @@ import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -63,23 +64,42 @@ final class InjectionHelper {
 
     /**
      * Internally evaluated the current valid configuration keys based on the given annotations present.
-     *
+     * @param method the method
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Method method) {
-        ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return getConfigValueInternal(method, areasAnnot);
+        return getConfigValue(method, null);
     }
-
 
     /**
      * Internally evaluated the current valid configuration keys based on the given annotations present.
-     *
+     * @param method the method
+     * @param retKey the array to return the key found, or null.
+     * @return the keys to be returned, or null.
+     */
+    public static String getConfigValue(Method method, String[] retKey) {
+        ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
+        return getConfigValueInternal(method, areasAnnot, retKey);
+    }
+
+    /**
+     * Internally evaluated the current valid configuration keys based on the given annotations present.
+     * @param field the field
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Field field) {
+        return getConfigValue(field, null);
+    }
+
+    /**
+     * Internally evaluated the current valid configuration keys based on the given annotations present.
+     * @param field the field
+     * @param retKey the array to return the key found, or null.
+     * @return the keys to be returned, or null.
+     */
+    public static String getConfigValue(Field field, String[] retKey) {
         ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return getConfigValueInternal(field, areasAnnot);
+        return getConfigValueInternal(field, areasAnnot, retKey);
     }
 
     /**
@@ -87,7 +107,7 @@ final class InjectionHelper {
      *
      * @return the keys to be returned, or null.
      */
-    private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot) {
+    private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot, String[] retKey) {
         Config prop = element.getAnnotation(Config.class);
         ConfigDefault defaultAnnot = element.getAnnotation(ConfigDefault.class);
         List<String> keys;
@@ -96,7 +116,7 @@ final class InjectionHelper {
         } else {
             keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
         }
-        String configValue = evaluteConfigValue(keys);
+        String configValue = evaluteConfigValue(keys, retKey);
         if (configValue == null && defaultAnnot != null) {
             return defaultAnnot.value();
         }
@@ -104,11 +124,14 @@ final class InjectionHelper {
     }
 
 
-    private static String evaluteConfigValue(List<String> keys) {
+    private static String evaluteConfigValue(List<String> keys, String[] retKey) {
         String configValue = null;
         for (String key : keys) {
             configValue = ConfigurationProvider.getConfiguration().get(key);
             if (configValue != null) {
+                if(retKey!=null && retKey.length>0){
+                    retKey[0] = key;
+                }
                 break;
             }
         }
@@ -117,7 +140,7 @@ final class InjectionHelper {
 
 
     @SuppressWarnings("rawtypes")
-    public static <T> T adaptValue(AnnotatedElement element, TypeLiteral<T> targetType, String configValue) {
+    public static <T> T adaptValue(AnnotatedElement element, TypeLiteral<T> targetType, String key, String configValue) {
         // Check for adapter/filter
         T adaptedValue = null;
         WithPropertyConverter converterAnnot = element.getAnnotation(WithPropertyConverter.class);
@@ -127,8 +150,11 @@ final class InjectionHelper {
             if (!converterType.getName().equals(WithPropertyConverter.class.getName())) {
                 try {
                     // TODO cache here...
+                    ConversionContext ctx = new ConversionContext.Builder(key,targetType)
+                            .setAnnotatedElement(element).build();
+
                     PropertyConverter<T> converter = PropertyConverter.class.cast(converterType.newInstance());
-                    adaptedValue = converter.convert(configValue);
+                    adaptedValue = converter.convert(configValue, ctx);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element +
                             ", trying default conversion.", e);
@@ -143,8 +169,10 @@ final class InjectionHelper {
         } else {
             List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                     .getPropertyConverters(targetType);
+            ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(), key,targetType)
+                    .setAnnotatedElement(element).build();
             for (PropertyConverter<T> converter : converters) {
-                adaptedValue = converter.convert(configValue);
+                adaptedValue = converter.convert(configValue, ctx);
                 if (adaptedValue != null) {
                     return adaptedValue;
                 }
