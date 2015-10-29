@@ -125,5 +125,8 @@ under the License.
         <!-- Imported from APache Felix. -->
         <Class name="org.apache.tamaya.integration.osgi.felix.ConfigurationHandler"/>
     </Match>
+    <Match>
+        <Class name="org.apache.tamaya.integration.osgi.injection.Activator"/>
+    </Match>
 
 </FindBugsFilter>

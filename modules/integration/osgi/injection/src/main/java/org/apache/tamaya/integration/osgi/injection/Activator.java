@@ -16,36 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.osgi.general;
+package org.apache.tamaya.integration.osgi.injection;
 
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.osgi.framework.*;
 import org.osgi.service.cm.ConfigurationAdmin;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 /**
  * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
  * using a default service priority of {@code 0}.
  */
-public class Activator implements ServiceListener {
+public class Activator implements ServiceListener, BundleActivator {
 
     private BundleContext context;
 
-    ServiceRegistration<ConfigurationAdmin> registration;
-
     @Override
     public void start(BundleContext context) throws Exception {
-        TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);
-        registration = context.registerService(ConfigurationAdmin.class, cm, null);
+        this.context = context;
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
-        if (registration != null) {
-            registration.unregister();
-        }
+        this.context = null;
     }
 
     @Override
@@ -56,6 +48,5 @@ public class Activator implements ServiceListener {
             Object service = context.getService(ref);
             ConfigurationInjection.getConfigurationInjector().configure(service);
         }
-
     }
 }

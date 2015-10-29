@@ -19,6 +19,7 @@
 package org.apache.tamaya.integration.osgi.felix;
 
 import org.apache.felix.cm.PersistenceManager;
+import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
@@ -29,18 +30,16 @@ import java.util.Hashtable;
  * Activator that registers the Tamaya implementation of {@link org.apache.felix.cm.PersistenceManager},
  * hereby overriding the version registered by felix CM by default.
  */
-public class Activator {
+public class Activator implements BundleActivator{
 
     /**
      * Our registration, used on stop.
      */
     private ServiceRegistration<PersistenceManager> pmRegistration;
 
-    /**
-     * Constructor.
-     * @param bundleContext the OSGI context
-     */
-    public Activator(BundleContext bundleContext){
+
+    @Override
+    public void start(BundleContext bundleContext) throws Exception {
         TamayaPersistenceManager tpm = new TamayaPersistenceManager(bundleContext);
         Hashtable props = new Hashtable();
         props.put( Constants.SERVICE_PID, tpm.getClass().getName() );
@@ -50,5 +49,13 @@ public class Activator {
         // TODO Make ranking configurable...
         props.put( Constants.SERVICE_RANKING, ranking );
         pmRegistration = bundleContext.registerService( PersistenceManager.class.getName(), tpm, props );
+    }
+
+    @Override
+    public void stop(BundleContext bundleContext) throws Exception {
+        if(pmRegistration!=null){
+            pmRegistration.unregister();
+            pmRegistration = null;
+        }
     }
 }
