@@ -19,12 +19,14 @@
 package org.apache.tamaya.integration.osgi.injection;
 
 import org.apache.tamaya.inject.ConfigurationInjection;
-import org.osgi.framework.*;
-import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceReference;
 
 /**
- * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
- * using a default service priority of {@code 0}.
+ * Activator that injects Tamaya configuration into OSGI Services.
  */
 public class Activator implements ServiceListener, BundleActivator {
 
