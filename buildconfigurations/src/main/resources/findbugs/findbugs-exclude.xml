@@ -128,5 +128,9 @@ under the License.
     <Match>
         <Class name="org.apache.tamaya.integration.osgi.injection.Activator"/>
     </Match>
+    <Match>
+        <Class name="org.apache.tamaya.resource.internal.FileCollector"/>
+        <Method name="traverseAndSelectFromChildren"/>
+    </Match>
 
 </FindBugsFilter>
