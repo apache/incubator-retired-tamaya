@@ -19,6 +19,7 @@
 package org.apache.tamaya.integration.cdi.internal;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.inject.Vetoed;
@@ -53,7 +54,8 @@ public class EnumConverter<T> implements PropertyConverter<T> {
     }
 
     @Override
-    public T convert(String value) {
+    public T convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "<enumValue>");
         try {
             return (T) factory.invoke(null, value);
         } catch (InvocationTargetException | IllegalAccessException e) {

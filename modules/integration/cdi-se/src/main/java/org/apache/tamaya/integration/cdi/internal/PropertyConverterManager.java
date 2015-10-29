@@ -20,6 +20,7 @@ package org.apache.tamaya.integration.cdi.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -349,7 +350,10 @@ public class PropertyConverterManager {
         if (factoryMethod != null) {
             converter = new PropertyConverter<T>() {
                 @Override
-                public T convert(String value) {
+                public T convert(String value, ConversionContext context) {
+                    context.addSupportedFormats(PropertyConverter.class, "static T of(String)", "static T valueOf(String)",
+                            "static T getInstance(String)", "static T from(String)",
+                            "static T fromString(String)", "static T parse(String)");
                     try {
                         if (!Modifier.isStatic(factoryMethod.getModifiers())) {
                             throw new ConfigException(factoryMethod.toGenericString() +
@@ -376,7 +380,8 @@ public class PropertyConverterManager {
                 final Constructor<T> constr = targetType.getRawType().getDeclaredConstructor(String.class);
                 converter = new PropertyConverter<T>() {
                     @Override
-                    public T convert(String value) {
+                    public T convert(String value, ConversionContext context) {
+                        context.addSupportedFormats(PropertyConverter.class, "new T(String)");
                         try {
                             AccessController.doPrivileged(new PrivilegedAction<Object>() {
                                 @Override
