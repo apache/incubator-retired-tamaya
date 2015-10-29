@@ -24,6 +24,7 @@ import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.io.Serializable;
@@ -115,9 +116,10 @@ public final class FrozenConfiguration implements Configuration, Serializable {
         if (value != null) {
             List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                     .getPropertyConverters(type);
+            ConversionContext context = new ConversionContext.Builder(this,key,type).build();
             for (PropertyConverter<T> converter : converters) {
                 try {
-                    T t = converter.convert(value);
+                    T t = converter.convert(value, context);
                     if (t != null) {
                         return t;
                     }
@@ -127,7 +129,8 @@ public final class FrozenConfiguration implements Configuration, Serializable {
                                     e);
                 }
             }
-            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key);
+            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key
+                    + ", supported formats: " + context.getSupportedFormats());
         }
 
         return null;

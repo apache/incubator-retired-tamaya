@@ -27,7 +27,6 @@ import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.inject.api.LoadPolicy;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 

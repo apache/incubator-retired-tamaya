@@ -24,6 +24,7 @@ import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.HashMap;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Created by Anatole on 24.03.2015.
@@ -117,9 +117,11 @@ public class TestConfigView implements ConfigOperator{
                 if (value != null) {
                     List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                             .getPropertyConverters(type);
+                    ConversionContext context = new ConversionContext.Builder(
+                            key,type).build();
                     for (PropertyConverter<T> converter : converters) {
                         try {
-                            T t = converter.convert(value);
+                            T t = converter.convert(value, context);
                             if (t != null) {
                                 return t;
                             }
@@ -129,7 +131,8 @@ public class TestConfigView implements ConfigOperator{
                                             + value, e);
                         }
                     }
-                    throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key);
+                    throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": "
+                            + key + ", supportedFormats: " + context.getSupportedFormats());
                 }
                 return null;
             }
