@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,10 +53,6 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
      * The paths to be evaluated.
      */
     private Collection<URL> paths = new ArrayList<>();
-    /**
-     * The ClassLoader to use.
-     */
-    private Optional<ClassLoader> classLoader;
 
     /**
      * Creates a new instance.

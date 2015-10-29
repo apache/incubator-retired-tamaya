@@ -80,7 +80,7 @@ public class FileCollector {
      * @return the URLs matching the tokens
      */
     static Collection<URL> traverseAndSelectFromChildren(File dir, List<String> subTokens, int tokenIndex) {
-        if (tokenIndex >= subTokens.size() || dir.isFile()) {
+        if (tokenIndex >= subTokens.size() || dir.isFile() || !dir.isDirectory()) {
             return Collections.emptyList();
         }
         List<URL> result = new ArrayList<>();
