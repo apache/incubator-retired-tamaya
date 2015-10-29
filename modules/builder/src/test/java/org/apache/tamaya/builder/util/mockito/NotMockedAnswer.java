@@ -33,6 +33,9 @@ public class NotMockedAnswer implements Answer<Object>, Serializable {
 
     @Override
     public Object answer(InvocationOnMock invocation) throws Throwable {
+        if("toString".equals(invocation.getMethod().getName())){
+            return "Some "+invocation.getMethod().getDeclaringClass().getName();
+        }
         StringBuilder msgBuilder = new StringBuilder();
 
         msgBuilder.append("Invocation of method not mocked: ")
@@ -49,7 +52,6 @@ public class NotMockedAnswer implements Answer<Object>, Serializable {
                 }
             }
         }
-
         throw new MockitoException(msgBuilder.toString());
     }
 }

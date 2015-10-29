@@ -24,9 +24,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.builder.util.types.CustomTypeA;
 import org.apache.tamaya.builder.util.types.CustomTypeB;
 import org.apache.tamaya.builder.util.types.CustomTypeC;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.*;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
@@ -273,9 +271,13 @@ public class ConfigurationBuilderTest {
     @Test(expected = NullPointerException.class)
     public void canNotAddNullTypeLiteralButPropertyConverter() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
-
-        builder.addPropertyConverter((TypeLiteral<CustomTypeA>)null,
-                                     prop -> new CustomTypeA(prop, prop));
+        builder.addPropertyConverter((TypeLiteral)null,
+                new PropertyConverter() {
+                    @Override
+                    public CustomTypeA convert(final String prop, ConversionContext context) {
+                        return new CustomTypeA(prop, prop);
+                    }
+                });
     }
 
     @Test
@@ -289,8 +291,13 @@ public class ConfigurationBuilderTest {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         builder.addPropertyConverter(TypeLiteral.of(CustomTypeA.class),
-                                     prop -> new CustomTypeA(prop, prop))
-               .addPropertySources(source);
+                new PropertyConverter() {
+                    @Override
+                    public CustomTypeA convert(final String prop, ConversionContext context) {
+                        return new CustomTypeA(prop, prop);
+                    }
+                });
+        builder.addPropertySources(source);
 
         Configuration config = builder.build();
 
@@ -313,9 +320,14 @@ public class ConfigurationBuilderTest {
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.addPropertyConverter(CustomTypeA.class,
-                                     prop -> new CustomTypeA(prop, prop))
-               .addPropertySources(source);
+        builder.addPropertyConverter(TypeLiteral.of(CustomTypeA.class),
+                new PropertyConverter() {
+                    @Override
+                    public CustomTypeA convert(final String prop, ConversionContext context) {
+                        return new CustomTypeA(prop, prop);
+                    }
+                });
+        builder.addPropertySources(source);
 
         Configuration config = builder.build();
 

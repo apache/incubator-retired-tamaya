@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.core.internal.DefaultConfiguration;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationFormats;
 import org.apache.tamaya.format.FlattenedDefaultPropertySource;
@@ -31,16 +30,13 @@ import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spisupport.DefaultConfiguration;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
@@ -187,12 +183,11 @@ public class ConfigurationBuilder {
      * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
     public ConfigurationBuilder addPropertySources(URL... urls) {
-        Stream.of(Arrays.asList(urls))
-              .flatMap(Collection::stream)
-              .filter(entry -> entry != null)
-              .collect(Collectors.toList())
-              .forEach(this::addPropertySource);
-
+        for(URL url:urls){
+            if(url!=null){
+                addPropertySource(url);
+            }
+        }
         return this;
     }
 
@@ -218,9 +213,11 @@ public class ConfigurationBuilder {
      * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
     public ConfigurationBuilder addPropertySources(Collection<URL> urls) {
-        urls.stream()
-                .filter(entry -> entry != null)
-                .forEach(this::addPropertySource);
+        for(URL url:urls) {
+            if (url != null) {
+                addPropertySource(url);
+            }
+        }
         return this;
     }
 
@@ -245,13 +242,15 @@ public class ConfigurationBuilder {
      * @see org.apache.tamaya.format.ConfigurationFormats#getFormats()
      */
     public ConfigurationBuilder addPropertySources(String... urls) {
-        Stream.of(Arrays.asList(urls))
-              .flatMap(Collection::stream)
-              .filter(entry -> entry != null)
-              .map(new StringToURLMapper())
-              .collect(Collectors.toList())
-              .forEach(this::addPropertySource);
-
+        for(String url:urls) {
+            if (url != null) {
+                try{
+                    addPropertySource(new URL(url));
+                } catch(Exception e){
+                    throw new ConfigException("Invalid URL: " + url);
+                }
+            }
+        }
         return this;
     }
 
@@ -360,8 +359,7 @@ public class ConfigurationBuilder {
     public <T> ConfigurationBuilder addPropertyConverter(Class<T> type, PropertyConverter<T> converter) {
         Objects.requireNonNull(type);
         Objects.requireNonNull(converter);
-
-        return addPropertyConverter(TypeLiteral.of(type), converter);
+        return addPropertyConverter(TypeLiteral.of(type), (PropertyConverter<Object>)converter);
     }
 
     /**
@@ -370,7 +368,6 @@ public class ConfigurationBuilder {
     public <T> ConfigurationBuilder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter){
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverter);
-
         contextBuilder.addPropertyConverter(type, propertyConverter);
         return this;
     }
@@ -591,8 +588,7 @@ public class ConfigurationBuilder {
     /**
      * Mapper to map a URL given as string to an URL instance.
      */
-    private static class StringToURLMapper implements Function<String, URL> {
-        @Override
+    private static class StringToURLMapper {
         public URL apply(String u) {
             try {
                 return new URL(u);

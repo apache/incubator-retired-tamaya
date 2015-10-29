@@ -21,7 +21,6 @@ package org.apache.tamaya.builder;
 
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.core.internal.PropertyConverterManager;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyFilter;
@@ -29,25 +28,15 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spisupport.PriorityServiceComparator;
+import org.apache.tamaya.spisupport.PropertyConverterManager;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import javax.annotation.Priority;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
@@ -56,6 +45,8 @@ import static java.util.stream.Collectors.toList;
  */
 class ProgrammaticConfigurationContext implements ConfigurationContext {
 
+    private static final Comparator<PropertySource> PS_COMPARATOR = new PropertySourceComparator();
+    private static final Comparator<Object> COMP_COMPARATOR = new PriorityServiceComparator();
     /**
      * The logger used.
      */
@@ -96,75 +87,78 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
     public ProgrammaticConfigurationContext(Builder builder) {
         propertyConverterManager = new PropertyConverterManager(builder.loadProvidedPropertyConverters);
 
-        immutablePropertySources = getAllPropertySources(builder).stream()
-                                                                 .sorted(this::comparePropertySources)
-                                                                 .collect(Collectors.toList());
+        List<PropertySource> sources = getAllPropertySources(builder);
+        Collections.sort(sources, PS_COMPARATOR);
+        immutablePropertySources = Collections.unmodifiableList(sources);
 
 
-        immutablePropertyFilters = getPropertyFilters(builder).stream()
-                                                              .sorted(this::comparePropertyFilters)
-                                                              .collect(toList());
+        List<PropertyFilter> filters = getPropertyFilters(builder);
+        Collections.sort(filters, COMP_COMPARATOR);
+        immutablePropertyFilters = Collections.unmodifiableList(filters);
 
 
         propertyValueCombinationPolicy = builder.propertyValueCombinationPolicy;
+        for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> en: builder.propertyConverters.entrySet()){
+            if(en!=null){
+                for(PropertyConverter pv:en.getValue()) {
+                    propertyConverterManager.register(en.getKey(), pv);
+                }
+            }
+        }
 
-        builder.propertyConverters.forEach((literal, converters) -> {
-            converters.stream().filter(c -> c != null)
-                      .forEach(c -> propertyConverterManager.register((TypeLiteral<Object>) literal,
-                                                                      (PropertyConverter<Object>) c));
-        });
-
-        LOG.info(() -> "Using " + immutablePropertySources.size() + " property sources: " +
-                createStringList(immutablePropertySources, ps -> ps.getName() + '[' + ps.getClass().getName() + ']'));
-
-
-        LOG.info(() -> "Using " + immutablePropertyFilters.size() + " property filters: " +
-                createStringList(immutablePropertyFilters, f -> f.getClass().getName()));
-
-
-        LOG.info(() -> "Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
+        LOG.info("Using " + immutablePropertySources.size() + " property sources: " + immutablePropertySources);
+        LOG.info("Using " + immutablePropertyFilters.size() + " property filters: " + immutablePropertyFilters);
+        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
     private List<PropertyFilter> getPropertyFilters(Builder builder) {
-        List<PropertyFilter> provided = builder.loadProvidedPropertyFilters
-                ? ServiceContextManager.getServiceContext().getServices(PropertyFilter.class)
-                : new ArrayList<>(0);
-
-        List<PropertyFilter> configured = builder.propertyFilters;
-
-        return Stream.of(provided, configured).flatMap(Collection::stream)
-                     .collect(toList());
+        List<PropertyFilter> provided = new ArrayList<>();
+        if(builder.loadProvidedPropertyFilters) {
+            provided.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
+        }
+        for(PropertyFilter pf:builder.propertyFilters) {
+            if (pf != null) {
+                provided.add(pf);
+            }
+        }
+        return provided;
     }
 
     private List<PropertySource> getAllPropertySources(Builder builder) {
-        List<PropertySource> provided = builder.loadProvidedPropertySources
-                ? ServiceContextManager.getServiceContext().getServices(PropertySource.class)
-                : new ArrayList<>(0);
-
+        List<PropertySource> provided = new ArrayList<>();
+        if(builder.loadProvidedPropertySources) {
+            provided.addAll(ServiceContextManager.getServiceContext().getServices(PropertySource.class));
+        }
+        for(PropertySource ps:builder.propertySources){
+            if(ps!=null){
+                provided.add(ps);
+            }
+        }
         if (builder.loadProvidedPropertySourceProviders) {
             List<PropertySourceProvider> providers = ServiceContextManager.getServiceContext()
                                                                   .getServices(PropertySourceProvider.class);
             for (PropertySourceProvider provider : providers) {
-                Collection<PropertySource> sources = provider.getPropertySources();
-                provided.addAll(sources);
+                for(PropertySource ps:provider.getPropertySources()) {
+                    if(ps!=null) {
+                        provided.addAll(provider.getPropertySources());
+                    }
+                }
             }
         }
-
-        List<PropertySource> configured = builder.propertySources;
-
-        return Stream.of(provided, configured).flatMap(Collection::stream)
-                     .collect(toList());
+        return provided;
     }
 
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
         Lock writeLock = propertySourceLock.asWriteLock();
         try {
             writeLock.lock();
-            List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
-            newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
-            Collections.sort(newPropertySources, this::comparePropertySources);
-
-            this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
+            List<PropertySource> provided = new ArrayList<>();
+            for(PropertySource ps:propertySourcesToAdd){
+                if(ps!=null){
+                    provided.add(ps);
+                }
+            }
+            this.immutablePropertySources = Collections.unmodifiableList(provided);
         } finally {
             writeLock.unlock();
         }
@@ -224,7 +218,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
     public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
         propertyConverterManager.register(typeToConvert, propertyConverter);
-        LOG.info(() -> "Added PropertyConverter: " + propertyConverter.getClass().getName());
+        LOG.info("Added PropertyConverter: " + propertyConverter.getClass().getName());
     }
 
     @Override
@@ -247,19 +241,9 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         return propertyValueCombinationPolicy;
     }
 
-    private <T> String createStringList(Collection<T> propertySources, Function<T, String> mapper) {
-        StringBuilder joiner = new StringBuilder(", ");
-        propertySources.forEach(t -> joiner.append(mapper.apply(t)));
-        return joiner.toString();
-    }
 
     @Override
     public ConfigurationContextBuilder toBuilder() {
-        // @todo Check if it could be useful to support this method, Oliver B. Fischer
-        throw new RuntimeException("This method is currently not supported.");
-    }
-
-    public Collection<PropertySource> getPropertySources(Predicate<PropertySource> selector) {
         // @todo Check if it could be useful to support this method, Oliver B. Fischer
         throw new RuntimeException("This method is currently not supported.");
     }
@@ -298,56 +282,56 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         }
 
         public Builder addPropertySources(PropertySource... propertySources) {
-            List<PropertySource> filtered = Stream.of(propertySources).filter(this::isNotNull)
-                                                  .collect(toList());
-
-            this.propertySources.addAll(filtered);
-
+            for (PropertySource ps : propertySources) {
+                if (ps != null) {
+                    this.propertySources.add(ps);
+                }
+            }
             return this;
         }
 
         public Builder addPropertySources(Collection<PropertySource> propertySources) {
-            List<PropertySource> filtered = propertySources.stream().filter(this::isNotNull)
-                                                           .collect(toList());
-
-            this.propertySources.addAll(filtered);
-
+            for (PropertySource ps : propertySources) {
+                if (ps != null) {
+                    this.propertySources.add(ps);
+                }
+            }
             return this;
         }
 
         public Builder addPropertySourceProviders(PropertySourceProvider... propertySourceProviders) {
-            List<PropertySourceProvider> providers = Stream.of(propertySourceProviders).filter(this::isNotNull)
-                                                           .collect(toList());
-
-            return addPropertySourceProviders(providers);
-        }
-
-        public Builder addPropertySourceProviders(Collection<PropertySourceProvider> providers) {
-            List<PropertySource> filtered = providers.stream().filter(this::isNotNull)
-                                                     .flatMap(p -> p.getPropertySources().stream())
-                                                     .filter(this::isNotNull)
-                                                     .collect(toList());
-
-            this.propertySources.addAll(filtered);
-
+            for (PropertySourceProvider ps : propertySourceProviders) {
+                if (ps != null) {
+                    this.propertySources.addAll(ps.getPropertySources());
+                }
+            }
             return this;
         }
 
-        public Builder addPropertyFilters(PropertyFilter... propertySources) {
-            List<PropertyFilter> sources = Stream.of(propertySources).filter(this::isNotNull)
-                                                 .collect(toList());
-
-            this.propertyFilters.addAll(sources);
-
+        public Builder addPropertySourceProviders(Collection<PropertySourceProvider> propertySourceProviders) {
+            for (PropertySourceProvider ps : propertySourceProviders) {
+                if (ps != null) {
+                    this.propertySources.addAll(ps.getPropertySources());
+                }
+            }
             return this;
         }
 
-        public Builder addPropertyFilters(Collection<PropertyFilter> propertySources) {
-            List<PropertyFilter> sources = propertySources.stream().filter(this::isNotNull)
-                                                          .collect(toList());
+        public Builder addPropertyFilters(PropertyFilter... propertyFIlter) {
+            for (PropertyFilter pf : propertyFIlter) {
+                if (pf != null) {
+                    this.propertyFilters.add(pf);
+                }
+            }
+            return this;
+        }
 
-            this.propertyFilters.addAll(sources);
-
+        public Builder addPropertyFilters(Collection<PropertyFilter> propertyFIlter) {
+            for (PropertyFilter pf : propertyFIlter) {
+                if (pf != null) {
+                    this.propertyFilters.add(pf);
+                }
+            }
             return this;
         }
 
@@ -367,9 +351,11 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         //X TODO as overrides used first.
 
         public <T> Builder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter) {
-            propertyConverters.computeIfAbsent(type, (t) -> new ArrayList<>())
-                              .add(propertyConverter);
-
+            if(!propertyConverters.containsKey(type)){
+                List<PropertyConverter<?>> convList = new ArrayList<>();
+                convList.add(propertyConverter);
+                propertyConverters.put(type, convList);
+            }
             return this;
         }
 
@@ -394,9 +380,6 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
             loadProvidedPropertyFilters = state;
         }
 
-        private <T> boolean isNotNull(T item) {
-            return null != item;
-        }
     }
 
 
