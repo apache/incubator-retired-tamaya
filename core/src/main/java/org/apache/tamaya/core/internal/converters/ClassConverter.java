@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Objects;
@@ -36,7 +37,8 @@ public class ClassConverter implements PropertyConverter<Class<?>>{
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Class<?> convert(String value) {
+    public Class<?> convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(),"<fullyQualifiedClassName>");
         String trimmed = Objects.requireNonNull(value).trim();
         try{
             return Class.forName(trimmed, false, Thread.currentThread().getContextClassLoader());

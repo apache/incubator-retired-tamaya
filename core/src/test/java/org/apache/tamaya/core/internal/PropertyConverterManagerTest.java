@@ -19,6 +19,8 @@
 package org.apache.tamaya.core.internal;
 
 
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
 import org.junit.Test;
@@ -31,6 +33,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 public class PropertyConverterManagerTest {
+
+    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
+            "someKey").build();
+
     @Test
     public void customTypeWithFactoryMethodOfIsRecognizedAsSupported() {
         PropertyConverterManager manager = new PropertyConverterManager();
@@ -50,7 +56,7 @@ public class PropertyConverterManagerTest {
 
         PropertyConverter<MyType> converter = converters.get(0);
 
-        Object result = converter.convert("IN");
+        Object result = converter.convert("IN", DUMMY_CONTEXT);
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(MyType.class));
@@ -64,7 +70,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters, hasSize(1));
 
         PropertyConverter<C> converter = converters.get(0);
-        C result = converter.convert("testDirectConverterMapping");
+        C result = converter.convert("testDirectConverterMapping", DUMMY_CONTEXT);
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
@@ -80,7 +86,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters, hasSize(1));
 
         PropertyConverter<B> converter = converters.get(0);
-        B result = converter.convert("testDirectSuperclassConverterMapping");
+        B result = converter.convert("testDirectSuperclassConverterMapping", DUMMY_CONTEXT);
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
@@ -104,7 +110,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters, hasSize(1));
 
         PropertyConverter<A> converter = converters.get(0);
-        A result = converter.convert("testTransitiveSuperclassConverterMapping");
+        A result = converter.convert("testTransitiveSuperclassConverterMapping", DUMMY_CONTEXT);
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
@@ -118,7 +124,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters, hasSize(1));
 
         PropertyConverter<Readable> converter = converters.get(0);
-        Readable result = converter.convert("testDirectInterfaceMapping");
+        Readable result = converter.convert("testDirectInterfaceMapping", DUMMY_CONTEXT);
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
@@ -132,7 +138,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters, hasSize(1));
 
         PropertyConverter<Runnable> converter = converters.get(0);
-        Runnable result = converter.convert("testTransitiveInterfaceMapping1");
+        Runnable result = converter.convert("testTransitiveInterfaceMapping1", DUMMY_CONTEXT);
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
@@ -146,7 +152,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters, hasSize(1));
 
         PropertyConverter<AutoCloseable> converter = converters.get(0);
-        AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2");
+        AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2", DUMMY_CONTEXT);
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));

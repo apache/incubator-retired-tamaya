@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.net.URL;
@@ -33,7 +34,8 @@ public class URLConverter implements PropertyConverter<URL> {
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public URL convert(String value) {
+    public URL convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(),"<URL>");
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return new URL(trimmed);

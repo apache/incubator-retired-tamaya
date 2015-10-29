@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Objects;
@@ -38,7 +39,8 @@ public class CharConverter implements PropertyConverter<Character>{
     private static final Logger LOG = Logger.getLogger(CharConverter.class.getName());
 
     @Override
-    public Character convert(String value) {
+    public Character convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(),"\\'<char>\\'", "<char>", "<charNum>");
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.isEmpty()){
             return null;

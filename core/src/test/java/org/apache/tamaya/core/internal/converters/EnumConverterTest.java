@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import java.math.RoundingMode;
@@ -32,23 +34,26 @@ public class EnumConverterTest {
 
     private EnumConverter testConverter = new EnumConverter(RoundingMode.class);
 
+    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(), "someKey").build();
+
     @Test
     public void testConvert() {
-        assertEquals(testConverter.convert(RoundingMode.CEILING.toString()), RoundingMode.CEILING);
+        assertEquals(testConverter.convert(RoundingMode.CEILING.toString(),
+                DUMMY_CONTEXT), RoundingMode.CEILING);
     }
 
     @Test
     public void testConvert_LowerCase() {
-        assertEquals(testConverter.convert("ceiling"), RoundingMode.CEILING);
+        assertEquals(testConverter.convert("ceiling", DUMMY_CONTEXT), RoundingMode.CEILING);
     }
 
     @Test
     public void testConvert_MixedCase()  {
-        assertEquals(testConverter.convert("CeiLinG"), RoundingMode.CEILING);
+        assertEquals(testConverter.convert("CeiLinG", DUMMY_CONTEXT), RoundingMode.CEILING);
     }
 
     @Test
     public void testConvert_OtherValue() {
-        assertNull(testConverter.convert("fooBars"));
+        assertNull(testConverter.convert("fooBars", DUMMY_CONTEXT));
     }
 }

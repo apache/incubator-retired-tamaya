@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Locale;
@@ -47,7 +48,8 @@ public class ByteConverter implements PropertyConverter<Byte>{
     private Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Byte convert(String value) {
+    public Byte convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(),"<byte>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX");
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":

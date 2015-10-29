@@ -28,14 +28,13 @@ public interface PropertyConverter<T>{
 
     /**
      * Convert the given configuration keys from it' String representation into the required target type.
-     * @param value the configuration keys
+     * The context instance passed also allows to add a list of supported formats, which is very handy in case a
+     * value could not be converted. This list of supported formats can then shown to the user to give some hints
+     * how a value could be configured.
+     * @param context the  {@link ConversionContext}, containing the String value and the requested configuration key.
      * @return converted keys
+     * @see ConversionContext#addSupportedFormats(Class, String...)
      */
-    T convert(String value);
+    T convert(String value, ConversionContext context);
 
-    //X TODO probably add some diagnostic info which explains what kind of
-    //X format(s) is supported.
-    //X This could be useful if e.g. no converter in the chain felt responsible
-    //X because a wrongly formatted configuration string had been used.
-    //X This could probably also be handled via an additional Annotation on the converter.
 }

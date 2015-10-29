@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.lang.reflect.InvocationTargetException;
@@ -51,7 +52,7 @@ public class EnumConverter<T> implements PropertyConverter<T> {
     }
 
     @Override
-    public T convert(String value) {
+    public T convert(String value, ConversionContext context) {
         try {
             return (T) factory.invoke(null, value);
         } catch (InvocationTargetException | IllegalAccessException e) {

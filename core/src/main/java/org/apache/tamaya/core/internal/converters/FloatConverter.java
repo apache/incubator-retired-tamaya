@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Locale;
@@ -45,7 +46,8 @@ public class FloatConverter implements PropertyConverter<Float> {
     private IntegerConverter integerConverter = new IntegerConverter();
 
     @Override
-    public Float convert(String value) {
+    public Float convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "<float>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE", "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "POSITIVE_INFINITY":
@@ -68,7 +70,7 @@ public class FloatConverter implements PropertyConverter<Float> {
                     LOG.finest("Parsing of float as floating number failed, trying parsing integral" +
                             " number/hex instead...");
                 }
-                Integer val = integerConverter.convert(trimmed);
+                Integer val = integerConverter.convert(trimmed, context);
                 if(val!=null) {
                     return val.floatValue();
                 }

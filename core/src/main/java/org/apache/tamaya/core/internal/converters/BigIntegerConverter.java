@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.math.BigInteger;
@@ -44,7 +45,8 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger>{
     private ByteConverter byteConverter = new ByteConverter();
 
     @Override
-    public BigInteger convert(String value) {
+    public BigInteger convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)");
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
             LOG.finest("Parsing Hex value to BigInteger: " + value);
@@ -55,7 +57,7 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger>{
                     LOG.finest("Invalid Hex-Byte-String: " + value);
                     return null;
                 }
-                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2));
+                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2), context);
                 if(val<10){
                     decimal.append('0').append(val);
                 } else{
@@ -72,7 +74,7 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger>{
                     LOG.finest("Invalid Hex-Byte-String: " + trimmed);
                     return null;
                 }
-                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2));
+                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2), context);
                 if(val<10){
                     decimal.append('0').append(val);
                 } else{

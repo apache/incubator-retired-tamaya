@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.math.BigDecimal;
@@ -42,7 +43,10 @@ public class NumberConverter implements PropertyConverter<Number>{
     private LongConverter longConverter = new LongConverter();
 
     @Override
-    public Number convert(String value) {
+    public Number convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "<double>, <long>", "0x (hex)", "0X... (hex)", "POSITIVE_INFINITY",
+                "NEGATIVE_INFINITY", "NAN");
+
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":
@@ -52,7 +56,7 @@ public class NumberConverter implements PropertyConverter<Number>{
             case "NAN":
                 return Double.NaN;
             default:
-                Long lVal = longConverter.convert(trimmed);
+                Long lVal = longConverter.convert(trimmed, context);
                 if (lVal != null) {
                     return lVal;
                 }

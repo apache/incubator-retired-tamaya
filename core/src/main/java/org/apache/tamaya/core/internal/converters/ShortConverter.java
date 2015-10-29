@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Locale;
@@ -47,7 +48,8 @@ public class ShortConverter implements PropertyConverter<Short>{
     private static final Logger LOG = Logger.getLogger(ShortConverter.class.getName());
 
     @Override
-    public Short convert(String value) {
+    public Short convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "short", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":

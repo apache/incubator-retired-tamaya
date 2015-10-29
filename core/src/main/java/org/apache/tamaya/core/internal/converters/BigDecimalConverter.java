@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.math.BigDecimal;
@@ -43,13 +44,15 @@ public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
     private BigIntegerConverter integerConverter = new BigIntegerConverter();
 
     @Override
-    public BigDecimal convert(String value) {
+    public BigDecimal convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "<bigDecimal> -> new BigDecimal(String)");
+
         String trimmed = Objects.requireNonNull(value).trim();
         try{
             return new BigDecimal(trimmed);
         } catch(Exception e){
             LOG.finest("Parsing BigDecimal failed, trying BigInteger for: " + value);
-            BigInteger bigInt = integerConverter.convert(trimmed);
+            BigInteger bigInt = integerConverter.convert(value, context);
             if(bigInt!=null){
                 return new BigDecimal(bigInt);
             }

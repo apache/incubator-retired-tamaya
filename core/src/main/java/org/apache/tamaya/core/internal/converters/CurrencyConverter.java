@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Currency;
@@ -40,7 +41,8 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
     private static final Logger LOG = Logger.getLogger(CurrencyConverter.class.getName());
 
     @Override
-    public Currency convert(String value) {
+    public Currency convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "<currencyCode>, using Locale.ENGLISH", "<numericValue>", "<locale>");
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));

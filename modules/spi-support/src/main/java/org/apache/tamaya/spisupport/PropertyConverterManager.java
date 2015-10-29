@@ -20,6 +20,7 @@ package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -369,7 +370,7 @@ public class PropertyConverterManager {
         if (factoryMethod != null) {
             converter = new PropertyConverter<T>() {
                 @Override
-                public T convert(String value) {
+                public T convert(String value, ConversionContext context) {
                     try {
                         if (!Modifier.isStatic(factoryMethod.getModifiers())) {
                             throw new ConfigException(factoryMethod.toGenericString() +
@@ -395,7 +396,7 @@ public class PropertyConverterManager {
                 final Constructor<T> constr = targetType.getRawType().getDeclaredConstructor(String.class);
                 converter = new PropertyConverter<T>() {
                     @Override
-                    public T convert(String value) {
+                    public T convert(String value, ConversionContext context) {
                         try {
                             constr.setAccessible(true);
                             return constr.newInstance(value);

@@ -23,11 +23,7 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -163,9 +159,10 @@ public class DefaultConfiguration implements Configuration {
     protected <T> T convertValue(String key, String value, TypeLiteral<T> type) {
         if (value != null) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
+            ConversionContext context = new ConversionContext.Builder(this, key).setTargetType(type).build();
             for (PropertyConverter<T> converter : converters) {
                 try {
-                    T t = converter.convert(value);
+                    T t = converter.convert(value, context);
                     if (t != null) {
                         return t;
                     }
@@ -173,7 +170,8 @@ public class DefaultConfiguration implements Configuration {
                     LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
                 }
             }
-            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key);
+            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key +
+                    ", supported formats: " + context.getSupportedFormats());
         }
         return null;
     }

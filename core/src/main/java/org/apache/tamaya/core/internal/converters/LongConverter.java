@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Locale;
@@ -46,9 +47,10 @@ public class LongConverter implements PropertyConverter<Long>{
     private static final Logger LOGGER = Logger.getLogger(LongConverter.class.getName());
 
     @Override
-    public Long convert(String value) {
+    public Long convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), "<long>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
 
-            String trimmed = Objects.requireNonNull(value).trim();
+        String trimmed = Objects.requireNonNull(value).trim();
             switch (trimmed.toUpperCase(Locale.ENGLISH)) {
                 case "MIN_VALUE":
                 case "MIN":
