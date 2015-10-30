@@ -48,7 +48,7 @@ public class Activator implements BundleActivator{
         Integer ranking = Integer.valueOf(Integer.MIN_VALUE + 10);
         // TODO Make ranking configurable...
         props.put( Constants.SERVICE_RANKING, ranking );
-        pmRegistration = bundleContext.registerService( PersistenceManager.class.getName(), tpm, props );
+        pmRegistration = bundleContext.registerService( PersistenceManager.class, tpm, props );
     }
 
     @Override
