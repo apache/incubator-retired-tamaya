@@ -119,7 +119,7 @@ public final class ConfigurationFunctions {
         return new ConfigOperator() {
             @Override
             public Configuration operate(Configuration config) {
-                return new FilteredConfiguration(config, filter, null);
+                return new FilteredConfiguration(config, filter, "FilterClass: " + filter.getClass().getName());
             }
         };
     }

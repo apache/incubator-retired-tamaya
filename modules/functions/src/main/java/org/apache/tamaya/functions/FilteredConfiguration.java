@@ -34,10 +34,12 @@ class FilteredConfiguration implements Configuration {
 
     private final Configuration baseConfiguration;
     private final BiPredicate<String, String> filter;
+    private String filterType;
 
-    FilteredConfiguration(Configuration baseConfiguration, BiPredicate<String, String> filter) {
+    FilteredConfiguration(Configuration baseConfiguration, BiPredicate<String, String> filter, String filterType) {
         this.baseConfiguration = Objects.requireNonNull(baseConfiguration);
         this.filter = Objects.requireNonNull(filter);
+        this.filterType = filterType!=null?filterType:this.filter.toString();
     }
 
     @Override
@@ -111,7 +113,7 @@ class FilteredConfiguration implements Configuration {
     public String toString() {
         return "FilteredConfiguration{" +
                 "baseConfiguration=" + baseConfiguration +
-                ", filter=" + filter +
+                ", filter=" + filterType +
                 '}';
     }
 
