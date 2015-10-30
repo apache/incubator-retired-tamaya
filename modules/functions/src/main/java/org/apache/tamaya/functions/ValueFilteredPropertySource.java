@@ -23,8 +23,7 @@ import org.apache.tamaya.spi.PropertySource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BiFunction;
+
 
 /**
  * Property source which filters any key/values dynamically.
@@ -36,7 +35,7 @@ class ValueFilteredPropertySource implements PropertySource{
     private PropertySource source;
 
     public ValueFilteredPropertySource(String name, BiFunction<String, String, String> valueFilter, PropertySource current) {
-        this.name = Optional.ofNullable(name).orElse("<valueFiltered> -> name="+current.getName()+", valueFilter="+valueFilter.toString());
+        this.name =  name!=null?name:"<valueFiltered> -> name="+current.getName()+", valueFilter="+valueFilter.toString();
         this.valueFilter = valueFilter;
         this.source = Objects.requireNonNull(current);
     }
@@ -62,8 +61,10 @@ class ValueFilteredPropertySource implements PropertySource{
 
     @Override
     public Map<String, String> getProperties() {
-        Map<String, String> map = new HashMap<>(source.getProperties());
-        map.replaceAll(valueFilter);
+        Map<String, String> map = new HashMap<>();
+        for(Map.Entry<String,String> entry:source.getProperties().entrySet()) {
+            map.put(entry.getKey(), valueFilter.apply(entry.getKey(), entry.getValue()));
+        }
         return map;
     }
 

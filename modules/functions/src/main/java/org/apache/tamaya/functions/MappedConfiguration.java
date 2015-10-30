@@ -26,7 +26,7 @@ import org.apache.tamaya.TypeLiteral;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+
 
 /**
  * Configuration that filters part of the entries defined by a filter predicate.
@@ -40,7 +40,7 @@ class MappedConfiguration implements Configuration {
     MappedConfiguration(Configuration baseConfiguration, Function<String, String> keyMapper, String mapType) {
         this.baseConfiguration = Objects.requireNonNull(baseConfiguration);
         this.keyMapper = Objects.requireNonNull(keyMapper);
-        this.mapType = Optional.ofNullable(mapType).orElse(this.keyMapper.toString());
+        this.mapType = mapType!=null?mapType:this.keyMapper.toString();
     }
 
     @Override

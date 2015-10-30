@@ -30,7 +30,7 @@ package org.apache.tamaya.functions;
  *
  * @see Predicate
  */
-@FunctionalInterface
+//@FunctionalInterface
 public interface BiPredicate<T, U> {
 
     /**

@@ -26,7 +26,6 @@ import org.apache.tamaya.TypeLiteral;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Configuration that filters part of the entries defined by a filter predicate.
@@ -35,12 +34,10 @@ class FilteredConfiguration implements Configuration {
 
     private final Configuration baseConfiguration;
     private final BiPredicate<String, String> filter;
-    private String filterType;
 
-    FilteredConfiguration(Configuration baseConfiguration, BiPredicate<String, String> filter, String filterType) {
+    FilteredConfiguration(Configuration baseConfiguration, BiPredicate<String, String> filter) {
         this.baseConfiguration = Objects.requireNonNull(baseConfiguration);
         this.filter = Objects.requireNonNull(filter);
-        this.filterType = Optional.ofNullable(filterType).orElse(this.filter.toString());
     }
 
     @Override

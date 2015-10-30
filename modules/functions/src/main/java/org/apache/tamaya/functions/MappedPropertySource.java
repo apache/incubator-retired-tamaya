@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.PropertySource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.UnaryOperator;
 
 /**
  * PropertySource implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate sections.
