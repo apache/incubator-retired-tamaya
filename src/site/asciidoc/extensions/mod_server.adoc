@@ -100,7 +100,7 @@ parameters:
   evaluating the entries to be returned. Hereby the +scopeId+ paramter allows to address a certain scope.
   As an example think of a scope +?scope=CLIENT&scopeId=client1+ to be passed as request parameters. This
   tells the server module to lookup a configured scope named 'CLIENT' and access a +ConfigOperator+ for the
-  given scopeId 'client1'. The returned operator then can filter and combine yna kind of entries to the
+  given scopeId 'client1'. The returned operator then can filter and combine any kind of entries to the
   required client configuration (for client1). Refer to the scopes section for more details.
 
 

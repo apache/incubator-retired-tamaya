@@ -85,10 +85,10 @@ For using the functionality shown in this document you only must add the corresp
 
 The following sections explain the provided functions defined by +ConfigurationFunctions+ singleton.
 
-* *ConfigOperator filter(BiPredicate<String,String> predicate)* creates a +ConfigOperator+ that creates a +Configuration+
-  containing only keys that are selected by the given _predicate_. The +BiPredicate+ hereby allows to evaluate not only
+* *ConfigOperator filter(PropertyMatcher matcher)* creates a +ConfigOperator+ that creates a +Configuration+
+  containing only keys that are selected by the given _matcher predicate_. The +PropertyMatcher+ hereby allows to evaluate not only
   the _key_, but also the _value_.
-* *ConfigOperator map(Function<String, String> keyMapper)* creates a +ConfigOperator+ that maps the keys as defined
+* *ConfigOperator map(KeyMapper keyMapper)* creates a +ConfigOperator+ that maps the keys as defined
   by the given _keyMapper_.
 * *ConfigOperator section(String section)* creates  a +ConfigOperator+ that creates a +Configuration+ containing only
   entries that are direct or indirect members of the given section.
