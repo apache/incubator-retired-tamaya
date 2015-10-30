@@ -35,7 +35,8 @@ import org.apache.tamaya.spisupport.PropertySourceComparator;
 import javax.annotation.Priority;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.StampedLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
 /**
@@ -75,7 +76,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
     /**
      * Lock for internal synchronization.
      */
-    private StampedLock propertySourceLock = new StampedLock();
+    private ReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
 
     /**
@@ -149,7 +150,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
     }
 
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
-        Lock writeLock = propertySourceLock.asWriteLock();
+        Lock writeLock = propertySourceLock.writeLock();
         try {
             writeLock.lock();
             List<PropertySource> provided = new ArrayList<>();

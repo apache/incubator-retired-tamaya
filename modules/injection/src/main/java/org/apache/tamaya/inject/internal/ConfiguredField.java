@@ -145,7 +145,7 @@ public class ConfiguredField {
     public String toString() {
         return "ConfiguredField{" +
                 annotatedField.getName() + ": " +
-                " " + annotatedField.getAnnotatedType().getType().getTypeName() + '}';
+                " " + annotatedField.getDeclaringClass().getName() + '}';
     }
 
 }

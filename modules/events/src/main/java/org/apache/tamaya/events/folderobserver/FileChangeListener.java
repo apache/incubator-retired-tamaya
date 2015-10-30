@@ -28,7 +28,6 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,7 +58,7 @@ class FileChangeListener implements Runnable {
         this.directory = directory;
         this.watchService = getWatchService();
 
-        if (Objects.nonNull(watchService) && Objects.nonNull(directory)) {
+        if (watchService!=null && directory!=null) {
             try {
                 directory.register(watchService,
                         StandardWatchEventKinds.ENTRY_DELETE,
@@ -80,7 +79,7 @@ class FileChangeListener implements Runnable {
 
     @Override
     public void run() {
-        if (Objects.isNull(watchService) || Objects.isNull(directory)) {
+        if (watchService!=null || directory!=null) {
             return;
         }
         while (running) {

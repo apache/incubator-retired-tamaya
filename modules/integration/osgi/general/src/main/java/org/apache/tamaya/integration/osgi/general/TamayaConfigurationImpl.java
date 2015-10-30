@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.functions.BiPredicate;
+import org.apache.tamaya.functions.PropertyMatcher;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -53,7 +53,7 @@ public class TamayaConfigurationImpl implements Configuration {
         }
         this.config = ConfigurationProvider.getConfiguration();
         this.properties.putAll(
-                config.with(ConfigurationFunctions.filter(new BiPredicate<String, String>() {
+                config.with(ConfigurationFunctions.filter(new PropertyMatcher() {
                     @Override
                     public boolean test(String key, String value) {
                         // TODO define name space / SPI
@@ -94,7 +94,7 @@ public class TamayaConfigurationImpl implements Configuration {
     @Override
     public void update() throws IOException {
         this.config = ConfigurationProvider.getConfiguration();
-        this.properties = config.with(ConfigurationFunctions.filter(new BiPredicate<String, String>() {
+        this.properties = config.with(ConfigurationFunctions.filter(new PropertyMatcher() {
             @Override
             public boolean test(String key, String value) {
 // TODO define name space / SPI

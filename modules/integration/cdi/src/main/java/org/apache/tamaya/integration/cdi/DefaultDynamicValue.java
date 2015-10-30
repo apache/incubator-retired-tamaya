@@ -150,14 +150,14 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
         if (targetType == null) {
-            throw new ConfigException("Failed to evaluate target type for " + annotatedField.getAnnotatedType().getType().getTypeName()
+            throw new ConfigException("Failed to evaluate target type for " + annotatedField.getDeclaringClass().getName()
                     + '.' + annotatedField.getName());
         }
         if (targetType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) targetType;
             Type[] types = pt.getActualTypeArguments();
             if (types.length != 1) {
-                throw new ConfigException("Failed to evaluate target type for " + annotatedField.getAnnotatedType().getType().getTypeName()
+                throw new ConfigException("Failed to evaluate target type for " + annotatedField.getDeclaringClass().getName()
                         + '.' + annotatedField.getName());
             }
             targetType = (Type) types[0];
@@ -169,7 +169,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 propertyConverter = annot.value().newInstance();
             } catch (Exception e) {
                 throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
-                        annotatedField.getAnnotatedType().getType().getTypeName()
+                        annotatedField.getDeclaringClass().getName()
                         + '.' + annotatedField.getName(), e);
             }
         }
@@ -195,14 +195,14 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         Type targetType = method.getGenericReturnType();
         if (targetType == null) {
             throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
-                    .getTypeName() + '.' + method.getName());
+                    .getName() + '.' + method.getName());
         }
         if (targetType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) targetType;
             Type[] types = pt.getActualTypeArguments();
             if (types.length != 1) {
                 throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
-                        .getTypeName() + '.' + method.getName());
+                        .getName() + '.' + method.getName());
             }
             targetType = (Class) types[0];
         }
@@ -213,7 +213,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 propertyConverter = (PropertyConverter<Object>) annot.value().newInstance();
             } catch (Exception e) {
                 throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
-                        method.getDeclaringClass().getTypeName()
+                        method.getDeclaringClass().getName()
                         + '.' + method.getName(), e);
             }
         }

@@ -21,7 +21,6 @@ package org.apache.tamaya.resolver.internal;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 import javax.annotation.Priority;
-import java.util.Optional;
 
 /**
  * Property resolver implementation that interprets the resolver expressions as environment properties. It can be
@@ -37,7 +36,7 @@ public final class EnvironmentPropertyResolver implements ExpressionResolver{
 
     @Override
     public String evaluate(String expression){
-        return Optional.ofNullable(System.getenv(expression)).orElse(null);
+        return System.getenv(expression);
     }
 
 }

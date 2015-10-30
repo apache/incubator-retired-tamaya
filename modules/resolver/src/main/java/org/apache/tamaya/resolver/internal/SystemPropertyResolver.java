@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import java.util.Optional;
-
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 import javax.annotation.Priority;
@@ -38,7 +36,7 @@ public final class SystemPropertyResolver implements ExpressionResolver{
 
     @Override
     public String evaluate(String expression){
-        return Optional.ofNullable(System.getProperty(expression)).orElse(null);
+        return System.getProperty(expression);
     }
 
 }

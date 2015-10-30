@@ -48,7 +48,7 @@ public class ConfiguredSetterMethod {
      */
     public ConfiguredSetterMethod(Method method) {
         if (void.class.equals(method.getReturnType()) &&
-                method.getParameterCount() == 1) {
+                method.getParameterTypes().length == 1) {
             this.setterMethod = method;
         }
     }

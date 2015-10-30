@@ -41,7 +41,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -91,7 +90,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
         if (directory == null) {
             directory = getDirectory();
         }
-        if (Objects.nonNull(directory)) {
+        if (directory!=null){
             synchronized (this.propertySources) {
                 this.propertySources.addAll(readConfiguration(directory));
             }
@@ -171,14 +170,14 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      */
     private Path getDirectory() {
         String absolutePath = System.getProperty("tamaya.configdir");
-        if (Objects.nonNull(absolutePath)) {
+        if (null!=absolutePath) {
             Path path = Paths.get(absolutePath);
             if (Files.isDirectory(path)) {
                 return path;
             }
         }
         URL resource = ObservingPropertySourceProvider.class.getResource("/META-INF/config/");
-        if (Objects.nonNull(resource)) {
+        if (null!=resource) {
             try {
                 return Paths.get(resource.toURI());
             } catch (URISyntaxException e) {
