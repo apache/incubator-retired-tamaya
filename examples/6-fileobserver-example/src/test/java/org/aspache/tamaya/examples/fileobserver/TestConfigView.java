@@ -27,14 +27,14 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
- * Created by Anatole on 24.03.2015.
+ * Simple view filter used for test output.
  */
 public class TestConfigView implements ConfigOperator{
 
@@ -51,8 +51,13 @@ public class TestConfigView implements ConfigOperator{
         return new Configuration() {
             @Override
             public Map<String, String> getProperties() {
-                return config.getProperties().entrySet().stream().filter(e -> e.getKey().startsWith("test")).collect(
-                        Collectors.toMap(en -> en.getKey(), en -> en.getValue()));
+                Map<String, String> result = new HashMap<>();
+                for(Map.Entry<String,String> e:config.getProperties().entrySet()){
+                    if(e.getKey().startsWith("test")){
+                        result.put(e.getKey(), e.getValue());
+                    }
+                }
+                return result;
             }
 
             @Override
