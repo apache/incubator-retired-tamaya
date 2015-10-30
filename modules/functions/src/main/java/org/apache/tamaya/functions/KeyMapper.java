@@ -19,29 +19,19 @@
 package org.apache.tamaya.functions;
 
 /**
- * Represents a predicate (boolean-valued function) of two arguments.  This is
- * the two-arity specialization of {@link Predicate}.
+ * Represents a function that maps a key of a property entry to another key (or removes it
+ * if mapped to null).
  *
- * <p>This is a <a href="package-summary.html">functional interface</a>
- * whose functional method is {@link #test(Object, Object)}.
- *
- * @param <T> the type of the first argument to the predicate
- * @param <U> the type of the second argument the predicate
- *
- * @see Predicate
  */
 //@FunctionalInterface
-public interface BiPredicate<T, U> {
+public interface KeyMapper {
 
     /**
-     * Evaluates this predicate on the given arguments.
-     *
-     * @param t the first input argument
-     * @param u the second input argument
-     * @return {@code true} if the input arguments match the predicate,
-     * otherwise {@code false}
+     * Maps a property key to another key.
+     * @param key the fproperty key, not null
+     * @return the new key, returning null, removes the entry.
      */
-    boolean test(T t, U u);
+    String mapKey(String key);
 
 }
 

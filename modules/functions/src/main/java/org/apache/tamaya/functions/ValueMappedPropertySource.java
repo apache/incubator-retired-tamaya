@@ -28,13 +28,13 @@ import java.util.Objects;
 /**
  * Property source which filters any key/values dynamically.
  */
-class ValueFilteredPropertySource implements PropertySource{
+class ValueMappedPropertySource implements PropertySource{
 
     private String name;
-    private BiFunction<String, String, String> valueFilter;
+    private PropertyMapper valueFilter;
     private PropertySource source;
 
-    public ValueFilteredPropertySource(String name, BiFunction<String, String, String> valueFilter, PropertySource current) {
+    public ValueMappedPropertySource(String name, PropertyMapper valueFilter, PropertySource current) {
         this.name =  name!=null?name:"<valueFiltered> -> name="+current.getName()+", valueFilter="+valueFilter.toString();
         this.valueFilter = valueFilter;
         this.source = Objects.requireNonNull(current);
@@ -54,7 +54,7 @@ class ValueFilteredPropertySource implements PropertySource{
     public String get(String key) {
         String value = this.source.get(key);
         if(value!=null) {
-            return valueFilter.apply(key, value);
+            return valueFilter.mapProperty(key, value);
         }
         return value;
     }
@@ -63,7 +63,7 @@ class ValueFilteredPropertySource implements PropertySource{
     public Map<String, String> getProperties() {
         Map<String, String> map = new HashMap<>();
         for(Map.Entry<String,String> entry:source.getProperties().entrySet()) {
-            map.put(entry.getKey(), valueFilter.apply(entry.getKey(), entry.getValue()));
+            map.put(entry.getKey(), valueFilter.mapProperty(entry.getKey(), entry.getValue()));
         }
         return map;
     }
@@ -75,7 +75,7 @@ class ValueFilteredPropertySource implements PropertySource{
 
     @Override
     public String toString() {
-        return "ValueFilteredPropertySource{" +
+        return "ValueMappedPropertySource{" +
                 "source=" + source.getName() +
                 ", name='" + name + '\'' +
                 ", valueFilter=" + valueFilter +

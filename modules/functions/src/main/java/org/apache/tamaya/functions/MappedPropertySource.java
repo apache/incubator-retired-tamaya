@@ -34,7 +34,7 @@ class MappedPropertySource implements PropertySource {
     /**
      * The mapping operator.
      */
-    private UnaryOperator<String> keyMapper;
+    private KeyMapper keyMapper;
     /**
      * The base configuration.
      */
@@ -46,7 +46,7 @@ class MappedPropertySource implements PropertySource {
      * @param config    the base configuration, not null
      * @param keyMapper The mapping operator, not null
      */
-    public MappedPropertySource(PropertySource config, UnaryOperator<String> keyMapper) {
+    public MappedPropertySource(PropertySource config, KeyMapper keyMapper) {
         this.propertySource = Objects.requireNonNull(config);
         this.keyMapper = Objects.requireNonNull(keyMapper);
     }
@@ -66,7 +66,7 @@ class MappedPropertySource implements PropertySource {
         Map<String, String> result = new HashMap<>();
         Map<String, String> map = this.propertySource.getProperties();
         for (Map.Entry<String, String> en : map.entrySet()) {
-            String targetKey = keyMapper.apply(en.getKey());
+            String targetKey = keyMapper.mapKey(en.getKey());
             if (targetKey != null) {
                 result.put(targetKey, en.getValue());
             }

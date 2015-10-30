@@ -26,6 +26,7 @@ import org.apache.tamaya.TypeLiteral;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 
 /**
@@ -33,11 +34,12 @@ import java.util.Objects;
  */
 class MappedConfiguration implements Configuration {
 
+    private static final Logger LOG = Logger.getLogger(MappedConfiguration.class.getName());
     private final Configuration baseConfiguration;
-    private final Function<String, String> keyMapper;
+    private final KeyMapper keyMapper;
     private final String mapType;
 
-    MappedConfiguration(Configuration baseConfiguration, Function<String, String> keyMapper, String mapType) {
+    MappedConfiguration(Configuration baseConfiguration, KeyMapper keyMapper, String mapType) {
         this.baseConfiguration = Objects.requireNonNull(baseConfiguration);
         this.keyMapper = Objects.requireNonNull(keyMapper);
         this.mapType = mapType!=null?mapType:this.keyMapper.toString();
@@ -73,7 +75,12 @@ class MappedConfiguration implements Configuration {
 
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
-        return baseConfiguration.get(this.keyMapper.apply(key), type);
+        String targetKey = keyMapper.mapKey(key);
+        if (targetKey != null) {
+            return baseConfiguration.get(targetKey, type);
+        }
+        LOG.finest("Configuration property hidden by KeyMapper, key="+key+", mapper="+keyMapper+", config="+this);
+        return null;
     }
 
     @Override
@@ -90,7 +97,10 @@ class MappedConfiguration implements Configuration {
         Map<String, String> baseProps = baseConfiguration.getProperties();
         Map<String, String> props = new HashMap<>(baseProps.size());
         for(Map.Entry<String,String> en:baseProps.entrySet()){
-            props.put(keyMapper.apply(en.getKey()), en.getValue());
+            String targetKey = keyMapper.mapKey(en.getKey());
+            if (targetKey != null) {
+                props.put(targetKey, en.getValue());
+            }
         }
         return props;
     }

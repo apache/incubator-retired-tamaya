@@ -28,18 +28,18 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Configuration that filters part of the entries defined by a filter predicate.
+ * Configuration that filters part of the entries defined by a matcher predicate.
  */
 class FilteredConfiguration implements Configuration {
 
     private final Configuration baseConfiguration;
-    private final BiPredicate<String, String> filter;
+    private final PropertyMatcher matcher;
     private String filterType;
 
-    FilteredConfiguration(Configuration baseConfiguration, BiPredicate<String, String> filter, String filterType) {
+    FilteredConfiguration(Configuration baseConfiguration, PropertyMatcher matcher, String filterType) {
         this.baseConfiguration = Objects.requireNonNull(baseConfiguration);
-        this.filter = Objects.requireNonNull(filter);
-        this.filterType = filterType!=null?filterType:this.filter.toString();
+        this.matcher = Objects.requireNonNull(matcher);
+        this.filterType = filterType!=null?filterType:this.matcher.toString();
     }
 
     @Override
@@ -73,7 +73,7 @@ class FilteredConfiguration implements Configuration {
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
         String value = baseConfiguration.get(key);
-        if (filter.test(key, value)) {
+        if (matcher.test(key, value)) {
             return baseConfiguration.get(key, type);
         }
         return null;
@@ -92,7 +92,7 @@ class FilteredConfiguration implements Configuration {
     public Map<String, String> getProperties() {
         Map<String, String> result = new HashMap<>();
         for(Map.Entry<String,String> en:baseConfiguration.getProperties().entrySet()){
-            if(filter.test(en.getKey(), en.getValue())){
+            if(matcher.test(en.getKey(), en.getValue())){
                 result.put(en.getKey(), en.getValue());
             }
         }
@@ -113,7 +113,7 @@ class FilteredConfiguration implements Configuration {
     public String toString() {
         return "FilteredConfiguration{" +
                 "baseConfiguration=" + baseConfiguration +
-                ", filter=" + filterType +
+                ", matcher=" + filterType +
                 '}';
     }
 

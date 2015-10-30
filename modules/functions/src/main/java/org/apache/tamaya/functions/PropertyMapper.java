@@ -18,22 +18,19 @@
  */
 package org.apache.tamaya.functions;
 
-
 /**
- * Represents an operation on a single operand that produces a result of the
- * same type as its operand.  This is a specialization of {@code Function} for
- * the case where the operand and result are of the same type.
- *
- * <p>This is a <a href="package-summary.html">functional interface</a>
- * whose functional method is {@link #apply(Object)}.
- *
- * @param <T> the type of the operand and result of the operator
- *
- * @see java.util.function.Function
- * @since 1.8
+ * This is a simple functional interface, used for mapping properties.
+ * It can be used as functional interface in Java 8.
  */
 //@FunctionalInterface
-public interface UnaryOperator<T> extends Function<T, T> {
+public interface PropertyMapper {
+
+    /**
+     * Maps the given key/value to another value.
+     * @param key the key, not null.
+     * @param value the value, not null.
+     * @return the new value, not null.
+     */
+    String mapProperty(String key, String value);
 
 }
-

@@ -110,12 +110,12 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are selected by the given {@link BiPredicate}.
+     * that are selected by the given {@link PropertyMatcher}.
      *
      * @param filter the filter, not null
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator filter(final BiPredicate<String, String> filter) {
+    public static ConfigOperator filter(final PropertyMatcher filter) {
         return new ConfigOperator() {
             @Override
             public Configuration operate(Configuration config) {
@@ -131,7 +131,7 @@ public final class ConfigurationFunctions {
      * @param keyMapper the keyMapper, not null
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator map(final Function<String, String> keyMapper) {
+    public static ConfigOperator map(final KeyMapper keyMapper) {
         return new ConfigOperator() {
             @Override
             public Configuration operate(Configuration config) {
@@ -166,17 +166,17 @@ public final class ConfigurationFunctions {
             @Override
             public Configuration operate(Configuration config) {
                 Configuration filtered = new FilteredConfiguration(config,
-                        new BiPredicate<String, String>() {
+                        new PropertyMatcher() {
                             @Override
                             public boolean test(String k, String v) {
                                 return isKeyInSection(k, areaKey);
                             }
                         }, "section: " + areaKey);
                 if (stripKeys) {
-                    return new MappedConfiguration(filtered, new Function<String, String>() {
+                    return new MappedConfiguration(filtered, new KeyMapper(){
                         @Override
-                        public String apply(String k) {
-                            return k.substring(areaKey.length() + 1);
+                        public String mapKey(String key) {
+                            return key.substring(areaKey.length() + 1);
                         }
                     }, "stripped");
                 }
@@ -367,17 +367,17 @@ public final class ConfigurationFunctions {
         return new ConfigOperator() {
             @Override
             public Configuration operate(Configuration config) {
-                Configuration filtered = new FilteredConfiguration(config, new BiPredicate<String, String>() {
+                Configuration filtered = new FilteredConfiguration(config, new PropertyMatcher() {
                     @Override
                     public boolean test(final String k, String v) {
                         return isKeyInSections(k, sectionKeys);
                     }
                 }, "sections: " + Arrays.toString(sectionKeys));
                 if (stripKeys) {
-                    return new MappedConfiguration(filtered, new Function<String, String>() {
+                    return new MappedConfiguration(filtered, new KeyMapper() {
                         @Override
-                        public String apply(String s) {
-                            return PropertySourceFunctions.stripSectionKeys(s, sectionKeys);
+                        public String mapKey(String key) {
+                            return PropertySourceFunctions.stripSectionKeys(key, sectionKeys);
                         }
                     }, "stripped");
                 }

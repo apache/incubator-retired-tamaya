@@ -19,24 +19,21 @@
 package org.apache.tamaya.functions;
 
 /**
- * Represents a function that accepts one argument and produces a result.
- * <p>
- * <p>This is a <a href="package-summary.html">functional interface</a>
- * whose functional method is {@link #apply(Object)}.
- *
- * @param <T> the type of the input to the function
- * @param <R> the type of the result of the function
+ * Represents a selector predicate for selecting configuration properties.
+ * This can be used as a functional interface in Java 8.
  */
 //@FunctionalInterface
-public interface Function<T, R> {
+public interface PropertyMatcher {
 
     /**
-     * Applies this function to the given argument.
+     * Evaluates this predicate on the given arguments.
      *
-     * @param t the function argument
-     * @return the function result
+     * @param key the key, not null
+     * @param value, the value, not null
+     * @return {@code true} if the entry should match the predicate,
+     * otherwise {@code false}
      */
-    R apply(T t);
+    boolean test(String key, String value);
 
 }
 
