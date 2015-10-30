@@ -49,6 +49,21 @@ used SPI parts in Tamaya:
 * +DefaultConfiguration+ provides you with a simple implementation of the +Configuration+ interface based on a
   +ConfigurationContext+ provided. This is also very useful for mocking configuration during test execution, but
   not only constraint to that use case.
+* +DefaultConfigurationContext+ provides you with a working implementation of the +ConfigurationContext+.
+* +EnumConverter+ is a converter implementation that can automatically select the currect enumeration values based
+  on a configured entry.
+* +MapPropertySource+ implements a static property source based on +java.util.Map+.
+* +PriorityServiceComparator+ compares arbitrary services based on their +@Priority+ annotations (also handling the
+  case, where no such annotation is present).
+* +PropertiesResourcePropertySource+ is an implementation of a +PropertySource+ based on a +Properties+ instance,
+  lodable from any +URL+.
++ +PropertyConverterManager+ is a service class very useful, when implementing instances of +ConfigurationContext+.
+  It manages registered instances of +PropertyConverter+ and provides easy to use type conversion logic.
++ +PropertyFiltering+ provides another helpful class that manages +PropertyFilter+ instances and provides an
+  easy to use high level API.
++ +PropertySourceComparator+ provides an implementation that compares +PropertySources+ based on their +getOrdinal()+
+  values and their class names.
+
 
 
 === Compatibility
