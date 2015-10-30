@@ -57,7 +57,7 @@ class JSONVisitor {
                     switch(jsonValue.getValueType()) {
                         case NULL: value = null; break;
                         case FALSE: value = Boolean.FALSE.toString(); break;
-                        case TRUE: Boolean.TRUE.toString(); break;
+                        case TRUE: value = Boolean.TRUE.toString(); break;
                         case NUMBER: value = jsonValue.toString(); break;
                         case STRING: value = ((JsonString) jsonValue).getString(); break;
                         default:
