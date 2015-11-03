@@ -55,7 +55,9 @@ public class ExampleMain {
 
     private static String dump(Map<String, String> properties) {
         StringBuilder b = new StringBuilder();
-        new TreeMap<>(properties).forEach((k,v)->b.append("  " + k + " = " + v + '\n'));
+        for(Map.Entry<String,String> en: new TreeMap<>(properties).entrySet()){
+            b.append("  " + en.getKey() + " = " + en.getValue() + '\n');
+        }
         return b.toString();
     }
 }

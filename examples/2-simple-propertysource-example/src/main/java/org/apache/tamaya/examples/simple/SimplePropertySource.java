@@ -42,7 +42,9 @@ public class SimplePropertySource extends BasePropertySource{
             properties.load(is);
         }
         finally{
-            properties.forEach((k,v) -> props.put(k.toString(), v.toString()));
+            for(Map.Entry en: properties.entrySet()){
+                props.put(en.getKey().toString(), en.getValue().toString());
+            }
             props = Collections.unmodifiableMap(props);
         }
     }

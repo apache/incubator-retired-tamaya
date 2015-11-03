@@ -19,6 +19,7 @@
 package org.apache.tamaya.examples.remote.server;
 
 import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.apache.tamaya.server.spi.ScopeProvider;
 
@@ -39,11 +40,16 @@ public class ClientScopeProvider implements ScopeProvider{
     }
 
     @Override
-    public ConfigOperator getScope(String scopeId) {
-        return c ->
-                ConfigurationFunctions.combine("Scoped Config CLIENT="+scopeId,
+    public ConfigOperator getScope(final String scopeId) {
+        return new ConfigOperator() {
+            @Override
+            public Configuration operate(Configuration c) {
+                return ConfigurationFunctions.combine("Scoped Config CLIENT="+scopeId,
                         c.with(ConfigurationFunctions.sectionRecursive(true, "client.default")),
                         c.with(ConfigurationFunctions.sectionRecursive(true, "client." + scopeId))
                 );
+            }
+        };
+
     }
 }

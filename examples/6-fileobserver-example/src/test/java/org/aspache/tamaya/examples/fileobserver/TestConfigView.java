@@ -47,7 +47,7 @@ public class TestConfigView implements ConfigOperator{
     }
 
     @Override
-    public Configuration operate(Configuration config) {
+    public Configuration operate(final Configuration config) {
         return new Configuration() {
             @Override
             public Map<String, String> getProperties() {
@@ -95,7 +95,7 @@ public class TestConfigView implements ConfigOperator{
 
             @Override
             public <T> T get(String key, Class<T> type) {
-                return get(key, TypeLiteral.of(type));
+                return (T)get(key, TypeLiteral.of(type));
             }
 
             /**
