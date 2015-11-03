@@ -165,6 +165,26 @@ under the License.
 
         <!-- Formats module -->
 
+        <!-- Injection-api module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- Injection-api module -->
+
         <!-- Injection module -->
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
@@ -224,6 +244,247 @@ under the License.
             <classifier>javadoc</classifier>
         </dependency>
         <!-- Resources module -->
+
+        <!-- Classloader Support module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-classloader-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-classloader-support</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-classloader-support</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- Classloader Support module -->
+
+        <!-- functions module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- functions module -->
+
+        <!-- functions module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- functions module -->
+
+        <!-- CDI module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-cdi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-cdi</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-cdi</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- CDI module -->
+
+        <!-- CDI-SE module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-cdi-se</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-cdi-se</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-cdi-se</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- CDI-SE module -->
+
+        <!-- OSGI Felix module -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-osgi-felix</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-osgi-felix</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-osgi-felix</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- OSGI Felix module -->
+
+        <!-- OSGI General -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-osgi-general</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-osgi-general</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-osgi-general</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- OSGI General -->
+
+        <!-- Spring Integration -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spring</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spring</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- Spring Integration -->
+
+        <!-- Optional Integration -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-optional</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-optional</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-optional</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- Optional Integration -->
+
+        <!-- Remote Integration -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-remote</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-remote</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-remote</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- Remote Integration -->
+
+        <!-- Remote Integration -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-server</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-server</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- Remote Integration -->
+
+        <!-- SPI SUpport -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spisupport</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spisupport</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spisupport</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <!-- SPI SUpport -->
+
 
     </dependencies>
 
