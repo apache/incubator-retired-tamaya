@@ -45,7 +45,7 @@ public class Activator implements BundleActivator{
         props.put( Constants.SERVICE_PID, tpm.getClass().getName() );
         props.put( Constants.SERVICE_DESCRIPTION, "Apache Tamaya Persistence Manager" );
         props.put( Constants.SERVICE_VENDOR, "Apache Software Foundation" );
-        Integer ranking = Integer.valueOf(Integer.MIN_VALUE + 10);
+        Integer ranking = 10;
         // TODO Make ranking configurable...
         props.put( Constants.SERVICE_RANKING, ranking );
         pmRegistration = bundleContext.registerService( PersistenceManager.class, tpm, props );
