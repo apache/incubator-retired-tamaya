@@ -1,21 +1,3 @@
-= Apache Tamaya -- Extension: Resolver
-
-:name: Tamaya
-:rootpackage: org.apache.tamaya.ext.resolver
-:title: Apache Tamaya Extension: Resolver
-:revnumber: 0.1.1
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:encoding: UTF-8
-:numbered:
-
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -33,13 +15,35 @@
 // specific language governing permissions and limitations
 // under the License.
 
+= Apache Tamaya -- Extension: Resolver
+
+include::temp-properties-files-for-site/attributes.adoc[]
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.ext.resolver
+:title: Apache Tamaya Extension: Resolver
+:revnumber: 0.1.1
+:revremark: Incubator
+:revdate: March 2015
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:encoding: UTF-8
+:numbered:
+
+
 [[Core]]
 == Tamaya Resolver (Extension Module)
 
 === Overview
 
-Tamaya Resolver is an extension module. Refer to the link:modules.html[extensions documentation] for further details
-about modules.
+Tamaya Resolver is an extension module. Refer to the
+// @todo Fix the link to the modules documentation
+link:modules.html[extensions documentation]
+for further details about modules.
 
 Tamaya Resolver provides a dynamic resolution mechanism, which allows to use UNIX-styled (+${...}+ placeholder
 expressions in your configuration values. The resolver hereby supports transitive resolution and also prevents
@@ -53,12 +57,12 @@ The module is based on Java 7, so it can be used with Java 7 and beyond.
 
 To benefit from dynamic value resolution you only must add the corresponding dependency to your module:
 
-[source, xml]
+[source, xml, subs="verbatim,attributes"]
 -----------------------------------------------
 <dependency>
   <groupId>org.apache.tamaya.ext</groupId>
   <artifactId>tamaya-resolver</artifactId>
-  <version>{tamayaVersion}</version>
+  <version>{tamaya_version_current}</version>
 </dependency>
 -----------------------------------------------
 
@@ -70,12 +74,28 @@ is accessed.
 Currently the module defined the following resolvers:
 
 .Available Resolvers
+[cols="<.1,<.2,<.1"]
 |=======
-|_Expression_                                 |_Description_                                |_Example_
-|+conf:<configKey>+       |Reads another configKey and replaces the expression with the value found.   | conf-ref=${conf:anotherConf.entryKey}
-|+resource:<resourceRef>+       |Reads a resource from the current classpath and replaces the expression with the given text content.   | cp-ref=${resource:Testresource.txt}
-|+file:<fileRef>+       |Reads a resource from the current classpath and replaces the expression with the given text content.   | file-ref=${file:c:\myFile.txt}
-|+url:<url>+       |Reads an URL and replaces the expression with the given text content.   | url-ref=${url:http://www.google.com}
+| _Expression_
+| _Description_
+| _Example_
+
+| +conf:<configKey>+
+| Reads another configKey and replaces the expression with the value found.
+| conf-ref=${conf:anotherConf.entryKey}
+
+| +resource:<resourceRef>+
+| Reads a resource from the current classpath and replaces the expression with the given text content.
+| cp-ref=${resource:Testresource.txt}
+
+| +file:<fileRef>+
+| Reads a resource from the current classpath and replaces the expression with the given text content.
+| file-ref=${file:c:\myFile.txt}
+
+|+url:<url>+
+|Reads an URL and replaces the expression with the given text content.
+| url-ref=${url:http://www.google.com}
+
 |=======
 
 === SPI: Implementing your own Resolvers
@@ -89,16 +109,16 @@ first and most important thing to do is implementing the +ExpressionResolver+ in
 public class PwdDecrypter implements ExpressionResolver {
 
   @Override
-  public String getResolverPrefix(){
+  public String getResolverPrefix() {
      return "decrypt:";
   }
 
   @Override
-  public String evaluate(String expression){
+  public String evaluate(String expression) {
     return decrypt(expression);
   }
 
-  private String decrypt(String s){
+  private String decrypt(String s) {
     ...
   }
 }
@@ -114,7 +134,7 @@ blabla ${decrypt:myname}
 blabla ${decrypt:myname} foo blabla ${decrypt:myname}
 -----------------------------------------------
 
-Hereby evaluation is repeasted until no further change of values could be detetced. In case of a endless loop
+Hereby evaluation is repeated until no further change of values could be detetced. In case of a endless loop
 the evaluation is broken after a (configurable) number of cycles.
 
 
