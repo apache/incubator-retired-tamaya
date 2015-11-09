@@ -54,6 +54,15 @@ under the License.
                             org.apache.tamaya,
                             org.apache.tamaya.spi
                         </Export-Package>
+                        <!--<Require-Capability>-->
+                            <!--osgi.extender;-->
+                            <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
+                            <!--osgi.serviceloader;-->
+                            <!--filter:="(org.apache.tamaya.spi.ServiceContext)";-->
+                            <!--cardinality:=multiple;-->
+                            <!--filter:="(org.apache.tamaya.spi.ConfigurationProviderSpi)";-->
+                            <!--cardinality:=multiple-->
+                        <!--</Require-Capability>-->
                     </instructions>
                 </configuration>
             </plugin>

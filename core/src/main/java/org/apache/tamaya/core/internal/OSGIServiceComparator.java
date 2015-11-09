@@ -18,23 +18,25 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.osgi.framework.ServiceReference;
+
 import javax.annotation.Priority;
 import java.util.Comparator;
 
 /**
  * Comparator implementation for odering services loaded based on their increasing priority values.
  */
-public class PriorityServiceComparator implements Comparator<Object> {
+class OSGIServiceComparator implements Comparator<ServiceReference> {
 
     @Override
-    public int compare(Object o1, Object o2) {
+    public int compare(ServiceReference o1, ServiceReference o2) {
         int prio = getPriority(o1) - getPriority(o2);
         if (prio < 0) {
             return 1;
         } else if (prio > 0) {
             return -1;
         } else {
-            return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+            return 0; //o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
         }
     }
 
