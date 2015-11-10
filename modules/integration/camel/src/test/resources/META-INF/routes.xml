@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -17,26 +16,24 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <parent>
-        <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-extensions</artifactId>
-        <version>0.2-incubating-SNAPSHOT</version>
-    </parent>
-
-    <packaging>pom</packaging>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>tamaya-integration</artifactId>
-
-    <modules>
-        <module>spring</module>
-        <module>cdi-se</module>
-        <module>cdi</module>
-        <module>osgi</module>
-        <module>camel</module>
-    </modules>
-
-</project>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <description>Routes for testing.</description>
+    <route>
+        <from uri="direct:hello1"/>
+        <transform>
+            <simple>{{message}}</simple>
+        </transform>
+    </route>
+    <route>
+        <from uri="direct:hello2"/>
+        <transform>
+            <simple>{{cfg:message}}</simple>
+        </transform>
+    </route>
+    <route>
+        <from uri="direct:hello3"/>
+        <transform>
+            <simple>{{tamaya:message}}</simple>
+        </transform>
+    </route>
+</routes>
