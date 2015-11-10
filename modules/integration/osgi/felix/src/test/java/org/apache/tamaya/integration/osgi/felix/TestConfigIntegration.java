@@ -55,6 +55,8 @@ public class TestConfigIntegration{
 
     @ArquillianResource BundleContext context;
 
+    //////////////////////////////////////////////////////// Test setup //////////////////////////////////
+
     @Deployment
     public static JavaArchive createdeployment() {
         final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "tamaya-config.jar");
@@ -69,8 +71,8 @@ public class TestConfigIntegration{
                 return builder.openStream();
             }
         });
-        archive.addClasses(Activator.class, ConfigurationHandler.class, TamayaPersistenceManager.class)       ;
-        archive.addAsResource("META-INF/javaconfiguration.properties");
+        archive.addClasses(Activator.class, ConfigurationHandler.class, TamayaPersistenceManager.class);
+//        archive.addAsResource("META-INF/javaconfiguration.properties");
         return archive;
     }
 
@@ -121,15 +123,21 @@ public class TestConfigIntegration{
                 .resolve("org.apache.tamaya:" + artifactId).withoutTransitivity().asSingleFile();
     }
 
+
+    //////////////////////////////////////////////////////// Tests //////////////////////////////////
+
+
     @Before
     public void startBundles(){
-        for(Bundle bundle:context.getBundles()){
-            try {
-                bundle.start();
-            } catch (BundleException e) {
-                e.printStackTrace();
-            }
+//        for(Bundle bundle:context.getBundles()){
+//            context
+//                bundle.start();
+        try{
+            context.getBundle(0).start();
+        } catch (BundleException e) {
+            e.printStackTrace();
         }
+//        }
     }
 
     @Test @Ignore
@@ -158,8 +166,8 @@ public class TestConfigIntegration{
     @Test
     public void testBundleContextInjection() throws Exception {
         assertNotNull("BundleContext injected", context);
-        assertEquals("System Bundle ID", 0, context.getBundle().getBundleId());
         System.err.println(Arrays.toString(context.getBundles()));
+        assertEquals("System Bundle ID", 0, context.getBundle().getBundleId());
     }
 
 }
