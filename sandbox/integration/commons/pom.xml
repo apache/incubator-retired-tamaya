@@ -26,7 +26,7 @@ under the License.
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>commons</artifactId>
+    <artifactId>tamaya-commons-config</artifactId>
     <name>Apache Tamaya Commons Configuration Integration</name>
     <packaging>bundle</packaging>
 
