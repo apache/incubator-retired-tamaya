@@ -86,60 +86,9 @@ under the License.
                             org.apache.tamaya.core.internal,
                             org.apache.tamaya.core.internal.converters
                         </Private-Package>
-                        <!--<Require-Capability>-->
-                            <!--osgi.extender;-->
-                            <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
-                            <!--osgi.serviceloader;-->
-                            <!--filter:="(org.apache.tamaya.Configuration)";-->
-                            <!--cardinality:=multiple-->
-                        <!--</Require-Capability>-->
-                        <!--<Require-Capability>-->
-                            <!--osgi.extender;-->
-                            <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
-                            <!--osgi.serviceloader;-->
-                            <!--filter:="(org.apache.tamaya.spi.ConfigurationContextBuilder)";-->
-                            <!--cardinality:=multiple-->
-                        <!--</Require-Capability>-->
-                        <!--<Require-Capability>-->
-                            <!--osgi.extender;-->
-                            <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
-                            <!--osgi.serviceloader;-->
-                            <!--filter:="(org.apache.tamaya.spi.PropertyConverter)";-->
-                            <!--cardinality:=multiple-->
-                        <!--</Require-Capability>-->
-                        <!--<Require-Capability>-->
-                            <!--osgi.extender;-->
-                            <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
-                            <!--osgi.serviceloader;-->
-                            <!--filter:="(org.apache.tamaya.spi.PropertyFilter)";-->
-                            <!--cardinality:=multiple-->
-                        <!--</Require-Capability>-->
-                        <!--<Require-Capability>-->
-                            <!--osgi.extender;-->
-                            <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
-                            <!--osgi.serviceloader;-->
-                            <!--filter:="(org.apache.tamaya.spi.PropertySource)";-->
-                            <!--cardinality:=multiple-->
-                        <!--</Require-Capability>-->
-                        <!--<Require-Capability>-->
-                            <!--osgi.extender;-->
-                            <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
-                            <!--osgi.serviceloader;-->
-                            <!--filter:="(org.apache.tamaya.spi.PropertySourceProvider)";-->
-                            <!--cardinality:=multiple-->
-                        <!--</Require-Capability>-->
-                        <!--<Require-Capability>osgi.extender;-->
-                            <!--filter:="(osgi.extender=osgi.serviceloader.registrar)"-->
-                        <!--</Require-Capability>-->
-                        <!--<Provide-Capability>osgi.serviceloader;-->
-                            <!--org.apache.tamaya.Configuration,-->
-                            <!--org.apache.tamaya.spi.ConfigurationContextBuilder,-->
-                            <!--org.apache.tamaya.spi.ConfigurationProviderSpi,-->
-                            <!--org.apache.tamaya.spi.PropertyConverter,-->
-                            <!--org.apache.tamaya.spi.PropertyFilter,-->
-                            <!--org.apache.tamaya.spi.PropertySource,-->
-                            <!--org.apache.tamaya.spi.PropertySourceProvider-->
-                        <!--</Provide-Capability>-->
+                        <Bundle-Activator>
+                            org.apache.tamaya.core.internal.OSGIActivator
+                        </Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
