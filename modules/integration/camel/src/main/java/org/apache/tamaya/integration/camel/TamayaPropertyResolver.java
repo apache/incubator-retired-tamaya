@@ -22,15 +22,27 @@ import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 
+import java.util.Objects;
+
 
 /**
  * Implementation of the Camel Properties SPI using Tamaya configuration.
  */
-public class TamayaPropertyTamayaResolver implements PropertiesFunction{
+public class TamayaPropertyResolver implements PropertiesFunction{
+
+    private final String prefix;
+
+    /**
+     * Creates a new instance.
+     * @param configPrefix the prefix to be registered for explicit resolution by this resolver function, not null.
+     */
+    public TamayaPropertyResolver(String configPrefix){
+        this.prefix = Objects.requireNonNull(configPrefix);
+    }
 
     @Override
     public String getName() {
-        return "tamaya";
+        return prefix;
     }
 
     @Override

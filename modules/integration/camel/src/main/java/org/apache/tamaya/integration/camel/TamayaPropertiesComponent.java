@@ -34,8 +34,8 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
      */
     public TamayaPropertiesComponent(){
         super();
-        addFunction(new TamayaPropertyCfgResolver());
-        addFunction(new TamayaPropertyTamayaResolver());
+        addFunction(new TamayaPropertyResolver("tamaya"));
+        addFunction(new TamayaPropertyResolver("cfg"));
         setTamayaOverrides(true);
     }
 
@@ -44,8 +44,8 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
      */
     public TamayaPropertiesComponent(String ... locations){
         super(locations);
-        addFunction(new TamayaPropertyCfgResolver());
-        addFunction(new TamayaPropertyTamayaResolver());
+        addFunction(new TamayaPropertyResolver("tamaya"));
+        addFunction(new TamayaPropertyResolver("cfg"));
         setTamayaOverrides(true);
     }
 
@@ -54,8 +54,8 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
      */
     public TamayaPropertiesComponent(String location){
         super(location);
-        addFunction(new TamayaPropertyCfgResolver());
-        addFunction(new TamayaPropertyTamayaResolver());
+        addFunction(new TamayaPropertyResolver("tamaya"));
+        addFunction(new TamayaPropertyResolver("cfg"));
         setTamayaOverrides(true);
     }
 
@@ -74,8 +74,7 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
             Properties props = new Properties();
             props.putAll(ConfigurationProvider.getConfiguration().getProperties());
             setOverrideProperties(props);
-        }
-        else{
+        } else{
             setOverrideProperties(null);
         }
     }
