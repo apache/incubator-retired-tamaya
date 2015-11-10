@@ -45,16 +45,16 @@ Mature extensions have a stable API and SPI, similar to the API and Implementati
 |=======
 
 
-== Draft Extensions
+== Extensions
 
 Extensions in _draft state_ are tested well and normally should have rather stable APIs. Nevertheless API changes may
 still occurr, but we try to prevent such changes if possible.
 
-NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 7 as well as on Java 8.
+NOTE All extensions currently run on Java 7 as well as on Java 8.
 
 [width="100%",frame="1",options="header",grid="all"]
 |=======
-|_Artifact_                                 |_Description_                                |_Links_
+|_Artifact_                                   |_Description_                                          |_Links_
 |+org.apache.tamaya.ext:tamaya-builder+       |Provides a fluent-style builder for configurations     | link:mod_builder.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-resources+     |Provides ant-style resource path resolution  |link:mod_resources.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-resolver+      |Provides placeholder and dynamic resolution functionality for configuration values.  |link:mod_resolver.html[Documentation]
@@ -68,9 +68,21 @@ NOTE All extensions, despite the _tamaya-builder_ module, currently run on Java 
 |+org.apache.tamaya.ext:tamaya-remote+        |Provides remote configuration support.                 |link:mod_remote.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a http service.     |link:mod_server.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:mod_optional.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-classloader-support+      |Manages Tamaya configuration and services considering classloading hierarchies.  |link:mod_classloader_support.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-cdi+           |Tamaya integration modules for CDI.                    |link:mod_cdi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-classloader-support+  |Manages Tamaya configuration and services considering classloading hierarchies.  |link:mod_classloader_support.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-spi-support+   |Tamaya support module for SPI implementation.          |link:mod_spi-support.html[Documentation]
+|=======
+
+== Integrations
+
+These extensions integrate/bridge Tamayas functionality with other frameworks turning their configuration capabilities
+from a sledgehammer to a scalpell:
+
+[width="100%",frame="1",options="header",grid="all"]
+|=======
+|_Artifact_                                 |_Description_                                 |_Links_
+|+org.apache.tamaya.ext:tamaya-cdi+         | Java EE/standalone compliant CDI integration | link:mod_cdi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-camel+       | Integration for Apache Camel.                | link:mod_camel.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-spring+      | Integration for Spring / Spring Boot.        | link:mod_spring.html[Documentation]
 |=======
 
 
@@ -81,8 +93,28 @@ very carefully and especially give us feedback, so we can improve them before pr
 
 [width="100%",frame="1",options="header",grid="all"]
 |=======
-|_Artifact_                                 |_Description_                                |_Links_
-|+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.   | link:mod_jodatime.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-cdi+         |Java EE compliant CDI extension for Tamaya.            |link:mod_cdi.html[Documentation]
+|_Artifact_                                 |_Description_                                          |_Links_
+|+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.                         | link:mod_jodatime.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-staged+      |Simple configuration extension to add staged config.   |link:mod_metamodel-staged.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-collections+ |Collections support.                                   | -
+|+org.apache.tamaya.ext:tamaya-ui+          |JSF based UI for Managing Configuration.               | -
+|=======
+
+
+== Integrations in Experimental Stage
+
+Integrations in _experimental mode_ may still be under discussions. API changes may still happen, so use them
+very carefully and especially give us feedback, so we can improve them before progressing to _draft_ state.
+
+[width="100%",frame="1",options="header",grid="all"]
+|=======
+|_Artifact_                                     |_Description_                                                     |_Links_
+|+org.apache.tamaya.ext:tamaya-osgi-felix+      |Provides support for Apache Felix PersistenceManager SPI.         | -
+|+org.apache.tamaya.ext:tamaya-osgi-general+    |Provides support for implementing the OSGI ConfigAdmin service.   | -
+|+org.apache.tamaya.ext:tamaya-osgi-injection+  |Provides support for configuration injection into services.       | -
+|+org.apache.tamaya.ext:tamaya-store+           |SPI for writing configuration.                                    | -
+|+org.apache.tamaya.ext:tamaya-store-file+      |Store SPI implementation using file storage.                      | -
+|+org.apache.tamaya.ext:tamaya-store-hazelcast+ |Store SPI implementation using a Hazelcast Datagrid.              | -
+|+org.apache.tamaya.ext:tamaya-store-ignite+    |Store SPI implementation using Apache Ignite.                     | -
+|+org.apache.tamaya.ext:tamaya-commons+         |Integration with Apache Commons Configuration.                    | -
 |=======
