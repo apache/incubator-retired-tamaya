@@ -1,0 +1,166 @@
+= Apache Tamaya -- Extension: Spring Integration
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.integration.spring
+:title: Apache Tamaya Extension: Spring Integration
+:revdate: November 2015
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Remote]]
+== Tamaya Spring Integration (Extension Module)
+=== Overview
+
+Apache Tamaya currently provides two implementations also full integration for Spring:
+
+* A Spring +@Configuration+ implementation that also provides a Tamaya based version of
+  +org.springframework.context.support.PropertySourcesPlaceholderConfigurer+.
+* +org.apache.tamaya.integration.spring.TamayaEnvironment+ is the Tamaya based implementation of the Spring
+  +Environment+ interface.
+* +TamayaSpringPropertySource+ implements an additional Spring +PropertySource+.
+* Finally +org.apache.tamaya.integration.spring.SpringConfigInjectionPostProcessor+ implements a Bean +PostProcessor+,
+  which adds all the full fledged Tamaya configuration capabilities to Spring.
+
+
+=== Compatibility
+
+Both modules are based on Java 7, so they will not run on Java 7 and beyond. The extension shown here works similarly
+with Spring Framework as well as Spring Boot.
+
+
+=== Installation
+
+To benefit from Tamaya Spring integration you only must one of the following dependencies to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-spring</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+
+=== Registering Tamaya Spring Configuration
+
+Basically to activate the Tamaya Spring support the most simple thing is to a enable the Tamaya package for being
+scanned for Spring components, e.g.
+
+[source, xml]
+--------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config />
+    <context:component-scan base-package="org.apache.tamaya.integration.spring"/>
+
+    ...
+
+</beans>
+--------------------------------------------------------
+
+NOTE: Of course you can also use the newer +@ComponentScan+ annotation as described by the Spring documentation.
+
+
+Similarly if you dont want to use component scanning you can configure things using plain old XML. Simply add the
+following lines somewhere into one of your application context configuration files.
+
+[source, xml]
+--------------------------------------------------------
+<bean id="tamayaInjectionProcessor" name="tamayaInjectionProcessor" class="org.apache.tamaya.integration.spring.SpringConfigInjectionPostProcessor"/>
+<bean id="tamayaConfigProvider" name="tamayaConfigProvider" class="org.apache.tamaya.integration.spring.TamayaSpringConfig"/>
+--------------------------------------------------------
+
+=== Configuring your Context
+
+Done so enables you to use Tamaya as a backend for property resolution, e.g. +propertyValue+ as illustrated below
+is resolved from the current Tamaya configuration.
+
+[source, xml]
+--------------------------------------------------------
+<bean id="configuredBean" name="configuredBean" class="org.apache.tamaya.integration.spring.ConfiguredSpringBean">
+    <property name="message" value="${propertyValue}"/>
+</bean>
+--------------------------------------------------------
+
+=== Configuring your Beans
+
+Similarly you can inject any kind of configuration as supported by Tamaya into your Spring managed beans:
+
+[source, java]
+--------------------------------------------------------
+**
+ * Created by Anatole on 25.09.2015.
+ */
+@ConfigDefaultSections
+public class ConfiguredSpringBean {
+
+    private String message;
+
+    @Autowired
+    private Environment env;
+
+    @Config("java.version")
+    private String javaVersion;
+
+    @Config
+    @ConfigDefault("23")
+    private int testNumber;
+
+    public String getJavaVersion(){
+        return javaVersion;
+    }
+
+    public int getTestNumber(){
+        return testNumber;
+    }
+
+    public Environment getEnv(){
+        return env;
+    }
+
+    public void setMessage(String message){
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}
+--------------------------------------------------------
+
+Summarizing you get all the nice features of Tamaya out of the box running with your Spring code.
