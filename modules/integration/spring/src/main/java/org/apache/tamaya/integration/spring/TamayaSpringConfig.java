@@ -24,6 +24,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySources;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -31,6 +34,7 @@ import javax.annotation.PostConstruct;
  * Spring Configuration Bean adding {@link TamayaSpringPropertySource} to the current
  * {@link org.springframework.core.env.Environment}.
  */
+@Component
 @Configuration
 public class TamayaSpringConfig {
 
@@ -44,6 +48,10 @@ public class TamayaSpringConfig {
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
+        PropertySourcesPlaceholderConfigurer cfgBean = new PropertySourcesPlaceholderConfigurer();
+        MutablePropertySources sources = new MutablePropertySources();
+        sources.addFirst(new TamayaSpringPropertySource());
+        cfgBean.setPropertySources(sources);
+        return cfgBean;
     }
  }

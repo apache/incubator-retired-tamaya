@@ -30,6 +30,8 @@ import org.springframework.core.env.Environment;
 @ConfigDefaultSections
 public class ConfiguredSpringBean {
 
+    private String message;
+
     @Autowired
     private Environment env;
 
@@ -50,5 +52,13 @@ public class ConfiguredSpringBean {
 
     public Environment getEnv(){
         return env;
+    }
+
+    public void setMessage(String message){
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
