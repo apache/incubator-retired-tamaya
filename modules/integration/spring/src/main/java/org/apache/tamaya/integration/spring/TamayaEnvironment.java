@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.integration.spring;
 
-import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
-import org.springframework.core.env.SystemEnvironmentPropertySource;
-import org.springframework.stereotype.Component;
 
+/**
+ * Tamaya specific environment for Spring.
+ */
 public class TamayaEnvironment extends StandardEnvironment{
 
     protected void customizePropertySources(MutablePropertySources propertySources) {

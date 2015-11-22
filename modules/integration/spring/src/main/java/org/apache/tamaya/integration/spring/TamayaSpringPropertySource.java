@@ -21,7 +21,6 @@ package org.apache.tamaya.integration.spring;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.springframework.core.env.PropertySource;
-import org.springframework.stereotype.Component;
 
 /**
  * Spring PropertySource bridging to Tamaya {@link org.apache.tamaya.Configuration}.

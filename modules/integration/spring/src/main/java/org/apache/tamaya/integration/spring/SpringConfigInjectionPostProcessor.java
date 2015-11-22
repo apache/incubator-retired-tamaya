@@ -21,7 +21,6 @@ package org.apache.tamaya.integration.spring;
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
