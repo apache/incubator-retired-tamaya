@@ -22,8 +22,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,21 +37,23 @@ import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * An bundle listener that registers services defined in META-INF/services, when a bundle is starting.
  *
  * @author anatole@apache.org
  */
-public class OSGIServiceLoader implements BundleListener
-{
+public class OSGIServiceLoader implements BundleListener {
     // Provide logging
     private static final Logger log = Logger.getLogger(OSGIServiceLoader.class.getName());
+
+    private Map<Class, ServiceTracker<Object,Object>> services = new ConcurrentHashMap<>();
 
     @Override
     public void bundleChanged(BundleEvent bundleEvent) {
         // Parse and create metadta on STARTING
-        if (bundleEvent.getType() == BundleEvent.STARTING) {
+        if (bundleEvent.getType() == BundleEvent.STARTED) {
             Bundle bundle = bundleEvent.getBundle();
             if (bundle.getEntry("META-INF/services/") == null) {
                 return;
@@ -76,32 +81,39 @@ public class OSGIServiceLoader implements BundleListener
             while (implClassName != null){
                 int hashIndex = implClassName.indexOf("#");
                 if (hashIndex > 0) {
-                    implClassName = implClassName.substring(0, hashIndex);
+                    implClassName = implClassName.substring(0, hashIndex-1);
                 }
-
+                else if (hashIndex == 0) {
+                    implClassName = "";
+                }
                 implClassName = implClassName.trim();
-
                 if (implClassName.length() > 0) {
-                    // Load the service class
-                    Class<?> implClass = (Class<?>)bundle.loadClass(implClassName);
-                    if (serviceClass.isAssignableFrom(implClass) == false) {
-                        log.warning("Configured service: " + implClassName + " is not assignble to " +
-                                serviceClass.getName());
-                        continue;
-                    }
-                    // Provide service properties
-                    Hashtable<String, String> props = new Hashtable<String, String>();
-                    props.put(Constants.VERSION_ATTRIBUTE, bundle.getVersion().toString());
-                    String vendor = (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
-                    props.put(Constants.SERVICE_VENDOR, (vendor != null ? vendor : "anonymous"));
-                    // Translate annotated @Priority into a service ranking
-                    props.put(Constants.SERVICE_RANKING,
-                            String.valueOf(PriorityServiceComparator.getPriority(implClass)));
+                    try {
+                        // Load the service class
+                        Class<?> implClass = (Class<?>) bundle.loadClass(implClassName);
+                        if (serviceClass.isAssignableFrom(implClass) == false) {
+                            log.warning("Configured service: " + implClassName + " is not assignble to " +
+                                    serviceClass.getName());
+                            continue;
+                        }
+                        // Provide service properties
+                        Hashtable<String, String> props = new Hashtable<String, String>();
+                        props.put(Constants.VERSION_ATTRIBUTE, bundle.getVersion().toString());
+                        String vendor = (String) bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
+                        props.put(Constants.SERVICE_VENDOR, (vendor != null ? vendor : "anonymous"));
+                        // Translate annotated @Priority into a service ranking
+                        props.put(Constants.SERVICE_RANKING,
+                                String.valueOf(PriorityServiceComparator.getPriority(implClass)));
 
-                    // Register the service factory on behalf of the intercepted bundle
-                   JDKUtilServiceFactory factory = new JDKUtilServiceFactory(implClass);
-                    BundleContext bundleContext = bundle.getBundleContext();
-                    bundleContext.registerService(serviceName, factory, props);
+                        // Register the service factory on behalf of the intercepted bundle
+                        JDKUtilServiceFactory factory = new JDKUtilServiceFactory(implClass);
+                        BundleContext bundleContext = bundle.getBundleContext();
+                        bundleContext.registerService(serviceName, factory, props);
+                    }
+                    catch(Exception e){
+                        log.log(Level.SEVERE,
+                                "Failed to load service class using ServiceLoader logic: " + implClassName, e);
+                    }
                 }
                 implClassName = br.readLine();
             }

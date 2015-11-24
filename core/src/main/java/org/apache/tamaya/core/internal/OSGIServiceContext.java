@@ -65,7 +65,7 @@ public class OSGIServiceContext implements ServiceContext{
     public <T> List<T> getServices(Class<T> serviceType) {
         List<ServiceReference<T>> refs = new ArrayList<>();
         try {
-            refs.addAll(this.bundleContext.getServiceReferences(serviceType, "*"));
+            refs.addAll(this.bundleContext.getServiceReferences(serviceType, null));
             Collections.sort(refs, REF_COMPARATOR);
             List<T> services = new ArrayList<>(refs.size());
             for(ServiceReference<T> ref:refs){

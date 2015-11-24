@@ -24,10 +24,14 @@ import org.apache.tamaya.spi.ServiceContextManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import java.util.logging.Logger;
+
 /**
  * A bundle activator that registers the {@link OSGIServiceLoader}.
  */
 public class OSGIActivator implements BundleActivator {
+
+    private static final Logger LOG = Logger.getLogger(OSGIActivator.class.getName());
 
     private OSGIServiceLoader serviceLoader;
 
@@ -35,7 +39,8 @@ public class OSGIActivator implements BundleActivator {
     public void start(BundleContext context) {
         // Register marker service
         ServiceContextManager.set(new OSGIServiceContext(context));
-        serviceLoader =new OSGIServiceLoader();
+        LOG.info("Registered OSGI enabled ServiceContext...");
+        serviceLoader = new OSGIServiceLoader();
         context.addBundleListener(serviceLoader);
     }
 
