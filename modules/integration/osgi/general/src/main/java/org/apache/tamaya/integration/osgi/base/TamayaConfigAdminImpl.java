@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.osgi.general;
+package org.apache.tamaya.integration.osgi.base;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,12 +118,12 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
 
     @Override
     public Configuration createFactoryConfiguration(String factoryPid) throws IOException {
-        throw new UnsupportedOperationException();
+        return createFactoryConfiguration(factoryPid, null);
     }
 
     @Override
     public Configuration createFactoryConfiguration(String factoryPid, String location) throws IOException {
-        throw new UnsupportedOperationException();
+        return new TamayaConfigurationImpl(factoryPid, null, this.parent);
     }
 
     @Override

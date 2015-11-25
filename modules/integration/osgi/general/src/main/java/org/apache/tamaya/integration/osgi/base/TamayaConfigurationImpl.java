@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.osgi.general;
+package org.apache.tamaya.integration.osgi.base;
 
 import java.io.IOException;
 import java.util.*;
