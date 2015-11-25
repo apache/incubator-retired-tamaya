@@ -50,10 +50,10 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
-                            org.apache.tamaya.integration.osgi.felix.Activator
+                            org.apache.tamaya.integration.osgi.base.Activator
                         </Bundle-Activator>
                         <Private-Package>
-                            org.apache.tamaya.integration.osgi.felix
+                            org.apache.tamaya.integration.osgi.base
                         </Private-Package>
                         <Export-Service>
                             org.apache.felix.cm.PersistenceManager

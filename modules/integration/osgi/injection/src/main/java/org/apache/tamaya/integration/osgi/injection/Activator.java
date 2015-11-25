@@ -19,26 +19,56 @@
 package org.apache.tamaya.integration.osgi.injection;
 
 import org.apache.tamaya.inject.ConfigurationInjection;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
+import org.osgi.util.tracker.ServiceTracker;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  * Activator that injects Tamaya configuration into OSGI Services.
  */
 public class Activator implements ServiceListener, BundleActivator {
 
+    private static final Logger LOG = Logger.getLogger(Activator.class.getName());
+
     private BundleContext context;
+    private ServiceTracker<Object, Object> serviceTracker;
 
     @Override
     public void start(BundleContext context) throws Exception {
         this.context = context;
+        serviceTracker = new ServiceTracker<Object, Object>(context, Object.class, null) {
+            @Override
+            public Object addingService(ServiceReference<Object> reference) {
+                Object service = context.getService(reference);
+                Object pidObj = reference.getProperty(Constants.SERVICE_PID);
+                if (pidObj instanceof String) {
+                    String pid = (String) pidObj;
+                    try {
+                        ConfigurationInjection.getConfigurationInjector().configure(service);
+                    } catch (Exception e) {
+                        LOG.log(Level.WARNING, "Error configuring Service: " + service, e);
+                    }
+                } else {
+                    LOG.log(Level.SEVERE, "Unsupported pid: " + pidObj);
+                }
+                return service;
+            }
+
+            @Override
+            public void removedService(ServiceReference<Object> reference, Object service) {
+                context.ungetService(reference);
+            }
+        };
+        serviceTracker.open();
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
+        this.serviceTracker.close();
+        this.serviceTracker = null;
         this.context = null;
     }
 
