@@ -73,7 +73,7 @@ public class TestConfigIntegration{
     @Deployment(name="felix.main",order=10)
     public static JavaArchive deployMain() {
         return ShrinkWrap.create(ZipImporter.class, "felix.main-5.4.0.jar")
-                .importFrom(new File("src/container/org.apache.felix.main-5.4.0.jar"))
+                .importFrom(new File("../test-bundles/org.apache.felix.main-5.4.0.jar"))
                 .as(JavaArchive.class);
     }
 
