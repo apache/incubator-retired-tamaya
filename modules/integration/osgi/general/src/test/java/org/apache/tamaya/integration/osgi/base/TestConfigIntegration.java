@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.integration.osgi.base;
 
+import org.apache.log4j.Priority;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.ServiceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.osgi.metadata.OSGiManifestBuilder;
@@ -30,12 +30,9 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 
 import java.io.File;
 import java.io.InputStream;
@@ -47,13 +44,14 @@ public class TestConfigIntegration{
 
     private static final String TAMAYA_VERSION = "0.2-incubating-SNAPSHOT";
 
+
     @ArquillianResource BundleContext context;
 
     //////////////////////////////////////////////////////// Test setup //////////////////////////////////
 
-    @Deployment(order=11)
+    @Deployment
     public static JavaArchive createdeployment() {
-        final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "tamaya-osgi-base.jar");
+        final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "tamaya-osgi-general.jar");
         archive.setManifest(new Asset() {
             public InputStream openStream() {
                 OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
@@ -65,8 +63,7 @@ public class TestConfigIntegration{
                 return builder.openStream();
             }
         });
-        archive.addClasses(TestConfigIntegration.class);
-//        archive.addAsResource("META-INF/javaconfiguration.properties");
+        archive.addClasses(Test.class, TestConfigIntegration.class, Priority.class);
         return archive;
     }
 
@@ -125,7 +122,6 @@ public class TestConfigIntegration{
 //        }
 //    }
 
-    @OperateOnDeployment("_DEFAULT_")
     @Test
     public void testTamayaAvailable() throws Exception {
         assertNotNull(ConfigurationProvider.getConfiguration());

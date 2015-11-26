@@ -21,7 +21,7 @@ under the License.
 
     <container qualifier="jboss" default="true">
         <configuration>
-            <property name="frameworkProperties">/felix.properties</property>
+            <property name="frameworkProperties">src/test/resources/felix.properties</property>
         </configuration>
     </container>
 </arquillian>
