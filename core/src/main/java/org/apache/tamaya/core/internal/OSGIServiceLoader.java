@@ -146,6 +146,7 @@ public class OSGIServiceLoader implements BundleListener {
                 return serviceInstance;
             }
             catch (Exception ex) {
+                ex.printStackTrace();
                 throw new IllegalStateException("Cannot instanciate service", ex);
             }
         }

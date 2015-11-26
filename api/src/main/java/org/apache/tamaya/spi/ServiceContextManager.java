@@ -65,7 +65,16 @@ public final class ServiceContextManager {
         } catch (Exception e) {
             throw new ConfigException("ServiceContext not loadable", e);
         }
-
+//        if (highestServiceContext==null){
+//            String serviceContext = System.getProperty(ServiceContext.class.getName());
+//            if(serviceContext != null){
+//                try{
+//                    highestServiceContext = (ServiceContext)Class.forName(serviceContext).newInstance();
+//                } catch (Exception e) {
+//                    throw new ConfigException("Configured ServiceContext not loadable: " + serviceContext, e);
+//                }
+//            }
+//        }
         if (highestServiceContext==null){
             throw new ConfigException("No ServiceContext found");
         }

@@ -42,10 +42,13 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
         try {
-            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
-                    .getResources(DEFAULT_PROPERTIES_FILE_NAME);
-            while (urls.hasMoreElements()) {
-                propertySources.add(new SimplePropertySource(urls.nextElement()));
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            if(cl!=null) {
+                Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
+                        .getResources(DEFAULT_PROPERTIES_FILE_NAME);
+                while (urls.hasMoreElements()) {
+                    propertySources.add(new SimplePropertySource(urls.nextElement()));
+                }
             }
 
         } catch (IOException e) {
