@@ -20,6 +20,7 @@ package org.apache.tamaya.integration.osgi.base;
 
 import org.apache.log4j.Priority;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.apache.tamaya.spi.ServiceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -39,11 +40,15 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Dictionary;
+import java.util.Enumeration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -52,6 +57,10 @@ import static org.junit.Assert.assertNotNull;
 public class TestConfigIntegration{
 
     private static final String TAMAYA_VERSION = "0.2-incubating-SNAPSHOT";
+
+    static{
+        System.setProperty("[bundle:tamaya]systemTestKey", "foo");
+    }
 
 
     @ArquillianResource BundleContext context;
@@ -69,13 +78,15 @@ public class TestConfigIntegration{
                 builder.addImportPackages("org.junit", "org.apache.tamaya", "org.apache.tamaya.spi",
                         "org.apache.tamaya.core", "org.osgi.service.cm");
                 builder.addImportPackages(ServiceContext.class, ConfigurationProvider.class, ConfigurationAdmin.class,
-                        ServiceTracker.class);
+                        ServiceTracker.class, ConfigurationFunctions.class);
                 builder.addBundleActivator(Activator.class);
                 return builder.openStream();
             }
         });
         archive.addClasses(Test.class, TestConfigIntegration.class, Priority.class, Activator.class,
-                            TamayaConfigAdminImpl.class, TamayaConfigurationImpl.class);
+                            TamayaConfigAdminImpl.class, TamayaConfigurationImpl.class, OSGIConfigRootMapper.class);
+        URL config = ClassLoader.getSystemClassLoader().getResource("META-INF/javaconfiguration.properties");
+        archive.addAsResource(config, "META-INF/javaconfiguration.properties");
         return archive;
     }
 
@@ -86,7 +97,6 @@ public class TestConfigIntegration{
                 .as(JavaArchive.class);
     }
 
-
     @Deployment(name="osgi.config",order=10)
     public static JavaArchive deployOSGIConfig() {
         return ShrinkWrap.create(ZipImporter.class, "felix.configadmin-1.8.8.jar")
@@ -94,24 +104,24 @@ public class TestConfigIntegration{
                 .as(JavaArchive.class);
     }
 
-//    @Deployment(name="osgi.event",order=9)
-//    public static JavaArchive deployEventAdmin() {
-//        return ShrinkWrap.create(ZipImporter.class, "felix.eventadmin-1.4.4.jar")
-//                .importFrom(new File("../test-bundles/org.apache.felix.eventadmin-1.4.4.jar"))
-//                .as(JavaArchive.class);
-//    }
-
     @Deployment(name="tamaya-api",order=1)
     public static JavaArchive deployTamayaAPI() {
         return ShrinkWrap.create(ZipImporter.class, "tamaya-api.jar")
-                .importFrom(getBundleFile("tamaya-api:"+TAMAYA_VERSION))
+                .importFrom(getBundleFile("org.apache.tamaya:tamaya-api:"+TAMAYA_VERSION))
                 .as(JavaArchive.class);
     }
 
     @Deployment(name="tamaya-core",order=2)
     public static JavaArchive deployTamayaCore() {
         return ShrinkWrap.create(ZipImporter.class, "tamaya-core.jar")
-                .importFrom(getBundleFile("tamaya-core:"+TAMAYA_VERSION))
+                .importFrom(getBundleFile("org.apache.tamaya:tamaya-core:"+TAMAYA_VERSION))
+                .as(JavaArchive.class);
+    }
+
+    @Deployment(name="tamaya-functions",order=2)
+    public static JavaArchive deployTamayaFunctions() {
+        return ShrinkWrap.create(ZipImporter.class, "tamaya-functions.jar")
+                .importFrom(getBundleFile("org.apache.tamaya.ext:tamaya-functions:"+TAMAYA_VERSION))
                 .as(JavaArchive.class);
     }
 
@@ -131,7 +141,7 @@ public class TestConfigIntegration{
         return Maven.configureResolver()
                 .withMavenCentralRepo(false)
                 .withClassPathResolution(true)
-                .resolve("org.apache.tamaya:" + artifactId).withoutTransitivity().asSingleFile();
+                .resolve(artifactId).withoutTransitivity().asSingleFile();
     }
 
 
@@ -155,13 +165,30 @@ public class TestConfigIntegration{
         assertNotNull(ConfigurationProvider.getConfiguration());
     }
 
-    @Test @Ignore
+    @Test
     public void testTamayaConfigAdminAvailable() throws Exception {
         ServiceReference<ConfigurationAdmin> ref = context.getServiceReference(ConfigurationAdmin.class);
-        assertNotNull(ref);
+        assertNotNull("OSGI ConfigAdmin not loaded.", ref);
+        ConfigurationAdmin osgiConfig = context.getService(ref);
+        assertNotNull("No config available from Tamaya through OSGI ConfigAdmin.", osgiConfig);
+        assertEquals("Override of OSGI ConfigAdmin with Tamaya did not work.", osgiConfig.getClass().getName(), TamayaConfigAdminImpl.class.getName());
+    }
+
+    @Test
+    public void testLoadTamayaConfigFromConfigAdmin() throws Exception {
+        ServiceReference<ConfigurationAdmin> ref = context.getServiceReference(ConfigurationAdmin.class);
+        assertNotNull("OSGI ConfigAdmin not loaded.", ref);
         ConfigurationAdmin admin = context.getService(ref);
-        assertNotNull(admin);
-        assertEquals(admin.getClass().getName(), TamayaConfigAdminImpl.class.getName());
+        Configuration osgiConfig = admin.getConfiguration("tamaya");
+        assertNotNull("No config available from Tamaya through OSGI ConfigAdmin.", osgiConfig);
+        Dictionary<String,Object> config = osgiConfig.getProperties();
+        assertNotNull("No config entries loaded from Tamaya.", config);
+        assertEquals("Property 'testKey' not loaded from Tamaya.", "foo", config.get("systemTestKey"));
+        // TODO: Think on Resource loading in OSGI:
+        // this should work with normal resource loading but does not work with OSGI, since this resource is not
+        // visible by default, when we have added resource loading as abstraction to the ServiceContext, too.
+        // Reason: Resource Loading in OSGI works differently!
+//        assertEquals("Property 'testKey' not loaded from Tamaya.", "success!", config.get("my.testProperty"));
     }
 
 }

@@ -42,15 +42,59 @@ import org.osgi.util.tracker.ServiceTracker;
  * Tamaya based implementation of an OSGI {@link ConfigurationAdmin}.
  */
 public class TamayaConfigAdminImpl implements ConfigurationAdmin {
-    private final BundleContext context;
-    private ConfigurationAdmin parent;
-    private Map<String,Configuration> configs = new ConcurrentHashMap<>();
+    /** the logger. */
     private static final Logger LOG = Logger.getLogger(TamayaConfigAdminImpl.class.getName());
 
+    /** The OSGI context. */
+    private final BundleContext context;
+    /** THe optional OSGI parent service. */
+    private ConfigurationAdmin parent;
+    /** The cached configurations. */
+    private Map<String,Configuration> configs = new ConcurrentHashMap<>();
+    /** The configuration section mapper. */
+    private OSGIConfigRootMapper configRootMapper;
+
+    /**
+     * Loads the configuration toor mapper using the OSGIConfigRootMapper OSGI service resolving mechanism. If no
+     * such service is available it loads the default mapper.
+     * @return the mapper to be used, bever null.
+     */
+    protected OSGIConfigRootMapper loadConfigRootMapper() {
+        OSGIConfigRootMapper mapper = null;
+        ServiceReference<OSGIConfigRootMapper> ref = context.getServiceReference(OSGIConfigRootMapper.class);
+        if(ref!=null){
+            mapper = context.getService(ref);
+        }
+        if(mapper==null){
+            mapper = new OSGIConfigRootMapper() {
+                @Override
+                public String getTamayaConfigRoot(String pid, String factoryPid) {
+                    if(pid!=null) {
+                        return "[bundle:" + pid +']';
+                    }
+                    else{
+                        return "[bundle:" + factoryPid +']';
+                    }
+                }
+                @Override
+                public String toString(){
+                    return "Default OSGIConfigRootMapper(pid -> [bundle:pid], factoryPid -> [bundle:factoryPid]";
+                }
+            };
+        }
+        return mapper;
+    }
+
+    /**
+     * Create a new config.
+     * @param context the OSGI context
+     * @throws IOException if something fails.
+     */
     public TamayaConfigAdminImpl(BundleContext context) throws IOException {
         this.context = context;
+        this.configRootMapper = loadConfigRootMapper();
         ServiceReference<ConfigurationAdmin> ref = context.getServiceReference(ConfigurationAdmin.class);
-        this.parent = context.getService(ref);
+        this.parent = ref!=null?context.getService(ref):null;
         ServiceTracker<ManagedService, ManagedService> serviceTracker = new ServiceTracker<ManagedService,
                 ManagedService>(context, ManagedService.class, null) {
             @Override
@@ -123,7 +167,7 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
 
     @Override
     public Configuration createFactoryConfiguration(String factoryPid, String location) throws IOException {
-        return new TamayaConfigurationImpl(factoryPid, null, this.parent);
+        return new TamayaConfigurationImpl(factoryPid, null, configRootMapper, this.parent);
     }
 
     @Override
@@ -133,7 +177,7 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
 
     @Override
     public Configuration getConfiguration(String pid) throws IOException {
-        return new TamayaConfigurationImpl(pid, null, this.parent);
+        return new TamayaConfigurationImpl(pid, null, configRootMapper, this.parent);
     }
 
     @Override

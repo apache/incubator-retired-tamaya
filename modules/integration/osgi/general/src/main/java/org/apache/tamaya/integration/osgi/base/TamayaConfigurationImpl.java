@@ -20,6 +20,8 @@ package org.apache.tamaya.integration.osgi.base;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.PropertyMatcher;
@@ -31,38 +33,45 @@ import org.osgi.service.cm.ConfigurationAdmin;
  * Tamaya based implementation of an OSGI {@link Configuration}.
  */
 public class TamayaConfigurationImpl implements Configuration {
+    private static final Logger LOG = Logger.getLogger(TamayaConfigurationImpl.class.getName());
     private final String pid;
     private final String factoryPid;
     private Map<String, String> properties = new HashMap<>();
     private org.apache.tamaya.Configuration config;
+    private OSGIConfigRootMapper configRootMapper;
 
-    public TamayaConfigurationImpl(String confPid, String factoryPid, ConfigurationAdmin parent) {
+    /**
+     * Constructor.
+     * @param confPid the OSGI pid
+     * @param factoryPid the factory pid
+     * @param configRootMapper the mapper that maps the pids to a tamaya root section.
+     * @param parent the (optional delegating parent, used as default).
+     */
+    public TamayaConfigurationImpl(String confPid, String factoryPid, OSGIConfigRootMapper configRootMapper,
+                                   ConfigurationAdmin parent) {
         this.pid = confPid;
         this.factoryPid = factoryPid;
+        this.configRootMapper = Objects.requireNonNull(configRootMapper);
         if(parent!=null){
             try {
                 Dictionary<String, Object> conf = parent.getConfiguration(confPid, factoryPid).getProperties();
-                Enumeration<String> keys = conf.keys();
-                while(keys.hasMoreElements()){
-                    String key = keys.nextElement();
-                    this.properties.put(key, conf.get(key).toString());
+                if(conf!=null) {
+                    LOG.info("Configuration: Adding default parameters from parent: " + parent.getClass().getName());
+                    Enumeration<String> keys = conf.keys();
+                    while (keys.hasMoreElements()) {
+                        String key = keys.nextElement();
+                        this.properties.put(key, conf.get(key).toString());
+                    }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.log(Level.WARNING, "Error reading parent OSGI config.", e);
             }
         }
         this.config = ConfigurationProvider.getConfiguration();
+        final String rootKey = configRootMapper.getTamayaConfigRoot(pid, factoryPid);
+        LOG.info("Configuration: Evaluating Tamaya configuration for '" + rootKey + "'.");
         this.properties.putAll(
-                config.with(ConfigurationFunctions.filter(new PropertyMatcher() {
-                    @Override
-                    public boolean test(String key, String value) {
-                        // TODO define name space / SPI
-                        if (key.startsWith("bundle." + pid)) {
-                            return true;
-                        }
-                        return false;
-            }
-        })).getProperties());
+                config.with(ConfigurationFunctions.section(rootKey, true)).getProperties());
     }
 
     @Override

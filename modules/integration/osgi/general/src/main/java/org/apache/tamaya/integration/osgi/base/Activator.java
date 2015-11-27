@@ -29,13 +29,21 @@ import java.util.Hashtable;
 
 /**
  * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
- * using a default service priority of {@code 0}.
+ * using a default service priority of {@code 0}. This behaviour is configurable based on OSGI properties:
+ * <ul>
+ *     <li><b>org.tamaya.integration.osgi.cm.ranking, type: int</b> allows to configure the OSGI service ranking for
+ *     Tamaya based ConfigurationAdmin instance. The default ranking used is 10.</li>
+ *     <li><b>org.tamaya.integration.osgi.cm.override, type: boolean</b></li> allows to configure if Tamaya should
+ *     register its ConfigAdmin service. Default is true.
+ * </ul>
  */
 public class Activator implements BundleActivator {
 
-    private static final String SERVICE_RANKING_PROP = "org.tamaya.integration.cm.ranking";
+    private static final String SERVICE_RANKING_PROP = "org.tamaya.integration.osgi.cm.ranking";
 
-    private static final Integer DEFAULT_RANKING = - Integer.MAX_VALUE;
+    private static final String SERVICE_OVERRIDE_PROP = "org.tamaya.integration.osgi.cm.override";
+
+    private static final Integer DEFAULT_RANKING = 10;
 
     private BundleContext context;
 
@@ -43,16 +51,19 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext context) throws Exception {
-        Dictionary<String,Object> props = new Hashtable<>();
-        String ranking = context.getProperty(SERVICE_RANKING_PROP);
-        if (ranking == null) {
-            props.put(Constants.SERVICE_RANKING, DEFAULT_RANKING);
-        } else{
-            props.put(Constants.SERVICE_RANKING, Integer.valueOf(ranking));
+        String val = context.getProperty(SERVICE_OVERRIDE_PROP);
+        if(val==null?true:Boolean.parseBoolean(val)){
+            Dictionary<String, Object> props = new Hashtable<>();
+            String ranking = context.getProperty(SERVICE_RANKING_PROP);
+            if (ranking == null) {
+                props.put(Constants.SERVICE_RANKING, DEFAULT_RANKING);
+            } else {
+                props.put(Constants.SERVICE_RANKING, Integer.valueOf(ranking));
+            }
+            this.context = context;
+            TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);
+            registration = context.registerService(ConfigurationAdmin.class, cm, props);
         }
-        this.context = context;
-        TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);
-        registration = context.registerService(ConfigurationAdmin.class, cm, props);
     }
 
     @Override
