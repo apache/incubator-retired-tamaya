@@ -193,15 +193,7 @@ public final class ConfigurationFunctions {
      * @return true, if the entry is exact in this section
      */
     public static boolean isKeyInSection(String key, String sectionKey) {
-        int lastIndex = key.lastIndexOf('.');
-        if (lastIndex < 0) {
-            return false;
-        }
-        String curAreaKey = key.substring(0, lastIndex);
-        if (curAreaKey.startsWith(sectionKey)) {
-            return true;
-        }
-        return false;
+        return key.startsWith(sectionKey);
     }
 
     /**
