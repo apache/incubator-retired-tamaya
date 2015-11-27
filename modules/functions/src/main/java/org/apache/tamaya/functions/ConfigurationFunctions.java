@@ -176,7 +176,7 @@ public final class ConfigurationFunctions {
                     return new MappedConfiguration(filtered, new KeyMapper(){
                         @Override
                         public String mapKey(String key) {
-                            return key.substring(areaKey.length() + 1);
+                            return key.substring(areaKey.length());
                         }
                     }, "stripped");
                 }
