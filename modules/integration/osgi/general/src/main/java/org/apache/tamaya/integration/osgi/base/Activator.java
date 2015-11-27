@@ -35,7 +35,7 @@ public class Activator implements BundleActivator {
 
     private static final String SERVICE_RANKING_PROP = "org.tamaya.integration.cm.ranking";
 
-    private static final Integer DEFAULT_RANKING = Integer.MIN_VALUE + 100;
+    private static final Integer DEFAULT_RANKING = - Integer.MAX_VALUE;
 
     private BundleContext context;
 
@@ -52,7 +52,7 @@ public class Activator implements BundleActivator {
         }
         this.context = context;
         TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);
-        registration = context.registerService(ConfigurationAdmin.class, cm, null);
+        registration = context.registerService(ConfigurationAdmin.class, cm, props);
     }
 
     @Override

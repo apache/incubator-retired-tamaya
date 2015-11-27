@@ -22,6 +22,7 @@ import org.apache.log4j.Priority;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.ServiceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.osgi.metadata.OSGiManifestBuilder;
@@ -30,13 +31,21 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 import java.io.File;
 import java.io.InputStream;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
@@ -57,13 +66,16 @@ public class TestConfigIntegration{
                 OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
                 builder.addBundleSymbolicName(archive.getName());
                 builder.addBundleManifestVersion(2);
-                builder.addImportPackages("org.junit", "org.apache.tamaya", "org.apache.tamaya.spi", "org.apache.tamaya.core");
-                builder.addImportPackages(ServiceContext.class, ConfigurationProvider.class);
-//                builder.addBundleActivator(Activator.class);
+                builder.addImportPackages("org.junit", "org.apache.tamaya", "org.apache.tamaya.spi",
+                        "org.apache.tamaya.core", "org.osgi.service.cm");
+                builder.addImportPackages(ServiceContext.class, ConfigurationProvider.class, ConfigurationAdmin.class,
+                        ServiceTracker.class);
+                builder.addBundleActivator(Activator.class);
                 return builder.openStream();
             }
         });
-        archive.addClasses(Test.class, TestConfigIntegration.class, Priority.class);
+        archive.addClasses(Test.class, TestConfigIntegration.class, Priority.class, Activator.class,
+                            TamayaConfigAdminImpl.class, TamayaConfigurationImpl.class);
         return archive;
     }
 
@@ -73,6 +85,21 @@ public class TestConfigIntegration{
                 .importFrom(new File("../test-bundles/org.apache.felix.main-5.4.0.jar"))
                 .as(JavaArchive.class);
     }
+
+
+    @Deployment(name="osgi.config",order=10)
+    public static JavaArchive deployOSGIConfig() {
+        return ShrinkWrap.create(ZipImporter.class, "felix.configadmin-1.8.8.jar")
+                .importFrom(new File("../test-bundles/org.apache.felix.configadmin-1.8.8.jar"))
+                .as(JavaArchive.class);
+    }
+
+//    @Deployment(name="osgi.event",order=9)
+//    public static JavaArchive deployEventAdmin() {
+//        return ShrinkWrap.create(ZipImporter.class, "felix.eventadmin-1.4.4.jar")
+//                .importFrom(new File("../test-bundles/org.apache.felix.eventadmin-1.4.4.jar"))
+//                .as(JavaArchive.class);
+//    }
 
     @Deployment(name="tamaya-api",order=1)
     public static JavaArchive deployTamayaAPI() {
@@ -111,20 +138,30 @@ public class TestConfigIntegration{
     //////////////////////////////////////////////////////// Tests //////////////////////////////////
 
 
-//    @Before
-//    public void startBundles(){
-//        for(Bundle bundle:context.getBundles()) {
-//            try {
-//                bundle.start();
-//            } catch (BundleException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    @Before
+    public void startBundles(){
+        for(Bundle bundle:context.getBundles()) {
+            try {
+                bundle.start();
+            } catch (BundleException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    @OperateOnDeployment("tamaya-core")
     @Test
     public void testTamayaAvailable() throws Exception {
         assertNotNull(ConfigurationProvider.getConfiguration());
+    }
+
+    @Test @Ignore
+    public void testTamayaConfigAdminAvailable() throws Exception {
+        ServiceReference<ConfigurationAdmin> ref = context.getServiceReference(ConfigurationAdmin.class);
+        assertNotNull(ref);
+        ConfigurationAdmin admin = context.getService(ref);
+        assertNotNull(admin);
+        assertEquals(admin.getClass().getName(), TamayaConfigAdminImpl.class.getName());
     }
 
 }
