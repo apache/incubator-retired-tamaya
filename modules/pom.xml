@@ -103,6 +103,7 @@ under the License.
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <configuration>
+                    <failOnError>false</failOnError>
                     <excludeFilterFile>findbugs/findbugs-exclude.xml</excludeFilterFile>
                 </configuration>
                 <dependencies>
