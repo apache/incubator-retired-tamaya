@@ -71,8 +71,7 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
                 public String getTamayaConfigRoot(String pid, String factoryPid) {
                     if(pid!=null) {
                         return "[bundle:" + pid +']';
-                    }
-                    else{
+                    } else{
                         return "[bundle:" + factoryPid +']';
                     }
                 }
