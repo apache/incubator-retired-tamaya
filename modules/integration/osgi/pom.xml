@@ -28,27 +28,55 @@
     </parent>
 
     <artifactId>tamaya-osgi</artifactId>
-    <packaging>pom</packaging>
-    <name>Apache Tamaya OSGI Support Projects</name>
-    <description>Tamaya Based OSGI extensions for different OSGI providers.</description>
+    <packaging>bundle</packaging>
+    <name>Apache Tamaya :: OSGi Services :: Tamaya Config</name>
+    <description>Tamaya Based OSGI Implementation of ConfigAdmin and Config Injection</description>
 
     <properties>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <felix.plugin.version>2.5.4</felix.plugin.version>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix.plugin.version}</version>
+                <inherited>true</inherited>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>
+                            org.apache.tamaya.integration.osgi.genereal.Activator
+                        </Bundle-Activator>
+                        <Private-Package>
+                            org.tamaya.integration.osgi.general
+                        </Private-Package>
+                        <Export-Service>
+                            org.osgi.service.cm.ConfigurationAdmin
+                        </Export-Service>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
-            <version>${osgi.compendium.version}</version>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.configadmin</artifactId>
+            <version>1.8.8</version>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>${osgi.version}</version>
-            <scope>provided</scope>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spisupport</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
@@ -57,20 +85,41 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-injection-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-injection</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-mutable-config</artifactId>
-            <version>${project.version}</version>
-        </dependency -->
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>1.1.10.Final</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-felix-embedded</artifactId>
+            <version>2.1.0.CR18</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
     </dependencies>
-
-    <modules>
-        <module>felix</module>
-        <module>injection</module>
-        <module>general</module>
-    </modules>
 
 </project>
