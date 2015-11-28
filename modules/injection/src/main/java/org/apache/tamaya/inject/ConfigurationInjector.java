@@ -19,6 +19,7 @@
 package org.apache.tamaya.inject;
 
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 
 /**
@@ -36,11 +37,28 @@ public interface ConfigurationInjector {
     <T> T configure(T instance);
 
     /**
+     * Configured the current instance and reigsterd necessary listener to forward config change events as
+     * defined by the current annotations in place.
+     *
+     * @param instance the instance to be configured
+     * @param config the configuration to be used for injection.
+     * @return the configured instance (allows chaining of operations).
+     */
+    <T> T configure(T instance, Configuration config);
+
+    /**
      * Create a template implementting the annotated methods based on current configuration data.
      *
      * @param templateType the type of the template to be created.
      */
     <T> T createTemplate(Class<T> templateType);
+
+    /**
+     * Create a template implementting the annotated methods based on current configuration data.
+     * @param config the configuration to be used for backing the template.
+     * @param templateType the type of the template to be created.
+     */
+    <T> T createTemplate(Class<T> templateType, Configuration config);
 
 
     /**
@@ -50,5 +68,14 @@ public interface ConfigurationInjector {
      * @return a supplier creating configured instances of {@code T}.
      */
     <T> ConfiguredItemSupplier<T> getConfiguredSupplier(ConfiguredItemSupplier<T> supplier);
+
+    /**
+     * Creates a supplier for configured instances of the given type {@code T}.
+     * @param supplier the supplier to create new instances.
+     * @param config the configuration to be used for backing the supplier.
+     * @param <T> the target type.
+     * @return a supplier creating configured instances of {@code T}.
+     */
+    <T> ConfiguredItemSupplier<T> getConfiguredSupplier(ConfiguredItemSupplier<T> supplier, Configuration config);
 
 }

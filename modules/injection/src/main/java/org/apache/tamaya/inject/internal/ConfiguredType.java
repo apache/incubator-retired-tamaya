@@ -25,6 +25,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigAutoInject;
 import org.apache.tamaya.inject.NoConfig;
 import org.apache.tamaya.inject.api.Config;
@@ -152,11 +154,21 @@ public class ConfiguredType {
      * @param instance       The instance to be configured.
      */
     public void configure(Object instance) {
+        configure(instance, ConfigurationProvider.getConfiguration());
+    }
+
+    /**
+     * Method called to configure an instance.
+     *
+     * @param instance       The instance to be configured.
+     * @param config  the target config.
+     */
+    public void configure(Object instance, Configuration config) {
         for (ConfiguredField field : configuredFields) {
-            field.applyValue(instance);
+            field.applyValue(instance, config);
         }
         for (ConfiguredSetterMethod method : configuredSetterMethods) {
-            method.applyValue(instance, true);
+            method.applyValue(instance, config, true);
 //            // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
         }
     }

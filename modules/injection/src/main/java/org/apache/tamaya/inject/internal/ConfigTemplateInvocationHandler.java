@@ -73,7 +73,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
             return DefaultDynamicValue.of(method, configuration);
         }
         String[] retKey = new String[1];
-        String configValue = InjectionHelper.getConfigValue(method, retKey);
+        String configValue = InjectionHelper.getConfigValue(method, retKey, configuration);
         return InjectionHelper.adaptValue(method, TypeLiteral.of(method.getReturnType()), retKey[0], configValue);
     }
 }

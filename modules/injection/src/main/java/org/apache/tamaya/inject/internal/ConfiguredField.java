@@ -19,6 +19,7 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
@@ -58,11 +59,11 @@ public class ConfiguredField {
      * @param target the target instance.
      * @throws ConfigException if evaluation or conversion failed.
      */
-    public void applyValue(Object target) throws ConfigException {
+    public void applyValue(Object target,Configuration config) throws ConfigException {
         if (this.annotatedField.getType() == DynamicValue.class) {
             applyDynamicValue(target);
         } else {
-            applyValue(target, false);
+            applyValue(target, config, false);
         }
     }
 
@@ -98,11 +99,11 @@ public class ConfiguredField {
      * @param resolve     set to true, if expression resolution should be applied on the keys passed.
      * @throws ConfigException if the configuration required could not be resolved or converted.
      */
-    private void applyValue(Object target,boolean resolve) throws ConfigException {
+    private void applyValue(Object target, Configuration config, boolean resolve) throws ConfigException {
         Objects.requireNonNull(target);
         try {
             String[] retKey = new String[1];
-            String configValue = InjectionHelper.getConfigValue(this.annotatedField, retKey);
+            String configValue = InjectionHelper.getConfigValue(this.annotatedField, retKey, config);
             // Next step perform expression resolution, if any
             String evaluatedValue = resolve && configValue != null
                     ? InjectionHelper.evaluateValue(configValue)

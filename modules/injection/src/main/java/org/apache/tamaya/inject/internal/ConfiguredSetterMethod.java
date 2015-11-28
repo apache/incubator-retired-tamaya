@@ -19,6 +19,7 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.InjectionUtils;
 
@@ -59,9 +60,9 @@ public class ConfiguredSetterMethod {
      * @param target the target instance.
      * @throws ConfigException if evaluation or conversion failed.
      */
-    public void applyValue(Object target, boolean resolve) throws ConfigException {
+    public void applyValue(Object target, Configuration config, boolean resolve) throws ConfigException {
         String[] retKey = new String[1];
-        String configValue = InjectionHelper.getConfigValue(this.setterMethod, retKey);
+        String configValue = InjectionHelper.getConfigValue(this.setterMethod, retKey, config);
         Objects.requireNonNull(target);
         try {
             String evaluatedString = resolve && configValue != null

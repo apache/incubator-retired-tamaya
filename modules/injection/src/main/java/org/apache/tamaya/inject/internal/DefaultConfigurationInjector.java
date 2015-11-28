@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.inject.internal;
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
@@ -92,10 +93,22 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      */
     @Override
     public <T> T configure(T instance) {
+        return configure(instance, ConfigurationProvider.getConfiguration());
+    }
+
+    /**
+     * Configured the current instance and reigsterd necessary listener to forward config change events as
+     * defined by the current annotations in place.
+     *
+     * @param instance the instance to be configured
+     * @param config the target configuration, not null.
+     */
+    @Override
+    public <T> T configure(T instance, Configuration config) {
         Class<?> type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerType(type);
         if(configuredType!=null){
-            configuredType.configure(instance);
+            configuredType.configure(instance, config);
         }else{
             LOG.info("Instance passed is not annotated for configuration: " + instance);
         }
@@ -109,6 +122,17 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      */
     @Override
     public <T> T createTemplate(Class<T> templateType) {
+        return createTemplate(templateType, ConfigurationProvider.getConfiguration());
+    }
+
+    /**
+     * Create a template implementting the annotated methods based on current configuration data.
+     *
+     * @param templateType the type of the template to be created.
+     * @param config the target configuration, not null.
+     */
+    @Override
+    public <T> T createTemplate(Class<T> templateType, Configuration config) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             cl = this.getClass().getClassLoader();
@@ -117,12 +141,16 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
                 new ConfigTemplateInvocationHandler(templateType, ConfigurationProvider.getConfiguration())));
     }
 
-
     @Override
     public <T> ConfiguredItemSupplier<T> getConfiguredSupplier(final ConfiguredItemSupplier<T> supplier) {
+        return getConfiguredSupplier(supplier, ConfigurationProvider.getConfiguration());
+    }
+
+    @Override
+    public <T> ConfiguredItemSupplier<T> getConfiguredSupplier(final ConfiguredItemSupplier<T> supplier, final Configuration config) {
         return new ConfiguredItemSupplier<T>() {
             public T get() {
-                return supplier.get();
+                return configure(supplier.get(), config);
             }
         };
     }
