@@ -19,9 +19,9 @@
 package org.apache.tamaya.model.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.model.Validation;
-import org.apache.tamaya.model.spi.ConfigValidationsReader;
-import org.apache.tamaya.model.spi.ValidationProviderSpi;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.spi.ConfigModelReader;
+import org.apache.tamaya.model.spi.ModelProviderSpi;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,17 +31,17 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Validation provider that reads model metadata from the current {@link org.apache.tamaya.Configuration}.
+ * ConfigModel provider that reads model metadata from the current {@link org.apache.tamaya.Configuration}.
  */
-public class ConfiguredInlineModelProviderSpi implements ValidationProviderSpi {
+public class ConfiguredInlineModelProviderSpi implements ModelProviderSpi {
 
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(ConfiguredInlineModelProviderSpi.class.getName());
     /** parameter to disable this provider. By default the provider is active. */
     private static final String MODEL_EANABLED_PARAM = "org.apache.tamaya.model.integrated.enabled";
 
-    /** The validations read. */
-    private List<Validation> validations = new ArrayList<>();
+    /** The configModels read. */
+    private List<ConfigModel> configModels = new ArrayList<>();
 
 
     /**
@@ -53,15 +53,14 @@ public class ConfiguredInlineModelProviderSpi implements ValidationProviderSpi {
         if (enabled) {
             LOG.info("Reading model configuration from config...");
             Map<String,String> config = ConfigurationProvider.getConfiguration().getProperties();
-            validations.addAll(ConfigValidationsReader.loadValidations(config,
+            configModels.addAll(ConfigModelReader.loadValidations(config,
                     "<Inline Configuration Model>"));
         }
-        validations = Collections.unmodifiableList(validations);
+        configModels = Collections.unmodifiableList(configModels);
     }
 
 
-    @Override
-    public Collection<Validation> getValidations() {
-        return validations;
+    public Collection<ConfigModel> getConfigModels() {
+        return configModels;
     }
 }

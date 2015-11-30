@@ -99,8 +99,8 @@
 
 ---
 {model}.a.b.c.aRequiredSection.aValidatedSection: {
-  description: 'A validation section.',
-  validations: 'org.apache.tamaya.model.validation.MaxItemValidator?max=3'
+  description: 'A configModel section.',
+  configModels: 'org.apache.tamaya.model.configModel.MaxItemValidator?max=3'
 }
 
 

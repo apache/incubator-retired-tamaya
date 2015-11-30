@@ -16,24 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.model.spi;
-
-import org.apache.tamaya.model.Validation;
-
-import java.util.Collection;
+package org.apache.tamaya.model;
 
 /**
- * Model of a configuration state. A model can be a full model, or a partial model, validating only
- * a configuration subset. This allows better user feedback because big configurations can be grouped
- * and validated by multiple (partial) models.
+ * This enumeration defines the types of supported validations.
  */
-public interface ValidationProviderSpi {
-
+public enum ModelType {
     /**
-     * Get the validation defined.
-     *
-     * @return the sections defined, never null.
+     * A configuration section.
      */
-    Collection<Validation> getValidations();
-
+    Section,
+    /**
+     * A configuration paramter.
+     */
+    Parameter,
+    /**
+     * ConfigModel to ensure a certain configuration filter is installed.
+     */
+    Filter,
+    /**
+     * ConfigModel to ensure a certain combination policy is active.
+     */
+    CombinationPolicy,
+    /**
+     * ConfigModel that is a container of other validations.
+     */
+    Group,
+    /**
+     * ConfigModel to simply check availability for a class on the current classpath.
+     */
+    LoadableClass
 }

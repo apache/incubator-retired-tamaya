@@ -20,10 +20,10 @@ package org.apache.tamaya.model.internal;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.model.ConfigValidator;
-import org.apache.tamaya.model.Validation;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.ConfigModelManager;
+import org.apache.tamaya.model.ModelType;
 import org.apache.tamaya.model.ValidationResult;
-import org.apache.tamaya.model.ValidationType;
 import org.apache.tamaya.model.spi.ConfigDocumentationMBean;
 
 import javax.json.Json;
@@ -52,7 +52,7 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
     private static final Comparator<ValidationResult> COMPARATOR = new Comparator<ValidationResult>() {
         @Override
         public int compare(ValidationResult v1, ValidationResult v2) {
-            int compare = VAL_COMPARATOR.compare(v1.getValidation(), v2.getValidation());
+            int compare = VAL_COMPARATOR.compare(v1.getConfigModel(), v2.getConfigModel());
             if(compare==0){
                 compare = v1.getResult().compareTo(v2.getResult());
             }
@@ -62,9 +62,9 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
             return compare;
         }
     };
-    private static final Comparator<Validation> VAL_COMPARATOR = new Comparator<Validation>() {
+    private static final Comparator<ConfigModel> VAL_COMPARATOR = new Comparator<ConfigModel>() {
         @Override
-        public int compare(Validation v1, Validation v2) {
+        public int compare(ConfigModel v1, ConfigModel v2) {
             int compare = v1.getType().compareTo(v2.getType());
             if(compare==0){
                 compare = v1.getName().compareTo(v2.getName());
@@ -105,7 +105,7 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
 
     @Override
     public String validate(boolean showUndefined) {
-        List<ValidationResult> validations = new ArrayList<>(ConfigValidator.validate(getConfig(), showUndefined));
+        List<ValidationResult> validations = new ArrayList<>(ConfigModelManager.validate(getConfig(), showUndefined));
         Collections.sort(validations, COMPARATOR);
         JsonArrayBuilder builder = Json.createArrayBuilder();
         for(ValidationResult val:validations){
@@ -118,37 +118,37 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
 
     @Override
     public String getConfigurationModel() {
-        List<Validation> validations = new ArrayList<>(ConfigValidator.getValidations());
-        Collections.sort(validations, VAL_COMPARATOR);
+        List<ConfigModel> configModels = new ArrayList<>(ConfigModelManager.getModels());
+        Collections.sort(configModels, VAL_COMPARATOR);
         JsonArrayBuilder result = Json.createArrayBuilder();
-        for(Validation val:validations){
+        for(ConfigModel val: configModels){
             result.add(toJsonObject(val));
         }
         return formatJson(result.build());
     }
 
     @Override
-    public String getConfigurationModel(ValidationType type) {
+    public String getConfigurationModel(ModelType type) {
         return findValidationModels(type, ".*");
     }
 
     @Override
     public String findConfigurationModels(String namePattern) {
-        List<Validation> validations = new ArrayList<>(ConfigValidator.findValidations(namePattern));
-        Collections.sort(validations, VAL_COMPARATOR);
+        List<ConfigModel> configModels = new ArrayList<>(ConfigModelManager.findModels(namePattern));
+        Collections.sort(configModels, VAL_COMPARATOR);
         JsonArrayBuilder result = Json.createArrayBuilder();
-        for(Validation val:validations){
+        for(ConfigModel val: configModels){
             result.add(toJsonObject(val));
         }
         return formatJson(result.build());
     }
 
     @Override
-    public String findValidationModels(ValidationType type, String namePattern) {
-        List<Validation> validations = new ArrayList<>(ConfigValidator.findValidations(type, namePattern));
-        Collections.sort(validations, VAL_COMPARATOR);
+    public String findValidationModels(ModelType type, String namePattern) {
+        List<ConfigModel> configModels = new ArrayList<>(ConfigModelManager.findModels(type, namePattern));
+        Collections.sort(configModels, VAL_COMPARATOR);
         JsonArrayBuilder result = Json.createArrayBuilder();
-        for(Validation val:validations){
+        for(ConfigModel val: configModels){
             result.add(toJsonObject(val));
         }
         return formatJson(result.build());
@@ -160,7 +160,7 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
     }
 
 
-    private JsonObject toJsonObject(Validation val) {
+    private JsonObject toJsonObject(ConfigModel val) {
         JsonObjectBuilder valJson = Json.createObjectBuilder().add("type", val.getType().toString())
                 .add("name", val.getName());
         if(val.getDescription()!=null) {
@@ -173,13 +173,13 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
     }
 
     private JsonObject toJsonObject(ValidationResult val) {
-        JsonObjectBuilder valJson = Json.createObjectBuilder().add("type", val.getValidation().getType().toString())
-                .add("name", val.getValidation().getName());
-        if(val.getValidation().isRequired()){
+        JsonObjectBuilder valJson = Json.createObjectBuilder().add("type", val.getConfigModel().getType().toString())
+                .add("name", val.getConfigModel().getName());
+        if(val.getConfigModel().isRequired()){
             valJson.add("required",true);
         }
-        if(val.getValidation().getDescription() != null){
-            valJson.add("description", val.getValidation().getDescription());
+        if(val.getConfigModel().getDescription() != null){
+            valJson.add("description", val.getConfigModel().getDescription());
         }
         valJson.add("result", val.getResult().toString());
         if( val.getMessage() != null) {

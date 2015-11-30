@@ -27,16 +27,16 @@ public class ValidationTests {
 
     @Test
     public void testDefaults(){
-        System.err.println(ConfigValidator.validate());
+        System.err.println(ConfigModelManager.validate());
     }
 
     @Test
     public void testAllValidations(){
-        System.err.println(ConfigValidator.getValidations());
+        System.err.println(ConfigModelManager.getModels());
     }
 
     @Test
     public void testAllValidationsInclUndefined(){
-        System.err.println("Including UNDEFINED: \n" + ConfigValidator.validate(true));
+        System.err.println("Including UNDEFINED: \n" + ConfigModelManager.validate(true));
     }
 }

@@ -19,9 +19,9 @@
 package org.apache.tamaya.model.spi;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.model.Validation;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.ModelType;
 import org.apache.tamaya.model.ValidationResult;
-import org.apache.tamaya.model.ValidationType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,23 +33,23 @@ import java.util.Objects;
 /**
  * Default configuration Model for a configuration area.
  */
-public class ValidationGroup implements Validation {
+public class ConfigModelGroup implements ConfigModel {
 
     private String name;
     private boolean required;
     private String provider;
-    private List<Validation> childValidations = new ArrayList<>();
+    private List<ConfigModel> childConfigModels = new ArrayList<>();
 
-    public ValidationGroup(String name, String provider, Validation... validations){
-        this(name, provider, Arrays.asList(validations));
+    public ConfigModelGroup(String name, String provider, ConfigModel... configModels){
+        this(name, provider, Arrays.asList(configModels));
     }
 
-    public ValidationGroup(String name, String provider, Collection<Validation> validations){
+    public ConfigModelGroup(String name, String provider, Collection<ConfigModel> configModels){
         this.name = Objects.requireNonNull(name);
         this.provider = provider;
-        this.childValidations.addAll(validations);
-        this.childValidations = Collections.unmodifiableList(childValidations);
-        for(Validation val:validations) {
+        this.childConfigModels.addAll(configModels);
+        this.childConfigModels = Collections.unmodifiableList(childConfigModels);
+        for(ConfigModel val: configModels) {
             if(val.isRequired()){
                 this.required = true;
                 break;
@@ -73,30 +73,30 @@ public class ValidationGroup implements Validation {
     }
 
     @Override
-    public ValidationType getType() {
-        return ValidationType.Group;
+    public ModelType getType() {
+        return ModelType.Group;
     }
 
     @Override
     public String getDescription() {
-        if(childValidations.isEmpty()){
+        if(childConfigModels.isEmpty()){
             return null;
         }
         StringBuilder b = new StringBuilder();
-        for(Validation val:childValidations){
+        for(ConfigModel val: childConfigModels){
             b.append("  >> " + val);
         }
         return b.toString();
     }
 
-    public Collection<Validation> getValidations(){
-        return childValidations;
+    public Collection<ConfigModel> getValidations(){
+        return childConfigModels;
     }
 
     @Override
     public Collection<ValidationResult> validate(Configuration config) {
         List<ValidationResult> result = new ArrayList<>(1);
-        for(Validation child: childValidations){
+        for(ConfigModel child: childConfigModels){
             result.addAll(child.validate(config));
         }
         return result;
@@ -105,7 +105,7 @@ public class ValidationGroup implements Validation {
     @Override
     public String toString(){
         StringBuilder b = new StringBuilder();
-        b.append(getType()).append(", size: ").append(childValidations.size()).append(": ").append(getDescription());
+        b.append(getType()).append(", size: ").append(childConfigModels.size()).append(": ").append(getDescription());
         return b.toString();
     }
 

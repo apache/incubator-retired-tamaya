@@ -25,14 +25,14 @@ import java.util.Collection;
 /**
  * Basis structure describing a validated item, by default a parameter or a section.
  */
-public interface Validation {
+public interface ConfigModel {
 
 
     /**
-     * Get the type of item that is validated by a validation.
-     * @return the validted type, never null.
+     * Get the type of item that is modelled..
+     * @return the modelled type, never null.
      */
-    ValidationType getType();
+    ModelType getType();
 
     /**
      * Get the item's name, it should minimally describe the validation. Examples are:

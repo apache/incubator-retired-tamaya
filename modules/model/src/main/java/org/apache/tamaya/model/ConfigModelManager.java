@@ -21,7 +21,7 @@ package org.apache.tamaya.model;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.model.spi.ConfigDocumentationMBean;
-import org.apache.tamaya.model.spi.ValidationProviderSpi;
+import org.apache.tamaya.model.spi.ModelProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.management.InstanceNotFoundException;
@@ -42,15 +42,15 @@ import java.util.logging.Logger;
 /**
  * Validator accessor to validate the current configuration.
  */
-public final class ConfigValidator {
+public final class ConfigModelManager {
 
     /** The logger used. */
-    private final static Logger LOG = Logger.getLogger(ConfigValidator.class.getName());
+    private final static Logger LOG = Logger.getLogger(ConfigModelManager.class.getName());
 
     /**
      * Singleton constructor.
      */
-    private ConfigValidator() {
+    private ConfigModelManager() {
     }
 
     /**
@@ -58,26 +58,26 @@ public final class ConfigValidator {
      *
      * @return the sections defined, never null.
      */
-    public static Collection<Validation> getValidations() {
-        List<Validation> result = new ArrayList<>();
-        for (ValidationProviderSpi model : ServiceContextManager.getServiceContext().getServices(ValidationProviderSpi.class)) {
-            result.addAll(model.getValidations());
+    public static Collection<ConfigModel> getModels() {
+        List<ConfigModel> result = new ArrayList<>();
+        for (ModelProviderSpi model : ServiceContextManager.getServiceContext().getServices(ModelProviderSpi.class)) {
+            result.addAll(model.getConfigModels());
         }
         return result;
     }
 
     /**
      * Find the validations by checking the validation's name using the given regular expression.
-     * @param type the target ValidationType, not null.
+     * @param type the target ModelType, not null.
      * @param namePattern the regular expression to use, not null.
      * @return the sections defined, never null.
      */
-    public static Collection<Validation> findValidations(ValidationType type, String namePattern) {
-        List<Validation> result = new ArrayList<>();
-        for (ValidationProviderSpi model : ServiceContextManager.getServiceContext().getServices(ValidationProviderSpi.class)) {
-            for(Validation validation: model.getValidations()) {
-                if(validation.getName().matches(namePattern) && validation.getType()==type) {
-                    result.add(validation);
+    public static Collection<ConfigModel> findModels(ModelType type, String namePattern) {
+        List<ConfigModel> result = new ArrayList<>();
+        for (ModelProviderSpi model : ServiceContextManager.getServiceContext().getServices(ModelProviderSpi.class)) {
+            for(ConfigModel configModel : model.getConfigModels()) {
+                if(configModel.getName().matches(namePattern) && configModel.getType()==type) {
+                    result.add(configModel);
                 }
             }
         }
@@ -89,11 +89,11 @@ public final class ConfigValidator {
      * @param name the name to use, not null.
      * @return the sections defined, never null.
      */
-    public static <T extends Validation> T getValidation(String name, Class<T> validationType) {
-        for (ValidationProviderSpi model : ServiceContextManager.getServiceContext().getServices(ValidationProviderSpi.class)) {
-            for(Validation validation: model.getValidations()) {
-                if(validation.getName().equals(name) && validation.getClass().equals(validationType)) {
-                    return validationType.cast(validation);
+    public static <T extends ConfigModel> T getModel(String name, Class<T> validationType) {
+        for (ModelProviderSpi model : ServiceContextManager.getServiceContext().getServices(ModelProviderSpi.class)) {
+            for(ConfigModel configModel : model.getConfigModels()) {
+                if(configModel.getName().equals(name) && configModel.getClass().equals(validationType)) {
+                    return validationType.cast(configModel);
                 }
             }
         }
@@ -105,12 +105,12 @@ public final class ConfigValidator {
      * @param namePattern the regular expression to use, not null.
      * @return the sections defined, never null.
      */
-    public static Collection<Validation> findValidations(String namePattern) {
-        List<Validation> result = new ArrayList<>();
-        for (ValidationProviderSpi model : ServiceContextManager.getServiceContext().getServices(ValidationProviderSpi.class)) {
-            for(Validation validation: model.getValidations()) {
-                if(validation.getName().matches(namePattern)) {
-                    result.add(validation);
+    public static Collection<ConfigModel> findModels(String namePattern) {
+        List<ConfigModel> result = new ArrayList<>();
+        for (ModelProviderSpi model : ServiceContextManager.getServiceContext().getServices(ModelProviderSpi.class)) {
+            for(ConfigModel configModel : model.getConfigModels()) {
+                if(configModel.getName().matches(namePattern)) {
+                    result.add(configModel);
                 }
             }
         }
@@ -153,14 +153,14 @@ public final class ConfigValidator {
      */
     public static Collection<ValidationResult> validate(Configuration config, boolean showUndefined) {
         List<ValidationResult> result = new ArrayList<>();
-        for (Validation defConf : getValidations()) {
+        for (ConfigModel defConf : getModels()) {
             result.addAll(defConf.validate(config));
         }
         if(showUndefined){
             Map<String,String> map = new HashMap<>(config.getProperties());
             Set<String> areas = extractTransitiveAreas(map.keySet());
-            for (Validation defConf : getValidations()) {
-                if(ValidationType.Section.equals(defConf.getType())){
+            for (ConfigModel defConf : getModels()) {
+                if(ModelType.Section.equals(defConf.getType())){
                     for (Iterator<String> iter = areas.iterator();iter.hasNext();){
                         String area = iter.next();
                         if(area.matches(defConf.getName())){
@@ -168,23 +168,23 @@ public final class ConfigValidator {
                         }
                     }
                 }
-                if(ValidationType.Parameter.equals(defConf.getType())){
+                if(ModelType.Parameter.equals(defConf.getType())){
                     map.remove(defConf.getName());
                 }
             }
             outer:for(Map.Entry<String,String> entry:map.entrySet()){
-                for (Validation defConf : getValidations()) {
-                    if(ValidationType.Section.equals(defConf.getType())){
+                for (ConfigModel defConf : getModels()) {
+                    if(ModelType.Section.equals(defConf.getType())){
                         if(defConf.getName().endsWith(".*") && entry.getKey().matches(defConf.getName())){
                             // Ignore parameters that are part of transitive section.
                             continue outer;
                         }
                     }
                 }
-                result.add(ValidationResult.ofUndefined(entry.getKey(), ValidationType.Parameter, null));
+                result.add(ValidationResult.ofUndefined(entry.getKey(), ModelType.Parameter, null));
             }
             for(String area:areas){
-                result.add(ValidationResult.ofUndefined(area, ValidationType.Section, null));
+                result.add(ValidationResult.ofUndefined(area, ModelType.Section, null));
             }
         }
         return result;

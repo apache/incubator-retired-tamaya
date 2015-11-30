@@ -21,9 +21,9 @@ package org.apache.tamaya.model.internal;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationFormats;
-import org.apache.tamaya.model.Validation;
-import org.apache.tamaya.model.spi.ConfigValidationsReader;
-import org.apache.tamaya.model.spi.ValidationProviderSpi;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.spi.ConfigModelReader;
+import org.apache.tamaya.model.spi.ModelProviderSpi;
 import org.apache.tamaya.resource.ConfigResources;
 
 import java.io.IOException;
@@ -38,12 +38,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Validation provider that reads model metadata from property files from
+ * ConfigModel provider that reads model metadata from property files from
  * {@code classpath*:META-INF/configmodel.json} in the following format:
  * <pre>
  * </pre>
  */
-public class ConfiguredResourcesModelProviderSpi implements ValidationProviderSpi {
+public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
 
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(ConfiguredResourcesModelProviderSpi.class.getName());
@@ -58,8 +58,8 @@ public class ConfiguredResourcesModelProviderSpi implements ValidationProviderSp
     /** Initializes the flag showing if the resources module is present (optional). */
     private static boolean resourcesExtensionAvailable = checkAvailabilityResources();
 
-    /** The validations read. */
-    private List<Validation> validations = new ArrayList<>();
+    /** The configModels read. */
+    private List<ConfigModel> configModels = new ArrayList<>();
 
     /** Initializes the flag showing if the formats module is present (required). */
     private static boolean checkAvailabilityFormats() {
@@ -119,19 +119,18 @@ public class ConfiguredResourcesModelProviderSpi implements ValidationProviderSp
             for(URL config:urls){
                 try (InputStream is = config.openStream()) {
                     ConfigurationData data = ConfigurationFormats.readConfigurationData(config);
-                    validations.addAll(ConfigValidationsReader.loadValidations(data.getCombinedProperties(), config.toString()));
+                    configModels.addAll(ConfigModelReader.loadValidations(data.getCombinedProperties(), config.toString()));
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE,
                             "Error loading config model data from " + config, e);
                 }
             }
         }
-        validations = Collections.unmodifiableList(validations);
+        configModels = Collections.unmodifiableList(configModels);
     }
 
 
-    @Override
-    public Collection<Validation> getValidations() {
-        return validations;
+    public Collection<ConfigModel> getConfigModels() {
+        return configModels;
     }
 }

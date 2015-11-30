@@ -27,14 +27,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.tamaya.model.Validation;
+import org.apache.tamaya.model.ConfigModel;
 
 /**
  * Utility class to read metamodel information from properties. Hereby these properties can be part of a
  * configuration (containing other entriees as well) or be dedicated model definition properties read
  * from any kind of source.
  */
-public final class ConfigValidationsReader {
+public final class ConfigModelReader {
 
     /** The default model entries selector. */
     private static final String DEFAULT_META_INFO_SELECTOR = "{model}";
@@ -44,7 +44,7 @@ public final class ConfigValidationsReader {
     /**
      * Utility class only.
      */
-    private ConfigValidationsReader(){}
+    private ConfigModelReader(){}
 
     /**
      * Loads validations as configured in the given properties.
@@ -52,8 +52,8 @@ public final class ConfigValidationsReader {
      * @param defaultProviderName the default provider name used if no explicit provider name is configured.
      * @return a collection of config validations.
      */
-    public static Collection<Validation> loadValidations(Properties props,
-                                                         String defaultProviderName) {
+    public static Collection<ConfigModel> loadValidations(Properties props,
+                                                          String defaultProviderName) {
         Map<String,String> map = new HashMap<>();
         for(Map.Entry<Object,Object> en: props.entrySet()){
             map.put(en.getKey().toString(), props.getProperty(en.getKey().toString()));
@@ -67,8 +67,8 @@ public final class ConfigValidationsReader {
      * @param defaultProviderName the default provider name used if no explicit provider name is configured.
      * @return a collection of config validations.
      */
-    public static Collection<Validation> loadValidations(Map<String,String> props,
-                                                         String defaultProviderName) {
+    public static Collection<ConfigModel> loadValidations(Map<String,String> props,
+                                                          String defaultProviderName) {
         String selector = props.get(META_INFO_SELECTOR_PARAM);
         if(selector==null){
             selector = DEFAULT_META_INFO_SELECTOR;
@@ -83,9 +83,9 @@ public final class ConfigValidationsReader {
      * @param defaultProviderName the default provider name used if no explicit provider name is configured.
      * @return a collection of config validations.
      */
-    public static Collection<Validation> loadValidations(Map<String,String> props, String selector,
-                                                         String defaultProviderName) {
-        List<Validation> result = new ArrayList<>();
+    public static Collection<ConfigModel> loadValidations(Map<String,String> props, String selector,
+                                                          String defaultProviderName) {
+        List<ConfigModel> result = new ArrayList<>();
         String provider = props.get(selector + ".__provider");
         if (provider == null) {
             provider = defaultProviderName;
@@ -137,10 +137,10 @@ public final class ConfigValidationsReader {
      * @param validations the optional custom validations to be performed.
      * @return the new validation for this parameter.
      */
-    private static Validation createParameterValidation(String paramName, String description, String type, String reqVal,
-                                                       String regEx, String validations, String provider) {
+    private static ConfigModel createParameterValidation(String paramName, String description, String type, String reqVal,
+                                                         String regEx, String validations, String provider) {
         boolean required = "true".equalsIgnoreCase(reqVal);
-        ParameterValidation.Builder builder = ParameterValidation.builder(paramName).setRequired(required)
+        ParameterModel.Builder builder = ParameterModel.builder(paramName).setRequired(required)
                 .setDescription(description).setExpression(regEx).setType(type).setProvider(provider);
 //        if (validations != null) {
 //            try {
@@ -161,10 +161,10 @@ public final class ConfigValidationsReader {
      * @param validations the optional custom validations to be performed.
      * @return the new validation for this section.
      */
-    private static Validation createSectionValidation(String sectionName, String description, String reqVal,
-                                                     String validations, String provider) {
+    private static ConfigModel createSectionValidation(String sectionName, String description, String reqVal,
+                                                       String validations, String provider) {
         boolean required = "true".equalsIgnoreCase(reqVal);
-        AreaValidation.Builder builder = AreaValidation.builder(sectionName).setRequired(required)
+        AreaConfigModel.Builder builder = AreaConfigModel.builder(sectionName).setRequired(required)
                 .setDescription(description).setProvider(provider);
 //        if (validations != null) {
 //            try {

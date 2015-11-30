@@ -19,9 +19,9 @@
 package org.apache.tamaya.model.spi;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.model.Validation;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.ModelType;
 import org.apache.tamaya.model.ValidationResult;
-import org.apache.tamaya.model.ValidationType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 /**
  * Default configuration Model for a configuration parameter.
  */
-public class ParameterValidation extends AbstractValidation {
+public class ParameterModel extends AbstractModel {
     /** Optional regular expression for validating the value. */
     private String regEx;
     /** The target type into which the value must be convertible. */
@@ -43,15 +43,15 @@ public class ParameterValidation extends AbstractValidation {
      * Internal constructor.
      * @param builder the builder, not null.
      */
-    protected ParameterValidation(Builder builder) {
+    protected ParameterModel(Builder builder) {
         super(builder.name, builder.required, builder.description, builder.provider);
         this.regEx = builder.regEx;
         this.type = builder.type;
     }
 
     @Override
-    public ValidationType getType() {
-        return ValidationType.Parameter;
+    public ModelType getType() {
+        return ModelType.Parameter;
     }
 
     /**
@@ -102,38 +102,38 @@ public class ParameterValidation extends AbstractValidation {
     }
 
     /**
-     * Creates a new Validation
+     * Creates a new ConfigModel
      * @param name the fully qualified parameter name.
      * @param required the required flag.
      * @param expression an optional regular expression to validate a value.
-     * @return the new Validation instance.
+     * @return the new ConfigModel instance.
      */
-    public static Validation of(String name, boolean required, String expression) {
+    public static ConfigModel of(String name, boolean required, String expression) {
         return new Builder(name).setRequired(required).setExpression(expression).build();
     }
 
     /**
-     * Creates a new Validation
+     * Creates a new ConfigModel
      * @param name the fully qualified parameter name.
      * @param required the required flag.
-     * @return the new Validation instance.
+     * @return the new ConfigModel instance.
      */
-    public static Validation of(String name, boolean required) {
+    public static ConfigModel of(String name, boolean required) {
         return new Builder(name).setRequired(required).build();
     }
 
     /**
-     * Creates a new Validation. The parameter will be defined as optional.
+     * Creates a new ConfigModel. The parameter will be defined as optional.
      * @param name the fully qualified parameter name.
-     * @return the new Validation instance.
+     * @return the new ConfigModel instance.
      */
-    public static Validation of(String name) {
+    public static ConfigModel of(String name) {
         return new Builder(name).setRequired(false).build();
     }
 
 
     /**
-     * A new Builder for creating ParameterValidation instances.
+     * A new Builder for creating ParameterModel instances.
      */
     public static class Builder {
         /** The parameter's target type. */
@@ -226,11 +226,11 @@ public class ParameterValidation extends AbstractValidation {
         }
 
         /**
-         * Creates a new Validation with the given parameters.
-         * @return a new Validation , never null.
+         * Creates a new ConfigModel with the given parameters.
+         * @return a new ConfigModel , never null.
          */
-        public Validation build() {
-            return new ParameterValidation(this);
+        public ConfigModel build() {
+            return new ParameterModel(this);
         }
     }
 }

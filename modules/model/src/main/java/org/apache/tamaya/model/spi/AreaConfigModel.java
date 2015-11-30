@@ -19,9 +19,9 @@
 package org.apache.tamaya.model.spi;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.ModelType;
 import org.apache.tamaya.model.ValidationResult;
-import org.apache.tamaya.model.Validation;
-import org.apache.tamaya.model.ValidationType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import java.util.Objects;
 /**
  * Default configuration Model for a configuration section.
  */
-public class AreaValidation extends ValidationGroup {
+public class AreaConfigModel extends ConfigModelGroup {
 
     /**
      * Creates a new builder.
@@ -48,9 +48,9 @@ public class AreaValidation extends ValidationGroup {
      * Creates a section validation for the given section.
      * @param name the fully qualified section name
      * @param required flag, if the section is required to be present.
-     * @return the Validation instance
+     * @return the ConfigModel instance
      */
-    public static Validation of(String name, boolean required){
+    public static ConfigModel of(String name, boolean required){
         return new Builder(name).setRequired(required).build();
     }
 
@@ -58,24 +58,24 @@ public class AreaValidation extends ValidationGroup {
      * Creates a section validation for the given section.
      * @param name the fully qualified section name
      * @param required flag, if the section is required to be present.
-     * @param validations additional validations
+     * @param configModels additional configModels
      * @return
      */
-    public static Validation of(String name, boolean required, Validation... validations){
-        return new Builder(name).setRequired(required).addValidations(validations).build();
+    public static ConfigModel of(String name, boolean required, ConfigModel... configModels){
+        return new Builder(name).setRequired(required).addValidations(configModels).build();
     }
 
     /**
      * Internal constructor.
      * @param builder the builder, not null.
      */
-    protected AreaValidation(Builder builder) {
-        super(builder.name, builder.provider, builder.childValidations);
+    protected AreaConfigModel(Builder builder) {
+        super(builder.name, builder.provider, builder.childConfigModels);
     }
 
     @Override
-    public ValidationType getType(){
-        return ValidationType.Section;
+    public ModelType getType(){
+        return ModelType.Section;
     }
 
     @Override
@@ -104,14 +104,14 @@ public class AreaValidation extends ValidationGroup {
         if(isRequired()) {
             b.append(", required: " + isRequired());
         }
-        for(Validation val:getValidations()){
+        for(ConfigModel val:getValidations()){
              b.append(", ").append(val.toString());
         }
         return b.toString();
     }
 
     /**
-     * Builder for setting up a AreaValidation instance.
+     * Builder for setting up a AreaConfigModel instance.
      */
     public static class Builder{
         /** The section name. */
@@ -123,7 +123,7 @@ public class AreaValidation extends ValidationGroup {
         /** The required flag. */
         private boolean required;
         /** The (optional) custom validations.*/
-        private List<Validation> childValidations = new ArrayList<>();
+        private List<ConfigModel> childConfigModels = new ArrayList<>();
 
         /**
          * Creates a new Builder.
@@ -134,22 +134,22 @@ public class AreaValidation extends ValidationGroup {
         }
 
         /**
-         * Add validations.
-         * @param validations the validations, not null.
+         * Add configModels.
+         * @param configModels the configModels, not null.
          * @return the Builder for chaining.
          */
-        public Builder addValidations(Validation... validations){
-            this.childValidations.addAll(Arrays.asList(validations));
+        public Builder addValidations(ConfigModel... configModels){
+            this.childConfigModels.addAll(Arrays.asList(configModels));
             return this;
         }
 
         /**
-         * Add validations.
-         * @param validations the validations, not null.
+         * Add configModels.
+         * @param configModels the configModels, not null.
          * @return the Builder for chaining.
          */
-        public Builder addValidations(Collection<Validation> validations){
-            this.childValidations.addAll(validations);
+        public Builder addValidations(Collection<ConfigModel> configModels){
+            this.childConfigModels.addAll(configModels);
             return this;
         }
 
@@ -194,11 +194,11 @@ public class AreaValidation extends ValidationGroup {
         }
 
         /**
-         * Build a new Validation instance.
-         * @return the new Validation instance, not null.
+         * Build a new ConfigModel instance.
+         * @return the new ConfigModel instance, not null.
          */
-        public Validation build(){
-            return new AreaValidation(this);
+        public ConfigModel build(){
+            return new AreaConfigModel(this);
         }
     }
 }

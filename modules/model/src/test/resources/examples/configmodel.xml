@@ -90,8 +90,8 @@ under the License.
         </section>
         <section name="a.b.c.aRequiredSection.optional-subsection"/>
         <section name="a.b.c.aRequiredSection.aValidatedSection">
-            <validations>org.apache.tamaya.model.validation.MaxItemValidator?max=3"</validations>
-            <description>A validation section.</description>
+            <configModels>org.apache.tamaya.model.configModel.MaxItemValidator?max=3"</configModels>
+            <description>A configModel section.</description>
         </section>
     </section>
 </configuration>

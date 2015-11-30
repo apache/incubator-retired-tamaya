@@ -19,105 +19,105 @@
 package org.apache.tamaya.model;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.model.spi.AbstractValidation;
+import org.apache.tamaya.model.spi.AbstractModel;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
 /**
- * Models a partial configuration validation result.
+ * Models a partial configuration configModel result.
  */
 public final class ValidationResult {
     /**
      * the config section.
      */
-    private Validation validation;
+    private ConfigModel configModel;
     /**
-     * The validation result.
+     * The configModel result.
      */
     private ValidationState result;
     /**
-     * The validation message.
+     * The configModel message.
      */
     private String message;
 
     /**
      * Creates a new ValidationResult.
      *
-     * @param validation the validation item, not null.
+     * @param configModel the configModel item, not null.
      */
-    public static ValidationResult ofValid(Validation validation) {
-        return new ValidationResult(validation, ValidationState.VALID, null);
+    public static ValidationResult ofValid(ConfigModel configModel) {
+        return new ValidationResult(configModel, ValidationState.VALID, null);
     }
 
     /**
      * Creates a new ValidationResult.
      *
-     * @param validation the validation item, not null.
+     * @param configModel the configModel item, not null.
      */
-    public static ValidationResult ofMissing(Validation validation) {
-        return new ValidationResult(validation, ValidationState.MISSING, null);
+    public static ValidationResult ofMissing(ConfigModel configModel) {
+        return new ValidationResult(configModel, ValidationState.MISSING, null);
     }
 
 
     /**
      * Creates a new ValidationResult.
      *
-     * @param validation the validation item, not null.
+     * @param configModel the configModel item, not null.
      *                   @param message Additional message to be shown (optional).
      */
-    public static ValidationResult ofMissing(Validation validation, String message) {
-        return new ValidationResult(validation, ValidationState.MISSING, message);
+    public static ValidationResult ofMissing(ConfigModel configModel, String message) {
+        return new ValidationResult(configModel, ValidationState.MISSING, message);
     }
 
     /**
      * Creates a new ValidationResult.
      *
-     * @param validation the validation item, not null.
+     * @param configModel the configModel item, not null.
      */
-    public static ValidationResult ofError(Validation validation, String error) {
-        return new ValidationResult(validation, ValidationState.ERROR, error);
+    public static ValidationResult ofError(ConfigModel configModel, String error) {
+        return new ValidationResult(configModel, ValidationState.ERROR, error);
     }
 
     /**
      * Creates a new ValidationResult.
      *
-     * @param validation the validation item, not null.
+     * @param configModel the configModel item, not null.
      */
-    public static ValidationResult ofWarning(Validation validation, String warning) {
-        return new ValidationResult(validation, ValidationState.WARNING, warning);
+    public static ValidationResult ofWarning(ConfigModel configModel, String warning) {
+        return new ValidationResult(configModel, ValidationState.WARNING, warning);
     }
 
     /**
      * Creates a new ValidationResult.
      *
-     * @param validation the validation item, not null.
+     * @param configModel the configModel item, not null.
      */
-    public static ValidationResult ofDeprecated(Validation validation, String alternateUsage) {
-        return new ValidationResult(validation, ValidationState.DEPRECATED, alternateUsage != null ? "Use instead: " + alternateUsage : null);
+    public static ValidationResult ofDeprecated(ConfigModel configModel, String alternateUsage) {
+        return new ValidationResult(configModel, ValidationState.DEPRECATED, alternateUsage != null ? "Use instead: " + alternateUsage : null);
     }
 
     /**
      * Creates a new ValidationResult.
      *
-     * @param validation the validation item, not null.
+     * @param configModel the configModel item, not null.
      */
-    public static ValidationResult ofDeprecated(Validation validation) {
-        return new ValidationResult(validation, ValidationState.DEPRECATED, null);
+    public static ValidationResult ofDeprecated(ConfigModel configModel) {
+        return new ValidationResult(configModel, ValidationState.DEPRECATED, null);
     }
 
     /**
      * Creates a new ValidationResult.
      *
      * @param key the name/key
-     * @return a corresponding validation item
+     * @return a corresponding configModel item
      */
-    public static ValidationResult ofUndefined(final String key, final ValidationType type, String provider) {
-        return new ValidationResult(new AbstractValidation(key, false, "Undefined key: " + key, provider) {
+    public static ValidationResult ofUndefined(final String key, final ModelType type, String provider) {
+        return new ValidationResult(new AbstractModel(key, false, "Undefined key: " + key, provider) {
 
             @Override
-            public ValidationType getType() {
+            public ModelType getType() {
                 return type;
             }
 
@@ -132,39 +132,39 @@ public final class ValidationResult {
     /**
      * Constructor.
      *
-     * @param validation the validation item, not null.
-     * @param result     the validation result, not null.
+     * @param configModel the configModel item, not null.
+     * @param result     the configModel result, not null.
      * @param message    the detail message.
      */
-    public static ValidationResult of(Validation validation, ValidationState result, String message) {
-        return new ValidationResult(validation, result, message);
+    public static ValidationResult of(ConfigModel configModel, ValidationState result, String message) {
+        return new ValidationResult(configModel, result, message);
     }
 
 
     /**
      * Constructor.
      *
-     * @param validation the validation item, not null.
-     * @param result     the validation result, not null.
+     * @param configModel the configModel item, not null.
+     * @param result     the configModel result, not null.
      * @param message    the detail message.
      */
-    private ValidationResult(Validation validation, ValidationState result, String message) {
+    private ValidationResult(ConfigModel configModel, ValidationState result, String message) {
         this.message = message;
-        this.validation = Objects.requireNonNull(validation);
+        this.configModel = Objects.requireNonNull(configModel);
         this.result = Objects.requireNonNull(result);
     }
 
     /**
-     * Get the validation section.
+     * Get the configModel section.
      *
      * @return the section, never null.
      */
-    public Validation getValidation() {
-        return validation;
+    public ConfigModel getConfigModel() {
+        return configModel;
     }
 
     /**
-     * Get the validation result.
+     * Get the configModel result.
      *
      * @return the result, never null.
      */
@@ -184,8 +184,8 @@ public final class ValidationResult {
     @Override
     public String toString() {
         if (message != null) {
-            return result + ": " + validation.getName() + " (" + validation.getType() + ") -> " + message + '\n';
+            return result + ": " + configModel.getName() + " (" + configModel.getType() + ") -> " + message + '\n';
         }
-        return result + ": " + validation.getName() + " (" + validation.getType() + ")";
+        return result + ": " + configModel.getName() + " (" + configModel.getType() + ")";
     }
 }

@@ -16,6 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.model.internal.ConfiguredPropertiesValidationProviderSpi
-org.apache.tamaya.model.internal.ConfiguredInlineModelProviderSpi
-org.apache.tamaya.model.internal.ConfiguredResourcesModelProviderSpi
+org.apache.tamaya.model.TestConfigModelProvider

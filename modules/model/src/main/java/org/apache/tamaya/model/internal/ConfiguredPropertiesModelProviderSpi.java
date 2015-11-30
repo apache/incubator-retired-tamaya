@@ -19,9 +19,9 @@
 package org.apache.tamaya.model.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.model.Validation;
-import org.apache.tamaya.model.spi.ConfigValidationsReader;
-import org.apache.tamaya.model.spi.ValidationProviderSpi;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.spi.ConfigModelReader;
+import org.apache.tamaya.model.spi.ModelProviderSpi;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Validation provider that reads model metadata from property files from
+ * ConfigModel provider that reads model metadata from property files from
  * {@code classpath*:META-INF/configmodel.properties} in the following format:
  * <pre>
  * ###################################################################################
@@ -105,19 +105,19 @@ import java.util.logging.Logger;
  * # a.b.c.aValidatedSection (section)
  * {model}a.b.c.aValidatedSection.class=Section
  * {model}a.b.c.aValidatedSection.description=A validated section.
- * {model}a.b.c.aValidatedSection.validations=org.apache.tamaya.model.TestValidator
+ * {model}a.b.c.aValidatedSection.configModels=org.apache.tamaya.model.TestValidator
  * </pre>
  */
-public class ConfiguredPropertiesValidationProviderSpi implements ValidationProviderSpi {
+public class ConfiguredPropertiesModelProviderSpi implements ModelProviderSpi {
 
     /** The logger. */
-    private static final Logger LOG = Logger.getLogger(ConfiguredPropertiesValidationProviderSpi.class.getName());
+    private static final Logger LOG = Logger.getLogger(ConfiguredPropertiesModelProviderSpi.class.getName());
     /** parameter to disable this provider. By default the provider is active. */
     private static final String MODEL_EANABLED_PARAM = "org.apache.tamaya.model.default.enabled";
-    /** The validations read. */
-    private List<Validation> validations = new ArrayList<>();
+    /** The configModels read. */
+    private List<ConfigModel> configModels = new ArrayList<>();
 
-    public ConfiguredPropertiesValidationProviderSpi() {
+    public ConfiguredPropertiesModelProviderSpi() {
         String enabledVal = ConfigurationProvider.getConfiguration().get(MODEL_EANABLED_PARAM);
         boolean enabled = enabledVal==null? true: "true".equalsIgnoreCase(enabledVal);
         if(!enabled){
@@ -132,7 +132,7 @@ public class ConfiguredPropertiesValidationProviderSpi implements ValidationProv
                 try (InputStream is = config.openStream()) {
                     Properties props = new Properties();
                     props.load(is);
-                    validations.addAll(ConfigValidationsReader.loadValidations(props, config.toString()));
+                    configModels.addAll(ConfigModelReader.loadValidations(props, config.toString()));
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE,
                             "Error loading config metadata from " + config, e);
@@ -142,12 +142,11 @@ public class ConfiguredPropertiesValidationProviderSpi implements ValidationProv
             LOG.log(Level.SEVERE,
                     "Error loading config metadata from META-INF/configmodel.properties", e);
         }
-        validations = Collections.unmodifiableList(validations);
+        configModels = Collections.unmodifiableList(configModels);
     }
 
 
-    @Override
-    public Collection<Validation> getValidations() {
-        return validations;
+    public Collection<ConfigModel> getConfigModels() {
+        return configModels;
     }
 }

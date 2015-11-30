@@ -16,31 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject.internal;
+package org.apache.tamaya.model.spi;
 
-import org.apache.tamaya.model.Validation;
-import org.apache.tamaya.model.spi.ValidationProviderSpi;
+import org.apache.tamaya.model.ConfigModel;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
- * Created by Anatole on 19.08.2015.
+ * Model of a configuration state. A model can be a full model, or a partial model, validating only
+ * a configuration subset. This allows better user feedback because big configurations can be grouped
+ * and validated by multiple (partial) models.
  */
-public class InjectableValidationProvider implements ValidationProviderSpi{
+public interface ModelProviderSpi {
 
-    private static Collection<Validation> validations = new ArrayList<>();
+    /**
+     * Get the validation defined.
+     *
+     * @return the sections defined, never null.
+     */
+    Collection<ConfigModel> getConfigModels();
 
-    static void addValidation(Validation validation){
-        List<Validation> newList = new ArrayList<>(validations);
-        newList.add(validation);
-        InjectableValidationProvider.validations = newList;
-    }
-
-    @Override
-    public Collection<Validation> getValidations() {
-        return Collections.unmodifiableCollection(validations);
-    }
 }

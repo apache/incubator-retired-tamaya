@@ -18,14 +18,14 @@
  */
 package org.apache.tamaya.model.spi;
 
-import org.apache.tamaya.model.Validation;
+import org.apache.tamaya.model.ConfigModel;
 
 import java.util.Objects;
 
 /**
  * Default configuration Model for a configuration area.
  */
-public abstract class AbstractValidation implements Validation, Comparable<Validation> {
+public abstract class AbstractModel implements ConfigModel, Comparable<ConfigModel> {
 
     private String name;
     private String provider;
@@ -33,7 +33,7 @@ public abstract class AbstractValidation implements Validation, Comparable<Valid
     private boolean required = false;
 
 
-    protected AbstractValidation(String name, boolean required, String description, String provider) {
+    protected AbstractModel(String name, boolean required, String description, String provider) {
         this.name = Objects.requireNonNull(name);
         this.description = description;
         this.required = required;
@@ -61,12 +61,12 @@ public abstract class AbstractValidation implements Validation, Comparable<Valid
     }
 
     @Override
-    public int compareTo(Validation validation) {
-        int compare = getType().compareTo(validation.getType());
+    public int compareTo(ConfigModel configModel) {
+        int compare = getType().compareTo(configModel.getType());
         if (compare != 0) {
             return compare;
         }
-        return getName().compareTo(validation.getName());
+        return getName().compareTo(configModel.getName());
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class AbstractValidation implements Validation, Comparable<Valid
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AbstractValidation that = (AbstractValidation) o;
+        AbstractModel that = (AbstractModel) o;
         return getType().equals(that.getType()) && name.equals(that.name);
 
     }
