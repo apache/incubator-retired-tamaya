@@ -19,8 +19,10 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
+import org.apache.tamaya.inject.spi.ConfiguredType;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -37,29 +39,21 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
     private ConfiguredType type;
 
     /**
-     * The configuration instance of this proxy.
-     */
-    private Configuration configuration;
-
-    /**
      * Creates a new handler instance.
      *
      * @param type          the target type, not null.
-     * @param configuration the configuration to be used for evaluating the values for injection into {@code instance},
-     *                      not null.
      */
-    public ConfigTemplateInvocationHandler(Class<?> type, Configuration configuration) {
-        Objects.requireNonNull(configuration);
-        this.type = new ConfiguredType(Objects.requireNonNull(type));
+    public ConfigTemplateInvocationHandler(Class<?> type) {
+        this.type = new ConfiguredTypeImpl(Objects.requireNonNull(type));
         if (!type.isInterface()) {
             throw new IllegalArgumentException("Can only proxy interfaces as configuration templates.");
         }
-        this.configuration = Objects.requireNonNull(configuration);
-        ModelPopulator.registerTemplate(type);
+        InjectionHelper.sendConfigurationEvent(this.type);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Configuration config = ConfigurationProvider.getConfiguration();
         if ("toString".equals(method.getName())) {
             return "Configured Proxy -> " + this.type.getType().getName();
         } else if ("hashCode".equals(method.getName())) {
@@ -67,13 +61,13 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
         } else if ("equals".equals(method.getName())) {
             return Objects.equals(proxy, args[0]);
         } else if ("get".equals(method.getName())) {
-            return this.configuration;
+            return config;
         }
         if (method.getReturnType() == DynamicValue.class) {
-            return DefaultDynamicValue.of(method, configuration);
+            return DefaultDynamicValue.of(method, config);
         }
         String[] retKey = new String[1];
-        String configValue = InjectionHelper.getConfigValue(method, retKey, configuration);
+        String configValue = InjectionHelper.getConfigValue(method, retKey, config);
         return InjectionHelper.adaptValue(method, TypeLiteral.of(method.getReturnType()), retKey[0], configValue);
     }
 }

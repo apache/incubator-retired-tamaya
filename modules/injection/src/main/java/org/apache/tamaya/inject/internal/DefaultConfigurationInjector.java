@@ -35,6 +35,7 @@ import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 import org.apache.tamaya.inject.NoConfig;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.spi.ConfiguredType;
 
 /**
  * Simple injector singleton that also registers instances configured using weak references.
@@ -55,9 +56,9 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
     public ConfiguredType registerType(Class<?> type) {
         ConfiguredType confType = configuredTypes.get(type);
         if (confType == null && isConfigured(type)) {
-            confType = new ConfiguredType(type);
-            ModelPopulator.register(confType);
+            confType = new ConfiguredTypeImpl(type);
             configuredTypes.put(type, confType);
+            InjectionHelper.sendConfigurationEvent(confType);
         }
         return confType;
 //        return configuredTypes.computeIfAbsent(type, ConfigDefaultSections::new);
@@ -138,7 +139,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
             cl = this.getClass().getClassLoader();
         }
         return templateType.cast(Proxy.newProxyInstance(cl, new Class[]{ConfiguredItemSupplier.class, Objects.requireNonNull(templateType)},
-                new ConfigTemplateInvocationHandler(templateType, ConfigurationProvider.getConfiguration())));
+                new ConfigTemplateInvocationHandler(templateType)));
     }
 
     @Override

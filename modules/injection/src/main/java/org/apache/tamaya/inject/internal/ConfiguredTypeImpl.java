@@ -31,15 +31,18 @@ import org.apache.tamaya.inject.ConfigAutoInject;
 import org.apache.tamaya.inject.NoConfig;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.spi.ConfiguredField;
+import org.apache.tamaya.inject.spi.ConfiguredMethod;
+import org.apache.tamaya.inject.spi.ConfiguredType;
 
 /**
  * Structure that contains and manages configuration related things for a configured type registered.
  * Created by Anatole on 03.10.2014.
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class ConfiguredType {
+public class ConfiguredTypeImpl implements ConfiguredType{
     /** The log used. */
-    private static final Logger LOG = Logger.getLogger(ConfiguredType.class.getName());
+    private static final Logger LOG = Logger.getLogger(ConfiguredTypeImpl.class.getName());
     /**
      * A list with all annotated instance variables.
      */
@@ -47,7 +50,7 @@ public class ConfiguredType {
     /**
      * A list with all annotated methods (templates).
      */
-    private List<ConfiguredSetterMethod> configuredSetterMethods = new ArrayList<>();
+    private List<ConfiguredMethod> configuredSetterMethods = new ArrayList<>();
     /**
      * The basic type.
      */
@@ -60,7 +63,7 @@ public class ConfiguredType {
      * @param type the instance type.
      */
 
-    public ConfiguredType(Class type) {
+    public ConfiguredTypeImpl(Class type) {
         this.type = Objects.requireNonNull(type);
         ConfigDefaultSections confType = (ConfigDefaultSections)
                 type.getAnnotation(ConfigDefaultSections.class);
@@ -93,7 +96,7 @@ public class ConfiguredType {
             }
             try {
                 if(isConfiguredField(f) || autoConfigure) {
-                    ConfiguredField configuredField = new ConfiguredField(f);
+                    ConfiguredField configuredField = new ConfiguredFieldImpl(f);
                     configuredFields.add(configuredField);
                     LOG.finer("Registered field " + f.getClass().getName() + "#" +
                             f.toGenericString());
@@ -157,18 +160,13 @@ public class ConfiguredType {
         configure(instance, ConfigurationProvider.getConfiguration());
     }
 
-    /**
-     * Method called to configure an instance.
-     *
-     * @param instance       The instance to be configured.
-     * @param config  the target config.
-     */
+    @Override
     public void configure(Object instance, Configuration config) {
         for (ConfiguredField field : configuredFields) {
-            field.applyValue(instance, config);
+            field.configure(instance, config);
         }
-        for (ConfiguredSetterMethod method : configuredSetterMethods) {
-            method.applyValue(instance, config, true);
+        for (ConfiguredMethod method : configuredSetterMethods) {
+            method.configure(instance, config);
 //            // TODO, if method should be recalled on changes, corresponding callbacks could be registered here
         }
     }
@@ -201,14 +199,21 @@ public class ConfiguredType {
         return method.isAnnotationPresent(Config.class);
     }
 
+    @Override
     public Class getType() {
         return this.type;
+    }
+
+    @Override
+    public String getName() {
+        return this.type.getName();
     }
 
     /**
      * Get the registered configured fields.
      * @return the registered configured fields, never null.
      */
+    @Override
     public Collection<ConfiguredField> getConfiguredFields(){
         return configuredFields;
     }
@@ -217,7 +222,8 @@ public class ConfiguredType {
      * Get the registered annotated setter methods.
      * @return the registered annotated setter methods, never null.
      */
-    public Collection<ConfiguredSetterMethod> getConfiguredSetterMethods(){
+    @Override
+    public Collection<ConfiguredMethod> getConfiguredMethods(){
         return configuredSetterMethods;
     }
 

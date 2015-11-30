@@ -24,6 +24,7 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.InjectionUtils;
+import org.apache.tamaya.inject.spi.ConfiguredField;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -36,7 +37,7 @@ import java.util.Objects;
  * it (referenced by a weak reference). It also implements all aspects current keys filtering, converting any applying the
  * final keys by reflection.
  */
-public class ConfiguredField {
+public class ConfiguredFieldImpl implements ConfiguredField{
     /**
      * The configured field instance.
      */
@@ -47,7 +48,7 @@ public class ConfiguredField {
      *
      * @param field the field instance.
      */
-    public ConfiguredField(Field field) {
+    public ConfiguredFieldImpl(Field field) {
         Objects.requireNonNull(field);
         this.annotatedField = field;
     }
@@ -59,7 +60,7 @@ public class ConfiguredField {
      * @param target the target instance.
      * @throws ConfigException if evaluation or conversion failed.
      */
-    public void applyValue(Object target,Configuration config) throws ConfigException {
+    public void configure(Object target, Configuration config) throws ConfigException {
         if (this.annotatedField.getType() == DynamicValue.class) {
             applyDynamicValue(target);
         } else {
@@ -130,6 +131,7 @@ public class ConfiguredField {
      * Get the field's type.
      * @return the field's type, not null.
      */
+    @Override
     public Class<?> getType(){
         return this.annotatedField.getType();
     }
@@ -138,15 +140,28 @@ public class ConfiguredField {
      * Access the applyable configuration keys for this field.
      * @return the configuration keys, never null.
      */
+    @Override
     public Collection<String> getConfiguredKeys(){
         return InjectionUtils.getKeys(this.annotatedField);
     }
 
     @Override
     public String toString() {
-        return "ConfiguredField{" +
-                annotatedField.getName() + ": " +
-                " " + annotatedField.getDeclaringClass().getName() + '}';
+        return "ConfiguredField[" + getSignature() + ']';
     }
 
+    @Override
+    public String getName() {
+        return annotatedField.getName();
+    }
+
+    @Override
+    public String getSignature() {
+        return getName()+':'+getType().getName();
+    }
+
+    @Override
+    public Field getAnnotatedField() {
+        return annotatedField;
+    }
 }

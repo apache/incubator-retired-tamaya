@@ -30,11 +30,13 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefault;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -50,6 +52,20 @@ final class InjectionHelper {
     private static final Logger LOG = Logger.getLogger(InjectionHelper.class.getName());
 
     private static final boolean RESOLUTION_MODULE_LOADED = checkResolutionModuleLoaded();
+
+    private static boolean EVENTS_AVAILABLE = checkForEvents();
+
+    private static boolean checkForEvents() {
+        try{
+            Class.forName("org.apache.tamaya.events.FrozenConfiguration");
+            LOG.info("Detected tamaya-events is loaded, will trigger ConfigEvents...");
+            return true;
+        }
+        catch(Exception e){
+            LOG.info("Detected tamaya-events not found, will not trigger any ConfigEvents...");
+            return false;
+        }
+    }
 
     private static boolean checkResolutionModuleLoaded() {
         try {
@@ -209,4 +225,14 @@ final class InjectionHelper {
         return expression;
     }
 
+    /**
+     * This method distributes the configuration event, if the Tamaya event module is accessible.
+     * When Tamaya events are not available, the call simply returns.
+     * @param event the event to be distributed, not null.
+     */
+    static void sendConfigurationEvent(ConfiguredType event) {
+        if(EVENTS_AVAILABLE){
+            ConfigEventManager.fireEvent(event);
+        }
+    }
 }

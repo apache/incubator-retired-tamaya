@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.InjectionUtils;
+import org.apache.tamaya.inject.spi.ConfiguredMethod;
 
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -34,7 +35,7 @@ import java.util.Objects;
  * it (referenced by a weak reference). It also implements all aspects current keys filtering, conversions any applying the
  * final keys by reflection.
  */
-public class ConfiguredSetterMethod {
+public class ConfiguredSetterMethod implements ConfiguredMethod {
 
     /**
      * The configured field instance.
@@ -54,18 +55,13 @@ public class ConfiguredSetterMethod {
         }
     }
 
-    /**
-     * Evaluate the initial keys fromMap the configuration and applyChanges it to the field.
-     *
-     * @param target the target instance.
-     * @throws ConfigException if evaluation or conversion failed.
-     */
-    public void applyValue(Object target, Configuration config, boolean resolve) throws ConfigException {
+    @Override
+    public void configure(Object target, Configuration config) throws ConfigException {
         String[] retKey = new String[1];
         String configValue = InjectionHelper.getConfigValue(this.setterMethod, retKey, config);
         Objects.requireNonNull(target);
         try {
-            String evaluatedString = resolve && configValue != null
+            String evaluatedString = configValue != null
                     ? InjectionHelper.evaluateValue(configValue)
                     : configValue;
 
@@ -95,6 +91,7 @@ public class ConfiguredSetterMethod {
      *
      * @return the configuration keys, never null.
      */
+    @Override
     public Collection<String> getConfiguredKeys() {
         return InjectionUtils.getKeys(this.setterMethod);
     }
@@ -103,15 +100,40 @@ public class ConfiguredSetterMethod {
      * Get the type to be set on the setter method.
      * @return
      */
-    public Class<?> getParameterType() {
-        return this.setterMethod.getParameterTypes()[0];
+    @Override
+    public Class<?>[] getParameterTypes() {
+        return this.setterMethod.getParameterTypes();
     }
 
     /**
      * Access the annotated method.
      * @return the annotated method, not null.
      */
+    @Override
     public Method getAnnotatedMethod() {
         return this.setterMethod;
     }
+
+    @Override
+    public String getName() {
+        return this.setterMethod.getName();
+    }
+
+    @Override
+    public String getSignature() {
+        return "void " + this.setterMethod.getName()+'('+ printTypes(getParameterTypes())+')';
+    }
+
+    private String printTypes(Class<?>[] parameterTypes) {
+        StringBuilder b = new StringBuilder();
+        for(Class cl:parameterTypes){
+            b.append(cl.getName());
+            b.append(',');
+        }
+        if(b.length()>0){
+            b.setLength(b.length()-1);
+        }
+        return b.toString();
+    }
+
 }
