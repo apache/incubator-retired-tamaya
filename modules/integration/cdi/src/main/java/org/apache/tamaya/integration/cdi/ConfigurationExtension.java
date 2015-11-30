@@ -36,6 +36,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessBean;
 import javax.enterprise.inject.spi.ProcessProducerMethod;
+import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -61,75 +62,6 @@ public class ConfigurationExtension implements Extension {
     static final Map<Class, ConfigOperator> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
     static final Map<Class, PropertyConverter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
 
-    /**
-     * Internally used conversion bean.
-     */
-    private static class ConverterBean implements Bean<Object> {
-
-        private final Bean<Object> delegate;
-        private final Set<Type> types;
-
-        public ConverterBean(final Bean convBean, final Set<Type> types) {
-            this.types = types;
-            this.delegate = convBean;
-        }
-
-        @Override
-        public Set<Type> getTypes() {
-            return types;
-        }
-
-        @Override
-        public Class<?> getBeanClass() {
-            return delegate.getBeanClass();
-        }
-
-        @Override
-        public Set<InjectionPoint> getInjectionPoints() {
-            return delegate.getInjectionPoints();
-        }
-
-        @Override
-        public String getName() {
-            return delegate.getName();
-        }
-
-        @Override
-        public Set<Annotation> getQualifiers() {
-            return delegate.getQualifiers();
-        }
-
-        @Override
-        public Class<? extends Annotation> getScope() {
-            return delegate.getScope();
-        }
-
-        @Override
-        public Set<Class<? extends Annotation>> getStereotypes() {
-            return delegate.getStereotypes();
-        }
-
-        @Override
-        public boolean isAlternative() {
-            return delegate.isAlternative();
-        }
-
-        @Override
-        public boolean isNullable() {
-            return delegate.isNullable();
-        }
-
-        @Override
-        public Object create(CreationalContext<Object> creationalContext) {
-            return delegate.create(creationalContext);
-        }
-
-        @Override
-        public void destroy(Object instance, CreationalContext<Object> creationalContext) {
-            delegate.destroy(instance, creationalContext);
-        }
-    }
-
     private Set<Type> types = new HashSet<>();
     private Bean<?> convBean;
 
@@ -137,10 +69,12 @@ public class ConfigurationExtension implements Extension {
      * Method that checks the configuration injection points during deployment for available configuration.
      * @param pb the bean to process.
      */
-    public void retrieveTypes(@Observes final ProcessBean<?> pb) {
+    public void retrieveTypes(@Observes final ProcessBean<?> pb, BeanManager beanManager) {
 
         final Set<InjectionPoint> ips = pb.getBean().getInjectionPoints();
+        CDIConfiguredType configuredType = new CDIConfiguredType(pb.getBean().getBeanClass());
 
+        boolean configured = false;
         for (InjectionPoint injectionPoint : ips) {
             if (injectionPoint.getAnnotated().isAnnotationPresent(Config.class)) {
                 final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
@@ -181,8 +115,27 @@ public class ConfigurationExtension implements Extension {
                             keys.toString()));
                 }
                 types.add(injectionPoint.getType());
+                if(annotation!=null){
+                    configured = true;
+                    configuredType.addConfiguredMember(injectionPoint, keys);
+                }
             }
         }
+        if(configured) {
+            beanManager.fireEvent(configuredType);
+        }
+    }
+
+
+    public void captureConvertBean(@Observes final ProcessProducerMethod<?, ?> ppm) {
+        if (ppm.getAnnotated().isAnnotationPresent(Config.class)) {
+            convBean = ppm.getBean();
+        }
+
+    }
+
+    public void addConverter(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
+        abd.addBean(new ConverterBean(convBean, types));
     }
 
     private void tryLoadOpererator(Class<? extends ConfigOperator> operatorClass) {
@@ -253,16 +206,73 @@ public class ConfigurationExtension implements Extension {
     }
 
 
-    public void captureConvertBean(@Observes final ProcessProducerMethod<?, ?> ppm) {
-        if (ppm.getAnnotated().isAnnotationPresent(Config.class)) {
-            convBean = ppm.getBean();
+    /**
+     * Internally used conversion bean.
+     */
+    private static class ConverterBean implements Bean<Object> {
+
+        private final Bean<Object> delegate;
+        private final Set<Type> types;
+
+        public ConverterBean(final Bean convBean, final Set<Type> types) {
+            this.types = types;
+            this.delegate = convBean;
         }
 
-    }
+        @Override
+        public Set<Type> getTypes() {
+            return types;
+        }
 
-    public void addConverter(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
-        abd.addBean(new ConverterBean(convBean, types));
-    }
+        @Override
+        public Class<?> getBeanClass() {
+            return delegate.getBeanClass();
+        }
 
+        @Override
+        public Set<InjectionPoint> getInjectionPoints() {
+            return delegate.getInjectionPoints();
+        }
+
+        @Override
+        public String getName() {
+            return delegate.getName();
+        }
+
+        @Override
+        public Set<Annotation> getQualifiers() {
+            return delegate.getQualifiers();
+        }
+
+        @Override
+        public Class<? extends Annotation> getScope() {
+            return delegate.getScope();
+        }
+
+        @Override
+        public Set<Class<? extends Annotation>> getStereotypes() {
+            return delegate.getStereotypes();
+        }
+
+        @Override
+        public boolean isAlternative() {
+            return delegate.isAlternative();
+        }
+
+        @Override
+        public boolean isNullable() {
+            return delegate.isNullable();
+        }
+
+        @Override
+        public Object create(CreationalContext<Object> creationalContext) {
+            return delegate.create(creationalContext);
+        }
+
+        @Override
+        public void destroy(Object instance, CreationalContext<Object> creationalContext) {
+            delegate.destroy(instance, creationalContext);
+        }
+    }
 
 }
