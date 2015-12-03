@@ -18,18 +18,16 @@ package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.spi.ConfiguredField;
-import org.apache.tamaya.inject.spi.ConfiguredMethod;
 
 import javax.enterprise.inject.spi.InjectionPoint;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by atsticks on 29.11.15.
+ * CDI implementation for event publishing of configured instances.
  */
 class CDIConfiguredField implements ConfiguredField{
 

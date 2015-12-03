@@ -78,8 +78,7 @@ class CDIConfiguredType implements ConfiguredType{
         Member member = injectionPoint.getMember();
         if(member instanceof Field){
             this.fields.add(new CDIConfiguredField(injectionPoint, keys));
-        }
-        else if(member instanceof Method){
+        } else if(member instanceof Method){
             this.methods.add(new CDIConfiguredMethod(injectionPoint, keys));
         }
     }
