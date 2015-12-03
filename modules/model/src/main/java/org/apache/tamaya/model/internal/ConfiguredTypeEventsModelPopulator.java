@@ -22,7 +22,6 @@ import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.inject.spi.ConfiguredField;
 import org.apache.tamaya.inject.spi.ConfiguredMethod;
 import org.apache.tamaya.inject.spi.ConfiguredType;
-import org.apache.tamaya.model.ConfigModel;
 import org.apache.tamaya.model.ConfigModelManager;
 import org.apache.tamaya.model.spi.ParameterModel;
 
@@ -30,7 +29,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
- * Internal facade that registers all kind of injected fields as {@link ConfigModel} entries,
+ * Internal facade that registers all kind of injected fields as {@link org.apache.tamaya.model.ConfigModel} entries,
  * so all configured injection points are visible as documented configuration hooks.
  */
 public final class ConfiguredTypeEventsModelPopulator implements ConfigEventListener<ConfiguredType> {
