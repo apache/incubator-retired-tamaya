@@ -53,15 +53,14 @@ final class InjectionHelper {
 
     private static final boolean RESOLUTION_MODULE_LOADED = checkResolutionModuleLoaded();
 
-    private static boolean EVENTS_AVAILABLE = checkForEvents();
+    private static final boolean EVENTS_AVAILABLE = checkForEvents();
 
     private static boolean checkForEvents() {
         try{
             Class.forName("org.apache.tamaya.events.FrozenConfiguration");
             LOG.info("Detected tamaya-events is loaded, will trigger ConfigEvents...");
             return true;
-        }
-        catch(Exception e){
+        } catch(Exception e){
             LOG.info("Detected tamaya-events not found, will not trigger any ConfigEvents...");
             return false;
         }
