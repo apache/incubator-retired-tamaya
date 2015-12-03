@@ -20,7 +20,8 @@ package org.apache.tamaya.integration.cdi.internal;
 
 
 import org.apache.tamaya.inject.ConfigurationInjection;
-import org.apache.tamaya.inject.internal.ConfiguredType;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
@@ -30,6 +31,8 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ProcessInjectionTarget;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
@@ -47,7 +50,7 @@ public final class SEInjectorCDIExtension implements Extension {
      */
     public <T> void initializeConfiguredFields(final @Observes ProcessInjectionTarget<T> pit) {
         final AnnotatedType<T> at = pit.getAnnotatedType();
-        if (!ConfiguredType.isConfigured(at.getJavaClass())) {
+        if (!isConfigured(at.getJavaClass())) {
             return;
         }
         final InjectionTarget<T> it = pit.getInjectionTarget();
@@ -84,6 +87,25 @@ public final class SEInjectorCDIExtension implements Extension {
             }
         };
         pit.setInjectionTarget(wrapped);
+    }
+
+    private boolean isConfigured(Class type) {
+        if (type.getAnnotation(ConfigDefaultSections.class) != null) {
+            return true;
+        }
+        // if no class level annotation is there we might have field level annotations only
+        for (Field field : type.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Config.class)) {
+                return true;
+            }
+        }
+        // if no class level annotation is there we might have method level annotations only
+        for (Method method : type.getDeclaredMethods()) {
+            if(method.isAnnotationPresent(Config.class)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
