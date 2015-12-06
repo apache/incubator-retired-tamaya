@@ -62,7 +62,18 @@ The module is based on Java 7, so it can be used with Java 7 and beyond.
 
 === Installation
 
-To benefit from configuration event support you only must add the corresponding dependency to your module:
+Basically Tamaya's injection API is deployed as API artifact:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-injection-api</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+To use injection with Java SE you must add the corresponding dependency to your module:
 
 [source, xml]
 -----------------------------------------------
@@ -73,9 +84,18 @@ To benefit from configuration event support you only must add the corresponding 
 </dependency>
 -----------------------------------------------
 
+Similarly there are other injection implementations available, targetig platforms such as
+
+* Spring, Spring Boot
+* Java EE/CDI
+* OSGI, Apache Felix/Apache Karaf
+
+
 === Core Concepts
 
-As an example refer to the following
+Basically you annotate fields or methods in your beans with +@Config+ to enable configuration injection. Tamaya
+additionally defines further annotations that allo you to define additional aspects such as default values, custom
+converters etc. The following example illustrates the basic functionality:
 code snippet:
 
 [source,java]
@@ -88,12 +108,12 @@ public class ConfiguredClass{
     // resolved by default, using property name, class and package name: foo.bar.ConfiguredClass.testProperty
     private String testProperty;
 
-    @ConfiguredProperty(keys={"a.b.c.key1","a.b.legacyKey",area1.key2"})
+    @Config({"a.b.c.key1","a.b.legacyKey",area1.key2"})
     @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
     // Using a (default) String -> Integer converter
-    @ConfiguredProperty(keys="a.b.c.key2")
+    @Config("a.b.c.key2")
     private int value2;
 
     // resolved by default as foo.bar.ConfiguredClass.accessUrl
@@ -106,7 +126,7 @@ public class ConfiguredClass{
     private Integer int1;
 
     // Overriding the String -> BigDecimal converter with a custom implementation.
-    @ConfiguredProperty(keys="BD")
+    @Config("BD")
     @WithPropertyConverter(MyBigDecimalRoundingAdapter.class)
     private BigDecimal bigNumber;
 
@@ -114,8 +134,37 @@ public class ConfiguredClass{
 }
 --------------------------------------------
 
-The class does not show all (but most) possibilities provided. Configuring an instance of the
-class using Tamaya is very simple. The only thing is to pass the instance to Tamaya to let
+
+When configuring data or configuration classes it is also possible to auto-inject the fields identified. For activating
+this feature a class must be annotated with +@ConfigAutoInject+:
+
+[source, java]
+. An autoinjected bean class
+--------------------------------------------
+package a.b;
+
+@ConfigAutoInject
+public final class Tenant{
+  private int id;
+  private String name;
+  private String description;
+  @NoConfig // prevents auto injection for this field
+  private String id2;
+
+  public int getId(){
+    return id;
+  }
+  public String getName(){
+    return name;
+  }
+  public String getDescription(){
+    return description;
+  }
+}
+--------------------------------------------
+
+These examples do not show all possibilities provided. Configuring instance of these
+class using Tamaya is very simple: Just pass the instance to Tamaya to let
 Tamaya inject the configuration (or throw a +ConfigException+, if this is not possible):
 
 [source,java]
@@ -123,14 +172,22 @@ Tamaya inject the configuration (or throw a +ConfigException+, if this is not po
 --------------------------------------------
 ConfiguredClass classInstance = new ConfiguredClass();
 ConfigurationInjector.configure(configuredClass);
+
+Tenant tenant = new Tenant();
+ConfigurationInjector.configure(tenant);
 --------------------------------------------
+
+NOTE: Configuration injection works similarly, when used with other integration modules, e.g. when Tamaya is used
+with CDI, Spring or within an OSGI container. For further details refer also to the corresponding integration module's
+documentation.
+
 
 === The Annotations in detail
 ==== The ConfigurationInjector
 
 The +ConfigurationInjector+ interface provides methods that allow any kind of instances to be configured
 by passing the instances to +T ConfigurationInjector.getInstance().configure(T);+. The classes passed
-hereby must not be annotated with +@ConfiguredProperty+ for being configurable. By default Tamaya
+hereby must not be annotated with +@Config+ for being configurable. By default Tamaya
 tries to determine configuration for each property of an instance passed, using the following resolution policy:
 
 Given a class +a.b.MyClass+ and a field +myField+ it would try to look up the following keys:
@@ -153,31 +210,6 @@ Tenant.description=Any kind of tenant.
 name=<unnamed>
 --------------------------------------------
 
-The following bean can be configured as follows:
-
-[source, java]
---------------------------------------------
-package a.b;
-
-@ConfiguredType(autoConfigure=true)
-public final class Tenant{
-  private int id;
-  private String name;
-  private String description;
-
-  public int getId(){
-    return id;
-  }
-  public String getName(){
-    return name;
-  }
-  public String getDescription(){
-    return description;
-  }
-}
-
-Tenant tenant = ConfigurationInjector.getInstance().configure(new Tenant());
---------------------------------------------
 
 ==== Accessing ConfiguredItemSupplier instances
 
@@ -213,21 +245,19 @@ To illustrate the mechanism below the most simple variant of a configured class 
 .Most simple configured class
 --------------------------------------------
 pubic class ConfiguredItem{
-  @ConfiguredProperty
+  @Config
   private String aValue;
 }
 --------------------------------------------
 
-When this class is configured, e.g. by passing it to +Configuration.configure(Object)+,
+When this class is configured, e.g. by passing it to +ConfigurationInjector.getInstance().configure(Object)+,
 the following is happening:
 
-* The current valid +Configuration+ is evaluated by calling +Configuration cfg = Configuration.of();+
-* The current property value (String) is evaluated by calling +cfg.get("aValue");+
+* The current valid +Configuration+ is evaluated by calling +Configuration cfg = ConfigurationProvider.getConfiguration();+
+* The current property value (String) is evaluated by calling +cfg.get("aValue");+ for each possible key (mutliple
+  keys are possible).
 * if not successful, an error is thrown (+ConfigException+)
 * On success, since no type conversion is involved, the value is injected.
-* The configured bean is registered as a weak change listener in the config system's underlying
-  configuration, so future config changes can be propagated (controllable by applying the
-  +@WithLoadPolicy+ annotation).
 
 ==== Using @DefaultValue
 
@@ -236,7 +266,7 @@ In the next example we explicitly define the property value:
 --------------------------------------------
 pubic class ConfiguredItem{
 
-  @ConfiguredProperty(keys={"aValue", "a.b.value","a.b.deprecated.value"})
+  @Config({"aValue", "a.b.value","a.b.deprecated.value"})
   @DefaultValue("${env:java.version}")
   private String aValue;
 }
@@ -251,7 +281,7 @@ commit new values exactly, when convenient for you.
 --------------------------------------------
 pubic class ConfiguredItem{
 
-  @ConfiguredProperty(keys={"aValue", "a.b.value","a.b.deprecated.value"})
+  @Config({"aValue", "a.b.value","a.b.deprecated.value"})
   @DefaultValue("${env:java.version}")
   private DynamicValue aValue;
 }
@@ -316,13 +346,13 @@ instance is not changed.
 
 ==== Ommitting Injection using @NoConfig
 
-Adding the @NoConfig annotation prevents a field or method to be selected (mostly auto-selected) for
-configuration. This is especially useful, if a type is annotated as @ConfiguredType with auto-confiuration
+Adding the @NoConfig annotation prevents a field or method to be auto-injected from
+configuration. This is especially useful, if a type is annotated as @ConfigAutoInject with auto-confiuration
 turned on as follows:
 
 [source,java]
 --------------------------------------------
-@ConfiguredType(autoConfigure=true)
+@ConfigAutoInject
 pubic class ConfiguredItem{
 
   @NoConfig
@@ -349,7 +379,7 @@ filtering or validating the visible properties for a certain use case.
 @WithConfigOperator(MyConfigView.class)
 pubic class ConfiguredItem{
 
-  @ConfiguredProperty
+  @Config
   private String a;
 
 }
@@ -360,7 +390,7 @@ pubic class ConfiguredItem{
 
 The @WithPropertyConverter annotation allows you to define a class of type +PropertyConverter+, to be applied
 on a property configured to convert the String value to the expected injected type. This can be used for
-various use cases, e.g. adding custom formats, validation, decryption.
+various use cases, e.g. adding custom formats, config models, decryption.
 
 [source,java]
 --------------------------------------------
@@ -368,7 +398,7 @@ various use cases, e.g. adding custom formats, validation, decryption.
 pubic class ConfiguredItem{
 
   @WithPropertyConverter(MyPropertyConverter.class)
-  @ConfiguredProperty
+  @Config
   private String a;
 
 }
@@ -387,9 +417,53 @@ enum hereby defines the various loading modes.
 pubic class BootTimeStableConfig{
 
   @WithPropertyConverter(MyPropertyConverter.class)
-  @ConfiguredProperty
+  @Config
   private String a;
 
 }
 --------------------------------------------
+
+
+=== Configuration Events
+
+Similar to CDI Tamaya publishes Configuration events, when instances were configured. It depends on the effective
+event backend in use, if and how events are published:
+
+* when you have the CDI extension active events are published using the default CDI event mechanism.
+* in all other scenarios events are delegated to the +tamaya-events+ module, if available,
+* if no event delegation is available no events are published.
+
+The event published is very simple:
+
+[source,java]
+--------------------------------------------
+public interface ConfiguredType {
+    Class getType();
+    String getName();
+    public Collection<ConfiguredField> getConfiguredFields();
+    Collection<ConfiguredMethod> getConfiguredMethods();
+    void configure(Object instance, Configuration config);
+}
+
+
+public interface ConfiguredField {
+    Class<?> getType();
+    Collection<String> getConfiguredKeys();
+    String getName();
+    String getSignature();
+    Field getAnnotatedField();
+    void configure(Object instance, Configuration config);
+}
+
+public interface ConfiguredMethod {
+    Collection<String> getConfiguredKeys();
+    Class<?>[] getParameterTypes();
+    Method getAnnotatedMethod();
+    String getName();
+    String getSignature();
+    void configure(Object instance, Configuration config);
+}
+----------------------------------------
+
+
 

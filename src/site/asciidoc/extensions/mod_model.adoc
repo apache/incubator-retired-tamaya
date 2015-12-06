@@ -46,7 +46,7 @@ toc::[]
 === Overview
 
 The Tamaya model module provides support for documenting configuration and validating configuration read and processed
-against this model. Documentation and validation can be provided in different ways:
+against this model. Documentation and config models can be provided in different ways:
 
 * as separate meta-model documents
 * by providers that check classes/packages for configuration annotations (planned)
@@ -95,7 +95,7 @@ Now with only these 2 concepts a simple configuration meta-model can be defined 
      a separator character.
   ** may be required, or optional
   ** may have an optional description
-  ** may have additional custom validations configured.
+  ** may have additional custom configModels configured.
 * Parameters additionally have
   ** a _type_, described by the fully qualified class name, into which any configured (String) value must be
      convertable into. If no type is configured +java.lang.String+ should be assumed as default.
@@ -103,7 +103,7 @@ Now with only these 2 concepts a simple configuration meta-model can be defined 
      configuration.
 
 Given these concepts a configuration can be fully described. Entries that are not contained in one of the given
-sections (or its children), or parameters not described or marked as valid (e.g. for dynamic validations of
+sections (or its children), or parameters not described or marked as valid (e.g. for dynamic configModels of
 a section), are called _undefined_. Undefined parameters should be grouped with its parent section. Each section, as
 well as all parent sections, including transitive) of any parametet read, should similarly marked as undefined, if and
 only if
@@ -112,7 +112,7 @@ only if
 . the section is not a _super section_ of a defined section.
 
 As en example the section definition of +a.b.c+ also implicitly includes the sections +a.b+ and +a+ to be defined
-sections, despite the fact that section properties, such as description and custom validations are not inherited to
+sections, despite the fact that section properties, such as description and custom configModels are not inherited to
 its parent, or child section.
 
 
@@ -147,7 +147,7 @@ variants supported:
 
 # custom validated section
 {model}.validated.class=Section
-{model}.validated.validations=org.apache.tamaya.model.TestValidator
+{model}.validated.configModels=org.apache.tamaya.model.TestValidator
 -------------------------------------------------------------------------------
 
 Above +org.mycompany.root+ transitively defines 3 sections:
@@ -161,7 +161,7 @@ Required sections are checked so the section is not empty. It is not checked for
 only the existance of any child parameter is validated.
 
 The _class_ attribute has to be defined for any section definition, because if not set a model entry is, by default,
-defined to be a parameter validation entry. Given above the entry for the section +minimal+ shows such a minimal
+defined to be a parameter configModel entry. Given above the entry for the section +minimal+ shows such a minimal
 entry.
 
 +validated+ defines a section, which is validated through a customizable validator. Hereby an ordered list of validators
@@ -183,7 +183,7 @@ Similarly parameters also can be defined:
 {model}.org.mycompany.security.uid.required=true
 {model}.org.mycompany.security.uid.description=The user id.
 {model}.org.mycompany.security.realm.required=true
-{model}.org.mycompany.security.realm.validations=org.apache.tamaya.model.RealmValidator
+{model}.org.mycompany.security.realm.configModels=org.apache.tamaya.model.RealmValidator
 {model}.org.mycompany.security.real.description=The security realm required.
 {model}.org.mycompany.security.tokenid.description=The token id, if the token service is used (optional).
 
@@ -198,7 +198,7 @@ the entry above for +org.mycompany.security.realm+ also defines the following se
 * org.mycompany
 * org.mycompany.security
 
-Additional entries for section, e.g. validations to be done, can be added as described in the previous section,
+Additional entries for section, e.g. configModels to be done, can be added as described in the previous section,
 but are optional.
 
 Since the parameter is the default type for model entries, a minmal parameter model entry only only needs it's
@@ -226,77 +226,167 @@ By default the configuration model can be defined at the following locations:
 
 ==== Programmatic API
 
-Basically the validation module provides a simple API to evaluate the current +Configuration+ by as follows:
+Basically the configModel module provides a simple API to access the defined +ConfigModel+ instances and
+validating the current +Configuration+ against the models as follows:
 
 [source,java]
 -----------------------------------------------------------
-public final class ConfigValidator {
+public final class ConfigModelManager {
 
-    private ConfigValidator() {}
+    private ConfigModelManager() {}
+
+    public static Collection<ConfigModel> getModels();
+    public static Collection<ConfigModel> findModels(ModelType type, String namePattern);
+    public static <T extends ConfigModel> T getModel(String name, Class<T> modelType);
+    public static Collection<ConfigModel> findModels(String namePattern);
 
     public static Collection<ValidationResult> validate();
     public static Collection<ValidationResult> validate(boolean showUndefined);
     public static Collection<ValidationResult> validate(Configuration config);
     public static Collection<ValidationResult> validate(Configuration config, boolean showUndefined);
 
-    public static Collection<Validation> getValidations();
+    public static void registerMBean();
+    public static void registerMBean(String context);
+
 }
 -----------------------------------------------------------
 
-This singleton allows to validate the current or any +Configuration+ instance. All the validations read also are
-available from the +getValidations+ method, which returns you not less than a instance of the current
-configuration model. This instance can be used to provide documentation, e.g. as part of a CLI interface or
-shown on a documentation web server.
+This singleton allows to validate the current or any +Configuration+ instance. All the ConfigModels read also are
+available from the +getModels+ method. This models can be used to provide documentation, e.g. as part of a CLI interface
+or shown on a documentation web server.
 
-A +Validation+ hereby is defined as:
+A +ConfigModel+ hereby is defined as one single part of configuration, typically corresponding to a specific concern
+of your system. As an example you can define different models for different modules or products plugged together.
+With resolution mechanism in place you can also define a shared module that is targeted by multiple modules as a
+single configuration source (e.g. for configuring the machine's IP address and subnet settings only once.
 
 [source,java]
 -----------------------------------------------------------
-public interface Validation {
+public interface ConfigModel {
 
-    String getType();
+    ModelType getType();
     String getName();
+    String getProvider();
+    boolean isRequired();
     String getDescription();
     Collection<ValidationResult> validate(Configuration config);
 }
 -----------------------------------------------------------
 
-Similarly a +ValidationResult+ is modelled as:
+
+Hereby +ModelType+ defines more details on the kind of model:
+
+[source,java]
+-----------------------------------------------------------
+public enum ModelType {
+    /**
+     * A configuration section.
+     */
+    Section,
+    /**
+     * A configuration paramter.
+     */
+    Parameter,
+    /**
+     * ConfigModel to ensure a certain configuration filter is installed.
+     */
+    Filter,
+    /**
+     * ConfigModel to ensure a certain combination policy is active.
+     */
+    CombinationPolicy,
+    /**
+     * ConfigModel that is a container of other validations.
+     */
+    Group,
+    /**
+     * ConfigModel to simply check availability for a class on the current classpath.
+     */
+    LoadableClass
+}
+-----------------------------------------------------------
+
+A +ValidationResult+ models one validation executed by a +ConfigModel+ on a certain +Configuration+ instance:
 
 [source,java]
 -----------------------------------------------------------
 public final class ValidationResult {
 
-    public static ValidationResult ofValid(Validation validation);
-    public static ValidationResult ofMissing(Validation validation);
-    public static ValidationResult ofMissing(Validation validation, String message);
-    public static ValidationResult ofError(Validation validation, String error);
-    public static ValidationResult ofWarning(Validation validation, String warning);
-    public static ValidationResult ofDeprecated(Validation validation, String alternateUsage);
-    public static ValidationResult ofDeprecated(Validation validation);
+    public static ValidationResult ofValid(ConfigModel configModel);
+    public static ValidationResult ofMissing(ConfigModel configModel);
+    public static ValidationResult ofMissing(ConfigModel configModel, String message);
+    public static ValidationResult ofError(ConfigModel configModel, String error);
+    public static ValidationResult ofWarning(ConfigModel configModel, String warning);
+    public static ValidationResult ofDeprecated(ConfigModel configModel, String alternateUsage);
+    public static ValidationResult ofDeprecated(ConfigModel configModel);
     public static ValidationResult ofUndefined(final String key);
-    public static ValidationResult of(Validation validation, ValidationState result, String message);
+    public static ValidationResult of(ConfigModel configModel, ValidationState result, String message);
 
-    public Validation getValidation();
+    public ConfigModel getConfigModel();
     public ValidationState getResult();
     public String getMessage(),
 }
 -----------------------------------------------------------
 
+The result of a complete validation on a concrete +Configuration+ instance finally is mapped as a
++Collection<ValidationResult>+, refer to the methods on +ConfigModelManager+.
+
+
+=== Auto-Documentation of Classes with Configuration Injection
+
+A special feature of this module is that it observes +ConfigEvent+ published through Tamaya'as event channel
+(+tamaya-events+ module). If no metaconfiguration model is found the model manager by default automatically creates
+models for all injected instances on the fly. In the case of CDI integration this happens typically during deployment
+time, since CDI initializes during deployment time. Other runtime platforms, such as OSGI, may have rather different
+behaviour. Nevertheless this means that after your system has been started you should have access to a complete
+set of +ConfigModel+ instances that automatically document all the classes in your system that consume configuration
+(through injection).
+
 
 == Model SPI
+=== Registering Configuration Models
 
 The model extension also provides an SPI where customized functionality can be added. The main abstraction hereby is
-the +ValidationProviderSpi+ interface, which allows any kind of additional validations to be added to the system:
+the +ModelProviderSpi+ interface, which allows any kind of additional config models to be added to the system:
 
 [source,java]
 -----------------------------------------------------------
-public interface ValidationProviderSpi {
+public interface ModelProviderSpi {
 
-    Collection<Validation> getValidations();
+    Collection<ConfigModel> getConfigModels();
 
 }
 -----------------------------------------------------------
 
 New instances implementing this interface must be registered into the current +ServiceContext+, by default the
 +ServiceLoader+ is used.
+
+
+=== Other Utility Classes
+
+The module also provides further utility classes that may be useful for implementing models or testing:
+
+* +AbstractModel+ provides a base class that can be extended, when implementing +ConfigModel+.
+* +AreaConfigModel+ provides a +ConfigModel+ implementation (with a corresponding +Builder+) to model the
+  requirement of certain configuration sections being present, or opionally present, in the model.
+* +ParameterModel+ provides an implementation base class for validating parameters on existence and compliance
+  with a regular expression.
+* +ConfigDocumentationMBean+ is the MBean registered that models similar functionality as +ConfigModelManager+.
+* +ConfigModelGroup+ provides a +ConfigModel+ that groups several child models.
+* +ConfigModelReader+ allows to read +ConfigModels+ from properties files as described at the beginning of this
+  document.
+
+
+=== Switches to enable/disable functionality
+
+The model module provides different switches that can be used to activate or deactivate features:
+
+* +org.apache.tamaya.model.integrated.enabled+ allows to deactivate reading inline metaconfiguration delivered with
+  the normal Tamaya Configuration. By default inline entries (+{meta}...+) are evaluated.
+* +org.apache.tamaya.model.default.enabled+ allows to deactivate reading metamodel information from
+  +classpath:META-INF/configmodel.properties+. By default it is active.
+* +org.apache.tamaya.model.resources+ allows to defie additional resources (loaded through the resources extension),
+  that can be used to read metamodel information in any format using Tamaya's format module.
+* the system property +org.apache.tamaya.model.autoModelEvents+ allows to activate/deactivate the automatic documentation of
+  classes configured and published by Tamaya +ConfiguredType+ event instances (e.g. published by Tamaya's injection
+  modules).

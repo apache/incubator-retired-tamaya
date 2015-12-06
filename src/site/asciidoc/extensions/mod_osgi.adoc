@@ -1,0 +1,78 @@
+= Apache Tamaya -- Extensions: OSGI Integrations
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.osgi
+:title: Apache Tamaya Extensions: OSGI Integration
+:revnumber: 0.1.1
+:revremark: Incubator
+:revdate: December 2015
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Optional]]
+== Tamaya OSGI Support
+=== Overview
+
+Tamaya provides also support for integration with OSGI. Hereby several options are available how Tamaya can be used in
+an OSGI context:
+
+. All Tamaya modules, its API and core library are actually valid OSGI bundles. So adding them into your OSGI modules
+  and using Tamaya is basically directly supported. Nevertheless OSGI works rather differently from a class- and
+  resource loading perspective. As long as you rely on Tamaya's mechanisms for resource loading things should work
+  out of the box. In the back Tamaya's core module actually comes with implicit OSGI support, which is automatically
+  activated, if Tamaya is running in an OSGI context. This support actually
+  ** Listens on deployed bundles and activel reads all resources registered as +ServiceLoader+ services and registers
+     them as OSGI services.
+  ** Uses the OSGI bundle to resolve any further resources, because accessing them from the classloader directly
+     typically fails in an OSGI context.
+.. Adding Tamaya's OSGI _general_ module replaces the existing OSGI +ConfigAdmin+ service with an istance based on
+   Tamaya.
+.. Adding Tamaya's OSGI _Felix_ module reimplements Felix's +FilePropertyManager+ module, hereby using any preexisting
+   instance as backend. This allows to use Tamaya as overriding configuration provider with runtime environments that
+   are based on Apache Felix and Apache Karaf.
+.. Tamaya's injection module actually combines Tamaya's base functionality and injecion capabilities with the
+   current +ConfigAdmin+ to resolve the effective raw properties. Hereby the values returned from the OSGI
+   +ConfigAdmin+ method are added to Tamaya's configuration model as a normal +PropertySource+. This way users
+   can simply decide using Tamaya's configuration model, how values from OSGI and Tamaya should be combined BEFORE
+   they are used for configuration injection. Configuration injection itself is done by Tamaya's _injection_ module
+   for Java SE.
+
+
+=== Compatibility
+
+All module described are based on Java 7, so it will not run on Java 7 and beyond.
+TBD: OSGI version required.
+
+
