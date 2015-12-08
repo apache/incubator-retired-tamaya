@@ -42,6 +42,36 @@ public class ConfigResolutionTest {
     }
 
     @Test
+    public void test_Prefix_Resolution_BadSyntax1() {
+        assertEquals(ConfigurationProvider.getConfiguration().get("Will fail1."), "V$java.version");
+    }
+
+    @Test
+    public void test_Prefix_Resolution_BadSyntax2() {
+        assertEquals(ConfigurationProvider.getConfiguration().get("Will fail2."), "V$java.version}");
+    }
+
+    @Test
+    public void test_Prefix_Resolution_BadSyntax31() {
+        assertEquals(ConfigurationProvider.getConfiguration().get("Will not fail3."), "V${java.version");
+    }
+
+    @Test
+    public void test_Prefix_Resolution_Escaped1() {
+        assertEquals(ConfigurationProvider.getConfiguration().get("Will not fail1."), "V$\\{java.version");
+    }
+
+    @Test
+    public void test_Prefix_Resolution_Escaped2() {
+        assertEquals(ConfigurationProvider.getConfiguration().get("Will not fail2."), "V\\${java.version");
+    }
+
+    @Test
+    public void test_Prefix_Resolution_EnvKeys() {
+        assertEquals(ConfigurationProvider.getConfiguration().get("env.keys"), System.getProperty("java.version") + " plus $java.version");
+    }
+
+    @Test
     public void test_Prefix_ExpressionOnly_Resolution() {
         assertEquals(ConfigurationProvider.getConfiguration().get("Expression Only"), System.getProperty("java.version"));
     }

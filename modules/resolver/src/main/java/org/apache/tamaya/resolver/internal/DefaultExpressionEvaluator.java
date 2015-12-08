@@ -127,36 +127,29 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
         if(value ==null){
             return null;
         }
-        StringTokenizer tokenizer = new StringTokenizer(value, "${}\\", true);
-        boolean escaped = false;
+        StringTokenizer tokenizer = new StringTokenizer(value, "${}", true);
         StringBuilder resolvedValue = new StringBuilder();
         StringBuilder current = new StringBuilder();
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-            if (escaped) {
-                current.append(token);
-                escaped = false;
-            } else {
                 switch (token) {
-                    case "\\":
-                        escaped = true;
-                        current.append("\\");
-                        break;
                     case "$":
-                        if (current.length() > 0) {
-                            resolvedValue.append(current);
-                            current.setLength(0);
+                        String nextToken = tokenizer.hasMoreTokens()?tokenizer.nextToken():"";
+                        if (!"{".equals(nextToken)) {
+                            current.append(token);
+                            current.append(nextToken);
+                            break;
                         }
-                        if (!"{".equals(tokenizer.nextToken())) {
-                            LOG.warning("Invalid expression syntax in: " + value);
-                            return value;
+                        if(value.indexOf('}')<=0){
+                            current.append(token);
+                            current.append(nextToken);
+                            break;
                         }
                         String subExpression = parseSubExpression(tokenizer, value);
                         current.append(evaluateInternal(subExpression));
                         break;
                     default:
                         current.append(token);
-                }
             }
         }
         if (current.length() > 0) {

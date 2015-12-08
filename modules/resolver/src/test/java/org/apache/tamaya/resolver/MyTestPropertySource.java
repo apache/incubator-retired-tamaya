@@ -50,6 +50,14 @@ public class MyTestPropertySource implements PropertySource{
         properties.put("config-ref2", "Config Ref 2 -> Ref 1: ${conf:config-ref}");
         properties.put("config-ref3", "Config Ref 3 -> Ref 2: ${conf:config-ref2}");
 
+        properties.put("Will fail1.", "V$java.version");
+        properties.put("Will fail2.", "V$java.version}");
+        properties.put("Will not fail3.", "V${java.version");
+        properties.put("Will not fail1.", "V$\\{java.version");
+        properties.put("Will not fail2.", "V\\${java.version");
+
+        properties.put("env.keys", "${java.version} plus $java.version");
+
         properties.put("escaped", "Config Ref 3 -> Ref 2: \\${conf:config-ref2 will not be evaluated and will not contain\\t tabs \\n " +
                 "newlines or \\r returns...YEP!");
     }
