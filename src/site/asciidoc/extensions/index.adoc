@@ -42,6 +42,12 @@ Mature extensions have a stable API and SPI, similar to the API and Implementati
 |=======
 |_Artifact_                                 |_Description_                                |_Links_
 |                                           | N/A: currently no extensions have reached that maturity level.  | -
+|+org.apache.tamaya.ext:tamaya-resolver+      |Provides placeholder and dynamic resolution functionality for configuration values.  |link:mod_resolver.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-formats+       |Provides an abstract model for configuration formats   |link:mod_formats.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-functions+     |Provides several functional extension points.          |link:mod_functions.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:mod_optional.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-spi-support+   |Tamaya support module for SPI implementation.          |link:mod_spi-support.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:modjson.html[Documentation]
 |=======
 
 
@@ -57,19 +63,13 @@ NOTE All extensions currently run on Java 7 as well as on Java 8.
 |_Artifact_                                   |_Description_                                          |_Links_
 |+org.apache.tamaya.ext:tamaya-builder+       |Provides a fluent-style builder for configurations     | link:mod_builder.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-resources+     |Provides ant-style resource path resolution  |link:mod_resources.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-resolver+      |Provides placeholder and dynamic resolution functionality for configuration values.  |link:mod_resolver.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-events+        |Provides support for publishing configuration changes  |link:mod_events.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-formats+       |Provides an abstract model for configuration formats   |link:mod_formats.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-injection+     |Provides configuration injection services and congiruation template support.  |link:mod_injection.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:modjson.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-model+         |Provides support documenting ang validating configuration during runtime.  |link:mod_model.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-functions+     |Provides several functional extension points.          |link:mod_functions.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-management+    |Provides JMX support for inspecting configuration.     |link:mod_management.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-remote+        |Provides remote configuration support.                 |link:mod_remote.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a http service.     |link:mod_server.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:mod_optional.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-classloader-support+  |Manages Tamaya configuration and services considering classloading hierarchies.  |link:mod_classloader_support.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-spi-support+   |Tamaya support module for SPI implementation.          |link:mod_spi-support.html[Documentation]
 |=======
 
 == Integrations
@@ -83,6 +83,7 @@ from a sledgehammer to a scalpell:
 |+org.apache.tamaya.ext:tamaya-cdi+         | Java EE/standalone compliant CDI integration | link:mod_cdi.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-camel+       | Integration for Apache Camel.                | link:mod_camel.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-spring+      | Integration for Spring / Spring Boot.        | link:mod_spring.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-osgi+        | Integration for OSGI containers.             | link:mod_osgi.html[Documentation]
 |=======
 
 
@@ -109,9 +110,6 @@ very carefully and especially give us feedback, so we can improve them before pr
 [width="100%",frame="1",options="header",grid="all"]
 |=======
 |_Artifact_                                     |_Description_                                                     |_Links_
-|+org.apache.tamaya.ext:tamaya-osgi-felix+      |Provides support for Apache Felix PersistenceManager SPI.         | -
-|+org.apache.tamaya.ext:tamaya-osgi-general+    |Provides support for implementing the OSGI ConfigAdmin service.   | -
-|+org.apache.tamaya.ext:tamaya-osgi-injection+  |Provides support for configuration injection into services.       | -
 |+org.apache.tamaya.ext:tamaya-store+           |SPI for writing configuration.                                    | -
 |+org.apache.tamaya.ext:tamaya-store-file+      |Store SPI implementation using file storage.                      | -
 |+org.apache.tamaya.ext:tamaya-store-hazelcast+ |Store SPI implementation using a Hazelcast Datagrid.              | -

@@ -53,26 +53,99 @@ an OSGI context:
   resource loading perspective. As long as you rely on Tamaya's mechanisms for resource loading things should work
   out of the box. In the back Tamaya's core module actually comes with implicit OSGI support, which is automatically
   activated, if Tamaya is running in an OSGI context. This support actually
-  ** Listens on deployed bundles and activel reads all resources registered as +ServiceLoader+ services and registers
-     them as OSGI services.
-  ** Uses the OSGI bundle to resolve any further resources, because accessing them from the classloader directly
+  ** Listens on deployed bundles and actively reads all resources configured as +java.util.ServiceLoader+ services and
+     registers them as OSGI services. Hereby integration is complete meaning you can also register Tamaya services
+     as normal OSGI services, e.g. your own +PropertySource+ instances.
+  ** Uses the OSGI bundle to resolve for resources, because accessing them from the classloader directly
      typically fails in an OSGI context.
-.. Adding Tamaya's OSGI _general_ module replaces the existing OSGI +ConfigAdmin+ service with an istance based on
-   Tamaya.
-.. Adding Tamaya's OSGI _Felix_ module reimplements Felix's +FilePropertyManager+ module, hereby using any preexisting
-   instance as backend. This allows to use Tamaya as overriding configuration provider with runtime environments that
-   are based on Apache Felix and Apache Karaf.
-.. Tamaya's injection module actually combines Tamaya's base functionality and injecion capabilities with the
-   current +ConfigAdmin+ to resolve the effective raw properties. Hereby the values returned from the OSGI
-   +ConfigAdmin+ method are added to Tamaya's configuration model as a normal +PropertySource+. This way users
-   can simply decide using Tamaya's configuration model, how values from OSGI and Tamaya should be combined BEFORE
-   they are used for configuration injection. Configuration injection itself is done by Tamaya's _injection_ module
-   for Java SE.
+. Adding Tamaya's OSGI integration module replaces the existing OSGI +ConfigAdmin+ service with an istance based on
+  Tamaya. Hereby several aspects can be configured using system properties:
+  ** +org.tamaya.integration.osgi.cm.ranking+ (int) allows to configure the OSGI service ranking used by the Tamaya
+    BundleActivator to register Tamaya's +ConfigAdmin+ service. In OSGI higher ranking precede lower rankings. By default
+    Tamaya's OSGI extending service registration mechanism is reusing any annotated +@Priority+ priority values as
+    corresponsing rankings.
+  ** +org.tamaya.integration.osgi.cm.override+ (boolean) allows to configure if Tamaya is overriding any existing
+    values from the default +ConfigAdmin+ instance, or only extending them. In other words this setting allows you to
+    define, which configuration subsystem has precedence for evaluating the final values, either Tamaya based
+    configuration (default) or the configuration mechanisms provided by default from your OSGI container (when this flag
+    is set to +false+).
+  ** +org.tamaya.integration.osgi.cm.inject+ allows you to deactivate injection of configuration values into your
+    OSGI services (by default injection is enabled). In all cases accessing the OSGI +ConfigAdmin+ service to
+    read your configuration is working as usual. But Tamaya adds additional injection functionality, which allows
+    to inject typed configuration as described by the Tamaya injection api.
+
+It is also possible to combine things, e.g. when you only define a low ranking for Tamaya's configuration service and
+the same time allow injection to be active, you will have Tamaya's injection support based on your default
+OSGI configuration.
 
 
 === Compatibility
 
-All module described are based on Java 7, so it will not run on Java 7 and beyond.
-TBD: OSGI version required.
+All module described are based on Java 7, so it will run on Java 7 and beyond.
+The modules are built against OSGI Compendium version 5.0.
 
 
+=== Installation
+
+To benefit from Tamaya in an OSGI context you must deploy at least the following modules to your OSGI runtime
+environment:
+
+[source, listing]
+-----------------------------------------------
+# API and core
+org.apache.tamaya:tamaya-api:{tamayaVersion}
+org.apache.tamaya:tamaya-core:{tamayaVersion}
+org.apache.geronimo.specs:geronimo-annotation_1.2_spec:1.0-alpha-1
+# injection API. SE injection module and dependencies
+org.apache.tamaya.ext:tamaya-injection-api:{tamayaVersion}
+org.apache.tamaya.ext:tamaya-injection:{tamayaVersion}
+org.apache.geronimo.specs:geronimo-atinject_1.0_spec:1.0
+org.apache.geronimo.specs:geronimo-el_2.2_spec:1.0.4
+org.apache.geronimo.specs:geronimo-interceptor_1.1_spec:1.0
+org.apache.geronimo.specs:geronimo-jcdi_1.1_spec:1.0
+# OSGI integration and dependencies
+org.apache.tamaya.ext:tamaya-osgi:{tamayaVersion}
+org.apache.tamaya.ext:tamaya-functions:{tamayaVersion}
+-----------------------------------------------
+
+
+=== Usage
+
+As an example, what is possible you can implement an OSGI service as a normal POJO and publish it as an OSGI service.
+Given that configuration can be injected very easily:
+
+[source, java]
+-----------------------------------------------
+public class HelloServiceImpl implements HelloService{
+
+    @Config("example.message")
+    @ConfigDefault("A Tamaya default.")
+    private String message;
+
+    @Override
+    public String sayHello() {
+        System.err.println("HELLO: " + message);
+        return message;
+    }
+}
+-----------------------------------------------
+
+
+=== SPI
+
+By defauklt the OSGI pid or factory pid is mapped to a corresponding root section in Tamaya's configuration. We are
+well aware that this might not always be the desired approach. Therefore there as an SPI service provided that allows
+to determine this mapping:
+
+[source, java]
+.OSGIConfigRootMapper
+-----------------------------------------------
+public interface OSGIConfigRootMapper {
+
+    String getTamayaConfigRoot(String pid, String factoryPid);
+}
+-----------------------------------------------
+
+Registering your own implementation as an OSGI service allows you to redefine the key mapping.
+By default a configuration mapping for +pid/factoryPid==myBundle+ is mapped to +[bundle:myBundle]+.
+This mapping is used as a prefix when collecting the corresponding entries for the OSGI configuration.
