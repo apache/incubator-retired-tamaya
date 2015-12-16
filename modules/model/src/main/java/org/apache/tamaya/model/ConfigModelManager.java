@@ -89,11 +89,11 @@ public final class ConfigModelManager {
      * @param name the name to use, not null.
      * @return the sections defined, never null.
      */
-    public static <T extends ConfigModel> T getModel(String name, Class<T> validationType) {
+    public static <T extends ConfigModel> T getModel(String name, Class<T> modelType) {
         for (ModelProviderSpi model : ServiceContextManager.getServiceContext().getServices(ModelProviderSpi.class)) {
             for(ConfigModel configModel : model.getConfigModels()) {
-                if(configModel.getName().equals(name) && configModel.getClass().equals(validationType)) {
-                    return validationType.cast(configModel);
+                if(configModel.getName().equals(name) && configModel.getClass().equals(modelType)) {
+                    return modelType.cast(configModel);
                 }
             }
         }

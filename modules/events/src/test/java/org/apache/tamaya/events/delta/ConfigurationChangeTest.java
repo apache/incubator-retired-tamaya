@@ -20,6 +20,8 @@ package org.apache.tamaya.events.delta;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.events.ConfigurationChange;
+import org.apache.tamaya.events.ConfigurationChangeBuilder;
 import org.junit.Test;
 
 import java.util.Map;
@@ -27,7 +29,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Test class for {@link org.apache.tamaya.events.delta.ConfigurationChange}.
+ * Test class for {@link ConfigurationChange}.
  */
 public class ConfigurationChangeTest {
 

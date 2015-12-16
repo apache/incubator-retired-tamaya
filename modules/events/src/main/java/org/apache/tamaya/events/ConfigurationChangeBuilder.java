@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events.delta;
+package org.apache.tamaya.events;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -66,6 +67,15 @@ public final class ConfigurationChangeBuilder {
      */
     private ConfigurationChangeBuilder(Configuration configuration) {
         this.source = Objects.requireNonNull(configuration);
+    }
+
+    /**
+     * Creates a new instance current this builder using the current COnfiguration as root resource.
+     *
+     * @return the builder for chaining.
+     */
+    public static ConfigurationChangeBuilder of() {
+        return new ConfigurationChangeBuilder(ConfigurationProvider.getConfiguration());
     }
 
     /**

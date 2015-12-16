@@ -20,6 +20,8 @@ package org.apache.tamaya.events;
 
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static org.junit.Assert.*;
 
 /**
@@ -27,37 +29,38 @@ import static org.junit.Assert.*;
  */
 public class ConfigEventManagerTest {
 
-    private String testAddListenerValue;
+    private Object testAddListenerValue;
 
     @Test
     public void testAddRemoveListener() throws Exception {
-        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
+        ConfigEventListener testListener = new ConfigEventListener() {
             @Override
-            public void onConfigEvent(String event) {
-                testAddListenerValue = event;
+            public void onConfigEvent(ConfigEvent<?> event) {
+                testAddListenerValue = event.getResource();
             }
         };
         ConfigEventManager.addListener(testListener);
-        ConfigEventManager.fireEvent("Event1", String.class);
+        ConfigEventManager.fireEvent(new SimpleEvent("Event1"));
         assertEquals(testAddListenerValue, "Event1");
         ConfigEventManager.removeListener(testListener);
-        ConfigEventManager.fireEvent("Event2", String.class);
+        ConfigEventManager.fireEvent(new SimpleEvent("Event2"));
         assertEquals(testAddListenerValue, "Event1");
     }
 
     @Test
     public void testFireEvent() throws Exception {
-        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
+        ConfigEventListener testListener = new ConfigEventListener() {
             @Override
-            public void onConfigEvent(String event) {
-                testAddListenerValue = event;
+            public void onConfigEvent(ConfigEvent<?> event) {
+                testAddListenerValue = event.getResource();
             }
         };
         ConfigEventManager.addListener(testListener);
-        ConfigEventManager.fireEvent("Event1");
+        ConfigEventManager.fireEvent(new SimpleEvent("Event1"));
         assertEquals(testAddListenerValue, "Event1");
         ConfigEventManager.removeListener(testListener);
-        ConfigEventManager.fireEvent("Event2");
+        ConfigEventManager.fireEvent(new SimpleEvent("Event2"));
         assertEquals(testAddListenerValue, "Event1");
     }
+
 }

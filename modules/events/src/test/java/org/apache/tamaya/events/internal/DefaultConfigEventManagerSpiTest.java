@@ -18,7 +18,9 @@
  */
 package org.apache.tamaya.events.internal;
 
+import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
+import org.apache.tamaya.events.SimpleEvent;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,32 +31,31 @@ import static org.junit.Assert.assertEquals;
 public class DefaultConfigEventManagerSpiTest {
 
     private DefaultConfigEventManagerSpi spi = new DefaultConfigEventManagerSpi();
-    private String testAddListenerValue;
+    private Object testAddListenerValue;
 
     @Test
     public void testAddListener() throws Exception {
-        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
-
+        ConfigEventListener testListener = new ConfigEventListener() {
             @Override
-            public void onConfigEvent(String event) {
-                testAddListenerValue = event;
+            public void onConfigEvent(ConfigEvent<?> event) {
+                testAddListenerValue = event.getResource();
             }
         };
         spi.addListener(testListener);
-        spi.fireEvent("Event1", String.class);
+        spi.fireEvent(new SimpleEvent("Event1"));
         assertEquals(testAddListenerValue, "Event1");
         spi.removeListener(testListener);
-        spi.fireEvent("Event2", String.class);
+        spi.fireEvent(new SimpleEvent("Event2"));
         assertEquals(testAddListenerValue, "Event1");
 
     }
 
     @Test
     public void testRemoveListener() throws Exception {
-        ConfigEventListener<String> testListener = new ConfigEventListener<String>() {
+        ConfigEventListener testListener = new ConfigEventListener() {
 
             @Override
-            public void onConfigEvent(String event) {
+            public void onConfigEvent(ConfigEvent<?> event) {
                 testAddListenerValue = event;
             }
         };

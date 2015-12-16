@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events.delta;
+package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
 

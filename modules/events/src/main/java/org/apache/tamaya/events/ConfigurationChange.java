@@ -16,11 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events.delta;
+package org.apache.tamaya.events;
 
-import org.apache.tamaya.events.ChangeNotification;
-import org.apache.tamaya.events.FrozenPropertySource;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.Configuration;
 
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
@@ -33,32 +31,39 @@ import java.util.UUID;
 /**
  * Event that contains a set current changes that were applied or could be applied.
  * This class is immutable and thread-safe. To create instances use
- * {@link org.apache.tamaya.events.delta.PropertySourceChangeBuilder}.
+ * {@link PropertySourceChangeBuilder}.
  *
  * Created by Anatole on 22.10.2014.
  */
-public final class PropertySourceChange implements ChangeNotification<PropertySource>, Serializable{
+public final class ConfigurationChange implements ConfigEvent<Configuration>, Serializable{
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private FrozenPropertySource propertySource;
+    private FrozenConfiguration configuration;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change set in millis from the epoch. */
     private long timestamp = System.currentTimeMillis();
     /** The recorded changes. */
     private Map<String,PropertyChangeEvent> changes = new HashMap<>();
-    /** The overall type of change. */
-    private ChangeType changeType;
 
     /**
-     * Constructor used by {@link org.apache.tamaya.events.delta.PropertySourceChangeBuilder}.
+     * Get an empty change set for the given provider.
+     * @param configuration The configuration changed, not null.
+     * @return an empty ConfigurationChangeSet instance.
+     */
+    public static ConfigurationChange emptyChangeSet(Configuration configuration){
+        return ConfigurationChangeBuilder.of(configuration).build();
+    }
+
+    /**
+     * Constructor used by {@link PropertySourceChangeBuilder}.
      * @param builder The builder used, not null.
      */
-    PropertySourceChange(PropertySourceChangeBuilder builder) {
-        this.propertySource = FrozenPropertySource.of(builder.source);
-        for (PropertyChangeEvent c : builder.delta.values()) {
-            this.changes.put(c.getPropertyName(), c);
+    ConfigurationChange(ConfigurationChangeBuilder builder) {
+        this.configuration = FrozenConfiguration.of(builder.source);
+        for(PropertyChangeEvent ev:builder.delta.values()){
+            this.changes.put(ev.getPropertyName(), ev);
         }
         if(builder.version!=null){
             this.version = builder.version;
@@ -66,29 +71,27 @@ public final class PropertySourceChange implements ChangeNotification<PropertySo
         if(builder.timestamp!=null){
             this.timestamp = builder.timestamp;
         }
-        this.changeType = builder.changeType;
     }
 
-    /**
-     * Gets the type of change for this PropertySource.
-     * @return the type of change for this PropertySource, never null.
-     */
-    public ChangeType getChangeType(){
-        return this.changeType;
+    @Override
+    public Class<Configuration> getResourceType() {
+        return Configuration.class;
     }
 
     /**
      * Get the underlying property provider/configuration.
-     * @return the underlying property provider/configuration, or null, if the change instance was deserialized.
+     * @return the underlying property provider/configuration, never null.
      */
-    public PropertySource getResource(){
-        return this.propertySource;
+    @Override
+    public Configuration getResource(){
+        return this.configuration;
     }
 
     /**
      * Get the base version, usable for optimistic locking.
      * @return the base version.
      */
+    @Override
     public String getVersion(){
         return version;
     }
@@ -98,6 +101,7 @@ public final class PropertySourceChange implements ChangeNotification<PropertySo
      * identify a changeset.
      * @return the timestamp, when this changeset was created.
      */
+    @Override
     public long getTimestamp(){
         return timestamp;
     }
@@ -116,8 +120,8 @@ public final class PropertySourceChange implements ChangeNotification<PropertySo
      */
     public int getRemovedSize() {
         int removedCount = 0;
-        for (PropertyChangeEvent ev : this.changes.values()) {
-            if (ev.getNewValue() == null) {
+        for(PropertyChangeEvent ev:this.changes.values()){
+            if(ev.getNewValue() == null){
                 removedCount++;
             }
         }
@@ -131,14 +135,15 @@ public final class PropertySourceChange implements ChangeNotification<PropertySo
      */
     public int getAddedSize() {
         int addedCount = 0;
-        for (PropertyChangeEvent ev : this.changes.values()) {
-            if (ev.getOldValue() == null &&
-                    ev.getNewValue() != null) {
+        for(PropertyChangeEvent ev:this.changes.values()){
+            if(ev.getOldValue() == null &&
+                    ev.getNewValue() != null){
                 addedCount++;
             }
         }
         return addedCount;
-//        return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null).count();
+//        return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null &&
+//                e.getNewValue() != null).count();
     }
 
     /**
@@ -147,8 +152,8 @@ public final class PropertySourceChange implements ChangeNotification<PropertySo
      */
     public int getUpdatedSize() {
         int updatedCount = 0;
-        for (PropertyChangeEvent ev : this.changes.values()) {
-            if (ev.getOldValue() != null && ev.getNewValue() != null) {
+        for(PropertyChangeEvent ev:this.changes.values()){
+            if( ev.getOldValue()!=null && ev.getNewValue()!=null){
                 updatedCount++;
             }
         }
@@ -206,29 +211,10 @@ public final class PropertySourceChange implements ChangeNotification<PropertySo
     }
 
 
-    /**
-     * Create a change event for a new PropertySource that was added.
-     * @param propertySource the new property source, not null.
-     * @return a new PropertySourceChange, representing a PropertySource that was added.
-     */
-    public static PropertySourceChange ofAdded(PropertySource propertySource) {
-        return PropertySourceChangeBuilder.of(propertySource, ChangeType.NEW).build();
-    }
-
-    /**
-     * Create a change event for a deleted PropertySource.
-     * @param propertySource the deleted property source, not null.
-     * @return a new PropertySourceChange, representing a PropertySource that was deleted.
-     */
-    public static PropertySourceChange ofDeleted(PropertySource propertySource) {
-        return PropertySourceChangeBuilder.of(propertySource, ChangeType.DELETED).build();
-    }
-
     @Override
     public String toString() {
-        return "PropertySourceChange{" +
-                "changeType=" + changeType +
-                ", propertySource=" + propertySource +
+        return "ConfigurationChange{" +
+                "configuration=" + configuration +
                 ", version='" + version + '\'' +
                 ", timestamp=" + timestamp +
                 '}';

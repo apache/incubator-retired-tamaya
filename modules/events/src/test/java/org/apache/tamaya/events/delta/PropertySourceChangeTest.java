@@ -21,6 +21,9 @@ package org.apache.tamaya.events.delta;
 import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
 import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
+import org.apache.tamaya.events.ChangeType;
+import org.apache.tamaya.events.PropertySourceChange;
+import org.apache.tamaya.events.PropertySourceChangeBuilder;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
@@ -30,7 +33,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link org.apache.tamaya.events.delta.PropertySourceChange} and its builder.
+ * Tests for {@link PropertySourceChange} and its builder.
  */
 public class PropertySourceChangeTest {
 

@@ -18,9 +18,11 @@
  */
 package org.apache.tamaya.events.spi;
 
+import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * SPI interface to implement the {@link org.apache.tamaya.events.ConfigEventManager} singleton.
@@ -35,29 +37,88 @@ public interface ConfigEventManagerSpi {
      *
      * @param l the listener not null.
      */
-    <T> void addListener(ConfigEventListener<T> l);
+    <T> void addListener(ConfigEventListener l);
 
+    /**
+     * Adds a listener for observing events of a given type.
+     *
+     * @param l the listener not null.
+     * @param eventType the type of concrete configuration event this listeners should be informed about. All other
+     *                  event types will never be delivered toe this listener instance.
+     */
+    <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
 
     /**
      * Removes a listener for observing events.
      *
      * @param l the listener not null.
      */
-    <T> void removeListener(ConfigEventListener<T> l);
+    void removeListener(ConfigEventListener l);
 
     /**
-     * Publishes an event to all interested listeners.
+     * Removes a listener for observing events of a certain type.
      *
-     * @param event     the event, not null.
-     * @param eventType the event type.
+     * @param l the listener not null.
+     * @param eventType the type of concrete configuration event this listeners should be informed about. All other
+     *                  event types will never be delivered toe this listener instance.
      */
-    <T> void fireEvent(T event, Class<T> eventType);
+    <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType);
 
     /**
-     * Access all known listeners for a given targe type.
-     * @param type the type.
-     * @param <T> the listener type.
-     * @return the items found, never null.
+     * Access all globally registered listeners.
+     *
+     * @return the listeners found, never null.
      */
-    <T> Collection<? extends ConfigEventListener<T>> getListeners(Class<T> type);
+    Collection<? extends ConfigEventListener> getListeners();
+
+    /**
+     * Access all listeners listening for a certain event type, including any global listeners.
+     * @param eventType the type of concrete configuration event this listeners should be informed about. All other
+     *                  event types will never be delivered toe this listener instance.
+     * @return the listeners found, never null.
+     */
+    Collection<? extends ConfigEventListener> getListeners(Class<? extends ConfigEvent> eventType);
+
+    /**
+     * Publishes an event to all interested listeners, hereby executing all registered listeners sequentually and
+     * synchronously.,
+     *
+     * @param event the event, not null.
+     */
+    void fireEvent(ConfigEvent<?> event);
+
+    /**
+     * Publishes an event to all interested listeners, hereby publishing the change events asynchrously and in
+     * parallel (multithreaded).
+     *
+     * @param event the event, not null.
+     */
+    void fireEventAsynch(ConfigEvent<?> event);
+
+    /**
+     * Get the current check period to check for configuration changes.
+     *
+     * @return the check period in ms.
+     */
+    long getChangeMonitoringPeriod();
+
+    void setChangeMonitoringPeriod(long millis);
+
+    /**
+     * Check if the observer is running currently.
+     *
+     * @return true, if the change monitoring service is currently running.
+     */
+    boolean isChangeMonitorActive();
+
+    /**
+     * Start/Stop the change monitoring service, which will observe/reevaluate the current configuration regularly
+     * and triggers ConfigurationChange events is something changed. This is quite handy for publishing
+     * configuration changes to whatever systems are interested in. Hereby the origin of a configuration change
+     * can be on this machine, or also remotedly. FOr handling corresponding {@link ConfigEventListener} have
+     * to be registered, e.g. listening on {@link org.apache.tamaya.events.ConfigurationChange} events.
+     */
+    void enableChangeMonitor(boolean enable);
+
+
 }

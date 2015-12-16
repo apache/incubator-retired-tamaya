@@ -18,20 +18,24 @@
  */
 package org.apache.tamaya.events.internal;
 
-import org.apache.tamaya.events.ConfigListener;
-import org.apache.tamaya.events.delta.ConfigurationChange;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.events.ConfigEvent;
+import org.apache.tamaya.events.ConfigEventListener;
+import org.apache.tamaya.events.ConfigurationChange;
 
 import java.util.logging.Logger;
 
 /**
  * Simple ConfigListener that simply logs any detected config changes to INFO level.
  */
-public class LoggingConfigListener implements ConfigListener{
+public class LoggingConfigListener implements ConfigEventListener {
 
     private static final Logger LOG = Logger.getLogger(LoggingConfigListener.class.getName());
 
     @Override
-    public void onConfigEvent(ConfigurationChange event) {
-        LOG.info("Configuration changed: " + event);
+    public void onConfigEvent(ConfigEvent<?> event) {
+        if(event.getResourceType()== Configuration.class) {
+            LOG.info("Configuration changed: " + event);
+        }
     }
 }

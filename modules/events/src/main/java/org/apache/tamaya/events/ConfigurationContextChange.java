@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events.delta;
+package org.apache.tamaya.events;
 
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.io.Serializable;
@@ -30,11 +31,11 @@ import java.util.UUID;
 /**
  * Event that contains a set current changes that were applied or could be applied.
  * This class is immutable and thread-safe. To create instances use
- * {@link org.apache.tamaya.events.delta.PropertySourceChangeBuilder}.
+ * {@link PropertySourceChangeBuilder}.
  *
  * Created by Anatole on 22.10.2014.
  */
-public final class ConfigurationContextChange implements Serializable{
+public final class ConfigurationContextChange implements ConfigEvent<ConfigurationContext>, Serializable{
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
@@ -43,17 +44,19 @@ public final class ConfigurationContextChange implements Serializable{
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change set in millis from the epoch. */
     private long timestamp = System.currentTimeMillis();
+    /** The configuration context. */
+    private ConfigurationContext configurationContext;
 
     /**
      * Get an empty change set for the given provider.
-     * @return an empty ConfigurationChangeSet instance.
+     * @return an empty ConfigurationContextChange instance.
      */
-    public static ConfigurationContextChange emptyChangeSet(){
-        return ConfigurationContextChangeBuilder.of().build();
+    public static ConfigurationContextChange emptyChangeSet(ConfigurationContext configurationContext){
+        return ConfigurationContextChangeBuilder.of(configurationContext).build();
     }
 
     /**
-     * Constructor used by {@link org.apache.tamaya.events.delta.PropertySourceChangeBuilder}.
+     * Constructor used by {@link PropertySourceChangeBuilder}.
      * @param builder The builder used, not null.
      */
     ConfigurationContextChange(ConfigurationContextChangeBuilder builder) {
@@ -64,12 +67,24 @@ public final class ConfigurationContextChange implements Serializable{
         if(builder.timestamp!=null){
             this.timestamp = builder.timestamp;
         }
+        this.configurationContext = builder.configurationContext;
+    }
+
+    @Override
+    public Class<ConfigurationContext> getResourceType() {
+        return ConfigurationContext.class;
+    }
+
+    @Override
+    public ConfigurationContext getResource() {
+        return configurationContext;
     }
 
     /**
      * Get the base version, usable for optimistic locking.
      * @return the base version.
      */
+    @Override
     public String getVersion(){
         return version;
     }
@@ -79,6 +94,7 @@ public final class ConfigurationContextChange implements Serializable{
      * identify a changeset.
      * @return the timestamp, when this changeset was created.
      */
+    @Override
     public long getTimestamp(){
         return timestamp;
     }

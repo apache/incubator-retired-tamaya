@@ -18,18 +18,15 @@
  */
 package org.apache.tamaya.events.internal;
 
-import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,14 +38,18 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigEventManagerSpi.class.getName());
 
-    private Map<Type, List<ConfigEventListener<?>>> listenerMap = new ConcurrentHashMap<>();
+    private Map<Class,List<ConfigEventListener>> listeners = new ConcurrentHashMap<>();
+
+    private ExecutorService publisher = Executors.newCachedThreadPool();
+
+    private DefaultConfigChangeObserver changeObserver = new DefaultConfigChangeObserver();
 
     /**
      * Constructor. Also loads all registered listeners.
      */
     public DefaultConfigEventManagerSpi() {
         try {
-            for (ConfigEventListener<?> l : ServiceContextManager.getServiceContext().getServices(ConfigEventListener.class)) {
+            for (ConfigEventListener l : ServiceContextManager.getServiceContext().getServices(ConfigEventListener.class)) {
                 try {
                     addListener(l);
                 } catch (Exception e) {
@@ -61,37 +62,76 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
     }
 
     @Override
-    public <T> void addListener(ConfigEventListener<T> l) {
-        Type type = TypeLiteral.getGenericInterfaceTypeParameters(l.getClass(), ConfigEventListener.class)[0];
-        List<ConfigEventListener<?>> listeners = listenerMap.get(type);
-        if (listeners == null) {
-            listeners = Collections.synchronizedList(new ArrayList<ConfigEventListener<?>>());
-            listenerMap.put(type, listeners);
+    public void addListener(ConfigEventListener l){
+        addListener(l, ConfigEvent.class);
+    }
+
+    @Override
+    public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType){
+        List<ConfigEventListener> ls = listeners.get(eventType);
+        if(ls==null){
+            ls = Collections.synchronizedList(new ArrayList<ConfigEventListener>());
+            listeners.put(eventType, ls);
         }
-        synchronized (listeners) {
-            if (!listeners.contains(l)) {
-                listeners.add(l);
+        synchronized (ls){
+            if(!ls.contains(l)){
+                ls.add(l);
             }
         }
     }
 
     @Override
-    public <T> void removeListener(ConfigEventListener<T> l) {
-        Type type = TypeLiteral.getGenericInterfaceTypeParameters(l.getClass(), ConfigEventListener.class)[0];
-        List<ConfigEventListener<?>> listeners = listenerMap.get(type);
-        if (listeners != null) {
-            synchronized (listeners) {
-                listeners.remove(l);
+    public void removeListener(ConfigEventListener l){
+        removeListener(l, ConfigEvent.class);
+    }
+
+    @Override
+    public <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
+        List<ConfigEventListener> targets = this.listeners.get(eventType);
+        if(targets!=null) {
+            // forward to explicit listeners
+            synchronized (targets) {
+                targets.remove(l);
             }
         }
     }
 
     @Override
-    public <T> void fireEvent(T event, Class<T> eventType) {
-        List<ConfigEventListener<?>> listeners = listenerMap.get(eventType);
-        if (listeners != null) {
-            synchronized (listeners) {
-                for (ConfigEventListener l : listeners) {
+    public Collection<? extends ConfigEventListener> getListeners(Class<? extends ConfigEvent> eventType) {
+        List<ConfigEventListener> targets = this.listeners.get(eventType);
+        if(targets!=null){
+            synchronized(targets){
+                return new ArrayList<>(targets);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Collection<? extends ConfigEventListener> getListeners() {
+        Set<ConfigEventListener> targets = new HashSet<>();
+        for(List<ConfigEventListener> l:this.listeners.values()){
+            targets.addAll(l);
+        }
+        return targets;
+    }
+
+    @Override
+    public void fireEvent(ConfigEvent<?> event) {
+        List<ConfigEventListener> targets = this.listeners.get(event.getClass());
+        if(targets!=null) {
+            // forward to explicit listeners
+            synchronized (targets) {
+                for (ConfigEventListener l : targets) {
+                    l.onConfigEvent(event);
+                }
+            }
+        }
+        // forward to global listeners
+        targets = this.listeners.get(ConfigEvent.class);
+        if(targets!=null) {
+            synchronized (targets) {
+                for (ConfigEventListener l : targets) {
                     l.onConfigEvent(event);
                 }
             }
@@ -99,12 +139,64 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
     }
 
     @Override
-    public <T> Collection<ConfigEventListener<T>> getListeners(Class<T> eventType) {
-        List<ConfigEventListener<?>> listeners =
-                listenerMap.get(eventType);
-        if (listeners != null) {
-            return Collection.class.cast(listeners);
+    public void fireEventAsynch(ConfigEvent<?> event) {
+        List<ConfigEventListener> targets = this.listeners.get(event.getClass());
+        if(targets!=null) {
+            // forward to explicit listeners
+            synchronized (targets) {
+                for (ConfigEventListener l : targets) {
+                    publisher.execute(new PublishConfigChangeTask(l, event));
+                }
+            }
         }
-        return Collections.emptyList();
+        // forward to global listeners
+        targets = this.listeners.get(ConfigEvent.class);
+        if(targets!=null) {
+            synchronized (targets) {
+                for (ConfigEventListener l : targets) {
+                    publisher.execute(new PublishConfigChangeTask(l, event));
+                }
+            }
+        }
+    }
+
+    @Override
+    public long getChangeMonitoringPeriod() {
+        return changeObserver.getCheckPeriod();
+    }
+
+    @Override
+    public void setChangeMonitoringPeriod(long millis){
+        changeObserver.setCheckPeriod(millis);
+    }
+
+    @Override
+    public boolean isChangeMonitorActive() {
+        return changeObserver.isMonitoring();
+    }
+
+    @Override
+    public void enableChangeMonitor(boolean enable) {
+        changeObserver.enableMonitoring(enable);
+    }
+
+
+    /**
+     * Tasks to inform observers on detected configuration changes.
+     */
+    private static final class PublishConfigChangeTask implements Runnable{
+
+        private ConfigEventListener l;
+        private ConfigEvent<?> changes;
+
+        public PublishConfigChangeTask(ConfigEventListener l, ConfigEvent<?> changes) {
+            this.l = Objects.requireNonNull(l);
+            this.changes = Objects.requireNonNull(changes);
+        }
+
+        @Override
+        public void run() {
+            l.onConfigEvent(changes);
+        }
     }
 }

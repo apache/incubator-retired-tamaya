@@ -21,19 +21,24 @@ package org.apache.tamaya.events.delta;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
+import org.apache.tamaya.events.ChangeType;
+import org.apache.tamaya.events.ConfigurationContextChange;
+import org.apache.tamaya.events.ConfigurationContextChangeBuilder;
+import org.apache.tamaya.events.PropertySourceChangeBuilder;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- * Test class for {@link org.apache.tamaya.events.delta.ConfigurationContextChange}.
+ * Test class for {@link ConfigurationContextChange}.
  */
 public class ConfigurationContextChangeTest {
 
     @Test
     public void testEmptyChangeSet() throws Exception {
-        ConfigurationContextChange change = ConfigurationContextChange.emptyChangeSet();
+        ConfigurationContextChange change = ConfigurationContextChange.emptyChangeSet(
+                ConfigurationProvider.getConfigurationContext());
         assertNotNull(change);
         assertTrue(change.isEmpty());
     }

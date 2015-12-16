@@ -39,33 +39,41 @@ public final class ConfiguredTypeEventsModelPopulator implements ConfigEventList
      */
     private static final Logger LOG = Logger.getLogger(ConfiguredTypeEventsModelPopulator.class.getName());
 
+    /** System property to be set to deactivate auto documentation of configured classes published thorugh
+     * ConfiguredType events.
+     */
+    private static final String ENABLE_EVENT_DOC = "org.apache.tamaya.model.autoModelEvents";
+
     @Override
     public void onConfigEvent(ConfiguredType confType) {
-        for (ConfiguredField field : confType.getConfiguredFields()) {
-            Collection<String> keys = field.getConfiguredKeys();
-            for (String key : keys) {
-                ParameterModel val = ConfigModelManager.getModel(key, ParameterModel.class);
-                if (val == null) {
-                    ConfiguredTypeEventsModelProvider.addValidation(new ParameterModel.Builder(key)
-                            .setType(field.getType().getName())
-                            .setDescription("Injected field: " +
-                                    field.getAnnotatedField().getDeclaringClass().getName() + '.' + field.toString() +
-                                    ", \nconfigured with keys: " + keys)
-                            .build());
+        String value = System.getProperty(ENABLE_EVENT_DOC);
+        if(value==null?true:Boolean.parseBoolean(value)) {
+            for (ConfiguredField field : confType.getConfiguredFields()) {
+                Collection<String> keys = field.getConfiguredKeys();
+                for (String key : keys) {
+                    ParameterModel val = ConfigModelManager.getModel(key, ParameterModel.class);
+                    if (val == null) {
+                        ConfiguredTypeEventsModelProvider.addValidation(new ParameterModel.Builder(key)
+                                .setType(field.getType().getName())
+                                .setDescription("Injected field: " +
+                                        field.getAnnotatedField().getDeclaringClass().getName() + '.' + field.toString() +
+                                        ", \nconfigured with keys: " + keys)
+                                .build());
+                    }
                 }
             }
-        }
-        for (ConfiguredMethod method : confType.getConfiguredMethods()) {
-            Collection<String> keys = method.getConfiguredKeys();
-            for (String key : keys) {
-                ParameterModel val = ConfigModelManager.getModel(key, ParameterModel.class);
-                if (val == null) {
-                    ConfiguredTypeEventsModelProvider.addValidation(new ParameterModel.Builder(key)
-                            .setType(method.getParameterTypes()[0].getName())
-                            .setDescription("Injected field: " +
-                                    method.getAnnotatedMethod().getDeclaringClass().getName() + '.' + method.toString() +
-                                    ", \nconfigured with keys: " + keys)
-                            .build());
+            for (ConfiguredMethod method : confType.getConfiguredMethods()) {
+                Collection<String> keys = method.getConfiguredKeys();
+                for (String key : keys) {
+                    ParameterModel val = ConfigModelManager.getModel(key, ParameterModel.class);
+                    if (val == null) {
+                        ConfiguredTypeEventsModelProvider.addValidation(new ParameterModel.Builder(key)
+                                .setType(method.getParameterTypes()[0].getName())
+                                .setDescription("Injected field: " +
+                                        method.getAnnotatedMethod().getDeclaringClass().getName() + '.' + method.toString() +
+                                        ", \nconfigured with keys: " + keys)
+                                .build());
+                    }
                 }
             }
         }

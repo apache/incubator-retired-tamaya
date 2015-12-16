@@ -16,8 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.events.delta;
+package org.apache.tamaya.events;
 
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.ArrayList;
@@ -50,10 +52,21 @@ public final class ConfigurationContextChangeBuilder {
      */
     Long timestamp;
 
+    ConfigurationContext configurationContext;
+
     /**
      * Constructor.
      */
-    private ConfigurationContextChangeBuilder() {
+    private ConfigurationContextChangeBuilder(ConfigurationContext configurationContext) {
+        this.configurationContext = Objects.requireNonNull(configurationContext);
+    }
+
+    /**
+     * Just creates a new ConfigurationContextBuilder using the current COnfigurationContext has root resource.
+     * @return a new ConfigurationContextBuilder, never null.
+     */
+    public static ConfigurationContextChangeBuilder of() {
+        return of(ConfigurationProvider.getConfigurationContext());
     }
 
     /**
@@ -61,8 +74,8 @@ public final class ConfigurationContextChangeBuilder {
      *
      * @return the builder for chaining.
      */
-    public static ConfigurationContextChangeBuilder of() {
-        return new ConfigurationContextChangeBuilder();
+    public static ConfigurationContextChangeBuilder of(ConfigurationContext context) {
+        return new ConfigurationContextChangeBuilder(context);
     }
 
     /*
@@ -155,5 +168,6 @@ public final class ConfigurationContextChangeBuilder {
     public String toString() {
         return "ConfigurationContextChangeBuilder [propertySources=" + changedPropertySources + "]";
     }
+
 
 }

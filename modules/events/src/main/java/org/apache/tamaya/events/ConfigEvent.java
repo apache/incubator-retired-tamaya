@@ -24,9 +24,15 @@ import java.util.Collection;
 
 /**
  * Event that contains a set current changes that were applied or could be applied.
- * @param <T> the event type
+ * @param <T> the resource type.
  */
-public interface ChangeNotification<T>{
+public interface ConfigEvent<T>{
+
+    /**
+     * Access the type of resource. This allows to easily determine the resource an event wants to observe.
+     * @return the resource type.
+     */
+    Class<T> getResourceType();
 
     /**
      * Get the underlying property provider/configuration.
@@ -37,7 +43,7 @@ public interface ChangeNotification<T>{
     /**
      * Get the version relative to the observed resource. The version is required to be unique for
      * each change emmitted for a resource. There is no further requirement how this uniqueness is
-     * modelled, so returning a UUID is cometely valid.
+     * modelled, so returning a UUID is a completely valid strategy.
      * @return the base version.
      */
     String getVersion();
@@ -48,19 +54,5 @@ public interface ChangeNotification<T>{
      * @return the timestamp, when this changeset was created.
      */
     long getTimestamp();
-
-    /**
-     * Get the changes recorded.
-     * @return the recorded changes, never null.
-     */
-    Collection<PropertyChangeEvent> getChanges();
-
-    /**
-     * Checks if the given key is added, or updated OR removed.
-     * @param key the target key (can also be a regular expression), that matches the requested keys,
-     *            not null.
-     * @return true, if the given key was added, or updated BUT NOT removed.
-     */
-    boolean isKeyAffected(String key);
 
 }

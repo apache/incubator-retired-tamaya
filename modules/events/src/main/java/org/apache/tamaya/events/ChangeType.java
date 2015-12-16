@@ -18,14 +18,11 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.events.delta.ConfigurationChange;
-
 /**
- * Simple observer interface that can be registered using the current {@code ServiceContext}.
- * This class will be called on each configuration change detected in the current environment.
+ * Created by Anatole on 20.02.2015.
  */
-// @FunctionalInterface
-public interface ConfigListener
-        extends ConfigEventListener<ConfigurationChange> {
-
+public enum ChangeType {
+    NEW,
+    DELETED,
+    UPDATED,
 }

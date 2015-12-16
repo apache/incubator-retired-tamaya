@@ -19,13 +19,17 @@
 package org.apache.tamaya.events.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
-import org.apache.tamaya.events.delta.ConfigurationContextChange;
+import org.apache.tamaya.events.ConfigurationContextChange;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertySource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,35 +37,38 @@ import java.util.logging.Logger;
  * Default ConfigEventListener for ConfigurationContextChange events that updates the current context, if resources were
  * affected.
  */
-public class DefaultConfigurationContextChangeListener implements ConfigEventListener<ConfigurationContextChange> {
+public class DefaultConfigurationContextChangeListener implements ConfigEventListener {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContextChangeListener.class.getName());
 
     @Override
-    public void onConfigEvent(ConfigurationContextChange event) {
-        ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
-        List<PropertySource> affectedPropertySources = new ArrayList<>();
-        for (PropertySource ps : context.getPropertySources()) {
-            if (event.isAffected(ps)) {
-                affectedPropertySources.add(ps);
+    public void onConfigEvent(ConfigEvent<?> event) {
+        if(event.getClass() == ConfigurationContextChange.class) {
+            ConfigurationContextChange contextChange = (ConfigurationContextChange) event;
+            ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
+            List<PropertySource> affectedPropertySources = new ArrayList<>();
+            for (PropertySource ps : context.getPropertySources()) {
+                if (contextChange.isAffected(ps)) {
+                    affectedPropertySources.add(ps);
+                }
             }
-        }
-        ConfigurationContextBuilder newContextBuilder = ConfigurationProvider.getConfigurationContextBuilder()
-                .setContext(context);
-        if (!affectedPropertySources.isEmpty()) {
-            Set<String> propertySourceNames = new HashSet<>();
-            for (PropertySource removed : event.getRemovedPropertySources()) {
-                propertySourceNames.add(removed.getName());
+            ConfigurationContextBuilder newContextBuilder = ConfigurationProvider.getConfigurationContextBuilder()
+                    .setContext(context);
+            if (!affectedPropertySources.isEmpty()) {
+                Set<String> propertySourceNames = new HashSet<>();
+                for (PropertySource removed : contextChange.getRemovedPropertySources()) {
+                    propertySourceNames.add(removed.getName());
+                }
+                newContextBuilder.removePropertySources(propertySourceNames);
             }
-            newContextBuilder.removePropertySources(propertySourceNames);
-        }
-        newContextBuilder.addPropertySources(event.getAddedPropertySources());
-        newContextBuilder.addPropertySources(event.getUpdatedPropertySources());
-        ConfigurationContext newContext = newContextBuilder.build();
-        try {
-            ConfigurationProvider.setConfigurationContext(newContext);
-        } catch (Exception e) {
-            LOG.log(Level.INFO, "Failed to update the current ConfigurationContext due to config model changes", e);
+            newContextBuilder.addPropertySources(contextChange.getAddedPropertySources());
+            newContextBuilder.addPropertySources(contextChange.getUpdatedPropertySources());
+            ConfigurationContext newContext = newContextBuilder.build();
+            try {
+                ConfigurationProvider.setConfigurationContext(newContext);
+            } catch (Exception e) {
+                LOG.log(Level.INFO, "Failed to update the current ConfigurationContext due to config model changes", e);
+            }
         }
     }
 }

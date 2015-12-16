@@ -19,6 +19,7 @@
 package org.apache.tamaya.events.folderobserver;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.events.PropertySourceChange;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
 
 /**
  * Class that has the responsibility to watch the folder and then publish the changes to a
- * {@link org.apache.tamaya.events.delta.PropertySourceChange}.
+ * {@link PropertySourceChange}.
  * @see ObservingPropertySourceProvider
  * This listener will wait to events and wait to one second to watch again.
  * <p>If new file was created or modified will commit from this file.</p>

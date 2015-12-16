@@ -20,14 +20,13 @@ package org.apache.tamaya.events;
 
 /**
  * Interface to be implemented for listening on changes on {@link org.apache.tamaya.Configuration} instances.
- * @param <T> the type listened to.
  */
 //@FunctionalInterface
-public interface ConfigEventListener<T> {
+public interface ConfigEventListener {
     /**
      * Called if an event occurred.
      * @param event the event, not null.
      */
-    void onConfigEvent(T event);
+    void onConfigEvent(ConfigEvent<?> event);
 
 }

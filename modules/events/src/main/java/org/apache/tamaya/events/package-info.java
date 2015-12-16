@@ -18,6 +18,7 @@
  */
 /**
  * This package provides the main building blocks for handling configuration changes, such as
- * {@link org.apache.tamaya.events.ConfigEventManager}, {@link org.apache.tamaya.events.ConfigEventListener}.
+ * {@link org.apache.tamaya.events.ConfigEventManager}, {@link org.apache.tamaya.events.ConfigEventListener} and
+ * artifacts to describe the changes (delta) of a Configuration or a PropertySource.
  */
 package org.apache.tamaya.events;

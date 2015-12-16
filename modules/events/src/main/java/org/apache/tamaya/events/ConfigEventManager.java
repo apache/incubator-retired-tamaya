@@ -42,12 +42,10 @@ public final class ConfigEventManager {
     }
 
     /**
-     * Add a listener for observing change events on {@link org.apache.tamaya.Configuration}. References of this
-     * component to the listeners must be managed as weak references.
-     *
+     * Adds a Config listener that listens to all kind of {@link ConfigEvent}.
      * @param l the listener not null.
      */
-    public static <T> void addListener(ConfigEventListener<T> l) {
+    public static void addListener(ConfigEventListener l) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
                     ConfigEventManager.class.getName());
@@ -56,12 +54,24 @@ public final class ConfigEventManager {
     }
 
     /**
-     * Add a listener for observing change events on {@link org.apache.tamaya.spi.PropertySource}. References of this
-     * component to the listeners must be managed as weak references.
+     * Adds a Config listener that listens to all kind of {@link ConfigEvent}.
+     * @param l the listener not null.
+     * @param eventType the event type to which this listener listens to.
+     */
+    public static <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
+        if (SPI == null) {
+            throw new ConfigException("No SPI registered for " +
+                    ConfigEventManager.class.getName());
+        }
+        SPI.addListener(l);
+    }
+
+    /**
+     * Removes a listener registered globally.
      *
      * @param l the listener not null.
      */
-    public static <T> void removeListener(ConfigEventListener<T> l) {
+    public static void removeListener(ConfigEventListener l) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
                     ConfigEventManager.class.getName());
@@ -70,38 +80,98 @@ public final class ConfigEventManager {
     }
 
     /**
-     * Access all registered ConfigEventListeners listening to the given event type.
-     * @param type the event type
-     * @param <T> type param
-     * @return a list with the listeners found, never null.
-     */
-    public static <T>
-        Collection<? extends ConfigEventListener<T>> getListeneters(Class<T> type) {
-        return SPI.getListeners(type);
-    }
-
-
-    /**
-     * Publishes sn event to all interested listeners.
+     * Removes a listener registered for the given event type.
      *
-     * @param event the event, not null.
+     * @param l the listener not null.
+     * @param eventType the event type to which this listener listens to.
      */
-    public static void fireEvent(Object event) {
-        fireEvent(event, (Class)event.getClass());
-    }
-
-    /**
-     * Publishes a {@link org.apache.tamaya.events.delta.ConfigurationChange} to all interested listeners.
-     *
-     * @param event the event, not null.
-     *              @param eventType the event type, the vent may be a subclass.
-     */
-    public static <T> void fireEvent(T event, Class<T> eventType) {
+    public static <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
         if (SPI == null) {
             throw new ConfigException("No SPI registered for " +
                     ConfigEventManager.class.getName());
         }
-        SPI.fireEvent(event, eventType);
+        SPI.removeListener(l);
+    }
+
+    /**
+     * Access all registered ConfigEventListeners listening to a given event type.
+     * @param type the event type
+     * @param <T> type param
+     * @return a list with the listeners found, never null.
+     */
+    public static <T extends ConfigEvent>
+        Collection<? extends ConfigEventListener> getListeners(Class<T> type) {
+        return SPI.getListeners(type);
+    }
+
+    /**
+     * Access all registered ConfigEventListeners listening to a all kind of event types globally.
+     * @return a list with the listeners found, never null.
+     */
+    public static <T extends ConfigEvent>
+    Collection<? extends ConfigEventListener> getListeners() {
+        return SPI.getListeners();
+    }
+
+    /**
+     * Publishes a {@link ConfigurationChange} synchronously to all interested listeners.
+     *
+     * @param event the event, not null.
+     */
+    public static <T> void fireEvent(ConfigEvent<?> event) {
+        SPI.fireEvent(event);
+    }
+
+    /**
+     * Publishes a {@link ConfigurationChange} asynchronously/multithreaded to all interested listeners.
+     *
+     * @param event the event, not null.
+     */
+    public static <T> void fireEventAsynch(ConfigEvent<?> event) {
+        SPI.fireEventAsynch(event);
+    }
+
+    /**
+     * Start/Stop the change monitoring service, which will observe/reevaluate the current configuration regularly
+     * and triggers ConfigurationChange events is something changed. This is quite handy for publishing
+     * configuration changes to whatever systems are interested in. Hereby the origin of a configuration change
+     * can be on this machine, or also remotedly. FOr handling corresponding {@link ConfigEventListener} have
+     * to be registered, e.g. listening on {@link org.apache.tamaya.events.ConfigurationChange} events.
+     * @see #isChangeMonitoring()
+     * @see #getChangeMonitoringPeriod()
+     */
+    public static void enableChangeMonitoring(boolean enable) {
+        SPI.enableChangeMonitor(enable);
+    }
+
+    /**
+     * Check if the observer is running currently.
+     *
+     * @return true, if the change monitoring service is currently running.
+     * @see #enableChangeMonitoring(boolean)
+     */
+    public static boolean isChangeMonitoring() {
+        return SPI.isChangeMonitorActive();
+    }
+
+    /**
+     * Get the current check period to check for configuration changes.
+     *
+     * @return the check period in ms.
+     */
+    public long getChangeMonitoringPeriod(){
+        return SPI.getChangeMonitoringPeriod();
+    }
+
+    /**
+     * Sets the current monitoring period and restarts the monitor. You still have to enable the monitor if
+     * it is currently not enabled.
+     * @param millis
+     * @see #enableChangeMonitoring(boolean)
+     * @see #isChangeMonitoring()
+     */
+    public void setChangeMonitoringPeriod(long millis){
+        SPI.setChangeMonitoringPeriod(millis);
     }
 
 }
