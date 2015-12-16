@@ -8,7 +8,7 @@ There are at least two main usage scenarios for Tamaya, which are synergetic:
   basic Tamaya core implementation). As a result all applications/modules in your company follow the same configuration
   policy, which makes it much more simpler to move people between your teams. Similarly additional tooling functionality
   can help you to manage configuration on application as well as on enterprise level, e.g. providing command line or
-  REST support to access the supported configuration entries, types and values, configuration validation and more.
+  REST support to access the supported configuration entries, types and values, configuration configModel and more.
 - If you are writing an application, application component or library you can support configuration using Tamaya by
   adding it as an optional dependency. If done so your users/customers can use Tamaya to connect their current enterprise
   configuration infrastructure transparently to your code. As an example you can use Tamaya to read your default

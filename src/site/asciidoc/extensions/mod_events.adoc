@@ -296,6 +296,28 @@ Configuration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getCon
 PropertySource frozenSource = FrozenPropertySource.of(ConfigurationProvider.getConfiguration());
 --------------------------------------------------
 
+=== Observing and publishing configuration changes
+
+The event module allows to register and publish listeners for acting on configuration changes, e.g. of paramters with a
+private section name. The main entry point for this feature is the +ConfigurationObserver+ singleton:
+
+[source,java]
+.ConfigurationObserver
+--------------------------------------------------
+public class ConfigurationObserver {
+
+    private ConfigurationObserver() {}
+
+    public static <T> void addObservedKeys(Collection<String> keys);
+    public static <T> void addObservedKeys(String... keys);
+    public static <T> void removeObservedKeys(Collection<String> keys);
+    public static <T> void removeObservedKeys(String... keys);
+    public static Set<String> getObservedKeys();
+--------------------------------------------------
+
+This singleton allows to register keys on which listeners may listen to. Hereby, when changes have been identified
+that are observed, a +ConfigurationChange+ event is published on the event bus.
+
 
 === SPIs
 

@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
-import org.apache.tamaya.inject.NoConfig;
+import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.spi.ConfiguredType;

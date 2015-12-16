@@ -19,8 +19,7 @@
 package annottext;
 
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.api.LoadPolicy;
-import org.apache.tamaya.inject.NoConfig;
+import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefault;
 

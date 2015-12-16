@@ -16,7 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.inject;
+package org.apache.tamaya.inject.api;
+
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,13 +25,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to control injection of a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link Config}
- * annotation(s). When this annotation is added the injection systems tries to inject all
- * fields found, also including fields not annotated with {@code @ConfigProperty}.
- * Fields not to be injected ccan be annotated with {@code @NoConfig} to exclude them
- * being eleceted for injection.
+ * This is a small marker annotations to inform Tamaya that the annotated element should never be injected with
+ * configured data. This is useful because by default Tamaya tries to lookup and inject configuration also by
+ * using property or method names without annotations. With that annotation none of these will be happen.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE })
-public @interface ConfigAutoInject {}
+@Target(value = { ElementType.FIELD, ElementType.METHOD })
+public @interface NoConfig {
+
+}
