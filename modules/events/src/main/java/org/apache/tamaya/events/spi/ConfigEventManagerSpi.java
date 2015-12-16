@@ -22,7 +22,6 @@ import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * SPI interface to implement the {@link org.apache.tamaya.events.ConfigEventManager} singleton.

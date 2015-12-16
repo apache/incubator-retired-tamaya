@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.events;
 
-import java.beans.PropertyChangeEvent;
-import java.util.Collection;
-
 
 /**
  * Event that contains a set current changes that were applied or could be applied.

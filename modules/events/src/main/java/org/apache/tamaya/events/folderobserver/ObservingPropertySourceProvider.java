@@ -19,9 +19,7 @@
 package org.apache.tamaya.events.folderobserver;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEventManager;
-import org.apache.tamaya.events.PropertySourceChange;
 import org.apache.tamaya.events.ConfigurationContextChange;
 import org.apache.tamaya.events.ConfigurationContextChangeBuilder;
 import org.apache.tamaya.format.ConfigurationData;
@@ -52,7 +50,7 @@ import java.util.logging.Logger;
  * This implementation run in a folder taking up all file compatible with the given
  * ConfigurationFormats. When a file is added, deleted or modified the PropertySourceProvider
  * will adapt the changes automatically and trigger according
- * {@link PropertySourceChange} events.
+ * {@link org.apache.tamaya.events.PropertySourceChange} events.
  * The default folder is META-INF/config, but you can change using the absolute path in
  * "-Dtamaya.configdir" parameter.
  */

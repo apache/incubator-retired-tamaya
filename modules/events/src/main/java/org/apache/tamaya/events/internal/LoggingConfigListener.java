@@ -21,7 +21,6 @@ package org.apache.tamaya.events.internal;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
-import org.apache.tamaya.events.ConfigurationChange;
 
 import java.util.logging.Logger;
 
