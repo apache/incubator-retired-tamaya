@@ -203,6 +203,7 @@ under the License.
 
     <modules>
         <module>buildconfigurations</module>
+        <module>code</module>
         <module>api</module>
         <module>core</module>
         <module>modules</module>
