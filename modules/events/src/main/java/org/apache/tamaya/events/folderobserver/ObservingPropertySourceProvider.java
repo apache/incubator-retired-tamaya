@@ -19,12 +19,10 @@
 package org.apache.tamaya.events.folderobserver;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigurationContextChange;
 import org.apache.tamaya.events.ConfigurationContextChangeBuilder;
-import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.ConfigurationFormat;
-import org.apache.tamaya.format.FlattenedDefaultPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
@@ -35,12 +33,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -64,29 +57,16 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      */
     private final List<PropertySource> propertySources = Collections.synchronizedList(new LinkedList<PropertySource>());
     /**
-     * The supported configuration formats of this provider.
-     */
-    private Collection<ConfigurationFormat> formats = new ArrayList<>();
-    /**
      * The thread pool used.
      */
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
-     * Constructor, reading the config file from classpath resource and system property.
-     */
-    public ObservingPropertySourceProvider(ConfigurationFormat... formats) {
-        this(null, formats);
-    }
-
-    /**
      * Constructorm using an explicit directory, ignoring all kind of configuration, if set.
      *
      * @param directory the target directory. If null, the default configuration and system property are used.
-     * @param formats   the formats to be used.
      */
-    public ObservingPropertySourceProvider(Path directory, ConfigurationFormat... formats) {
-        this.formats = Arrays.asList(formats);
+    public ObservingPropertySourceProvider(Path directory) {
         if (directory == null) {
             directory = getDirectory();
         }
@@ -111,10 +91,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
         try {
             synchronized (propertySources) {
                 for (Path path : Files.newDirectoryStream(directory, "*")) {
-                    ConfigurationData data = loadFile(path);
-                    if (data != null) {
-                        result.addAll(getPropertySources(data));
-                    }
+                    result.addAll(getPropertySources(path));
                 }
                 return result;
             }
@@ -124,8 +101,14 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
         return result;
     }
 
-    protected Collection<PropertySource> getPropertySources(ConfigurationData data) {
-        return Arrays.asList(new PropertySource[]{new FlattenedDefaultPropertySource(data)});
+    protected Collection<PropertySource> getPropertySources(final Path file) {
+        return Arrays.asList(new PropertySource[]{new BasePropertySource() {
+            private Map<String,String> props = readProperties(file);
+            @Override
+            public Map<String, String> getProperties() {
+                return props;
+            }
+        }});
     }
 
     /**
@@ -133,33 +116,20 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      *
      * @param file the file, not null.
      */
-    protected ConfigurationData loadFile(Path file) {
-        InputStream is = null;
-        for (ConfigurationFormat format : formats) {
-            try {
-                URL url = file.toUri().toURL();
-                if (format.accepts(url)) {
-                    is = url.openStream();
-                    ConfigurationData data = format.readConfiguration(file.toString(), is);
-                    if (data != null) {
-                        return data;
-                    }
-                }
-            } catch (IOException e) {
-                LOG.log(Level.INFO, "Error reading file: " + file.toString() +
-                        ", using format: " + format, e);
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException ioe) {
-                        LOG.log(Level.SEVERE, "Failed to rea data...", ioe);
-                    }
-                }
+    protected static Map<String,String> readProperties(Path file) {
+        try (InputStream is = file.toUri().toURL().openStream()){
+            Properties props = new Properties();
+                props.load(is);
+            Map<String,String> result = new HashMap<>();
+            for(Map.Entry en:props.entrySet()){
+                result.put(en.getKey().toString(), en.getValue().toString());
             }
+            return result;
+        } catch (Exception e) {
+            LOG.log(Level.INFO, "Error reading file: " + file.toString() +
+                    ", using format: properties", e);
         }
-        LOG.warning("Error reading file: " + file.toString());
-        return null;
+        return Collections.emptyMap();
     }
 
 

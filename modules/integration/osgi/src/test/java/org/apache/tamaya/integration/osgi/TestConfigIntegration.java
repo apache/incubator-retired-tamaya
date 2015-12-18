@@ -34,6 +34,7 @@ import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.*;
@@ -51,6 +52,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
+@Ignore
 public class TestConfigIntegration{
 
     private static final String TAMAYA_VERSION = "0.2-incubating-SNAPSHOT";
@@ -185,12 +187,20 @@ public class TestConfigIntegration{
                 .as(JavaArchive.class);
     }
 
-    @Deployment(name="tamaya-injection", order=15)
+    @Deployment(name="tamaya-events", order=14)
+    public static JavaArchive deployTamayaEvents() {
+        return ShrinkWrap.create(ZipImporter.class, "tamaya-events.jar")
+                .importFrom(getBundleFile("org.apache.tamaya.ext:tamaya-events:"+TAMAYA_VERSION))
+                .as(JavaArchive.class);
+    }
+
+    @Deployment(name="tamaya-injection", order=6)
     public static JavaArchive deployTamayaInjectionSE() {
         return ShrinkWrap.create(ZipImporter.class, "tamaya-injection.jar")
                 .importFrom(getBundleFile("org.apache.tamaya.ext:tamaya-injection:"+TAMAYA_VERSION))
                 .as(JavaArchive.class);
     }
+
 
 
     private static File getBundleFile(String artifactId) {
@@ -248,7 +258,6 @@ public class TestConfigIntegration{
 //        assertEquals("Property 'testKey' not loaded from Tamaya.", "success!", config.get("my.testProperty"));
     }
 
-    @OperateOnDeployment("default")
     @Test
     public void testInjection() throws Exception {
         Dictionary<String,Object> config = new Hashtable<>();

@@ -21,6 +21,7 @@ package org.aspache.tamaya.examples.fileobserver;
 import org.apache.commons.io.FileUtils;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.events.folderobserver.ObservingPropertySourceProvider;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -48,7 +49,7 @@ public class ObservedConfigExampleTest {
         // create some temporary config
         Path tempDir = Files.createTempDirectory("observedFolder");
 
-        TestObservingProvider.propertyLocation = tempDir;
+        Path propertyLocation = tempDir;
 
         FileUtils.copyInputStreamToFile(
                 getClass().getResourceAsStream("/test.properties"),

@@ -30,13 +30,14 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventManager;
+import org.apache.tamaya.events.spi.BaseConfigEvent;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefault;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -229,9 +230,9 @@ final class InjectionHelper {
      * When Tamaya events are not available, the call simply returns.
      * @param event the event to be distributed, not null.
      */
-    static void sendConfigurationEvent(ConfigEvent<?> event) {
+    static void sendConfigurationEvent(ConfiguredType event) {
         if(EVENTS_AVAILABLE){
-            ConfigEventManager.fireEvent(event);
+            ConfigEventManager.fireEvent(new BaseConfigEvent<ConfiguredType>(event, ConfiguredType.class) {});
         }
     }
 }

@@ -30,7 +30,7 @@ import java.util.List;
  * Model provider that adds model definitions for the items published as
  * {@link org.apache.tamaya.inject.spi.ConfiguredType} events.
  */
-class ConfiguredTypeEventsModelProvider implements ModelProviderSpi {
+public class ConfiguredTypeEventsModelProvider implements ModelProviderSpi {
     /** The collected models. */
     private static Collection<ConfigModel> configModels = new ArrayList<>();
 
@@ -38,7 +38,7 @@ class ConfiguredTypeEventsModelProvider implements ModelProviderSpi {
      * Adds a model, called from the registered listener class.
      * @param configModel adds the config model.
      */
-    static void addValidation(ConfigModel configModel){
+    static void addConfigModel(ConfigModel configModel){
         List<ConfigModel> newList = new ArrayList<>(configModels);
         newList.add(configModel);
         ConfiguredTypeEventsModelProvider.configModels = newList;

@@ -25,7 +25,7 @@ import java.util.Collection;
 /**
  * Abstract model of an type used to inject configuration. This also includes instances passed programmatically.
  */
-public interface ConfiguredType {
+public interface ConfiguredType{
 
     /**
      * Get the type's class.

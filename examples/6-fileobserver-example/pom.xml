@@ -44,6 +44,11 @@ under the License.
             <version>0.2-incubating-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-formats</artifactId>
+            <version>0.2-incubating-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>

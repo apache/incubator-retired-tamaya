@@ -31,6 +31,8 @@ public class TestObservingProvider extends ObservingPropertySourceProvider{
     public static Path propertyLocation;
 
     public TestObservingProvider(){
-        super(propertyLocation, new PropertiesFormat());
+        super(propertyLocation);
     }
+    
+    
 }

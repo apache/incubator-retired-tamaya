@@ -20,7 +20,6 @@ package org.apache.tamaya.events;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.tamaya.events.folderobserver.ObservingPropertySourceProvider;
-import org.apache.tamaya.format.formats.PropertiesFormat;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -74,8 +73,7 @@ public class TestObservingProvider extends ObservingPropertySourceProvider{
     }
 
     public TestObservingProvider(){
-        super(propertyLocation,
-                new PropertiesFormat());
+        super(propertyLocation);
         Logger.getLogger(getClass().getName()).info("Using test directory: " + getTestPath());
     }
 
