@@ -108,17 +108,17 @@ public class ConfiguredClass{
     // resolved by default, using property name, class and package name: foo.bar.ConfiguredClass.testProperty
     private String testProperty;
 
-    @Config({"a.b.c.key1","a.b.legacyKey",area1.key2"})
-    @DefaultValue("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    // Trying to resolve mutiple keys, with a default value, if none could be resolved
+    @Config({"a.b.c.key1","a.b.legacyKey",area1.key2"}, defaultValue="The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    // Using a (default) String -> Integer converter
+    // Typical case
     @Config("a.b.c.key2")
     private int value2;
 
     // resolved by default as foo.bar.ConfiguredClass.accessUrl
     // Using a (default) String -> URL converter
-    @DefaultValue("http://127.0.0.1:8080/res/api/v1/info.json")
+    @Config(defaultValue="http://127.0.0.1:8080/res/api/v1/info.json")
     private URL accessUrl;
 
     // Config injection disabled for this property
@@ -266,8 +266,7 @@ In the next example we explicitly define the property value:
 --------------------------------------------
 pubic class ConfiguredItem{
 
-  @Config({"aValue", "a.b.value","a.b.deprecated.value"})
-  @DefaultValue("${env:java.version}")
+  @Config({"aValue", "a.b.value","a.b.deprecated.value"}, defaultValue="${env:java.version}")
   private String aValue;
 }
 --------------------------------------------
@@ -281,8 +280,7 @@ commit new values exactly, when convenient for you.
 --------------------------------------------
 pubic class ConfiguredItem{
 
-  @Config({"aValue", "a.b.value","a.b.deprecated.value"})
-  @DefaultValue("${env:java.version}")
+  @Config({"aValue", "a.b.value","a.b.deprecated.value"}, defaultValue="${env:java.version}")
   private DynamicValue aValue;
 }
 --------------------------------------------
