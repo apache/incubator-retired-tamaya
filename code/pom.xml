@@ -33,5 +33,17 @@ under the License.
     <packaging>pom</packaging>
     <name>Apache Tamaya Codebase</name>
 
+    <modules>
+        <module>api</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
     
 </project>
