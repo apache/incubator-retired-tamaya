@@ -77,4 +77,14 @@ public @interface Config {
     @Nonbinding
     String[] value() default {};
 
+    /**
+     * The default value to be injected, if none of the configuration keys could be resolved. If no key has been
+     * resolved and no default value is defined, it is handled as a deployment error. Depending on the extension loaded
+     * default values can be fixed Strings or even themselves resolvable. For typed configuration of type T entries
+     * that are not Strings the default value must be a valid input to the corresponding
+     * {@link org.apache.tamaya.spi.PropertyConverter}.
+     */
+    @Nonbinding
+    String defaultValue() default "";
+
 }

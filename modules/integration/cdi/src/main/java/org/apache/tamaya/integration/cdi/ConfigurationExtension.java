@@ -21,7 +21,6 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.WithConfigOperator;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
@@ -52,7 +51,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * CDI Extension module that adds injection mechanism for configuration.
  *
  * @see org.apache.tamaya.inject.api.Config
- * @see org.apache.tamaya.inject.api.ConfigDefault
  * @see org.apache.tamaya.inject.api.ConfigDefaultSections
  * @see ConfigException
  */
@@ -77,7 +75,6 @@ public class ConfigurationExtension implements Extension {
         for (InjectionPoint injectionPoint : ips) {
             if (injectionPoint.getAnnotated().isAnnotationPresent(Config.class)) {
                 final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
-                final ConfigDefault defaultAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefault.class);
                 final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
                 final List<String> keys = evaluateKeys(injectionPoint.getMember().getName(),
                         annotation!=null?annotation.value():null,
@@ -104,12 +101,12 @@ public class ConfigurationExtension implements Extension {
                         break;
                     }
                 }
-                if(value==null && defaultAnnot!=null){
-                    value = defaultAnnot.value();
+                if(value==null && !annotation.defaultValue().isEmpty()){
+                    value = annotation.defaultValue();
                 }
                 if(value==null){
                     throw new ConfigException(String.format(
-                            "Can't resolve any of the possible config keys: %s. Please provide one of the given keys" +
+                            "Can't resolve any of the possible config keys: %s. Please provide one of the given keys " +
                                     "with a value in your configuration sources.",
                             keys.toString()));
                 }

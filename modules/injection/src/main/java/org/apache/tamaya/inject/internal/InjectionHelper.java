@@ -33,7 +33,6 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.spi.BaseConfigEvent;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
@@ -126,7 +125,6 @@ final class InjectionHelper {
      */
     private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot, String[] retKey, Configuration config) {
         Config prop = element.getAnnotation(Config.class);
-        ConfigDefault defaultAnnot = element.getAnnotation(ConfigDefault.class);
         List<String> keys;
         if (prop == null) {
             keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
@@ -134,8 +132,11 @@ final class InjectionHelper {
             keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
         }
         String configValue = evaluteConfigValue(keys, retKey, config);
-        if (configValue == null && defaultAnnot != null) {
-            return defaultAnnot.value();
+        if (configValue == null) {
+            if(prop.defaultValue().isEmpty()){
+                return null;
+            }
+            return prop.defaultValue();
         }
         return configValue;
     }

@@ -21,7 +21,6 @@ package annottext;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +32,7 @@ import java.util.List;
  */
 public class AnnotatedConfigBean {
 
-    @Config({"foo.bar.myprop", "mp", "common.testdata.myProperty"})
-    @ConfigDefault("ET")
+    @Config(value = {"foo.bar.myprop", "mp", "common.testdata.myProperty"}, defaultValue = "ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     public String myParameter;
 

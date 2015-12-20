@@ -20,7 +20,6 @@ package annottext;
 
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 
 /**
  * An example showing some basic annotations, using an interface to be proxied by the
@@ -29,8 +28,7 @@ import org.apache.tamaya.inject.api.ConfigDefault;
  */
 public interface AnnotatedConfigTemplate {
 
-    @Config({"foo.bar.myprop", "mp","common.testdata.myProperty"})
-    @ConfigDefault("ET")
+    @Config(value = {"foo.bar.myprop", "mp","common.testdata.myProperty"}, defaultValue = "ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     String myParameter();
 

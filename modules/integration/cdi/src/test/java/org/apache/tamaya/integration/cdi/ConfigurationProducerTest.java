@@ -21,7 +21,6 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.tomitribe.util.Duration;
@@ -70,53 +69,43 @@ public class ConfigurationProducerTest {
     static class AllTypes {
 
         @Inject
-        @Config("string.value")
-        @ConfigDefault("defaultString")
+        @Config(value = "string.value", defaultValue = "defaultString")
         private String string;
 
         @Inject
-        @Config("defaultString.value")
-        @ConfigDefault("defaultString")
+        @Config(value = "defaultString.value", defaultValue = "defaultString")
         private String defaultString;
 
         @Inject
-        @Config("file.value")
-        @ConfigDefault("./")
+        @Config(value = "file.value", defaultValue = "./")
         private File file;
 
         @Inject
-        @Config("defaultFile.value")
-        @ConfigDefault("./")
+        @Config(value = "defaultFile.value", defaultValue = "./")
         private File defaultFile;
 
         @Inject
-        @Config("duration.value")
-        @ConfigDefault("2 hours and 54 minutes")
+        @Config(value = "duration.value", defaultValue = "2 hours and 54 minutes")
         private Duration duration;
 
         @Inject
-        @Config("defaultDuration.value")
-        @ConfigDefault("2 hours and 54 minutes")
+        @Config(value = "defaultDuration.value", defaultValue = "2 hours and 54 minutes")
         private Duration defaultDuration;
 
         @Inject
-        @Config("boolean.value")
-        @ConfigDefault("true")
+        @Config(value = "boolean.value", defaultValue = "true")
         private Boolean aBoolean;
 
         @Inject
-        @Config("defaultBoolean.value")
-        @ConfigDefault("true")
+        @Config(value = "defaultBoolean.value", defaultValue = "true")
         private Boolean defaultBoolean;
 
         @Inject
-        @Config("integer.value")
-        @ConfigDefault("45")
+        @Config(value = "integer.value", defaultValue = "45")
         private Integer integer;
 
         @Inject
-        @Config("defaultInteger.value")
-        @ConfigDefault("45")
+        @Config(value = "defaultInteger.value", defaultValue = "45")
         private Integer defaultInteger;
 
         public String getString() {

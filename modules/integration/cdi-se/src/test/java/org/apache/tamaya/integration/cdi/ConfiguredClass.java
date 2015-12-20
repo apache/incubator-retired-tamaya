@@ -21,7 +21,6 @@
 package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 
 import java.math.BigDecimal;
 
@@ -36,23 +35,19 @@ public class ConfiguredClass{
     @Config
     private String testProperty;
 
-    @Config({"a.b.c.key1","a.b.c.key2","a.b.c.key3"})
-    @ConfigDefault("The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    @Config(value = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"}, defaultValue = "The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
     @Config({"foo","a.b.c.key2"})
     private String value2;
 
-    @Config
-    @ConfigDefault("N/A")
+    @Config(defaultValue = "N/A")
     private String runtimeVersion;
 
-    @Config
-    @ConfigDefault("${sys:java.version}")
+    @Config(defaultValue = "${sys:java.version}")
     private String javaVersion2;
 
-    @Config
-    @ConfigDefault("5")
+    @Config(defaultValue = "5")
     private Integer int1;
 
     @Config

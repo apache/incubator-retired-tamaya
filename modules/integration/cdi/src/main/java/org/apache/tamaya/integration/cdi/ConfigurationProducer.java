@@ -22,7 +22,6 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.WithConfigOperator;
@@ -66,7 +65,6 @@ public class ConfigurationProducer {
             return createynamicValue(injectionPoint);
         }
         final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
-        final ConfigDefault defaultAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefault.class);
         final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
         final List<String> keys = ConfigurationExtension.evaluateKeys(injectionPoint.getMember().getName(),
                 annotation!=null?annotation.value():null,
@@ -91,7 +89,7 @@ public class ConfigurationProducer {
         }
         final Class<?> toType = (Class<?>) injectionPoint.getAnnotated().getBaseType();
         String textValue = null;
-        String defaultTextValue = defaultAnnot!=null?defaultAnnot.value():null;
+        String defaultTextValue = annotation.defaultValue().isEmpty()?null:annotation.defaultValue();
         String keyFound = null;
         for(String key:keys) {
             textValue = config.get(key);
