@@ -204,7 +204,6 @@ under the License.
     <modules>
         <module>buildconfigurations</module>
         <module>code</module>
-        <module>core</module>
         <module>modules</module>
         <module>docs</module>
         <module>examples</module>
