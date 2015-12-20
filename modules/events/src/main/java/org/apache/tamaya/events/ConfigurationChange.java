@@ -126,7 +126,6 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
             }
         }
         return removedCount;
-//        return (int) this.changes.values().stream().filter((e) -> e.getNewValue() == null).count();
     }
 
     /**
@@ -142,8 +141,6 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
             }
         }
         return addedCount;
-//        return (int) this.changes.values().stream().filter((e) -> e.getOldValue() == null &&
-//                e.getNewValue() != null).count();
     }
 
     /**
@@ -158,7 +155,6 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
             }
         }
         return updatedCount;
-//        return (int) this.changes.values().stream().filter((e) -> e.getOldValue()!=null && e.getNewValue()!=null).count();
     }
 
 
