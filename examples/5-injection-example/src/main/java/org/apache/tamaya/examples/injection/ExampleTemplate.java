@@ -19,7 +19,6 @@
 package org.apache.tamaya.examples.injection;
 
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefault;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 
 /**
@@ -31,7 +30,7 @@ public interface ExampleTemplate {
     String getType();
 
     String getName();
-    @ConfigDefault("No description available.")
+    @Config(defaultValue = "No description available.")
     String getDescription();
 
     int getVersion();
