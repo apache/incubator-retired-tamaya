@@ -26,6 +26,8 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by Anatole on 20.03.2015.
  */
@@ -57,9 +59,8 @@ public class MinimalTests {
     @Test(expected = ConfigException.class)
     public void getNumberValueTooLong() {
         String value = config.get("example.number");
-        System.err.println("**** example.number(String)=" + value);
+        assertEquals(value, "350322222222222222222222222222222222222222222222222222222222222222222");
         int number = config.get("example.number", int.class);
-        System.out.println("----\n   example.number(int)=" + number);
     }
 
     @Test
