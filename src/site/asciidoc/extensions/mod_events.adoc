@@ -75,30 +75,24 @@ for event handling and observation:
 [source,java]
 .ConfigEvent
 --------------------------------------------
-public final class ConfigEvent {
+public final interface ConfigEvent<T> {
 
-    public ConfigEvent() {
-    }
-
-    public static void addListener(ConfigEventListener<?> l);
-    public static void removeListener(ConfigEventListener<?> l);
-    public static void fireEvent(Object event);
-    public static <T> void fireEvent(T event, Class<T> eventType);
-
+    Class<T> getResourceType();
+    T getResource();
+    String getVersion();
+    long getTimestamp();
 }
 
 // @FunctionalInterface
-public interface ConfigEventListener<T> {
-    /**
-     * Called if an event occurred.
-     * @param event the event, not null.
-     */
-    void onConfigEvent(T event);
+public interface ConfigEventListener {
+
+    void onConfigEvent(ConfigEvent<?> event);
 
 }
 --------------------------------------------
 
-This mechanism can now be used to propagate configuration changes to all interested stakeholders. The next sections
+This mechanism can now be used to propagate configuration changes to all interested stakeholders. Hereby the payloed
+can be basically arbitrary as long as it implements the +ConfigEvent+ interface. The next sections
 give more details on the the provided event implementations and abstractions that are used to implement such
 features.
 
@@ -123,24 +117,34 @@ public enum ChangeType {
 }
 -------------------------------------------------------
 
-This enum type is used within the +ConfigurationChange+ class:
+This enum type is used within the +ConfigurationChange+ class, which implements the event sent for a changed
++Configuration+:
 
 [source,java]
 -------------------------------------------------------
-public final class ConfigurationChange implements Serializable{
+public final class ConfigurationChange implements ConfigEvent<Configuration>, Serializable{
 
     public static ConfigurationChange emptyChangeSet(Configuration configuration);
 
-    public Configuration getConfiguration();
-
+    @Override
+    public Configuration getResource();
+    @Override
+    public Class<Configuration> getResourceType();
+    @Override
     public String getVersion();
+    @Override
     public long getTimestamp();
-    public Collection<PropertyChangeEvent> getEvents();
+    @Override
+    public long getTimestamp();
 
+    // Event specific methods
+
+    public Collection<PropertyChangeEvent> getChanges();
     public int getRemovedSize();
     public int getAddedSize();
     public int getUpdatedSize();
 
+    public boolean isKeyAffected(String key);
     public boolean isRemoved(String key);
     public boolean isAdded(String key);
     public boolean isUpdated(String key);
@@ -184,9 +188,11 @@ public final class MyConfigChangeListener implements ConfigChangeListener<Config
 
   private Configuration config = ConfigurationProvider.getConfiguration();
 
-  public void onConfigEvent(ConfigurationChange event){
-     if(event.getConfiguration()==config){
-       // do something
+  public void onConfigEvent(ConfigEvent<?> event){
+     if(event.getResourceTspe()==Configuration.class){
+         if(event.getConfiguration()==config){
+           // do something
+         }
      }
   }
 
@@ -195,15 +201,17 @@ public final class MyConfigChangeListener implements ConfigChangeListener<Config
 
 You can *register* your implementation in 2 ways:
 
-. Manually by calling +ConfigEvent.addListener(new MyConfigChangeListener())+
+. Manually by calling +ConfigEventManager.addListener(new MyConfigChangeListener())+
 . Automatically by registering your listener using the +ServiceLoader+ under
-  +META-INF/services/org.apache.tamaya.ConfigEventListener+
+  +META-INF/services/org.apache.tamaya.events.ConfigEventListener+
+
 
 === Modelling PropertySource Changes
 
 Beside that a whole configuration changes, also +PropertySource+ instance can change, e.g. by a configuration file
-edited on the fly. This is similarly to +ConfigurationChange+ reflected by the classes +PropertySourceChange,
+edited on the fly. This is similarly to a +ConfigurationChange+ reflected by the classes +PropertySourceChange,
 PropertySourceChangeBuilder+.
+
 
 === Modelling Configuration Context Changes
 
@@ -213,14 +221,21 @@ file folder, the +ConfigurationContext+ may change, so a corresponding +Configur
 defined:
 
 [source,java]
-.Implementing a ConfigChangeListener
 -------------------------------------------------------
-public final class ConfigurationContextChange implements Serializable{
+public final class ConfigurationContextChange implements ConfigEvent<ConfigurationContext>, Serializable{
 
     public static ConfigurationContextChange emptyChangeSet();
 
+    @Override
+    public ConfigurationContext getResource();
+    @Override
+    public Class<ConfigurationContext> getResourceType();
+    @Override
     public String getVersion();
+    @Override
     public long getTimestamp();
+
+    // specific methods
     public Collection<PropertySourceChange> getPropertySourceChanges();
     public Collection<PropertySourceChange> getPropertySourceUpdates();
     public Collection<PropertySource> getRemovedPropertySources();
@@ -234,40 +249,53 @@ public final class ConfigurationContextChange implements Serializable{
 Similar to the +ConfigurationChange+ class you also must use a +ConfigurationContextChangeBuilder+ to create instances
 of +ConfigurationContextChange+.
 
-=== Modelling of an observing PropertySourceProvider.
+=== The ConfigEventManager Singleton
 
-In Tamaya configuration data is provided by instances of +PropertySource+, which in case of a configuration directory
-may be provided by an implementation of +PropertySourceProvider+. The events module provides a base provider
-implementation that
-
-* observes all changes in a +Path+
-* tries to reevaluate corresponding resources based on the +ConfigurationFormats+ supported.
-* it creates an instance of +ConfigurationContextChange+ reflecting the changed +ConfigurationContext+ and triggers
-  this event by calling +ConfigEvent.fireEvent(contextChange);+.
-
-Additionally this module registers an instance of +ConfigEventListener<ConfigurationContextChange+>+, which listenes to
-these events. If such an event is triggered the listener tries to apply the changes by
-
-. accessing the current +Configuration+ and its +ConfigurationContext+
-. checking if the event is affecting the current +ConfigurationContext+.
-. in the case the current context is affected, based on the current +ConfigurationContext+ a new context is created,
-  whereas
-  .. all +PropertySources+ provided by this provider implementation type are removed.
-  .. the new +PropertySources+ loaded are added.
-. Finally the listener tries to apply the new +ConfigurationContext+ by calling the corresponding API methods of the
-  +ConfigurationProvider+:
+Main entry point of the events module is the +ConfigEventManager+ singleton class, which provides static accessor
+methods to the extension's functionality:
 
 [source,java]
---------------------------------------------------
-try {
-    ConfigurationProvider.setConfigurationContext(newContext);
-} catch (Exception e) {
-    LOG.log(Level.INFO, "Failed to update the current ConfigurationContext due to config model changes", e);
-}
---------------------------------------------------
+-------------------------------------------------------
+public final class ConfigEventManager {
 
-So if the current +ConfigurationProvider+ supports reloading of the current +ConfigurationContext+ this will apply the
-changes to the current +Configuration+. Otherwise the change is logged, but no further actions are taken.
+    private ConfigEventManager() {}
+
+    public static void addListener(ConfigEventListener l);
+    public static <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
+    public static void removeListener(ConfigEventListener l);
+    public static <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType);
+    public static <T extends ConfigEvent>
+        Collection<? extends ConfigEventListener> getListeners();
+    public static <T extends ConfigEvent>
+        Collection<? extends ConfigEventListener> getListeners(Class<T> type);
+
+    public static <T> void fireEvent(ConfigEvent<?> event);
+    public static <T> void fireEventAsynch(ConfigEvent<?> event);
+
+    public static void enableChangeMonitoring(boolean enable);
+    public static boolean isChangeMonitoring();
+    public long getChangeMonitoringPeriod();
+    public void setChangeMonitoringPeriod(long millis);
+
+}
+-------------------------------------------------------
+
+Looking at the methods listed above you see that there is more functionality worth to be mentioned:
+
+* +ConfigCHangeListeners+ can be registered either _globally_ or for a certain _event type_ only.
+* +ConfigEvents+ can be published within the same thread, or asynchronously.
+
+
+==== Monitoring of configuration changes
+
+The +ConfigEventManager+ also supports active monitoring of the current configuration to trigger corresponding change
+events to listeners registered. This feature is activated by default, but can be deactivated optionally. Nevertheless
+this feature is quite handy, since regularly polling your local +Configuration+ for any kind of changes is much
+more simpler than implementing change management on the +PropertySource+ level. With this feature you can easily
+implement also remote property source, which can deliver different configuration based on any changes done remotedly
+on another node in your system. If such a change happened Tamaya identifies it and triggers corresponding
++ConfigurationChange" events automatically. Similarly changes in a configuration tree, can actively identified and
+broadcasted to the targeting nodes automatically.
 
 
 === Freezing Configurations and PropertySources
@@ -296,62 +324,69 @@ Configuration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getCon
 PropertySource frozenSource = FrozenPropertySource.of(ConfigurationProvider.getConfiguration());
 --------------------------------------------------
 
-=== Observing and publishing configuration changes
 
-The event module allows to register and publish listeners for acting on configuration changes, e.g. of paramters with a
-private section name. The main entry point for this feature is the +ConfigurationObserver+ singleton:
+=== Modelling of an observing PropertySourceProvider.
+
+In Tamaya configuration data is provided by instances of +PropertySource+, which in case of a configuration directory
+may be provided by an implementation of +PropertySourceProvider+, which produces one +PropertySource+ (at least) per
+file detected. The events module provides a base provider implementation that
+
+* observes all changes in a +Path+
+* tries to reevaluate corresponding resources based on the +ConfigurationFormats+ supported.
+* it creates an instance of +ConfigurationContextChange+ reflecting the changed +ConfigurationContext+ and triggers
+  this event by calling +ConfigEventManager.fireEvent(contextChange);+.
+
+Additionally this module registers an instance of +ConfigEventListener<ConfigurationContextChange+>+, which listenes to
+these events. If such an event is triggered the listener tries to apply the changes by
+
+. accessing the current +Configuration+ and its +ConfigurationContext+
+. checking if the event is affecting the current +ConfigurationContext+.
+. in the case the current context is affected, based on the current +ConfigurationContext+ a new context is created,
+  whereas
+  .. all +PropertySources+ provided by this provider implementation type are removed.
+  .. the new +PropertySources+ loaded are added.
+. Finally the listener tries to apply the new +ConfigurationContext+ by calling the corresponding API methods of the
+  +ConfigurationProvider+:
 
 [source,java]
-.ConfigurationObserver
 --------------------------------------------------
-public class ConfigurationObserver {
-
-    private ConfigurationObserver() {}
-
-    public static <T> void addObservedKeys(Collection<String> keys);
-    public static <T> void addObservedKeys(String... keys);
-    public static <T> void removeObservedKeys(Collection<String> keys);
-    public static <T> void removeObservedKeys(String... keys);
-    public static Set<String> getObservedKeys();
+try {
+    ConfigurationProvider.setConfigurationContext(newContext);
+} catch (Exception e) {
+    LOG.log(Level.INFO, "Failed to update the current ConfigurationContext due to config model changes", e);
+}
 --------------------------------------------------
 
-This singleton allows to register keys on which listeners may listen to. Hereby, when changes have been identified
-that are observed, a +ConfigurationChange+ event is published on the event bus.
+So if the current +ConfigurationProvider+ supports reloading of the current +ConfigurationContext+ this will apply the
+changes to the current +Configuration+. Otherwise the change is logged, but no further actions are taken.
 
 
 === SPIs
 
-This component also defines an additional SPI, which allows to implement/adapt the mechanism how events are forwarded/
-received and how +ConfigEventListeners+ are managed. This enables to use external eventing systems, such as CDI,
-instead of the simple SE, fully synchronized implementation provided by default.
+This component also defines an additional SPI, which allows to adapt the implementation of the main +ConfigEventManager+
+singleton. This enables, for example, using external eventing systems, such as CDI, instead of the default provided
+simple SE based implementation. As normal, implementation mus be registered using the current +ServiceContext+
+active, by default using the Java +ServiceLoader+ mechanism.
 
 [source,java]
 .SPI: ConfigEventSpi
 --------------------------------------------------
-public interface ConfigEventSpi {
-    /**
-     * Add a listener for observing events. References of this
-     * component to the listeners must be managed as weak references.
-     *
-     * @param l the listener not null.
-     */
-    <T> void addListener(ConfigEventListener<T> l);
+public interface ConfigEventManagerSpi {
 
+        <T> void addListener(ConfigEventListener l);
+        <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
+        void removeListener(ConfigEventListener l);
+        <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType);
+        Collection<? extends ConfigEventListener> getListeners();
+        Collection<? extends ConfigEventListener> getListeners(Class<? extends ConfigEvent> eventType);
 
-    /**
-     * Removes a listener for observing events.
-     *
-     * @param l the listener not null.
-     */
-    <T> void removeListener(ConfigEventListener<T> l);
+        void fireEvent(ConfigEvent<?> event);
+        void fireEventAsynch(ConfigEvent<?> event);
 
-    /**
-     * Publishes an event to all interested listeners.
-     *
-     * @param event     the event, not null.
-     * @param eventType the event type.
-     */
-    <T> void fireEvent(T event, Class<T> eventType);
-
+        long getChangeMonitoringPeriod();
+        void setChangeMonitoringPeriod(long millis);
+        boolean isChangeMonitorActive();
+        void enableChangeMonitor(boolean enable);
 }
 --------------------------------------------------
+
