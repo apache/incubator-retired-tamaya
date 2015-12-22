@@ -537,7 +537,7 @@ public class ConfigurationBuilderTest {
     }
 
 
-    /*********************************************************************
+    /*
      * Tests for adding
      * P r o p e r t y V a l u e C o m b i n a t i o n P o l i c y
      */

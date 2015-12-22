@@ -52,7 +52,7 @@ class VfsSupport {
      */
     private VfsSupport(){}
 
-    /**
+    /*
      * Initialize glue reflection code for communicating with VFS systems.
      */
     static {
