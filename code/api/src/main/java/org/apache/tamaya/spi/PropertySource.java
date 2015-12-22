@@ -23,17 +23,15 @@ import java.util.Map;
 
 
 /**
- * This interface models a provider that serves configuration properties. The contained
- * properties may be read fromMap single or several sources (composite).<br/>
- * PropertySources are the building blocks of the final configuration.
- * <p/>
+ * <p>This interface models a provider that serves configuration properties. The contained
+ * properties may be read fromMap single or several sources (composite).
+ * PropertySources are the building blocks of the final configuration. </p>
  * <h3>Implementation Requirements</h3>
- * <p></p>Implementations current this interface must be
+ * <p>Implementations current this interface must be</p>
  * <ul>
  * <li>Thread safe.</li>
  * </ul>
- * </p>
- * <p>
+ *
  * <p>A PropertySourceProvider will get picked up via the
  * {@link java.util.ServiceLoader} mechanism and can be registered via
  * META-INF/services/org.apache.tamaya.spi.PropertySource
@@ -70,7 +68,7 @@ public interface PropertySource {
      * <p>
      * If a custom implementation should be invoked <b>after</b> the default implementations, use a value &lt; 100
      * </p>
-     * <p/>
+     *
      * <p>Reordering of the default order of the config-sources:</p>
      * <p>Example: If the properties file/s should be used <b>before</b> the other implementations,
      * you have to configure an ordinal &gt; 400. That means, you have to add e.g. deltaspike_ordinal=401 to

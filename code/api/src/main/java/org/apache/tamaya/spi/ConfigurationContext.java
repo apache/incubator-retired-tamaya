@@ -70,16 +70,15 @@ public interface ConfigurationContext {
      * The List for each type is ordered via their {@link javax.annotation.Priority} and
      * cladd name. Refer also to {@link #getPropertyConverters()}.
      * </p>
-     * <p>
-     * A simplified scenario could be like:
+     *
+     * <p>A simplified scenario could be like:</p>
      * <pre>
      *  {
-     *      Date.class -> {StandardDateConverter, TimezoneDateConverter, MyCustomDateConverter }
-     *      Boolean.class -> {StandardBooleanConverter, FrenchBooleanConverter}
-     *      Integer.class -> {DynamicDefaultConverter}
+     *      Date.class -&gt; {StandardDateConverter, TimezoneDateConverter, MyCustomDateConverter }
+     *      Boolean.class -&gt; {StandardBooleanConverter, FrenchBooleanConverter}
+     *      Integer.class -&gt; {DynamicDefaultConverter}
      *  }
      * </pre>
-     * </p>
      *
      * @return map with sorted list of registered PropertySources per type.
      */
@@ -101,27 +100,28 @@ public interface ConfigurationContext {
      *
      * <p>
      * Additionally if a PropertyProvider is accessed, which is not registered the implementation
-     * should try to figure out, if there could be a default implementation as follows:
+     * should try to figure out, if there could be a default implementation as follows:</p>
      * <ol>
-     *     <le>Look for static factory methods: {@code of(String), valueOf(String), getInstance(String),
-     *     instanceOf(String), fomr(String)}</le>
-     *     <le>Look for a matching constructor: {@code T(String)}.</le>
+     *     <li>Look for static factory methods: {@code of(String), valueOf(String), getInstance(String),
+     *     instanceOf(String), fomr(String)}</li>
+     *     <li>Look for a matching constructor: {@code T(String)}.</li>
      * </ol>
+     *
+     * <p>
      * If a correspoding factory method or constructor could be found, a corresponding
      * PropertyConverter should be created and registered automatically for the given
      * type.
      * </p>
      *
-     * <p>
-     * The scenario could be like:
+     * <p> The scenario could be like:</p>
+     *
      * <pre>
      *  {
-     *      Date.class -> {MyCustomDateConverter,StandardDateConverter, TimezoneDateConverter}
-     *      Boolean.class -> {StandardBooleanConverter, FrenchBooleanConverter}
-     *      Integer.class -> {DynamicDefaultConverter}
+     *      Date.class -&gt; {MyCustomDateConverter,StandardDateConverter, TimezoneDateConverter}
+     *      Boolean.class -&gt; {StandardBooleanConverter, FrenchBooleanConverter}
+     *      Integer.class -&gt; {DynamicDefaultConverter}
      *  }
      * </pre>
-     * </p>
      *
      * <p>
      * The converters returned for a type should be used as a chain, whereas the result of the

@@ -635,7 +635,7 @@ under the License.
                     <detectLinks>false</detectLinks>
                     <keywords>true</keywords>
                     <linksource>false</linksource>
-                    <failOnError>false</failOnError>
+                    <failOnError>true</failOnError>
                     <source>${maven.compile.sourceLevel}</source>
                     <verbose>false</verbose>
                 </configuration>

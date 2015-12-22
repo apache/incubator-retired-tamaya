@@ -27,10 +27,10 @@ import java.lang.reflect.Type;
 /**
  * <p>Class for instantiation of objects that represent parameterized types
  * with current parameters.</p>
- * <p>
+ *
  * <p>An object that represents a parameterized type may be obtained by
  * subclassing <tt>TypeLiteral</tt>.</p>
- * <p>
+ *
  * <pre>
  * TypeLiteral&lt;List&lt;Integer&gt;&gt; stringListType = new TypeLiteral&lt;List&lt;Integer&gt;&gt;() {};
  * </pre>

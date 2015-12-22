@@ -33,10 +33,15 @@ import java.util.Collection;
  * </ol>
  * After all changes are applied to a builder a new {@link ConfigurationContext} instance can
  * be created and can be applied by calling
- * {@link org.apache.tamaya.ConfigurationProvider#setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)}. Since this method can
+ * {@link org.apache.tamaya.ConfigurationProvider#setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)}.
+ */
+
+/* @todo This is some Javadoc which is outdated. I am not sure if I can deleted it. The author
+ *       should take care. Oliver B. Fischer, 2015-12-23
+ * Since this method can
  * throw an UnsupportedOperationException, you should check before if changing the current ConfigurationContext
  * programmatically is supported by calling
- * {@link org.apache.tamaya.ConfigurationProvider#isConfigurationContextSettable()}.
+ * {@link org.apache.tamaya.ConfigurationProvider#is}.
  */
 public interface ConfigurationContextBuilder {
 

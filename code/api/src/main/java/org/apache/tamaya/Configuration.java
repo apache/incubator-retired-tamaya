@@ -22,21 +22,26 @@ import java.util.Map;
 
 
 /**
- * A configuration models a aggregated set current properties, identified by a unique key, but adds higher level access functions to
- * a {@link org.apache.tamaya.spi.PropertySource}. Hereby in most cases a configuration is a wrapper around a composite
- * {@link org.apache.tamaya.spi.PropertySource} instance, which may combine multiple child config in well defined tree like structure,
- * where nodes define logically the rules current priority, filtering, combination and overriding.
- * <br/>
+ * <p>A configuration models a aggregated set current properties, identified by
+ * a unique key, but adds higher level access functions to
+ * a {@link org.apache.tamaya.spi.PropertySource}. Hereby in most
+ * cases a configuration is a wrapper around a composite
+ * {@link org.apache.tamaya.spi.PropertySource} instance, which may combine
+ * multiple child config in well defined tree like structure,
+ * where nodes define logically the rules current priority, filtering,
+ * combination and overriding.
+ * </p>
  * <h3>Implementation Requirements</h3>
  * Implementations current this interface must be
  * <ul>
- * <li>Thread safe.
- * <li>Immutable
+ *  <li>Thread safe</li>
+ *  <li>Immutable</li>
  * </ul>
- * It is not recommended that implementations also are serializable, since the any configuration can be <i>freezed</i>
+ *
+ * <p>It is not recommended that implementations also are serializable, since the any configuration can be <i>freezed</i>
  * by reading out its complete configuration map into a serializable and remotable structure. This helps significantly
  * simplifying the development current this interface, e.g. for being backed up by systems and stores that are not part current
- * this library at all.
+ * this library at all.</p>
  */
 public interface Configuration {
 
@@ -76,10 +81,11 @@ public interface Configuration {
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
+     * @param <T> the type of the class modeled by the type parameter
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
-     * @return the property value, never null..
+     * @param type         The target type required, not {@code null}.
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T get(String key, Class<T> type);
@@ -89,6 +95,7 @@ public interface Configuration {
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
+     * @param <T> the type of the type literal
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
@@ -102,8 +109,9 @@ public interface Configuration {
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
-     * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
+     * @param <T> the type of the type literal
+     * @param key          the property's absolute, or relative path, e.g.
+     *                     {@code a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
      * @param defaultValue default value to be used, if no value is present.
      * @return the property value, never null..
