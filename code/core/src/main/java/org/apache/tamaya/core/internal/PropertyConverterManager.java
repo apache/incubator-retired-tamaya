@@ -198,7 +198,7 @@ public class PropertyConverterManager {
     /**
      * Get the list of all current registered converters for the given target type.
      * If not converters are registered, they component tries to create and register a dynamic
-     * converter based on String costructor or static factory methods available.<br/>
+     * converter based on String costructor or static factory methods available.
      * The converters provided are of the following type and returned in the following order:
      * <ul>
      * <li>Converters mapped explicitly to the required target type are returned first, ordered

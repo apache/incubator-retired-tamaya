@@ -38,10 +38,10 @@ import java.util.logging.Logger;
  * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
  * using a default service priority of {@code 0}. This behaviour is configurable based on OSGI properties:
  * <ul>
- *     <li><b>org.tamaya.integration.osgi.cm.ranking, type: int</b> allows to configure the OSGI service ranking for
- *     Tamaya based ConfigurationAdmin instance. The default ranking used is 10.</li>
- *     <li><b>org.tamaya.integration.osgi.cm.override, type: boolean</b></li> allows to configure if Tamaya should
- *     register its ConfigAdmin service. Default is true.
+ *     <li><p><b>org.tamaya.integration.osgi.cm.ranking, type: int</b> allows to configure the OSGI service ranking for
+ *     Tamaya based ConfigurationAdmin instance. The default ranking used is 10.</p></li>
+ *     <li><p><b>org.tamaya.integration.osgi.cm.override, type: boolean</b> allows to configure if Tamaya should
+ *     register its ConfigAdmin service. Default is true.</p></li>
  * </ul>
  */
 public class Activator implements BundleActivator {

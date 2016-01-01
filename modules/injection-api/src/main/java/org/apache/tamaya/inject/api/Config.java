@@ -26,44 +26,45 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Annotation to enable injection current a configured property or define the returned data for
- * a configuration template method. Hereby this annotation can be used in multiple ways and combined
- * with other annotations such as {@link ConfigDefault}, {@link WithConfigOperator}, {@link WithPropertyConverter}.
- *
- * Below the most simple variant current a configured class is given:
- * {@code
- * pubic class ConfiguredItem{
- *
- *   @ConfiguredProperty
- *   private String aValue;
- * }
- * When this class is configured, e.g. by passing it to {@link org.apache.tamaya.Configuration#configure(Object)},
- * the following is happening:
- * <ul>
- *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = ConfigurationProvider.getConfiguration();}</li>
- *     <li>The current possible property keys are evaluated by calling {@code cfg.get("aValue");}</li>
- *     <li>if not successful, and a @ConfigDefault annotation is present, the default value is used.
- *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
- *     <li>On success, since no type conversion is involved, the value is injected.</li>
- * </ul>
- *
- * In the next example we explicitly define the property keys:
- * {@code
- * @ConfigDefaultSections("section1")
- * pubic class ConfiguredItem{
- *
- *   @ConfiguredProperty({"b", "[a.b.deprecated.keys]", "a"})
- *   @ConfigDefault("myDefaultValue")
- *   private String aValue;
- * }
- *
- * Within this example we evaluate multiple possible keys (section1.b, a.b.deprecated.keys, section1.a). Evaluation is
- * aborted if a key could be successfully resolved. Hereby the ordering current the annotations define the ordering
- * current resolution, so in the example above
- * resolution equals to {@code "section1.b", "a.b.deprecated.keys", "section1.a"}. If no value has bee found,
- * the configured default {@code myDefaultValue} is returned.
- */
+/** todo The author of this should fix this invalid Javadoc. Oliver B. Fischer, 2015-12-27 */
+///**
+// * Annotation to enable injection current a configured property or define the returned data for
+// * a configuration template method. Hereby this annotation can be used in multiple ways and combined
+// * with other annotations such as {@link ConfigDefault}, {@link WithConfigOperator}, {@link WithPropertyConverter}.
+// *
+// * Below the most simple variant current a configured class is given:
+// * {@code
+// * pubic class ConfiguredItem{
+// *
+// *   @ConfiguredProperty
+// *   private String aValue;
+// * }
+// * When this class is configured, e.g. by passing it to {@link org.apache.tamaya.Configuration#configure(Object)},
+// * the following is happening:
+// * <ul>
+// *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = ConfigurationProvider.getConfiguration();}</li>
+// *     <li>The current possible property keys are evaluated by calling {@code cfg.get("aValue");}</li>
+// *     <li>if not successful, and a @ConfigDefault annotation is present, the default value is used.
+// *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
+// *     <li>On success, since no type conversion is involved, the value is injected.</li>
+// * </ul>
+// *
+// * In the next example we explicitly define the property keys:
+// * {@code
+// * @ConfigDefaultSections("section1")
+// * pubic class ConfiguredItem{
+// *
+// *   @ConfiguredProperty({"b", "[a.b.deprecated.keys]", "a"})
+// *   @ConfigDefault("myDefaultValue")
+// *   private String aValue;
+// * }
+// *
+// * Within this example we evaluate multiple possible keys (section1.b, a.b.deprecated.keys, section1.a). Evaluation is
+// * aborted if a key could be successfully resolved. Hereby the ordering current the annotations define the ordering
+// * current resolution, so in the example above
+// * resolution equals to {@code "section1.b", "a.b.deprecated.keys", "section1.a"}. If no value has bee found,
+// * the configured default {@code myDefaultValue} is returned.
+// */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })

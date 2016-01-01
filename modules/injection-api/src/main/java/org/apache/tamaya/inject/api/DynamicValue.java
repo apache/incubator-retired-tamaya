@@ -22,18 +22,21 @@ import java.beans.PropertyChangeListener;
 
 
 /**
- * A accessor for a single configured value. This can be used to support values that may change during runtime,
+ * <p>A accessor for a single configured value. This can be used to support values that may change during runtime,
  * reconfigured or final. Hereby external code (could be Tamaya configuration listners or client code), can set a
  * new value. Depending on the {@link UpdatePolicy} the new value is immedeately active or it requires an active commit
- * by client code. Similarly an instance also can ignore all later changes to the value.<br/>
- * Types of this interface can be used as injection targets in injected beans or as template resiult on configuration
- * templates.
+ * by client code. Similarly an instance also can ignore all later changes to the value.</p>
+ *
+ * <p>Types of this interface can be used as injection targets in injected beans or as template resiult on configuration
+ * templates.</p>
+ *
  * <h3>Implementation Specification</h3>
  * Implementation of this interface must be
  * <ul>
  *     <li>Serializable, when also the item stored is serializable</li>
  *     <li>Thread safe</li>
  * </ul>
+ *
  * @param <T> The type of the value.
  */
 public interface DynamicValue<T> {

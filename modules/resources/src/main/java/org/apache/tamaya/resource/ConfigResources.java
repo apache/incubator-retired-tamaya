@@ -32,11 +32,13 @@ public final class ConfigResources {
     private ConfigResources(){}
 
     /**
-     * Access the current ResourceResolver.
+     * <p>Access the current ResourceResolver.</p>
+     *
+     * @throws ConfigException if no ResourceResolver is available (should not happen).
+     *
      * @return the current ResourceResolver instance, never null.
-     * @throws org.apache.tamaya.ConfigException, if no ResourceResolver is available (should not happen).
      */
-    public static ResourceResolver getResourceResolver(){
+    public static ResourceResolver getResourceResolver() throws ConfigException {
         ResourceResolver resolver = ServiceContextManager.getServiceContext().getService(ResourceResolver.class);
         if (resolver == null) {
             throw new ConfigException("ResourceResolver not available.");

@@ -35,11 +35,11 @@ import java.util.logging.Logger;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Property resolver implementation that tries to load the given resource from the current classpath using the
+ * <p>Property resolver implementation that tries to load the given resource from the current classpath using the
  * Thread Context classloader, and as fallback from the classloader that loaded this module and system classloader.
- * It can be explicitly addressed by prefixing {@code resource:}, e.g. {@code ${resource:META-INF/VERSION}}.
- * <br/>
- * If the {@code Resources} module is available this module is used for resolving the expression.
+ * It can be explicitly addressed by prefixing {@code resource:}, e.g. {@code ${resource:META-INF/VERSION}}.</p>
+ *
+ * <p>If the {@code Resources} module is available this module is used for resolving the expression.</p>
  */
 @Priority(300)
 public final class ResourceResolver implements ExpressionResolver {

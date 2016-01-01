@@ -35,16 +35,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * This class implements a {@link ServiceContext}, which basically provides a similar loading mechanism as used
+ * <p>This class implements a {@link ServiceContext}, which basically provides a similar loading mechanism as used
  * by the {@link java.util.ServiceLoader}. Whereas the {@link java.util.ServiceLoader} only loads configurations
  * and instances from one classloader, this loader manages configs found and the related instances for each
  * classloader along the classloader hierarchies individually. It ensures instances are loaded on the classloader
  * level, where they first are visible. Additionally it ensures the same configuration resource (and its
- * declared services) are loaded multiple times, when going up the classloader hierarchy.<p/>
- * Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
- * Refer also the inherited parent class for further details.<p/>
- * This class uses an ordinal of {@code 10}, so it overrides any default {@link ServiceContext} implementations
- * provided with the Tamaya core modules.
+ * declared services) are loaded multiple times, when going up the classloader hierarchy.</p>
+ *
+ * <p>Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
+ * Refer also the inherited parent class for further details.</p>
+ *
+ * <p>This class uses an ordinal of {@code 10}, so it overrides any default {@link ServiceContext} implementations
+ * provided with the Tamaya core modules.</p>
  */
 public class CDIAwareServiceContext implements ServiceContext {
     /**

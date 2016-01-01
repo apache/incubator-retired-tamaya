@@ -27,6 +27,10 @@ under the License.
     <artifactId>tamaya-example-injection</artifactId>
     <groupId>org.apache.tamaya.examples</groupId>
 
+    <properties>
+        <geronimo-jcdi-1.1-spec.version>1.0</geronimo-jcdi-1.1-spec.version>
+    </properties>
+
     <name>Apache Tamaya Example: Configuration Injection</name>
     <description>This project contains a simple illustrating how configuration values can be injected.</description>
     <packaging>jar</packaging>
@@ -48,6 +52,17 @@ under the License.
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
+            <version>${geronimo-jcdi-1.1-spec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>

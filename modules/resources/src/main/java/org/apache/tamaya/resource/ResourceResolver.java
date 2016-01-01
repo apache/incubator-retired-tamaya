@@ -87,9 +87,8 @@ public interface ResourceResolver {
      * there is no determined ordering of format located within a classloader.
      *
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link URL}s found, never
-     * null.
-     * .
+     * @return the corresponding collection of current {@link URL}s found,
+     * never {@code null}.
      */
     Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
 

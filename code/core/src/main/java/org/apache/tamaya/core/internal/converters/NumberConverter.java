@@ -29,11 +29,11 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Number. Valid inputs are:
  * <pre>
- *     POSITIVE_INFINITY -> Double.POSITIVE_INFINITY
- *     NEGATIVE_INFINITY -> Double.NEGATIVE_INFINITY
- *     NaN -> Double.NaN
- *     0xFFDCD3D2 -> Long
- *     1234566789.23642327352735273752 -> new BigDecimal(input)
+ *     POSITIVE_INFINITY -&gt; Double.POSITIVE_INFINITY
+ *     NEGATIVE_INFINITY -&gt; Double.NEGATIVE_INFINITY
+ *     NaN &gt; Double.NaN
+ *     0xFFDCD3D2 -&gt; Long
+ *     1234566789.23642327352735273752 -&gt; new BigDecimal(input)
  * </pre>
  */
 public class NumberConverter implements PropertyConverter<Number>{

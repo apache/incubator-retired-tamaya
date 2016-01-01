@@ -190,10 +190,11 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Get the list of all current registered converters for the given target type.
+     * <p>Get the list of all current registered converters for the given target type.
      * If not converters are registered, they component tries to create and register a dynamic
-     * converter based on String costructor or static factory methods available.<br/>
-     * The converters provided are of the following type and returned in the following order:
+     * converter based on String costructor or static factory methods available.</p>
+     *
+     * <p>The converters provided are of the following type and returned in the following order:</p>
      * <ul>
      *     <li>Converters mapped explicitly to the required target type are returned first, ordered
      *     by decreasing priority. This means, if explicit converters are registered these are used
@@ -207,10 +208,10 @@ public class PropertyConverterManager {
      *     compares the configuration values with the different enum members defined (cases sensitive mapping).</li>
      * </ul>
      *
-     * So given that list above directly registered mappings always are tried first, before any transitive mapping
+     * <p>So given that list above directly registered mappings always are tried first, before any transitive mapping
      * should be used. Also in all cases @Priority annotations are honored for ordering of the converters in place.
      * Transitive conversion is supported for all directly implemented interfaces (including inherited ones) and
-     * the inheritance hierarchy (exception Object). Superinterfaces of implemented interfaces are ignored.
+     * the inheritance hierarchy (exception Object). Super interfaces of implemented interfaces are ignored.</p>
      *
      *
      * @param targetType the target type, not null.

@@ -30,13 +30,15 @@ import java.util.logging.Logger;
 
 
 /**
- * This class implements an abstract base class, which basically provides a loading mechanism that supports
+ * <p>This class implements an abstract base class, which basically provides a loading mechanism that supports
  * loading and managing resources along the classloader hierarchies individually. It ensures resources are loaded
  * and stored related to the each target classloader within the hierarchy individually. Additionally it enables
- * mechanisms to ensure an item T is not loaded multiple times, when traversing up the classloader hierarchy.<p/>
- * Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
+ * mechanisms to ensure an item T is not loaded multiple times, when traversing up the classloader hierarchy.</p>
+ *
+ * <p>Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
  * Instead this class uses the fully qualified class name of the loader and the corresponsing hashCode as returned
- * by {@link Objects#hashCode(Object)}.
+ * by {@link Objects#hashCode(Object)}.</p>
+ *
  * @param <T> the managed item type.
  */
 public abstract class AbstractClassloaderAwareItemLoader<T> {
@@ -122,7 +124,6 @@ public abstract class AbstractClassloaderAwareItemLoader<T> {
      *
      * @param currentItemSet the current found ItemContainer instance to be updated.
      * @param classLoader    the classloader, not null.
-     * @return
      */
     protected abstract void updateItem(T currentItemSet, ClassLoader classLoader);
 
@@ -131,7 +132,7 @@ public abstract class AbstractClassloaderAwareItemLoader<T> {
      * This prevents the storage of classloader references as keys and therefore enables classloaders not used anymore
      * to be garbage collected.
      *
-     * @param classLoader
+     * @param classLoader {@link ClassLoader} to be identified, must not be {@code null}.
      * @return the unique key for the given classloader
      */
     public static String getClassLoaderID(ClassLoader classLoader) {

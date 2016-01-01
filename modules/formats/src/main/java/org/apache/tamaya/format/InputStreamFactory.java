@@ -26,9 +26,9 @@ import java.util.logging.Logger;
 /**
  * Wrapper for a given {@link InputStream} to be able to close
  * it via the try-with-resources construct of Java 7.
- * <p>
+ *
  * <h1>Usage example</h1>
- * <p>
+ *
  * <pre>
  * public void readIt(InputStream inputStream) {
  *    try (InputStream is = new ParallelInputStream(inputStream) {

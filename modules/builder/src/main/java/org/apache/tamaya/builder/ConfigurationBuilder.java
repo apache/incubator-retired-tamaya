@@ -527,7 +527,6 @@ public class ConfigurationBuilder {
      * @return the builder instance currently used
      *
      * @see org.apache.tamaya.spi.PropertySourceProvider
-     * @see
      */
     public ConfigurationBuilder enableProvidedPropertySourceProviders() {
         checkBuilderState();

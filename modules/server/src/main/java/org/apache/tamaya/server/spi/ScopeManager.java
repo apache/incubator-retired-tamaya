@@ -59,11 +59,13 @@ public final class ScopeManager {
 
     /**
      * Get the scope given its name.
+     *
+     * @throws ConfigException if no such scope is defined
      * @param scopeId the scope name
      * @return the scope matching
-     * @throws ConfigException, if nos such scope is defined.
      */
-    public static ConfigOperator getScope(String scopeId, String target){
+    public static ConfigOperator getScope(String scopeId, String target)
+         throws ConfigException {
         ScopeProvider  prov = scopeProviders.get(scopeId);
         if(prov==null){
             throw new ConfigException("No such scope: " + scopeId);

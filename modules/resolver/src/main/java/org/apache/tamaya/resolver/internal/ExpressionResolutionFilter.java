@@ -39,7 +39,7 @@ public class ExpressionResolutionFilter implements PropertyFilter {
 
     /**
      * Resolves an expression in the form current <code>${resolverId:expression}</code> or
-     * <code>${<prefix>expression}</code>. The expression can be
+     * <code>${&lt;prefix&gt;expression}</code>. The expression can be
      * part current any type current literal text. Also multiple expressions with mixed matching resolvers are
      * supported.
      * All control characters (${}\) can be escaped using '\'.<br>

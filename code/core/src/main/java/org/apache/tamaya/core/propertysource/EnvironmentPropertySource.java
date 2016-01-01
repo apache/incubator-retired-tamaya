@@ -24,8 +24,8 @@ import java.util.Map;
 
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} provides all Properties which are set
- * via <br />
- * {@code export myprop=myval} on UNIX Systems or<br />
+ * via
+ * {@code export myprop=myval} on UNIX Systems or
  * {@code set myprop=myval} on Windows
  */
 public class EnvironmentPropertySource implements PropertySource {

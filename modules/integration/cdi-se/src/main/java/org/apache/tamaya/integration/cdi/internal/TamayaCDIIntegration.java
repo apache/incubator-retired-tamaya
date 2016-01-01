@@ -43,7 +43,6 @@ public class TamayaCDIIntegration implements Extension{
 
     /**
      * Get the current {@link  BeanManager} instance.
-     * @return
      */
     public static BeanManager getBeanManager(){
         return beanManager;

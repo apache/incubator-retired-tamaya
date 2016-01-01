@@ -50,6 +50,7 @@ public interface ServiceContext {
      *
      * @param serviceType
      *            the service type.
+     * @param <T> the type of the list element returned by this method
      * @return The instance to be used, never {@code null}
      */
      <T> List<T> getServices(Class<T> serviceType);

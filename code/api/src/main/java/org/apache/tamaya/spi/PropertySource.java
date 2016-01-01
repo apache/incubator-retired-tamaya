@@ -60,7 +60,7 @@ public interface PropertySource {
      *     <li>JNDI values (ordinal 200)</li>
      *     <li>Properties file values (/META-INF/applicationConfiguration.properties) (ordinal 100)</li>
      * </ol>
-     * <p/>
+     *
      * <p><b>Important Hints for custom implementations</b>:</p>
      * <p>
      * If a custom implementation should be invoked <b>before</b> the default implementations, use a value &gt; 400

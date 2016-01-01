@@ -21,9 +21,9 @@ package org.apache.tamaya.format;
 import java.util.*;
 
 /**
- * Data that abstracts the data read from a configuration resources using a certain format. The data can be divided
+ * <p>Data that abstracts the data read from a configuration resources using a certain format. The data can be divided
  * into different sections, similar to ini-files. Herebey different sections the best map to entries with different
- * priorities to be applied, when integrated into PropertySource instances.<br/>
+ * priorities to be applied, when integrated into PropertySource instances.</p>
  * New instances of this class can be created using a {@link org.apache.tamaya.format.ConfigurationDataBuilder}.
  * <h3>Implementation Specification</h3>
  * This class is

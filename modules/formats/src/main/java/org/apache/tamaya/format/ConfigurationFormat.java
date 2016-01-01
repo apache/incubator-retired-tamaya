@@ -22,13 +22,14 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Implementations current this class encapsulate the mechanism how to read a
+ * <p>Implementations current this class encapsulate the mechanism how to read a
  * resource including interpreting the format correctly (e.g. xml vs.
  * properties vs. ini). In most cases file only contains entries of the same priority, which would then
  * result in only one {@link org.apache.tamaya.spi.PropertySource}. Complex file formats, however, may contain entries
  * of different priorities. In this cases, each ordinal type found typically is returned as a separate section so the
  * consuming {@link org.apache.tamaya.spi.PropertySourceProvider} implementation can distribute the different part to
- * individual {@link org.apache.tamaya.spi.PropertySource}s.<p>
+ * individual {@link org.apache.tamaya.spi.PropertySource}s.</p>
+ *
  * <h3>Implementation Requirements</h3>
  * Implementations of this type must be
  * <ul>

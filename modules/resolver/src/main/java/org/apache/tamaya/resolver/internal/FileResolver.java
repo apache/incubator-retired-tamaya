@@ -35,10 +35,10 @@ import java.util.logging.Logger;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Property resolver implementation that tries to load the given resource from the current file system.
- * <br/>
- * If the {@code Resources} module is available this module is used for resolving the expression. It can be
- * explicitly addressed by prefixing {@code file:}, e.g. {@code ${file:c:/temp/mytext.txt}}.
+ * <p>Property resolver implementation that tries to load the given resource from the current file system.</p>
+ *
+ * <p>If the {@code Resources} module is available this module is used for resolving the expression. It can be
+ * explicitly addressed by prefixing {@code file:}, e.g. {@code ${file:c:/temp/mytext.txt}}.</p>
  */
 @Priority(400)
 public final class FileResolver implements ExpressionResolver {
