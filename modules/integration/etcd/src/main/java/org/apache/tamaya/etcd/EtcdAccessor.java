@@ -43,11 +43,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Accessor for reading/writing an etcd endpoint.
  */
 public class EtcdAccessor {
+
+    private static final Logger LOG = Logger.getLogger(EtcdAccessor.class.getName());
 
     /** Property that make Johnzon accept commentc. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
@@ -61,13 +64,25 @@ public class EtcdAccessor {
         return Json.createReaderFactory(config);
     }
 
+    /** The base server url. */
     private String serverURL;
+    /** The http client. */
     private CloseableHttpClient httpclient = HttpClients.createDefault();
 
+    /**
+     * Creates a new instance, trying to read the basic server endpoint from {@code -Detcd.url}, using default
+     * value of {@code http://127.0.0.1:4001}.
+     * @throws MalformedURLException
+     */
     public EtcdAccessor() throws MalformedURLException {
         this(System.getProperty("etcd.url", "http://127.0.0.1:4001"));
     }
 
+    /**
+     * Creates a new instance with the basic access url.
+     * @param server server url, e.g. {@code http://127.0.0.1:4001}.
+     * @throws MalformedURLException
+     */
     public EtcdAccessor(String server) throws MalformedURLException {
         if(server.endsWith("/")){
             serverURL = server.substring(0, server.length()-1);
@@ -77,6 +92,10 @@ public class EtcdAccessor {
 
     }
 
+    /**
+     * Get the etcd server version.
+     * @return the etcd server version, never null.
+     */
     public String getVersion(){
         CloseableHttpResponse response = null;
         String version = "<ERROR>";
@@ -107,6 +126,7 @@ public class EtcdAccessor {
     }
 
     /**
+     * Ask etcd for s aingle key, value pair. Hereby the response returned from etcd:
      * <pre>
      * {
          "action": "get",
@@ -118,8 +138,17 @@ public class EtcdAccessor {
          }
      * }
      * </pre>
+     * is mapped to:
+     * <pre>
+     *     key=value
+     *     _key.source=[etcd]http://127.0.0.1:4001
+     *     _key.createdIndex=12
+     *     _key.modifiedIndex=34
+     *     _key.ttl=300
+     *     _key.expiration=...
+     * </pre>
      * @param key the requested key
-     * @return
+     * @return the mapped result, including meta-entries.
      */
     public Map<String,String> get(String key){
         CloseableHttpResponse response = null;
@@ -164,6 +193,7 @@ public class EtcdAccessor {
     }
 
     /**
+     * Creates/updates an entry in etcd. The response as follows:
      * <pre>
      *     {
      "action": "set",
@@ -181,10 +211,24 @@ public class EtcdAccessor {
      }
      }
      * </pre>
-     * @param key
-     * @param value
-     * @param ttlSeconds
-     * @return
+     * is mapped to:
+     * <pre>
+     *     key=value
+     *     _key.source=[etcd]http://127.0.0.1:4001
+     *     _key.createdIndex=12
+     *     _key.modifiedIndex=34
+     *     _key.ttl=300
+     *     _key.expiry=...
+     *      // optional
+     *     _key.prevNode.createdIndex=12
+     *     _key.prevNode.modifiedIndex=34
+     *     _key.prevNode.ttl=300
+     *     _key.prevNode.expiration=...
+     * </pre>
+     * @param key the property key, not null
+     * @param value the value to be set
+     * @param ttlSeconds the ttl in seconds (optional)
+     * @return the result map as described above.
      */
     public Map<String,String> set(String key, String value, Integer ttlSeconds){
         CloseableHttpResponse response = null;
@@ -252,6 +296,24 @@ public class EtcdAccessor {
     }
 
 
+    /**
+     * Deletes a given key. The response is as follows:
+     * <pre>
+     *     _key.source=[etcd]http://127.0.0.1:4001
+     *     _key.createdIndex=12
+     *     _key.modifiedIndex=34
+     *     _key.ttl=300
+     *     _key.expiry=...
+     *      // optional
+     *     _key.prevNode.createdIndex=12
+     *     _key.prevNode.modifiedIndex=34
+     *     _key.prevNode.ttl=300
+     *     _key.prevNode.expiration=...
+     *     _key.prevNode.value=...
+     * </pre>
+     * @param key the key to be deleted.
+     * @return the response mpas as described above.
+     */
     public Map<String,String> delete(String key){
         CloseableHttpResponse response = null;
         Map<String,String> result = new HashMap<>();
@@ -312,11 +374,20 @@ public class EtcdAccessor {
         return result;
     }
 
+    /**
+     * Get all properties for the given directory key recursively.
+     * @see #getProperties(String, boolean)
+     * @param directory the directory entry
+     * @return the properties and its metadata
+     */
     public Map<String,String> getProperties(String directory){
         return getProperties(directory, true);
     }
 
-    /*
+    /**
+     * Access all properties.
+     * The response of:
+     * <pre>
     {
     "action": "get",
     "node": {
@@ -338,6 +409,25 @@ public class EtcdAccessor {
         ]
     }
 }
+     </pre>
+     is mapped to a regular Tamaya properties map as follows:
+     <pre>
+     *    key1=myvalue
+     *     _key1.source=[etcd]http://127.0.0.1:4001
+     *     _key1.createdIndex=12
+     *     _key1.modifiedIndex=34
+     *     _key1.ttl=300
+     *     _key1.expiration=...
+     *
+     *      key2=myvaluexxx
+     *     _key2.source=[etcd]http://127.0.0.1:4001
+     *     _key2.createdIndex=12
+     *
+     *      key3=val3
+     *     _key3.source=[etcd]http://127.0.0.1:4001
+     *     _key3.createdIndex=12
+     *     _key3.modifiedIndex=2
+     * </pre>
      */
     public Map<String,String> getProperties(String directory, boolean recursive){
         CloseableHttpResponse response = null;
@@ -372,6 +462,11 @@ public class EtcdAccessor {
         return result;
     }
 
+    /**
+     * Recursively read out all key/values from this etcd JSON array.
+     * @param result
+     * @param node
+     */
     private void addNodes(Map<String, String> result, JsonObject node) {
         if(node.getBoolean("dir", false)) {
             String key = node.getString("key").substring(1);
