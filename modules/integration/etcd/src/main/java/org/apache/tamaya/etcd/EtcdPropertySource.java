@@ -71,7 +71,25 @@ public class EtcdPropertySource implements PropertySource{
     @Override
     public String get(String key) {
         if(etcdBackend!=null) {
-            return etcdBackend.get(key).get(key);
+            Map<String,String> props = null;
+            if(key.startsWith("_")){
+                String reqKey = key.substring(1);
+                if(reqKey.endsWith(".createdIndex")){
+                    reqKey = reqKey.substring(0,reqKey.length()-".createdIndex".length());
+                } else if(reqKey.endsWith(".modifiedIndex")){
+                    reqKey = reqKey.substring(0,reqKey.length()-".modifiedIndex".length());
+                } else if(reqKey.endsWith(".ttl")){
+                    reqKey = reqKey.substring(0,reqKey.length()-".ttl".length());
+                } else if(reqKey.endsWith(".expiration")){
+                    reqKey = reqKey.substring(0,reqKey.length()-".expiration".length());
+                } else if(reqKey.endsWith(".source")){
+                    reqKey = reqKey.substring(0,reqKey.length()-".source".length());
+                }
+                props = etcdBackend.get(reqKey);
+            } else{
+                props = etcdBackend.get(key);
+            }
+            return props.get(key);
         }
         return null;
     }

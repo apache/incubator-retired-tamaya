@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -112,13 +113,13 @@ public class EtcdAccessor {
             }
             return version;
         } catch(Exception e){
-            // TODO log error
+            LOG.log(Level.SEVERE, "Error getting etcd version from: " + serverURL, e);
         } finally {
             if(response!=null){
                 try {
                     response.close();
                 } catch (IOException e) {
-                    // TODO log error
+                    LOG.log(Level.WARNING, "Failed to close http response", e);
                 }
             }
         }
@@ -153,7 +154,6 @@ public class EtcdAccessor {
     public Map<String,String> get(String key){
         CloseableHttpResponse response = null;
         Map<String,String> result = new HashMap<>();
-        result.put("_" + key +".source", "[etcd]"+serverURL);
         try {
             HttpGet httpGet = new HttpGet(serverURL + "/v2/keys/"+key);
             response = httpclient.execute(httpGet);
@@ -162,6 +162,8 @@ public class EtcdAccessor {
                 JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
                 JsonObject o = reader.readObject();
                 JsonObject node = o.getJsonObject("node");
+                result.put(key, node.getString("value"));
+                result.put("_" + key +".source", "[etcd]"+serverURL);
                 if(node.containsKey("createdIndex")) {
                     result.put("_" + key +".createdIndex", String.valueOf(node.getInt("createdIndex")));
                 }
@@ -169,27 +171,39 @@ public class EtcdAccessor {
                     result.put("_" + key +".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
                 }
                 if(node.containsKey("expiration")) {
-                    result.put("_" + key +".expiration", String.valueOf(node.getInt("expiration")));
+                    result.put("_" + key +".expiration", String.valueOf(node.getString("expiration")));
                 }
-                if(node.containsKey("_" + key +".ttl")) {
+                if(node.containsKey("ttl")) {
                     result.put("_" + key +".ttl", String.valueOf(node.getInt("ttl")));
                 }
-                result.put(key, o.getString("value"));
                 EntityUtils.consume(entity);
+            }else{
+                result.put("_" + key +".NOT_FOUND.target", "[etcd]"+serverURL);
             }
         } catch(Exception e){
-            // TODO log error
-            result.put("_" + key +".error", e.toString());
+            LOG.log(Level.SEVERE, "Error reading key '"+key+"' from etcd: " + serverURL, e);
+            result.put("_ERROR", "Error reading key '"+key+"' from etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
                 try {
                     response.close();
                 } catch (IOException e) {
-                    // TODO log error
+                    LOG.log(Level.WARNING, "Failed to close http response", e);
                 }
             }
         }
         return result;
+    }
+
+    /**
+     * Creates/updates an entry in etcd without any ttl set.
+     * @see #set(String, String, Integer)
+     * @param key the property key, not null
+     * @param value the value to be set
+     * @return the result map as described above.
+     */
+    public Map<String,String> set(String key, String value){
+        return set(key, value, null);
     }
 
     /**
@@ -233,18 +247,17 @@ public class EtcdAccessor {
     public Map<String,String> set(String key, String value, Integer ttlSeconds){
         CloseableHttpResponse response = null;
         Map<String,String> result = new HashMap<>();
-        result.put("_" + key +".source", "[etcd]"+serverURL);
         try{
             HttpPut put = new HttpPut(serverURL + "/v2/keys/"+key);
             List<NameValuePair> nvps = new ArrayList<>();
             nvps.add(new BasicNameValuePair("value", value));
             if(ttlSeconds!=null){
-                result.put("ttl", ttlSeconds.toString());
                 nvps.add(new BasicNameValuePair("ttl", ttlSeconds.toString()));
             }
             put.setEntity(new UrlEncodedFormEntity(nvps));
             response = httpclient.execute(put);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED ||
+                    response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
                 JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
                 JsonObject o = reader.readObject();
@@ -256,14 +269,15 @@ public class EtcdAccessor {
                     result.put("_" + key +".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
                 }
                 if(node.containsKey("expiration")) {
-                    result.put("_" + key +".expiration", String.valueOf(node.getInt("expiration")));
+                    result.put("_" + key +".expiration", String.valueOf(node.getString("expiration")));
                 }
-                if(node.containsKey("_" + key +".ttl")) {
+                if(node.containsKey("ttl")) {
                     result.put("_" + key +".ttl", String.valueOf(node.getInt("ttl")));
                 }
-                result.put("value", node.getString("value"));
-                JsonObject prevNode = o.getJsonObject("prevNode");
-                if(prevNode!=null) {
+                result.put(key, node.getString("value"));
+                result.put("_" + key +".source", "[etcd]"+serverURL);
+                if(node.containsKey("prevNode")){
+                    JsonObject prevNode = node.getJsonObject("prevNode");
                     if (prevNode.containsKey("createdIndex")) {
                         result.put("_" + key +".prevNode.createdIndex", String.valueOf(prevNode.getInt("createdIndex")));
                     }
@@ -271,7 +285,7 @@ public class EtcdAccessor {
                         result.put("_" + key +".prevNode.modifiedIndex", String.valueOf(prevNode.getInt("modifiedIndex")));
                     }
                     if(prevNode.containsKey("expiration")) {
-                        result.put("_" + key +".prevNode.expiration", String.valueOf(prevNode.getInt("expiration")));
+                        result.put("_" + key +".prevNode.expiration", String.valueOf(prevNode.getString("expiration")));
                     }
                     if(prevNode.containsKey("ttl")) {
                         result.put("_" + key +".prevNode.ttl", String.valueOf(prevNode.getInt("ttl")));
@@ -281,14 +295,14 @@ public class EtcdAccessor {
                 EntityUtils.consume(entity);
             }
         } catch(Exception e){
-            // TODO log error
-            result.put("_" + key +".error", e.toString());
+            LOG.log(Level.SEVERE, "Error writing to etcd: " + serverURL, e);
+            result.put("_ERROR", "Error writing '"+key+"' to etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
                 try {
                     response.close();
                 } catch (IOException e) {
-                    // TODO log error
+                    LOG.log(Level.WARNING, "Failed to close http response", e);
                 }
             }
         }
@@ -317,8 +331,6 @@ public class EtcdAccessor {
     public Map<String,String> delete(String key){
         CloseableHttpResponse response = null;
         Map<String,String> result = new HashMap<>();
-        result.put("key", key);
-        result.put("_" + key +".source", "[etcd]"+serverURL);
         try{
             HttpDelete delete = new HttpDelete(serverURL + "/v2/keys/"+key);
             List<NameValuePair> nvps = new ArrayList<>();
@@ -336,13 +348,13 @@ public class EtcdAccessor {
                     result.put("_" + key +".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
                 }
                 if(node.containsKey("expiration")) {
-                    result.put("_" + key +".expiration", String.valueOf(node.getInt("expiration")));
+                    result.put("_" + key +".expiration", String.valueOf(node.getString("expiration")));
                 }
                 if(node.containsKey("ttl")) {
                     result.put("_" + key +".ttl", String.valueOf(node.getInt("ttl")));
                 }
-                JsonObject prevNode = o.getJsonObject("prevNode");
-                if(prevNode!=null) {
+                if(o.containsKey("prevNode")){
+                    JsonObject prevNode = o.getJsonObject("prevNode");
                     if (prevNode.containsKey("createdIndex")) {
                         result.put("_" + key +".prevNode.createdIndex", String.valueOf(prevNode.getInt("createdIndex")));
                     }
@@ -350,7 +362,7 @@ public class EtcdAccessor {
                         result.put("_" + key +".prevNode.modifiedIndex", String.valueOf(prevNode.getInt("modifiedIndex")));
                     }
                     if(prevNode.containsKey("expiration")) {
-                        result.put("_" + key +".prevNode.expiration", String.valueOf(prevNode.getInt("expiration")));
+                        result.put("_" + key +".prevNode.expiration", String.valueOf(prevNode.getString("expiration")));
                     }
                     if(prevNode.containsKey("ttl")) {
                         result.put("_" + key +".prevNode.ttl", String.valueOf(prevNode.getInt("ttl")));
@@ -360,8 +372,8 @@ public class EtcdAccessor {
                 EntityUtils.consume(entity);
             }
         } catch(Exception e){
-            // TODO log error
-            result.put("_" + key +".error", e.toString());
+            LOG.log(Level.SEVERE, "Error deleting key '"+key+"' from etcd: " + serverURL, e);
+            result.put("_ERROR", "Error deleting '"+key+"' from etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
                 try {
@@ -432,12 +444,10 @@ public class EtcdAccessor {
     public Map<String,String> getProperties(String directory, boolean recursive){
         CloseableHttpResponse response = null;
         Map<String,String> result = new HashMap<>();
-        result.put("_" + directory +".source", "[etcd]"+serverURL);
         try{
             HttpGet get = new HttpGet(serverURL + "/v2/keys/"+directory+"?recursive="+recursive);
             response = httpclient.execute(get);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                result.put("_" + directory +".source", "[etcd]"+serverURL);
                 HttpEntity entity = response.getEntity();
                 JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
                 JsonObject o = reader.readObject();
@@ -448,8 +458,8 @@ public class EtcdAccessor {
                 EntityUtils.consume(entity);
             }
         } catch(Exception e){
-            // TODO log error
-            result.put("_" + directory +".error", e.toString());
+            LOG.log(Level.SEVERE, "Error reading properties for '"+directory+"' from etcd: " + serverURL, e);
+            result.put("_ERROR", "Error reading properties for '"+directory+"' from etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
                 try {
@@ -468,7 +478,7 @@ public class EtcdAccessor {
      * @param node
      */
     private void addNodes(Map<String, String> result, JsonObject node) {
-        if(node.getBoolean("dir", false)) {
+        if(!node.containsKey("dir") || "false".equals(node.get("dir"))) {
             String key = node.getString("key").substring(1);
             result.put(key, node.getString("value"));
             if (node.containsKey("createdIndex")) {
@@ -478,14 +488,14 @@ public class EtcdAccessor {
                 result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
             }
             if (node.containsKey("expiration")) {
-                result.put("_" + key + ".expiration", String.valueOf(node.getInt("expiration")));
+                result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
             }
             if (node.containsKey("ttl")) {
                 result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
             }
             result.put("_" + key +".source", "[etcd]"+serverURL);
         } else {
-            JsonArray nodes = node.getJsonArray("node");
+            JsonArray nodes = node.getJsonArray("nodes");
             if (nodes != null) {
                 for (int i = 0; i < nodes.size(); i++) {
                     addNodes(result, nodes.getJsonObject(i));

@@ -37,6 +37,7 @@ under the License.
         <module>cdi</module>
         <module>osgi</module>
         <module>camel</module>
+        <module>etcd</module>
     </modules>
 
 </project>
