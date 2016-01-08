@@ -35,7 +35,7 @@ public class EtcdPropertySourceTest {
 
     @BeforeClass
     public static void setup(){
-        System.setProperty("etcd.url", "http://192.168.99.105:4001");
+        System.setProperty("etcd.server.urls", "http://8.8.8.8:4001,http://192.168.99.105:4001");
     }
 
     @Test

@@ -21,6 +21,7 @@ package org.apache.tamaya.etcd;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -28,6 +29,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -53,6 +55,8 @@ public class EtcdAccessor {
 
     private static final Logger LOG = Logger.getLogger(EtcdAccessor.class.getName());
 
+    /** Timeout in seconds. */
+    private static int timeout = 2;
     /** Property that make Johnzon accept commentc. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
     /** The JSON reader factory used. */
@@ -71,20 +75,16 @@ public class EtcdAccessor {
     private CloseableHttpClient httpclient = HttpClients.createDefault();
 
     /**
-     * Creates a new instance, trying to read the basic server endpoint from {@code -Detcd.url}, using default
-     * value of {@code http://127.0.0.1:4001}.
+     * Creates a new instance with the basic access url.
+     * @param server server url, e.g. {@code http://127.0.0.1:4001}, not null.
      * @throws MalformedURLException
      */
-    public EtcdAccessor() throws MalformedURLException {
-        this(System.getProperty("etcd.url", "http://127.0.0.1:4001"));
+    public EtcdAccessor(String server)throws MalformedURLException{
+        this(server, 2);
     }
 
-    /**
-     * Creates a new instance with the basic access url.
-     * @param server server url, e.g. {@code http://127.0.0.1:4001}.
-     * @throws MalformedURLException
-     */
-    public EtcdAccessor(String server) throws MalformedURLException {
+    public EtcdAccessor(String server, int timeout) throws MalformedURLException {
+        this.timeout = timeout;
         if(server.endsWith("/")){
             serverURL = server.substring(0, server.length()-1);
         } else{
@@ -103,6 +103,8 @@ public class EtcdAccessor {
         try {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(serverURL + "/version");
+            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
             response = httpclient.execute(httpGet);
             HttpEntity entity = null;
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -113,7 +115,7 @@ public class EtcdAccessor {
             }
             return version;
         } catch(Exception e){
-            LOG.log(Level.SEVERE, "Error getting etcd version from: " + serverURL, e);
+            LOG.log(Level.INFO, "Error getting etcd version from: " + serverURL, e);
         } finally {
             if(response!=null){
                 try {
@@ -156,6 +158,8 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try {
             HttpGet httpGet = new HttpGet(serverURL + "/v2/keys/"+key);
+            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
             response = httpclient.execute(httpGet);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
@@ -181,7 +185,7 @@ public class EtcdAccessor {
                 result.put("_" + key +".NOT_FOUND.target", "[etcd]"+serverURL);
             }
         } catch(Exception e){
-            LOG.log(Level.SEVERE, "Error reading key '"+key+"' from etcd: " + serverURL, e);
+            LOG.log(Level.INFO, "Error reading key '"+key+"' from etcd: " + serverURL, e);
             result.put("_ERROR", "Error reading key '"+key+"' from etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
@@ -249,6 +253,8 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try{
             HttpPut put = new HttpPut(serverURL + "/v2/keys/"+key);
+            put.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
             List<NameValuePair> nvps = new ArrayList<>();
             nvps.add(new BasicNameValuePair("value", value));
             if(ttlSeconds!=null){
@@ -295,7 +301,7 @@ public class EtcdAccessor {
                 EntityUtils.consume(entity);
             }
         } catch(Exception e){
-            LOG.log(Level.SEVERE, "Error writing to etcd: " + serverURL, e);
+            LOG.log(Level.INFO, "Error writing to etcd: " + serverURL, e);
             result.put("_ERROR", "Error writing '"+key+"' to etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
@@ -333,6 +339,8 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try{
             HttpDelete delete = new HttpDelete(serverURL + "/v2/keys/"+key);
+            delete.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
             List<NameValuePair> nvps = new ArrayList<>();
             // delete.setEntity(new UrlEncodedFormEntity(nvps));
             response = httpclient.execute(delete);
@@ -372,14 +380,14 @@ public class EtcdAccessor {
                 EntityUtils.consume(entity);
             }
         } catch(Exception e){
-            LOG.log(Level.SEVERE, "Error deleting key '"+key+"' from etcd: " + serverURL, e);
+            LOG.log(Level.INFO, "Error deleting key '"+key+"' from etcd: " + serverURL, e);
             result.put("_ERROR", "Error deleting '"+key+"' from etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
                 try {
                     response.close();
                 } catch (IOException e) {
-                    // TODO log error
+                    LOG.log(Level.WARNING, "Failed to close http response", e);
                 }
             }
         }
@@ -446,6 +454,8 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try{
             HttpGet get = new HttpGet(serverURL + "/v2/keys/"+directory+"?recursive="+recursive);
+            get.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
             response = httpclient.execute(get);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
@@ -458,14 +468,14 @@ public class EtcdAccessor {
                 EntityUtils.consume(entity);
             }
         } catch(Exception e){
-            LOG.log(Level.SEVERE, "Error reading properties for '"+directory+"' from etcd: " + serverURL, e);
+            LOG.log(Level.INFO, "Error reading properties for '"+directory+"' from etcd: " + serverURL, e);
             result.put("_ERROR", "Error reading properties for '"+directory+"' from etcd: " + serverURL + ": " + e.toString());
         } finally {
             if(response!=null){
                 try {
                     response.close();
                 } catch (IOException e) {
-                    // TODO log error
+                    LOG.log(Level.WARNING, "Failed to close http response", e);
                 }
             }
         }
@@ -504,5 +514,11 @@ public class EtcdAccessor {
         }
     }
 
-
+    /**
+     * Access the server root URL used by this accessor.
+     * @return
+     */
+    public String getUrl() {
+        return serverURL;
+    }
 }

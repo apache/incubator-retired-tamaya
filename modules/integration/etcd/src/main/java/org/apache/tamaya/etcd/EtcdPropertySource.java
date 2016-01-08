@@ -20,24 +20,37 @@ package org.apache.tamaya.etcd;
 
 import org.apache.tamaya.spi.PropertySource;
 
-import java.net.MalformedURLException;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Propertysource that is reading configuration from a configured etcd endpoint.
+ * Propertysource that is reading configuration from a configured etcd endpoint. Setting
+ * {@code etcd.prefix} as system property maps the etcd based onfiguration
+ * to this prefix namespace. Etcd servers are configured as {@code etcd.server.urls} system or environment property.
  */
 public class EtcdPropertySource implements PropertySource{
-
-    private EtcdAccessor etcdBackend;
+    private static final Logger LOG = Logger.getLogger(EtcdPropertySource.class.getName());
+    private List<EtcdAccessor> etcdBackends = new ArrayList<>();
+    private String prefix = System.getProperty("etcd.prefix", "");
 
     public EtcdPropertySource(){
-        try {
-            etcdBackend = new EtcdAccessor();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+        int timeout = 2;
+        String val = System.getProperty("etcd.timeout");
+        if(val == null){
+            val = System.getenv("etcd.timeout");
+        }
+        if(val!=null){
+            timeout = Integer.parseInt(val);
+        }
+        String serverURLs = System.getProperty("etcd.server.urls", "http://127.0.0.1:4001");
+        for(String url:serverURLs.split("\\,")) {
+            try{
+                etcdBackends.add(new EtcdAccessor(url, timeout));
+                LOG.info("Using etcd endoint: " + url);
+            } catch(Exception e){
+                LOG.log(Level.SEVERE, "Error initializing etcd accessor for URL: " + url, e);
+            }
         }
     }
 
@@ -70,36 +83,79 @@ public class EtcdPropertySource implements PropertySource{
 
     @Override
     public String get(String key) {
-        if(etcdBackend!=null) {
-            Map<String,String> props = null;
-            if(key.startsWith("_")){
-                String reqKey = key.substring(1);
-                if(reqKey.endsWith(".createdIndex")){
-                    reqKey = reqKey.substring(0,reqKey.length()-".createdIndex".length());
-                } else if(reqKey.endsWith(".modifiedIndex")){
-                    reqKey = reqKey.substring(0,reqKey.length()-".modifiedIndex".length());
-                } else if(reqKey.endsWith(".ttl")){
-                    reqKey = reqKey.substring(0,reqKey.length()-".ttl".length());
-                } else if(reqKey.endsWith(".expiration")){
-                    reqKey = reqKey.substring(0,reqKey.length()-".expiration".length());
-                } else if(reqKey.endsWith(".source")){
-                    reqKey = reqKey.substring(0,reqKey.length()-".source".length());
-                }
-                props = etcdBackend.get(reqKey);
-            } else{
-                props = etcdBackend.get(key);
+        // check prefix, if key does not start with it, it is not part of our name space
+        // if so, the prefix part must be removed, so etcd can resolve without it
+        if(!key.startsWith(prefix)){
+            return null;
+        }
+        else{
+            key = key.substring(prefix.length());
+        }
+        Map<String,String> props = null;
+        String reqKey = key;
+        if(key.startsWith("_")){
+            reqKey = key.substring(1);
+            if(reqKey.endsWith(".createdIndex")){
+                reqKey = reqKey.substring(0,reqKey.length()-".createdIndex".length());
+            } else if(reqKey.endsWith(".modifiedIndex")){
+                reqKey = reqKey.substring(0,reqKey.length()-".modifiedIndex".length());
+            } else if(reqKey.endsWith(".ttl")){
+                reqKey = reqKey.substring(0,reqKey.length()-".ttl".length());
+            } else if(reqKey.endsWith(".expiration")){
+                reqKey = reqKey.substring(0,reqKey.length()-".expiration".length());
+            } else if(reqKey.endsWith(".source")){
+                reqKey = reqKey.substring(0,reqKey.length()-".source".length());
             }
-            return props.get(key);
+        }
+        for(EtcdAccessor accessor:etcdBackends){
+            try{
+                props = accessor.get(key);
+                if(!props.containsKey("_ERROR")) {
+                    // No repfix mapping necessary here, since we only access/return the value...
+                    return props.get(key);
+                } else{
+                    LOG.log(Level.FINE, "etcd error on " + accessor.getUrl() + ": " + props.get("_ERROR"));
+                }
+            } catch(Exception e){
+                LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
+            }
         }
         return null;
     }
 
     @Override
     public Map<String, String> getProperties() {
-        if(etcdBackend!=null) {
-            return etcdBackend.getProperties("");
+        if(etcdBackends.isEmpty()){
+            for(EtcdAccessor accessor:etcdBackends){
+                try{
+                    Map<String, String> props = accessor.getProperties("");
+                    if(!props.containsKey("_ERROR")) {
+                        return mapPrefix(props);
+                    } else{
+                        LOG.log(Level.FINE, "etcd error on " + accessor.getUrl() + ": " + props.get("_ERROR"));
+                    }
+                } catch(Exception e){
+                    LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
+                }
+            }
         }
         return Collections.emptyMap();
+    }
+
+    private Map<String, String> mapPrefix(Map<String, String> props) {
+        if(prefix.isEmpty()){
+            return props;
+        }
+        Map<String,String> map = new HashMap<>();
+        for(Map.Entry<String,String> entry:props.entrySet()){
+            if(entry.getKey().startsWith("_")){
+                map.put("_" + prefix + entry.getKey().substring(1), entry.getValue());
+            }
+            else{
+                map.put(prefix+ entry.getKey(), entry.getValue());
+            }
+        }
+        return map;
     }
 
     @Override

@@ -37,10 +37,10 @@ public class EtcdAccessorTest {
 
     @BeforeClass
     public static void setup() throws MalformedURLException {
-        accessor = new EtcdAccessor();
+        accessor = new EtcdAccessor("http://192.168.99.105:4001");
         if(!accessor.getVersion().contains("etcd")){
-            System.out.println("Disabling etcd tests, etcd not accessible at: " + System.getProperty("etcd.url"));
-            System.out.println("Configure etcd with -Detcd.url=http://<IP>:<PORT>");
+            System.out.println("Disabling etcd tests, etcd not accessible at: " + System.getProperty("etcd.server.urls"));
+            System.out.println("Configure etcd with -Detcd.server.urls=http://<IP>:<PORT>");
         }
         else{
             execute = true;
