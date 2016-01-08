@@ -84,6 +84,7 @@ from a sledgehammer to a scalpell:
 |+org.apache.tamaya.ext:tamaya-camel+       | Integration for Apache Camel.                | link:mod_camel.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-spring+      | Integration for Spring / Spring Boot.        | link:mod_spring.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-osgi+        | Integration for OSGI containers.             | link:mod_osgi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-etcd+        | Integration with etcd clusters.              | link:mod_etcd.html[Documentation]
 |=======
 
 
