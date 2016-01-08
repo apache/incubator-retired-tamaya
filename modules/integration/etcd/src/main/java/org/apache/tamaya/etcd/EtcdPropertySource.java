@@ -32,21 +32,27 @@ import java.util.logging.Logger;
 public class EtcdPropertySource implements PropertySource{
     private static final Logger LOG = Logger.getLogger(EtcdPropertySource.class.getName());
     private List<EtcdAccessor> etcdBackends = new ArrayList<>();
-    private String prefix = System.getProperty("etcd.prefix", "");
+    private String prefix = System.getProperty("tamaya.etcd.prefix", "");
 
     public EtcdPropertySource(){
         int timeout = 2;
-        String val = System.getProperty("etcd.timeout");
+        String val = System.getProperty("tamaya.etcd.timeout");
         if(val == null){
-            val = System.getenv("etcd.timeout");
+            val = System.getenv("tamaya.etcd.timeout");
         }
         if(val!=null){
             timeout = Integer.parseInt(val);
         }
-        String serverURLs = System.getProperty("etcd.server.urls", "http://127.0.0.1:4001");
+        String serverURLs = System.getProperty("tamaya.etcd.server.urls");
+        if(serverURLs==null){
+            serverURLs = System.getenv("tamaya.etcd.server.urls");
+        }
+        if(serverURLs==null){
+            serverURLs = "http://127.0.0.1:4001";
+        }
         for(String url:serverURLs.split("\\,")) {
             try{
-                etcdBackends.add(new EtcdAccessor(url, timeout));
+                etcdBackends.add(new EtcdAccessor(url.trim(), timeout));
                 LOG.info("Using etcd endoint: " + url);
             } catch(Exception e){
                 LOG.log(Level.SEVERE, "Error initializing etcd accessor for URL: " + url, e);
