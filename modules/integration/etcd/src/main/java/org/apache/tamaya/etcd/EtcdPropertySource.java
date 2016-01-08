@@ -93,8 +93,7 @@ public class EtcdPropertySource implements PropertySource{
         // if so, the prefix part must be removed, so etcd can resolve without it
         if(!key.startsWith(prefix)){
             return null;
-        }
-        else{
+        } else{
             key = key.substring(prefix.length());
         }
         Map<String,String> props = null;
@@ -156,8 +155,7 @@ public class EtcdPropertySource implements PropertySource{
         for(Map.Entry<String,String> entry:props.entrySet()){
             if(entry.getKey().startsWith("_")){
                 map.put("_" + prefix + entry.getKey().substring(1), entry.getValue());
-            }
-            else{
+            } else{
                 map.put(prefix+ entry.getKey(), entry.getValue());
             }
         }
