@@ -35,7 +35,7 @@ public interface ExpressionResolver {
      * separator, but it is recommended to use it, because it fits well, with the other existing resolvers and
      * is easy to read.
      */
-    public String getResolverPrefix();
+    String getResolverPrefix();
 
     /**
      * Evaluates the given expression.

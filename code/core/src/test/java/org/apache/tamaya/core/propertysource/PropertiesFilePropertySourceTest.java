@@ -25,9 +25,9 @@ import org.junit.Test;
 
 public class PropertiesFilePropertySourceTest {
 
-    private SimplePropertySource testfilePropertySource = new SimplePropertySource(Thread.currentThread()
+    private final SimplePropertySource testfilePropertySource = new SimplePropertySource(Thread.currentThread()
             .getContextClassLoader().getResource("testfile.properties"));
-    private SimplePropertySource overrideOrdinalPropertySource = new SimplePropertySource(
+    private final SimplePropertySource overrideOrdinalPropertySource = new SimplePropertySource(
             Thread.currentThread().getContextClassLoader().getResource("overrideOrdinal.properties"));
 
 

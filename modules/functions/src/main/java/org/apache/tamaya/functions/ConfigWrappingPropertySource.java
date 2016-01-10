@@ -29,11 +29,11 @@ import java.util.Objects;
  */
 final class ConfigWrappingPropertySource implements PropertySource {
     /** The property source name. */
-    private String name;
+    private final String name;
     /** The ordinal. */
-    private int ordinal;
+    private final int ordinal;
     /** The wrapped config. */
-    private Configuration config;
+    private final Configuration config;
 
     /**
      * Constructor.

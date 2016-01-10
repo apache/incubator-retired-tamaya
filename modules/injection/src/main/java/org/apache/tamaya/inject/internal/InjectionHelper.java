@@ -213,7 +213,7 @@ final class InjectionHelper {
      * Evaluates the given expression.
      *
      * @param expression the expression, not null.
-     * @return
+     * @return the evaluated expression.
      */
     public static String evaluateValue(String expression) {
         if (!RESOLUTION_MODULE_LOADED) {

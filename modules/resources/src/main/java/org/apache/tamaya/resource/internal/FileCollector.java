@@ -92,16 +92,20 @@ public class FileCollector {
             File[] files = dir.listFiles();
             if (tokenIndex == subTokens.size() - 1) {
                 // select files!
-                for (File f : files) {
-                    if (f.isFile() && f.getName().matches(token)) {
-                        result.add(getURL(f));
+                if(files!=null) {
+                    for (File f : files) {
+                        if (f.isFile() && f.getName().matches(token)) {
+                            result.add(getURL(f));
+                        }
                     }
                 }
             } else {
                 // check directory pattern
-                for (File f : files) {
-                    if (f.isDirectory() && f.getName().matches(token)) {
-                        result.addAll(traverseAndSelectFromChildren(f, subTokens, tokenIndex + 1));
+                if(files!=null) {
+                    for (File f : files) {
+                        if (f.isDirectory() && f.getName().matches(token)) {
+                            result.addAll(traverseAndSelectFromChildren(f, subTokens, tokenIndex + 1));
+                        }
                     }
                 }
             }
@@ -117,7 +121,11 @@ public class FileCollector {
      */
     static Collection<URL> traverseAndSelectFromChildren(File file, String expression) {
         List<URL> result = new ArrayList<>();
-        for (File childFile : file.listFiles()) {
+        File[] files = file.listFiles();
+        if(files==null){
+            return result;
+        }
+        for (File childFile : files) {
             if (childFile.isFile()) {
                 if (childFile.getName().matches(expression)) {
                     try {

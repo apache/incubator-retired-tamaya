@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ConfigDocumentationBeanTest {
 
-    private ConfigDocumentationBean mbean = new ConfigDocumentationBean();
+    private final ConfigDocumentationBean mbean = new ConfigDocumentationBean();
 
     @Test
     public void testValidate_NoUnknowns() throws Exception {

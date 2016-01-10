@@ -57,15 +57,15 @@ public class PropertyConverterManager {
     /**
      * The registered converters.
      */
-    private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
+    private final Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /**
      * The transitive converters.
      */
-    private Map<TypeLiteral<?>, List<PropertyConverter<?>>> transitiveConverters = new ConcurrentHashMap<>();
+    private final Map<TypeLiteral<?>, List<PropertyConverter<?>>> transitiveConverters = new ConcurrentHashMap<>();
     /**
      * The lock used.
      */
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     private static final Comparator<Object> PRIORITY_COMPARATOR = new Comparator<Object>() {
 
@@ -171,10 +171,7 @@ public class PropertyConverterManager {
      * @return true, if a converter for the given type is registered, or a default one can be created.
      */
     public boolean isTargetTypeSupported(TypeLiteral<?> targetType) {
-        if (converters.containsKey(targetType) || transitiveConverters.containsKey(targetType)) {
-            return true;
-        }
-        return createDefaultPropertyConverter(targetType) != null;
+        return converters.containsKey(targetType) || transitiveConverters.containsKey(targetType) || createDefaultPropertyConverter(targetType) != null;
     }
 
     /**
@@ -413,8 +410,8 @@ public class PropertyConverterManager {
 
     private static class DefaultPropertyConverter<T> implements PropertyConverter<T> {
 
-        private Method factoryMethod;
-        private Class<T> targetType;
+        private final Method factoryMethod;
+        private final Class<T> targetType;
 
         DefaultPropertyConverter(Method factoryMethod, Class<T> targetType){
             this.factoryMethod = Objects.requireNonNull(factoryMethod);

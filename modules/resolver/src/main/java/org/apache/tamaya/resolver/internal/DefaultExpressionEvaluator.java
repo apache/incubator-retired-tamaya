@@ -41,7 +41,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     private static final Logger LOG = Logger.getLogger(DefaultExpressionEvaluator.class.getName());
 
-    private List<ExpressionResolver> resolvers = new ArrayList<>();
+    private final List<ExpressionResolver> resolvers = new ArrayList<>();
 
     /**
      * Comparator used (not needed with Java8).

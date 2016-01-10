@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class BooleanConverter implements PropertyConverter<Boolean> {
 
-    private Logger LOG = Logger.getLogger(getClass().getName());
+    private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
     public Boolean convert(String value, ConversionContext context) {

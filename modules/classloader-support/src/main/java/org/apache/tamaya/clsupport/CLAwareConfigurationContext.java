@@ -41,7 +41,7 @@ public class CLAwareConfigurationContext implements ConfigurationContext {
     /** The logger used. */
     private final static Logger LOG = Logger.getLogger(CLAwareConfigurationContext.class.getName());
 
-    private ContextManager contextManager = new ContextManager();
+    private final ContextManager contextManager = new ContextManager();
 
 
     @Override

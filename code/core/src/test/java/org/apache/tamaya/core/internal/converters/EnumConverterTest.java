@@ -33,9 +33,9 @@ import static org.junit.Assert.assertNull;
  */
 public class EnumConverterTest {
 
-    private EnumConverter testConverter = new EnumConverter(RoundingMode.class);
+    private final EnumConverter testConverter = new EnumConverter(RoundingMode.class);
 
-    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
+    private final ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
 
     @Test
     public void testConvert() {

@@ -57,8 +57,8 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
 
     private final static class PropertiesBasedPropertySource implements PropertySource{
 
-        private String name;
-        private Map<String,String> properties = new HashMap<>();
+        private final String name;
+        private final Map<String,String> properties = new HashMap<>();
 
         public PropertiesBasedPropertySource(String name, Properties props) {
             this.name = name;

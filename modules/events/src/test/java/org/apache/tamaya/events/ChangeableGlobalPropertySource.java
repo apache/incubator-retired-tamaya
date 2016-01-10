@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ChangeableGlobalPropertySource extends BasePropertySource{
 
-    private static Map<String,String> STORED_ENTRIES = new ConcurrentHashMap<>();
+    private static final Map<String,String> STORED_ENTRIES = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {

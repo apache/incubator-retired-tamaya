@@ -38,7 +38,6 @@ public class TamayaConfigurationImpl implements Configuration {
     private final String factoryPid;
     private Map<String, String> properties = new HashMap<>();
     private org.apache.tamaya.Configuration config;
-    private OSGIConfigRootMapper configRootMapper;
 
     /**
      * Constructor.
@@ -51,7 +50,6 @@ public class TamayaConfigurationImpl implements Configuration {
                                    ConfigurationAdmin parent) {
         this.pid = confPid;
         this.factoryPid = factoryPid;
-        this.configRootMapper = Objects.requireNonNull(configRootMapper);
         if(parent!=null){
             try {
                 Dictionary<String, Object> conf = parent.getConfiguration(confPid, factoryPid).getProperties();

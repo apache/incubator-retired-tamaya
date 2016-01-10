@@ -35,9 +35,9 @@ import java.util.logging.Logger;
  */
 public class ParameterModel extends AbstractModel {
     /** Optional regular expression for validating the value. */
-    private String regEx;
+    private final String regEx;
     /** The target type into which the value must be convertible. */
-    private Class<?> type;
+    private final Class<?> type;
 
     /**
      * Internal constructor.
@@ -84,10 +84,10 @@ public class ParameterModel extends AbstractModel {
         StringBuilder b = new StringBuilder();
         b.append(getType()).append(": ").append(getName());
         if (isRequired()) {
-            b.append(", required: " + isRequired());
+            b.append(", required: ").append(isRequired());
         }
         if (regEx != null) {
-            b.append(", expression: " + regEx);
+            b.append(", expression: ").append(regEx);
         }
         return b.toString();
     }
@@ -95,7 +95,7 @@ public class ParameterModel extends AbstractModel {
     /**
      * Creates a new Builder instance.
      * @param name the fully qualified parameter name.
-     * @return
+     * @return a new builder, never null.
      */
     public static Builder builder(String name) {
         return new Builder(name);

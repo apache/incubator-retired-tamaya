@@ -96,7 +96,7 @@ public class EtcdPropertySource implements PropertySource{
         } else{
             key = key.substring(prefix.length());
         }
-        Map<String,String> props = null;
+        Map<String,String> props;
         String reqKey = key;
         if(key.startsWith("_")){
             reqKey = key.substring(1);
@@ -114,10 +114,10 @@ public class EtcdPropertySource implements PropertySource{
         }
         for(EtcdAccessor accessor:etcdBackends){
             try{
-                props = accessor.get(key);
+                props = accessor.get(reqKey);
                 if(!props.containsKey("_ERROR")) {
                     // No repfix mapping necessary here, since we only access/return the value...
-                    return props.get(key);
+                    return props.get(reqKey);
                 } else{
                     LOG.log(Level.FINE, "etcd error on " + accessor.getUrl() + ": " + props.get("_ERROR"));
                 }

@@ -46,9 +46,9 @@ public class JSONPropertySource implements PropertySource {
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
 
     /** The underlying resource. */
-    private URL urlResource;
+    private final URL urlResource;
     /** The values read. */
-    private Map<String, String> values;
+    private final Map<String, String> values;
     /** The evaluated ordinal. */
     private int ordinal;
     /** The JSON reader factory used. */
@@ -56,7 +56,7 @@ public class JSONPropertySource implements PropertySource {
 
     /** Initializes the factory to be used for creating readers. */
     private JsonReaderFactory initReaderFactory() {
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
        return Json.createReaderFactory(config);
     }
@@ -81,7 +81,7 @@ public class JSONPropertySource implements PropertySource {
         if (this.values.containsKey(TAMAYA_ORDINAL)) {
             this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
         }
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
         this.readerFactory = Json.createReaderFactory(config);
     }

@@ -19,4 +19,4 @@
 /**
  * Contains additional useful operators and queries.
  */
-package org.apache.tamaya.resource.internal;
+package org.apache.tamaya.functions;

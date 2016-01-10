@@ -35,9 +35,9 @@ import java.util.Objects;
  */
 public class ConfigModelGroup implements ConfigModel {
 
-    private String name;
+    private final String name;
     private boolean required;
-    private String provider;
+    private final String provider;
     private List<ConfigModel> childConfigModels = new ArrayList<>();
 
     public ConfigModelGroup(String name, String provider, ConfigModel... configModels){
@@ -84,7 +84,7 @@ public class ConfigModelGroup implements ConfigModel {
         }
         StringBuilder b = new StringBuilder();
         for(ConfigModel val: childConfigModels){
-            b.append("  >> " + val);
+            b.append("  >> ").append(val);
         }
         return b.toString();
     }
@@ -104,9 +104,7 @@ public class ConfigModelGroup implements ConfigModel {
 
     @Override
     public String toString(){
-        StringBuilder b = new StringBuilder();
-        b.append(getType()).append(", size: ").append(childConfigModels.size()).append(": ").append(getDescription());
-        return b.toString();
+        return String.valueOf(getType()) + ", size: " + childConfigModels.size() + ": " + getDescription();
     }
 
 }

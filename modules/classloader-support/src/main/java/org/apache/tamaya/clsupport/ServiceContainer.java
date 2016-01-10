@@ -39,7 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Anatole on 08.09.2015.
+ * Classloader managed ServiceContainer.
  */
 class ServiceContainer {
 
@@ -50,7 +50,7 @@ class ServiceContainer {
     // The access control context taken when the ServiceLoader is created
     private final AccessControlContext acc;
 
-    private WeakReference<ClassLoader> classLoaderRef;
+    private final WeakReference<ClassLoader> classLoaderRef;
 
     /**
      * List current services loaded using this classloader, per class.
@@ -82,7 +82,7 @@ class ServiceContainer {
 
     public <T> void loadServices(Class<?> type,
                                  Collection<ServiceContainer> preceedingContainers) {
-        Map<String, Object> services = (Map<String, Object>) this.servicesLoaded.get(type);
+        Map<String, Object> services = this.servicesLoaded.get(type);
         if (services == null) {
             services = new LinkedHashMap<>();
             this.servicesLoaded.put(type, services);
@@ -100,7 +100,6 @@ class ServiceContainer {
                 for (ServiceContainer cont : preceedingContainers) {
                     if (cont.containsService(type, s)) {
                         LOG.finest("Ignoring duplicate service: " + s);
-                        continue;
                     }
                 }
                 LOG.info("Loading component: " + s);
@@ -133,10 +132,7 @@ class ServiceContainer {
 
     private boolean containsService(Class<?> type, String serviceClassName) {
         Map<String, Object> services = servicesLoaded.get(type);
-        if (services == null) {
-            return false;
-        }
-        return services.containsKey(serviceClassName);
+        return services != null && services.containsKey(serviceClassName);
     }
 
 
@@ -154,8 +150,7 @@ class ServiceContainer {
                     "Provider " + className + " not a subtype");
         }
         try {
-            S p = serviceType.cast(c.newInstance());
-            return p;
+            return serviceType.cast(c.newInstance());
         } catch (Throwable x) {
             fail(serviceType,
                     "Provider " + className + " could not be instantiated",

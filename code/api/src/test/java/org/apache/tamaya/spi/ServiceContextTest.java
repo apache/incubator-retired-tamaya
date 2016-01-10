@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class ServiceContextTest {
 
-    private ServiceContext serviceContext = new ServiceContext(){
+    private final ServiceContext serviceContext = new ServiceContext(){
 
         @Override
         public int ordinal() {

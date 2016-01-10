@@ -19,10 +19,13 @@
 package org.apache.tamaya.events;
 
 /**
- * Created by Anatole on 20.02.2015.
+ * Enum describing the type of configuration change.
  */
 public enum ChangeType {
+    /** Configuration hase been added. */
     NEW,
+    /** Configuration hase been removed. */
     DELETED,
+    /** Configuration hase been changed. */
     UPDATED,
 }

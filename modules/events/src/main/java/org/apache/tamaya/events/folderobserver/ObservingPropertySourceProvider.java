@@ -59,7 +59,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     /**
      * The thread pool used.
      */
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
      * Constructorm using an explicit directory, ignoring all kind of configuration, if set.
@@ -103,7 +103,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
 
     protected Collection<PropertySource> getPropertySources(final Path file) {
         return Arrays.asList(new PropertySource[]{new BasePropertySource() {
-            private Map<String,String> props = readProperties(file);
+            private final Map<String,String> props = readProperties(file);
             @Override
             public Map<String, String> getProperties() {
                 return props;

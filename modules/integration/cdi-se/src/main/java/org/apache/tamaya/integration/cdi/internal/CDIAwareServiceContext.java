@@ -86,7 +86,7 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = (List<T>) clAwareServiceContext.getServices(serviceType);
+        List<T> found = clAwareServiceContext.getServices(serviceType);
         BeanManager beanManager = TamayaCDIIntegration.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){

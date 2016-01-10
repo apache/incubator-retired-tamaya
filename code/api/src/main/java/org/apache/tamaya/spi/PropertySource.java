@@ -47,7 +47,7 @@ public interface PropertySource {
     /**
      * property name to override default tamaya ordinals
      */
-    static final String TAMAYA_ORDINAL = "tamaya.ordinal";
+    String TAMAYA_ORDINAL = "tamaya.ordinal";
 
 
     /**

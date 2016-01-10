@@ -52,7 +52,7 @@ public final class ConfigurationContextChangeBuilder {
      */
     Long timestamp;
 
-    ConfigurationContext configurationContext;
+    final ConfigurationContext configurationContext;
 
     /**
      * Constructor.

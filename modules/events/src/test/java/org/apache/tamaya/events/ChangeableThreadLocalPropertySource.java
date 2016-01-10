@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class ChangeableThreadLocalPropertySource extends BasePropertySource{
 
-    private static ThreadLocal<Map<String,String>> STORED_ENTRIES = new ThreadLocal<Map<String,String>>(){
+    private static final ThreadLocal<Map<String,String>> STORED_ENTRIES = new ThreadLocal<Map<String,String>>(){
         protected Map<String,String> initialValue(){
             return new HashMap<>();
         }

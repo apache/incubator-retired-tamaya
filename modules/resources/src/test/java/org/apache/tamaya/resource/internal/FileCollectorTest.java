@@ -34,6 +34,9 @@ public class FileCollectorTest {
 
     private String getResourceDir() throws URISyntaxException {
         URL res = getClass().getClassLoader().getResource("resources_testroot/");
+        if(res==null){
+            return null;
+        }
         return new File(res.toURI()).getAbsolutePath();
     }
 

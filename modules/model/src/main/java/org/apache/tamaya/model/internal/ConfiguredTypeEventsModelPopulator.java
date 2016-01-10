@@ -51,7 +51,7 @@ public final class ConfiguredTypeEventsModelPopulator implements ConfigEventList
             return;
         }
         String value = System.getProperty(ENABLE_EVENT_DOC);
-        if(value==null?true:Boolean.parseBoolean(value)) {
+        if(value == null || Boolean.parseBoolean(value)) {
             ConfiguredType confType = (ConfiguredType)event.getResource();
             for (ConfiguredField field : confType.getConfiguredFields()) {
                 Collection<String> keys = field.getConfiguredKeys();

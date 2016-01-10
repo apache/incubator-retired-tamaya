@@ -36,7 +36,7 @@ public interface ConfiguredMethod {
 
     /**
      * Get the methods input parameter types.
-     * @return
+     * @return the method param types, not null.
      */
     Class<?>[] getParameterTypes();
 

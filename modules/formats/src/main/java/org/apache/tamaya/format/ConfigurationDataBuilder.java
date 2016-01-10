@@ -27,9 +27,9 @@ import java.util.*;
 public final class ConfigurationDataBuilder {
 
     /** The format instance used to read this instance. */
-    ConfigurationFormat format;
+    final ConfigurationFormat format;
     /** The resource read. */
-    String resource;
+    final String resource;
     /**
      * The properties of the default section (no name).
      */
@@ -104,7 +104,7 @@ public final class ConfigurationDataBuilder {
     public ConfigurationDataBuilder addSectionProperty(String section, String key, String value) {
         Map<String, String> map = getSections().get(section);
         if (map == null) {
-            map = new HashMap<String, String>();
+            map = new HashMap<>();
             getSections().put(section, map);
         }
         map.put(key, value);
@@ -131,7 +131,7 @@ public final class ConfigurationDataBuilder {
     public ConfigurationDataBuilder addSectionProperties(String section, Map<String, String> properties) {
         Map<String, String> map = getSections().get(section);
         if (map == null) {
-            map = new HashMap<String, String>();
+            map = new HashMap<>();
             getSections().put(section, map);
         }
         map.putAll(properties);

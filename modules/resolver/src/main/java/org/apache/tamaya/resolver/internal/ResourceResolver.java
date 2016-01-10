@@ -85,7 +85,9 @@ public final class ResourceResolver implements ExpressionResolver {
 
     private String readURL(String expression, List<ClassLoader> classLoaders) {
         URL url = getUrl(expression, classLoaders);
-
+        if(url==null){
+            return null;
+        }
         try (InputStreamReader streamReader = new InputStreamReader(url.openStream(), UTF_8);
              BufferedReader bufferedReader = new BufferedReader(streamReader)){
 

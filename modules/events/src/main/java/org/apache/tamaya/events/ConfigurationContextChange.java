@@ -39,13 +39,13 @@ public final class ConfigurationContextChange implements ConfigEvent<Configurati
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private List<PropertySourceChange> changedPropertySources = new ArrayList<>();
+    private final List<PropertySourceChange> changedPropertySources = new ArrayList<>();
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change set in millis from the epoch. */
     private long timestamp = System.currentTimeMillis();
     /** The configuration context. */
-    private ConfigurationContext configurationContext;
+    private final ConfigurationContext configurationContext;
 
     /**
      * Get an empty change set for the given provider.

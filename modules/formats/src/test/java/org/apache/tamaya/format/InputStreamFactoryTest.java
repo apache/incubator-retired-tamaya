@@ -99,7 +99,7 @@ public class InputStreamFactoryTest {
 
     @Test
     public void callToMarkIsNotForwardedToWrapped() throws IOException {
-        ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
+//        ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
         InputStream stream = new ByteArrayInputStream(new byte[]{1, 2, 3, 4});
         InputStreamFactory closer = new InputStreamFactory(stream);
         for (int i = 0; i < 100; i++) {

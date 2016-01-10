@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Created by Anatole on 16.10.2015.
+ * Utility class with several commonly used functions.
  */
 public final class InjectionUtils {
 

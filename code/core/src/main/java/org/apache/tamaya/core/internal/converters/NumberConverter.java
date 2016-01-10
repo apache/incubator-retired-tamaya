@@ -40,7 +40,7 @@ public class NumberConverter implements PropertyConverter<Number>{
     /** the logger. */
     private static final Logger LOGGER = Logger.getLogger(NumberConverter.class.getName());
     /** Converter used for trying to parse as an integral value. */
-    private LongConverter longConverter = new LongConverter();
+    private final LongConverter longConverter = new LongConverter();
 
     @Override
     public Number convert(String value, ConversionContext context) {

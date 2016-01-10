@@ -21,7 +21,7 @@ package org.apache.tamaya.core.internal;
 /**
  * Test class for testing transitively evaluated property converters.
  */
-public class A implements AutoCloseable{
+class A implements AutoCloseable{
     @Override
     public void close() throws Exception {
 

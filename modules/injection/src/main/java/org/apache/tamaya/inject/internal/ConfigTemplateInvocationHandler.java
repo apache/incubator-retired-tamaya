@@ -36,7 +36,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
     /**
      * The configured type.
      */
-    private ConfiguredType type;
+    private final ConfiguredType type;
 
     /**
      * Creates a new handler instance.

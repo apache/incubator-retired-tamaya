@@ -32,8 +32,8 @@ import java.util.logging.Logger;
  */
 public class FlattenedDefaultPropertySource implements PropertySource {
     private static final Logger LOG = Logger.getLogger(FlattenedDefaultPropertySource.class.getName());
-    private Map<String, String> properties;
-    private ConfigurationData data;
+    private final Map<String, String> properties;
+    private final ConfigurationData data;
     private int defaultOrdinal = 0;
 
 

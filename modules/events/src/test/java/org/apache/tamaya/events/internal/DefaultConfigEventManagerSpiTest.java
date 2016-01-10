@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class DefaultConfigEventManagerSpiTest {
 
-    private DefaultConfigEventManagerSpi spi = new DefaultConfigEventManagerSpi();
+    private final DefaultConfigEventManagerSpi spi = new DefaultConfigEventManagerSpi();
     private Object testAddListenerValue;
 
     @Test

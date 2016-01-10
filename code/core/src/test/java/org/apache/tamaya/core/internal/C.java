@@ -26,7 +26,7 @@ import java.nio.CharBuffer;
  */
 public class C extends B implements Readable{
 
-    private String inValue;
+    private final String inValue;
 
     public C(String inValue){
         this.inValue = inValue;

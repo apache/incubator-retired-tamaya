@@ -51,7 +51,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /**
      * Cubcomponent handling {@link PropertyConverter} instances.
      */
-    private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
+    private final PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
     /**
      * The current unmodifiable list of loaded {@link PropertySource} instances.

@@ -52,7 +52,7 @@ public class RemotePropertySource extends BaseRemotePropertySource{
                 configServerUrl = "http://localhost:8888/config?scope=CLIENT&scopeId={clientId}&format=application/json";
             }
             System.out.println("Reading config from " + configServerUrl.replace("{clientId}", Client.getClientId()));
-            return Arrays.asList(new URL[]{new URL(configServerUrl.replace("{clientId}", Client.getClientId()))});
+            return Arrays.asList(new URL(configServerUrl.replace("{clientId}", Client.getClientId())));
         } catch (MalformedURLException e) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to configure remote config location,", e);
             return Collections.emptySet();

@@ -29,8 +29,8 @@ import java.util.Objects;
  */
 class FilteredPropertySource implements PropertySource {
 
-    private PropertySource baseSource;
-    private Predicate<String> filter;
+    private final PropertySource baseSource;
+    private final Predicate<String> filter;
 
     /**
      * Creates a new instance

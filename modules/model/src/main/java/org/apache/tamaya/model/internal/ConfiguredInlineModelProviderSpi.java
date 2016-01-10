@@ -49,7 +49,7 @@ public class ConfiguredInlineModelProviderSpi implements ModelProviderSpi {
      */
     public ConfiguredInlineModelProviderSpi() {
         String enabledVal = ConfigurationProvider.getConfiguration().get(MODEL_EANABLED_PARAM);
-        boolean enabled = enabledVal==null? true: "true".equalsIgnoreCase(enabledVal);
+        boolean enabled = enabledVal == null || "true".equalsIgnoreCase(enabledVal);
         if (enabled) {
             LOG.info("Reading model configuration from config...");
             Map<String,String> config = ConfigurationProvider.getConfiguration().getProperties();

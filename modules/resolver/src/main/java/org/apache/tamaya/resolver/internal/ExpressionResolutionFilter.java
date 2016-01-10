@@ -35,7 +35,7 @@ public class ExpressionResolutionFilter implements PropertyFilter {
 
     private static final Logger LOG = Logger.getLogger(ExpressionResolutionFilter.class.getName());
 
-    private ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
+    private final ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
 
     /**
      * Resolves an expression in the form current <code>${resolverId:expression}</code> or

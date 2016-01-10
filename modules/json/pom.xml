@@ -112,7 +112,7 @@ under the License.
                 <executions>
                     <execution>
                         <id>copyMain</id>
-                        <phase>process-test-items</phase>
+                        <phase>process-test-sources</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>

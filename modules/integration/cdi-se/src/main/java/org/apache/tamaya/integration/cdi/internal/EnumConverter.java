@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 @Vetoed
 public class EnumConverter<T> implements PropertyConverter<T> {
-    private Logger LOG = Logger.getLogger(EnumConverter.class.getName());
+    private final Logger LOG = Logger.getLogger(EnumConverter.class.getName());
     private Class<T> enumType;
     private Method factory;
 

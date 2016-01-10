@@ -46,13 +46,13 @@ public class JSONFormat implements ConfigurationFormat {
     /** Property that make Johnzon accept commentc. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
     /** The reader factory used. */
-    private JsonReaderFactory readerFactory;
+    private final JsonReaderFactory readerFactory;
 
     /**
      * Constructor, itniaitlizing zhe JSON reader factory.
      */
     public JSONFormat(){
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
         this.readerFactory = Json.createReaderFactory(config);
     }

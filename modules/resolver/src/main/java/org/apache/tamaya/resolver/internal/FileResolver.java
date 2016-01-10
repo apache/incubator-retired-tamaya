@@ -74,7 +74,9 @@ public final class FileResolver implements ExpressionResolver {
     @Override
     public String evaluate(String expression) {
         URL url = getUrl(expression);
-
+        if(url==null){
+            return null;
+        }
         try (InputStreamReader streamReader = new InputStreamReader(url.openStream(), UTF_8);
              BufferedReader bufferedReader = new BufferedReader(streamReader)) {
             StringBuilder builder = new StringBuilder();

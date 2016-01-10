@@ -119,7 +119,7 @@ public class ConfiguredPropertiesModelProviderSpi implements ModelProviderSpi {
 
     public ConfiguredPropertiesModelProviderSpi() {
         String enabledVal = ConfigurationProvider.getConfiguration().get(MODEL_EANABLED_PARAM);
-        boolean enabled = enabledVal==null? true: "true".equalsIgnoreCase(enabledVal);
+        boolean enabled = enabledVal == null || "true".equalsIgnoreCase(enabledVal);
         if(!enabled){
             LOG.info("Reading model data from META-INF/configmodel.properties has been disabled.");
             return;

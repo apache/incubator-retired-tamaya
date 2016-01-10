@@ -29,18 +29,18 @@ import java.util.Objects;
  */
 class EnrichedPropertySource implements PropertySource {
 
-    private PropertySource basePropertySource;
+    private final PropertySource basePropertySource;
 
-    private Map<String, String> addedProperties;
+    private final Map<String, String> addedProperties;
 
-    private boolean overriding;
+    private final boolean overriding;
 
     /**
      * Constructor.
      *
-     * @param propertySource
-     * @param properties
-     * @param overriding
+     * @param propertySource the base property source, not null.
+     * @param properties the properties to be added.
+     * @param overriding flag if existing properties are overridden.
      */
     EnrichedPropertySource(PropertySource propertySource, Map<String, String> properties, boolean overriding) {
         this.basePropertySource = Objects.requireNonNull(propertySource);

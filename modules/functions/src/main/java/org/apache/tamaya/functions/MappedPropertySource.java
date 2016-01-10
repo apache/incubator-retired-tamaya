@@ -34,11 +34,11 @@ class MappedPropertySource implements PropertySource {
     /**
      * The mapping operator.
      */
-    private KeyMapper keyMapper;
+    private final KeyMapper keyMapper;
     /**
      * The base configuration.
      */
-    private PropertySource propertySource;
+    private final PropertySource propertySource;
 
     /**
      * Creates a new instance.

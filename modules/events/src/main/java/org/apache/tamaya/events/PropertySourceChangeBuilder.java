@@ -49,7 +49,7 @@ public final class PropertySourceChangeBuilder {
     /**
      * The underlying configuration/provider.
      */
-    PropertySource source;
+    final PropertySource source;
     /**
      * The version configured, or null, for generating a default.
      */
@@ -196,7 +196,9 @@ public final class PropertySourceChangeBuilder {
      * @return the builder for chaining.
      */
     public PropertySourceChangeBuilder putAll(Map<String, String> changes) {
-        changes.putAll(changes);
+        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
+            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), null, en.getValue()));
+        }
         return this;
     }
 

@@ -28,7 +28,7 @@ final class Locator {
     /**
      * The tokenized location expression.
      */
-    private List<String> tokens;
+    private final List<String> tokens;
 
     /**
      * Creates a new instances based on the tokenized expression.

@@ -42,7 +42,7 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger>{
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(BigIntegerConverter.class.getName());
     /** Converter used to decode hex, octal values. */
-    private ByteConverter byteConverter = new ByteConverter();
+    private final ByteConverter byteConverter = new ByteConverter();
 
     @Override
     public BigInteger convert(String value, ConversionContext context) {

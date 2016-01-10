@@ -89,7 +89,7 @@ public final class OptionalConfiguration {
     /**
      * Evaluation policy that determines if local configuration or Tamaya configuration values override.
      */
-    private EvaluationPolicy policy;
+    private final EvaluationPolicy policy;
 
     /**
      * Creates a new instance.

@@ -33,9 +33,9 @@ import java.util.Map;
  */
 class CombinedConfiguration implements Configuration{
     /** The name of the new configuration. */
-    private String name;
+    private final String name;
     /** The configuration's in evaluation order. Instances with higher indices override results with lower ones. */
-    private Configuration[] configurations;
+    private final Configuration[] configurations;
 
     /**
      * Creates a combined configuration instance.

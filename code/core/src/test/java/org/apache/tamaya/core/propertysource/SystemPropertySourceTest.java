@@ -28,7 +28,7 @@ import java.util.Properties;
 
 public class SystemPropertySourceTest {
 
-    private SystemPropertySource testPropertySource = new SystemPropertySource();
+    private final SystemPropertySource testPropertySource = new SystemPropertySource();
 
 
     @Test

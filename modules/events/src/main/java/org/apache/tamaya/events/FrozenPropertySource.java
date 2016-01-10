@@ -34,7 +34,7 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     /**
      * The ordinal.
      */
-    private int ordinal;
+    private final int ordinal;
     /**
      * The properties read.
      */
@@ -42,7 +42,7 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     /**
      * The PropertySource's name.
      */
-    private String name;
+    private final String name;
 
     /**
      * Constructor.

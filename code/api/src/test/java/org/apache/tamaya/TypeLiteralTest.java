@@ -39,7 +39,7 @@ public class TypeLiteralTest {
 
     @Test
     public void test_of(){
-        class MyListClass extends ArrayList<String>{};
+        class MyListClass extends ArrayList<String>{}
         TypeLiteral<MyListClass> listTypeLiteral = TypeLiteral.of(MyListClass.class);
         assertEquals(MyListClass.class, listTypeLiteral.getRawType());
         assertEquals(MyListClass.class, listTypeLiteral.getType());
@@ -54,7 +54,7 @@ public class TypeLiteralTest {
 
     @Test
     public void test_getGenericInterfaceTypeParameter(){
-        class MyListClass extends ArrayList<String> implements List<String>{};
+        class MyListClass extends ArrayList<String> implements List<String>{}
         assertEquals(String.class, TypeLiteral.getGenericInterfaceTypeParameters(MyListClass.class, List.class)[0]);
     }
 

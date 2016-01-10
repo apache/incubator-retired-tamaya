@@ -46,15 +46,15 @@ public class ConfiguredTypeImpl implements ConfiguredType{
     /**
      * A list with all annotated instance variables.
      */
-    private List<ConfiguredField> configuredFields = new ArrayList<>();
+    private final List<ConfiguredField> configuredFields = new ArrayList<>();
     /**
      * A list with all annotated methods (templates).
      */
-    private List<ConfiguredMethod> configuredSetterMethods = new ArrayList<>();
+    private final List<ConfiguredMethod> configuredSetterMethods = new ArrayList<>();
     /**
      * The basic type.
      */
-    private Class type;
+    private final Class type;
 
     /**
      * Creates an instance of this class hereby evaluating the config annotations given for later effective

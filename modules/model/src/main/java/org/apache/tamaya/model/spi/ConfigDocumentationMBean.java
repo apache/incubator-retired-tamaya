@@ -29,18 +29,18 @@ public interface ConfigDocumentationMBean {
      *
      * @return the validation results, never null.
      */
-    public String validate(boolean showUndefined);
+    String validate(boolean showUndefined);
 
-    public String getConfigurationModel();
+    String getConfigurationModel();
 
-    public String getConfigurationModel(ModelType type);
+    String getConfigurationModel(ModelType type);
 
     /**
      * Find the validations by checking the validation's name using the given regular expression.
      * @param namePattern the regular expression to use, not null.
      * @return the sections defined, never null.
      */
-    public String findConfigurationModels(String namePattern);
+    String findConfigurationModels(String namePattern);
 
     /**
      * Find the validations by checking the validation's name using the given regular expression.
@@ -48,5 +48,5 @@ public interface ConfigDocumentationMBean {
      * @param namePattern the regular expression to use, not null.
      * @return the sections defined, never null.
      */
-    public String findValidationModels(ModelType type, String namePattern);
+    String findValidationModels(ModelType type, String namePattern);
 }

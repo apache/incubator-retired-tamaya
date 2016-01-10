@@ -35,11 +35,11 @@ import java.util.Set;
  */
 public class ConversionContext {
 
-    private Configuration configuration;
-    private String key;
-    private TypeLiteral<?> targetType;
-    private AnnotatedElement annotatedElement;
-    private List<String> supportedFormats = new ArrayList<>();
+    private final Configuration configuration;
+    private final String key;
+    private final TypeLiteral<?> targetType;
+    private final AnnotatedElement annotatedElement;
+    private final List<String> supportedFormats = new ArrayList<>();
 
     /**
      * Private constructor used from builder.
@@ -133,11 +133,11 @@ public class ConversionContext {
         /** The accessed key, or null. */
         private String key;
         /** The target type. */
-        private TypeLiteral<?> targetType;
+        private final TypeLiteral<?> targetType;
         /** The injection target (only set with injection used). */
         private AnnotatedElement annotatedElement;
         /** The ordered list of formats tried. */
-        private Set<String> supportedFormats = new HashSet<>();
+        private final Set<String> supportedFormats = new HashSet<>();
 
         /**
          * Creates a new Builder instance.

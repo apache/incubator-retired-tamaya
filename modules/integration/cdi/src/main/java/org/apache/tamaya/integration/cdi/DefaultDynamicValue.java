@@ -68,25 +68,25 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     /**
      * The property name of the entry.
      */
-    private String propertyName;
+    private final String propertyName;
     /**
      * The keys to be resolved.
      */
-    private String[] keys;
+    private final String[] keys;
     /**
      * Back reference to the base configuration instance. This reference is used reevalaute the given property and
      * compare the result with the previous value after a configuration change was triggered.
      */
-    private Configuration configuration;
+    private final Configuration configuration;
     /**
      * The target type of the property used to lookup a matching {@link PropertyConverter}.
      * If null, {@code propertyConverter} is set and used instead.
      */
-    private TypeLiteral<T> targetType;
+    private final TypeLiteral<T> targetType;
     /**
      * The property converter to be applied, may be null. In the ladder case targetType is not null.
      */
-    private PropertyConverter<T> propertyConverter;
+    private final PropertyConverter<T> propertyConverter;
     /**
      * Policy that defines how new values are applied, be default it is applied initially once, but never updated
      * anymore.
@@ -160,7 +160,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 throw new ConfigException("Failed to evaluate target type for " + annotatedField.getDeclaringClass().getName()
                         + '.' + annotatedField.getName());
             }
-            targetType = (Type) types[0];
+            targetType = types[0];
         }
         PropertyConverter<?> propertyConverter = null;
         WithPropertyConverter annot = annotatedField.getAnnotation(WithPropertyConverter.class);
@@ -204,7 +204,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
                         .getName() + '.' + method.getName());
             }
-            targetType = (Class) types[0];
+            targetType = types[0];
         }
         PropertyConverter<Object> propertyConverter = null;
         WithPropertyConverter annot = method.getAnnotation(WithPropertyConverter.class);
@@ -217,7 +217,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                         + '.' + method.getName(), e);
             }
         }
-        return new DefaultDynamicValue<Object>(method.getName(),
+        return new DefaultDynamicValue<>(method.getName(),
                 configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method),
                 loadPolicy, updatePolicy);
     }
@@ -304,7 +304,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @see DefaultDynamicValue#isPresent()
      */
     public T get() {
-        T newLocalValue = null;
+        T newLocalValue;
         if(loadPolicy!=LoadPolicy.INITIAL) {
             newLocalValue = evaluateValue();
             if (this.value == null) {

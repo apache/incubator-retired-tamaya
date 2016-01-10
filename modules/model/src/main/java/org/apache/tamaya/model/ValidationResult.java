@@ -32,15 +32,15 @@ public final class ValidationResult {
     /**
      * the config section.
      */
-    private ConfigModel configModel;
+    private final ConfigModel configModel;
     /**
      * The configModel result.
      */
-    private ValidationState result;
+    private final ValidationState result;
     /**
      * The configModel message.
      */
-    private String message;
+    private final String message;
 
     /**
      * Creates a new ValidationResult.

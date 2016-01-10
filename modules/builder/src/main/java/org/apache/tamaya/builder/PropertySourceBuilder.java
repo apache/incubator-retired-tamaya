@@ -31,9 +31,9 @@ public final class PropertySourceBuilder {
     /** The ordinal to be used. */
     private int ordinal;
     /** The name to be used. */
-    private String name;
+    private final String name;
     /** The properties. */
-    private Map<String,String> properties = new HashMap<>();
+    private final Map<String,String> properties = new HashMap<>();
 
     /** private constructor. */
     private PropertySourceBuilder(String name){

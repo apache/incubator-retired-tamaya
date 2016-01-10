@@ -50,7 +50,7 @@ public final class ConfigurationChangeBuilder {
     /**
      * The underlying configuration/provider.
      */
-    Configuration source;
+    final Configuration source;
     /**
      * The version configured, or null, for generating a default.
      */
@@ -213,7 +213,9 @@ public final class ConfigurationChangeBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationChangeBuilder putAll(Map<String, String> changes) {
-        changes.putAll(changes);
+        for (Map.Entry<String, String> en : changes.entrySet()) {
+            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), null, en.getValue()));
+        }
         return this;
     }
 

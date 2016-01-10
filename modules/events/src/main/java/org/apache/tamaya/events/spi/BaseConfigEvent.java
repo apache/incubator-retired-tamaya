@@ -28,10 +28,10 @@ import java.util.UUID;
  * @param <T> the vent type
  */
 public abstract class BaseConfigEvent<T> implements ConfigEvent<T> {
-        private long timestamp = System.currentTimeMillis();
+        protected long timestamp = System.currentTimeMillis();
         protected String version = UUID.randomUUID().toString();
-        protected T paylod;
-        private Class<T> type;
+        protected final T paylod;
+        private final Class<T> type;
 
         public BaseConfigEvent(T paylod, Class<T> type){
             this.paylod = Objects.requireNonNull(paylod);

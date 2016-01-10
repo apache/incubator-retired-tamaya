@@ -262,6 +262,7 @@ public class TestConfigIntegration{
     public void testInjection() throws Exception {
         Dictionary<String,Object> config = new Hashtable<>();
         ServiceRegistration<HelloService> reg = context.registerService(HelloService.class, new HelloServiceImpl(), config);
+        assertNotNull(context.getServiceReference(HelloService.class));
         ServiceReference<HelloService> ref = context.getServiceReference(HelloService.class);
         assertNotNull("HelloService not loaded.", ref);
         HelloService helloServ = context.getService(ref);

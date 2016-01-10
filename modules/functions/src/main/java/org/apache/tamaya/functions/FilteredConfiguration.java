@@ -34,7 +34,7 @@ class FilteredConfiguration implements Configuration {
 
     private final Configuration baseConfiguration;
     private final PropertyMatcher matcher;
-    private String filterType;
+    private final String filterType;
 
     FilteredConfiguration(Configuration baseConfiguration, PropertyMatcher matcher, String filterType) {
         this.baseConfiguration = Objects.requireNonNull(baseConfiguration);

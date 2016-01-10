@@ -48,11 +48,11 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
     /**
      * The config formats supported for the given location/resource paths.
      */
-    private List<ConfigurationFormat> configFormats = new ArrayList<>();
+    private final List<ConfigurationFormat> configFormats = new ArrayList<>();
     /**
      * The paths to be evaluated.
      */
-    private Collection<URL> paths = new ArrayList<>();
+    private final Collection<URL> paths = new ArrayList<>();
 
     /**
      * Creates a new instance.
@@ -81,7 +81,7 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
         }
         this.configFormats.addAll(Objects.requireNonNull(formats));
         for(String path:paths) {
-            Enumeration<URL> urls = null;
+            Enumeration<URL> urls;
             try {
                 urls = cl.getResources(path);
             } catch (IOException e) {
@@ -106,7 +106,7 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
             ClassLoader classLoader, String... paths) {
         this.configFormats.addAll(Objects.requireNonNull(formats));
         for(String path:paths) {
-            Enumeration<URL> urls = null;
+            Enumeration<URL> urls;
             try {
                 urls = classLoader.getResources(path);
             } catch (IOException e) {

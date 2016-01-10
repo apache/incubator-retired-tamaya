@@ -84,7 +84,7 @@ public class OSGIEnhancedConfiguration extends DefaultConfiguration{
      */
     private static final class OSGIPropertySource extends BasePropertySource{
 
-        private org.osgi.service.cm.Configuration osgiConfiguration;
+        private final org.osgi.service.cm.Configuration osgiConfiguration;
 
         public OSGIPropertySource(org.osgi.service.cm.Configuration osgiConfiguration){
             this.osgiConfiguration = Objects.requireNonNull(osgiConfiguration);
@@ -102,7 +102,7 @@ public class OSGIEnhancedConfiguration extends DefaultConfiguration{
         @Override
         public String getName() {
             return "OSGIConfig:pid="+
-                    osgiConfiguration.getPid()!=null?osgiConfiguration.getPid():osgiConfiguration.getFactoryPid();
+                    (osgiConfiguration.getPid()!=null?osgiConfiguration.getPid():osgiConfiguration.getFactoryPid());
         }
 
         @Override

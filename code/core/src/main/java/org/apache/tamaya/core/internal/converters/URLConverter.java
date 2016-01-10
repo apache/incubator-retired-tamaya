@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class URLConverter implements PropertyConverter<URL> {
 
-    private Logger LOG = Logger.getLogger(getClass().getName());
+    private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
     public URL convert(String value, ConversionContext context) {

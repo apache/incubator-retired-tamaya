@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * @param <T> the enum type.
  */
 public class EnumConverter<T> implements PropertyConverter<T> {
-    private Logger LOG = Logger.getLogger(EnumConverter.class.getName());
+    private final Logger LOG = Logger.getLogger(EnumConverter.class.getName());
     private Class<T> enumType;
     private Method factory;
 

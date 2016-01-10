@@ -36,7 +36,7 @@ public class DefaultConfigChangeObserver {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigChangeObserver.class.getName());
 
-    private Timer timer = new Timer("DefaultConfigChangeObserver", true);
+    private final Timer timer = new Timer("DefaultConfigChangeObserver", true);
 
     private long checkPeriod = 2000L;
 
@@ -63,7 +63,7 @@ public class DefaultConfigChangeObserver {
     public void checkConfigurationUpdate() {
         LOG.finest("Checking configuration for changes...");
         FrozenConfiguration newConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
-        ConfigurationChange changes = null;
+        ConfigurationChange changes;
         if(lastConfig==null){
             changes = ConfigurationChangeBuilder.of(newConfig).putAll(newConfig.getProperties())
                     .build();
@@ -92,7 +92,7 @@ public class DefaultConfigChangeObserver {
     /**
      * Sets the new check period, cancels the currently running timer and schedules a new task with the new checkperiod
      * and a startup delay of 500ms.
-     * @param checkPeriod
+     * @param checkPeriod the period in ms, for checking on changes.
      */
     public void setCheckPeriod(long checkPeriod) {
         LOG.finest("Resetting check period to " + checkPeriod + " ms, reregistering timer.");

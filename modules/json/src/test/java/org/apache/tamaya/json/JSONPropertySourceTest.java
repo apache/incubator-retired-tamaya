@@ -51,7 +51,6 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
     @Override
     PropertySource getPropertiesFrom(URL source) throws Exception {
-        JSONPropertySource propertySource = new JSONPropertySource(source);
-        return propertySource;
+        return new JSONPropertySource(source);
     }
 }

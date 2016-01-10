@@ -34,7 +34,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 public class PropertyConverterManagerTest {
 
-    private ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(
+    private final ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(
             "someKey", TypeLiteral.of(Object.class)).build();
 
     @Test
@@ -74,7 +74,7 @@ public class PropertyConverterManagerTest {
 
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
-        assertThat(((C)result).getInValue(), equalTo("testDirectConverterMapping"));
+        assertThat((result).getInValue(), equalTo("testDirectConverterMapping"));
     }
 
     @Test
@@ -160,7 +160,7 @@ public class PropertyConverterManagerTest {
     }
 
     public static class MyType {
-        private String typeValue;
+        private final String typeValue;
 
         private MyType(String value) {
             typeValue = value;

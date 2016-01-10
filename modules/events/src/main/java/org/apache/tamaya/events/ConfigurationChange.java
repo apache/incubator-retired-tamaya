@@ -39,13 +39,13 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private FrozenConfiguration configuration;
+    private final FrozenConfiguration configuration;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change set in millis from the epoch. */
     private long timestamp = System.currentTimeMillis();
     /** The recorded changes. */
-    private Map<String,PropertyChangeEvent> changes = new HashMap<>();
+    private final Map<String,PropertyChangeEvent> changes = new HashMap<>();
 
     /**
      * Get an empty change set for the given provider.

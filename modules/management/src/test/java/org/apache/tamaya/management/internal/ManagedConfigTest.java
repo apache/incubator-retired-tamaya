@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  */
 public class ManagedConfigTest {
 
-    private ManagedConfigMBean bean = new ManagedConfig();
+    private final ManagedConfigMBean bean = new ManagedConfig();
 
     @org.junit.Test
     public void testGetJsonConfigurationInfo() throws Exception {

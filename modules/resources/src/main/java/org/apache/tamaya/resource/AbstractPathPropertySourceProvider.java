@@ -114,9 +114,9 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
      */
     private final static class PropertiesBasedPropertySource implements PropertySource{
         /** The property source's name. */
-        private String name;
+        private final String name;
         /** The properties. */
-        private Map<String,String> properties = new HashMap<>();
+        private final Map<String,String> properties = new HashMap<>();
 
         /**
          * Constructor for a simple properties configuration.

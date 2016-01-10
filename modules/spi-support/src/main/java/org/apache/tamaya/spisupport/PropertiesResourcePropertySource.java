@@ -33,7 +33,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
     /** The logger used. */
     private static final Logger LOGGER = Logger.getLogger(PropertiesResourcePropertySource.class.getName());
     /** The resource loaded. */
-    private URL url;
+    private final URL url;
 
     /**
      * Creates a new instance.
@@ -62,7 +62,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      */
     private static Map<String, String> loadProps(URL url) {
         Map<String,String> result = new HashMap<>();
-        try(InputStream is = url.openStream();){
+        try(InputStream is = url.openStream()){
             Properties props = new Properties();
             props.load(is);
             for(Map.Entry en: props.entrySet()){

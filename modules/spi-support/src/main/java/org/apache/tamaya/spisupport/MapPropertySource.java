@@ -39,7 +39,7 @@ public class MapPropertySource extends BasePropertySource {
     /**
      * The current properties.
      */
-    private Map<String, String> props = new HashMap<>();
+    private final Map<String, String> props = new HashMap<>();
 
     /**
      * Creates a new instance, hereby using the default mechanism for evaluting the property source's

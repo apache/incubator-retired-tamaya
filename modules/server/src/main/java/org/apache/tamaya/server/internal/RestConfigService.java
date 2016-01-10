@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
  */
 public class RestConfigService {
 
-    private ConfigService configService = ServiceContextManager.getServiceContext()
+    private final ConfigService configService = ServiceContextManager.getServiceContext()
             .getService(ConfigService.class);
 
     @GET

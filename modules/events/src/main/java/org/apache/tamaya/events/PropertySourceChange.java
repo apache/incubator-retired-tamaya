@@ -39,15 +39,15 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private FrozenPropertySource propertySource;
+    private final FrozenPropertySource propertySource;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change set in millis from the epoch. */
     private long timestamp = System.currentTimeMillis();
     /** The recorded changes. */
-    private Map<String,PropertyChangeEvent> changes = new HashMap<>();
+    private final Map<String,PropertyChangeEvent> changes = new HashMap<>();
     /** The overall type of change. */
-    private ChangeType changeType;
+    private final ChangeType changeType;
 
     /**
      * Constructor used by {@link PropertySourceChangeBuilder}.

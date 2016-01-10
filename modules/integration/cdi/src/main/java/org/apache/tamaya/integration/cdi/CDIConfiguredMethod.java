@@ -27,11 +27,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by atsticks on 29.11.15.
+ * Implementation of a configured methods for CDI module.
  */
 public class CDIConfiguredMethod implements ConfiguredMethod{
 
-    private Method method;
+    private final Method method;
     private List<String> keys = new ArrayList<>();
 
     CDIConfiguredMethod(InjectionPoint injectionPoint, List<String> keys){

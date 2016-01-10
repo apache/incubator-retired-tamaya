@@ -49,7 +49,7 @@ public abstract class AbstractClassloaderAwareItemLoader<T> {
     /**
      * The items managed, related to their classloader.
      */
-    private Map<String, T> items = new ConcurrentHashMap<>();
+    private final Map<String, T> items = new ConcurrentHashMap<>();
 
     /**
      * Creates a new instance, using the current Thread context classloader, or - if null - the classloader that
@@ -115,7 +115,7 @@ public abstract class AbstractClassloaderAwareItemLoader<T> {
      * Creates a new item for being stored linked with the given lassloader.
      *
      * @param classLoader the classloader, not null.
-     * @return
+     * @return the new item loaded.
      */
     protected abstract T createItem(ClassLoader classLoader);
 

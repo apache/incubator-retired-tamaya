@@ -80,7 +80,7 @@ import static java.lang.String.format;
  */
 public class ConfigurationBuilder {
     /** Builder used to create new ConfigurationContext instances. */
-    private ProgrammaticConfigurationContext.Builder contextBuilder = new ProgrammaticConfigurationContext.Builder();
+    private final ProgrammaticConfigurationContext.Builder contextBuilder = new ProgrammaticConfigurationContext.Builder();
 
     /**
      * Flag if the config has already been built.
@@ -113,6 +113,7 @@ public class ConfigurationBuilder {
      * Allows to set configuration context during unit tests.
      */
     ConfigurationBuilder setConfigurationContext(ConfigurationContext configurationContext) {
+        //noinspection deprecation
         contextBuilder.setConfigurationContext(configurationContext);
         return this;
     }
@@ -486,8 +487,6 @@ public class ConfigurationBuilder {
     /**
      * Disables the automatic loading of all {@link org.apache.tamaya.spi.PropertyFilter}
      * service providers.
-     *
-     * @return the builder instance currently used
      *
      * @see org.apache.tamaya.spi.PropertyFilter
      * @see #enabledProvidedPropertyFilters()

@@ -41,7 +41,7 @@ public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(BigDecimalConverter.class.getName());
     /** Converter to be used if the format is not directly supported by BigDecimal, e.g. for integral hex values. */
-    private BigIntegerConverter integerConverter = new BigIntegerConverter();
+    private final BigIntegerConverter integerConverter = new BigIntegerConverter();
 
     @Override
     public BigDecimal convert(String value, ConversionContext context) {

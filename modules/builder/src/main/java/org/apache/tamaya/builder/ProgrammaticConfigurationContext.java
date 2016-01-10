@@ -76,7 +76,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
     /**
      * Lock for internal synchronization.
      */
-    private ReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
 
     /**
@@ -256,14 +256,14 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
         /**
          * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
          */
-        private List<PropertySource> propertySources = new ArrayList<>();
+        private final List<PropertySource> propertySources = new ArrayList<>();
 
         /**
          * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
          */
-        private List<PropertyFilter> propertyFilters = new ArrayList<>();
+        private final List<PropertyFilter> propertyFilters = new ArrayList<>();
 
-        private Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
+        private final Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
 
         /**
          * The overriding policy used when combining PropertySources registered to evalute the final configuration

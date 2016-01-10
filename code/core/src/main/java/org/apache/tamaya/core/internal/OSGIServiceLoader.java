@@ -90,16 +90,16 @@ public class OSGIServiceLoader implements BundleListener {
                 if (implClassName.length() > 0) {
                     try {
                         // Load the service class
-                        Class<?> implClass = (Class<?>) bundle.loadClass(implClassName);
-                        if (serviceClass.isAssignableFrom(implClass) == false) {
+                        Class<?> implClass = bundle.loadClass(implClassName);
+                        if (!serviceClass.isAssignableFrom(implClass)) {
                             log.warning("Configured service: " + implClassName + " is not assignble to " +
                                     serviceClass.getName());
                             continue;
                         }
                         // Provide service properties
-                        Hashtable<String, String> props = new Hashtable<String, String>();
+                        Hashtable<String, String> props = new Hashtable<>();
                         props.put(Constants.VERSION_ATTRIBUTE, bundle.getVersion().toString());
-                        String vendor = (String) bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
+                        String vendor = bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
                         props.put(Constants.SERVICE_VENDOR, (vendor != null ? vendor : "anonymous"));
                         // Translate annotated @Priority into a service ranking
                         props.put(Constants.SERVICE_RANKING,
@@ -133,7 +133,7 @@ public class OSGIServiceLoader implements BundleListener {
      */
     static class JDKUtilServiceFactory implements ServiceFactory
     {
-        private Class<?> serviceClass;
+        private final Class<?> serviceClass;
 
         public JDKUtilServiceFactory(Class<?> serviceClass) {
             this.serviceClass = serviceClass;
@@ -142,8 +142,7 @@ public class OSGIServiceLoader implements BundleListener {
         @Override
         public Object getService(Bundle bundle, ServiceRegistration registration) {
             try {
-                Object serviceInstance = serviceClass.newInstance();
-                return serviceInstance;
+                return serviceClass.newInstance();
             }
             catch (Exception ex) {
                 ex.printStackTrace();

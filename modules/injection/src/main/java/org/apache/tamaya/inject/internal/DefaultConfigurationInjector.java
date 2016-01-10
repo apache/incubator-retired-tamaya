@@ -43,7 +43,7 @@ import org.apache.tamaya.inject.spi.ConfiguredType;
 @Priority(0)
 public final class DefaultConfigurationInjector implements ConfigurationInjector {
 
-    private Map<Class<?>, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
+    private final Map<Class<?>, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationInjector.class.getName());
 

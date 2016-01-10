@@ -43,7 +43,7 @@ public class DoubleConverter implements PropertyConverter<Double> {
     /**
      * The converter used, when floating point parse failed.
      */
-    private LongConverter integerConverter = new LongConverter();
+    private final LongConverter integerConverter = new LongConverter();
 
     @Override
     public Double convert(String value, ConversionContext context) {

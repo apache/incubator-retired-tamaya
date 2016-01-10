@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AbstractPathPropertySourceProviderTest {
 
-    private AbstractPathPropertySourceProvider myProvider = new AbstractPathPropertySourceProvider("*.properties") {
+    private final AbstractPathPropertySourceProvider myProvider = new AbstractPathPropertySourceProvider("*.properties") {
         @Override
         protected Collection<PropertySource> getPropertySources(URL url) {
             List<PropertySource> result = new ArrayList<>();

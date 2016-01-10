@@ -166,7 +166,7 @@ public final class ConfigEventManager {
     /**
      * Sets the current monitoring period and restarts the monitor. You still have to enable the monitor if
      * it is currently not enabled.
-     * @param millis
+     * @param millis the monitoring period in ms.
      * @see #enableChangeMonitoring(boolean)
      * @see #isChangeMonitoring()
      */

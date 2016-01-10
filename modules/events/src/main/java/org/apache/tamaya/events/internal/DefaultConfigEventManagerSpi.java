@@ -38,11 +38,11 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigEventManagerSpi.class.getName());
 
-    private Map<Class,List<ConfigEventListener>> listeners = new ConcurrentHashMap<>();
+    private final Map<Class,List<ConfigEventListener>> listeners = new ConcurrentHashMap<>();
 
-    private ExecutorService publisher = Executors.newCachedThreadPool();
+    private final ExecutorService publisher = Executors.newCachedThreadPool();
 
-    private DefaultConfigChangeObserver changeObserver = new DefaultConfigChangeObserver();
+    private final DefaultConfigChangeObserver changeObserver = new DefaultConfigChangeObserver();
 
     /**
      * Constructor. Also loads all registered listeners.
@@ -186,8 +186,8 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
      */
     private static final class PublishConfigChangeTask implements Runnable{
 
-        private ConfigEventListener l;
-        private ConfigEvent<?> changes;
+        private final ConfigEventListener l;
+        private final ConfigEvent<?> changes;
 
         public PublishConfigChangeTask(ConfigEventListener l, ConfigEvent<?> changes) {
             this.l = Objects.requireNonNull(l);

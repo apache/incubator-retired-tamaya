@@ -42,9 +42,9 @@ import java.util.Objects;
 @Vetoed
 public class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
 
-    Map<String, PropertySource> propertySources = new HashMap<>();
-    List<PropertyFilter> propertyFilters = new ArrayList<>();
-    Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
+    final Map<String, PropertySource> propertySources = new HashMap<>();
+    final List<PropertyFilter> propertyFilters = new ArrayList<>();
+    final Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
     PropertyValueCombinationPolicy combinationPolicy;
 
     @Override

@@ -59,7 +59,7 @@ public class ConfigurationExtension implements Extension {
     static final Map<Class, ConfigOperator> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
     static final Map<Class, PropertyConverter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
 
-    private Set<Type> types = new HashSet<>();
+    private final Set<Type> types = new HashSet<>();
     private Bean<?> convBean;
 
     /**
@@ -92,12 +92,10 @@ public class ConfigurationExtension implements Extension {
                 // We don't want to wait until the injection really fails at runtime.
                 // If there is a non resolvable configuration, we want to know at startup.
                 Configuration config = ConfigurationProvider.getConfiguration();
-                String keyFound = null;
                 String value = null;
                 for(String key:keys) {
                     value = config.get(key);
                     if(value!=null){
-                        keyFound = key;
                         break;
                     }
                 }

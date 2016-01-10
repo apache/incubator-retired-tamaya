@@ -409,7 +409,8 @@ public final class ConfigurationFunctions {
                 }
                 StringBuilder builder = new StringBuilder(400).append("{\n");
                 for (Map.Entry<String, String> en : props.entrySet()) {
-                    builder.append("  \"" + escape(en.getKey()) + "\": \"" + escape(en.getValue()) + "\",\n");
+                    builder.append("  \"").append(escape(en.getKey())).append("\": \"" )
+                            .append(escape(en.getValue())).append("\",\n");
                 }
                 if(builder.toString().endsWith(",\n")){
                     builder.setLength(builder.length()-2);

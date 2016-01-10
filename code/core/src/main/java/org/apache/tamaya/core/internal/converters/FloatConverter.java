@@ -43,7 +43,7 @@ public class FloatConverter implements PropertyConverter<Float> {
     /**
      * The converter used, when floating point parse failed.
      */
-    private IntegerConverter integerConverter = new IntegerConverter();
+    private final IntegerConverter integerConverter = new IntegerConverter();
 
     @Override
     public Float convert(String value, ConversionContext context) {

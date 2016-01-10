@@ -31,9 +31,9 @@ import java.util.logging.Logger;
 */
 public class SimplePropertySource implements PropertySource {
     /** The properties. */
-    private Map<String, String> properties;
+    private final Map<String, String> properties;
     /** The source's name. */
-    private String name;
+    private final String name;
 
     public SimplePropertySource(String name, Map<String, String> properties){
         this.properties = new HashMap<>(properties);

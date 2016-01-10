@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class MyTestPropertySource implements PropertySource{
 
-    private Map<String,String> properties = new HashMap<>();
+    private final Map<String,String> properties = new HashMap<>();
 
     public MyTestPropertySource(){
         properties.put("Expression Only", "${java.version}");
@@ -65,6 +65,9 @@ public class MyTestPropertySource implements PropertySource{
     private String getFileRefAsString() {
         try {
             URL res = getClass().getClassLoader().getResource("Testresource2.txt");
+            if(res==null){
+                return null;
+            }
             return new File(res.toURI()).getAbsolutePath().replaceAll("\\\\","/");
         } catch (URISyntaxException e) {
             return "Failed to evaluate file: Testresource2.txt";

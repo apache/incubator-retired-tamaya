@@ -68,7 +68,7 @@ public interface ConfigurationContext {
      * This method returns the Map of registered PropertyConverters
      * per type.
      * The List for each type is ordered via their {@link javax.annotation.Priority} and
-     * cladd name. Refer also to {@link #getPropertyConverters()}.
+     * cladd name.
      * </p>
      *
      * <p>A simplified scenario could be like:</p>

@@ -30,9 +30,9 @@ import java.util.Objects;
  */
 class ValueMappedPropertySource implements PropertySource{
 
-    private String name;
-    private PropertyMapper valueFilter;
-    private PropertySource source;
+    private final String name;
+    private final PropertyMapper valueFilter;
+    private final PropertySource source;
 
     public ValueMappedPropertySource(String name, PropertyMapper valueFilter, PropertySource current) {
         this.name =  name!=null?name:"<valueFiltered> -> name="+current.getName()+", valueFilter="+valueFilter.toString();
@@ -56,7 +56,7 @@ class ValueMappedPropertySource implements PropertySource{
         if(value!=null) {
             return valueFilter.mapProperty(key, value);
         }
-        return value;
+        return null;
     }
 
     @Override

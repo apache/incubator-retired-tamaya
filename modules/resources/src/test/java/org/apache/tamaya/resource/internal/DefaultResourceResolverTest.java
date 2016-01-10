@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class DefaultResourceResolverTest {
 
-    private DefaultResourceResolver resolver = new DefaultResourceResolver();
+    private final DefaultResourceResolver resolver = new DefaultResourceResolver();
 
 
     @Test

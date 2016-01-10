@@ -31,7 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class JSONFormatTest extends CommonJSONTestCaseCollection {
-    private JSONFormat format = new JSONFormat();
+    private final JSONFormat format = new JSONFormat();
 
     @Test(expected = NullPointerException.class)
     public void acceptsNeedsNonNullParameter() throws Exception {

@@ -32,7 +32,7 @@ public class DefaultServiceContextTest {
     /**
      * context to test
      */
-    private DefaultServiceContext context = new DefaultServiceContext();
+    private final DefaultServiceContext context = new DefaultServiceContext();
 
 
     @Test
@@ -109,7 +109,7 @@ public class DefaultServiceContextTest {
 
     // some test interfaces and classes
 
-    public static interface InvalidPriorityInterface {
+    public interface InvalidPriorityInterface {
     }
 
     @Priority(value = 50)
@@ -121,7 +121,7 @@ public class DefaultServiceContextTest {
     }
 
 
-    public static interface MultiImplsInterface {
+    public interface MultiImplsInterface {
     }
 
     public static class MultiImpl1 implements MultiImplsInterface {
@@ -135,6 +135,6 @@ public class DefaultServiceContextTest {
     public static class MultiImpl3 implements MultiImplsInterface {
     }
 
-    private static interface NoImplInterface {
+    private interface NoImplInterface {
     }
 }

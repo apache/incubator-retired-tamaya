@@ -57,15 +57,15 @@ public class PropertyConverterManager {
     /**
      * The registered converters.
      */
-    private Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
+    private final Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = new ConcurrentHashMap<>();
     /**
      * The transitive converters.
      */
-    private Map<TypeLiteral<?>, List<PropertyConverter<?>>> transitiveConverters = new ConcurrentHashMap<>();
+    private final Map<TypeLiteral<?>, List<PropertyConverter<?>>> transitiveConverters = new ConcurrentHashMap<>();
     /**
      * The lock used.
      */
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     private static final Comparator<Object> PRIORITY_COMPARATOR = new Comparator<Object>() {
 
@@ -344,7 +344,7 @@ public class PropertyConverterManager {
      */
     protected <T> PropertyConverter<T> createDefaultPropertyConverter(final TypeLiteral<T> targetType) {
         if (Enum.class.isAssignableFrom(targetType.getRawType())) {
-            return new EnumConverter<T>(targetType.getRawType());
+            return new EnumConverter<>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
         final Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");

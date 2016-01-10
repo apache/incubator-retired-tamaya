@@ -32,18 +32,18 @@ import java.util.Objects;
  */
 class EnrichedConfiguration implements Configuration {
 
-    private Configuration baseConfiguration;
+    private final Configuration baseConfiguration;
 
-    private Map<String, Object> addedProperties = new HashMap<>();
+    private final Map<String, Object> addedProperties = new HashMap<>();
 
-    private boolean overriding;
+    private final boolean overriding;
 
     /**
      * Constructor.
      *
-     * @param configuration
-     * @param properties
-     * @param overriding
+     * @param configuration the base config, not null.
+     * @param properties the properties to be added, not null.
+     * @param overriding true, if existing keys should be overriden, or config should be extended only.
      */
     EnrichedConfiguration(Configuration configuration, Map<String, Object> properties, boolean overriding) {
         this.baseConfiguration = Objects.requireNonNull(configuration);

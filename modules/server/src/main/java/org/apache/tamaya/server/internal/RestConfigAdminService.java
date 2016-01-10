@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class RestConfigAdminService {
 
-    private ConfigAdminService adminService = ServiceContextManager.getServiceContext()
+    private final ConfigAdminService adminService = ServiceContextManager.getServiceContext()
             .getService(ConfigAdminService.class);
 
     @GET

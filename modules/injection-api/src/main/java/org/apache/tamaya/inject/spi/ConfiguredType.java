@@ -29,7 +29,7 @@ public interface ConfiguredType{
 
     /**
      * Get the type's class.
-     * @return
+     * @return the base type.
      */
     Class getType();
 
@@ -43,7 +43,7 @@ public interface ConfiguredType{
      * Get the registered configured fields.
      * @return the registered configured fields, never null.
      */
-    public Collection<ConfiguredField> getConfiguredFields();
+    Collection<ConfiguredField> getConfiguredFields();
 
     /**
      * Get the registered configured methods.

@@ -42,7 +42,7 @@ public class TypeLiteral<T> implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
     /** The current defined type. */
-    private Type definedType;
+    private final Type definedType;
 
     /**
      * Constructor.
@@ -113,7 +113,7 @@ public class TypeLiteral<T> implements Serializable {
      * @return the actual type represented by this object
      */
     public final Class<T> getRawType() {
-        Class<T> rawType = null;
+        Class<T> rawType;
 
         if (this.definedType instanceof Class) {
             rawType = (Class<T>) this.definedType;
@@ -132,7 +132,7 @@ public class TypeLiteral<T> implements Serializable {
 
 
     protected Type getDefinedType(Class<?> clazz) {
-        Type type = null;
+        Type type;
 
         if (clazz == null) {
             throw new RuntimeException("Class parameter clazz can not be null");

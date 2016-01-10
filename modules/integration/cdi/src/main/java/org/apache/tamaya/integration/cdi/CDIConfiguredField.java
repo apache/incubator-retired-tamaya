@@ -31,7 +31,7 @@ import java.util.List;
  */
 class CDIConfiguredField implements ConfiguredField{
 
-    private Field field;
+    private final Field field;
     private List<String> keys = new ArrayList<>();
 
     CDIConfiguredField(InjectionPoint injectionPoint, List<String> keys){

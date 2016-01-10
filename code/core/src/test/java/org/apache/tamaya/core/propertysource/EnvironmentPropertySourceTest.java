@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class EnvironmentPropertySourceTest {
 
-    private EnvironmentPropertySource envPropertySource = new EnvironmentPropertySource();
+    private final EnvironmentPropertySource envPropertySource = new EnvironmentPropertySource();
 
     @Test
     public void testGetOrdinal() throws Exception {

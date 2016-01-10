@@ -41,7 +41,7 @@ public class NumberConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.decimal", Number.class);
         assertTrue(valueRead!=null);
-        assertEquals(valueRead, Long.valueOf(101));
+        assertEquals(valueRead, 101L);
     }
 
 

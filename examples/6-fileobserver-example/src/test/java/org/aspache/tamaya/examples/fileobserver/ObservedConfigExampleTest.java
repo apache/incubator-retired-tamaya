@@ -48,9 +48,6 @@ public class ObservedConfigExampleTest {
     public void setup() throws IOException {
         // create some temporary config
         Path tempDir = Files.createTempDirectory("observedFolder");
-
-        Path propertyLocation = tempDir;
-
         FileUtils.copyInputStreamToFile(
                 getClass().getResourceAsStream("/test.properties"),
                 new File(tempDir.toFile(), "test.properties"));

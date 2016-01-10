@@ -27,9 +27,9 @@ import java.util.Objects;
  */
 public abstract class AbstractModel implements ConfigModel, Comparable<ConfigModel> {
 
-    private String name;
-    private String provider;
-    private String description;
+    private final String name;
+    private final String provider;
+    private final String description;
     private boolean required = false;
 
 

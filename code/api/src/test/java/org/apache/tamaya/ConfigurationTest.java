@@ -32,10 +32,10 @@ public class ConfigurationTest {
         assertEquals(Boolean.TRUE, ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class));
         assertEquals(Boolean.FALSE, ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class));
         assertEquals((int)Byte.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("byte", Byte.class));
-        assertEquals((int)Integer.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("int", Integer.class));
-        assertEquals((long)Long.MAX_VALUE, (long)ConfigurationProvider.getConfiguration().get("long", Long.class));
-        assertEquals((double)Float.MAX_VALUE, (double)ConfigurationProvider.getConfiguration().get("float", Float.class), 0.0d);
-        assertEquals((double)Double.MAX_VALUE, (double)ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
+        assertEquals(Integer.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("int", Integer.class));
+        assertEquals(Long.MAX_VALUE, (long)ConfigurationProvider.getConfiguration().get("long", Long.class));
+        assertEquals(Float.MAX_VALUE, (double)ConfigurationProvider.getConfiguration().get("float", Float.class), 0.0d);
+        assertEquals(Double.MAX_VALUE, ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ConfigurationTest {
 
     @Test
     public void testGetDouble() throws Exception {
-        assertEquals(Double.MAX_VALUE,(double) ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
+        assertEquals(Double.MAX_VALUE,ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
     }
 
 

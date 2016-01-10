@@ -40,7 +40,6 @@ public class SpringConfigTest2 {
         ConfiguredSpringBean configuredBean = context.getBean(ConfiguredSpringBean.class);
         assertNotNull(configuredBean.getJavaVersion());
         assertEquals(System.getProperty("java.version"), configuredBean.getJavaVersion());
-        org.springframework.core.env.Environment env;
         assertNotNull(configuredBean.getMessage());
         assertEquals("value2", configuredBean.getMessage());
     }

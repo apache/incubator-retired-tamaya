@@ -46,9 +46,9 @@ public final class ConfigurationData {
      */
     private Map<String, Map<String, String>> namedSections;
     /** The format instance used to read this instance. */
-    private ConfigurationFormat format;
+    private final ConfigurationFormat format;
     /** The resource read. */
-    private String resource;
+    private final String resource;
 
 
     /**

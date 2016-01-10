@@ -39,7 +39,6 @@ import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,34 +54,33 @@ public class EtcdAccessor {
     private static final Logger LOG = Logger.getLogger(EtcdAccessor.class.getName());
 
     /** Timeout in seconds. */
-    private static int timeout = 2;
+    private int timeout = 2;
     /** Property that make Johnzon accept commentc. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
     /** The JSON reader factory used. */
-    private JsonReaderFactory readerFactory = initReaderFactory();
+    private final JsonReaderFactory readerFactory = initReaderFactory();
 
     /** Initializes the factory to be used for creating readers. */
     private JsonReaderFactory initReaderFactory() {
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
         return Json.createReaderFactory(config);
     }
 
     /** The base server url. */
-    private String serverURL;
+    private final String serverURL;
     /** The http client. */
     private CloseableHttpClient httpclient = HttpClients.createDefault();
 
     /**
      * Creates a new instance with the basic access url.
      * @param server server url, e.g. {@code http://127.0.0.1:4001}, not null.
-     * @throws MalformedURLException
      */
-    public EtcdAccessor(String server)throws MalformedURLException{
+    public EtcdAccessor(String server){
         this(server, 2);
     }
 
-    public EtcdAccessor(String server, int timeout) throws MalformedURLException {
+    public EtcdAccessor(String server, int timeout) {
         this.timeout = timeout;
         if(server.endsWith("/")){
             serverURL = server.substring(0, server.length()-1);
@@ -105,7 +103,7 @@ public class EtcdAccessor {
             httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
             response = httpclient.execute(httpGet);
-            HttpEntity entity = null;
+            HttpEntity entity;
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 entity = response.getEntity();
                 // and ensure it is fully consumed
@@ -340,8 +338,6 @@ public class EtcdAccessor {
             HttpDelete delete = new HttpDelete(serverURL + "/v2/keys/"+key);
             delete.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
-            List<NameValuePair> nvps = new ArrayList<>();
-            // delete.setEntity(new UrlEncodedFormEntity(nvps));
             response = httpclient.execute(delete);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
@@ -483,11 +479,11 @@ public class EtcdAccessor {
 
     /**
      * Recursively read out all key/values from this etcd JSON array.
-     * @param result
-     * @param node
+     * @param result map with key, values and metadata.
+     * @param node the node to parse.
      */
     private void addNodes(Map<String, String> result, JsonObject node) {
-        if(!node.containsKey("dir") || "false".equals(node.get("dir"))) {
+        if(!node.containsKey("dir") || "false".equals(node.get("dir").toString())) {
             String key = node.getString("key").substring(1);
             result.put(key, node.getString("value"));
             if (node.containsKey("createdIndex")) {

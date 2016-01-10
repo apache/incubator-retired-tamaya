@@ -91,7 +91,7 @@ public class ClasspathCollector {
     /**
      * The classloader used to load the resources.
      */
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     /**
      * Creates a new instance.

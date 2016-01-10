@@ -41,7 +41,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
     /**
      * The configured field instance.
      */
-    protected Field annotatedField;
+    protected final Field annotatedField;
 
     /**
      * Models a configured field and provides mechanisms for injection.

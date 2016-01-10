@@ -36,7 +36,7 @@ public class OSGIServiceContext implements ServiceContext{
 
     private static final OSGIServiceComparator REF_COMPARATOR = new OSGIServiceComparator();
 
-    private BundleContext bundleContext;
+    private final BundleContext bundleContext;
 
     public OSGIServiceContext(BundleContext bundleContext){
         this.bundleContext = Objects.requireNonNull(bundleContext);

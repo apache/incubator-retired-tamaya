@@ -41,12 +41,12 @@ public class PrintConfigServlet extends HttpServlet {
     /**
      * The client id used.
      */
-    private String clientId = Client.getClientId();
+    private final String clientId = Client.getClientId();
     /**
      * The current info map, containing the clientId. This is passed to be added to the configuration's info section
      * when shows.
      */
-    private Map<String,String> info = new HashMap<>();
+    private final Map<String,String> info = new HashMap<>();
 
     /**
      * Constructor.

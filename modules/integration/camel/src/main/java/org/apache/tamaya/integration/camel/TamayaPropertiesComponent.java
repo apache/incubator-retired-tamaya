@@ -59,15 +59,10 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
         setTamayaOverrides(true);
     }
 
-    @Override
-    public Properties getOverrideProperties() {
-        return super.getOverrideProperties();
-    }
-
     /**
      * Apply the current Tamaya properties (configuration) as override properties evaluated first by camel before
      * evaluating other uris.
-     * @param enabled
+     * @param enabled flag to define if tamaya values override everything else.
      */
     public void setTamayaOverrides(boolean enabled){
         if(enabled){

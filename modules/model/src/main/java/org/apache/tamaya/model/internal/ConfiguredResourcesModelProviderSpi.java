@@ -54,9 +54,9 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
     /** The resource class to checked for testing the availability of the formats extension module. */
     private static final String CONFIGURATION_FORMATS_CLASS = "org.apache.tamaya.format.ConfigurationFormats";
     /** Initializes the flag showing if the formats module is present (required). */
-    private static boolean available = checkAvailabilityFormats();
+    private static final boolean AVAILABLE = checkAvailabilityFormats();
     /** Initializes the flag showing if the resources module is present (optional). */
-    private static boolean resourcesExtensionAvailable = checkAvailabilityResources();
+    private static final boolean RESOURCES_EXTENSION_AVAILABLE = checkAvailabilityResources();
 
     /** The configModels read. */
     private List<ConfigModel> configModels = new ArrayList<>();
@@ -85,8 +85,8 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
      * Constructor, mostly called from {@link java.util.ServiceLoader}
      */
     public ConfiguredResourcesModelProviderSpi() {
-        if (!available) {
-            LOG.info("tamaya-format extension is required to read model configuration, No extended model support available.");
+        if (!AVAILABLE) {
+            LOG.info("tamaya-format extension is required to read model configuration, No extended model support AVAILABLE.");
         } else {
             String resources = ConfigurationProvider.getConfiguration().get(MODEL_RESOURCE_PARAM);
             if(resources==null || resources.trim().isEmpty()){
@@ -94,7 +94,7 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
                 return;
             }
             Collection<URL> urls;
-            if(resourcesExtensionAvailable){
+            if(RESOURCES_EXTENSION_AVAILABLE){
                 LOG.info("Using tamaya-resources extension to read model configuration from " + resources);
                 urls = ConfigResources.getResourceResolver().getResources(resources.split(","));
             } else{
@@ -102,7 +102,7 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
                 urls = new ArrayList<>();
                 for(String resource:resources.split(",")){
                     if(!resource.trim().isEmpty()){
-                        Enumeration<URL> configs = null;
+                        Enumeration<URL> configs;
                         try {
                             configs = getClass().getClassLoader().getResources(resource);
                             while (configs.hasMoreElements()) {

@@ -28,7 +28,6 @@ under the License.
         <version>0.2-incubating-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.apache.tamaya</groupId>
     <artifactId>code</artifactId>
     <packaging>pom</packaging>
     <name>Apache Tamaya Codebase</name>

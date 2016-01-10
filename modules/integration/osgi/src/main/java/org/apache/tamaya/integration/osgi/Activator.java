@@ -56,8 +56,6 @@ public class Activator implements BundleActivator {
 
     private static final Logger LOG = Logger.getLogger(Activator.class.getName());
 
-    private BundleContext context;
-
     private ServiceRegistration<ConfigurationAdmin> registration;
 
     private ServiceTracker<Object, Object> injectionTracker;
@@ -65,7 +63,7 @@ public class Activator implements BundleActivator {
     @Override
     public void start(BundleContext context) throws Exception {
         String val = context.getProperty(SERVICE_OVERRIDE_PROP);
-        if(val==null?true:Boolean.parseBoolean(val)){
+        if(val == null || Boolean.parseBoolean(val)){
             Dictionary<String, Object> props = new Hashtable<>();
             String ranking = context.getProperty(SERVICE_RANKING_PROP);
             if (ranking == null) {
@@ -73,14 +71,13 @@ public class Activator implements BundleActivator {
             } else {
                 props.put(Constants.SERVICE_RANKING, Integer.valueOf(ranking));
             }
-            this.context = context;
             TamayaConfigAdminImpl cm = new TamayaConfigAdminImpl(context);
             registration = context.registerService(ConfigurationAdmin.class, cm, props);
         }
 
         // register injection mechanisms, if not configured otherwise
         val = context.getProperty(SERVICE_INJECT_PROP);
-        if(val==null?true:Boolean.parseBoolean(val)){
+        if(val == null || Boolean.parseBoolean(val)){
             injectionTracker = new ServiceTracker<Object, Object>(context, Object.class, null) {
                 @Override
                 public Object addingService(ServiceReference<Object> reference) {

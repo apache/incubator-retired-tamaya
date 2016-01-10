@@ -45,11 +45,11 @@ class FileChangeListener implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(FileChangeListener.class.getName());
 
-    private WatchService watchService;
+    private final WatchService watchService;
 
-    private FileChangeObserver observer;
+    private final FileChangeObserver observer;
 
-    private Path directory;
+    private final Path directory;
 
     private volatile boolean running = true;
 

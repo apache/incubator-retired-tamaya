@@ -59,7 +59,7 @@ public class AreaConfigModel extends ConfigModelGroup {
      * @param name the fully qualified section name
      * @param required flag, if the section is required to be present.
      * @param configModels additional configModels
-     * @return
+     * @return a new builder, never null.
      */
     public static ConfigModel of(String name, boolean required, ConfigModel... configModels){
         return new Builder(name).setRequired(required).addValidations(configModels).build();
@@ -100,9 +100,9 @@ public class AreaConfigModel extends ConfigModelGroup {
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        b.append(getType()).append(": " + getName());
+        b.append(getType()).append(": ").append(getName());
         if(isRequired()) {
-            b.append(", required: " + isRequired());
+            b.append(", required: " ).append(isRequired());
         }
         for(ConfigModel val:getValidations()){
              b.append(", ").append(val.toString());
@@ -123,7 +123,7 @@ public class AreaConfigModel extends ConfigModelGroup {
         /** The required flag. */
         private boolean required;
         /** The (optional) custom validations.*/
-        private List<ConfigModel> childConfigModels = new ArrayList<>();
+        private final List<ConfigModel> childConfigModels = new ArrayList<>();
 
         /**
          * Creates a new Builder.

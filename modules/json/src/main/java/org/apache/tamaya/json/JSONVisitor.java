@@ -52,7 +52,7 @@ class JSONVisitor {
 
                 if (!(current.getValue() instanceof JsonStructure)) {
                     String key = stack.peek().getNSPrefix() + current.getKey();
-                    String value = null;
+                    String value;
                     JsonValue jsonValue = current.getValue();
                     switch(jsonValue.getValueType()) {
                         case NULL: value = null; break;
@@ -89,7 +89,7 @@ class JSONVisitor {
      * Context for a sub context visited.
      */
     private static class VisitingContext {
-        private String namespace;
+        private final String namespace;
         private final JsonObject node;
         private final Iterator<Map.Entry<String, JsonValue>> elements;
 

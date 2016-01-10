@@ -36,9 +36,9 @@ import java.util.Objects;
  */
 class CDIConfiguredType implements ConfiguredType{
 
-    private Class<?> type;
-    private List<CDIConfiguredMethod> methods = new ArrayList<>();
-    private List<CDIConfiguredField> fields = new ArrayList<>();
+    private final Class<?> type;
+    private final List<CDIConfiguredMethod> methods = new ArrayList<>();
+    private final List<CDIConfiguredField> fields = new ArrayList<>();
 
     public CDIConfiguredType(Class<?> type){
         this.type = Objects.requireNonNull(type);
@@ -72,7 +72,7 @@ class CDIConfiguredType implements ConfiguredType{
     /**
      * Used to build up during injection point processing.
      * @param injectionPoint the CDI injection ppint, not null.
-     * @param keys
+     * @param keys the possible config keys, in order of precedence, not null.
      */
     void addConfiguredMember(InjectionPoint injectionPoint, List<String> keys) {
         Member member = injectionPoint.getMember();

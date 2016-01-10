@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class EtcdPropertySourceTest {
 
-    private EtcdPropertySource propertySource = new EtcdPropertySource();
+    private final EtcdPropertySource propertySource = new EtcdPropertySource();
 
     @BeforeClass
     public static void setup(){

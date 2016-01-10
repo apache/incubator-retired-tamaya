@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  */
 public class ClassConverter implements PropertyConverter<Class<?>>{
 
-    private Logger LOG = Logger.getLogger(getClass().getName());
+    private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
     public Class<?> convert(String value, ConversionContext context) {
