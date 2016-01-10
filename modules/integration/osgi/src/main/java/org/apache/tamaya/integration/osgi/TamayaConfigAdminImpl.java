@@ -87,7 +87,6 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
     /**
      * Create a new config.
      * @param context the OSGI context
-     * @throws IOException if something fails.
      */
     public TamayaConfigAdminImpl(BundleContext context) {
         this.context = context;
