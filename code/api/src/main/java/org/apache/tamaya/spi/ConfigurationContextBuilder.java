@@ -34,6 +34,7 @@ import java.util.Collection;
  * After all changes are applied to a builder a new {@link ConfigurationContext} instance can
  * be created and can be applied by calling
  * {@link org.apache.tamaya.ConfigurationProvider#setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)}.
+ * 
  */
 
 /* @todo This is some Javadoc which is outdated. I am not sure if I can deleted it. The author
@@ -127,7 +128,8 @@ public interface ConfigurationContextBuilder {
      * This method can be used for programmatically adding {@link PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
-     * @param typeToConvert     the type which the converter is for
+     * @param <T> the type of the type literal
+     * @param typeToConvert     the type for which the converter is for
      * @param propertyConverter the PropertyConverters to add for this type
      * @return this builder, for chaining, never null.
      */
@@ -165,6 +167,7 @@ public interface ConfigurationContextBuilder {
 
     /**
      * Builds a {@link ConfigurationContext} based on the data set.
+     * @return final context with the current builder's properties.
      */
     ConfigurationContext build();
 

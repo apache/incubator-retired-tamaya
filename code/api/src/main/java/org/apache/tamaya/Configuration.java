@@ -67,6 +67,7 @@ public interface Configuration {
      * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
      * fromMap the given String keys.
      *
+     * @param <T> the type of the class modeled by the type parameter
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
@@ -99,7 +100,7 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
-     * @return the property value, never null..
+     * @return the property value, never null.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T get(String key, TypeLiteral<T> type);
@@ -114,16 +115,17 @@ public interface Configuration {
      *                     {@code a/b/c/d.myProperty}.
      * @param type         The target type required, not null.
      * @param defaultValue default value to be used, if no value is present.
-     * @return the property value, never null..
+     * @return the property value, never null.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue);
 
     /**
-     * Access all current known Configuration properties as a full {@code Map<String,String>}.
+     * Access all currently known configuration properties as a full {@code Map<String,String>}.
      * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
      * instances may not be contained in the result, but nevertheless be accessible calling one of the
      * {@code get(...)} methods.
+     * @return all currently known configuration properties.
      */
     Map<String,String> getProperties();
 
@@ -139,8 +141,9 @@ public interface Configuration {
     /**
      * Query a configuration.
      *
+     * @param <T> the type of the configuration.
      * @param query the query, never {@code null}.
-     * @return the result returned by the {@code query}
+     * @return the result returned by the {@code query}.
      */
     <T> T query(ConfigQuery<T> query);
 

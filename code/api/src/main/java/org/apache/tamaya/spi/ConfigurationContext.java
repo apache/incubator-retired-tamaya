@@ -58,6 +58,7 @@ public interface ConfigurationContext {
      * This method can be used for programmatically adding {@link PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
+     * @param <T> the type of the type literal
      * @param typeToConvert the type which the converter is for
      * @param propertyConverter the PropertyConverters to add for this type
      */
@@ -129,7 +130,9 @@ public interface ConfigurationContext {
      * No more converters are called after a converter has successfully converted the input into
      * the required target type.
      * </p>
-     *
+     * 
+     * @param <T> the type of the type literal
+     * @param type type of the desired converter
      * @return a sorted list of registered PropertySources per type.
      */
     <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type);

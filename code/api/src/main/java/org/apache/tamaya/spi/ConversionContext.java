@@ -160,6 +160,7 @@ public class ConversionContext {
          * Creates a new Builder instance.
          * @param configuration the configuration, not null.
          * @param key the requested key, may be null.
+         * @param targetType the target type
          */
         public Builder(Configuration configuration, String key, TypeLiteral<?> targetType){
             this.key = key;

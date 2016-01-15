@@ -86,6 +86,7 @@ public final class ServiceContextManager {
      * Replace the current {@link ServiceContext} in use.
      *
      * @param serviceContextProvider the new {@link ServiceContext}, not null.
+     * @return the currently used context after setting it.
      */
     public static ServiceContext set(ServiceContext serviceContextProvider) {
         ServiceContext currentContext = ServiceContextManager.serviceContextProviderDelegate;
