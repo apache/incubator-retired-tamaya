@@ -27,7 +27,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-builder</artifactId>
-    <name>Apache Tamaya Builder</name>
+    <name>Apache Tamaya Modules - Builder</name>
     <packaging>jar</packaging> <!-- bundle -->
 
     <inceptionYear>2015</inceptionYear>

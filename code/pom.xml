@@ -28,9 +28,9 @@ under the License.
         <version>0.2-incubating-SNAPSHOT</version>
     </parent>
 
-    <artifactId>code</artifactId>
+    <artifactId>tamaya-code</artifactId>
     <packaging>pom</packaging>
-    <name>Apache Tamaya Codebase</name>
+    <name>Apache Tamaya Code - all</name>
 
     <modules>
         <module>api</module>

@@ -29,7 +29,7 @@
 
     <artifactId>tamaya-osgi</artifactId>
     <packaging>bundle</packaging>
-    <name>Apache Tamaya :: OSGi Services :: Tamaya Config</name>
+    <name>Apache Tamaya Integration - OSGi Services :: Tamaya Config</name>
     <description>Tamaya Based OSGI Implementation of ConfigAdmin and Config Injection</description>
 
     <properties>

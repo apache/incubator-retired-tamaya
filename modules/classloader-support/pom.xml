@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-classloader-support</artifactId>
-    <name>Apache Tamaya Modules -Classloader Support</name>
+    <name>Apache Tamaya Modules - Classloader Support</name>
     <description>Apache Tamaya Classloader Support registers a ConfigurationContext that leverages
     classloader hierarchies. Also visibility of features and components is aligned with the
     corresponding hierarchy of classloaders.</description>

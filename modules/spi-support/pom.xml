@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-spisupport</artifactId>
-    <name> Apache Tamaya SPI Support Classes</name>
+    <name> Apache Tamaya Modules - Common Support Classes</name>
     <description>Apache Tamaya Support Classes useful when implementing the Tamaya SPI or code independent of the core RI
         implementation.</description>
     <packaging>bundle</packaging>

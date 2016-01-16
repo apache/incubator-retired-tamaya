@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-remote</artifactId>
-    <name>Apache Tamaya Remote PropertySource</name>
+    <name>Apache Tamaya Modules - Remote PropertySource</name>
     <packaging>bundle</packaging>
 
     <properties>

@@ -27,7 +27,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-json</artifactId>
-    <name>Apache Tamaya JSON Support</name>
+    <name>Apache Tamaya Modules - JSON Support</name>
     <packaging>bundle</packaging>
     <inceptionYear>2015</inceptionYear>
 

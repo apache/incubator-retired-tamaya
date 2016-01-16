@@ -27,7 +27,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-spring</artifactId>
-    <name>Apache Tamaya Modules Integration - Spring</name>
+    <name>Apache Tamaya Integration - Spring</name>
     <packaging>bundle</packaging>
 
     <properties>

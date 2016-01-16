@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-optional</artifactId>
-    <name>Apache Tamaya Optional Configuration Backend</name>
+    <name>Apache Tamaya Modules - Optional Configuration Backend</name>
     <description>This module provides a simple class that can be used as a single dependency for evaluating
     configuration. It runs basically without Tamaya being on the classpath, but if available it
     considers/uses Tamaya functionality.</description>

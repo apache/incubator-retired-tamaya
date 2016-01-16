@@ -27,7 +27,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-cdi</artifactId>
-    <name>Apache Tamaya Modules Integration - CDI (Java EE)</name>
+    <name>Apache Tamaya Integration - CDI (Java EE)</name>
     <packaging>bundle</packaging>
 
     <properties>

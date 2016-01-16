@@ -27,7 +27,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-resolver</artifactId>
-    <name>Apache Tamaya Resolver Services</name>
+    <name>Apache Tamaya Modules - Resolver Services</name>
     <packaging>bundle</packaging>
 
     <properties>

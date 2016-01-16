@@ -30,6 +30,7 @@ under the License.
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>tamaya-integration</artifactId>
+    <name>Apache Tamaya Integration - all</name>
 
     <modules>
         <module>spring</module>

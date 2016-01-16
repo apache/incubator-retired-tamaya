@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-functions</artifactId>
-    <name>Apache Tamaya Common Functional Extensions</name>
+    <name>Apache Tamaya Modules - Common Functional Extensions</name>
     <packaging>bundle</packaging>
 
     <properties>

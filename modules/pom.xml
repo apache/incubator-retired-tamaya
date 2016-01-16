@@ -28,12 +28,13 @@ under the License.
 
     <artifactId>tamaya-extensions</artifactId>
     <groupId>org.apache.tamaya.ext</groupId>
-    <name>Apache Tamaya Extension Modules</name>
+    <name>Apache Tamaya Extension Modules - all</name>
     <description>This project contains the several extensions that can be used with Tamaya.</description>
     <packaging>pom</packaging>
 
     <modules>
         <module>builder</module>
+        <module>mutable-config</module>
         <module>spi-support</module>
         <module>events</module>
         <module>formats</module>

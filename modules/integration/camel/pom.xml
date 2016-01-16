@@ -27,7 +27,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-camel</artifactId>
-    <name>Apache Tamaya Modules Integration - Apache Camel</name>
+    <name>Apache Tamaya Integration - Apache Camel</name>
     <packaging>bundle</packaging>
 
     <properties>

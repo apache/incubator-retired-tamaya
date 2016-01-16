@@ -28,7 +28,7 @@ under the License.
 
     <artifactId>tamaya-examples</artifactId>
     <groupId>org.apache.tamaya.ext</groupId>
-    <name>Apache Tamaya Examples</name>
+    <name>Apache Tamaya Example - all</name>
     <description>This project contains several examples that illustrate usage of Tamaya.</description>
     <packaging>pom</packaging>
 

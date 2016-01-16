@@ -27,7 +27,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-events</artifactId>
-    <name>Apache Tamaya Event and dynamic Update Extensions</name>
+    <name>Apache Tamaya Modules - Event and dynamic Update Extensions</name>
     <packaging>bundle</packaging>
 
     <properties>

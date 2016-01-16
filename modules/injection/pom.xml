@@ -26,7 +26,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-injection</artifactId>
-    <name>Apache Tamaya Injection Support</name>
+    <name>Apache Tamaya Modules - Injection Support</name>
     <packaging>bundle</packaging>
 
     <properties>

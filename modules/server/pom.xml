@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-server</artifactId>
-    <name>Apache Tamaya Modules: Server Extension</name>
+    <name>Apache Tamaya Modules - Server Extension</name>
     <packaging>bundle</packaging>
 
     <properties>

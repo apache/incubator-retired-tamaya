@@ -27,7 +27,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-cdi-se</artifactId>
-    <name>Apache Tamaya Modules Integration - CDI (Using SE Injection)</name>
+    <name>Apache Tamaya Integration - CDI (Using SE Injection)</name>
     <packaging>bundle</packaging>
 
     <properties>
