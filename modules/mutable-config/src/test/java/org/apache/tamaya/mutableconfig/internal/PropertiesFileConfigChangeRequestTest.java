@@ -31,9 +31,14 @@ import java.util.Properties;
 import static org.junit.Assert.*;
 
 /**
- * Created by atsticks on 16.01.16.
+ * Tests for {@link PropertiesFileConfigChangeRequest}.
  */
 public class PropertiesFileConfigChangeRequestTest {
+    /**
+     * Test read write properties with cancel.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testReadWriteProperties_WithCancel() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCancel",".properties");
@@ -49,6 +54,11 @@ public class PropertiesFileConfigChangeRequestTest {
         assertFalse(f.exists());
     }
 
+    /**
+     * Test read write properties with commit.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testReadWriteProperties_WithCommit() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCommit",".properties");
@@ -78,6 +88,11 @@ public class PropertiesFileConfigChangeRequestTest {
         assertEquals("value4", props.getProperty("key4"));
     }
 
+    /**
+     * Test read write xml properties with commit.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testReadWriteXmlProperties_WithCommit() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCommit",".xml");

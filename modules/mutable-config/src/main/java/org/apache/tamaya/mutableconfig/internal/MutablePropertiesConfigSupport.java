@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Mutable Config Requestfactory that tries to convert given URIs to file references, if successful, it returns
+ * Mutable Config Request factory that tries to convert given URIs to file references, if successful, it returns
  * ConfigChangeRequests fir .properties and .xml files.
  */
 public class MutablePropertiesConfigSupport implements ConfigChangeManagerSpi{

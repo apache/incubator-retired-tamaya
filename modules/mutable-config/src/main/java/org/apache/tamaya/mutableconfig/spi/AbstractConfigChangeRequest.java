@@ -30,18 +30,29 @@ import java.util.*;
 public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest {
 
     private final URI uri;
-    private String requestID = UUID.randomUUID().toString();
-    protected Map<String,String> properties = new HashMap<>();
-    protected Set<String> removed = new HashSet<>();
+    private final String requestID = UUID.randomUUID().toString();
+    /**
+     * The Properties.
+     */
+    protected final Map<String,String> properties = new HashMap<>();
+    /**
+     * The Removed.
+     */
+    protected final Set<String> removed = new HashSet<>();
     private boolean closed = false;
 
+    /**
+     * Instantiates a new Abstract config change request.
+     *
+     * @param uri the uri
+     */
     protected AbstractConfigChangeRequest(URI uri){
         this.uri = Objects.requireNonNull(uri);
     }
 
     /**
-     * Get the unique id of this change reqeust (UUID).
-     * @return the unique id of this change reqeust (UUID).
+     * Get the unique id of this change request (UUID).
+     * @return the unique id of this change request (UUID).
      */
     @Override
     public String getRequestID(){
@@ -61,14 +72,6 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     @Override
     public boolean isRemovable(String keyExpression) {
         return true;
-    }
-
-    protected Map<String,String> getProperties(){
-        return properties;
-    }
-
-    protected Set<String> getRemoved(){
-        return removed;
     }
 
     @Override
@@ -91,27 +94,21 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     @Override
     public ConfigChangeRequest remove(String... keys) {
         checkClosed();
-        for(String k:keys) {
-            this.removed.add(k);
-        }
+        Collections.addAll(this.removed, keys);
         return this;
     }
 
     @Override
     public ConfigChangeRequest remove(Collection<String> keys) {
         checkClosed();
-        for(String k:keys) {
-            this.removed.add(k);
-        }
+        this.removed.addAll(keys);
         return this;
     }
 
     @Override
     public ConfigChangeRequest removeAll(String... keys) {
         checkClosed();
-        for(String k:keys) {
-            this.removed.add(k);
-        }
+        Collections.addAll(this.removed, keys);
         return this;
     }
 
@@ -122,6 +119,9 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
         closed = true;
     }
 
+    /**
+     * Commit internal.
+     */
     protected abstract void commitInternal();
 
     @Override
@@ -135,6 +135,9 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
         return closed;
     }
 
+    /**
+     * Check closed.
+     */
     protected void checkClosed(){
         if(closed){
             throw new ConfigException("Change request already closed.");

@@ -28,16 +28,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Change Request implementation based on .xml properties fiel.
+ * Change Request implementation based on .xml properties file.
  */
 class XmlPropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
 
     private static final Logger LOG = Logger.getLogger(XmlPropertiesFileConfigChangeRequest.class.getName());
 
-    private File file;
+    private final File file;
 
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
+    /**
+     * Instantiates a new Xml properties file config change request.
+     *
+     * @param file the file
+     */
     XmlPropertiesFileConfigChangeRequest(File file){
         super(file.toURI());
         this.file = file;

@@ -34,10 +34,15 @@ class PropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
 
     private static final Logger LOG = Logger.getLogger(PropertiesFileConfigChangeRequest.class.getName());
 
-    private File file;
+    private final File file;
 
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
+    /**
+     * Instantiates a new Properties file config change request.
+     *
+     * @param file the file
+     */
     PropertiesFileConfigChangeRequest(File file){
         super(file.toURI());
         this.file = file;

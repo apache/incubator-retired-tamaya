@@ -26,7 +26,7 @@ import java.net.URI;
 import java.util.Objects;
 
 /**
- * Accessor for creating {@link ConfigChangeRequest} instances to change and commite configuration.
+ * Accessor for creating {@link ConfigChangeRequest} instances to change and commit configuration.
  */
 public final class ConfigChangeManager {
 
@@ -35,6 +35,8 @@ public final class ConfigChangeManager {
 
     /**
      * Creates a new change request for the given configurationSource
+     *
+     * @param configurationSource the configuration source
      * @return a new ChangeRequest
      * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
      */

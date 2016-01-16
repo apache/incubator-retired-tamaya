@@ -27,10 +27,15 @@ import java.net.URI;
 import static org.junit.Assert.*;
 
 /**
- * Created by atsticks on 16.01.16.
+ * Tests for {@link ConfigChangeManager}.
  */
 public class ConfigChangeManagerTest {
 
+    /**
+     * Test create change request.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testCreateChangeRequest() throws Exception {
         File f = File.createTempFile("ConfigChangeRequest",".properties");
@@ -41,11 +46,21 @@ public class ConfigChangeManagerTest {
         assertNotNull(req);
     }
 
+    /**
+     * Test invalid create change request.
+     *
+     * @throws Exception the exception
+     */
     @Test(expected=ConfigException.class)
     public void testInvalidCreateChangeRequest() throws Exception {
         ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(new URI("foo:bar"));
     }
 
+    /**
+     * Test null create change request.
+     *
+     * @throws Exception the exception
+     */
     @Test(expected=NullPointerException.class)
     public void testNullCreateChangeRequest() throws Exception {
         ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(null);

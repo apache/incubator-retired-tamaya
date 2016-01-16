@@ -30,6 +30,8 @@ public interface ConfigChangeManagerSpi {
 
    /**
     * Creates a new change request for the given Configuration.
+    *
+    * @param backendURI the backend uri
     * @return a new ChangeRequest, or null if the given backend URI cannot be edited.
     */
    ConfigChangeRequest createChangeRequest(URI backendURI);

@@ -35,14 +35,16 @@ import java.util.Map;
 public interface ConfigChangeRequest {
 
     /**
-     * Get the unique id of this change reqeust (UUID).
-     * @return the unique id of this change reqeust (UUID).
+     * Get the unique id of this change request (UUID).
+     *
+     * @return the unique id of this change request (UUID).
      */
     String getRequestID();
 
     /**
      * Identifies the configuration backend that was used to create this request instance and which is
      * also responsible for writing back the changes on this instance.
+     *
      * @return the backend URI, never null.
      */
     URI getBackendURI();
@@ -50,8 +52,9 @@ public interface ConfigChangeRequest {
     /**
      * Checks if a configuration key is writable (or it can be added).
      *
-     * @param keyExpression the key to be cheched for write access (including creation), not null. Here this could also
-     *                      be a regulat expression, such "as a.b.c.*".
+     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
+     *                      be a regular expression, such "as a.b.c.*".
+     * @return the boolean
      */
     boolean isWritable(String keyExpression);
 
@@ -59,17 +62,20 @@ public interface ConfigChangeRequest {
      * Checks if a configuration key is removable. This also implies that it is writable, but there might be writable
      * keys that cannot be removed.
      *
-     * @param keyExpression the keyExpression the key to be cheched for write access (including creation), not null. Here this could also
+     * @param keyExpression the keyExpression the key to be cheched for write access (including creation), not null.
+     *                      Here this could also
      *                      be a regulat expression, such "as a.b.c.*".
+     * @return the boolean
      */
     boolean isRemovable(String keyExpression);
 
     /**
      * Checks if any keys of the given type already exist in the backend. <b>NOTE:</b> there may be backends that
-     * are not able to supportlookups with regular expressions. In most such cases you should pass the keys to
+     * are not able to support lookups with regular expressions. In most such cases you should pass the keys to
      * lookup explicitly.
-     * @param keyExpression the key to be cheched for write access (including creation), not null. Here this could
-     *                      also be a regulat expression, such "as a.b.c.*".
+     *
+     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could
+     *                      also be a regular expression, such "as a.b.c.*".
      * @return true, if there is any key found matching the expression.
      */
     boolean exists(String keyExpression);
@@ -77,7 +83,7 @@ public interface ConfigChangeRequest {
     /**
      * Sets a property.
      *
-     * @param key the property's key, not null.
+     * @param key   the property's key, not null.
      * @param value the property's value, not null.
      * @return the former property value, or null.
      * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
@@ -93,6 +99,7 @@ public interface ConfigChangeRequest {
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param properties the properties tobe written, not null.
+     * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request is read-only.
      */
     ConfigChangeRequest putAll(Map<String, String> properties);
@@ -101,8 +108,8 @@ public interface ConfigChangeRequest {
      * Removes a configuration entry.
      *
      * @param keys the property's keys, not null.
-     * @throws org.apache.tamaya.ConfigException if the given cannot be removed.
      * @return the property's keys, or the request is read-only.
+     * @throws org.apache.tamaya.ConfigException if the given cannot be removed.
      */
     ConfigChangeRequest remove(String... keys);
 
@@ -115,6 +122,7 @@ public interface ConfigChangeRequest {
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param keys the property's keys to be removed, not null.
+     * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removed, or the request is read-only.
      */
     ConfigChangeRequest remove(Collection<String> keys);
@@ -128,6 +136,7 @@ public interface ConfigChangeRequest {
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param keys the property's keys to be removed, not null.
+     * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removed, or the request is read-only.
      */
     ConfigChangeRequest removeAll(String... keys);
@@ -135,21 +144,22 @@ public interface ConfigChangeRequest {
     /**
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
      * the corresponding configuration backend.
-     " @throws ConfigException if the request already has been committed or cancelled, or the commit fails.
+     * " @throws ConfigException if the request already has been committed or cancelled, or the commit fails.
      */
     void commit();
 
     /**
      * Cancel the given request, leaving everything unchanged. Cancelled requests are read-only and can not be used
      * for preparing/submitting any configuration changes.
-     * @return true, if this instance is closed.
+     *
      * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled.
      */
-    public void cancel();
+    void cancel();
 
     /**
      * Operation to check, if the current request is closed (either commited or cancelled). Closed requests are
      * read-only and can not be used for preparing/submitting any configuration changes.
+     *
      * @return true, if this instance is closed.
      */
     boolean isClosed();
