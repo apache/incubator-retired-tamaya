@@ -29,7 +29,7 @@ under the License.
 
     <groupId>org.apache.tamaya.ext.metamodels</groupId>
     <artifactId>tamaya-metamodels</artifactId>
-    <name>Apache Tamaya Extension Modules: Metamodels</name>
+    <name>Apache Tamaya Modules - Metamodels</name>
     <packaging>pom</packaging>
 
     <modules>

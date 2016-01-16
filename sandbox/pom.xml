@@ -29,7 +29,7 @@ under the License.
     <artifactId>tamaya-sandbox</artifactId>
     <groupId>org.apache.tamaya.ext</groupId>
 
-    <name>Apache Tamaya Sandbox Modules</name>
+    <name>Apache Tamaya Sandbox</name>
     <description>This project contains the several extensions that can be used with Tamaya, but are not (yet) ready for
         a release.</description>
     <packaging>pom</packaging>

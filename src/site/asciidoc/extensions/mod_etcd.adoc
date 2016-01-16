@@ -78,6 +78,8 @@ ETcd integration comes basically with 2 artifacts:
   atomic write methods are implemented.
 * The +org.apache.tamaya.etcd.EtcdPropertySource+ is a +PropertySource+ with a default ordinal of 100 and the name 'etcd', which is
   automatically registered.
+* If the +tamaya-mutable-config+ module is loaded it is possible to write property values back into the etcd cluster,
+  by accessing a +ConfigChangeRequest+ using the URI +config:etcd+.
 
 === The EtcdAccessor
 

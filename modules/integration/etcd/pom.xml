@@ -27,7 +27,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-etcd</artifactId>
-    <name>Apache Tamaya Modules Integration - etcd</name>
+    <name>Apache Tamaya Integration - etcd</name>
     <packaging>bundle</packaging>
 
     <properties>
@@ -107,6 +107,13 @@ under the License.
         <dependency>
             <groupId>org.apache.johnzon</groupId>
             <artifactId>johnzon-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-mutable-config</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

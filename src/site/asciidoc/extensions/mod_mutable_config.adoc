@@ -1,0 +1,143 @@
+= Apache Tamaya -- Extension: Events
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.mutableconfig
+:title: Apache Tamaya Extension: Mutable Configuration
+:revnumber: 0.1
+:revremark: Incubator
+:revdate: March 2016
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Core]]
+== Tamaya Mutable Configuration (Extension Module)
+=== Overview
+
+Tamaya Configuration by default is read-only, which covers must of the use cases. Make it writable through out
+creates also a bunch of new issues, especially with distributed configuration services and eventual consistency.
+Therefore mutability of configuration is modelled in Tamaya as a separate concern. This module defines the API
+to be used, whereas multiple mutable backends can register their mechanism to write configuration properties.
+
+=== Compatibility
+
+The module is based on Java 7, so it can be used with Java 7 and beyond.
+
+=== Installation
+
+To benefit from configuration mutability support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-mutable-config</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+=== Core Architecture
+
+The core of the module is the +ConfigChangeManager+ singleton, which creates a +ConfigChangeReuqest+ class for
+a +configurationTarget+ passed. The supported target +URIs+ hereby are determined (and must be documented) by
+the registered backend spis. If not sure you can call +getSupportedURIInfo()+ to see, which kind of URI's
+supported.
+As an example writing configuration entries to an +etcd+ server can be done as follows:
+
+[source,java]
+.Writing configuration to etcd
+--------------------------------------------
+ConfigChangeRequest request = ConfigChangeManager.createChangeRequest(new URI("etc:http://127.0.0.1:4441"));
+ChangeSummary summary = request
+                .set("newKey", "newValue").set("anotherKey", "updatedValue")
+                .remove("valueNotValid")
+                .commit();
+--------------------------------------------
+
+The effective effect of your changes to the overall configuration changes cannot be easily predicted, since it depends
+on several aspects:
+
+. is the corresponding configuration resource configured as part of the current system's configuration?
+. what is the +PropertySource's+ ordinal? Is it overriding or overriden by other sources?
+. is the change directly visible to the configuration system? E.g. injected values are normally not updated,
+  whereas injecting a +DynamicValue<T>+ instance allows to detect and react single value changes. Also the
+  +PropertySources+ implementation must be able to detect any configuration changes and adapt its values returned
+  accordingly.
+. Is configuration cached, or written/collected directly on access?
+. can the changes applied be committed at all?
+
+So it is part of your application configuration design to clearly define, which confoguration may be read-only, which
+may be mutable, how overridings should work and to which backends finally any changes should be written back. To
+support such fine granular scenarios the +ConfigChangeRequest+ interface also has methods to determine if a key
+is writable at all for a given configuration target:
+
+[source,java]
+.Checking for mutability
+--------------------------------------------
+ConfigChangeRequest request = ConfigChangeManager.createChangeRequest(new URI("file://$USER_HOME/.myapp/mapp.properties"));
+if(request,isWritable("mycluster.shared.appKey")){
+    request.set("newKey", "newValue")
+    .remove("valueNotValid")
+     .commit();
+}else{
+    request.cancel();
+}
+--------------------------------------------
+
+=== Configuration Changes
+
+This module does not handle detection of changes to the overall system's +Configuration+. This can be done in
+several ways, e.g. by:
+
+* using the _tamaya-events_ extension, which can be used to observe the system's configuration and
+  publishing events when things have been changed.
+* The SPI implementing the +ConfigChangeManagerSpi+ may inform/update any affected +PropertySource,
+  PropertySourceProvider+ instances about the changes applied.
+
+
+=== SPIs
+
+The module defines only one single SPI, that must be implemented to implement the fabric method
++createChangeRequest(URI)+ of the +ConfigChangeManager+ singleton:
+
+[source,java]
+.SPI: ConfigEventSpi
+--------------------------------------------------
+public interface ConfigChangeManagerSpi {
+    ConfigChangeRequest createChangeRequest(URI backendURI);
+}
+--------------------------------------------------
+
+Implementations are registered with the current +ServiceContext+, be default as with
+ +java.util.ServiceLoader+.

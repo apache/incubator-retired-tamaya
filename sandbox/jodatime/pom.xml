@@ -30,7 +30,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-jodatime</artifactId>
-    <name>Apache Tamaya Joda-Time Support</name>
+    <name>Apache Tamaya Modules - Joda-Time Support</name>
     <packaging>bundle</packaging>
 
     <inceptionYear>2015</inceptionYear>

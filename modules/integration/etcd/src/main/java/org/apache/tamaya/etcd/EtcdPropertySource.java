@@ -31,33 +31,12 @@ import java.util.logging.Logger;
  */
 public class EtcdPropertySource implements PropertySource{
     private static final Logger LOG = Logger.getLogger(EtcdPropertySource.class.getName());
-    private List<EtcdAccessor> etcdBackends = new ArrayList<>();
+
     private String prefix = System.getProperty("tamaya.etcd.prefix", "");
 
     public EtcdPropertySource(){
-        int timeout = 2;
-        String val = System.getProperty("tamaya.etcd.timeout");
-        if(val == null){
-            val = System.getenv("tamaya.etcd.timeout");
-        }
-        if(val!=null){
-            timeout = Integer.parseInt(val);
-        }
-        String serverURLs = System.getProperty("tamaya.etcd.server.urls");
-        if(serverURLs==null){
-            serverURLs = System.getenv("tamaya.etcd.server.urls");
-        }
-        if(serverURLs==null){
-            serverURLs = "http://127.0.0.1:4001";
-        }
-        for(String url:serverURLs.split("\\,")) {
-            try{
-                etcdBackends.add(new EtcdAccessor(url.trim(), timeout));
-                LOG.info("Using etcd endoint: " + url);
-            } catch(Exception e){
-                LOG.log(Level.SEVERE, "Error initializing etcd accessor for URL: " + url, e);
-            }
-        }
+
+
     }
 
     @Override
@@ -112,7 +91,7 @@ public class EtcdPropertySource implements PropertySource{
                 reqKey = reqKey.substring(0,reqKey.length()-".source".length());
             }
         }
-        for(EtcdAccessor accessor:etcdBackends){
+        for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
             try{
                 props = accessor.get(reqKey);
                 if(!props.containsKey("_ERROR")) {
@@ -130,8 +109,8 @@ public class EtcdPropertySource implements PropertySource{
 
     @Override
     public Map<String, String> getProperties() {
-        if(etcdBackends.isEmpty()){
-            for(EtcdAccessor accessor:etcdBackends){
+        if(EtcdBackends.getEtcdBackends().isEmpty()){
+            for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
                 try{
                     Map<String, String> props = accessor.getProperties("");
                     if(!props.containsKey("_ERROR")) {

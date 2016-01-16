@@ -47,7 +47,8 @@ Mature extensions have a stable API and SPI, similar to the API and Implementati
 |+org.apache.tamaya.ext:tamaya-functions+     |Provides several functional extension points.          |link:mod_functions.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:mod_optional.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-spi-support+   |Tamaya support module for SPI implementation.          |link:mod_spi-support.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:modjson.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:mod_json.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-mutable-config+|Provides API/SPI for writing configuration             |link:mod_mutable_config.html[Documentation]
 |=======
 
 

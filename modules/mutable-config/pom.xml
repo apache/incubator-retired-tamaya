@@ -22,29 +22,43 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-integrations</artifactId>
+        <artifactId>tamaya-extensions</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-commons-config</artifactId>
-    <name>Apache Tamaya Commons Integration - Apache Commons</name>
+
+    <artifactId>tamaya-mutable-config</artifactId>
+    <name>Apache Tamaya Modules - Mutable Configuration Support</name>
+    <description>This module provides abstraction, if your scenario needs to actively change configuration entries
+        and write changes back to some property sources, files etc.</description>
     <packaging>bundle</packaging>
+
+    <properties>
+        <jdkVersion>1.7</jdkVersion>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-formats</artifactId>
+            <artifactId>tamaya-events</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.10</version>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 
@@ -56,16 +70,8 @@ under the License.
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Import-Package>
-                            org.apache.tamaya,
-                            org.apache.tamaya.spi,
-                            org.apache.tamaya.format,
-                            org.apache.commons,
-                            javax.annotation,
-                            *
-                        </Import-Package>
                         <Export-Package>
-                            org.apache.tamaya.integration.commons
+                            org.apache.tamaya.mutableconfig
                         </Export-Package>
                     </instructions>
                 </configuration>

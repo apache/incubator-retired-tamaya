@@ -27,7 +27,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-sysprops</artifactId>
-    <name>Apache Tamaya - Configured Java SE System Properties</name>
+    <name>Apache Tamaya Modules - Configured Java SE System Properties</name>
     <packaging>bundle</packaging>
 
     <build>

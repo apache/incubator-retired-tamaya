@@ -30,6 +30,7 @@ under the License.
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>tamaya-ui</artifactId>
+    <name>Apache Tamaya Modules - UI</name>
 
     <modules>
         <module>jsf</module>
