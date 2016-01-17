@@ -28,7 +28,7 @@ import java.util.Map;
  * Hereby not all configuration entries are necessarily mutable, since some entries may be read from non
  * mutable areas of configuration. Of course, it is always possible to add a mutable shadow layer on top of all
  * configuration to enable whatever changes applied. The exact management and storage persistence algorithm should be
- * transparent.<br/>
+ * transparent.<br>
  * As a consequence clients should first check, using the corresponding methods, if entries are to edited or removed
  * actually are eligible for change/creation or removal.
  */

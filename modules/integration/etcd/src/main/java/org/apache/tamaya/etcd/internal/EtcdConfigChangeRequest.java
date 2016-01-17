@@ -60,18 +60,18 @@ class EtcdConfigChangeRequest extends AbstractConfigChangeRequest{
         checkClosed();
         for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
             try{
-                for(String k:getRemoved()){
-                    Map<String,String> res = accessor.delete(k);
-                    if(res.get("_ERROR")!=null){
-                        LOG.info("Failed to remove key from etcd: " + k);
-                    }
-                }
-                for(Map.Entry<String,String> en:getProperties().entrySet()){
-                    Map<String,String> res = accessor.set(en.getKey(), en.getValue());
-                    if(res.get("_ERROR")!=null){
-                        LOG.info("Failed key from etcd: " + en.getKey()  + "=" + en.getValue());
-                    }
-                }
+//                for(String k:getRemoved()){
+//                    Map<String,String> res = accessor.delete(k);
+//                    if(res.get("_ERROR")!=null){
+//                        LOG.info("Failed to remove key from etcd: " + k);
+//                    }
+//                }
+//                for(Map.Entry<String,String> en:getProperties().entrySet()){
+//                    Map<String,String> res = accessor.set(en.getKey(), en.getValue());
+//                    if(res.get("_ERROR")!=null){
+//                        LOG.info("Failed key from etcd: " + en.getKey()  + "=" + en.getValue());
+//                    }
+//                }
             } catch(Exception e){
                 LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
             }
