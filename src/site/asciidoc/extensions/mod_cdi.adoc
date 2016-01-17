@@ -1,18 +1,3 @@
-= Apache Tamaya -- Extension: Classloader Isolation Support
-
-:name: Tamaya
-:rootpackage: org.apache.tamaya.integration.cdi
-:title: Apache Tamaya Extension: CDI Integration of tamaya-injection (SE)
-:revdate: September 2015
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -29,6 +14,23 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
+= Apache Tamaya -- Extension: Classloader Isolation Support
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.integration.cdi
+:title: Apache Tamaya Extension: CDI Integration of tamaya-injection (SE)
+:revdate: September 2015
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+
 '''
 
 <<<
