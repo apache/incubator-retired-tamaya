@@ -21,7 +21,7 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya</groupId>
-        <artifactId>code</artifactId>
+        <artifactId>tamaya-code</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
