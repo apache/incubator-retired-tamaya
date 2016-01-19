@@ -43,7 +43,7 @@ public class InputStreamFactory implements Closeable {
     private byte[] data;
 
     /**
-     * Creates a bew InputStreamFactory.
+     * Creates a new InputStreamFactory.
      *
      * @param original the InputStream to be read for extract its data into memory.
      * @throws IOException if thrown by the original during read.
@@ -72,6 +72,7 @@ public class InputStreamFactory implements Closeable {
      * Creates a new InputStream with the same data as provided by the InputStream passed on factory creation.
      *
      * @return a new InputStream , never null.
+     * @throws IOException if no data is available.
      */
     public InputStream createInputStream() throws IOException {
         byte[] bytes = this.data;

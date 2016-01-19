@@ -23,7 +23,7 @@ import java.util.Collection;
 
 /**
  * Interface to be implemented by modules. It supports loading of files or classpath resources either directly or by
- * defining a Ant-styled resource pattern:
+ * defining an Ant-style resource pattern:
  * <ul>
  *     <li>'*' is a placeholder for any character (0..n)</li>
  *     <li>'**' is a placeholder for any number of subdirectories going down a directory structure recursively.</li>
@@ -73,10 +73,9 @@ public interface ResourceResolver {
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
+     * @param classLoader classloader to use for resolving.
      * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link URL}s found, never
-     * null.
-     * .
+     * @return the corresponding collection of current {@link URL}s found, never {@code null}.
      */
     Collection<URL> getResources(ClassLoader classLoader, String... expressions);
 
@@ -86,6 +85,7 @@ public interface ResourceResolver {
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
+     * @param classLoader classloader to use for resolving.
      * @param expressions the expressions to be resolved, not empty.
      * @return the corresponding collection of current {@link URL}s found,
      * never {@code null}.

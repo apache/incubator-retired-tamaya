@@ -66,6 +66,7 @@ public final class PropertySourceChangeBuilder {
      * Constructor.
      *
      * @param source the underlying configuration/provider, not null.
+     * @param changeType kind of change.
      */
     private PropertySourceChangeBuilder(PropertySource source, ChangeType changeType) {
         this.source = Objects.requireNonNull(source);
@@ -73,9 +74,10 @@ public final class PropertySourceChangeBuilder {
     }
 
     /**
-     * Creates a new instance current this builder.
+     * Creates a new instance of this builder.
      *
      * @param source the underlying property provider/configuration, not null.
+     * @param changeType kind of change.
      * @return the builder for chaining.
      */
     public static PropertySourceChangeBuilder of(PropertySource source, ChangeType changeType) {

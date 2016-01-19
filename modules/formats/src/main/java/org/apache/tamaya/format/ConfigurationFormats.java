@@ -61,6 +61,7 @@ public final class ConfigurationFormats {
     /**
      * Get all currently available formats, ordered by priority.
      *
+     * @param formatNames available formats to be ordered.
      * @return the currently available formats, never null.
      */
     public static List<ConfigurationFormat> getFormats(String... formatNames) {
@@ -93,9 +94,10 @@ public final class ConfigurationFormats {
     /**
      * Get all currently available formats, ordered by priority.
      *
+     * @param url source to read configuration from. 
      * @return the currently available formats, never null.
      */
-    public static List<ConfigurationFormat> getFormats(URL url) {
+    public static List<ConfigurationFormat> getFormats(final URL url) {
         List<ConfigurationFormat> formats = getFormats();
         List<ConfigurationFormat> result = new ArrayList<>();
         for (ConfigurationFormat f : formats) {

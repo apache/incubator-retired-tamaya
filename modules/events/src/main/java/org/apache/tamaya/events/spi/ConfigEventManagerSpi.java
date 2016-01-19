@@ -27,13 +27,14 @@ import java.util.Collection;
  * SPI interface to implement the {@link org.apache.tamaya.events.ConfigEventManager} singleton.
  * Implementations of this interface must be registered with the current {@link org.apache.tamaya.spi.ServiceContext},
  * by default this equals to registering it with {@link java.util.ServiceLoader}. Add {@link javax.annotation.Priority}
- * annotations for overriding (higher values overriden lower values).
+ * annotations for overriding (higher values override lower values).
  */
 public interface ConfigEventManagerSpi {
     /**
-     * Add a listener for observing events. References of this
+     * Adds a listener for observing events. References of this
      * component to the listeners must be managed as weak references.
-     *
+     * 
+     * @param <T> the type of the events listened to.
      * @param l the listener not null.
      */
     <T> void addListener(ConfigEventListener l);
@@ -41,9 +42,10 @@ public interface ConfigEventManagerSpi {
     /**
      * Adds a listener for observing events of a given type.
      *
+     * @param <T> the type of the events listened to.
      * @param l the listener not null.
      * @param eventType the type of concrete configuration event this listeners should be informed about. All other
-     *                  event types will never be delivered toe this listener instance.
+     *                  event types will never be delivered to this listener instance.
      */
     <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
 
@@ -57,6 +59,7 @@ public interface ConfigEventManagerSpi {
     /**
      * Removes a listener for observing events of a certain type.
      *
+     * @param <T> the type of the events listened to.
      * @param l the listener not null.
      * @param eventType the type of concrete configuration event this listeners should be informed about. All other
      *                  event types will never be delivered toe this listener instance.
@@ -111,11 +114,13 @@ public interface ConfigEventManagerSpi {
     boolean isChangeMonitorActive();
 
     /**
-     * Start/Stop the change monitoring service, which will observe/reevaluate the current configuration regularly
-     * and triggers ConfigurationChange events is something changed. This is quite handy for publishing
+     * Start/stop the change monitoring service, which will observe/reevaluate the current configuration regularly
+     * and trigger ConfigurationChange events if something is changed. This is quite handy for publishing
      * configuration changes to whatever systems are interested in. Hereby the origin of a configuration change
-     * can be on this machine, or also remotedly. FOr handling corresponding {@link ConfigEventListener} have
+     * can be on this machine, or also remotedly. For handling corresponding {@link ConfigEventListener} have
      * to be registered, e.g. listening on {@link org.apache.tamaya.events.ConfigurationChange} events.
+     * 
+     * @param enable whether to enable or disable the change monitoring.
      */
     void enableChangeMonitor(boolean enable);
 

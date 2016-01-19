@@ -57,6 +57,7 @@ public final class ConfigurationDataBuilder {
      * Creates a new instance.
      * @param resource the configuration resource URL, not null.
      * @param format the format that read this data, not null.
+     * @return new instance of this class.
      */
     public static ConfigurationDataBuilder of(String resource, ConfigurationFormat format){
         return new ConfigurationDataBuilder(resource, format);
@@ -64,7 +65,8 @@ public final class ConfigurationDataBuilder {
 
     /**
      * Creates a new instance.
-     * @param data an existing COnfigurationData instances used to initialize the builder.
+     * @param data an existing ConfigurationData instances used to initialize the builder.
+     * @return new instance of this class from the given configuration.
      */
     public static ConfigurationDataBuilder of(ConfigurationData data){
         ConfigurationDataBuilder b = new ConfigurationDataBuilder(data.getResource(), data.getFormat());

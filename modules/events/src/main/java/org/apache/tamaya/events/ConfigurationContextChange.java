@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Event that contains a set current changes that were applied or could be applied.
+ * Event that contains a set of current changes that were applied or can be applied.
  * This class is immutable and thread-safe. To create instances use
  * {@link PropertySourceChangeBuilder}.
  *
@@ -49,6 +49,8 @@ public final class ConfigurationContextChange implements ConfigEvent<Configurati
 
     /**
      * Get an empty change set for the given provider.
+     * 
+     * @param configurationContext context to use for creating changesets.
      * @return an empty ConfigurationContextChange instance.
      */
     public static ConfigurationContextChange emptyChangeSet(ConfigurationContext configurationContext){

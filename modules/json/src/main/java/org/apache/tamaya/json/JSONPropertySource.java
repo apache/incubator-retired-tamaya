@@ -118,6 +118,9 @@ public class JSONPropertySource implements PropertySource {
 
     /**
      * Reads the configuration.
+     * @param urlResource soure of the configuration.
+     * @return the configuration read from the given resource URL.
+     * @throws ConfigException if resource URL cannot be read.
      */
     protected Map<String, String> readConfig(URL urlResource) {
         try (InputStream is = urlResource.openStream()) {

@@ -331,7 +331,8 @@ public class ConfigurationBuilder {
 
 
     /**
-     * @return the builder instance currently used
+     * @param propertyValueCombinationPolicy combination policy to use for this builder. 
+     * @return the builder instance currently in use.
      */
     public ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy propertyValueCombinationPolicy){
         contextBuilder.setPropertyValueCombinationPolicy(propertyValueCombinationPolicy);
@@ -347,6 +348,7 @@ public class ConfigurationBuilder {
      * builder.addPropertyConverter(MyType.class, converter}
      * </pre>
      *
+     * @param <T> the type of the configuration
      * @param type the required target type the converter should be applied to
      * @param converter the converter to be used to convert the string property
      *                  to the given target type.
@@ -364,6 +366,11 @@ public class ConfigurationBuilder {
     }
 
     /**
+     * Adds a propertyConverter of a given type.
+     *  
+     * @param <T> the type of the configuration
+     * @param type type literal of this converter.
+     * @param propertyConverter property converter.
      * @return the builder instance currently used
      */
     public <T> ConfigurationBuilder addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter){
@@ -560,7 +567,7 @@ public class ConfigurationBuilder {
         return loadProvidedPropertySourceProviders;
     }
 
-    //X TODO think on a functonality/API for using the default PropertyConverters and use the configured ones here
+    //X TODO think on a functionality/API for using the default PropertyConverters and use the configured ones here
     //X TODO as overrides used first.
 
 

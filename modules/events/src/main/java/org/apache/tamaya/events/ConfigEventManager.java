@@ -55,6 +55,7 @@ public final class ConfigEventManager {
 
     /**
      * Adds a Config listener that listens to all kind of {@link ConfigEvent}.
+     * @param <T> the type of the event.
      * @param l the listener not null.
      * @param eventType the event type to which this listener listens to.
      */
@@ -82,7 +83,8 @@ public final class ConfigEventManager {
     /**
      * Removes a listener registered for the given event type.
      *
-     * @param l the listener not null.
+     * @param <T> the type of the event.
+     * @param l the listener, not null.
      * @param eventType the event type to which this listener listens to.
      */
     public static <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
@@ -106,6 +108,8 @@ public final class ConfigEventManager {
 
     /**
      * Access all registered ConfigEventListeners listening to a all kind of event types globally.
+     * 
+     * @param <T> the type of the event.
      * @return a list with the listeners found, never null.
      */
     public static <T extends ConfigEvent>
@@ -115,7 +119,8 @@ public final class ConfigEventManager {
 
     /**
      * Publishes a {@link ConfigurationChange} synchronously to all interested listeners.
-     *
+     * 
+     * @param <T> the type of the event.
      * @param event the event, not null.
      */
     public static <T> void fireEvent(ConfigEvent<?> event) {
@@ -125,6 +130,7 @@ public final class ConfigEventManager {
     /**
      * Publishes a {@link ConfigurationChange} asynchronously/multithreaded to all interested listeners.
      *
+     * @param <T> the type of the event.
      * @param event the event, not null.
      */
     public static <T> void fireEventAsynch(ConfigEvent<?> event) {
@@ -133,10 +139,13 @@ public final class ConfigEventManager {
 
     /**
      * Start/Stop the change monitoring service, which will observe/reevaluate the current configuration regularly
-     * and triggers ConfigurationChange events is something changed. This is quite handy for publishing
+     * and trigger ConfigurationChange events if something changed. This is quite handy for publishing
      * configuration changes to whatever systems are interested in. Hereby the origin of a configuration change
-     * can be on this machine, or also remotedly. FOr handling corresponding {@link ConfigEventListener} have
+     * can be on this machine, or also remotely. For handling corresponding {@link ConfigEventListener} have
      * to be registered, e.g. listening on {@link org.apache.tamaya.events.ConfigurationChange} events.
+     * 
+     * @param enable whether to enable or disable the change monitoring.
+     * 
      * @see #isChangeMonitoring()
      * @see #getChangeMonitoringPeriod()
      */

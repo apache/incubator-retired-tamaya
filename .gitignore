@@ -17,3 +17,6 @@ release.properties
 temp-properties-files-for-site/
 modules/integration/commons-config/commons-configuration.iml
 examples/simple-propertysource/tamaya-example-simple-propertysource.iml
+**/*.checkstyle
+**/*.fbExcludeFilterFile
+

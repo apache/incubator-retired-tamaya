@@ -32,7 +32,7 @@ public class MapPropertySource extends BasePropertySource {
     private final String name;
 
     /**
-     * The Property Sources priority, if a fixed priority should be used.
+     * The Property Sources priority, a fixed priority should be used.
      */
     private final Integer priority;
 
@@ -42,9 +42,10 @@ public class MapPropertySource extends BasePropertySource {
     private final Map<String, String> props = new HashMap<>();
 
     /**
-     * Creates a new instance, hereby using the default mechanism for evaluting the property source's
+     * Creates a new instance, hereby using the default mechanism for evaluating the property source's
      * priority.
      *
+     * @param name unique name of this source.
      * @param props the properties
      */
     public MapPropertySource(String name, Map<String, String> props) {
@@ -52,9 +53,10 @@ public class MapPropertySource extends BasePropertySource {
     }
 
     /**
-     * Creates a new instance, hereby using the default mechanism for evaluting the property source's
+     * Creates a new instance, hereby using the default mechanism for evaluating the property source's
      * priority, but applying a custom mapping {@code rootContext} to the entries provided.
      *
+     * @param name unique name of this source.
      * @param props       the properties
      * @param rootContext the root context mapping, or null (for no mapping).
      */
@@ -63,9 +65,10 @@ public class MapPropertySource extends BasePropertySource {
     }
 
     /**
-     * Creates a new instance, hereby using the default mechanism for evaluting the property source's
+     * Creates a new instance, hereby using the default mechanism for evaluating the property source's
      * priority, but applying a custom mapping {@code rootContext} to the entries provided.
      *
+     * @param name unique name of this source.
      * @param props       the properties
      * @param rootContext the root context mapping, or null (for no mapping).
      * @param priority    the (optional) fixed priority. If null, the default priority
@@ -88,9 +91,10 @@ public class MapPropertySource extends BasePropertySource {
     }
 
     /**
-     * Creates a new instance, hereby using the default mechanism for evaluting the property source's
+     * Creates a new instance, hereby using the default mechanism for evaluating the property source's
      * priority, but applying a custom mapping {@code rootContext} to the entries provided.
      *
+     * @param name unique name of this source.
      * @param props       the properties
      * @param rootContext the root context mapping, or null (for no mapping).
      * @param priority    the (optional) fixed priority. If null, the default priority
@@ -101,7 +105,7 @@ public class MapPropertySource extends BasePropertySource {
     }
 
     /**
-     * Simple method to convert a Properties to a Map instance.
+     * Simple method to convert Properties into a Map instance.
      * @param props the properties, not null.
      * @return the corresponding Map instance.
      */

@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Models a set current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
- * can observing changes to property sources and
+ * Models a set of current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
+ * can observe changes to property sources and
  * <ol>
- *     <li>Check if their current configuration instance ({@link org.apache.tamaya.spi.ConfigurationContext}
- *     contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference tova property source is never affected by a
- *     change, its only the data of the property source).</li>
- *     <li>If so corresponding action may be taken, such as reevaluating the configuration values (depending on
+ *     <li>check if their current configuration instance ({@link org.apache.tamaya.spi.ConfigurationContext}
+ *     contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference to a property source is never affected by a
+ *     change, it is the data of the property source only).</li>
+ *     <li>if so, a corresponding action may be taken, such as reevaluating the configuration values (depending on
  *     the update policy) or reevaluating the complete {@link org.apache.tamaya.Configuration} to create a change
  *     event on configuration level.
  * </ol>
@@ -72,13 +72,14 @@ public final class ConfigurationContextChangeBuilder {
     /**
      * Creates a new instance current this builder.
      *
+     * @param context context to use for creating changesets.
      * @return the builder for chaining.
      */
     public static ConfigurationContextChangeBuilder of(ConfigurationContext context) {
         return new ConfigurationContextChangeBuilder(context);
     }
 
-    /*
+    /**
      * Apply a version/UUID to the set being built.
      * @param version the version to apply, or null, to let the system generate a version for you.
      * @return the builder for chaining.
@@ -88,9 +89,9 @@ public final class ConfigurationContextChangeBuilder {
         return this;
     }
 
-    /*
+    /**
      * Apply given timestamp to the set being built.
-     * @param version the version to apply, or null, to let the system generate a version for you.
+     * @param timestamp timestamp to set.
      * @return the builder for chaining.
      */
     public ConfigurationContextChangeBuilder setTimestamp(long timestamp) {

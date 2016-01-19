@@ -39,7 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Collector that searches files based on ant styled patterns. For example the following patterns would be matched:
+ * Collector that searches files based on Ant styled patterns. For example the following patterns would be matched:
  * <pre>
  *     classpath:javax/annotations/*
  *     javax?/annotations&#47;**&#47;*.class
@@ -149,6 +149,7 @@ public class ClasspathCollector {
      * @param subPattern      the sub pattern to match (below the root directory)
      * @return the Set of matching Resource instances
      * @throws java.io.IOException in case of I/O errors
+     * @throws java.net.URISyntaxException in case of URL-related errors
      * @see java.net.JarURLConnection
      */
     protected Collection<URL> doFindPathMatchingJarResources(URL rootDirResource, String subPattern)
