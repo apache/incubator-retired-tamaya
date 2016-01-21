@@ -23,6 +23,10 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 /**
  * Static access to the {@link Configuration} for the very application.
  */
@@ -35,6 +39,22 @@ public final class ConfigurationProvider {
                 .getService(ConfigurationProviderSpi.class);
         if(spi==null){
             throw new IllegalStateException("ConfigurationProviderSpi not available.");
+        }
+        try{
+            URL url = ConfigurationProvider.class.getResource("/banner.txt");
+            if(url!=null){
+                BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                StringBuilder b = new StringBuilder();
+                String line = reader.readLine();
+                while(line != null){
+                    b.append(line).append('\n');
+                    line = reader.readLine();
+                }
+                System.out.println(b.toString());
+            }
+        }
+        catch(Exception e){
+            System.out.println("************ TAMAYA CONFIG ************");
         }
         return spi;
     }
