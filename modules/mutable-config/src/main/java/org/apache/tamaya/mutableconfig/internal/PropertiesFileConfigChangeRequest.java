@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.mutableconfig.spi.AbstractConfigChangeRequest;
 
 import java.io.*;
+import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -47,10 +48,12 @@ class PropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
         super(file.toURI());
         this.file = file;
         if(file.exists()) {
-            try (InputStream is = getBackendURI().toURL().openStream()) {
-                properties.load(is);
-            } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Failed to load properties from " + file, e);
+            for(URI uri:getBackendURIs()) {
+                try (InputStream is = uri.toURL().openStream()) {
+                    properties.load(is);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Failed to load properties from " + file, e);
+                }
             }
         }
     }

@@ -21,7 +21,12 @@ package org.apache.tamaya.mutableconfig.internal;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.mutableconfig.spi.AbstractConfigChangeRequest;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -47,10 +52,12 @@ class XmlPropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
         super(file.toURI());
         this.file = file;
         if(file.exists()) {
-            try (InputStream is = getBackendURI().toURL().openStream()) {
-                properties.loadFromXML(is);
-            } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Failed to load properties from " + file, e);
+            for(URI uri:getBackendURIs()) {
+                try (InputStream is = uri.toURL().openStream()) {
+                    properties.loadFromXML(is);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Failed to load properties from " + file, e);
+                }
             }
         }
     }

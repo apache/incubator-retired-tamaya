@@ -72,15 +72,17 @@ To benefit from configuration mutability support you only must add the correspon
 === Core Architecture
 
 The core of the module is the +ConfigChangeManager+ singleton, which creates a +ConfigChangeReuqest+ class for
-a +configurationTarget+ passed. The supported target +URIs+ hereby are determined (and must be documented) by
-the registered backend spis. If not sure you can call +getSupportedURIInfo()+ to see, which kind of URI's
+one or multiple +configurationTargets+ passed. The supported target +URIs+ hereby are determined (and must be
+documented) by the registered backend spis. If not sure you can call +getSupportedURIInfo()+ to see, which kind of URI's
 supported.
 As an example writing configuration entries to an +etcd+ server can be done as follows:
 
 [source,java]
 .Writing configuration to etcd
 --------------------------------------------
-ConfigChangeRequest request = ConfigChangeManager.createChangeRequest(new URI("etc:http://127.0.0.1:4441"));
+ConfigChangeRequest request = ConfigChangeManager.createChangeRequest(
+    new URI("etc:http://127.0.0.1:4441"),
+    new URI("file:/home/etcd/backup-config.properties"));
 ChangeSummary summary = request
                 .set("newKey", "newValue").set("anotherKey", "updatedValue")
                 .remove("valueNotValid")

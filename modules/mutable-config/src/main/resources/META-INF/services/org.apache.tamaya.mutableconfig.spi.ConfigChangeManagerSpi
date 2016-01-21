@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.mutableconfig.internal.MutablePropertiesConfigSupport
+org.apache.tamaya.mutableconfig.internal.DefaultConfigChangeManagerSpi

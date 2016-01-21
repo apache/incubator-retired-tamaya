@@ -42,12 +42,12 @@ public interface ConfigChangeRequest {
     String getRequestID();
 
     /**
-     * Identifies the configuration backend that was used to create this request instance and which is
-     * also responsible for writing back the changes on this instance.
+     * Identifies the configuration backends that participate in this request instance and which are
+     * also responsible for writing back the changes applied.
      *
      * @return the backend URI, never null.
      */
-    URI getBackendURI();
+    Collection<URI> getBackendURIs();
 
     /**
      * Checks if a configuration key is writable (or it can be added).
@@ -105,15 +105,6 @@ public interface ConfigChangeRequest {
     ConfigChangeRequest putAll(Map<String, String> properties);
 
     /**
-     * Removes a configuration entry.
-     *
-     * @param keys the property's keys, not null.
-     * @return the property's keys, or the request is read-only.
-     * @throws org.apache.tamaya.ConfigException if the given cannot be removed.
-     */
-    ConfigChangeRequest remove(String... keys);
-
-    /**
      * Removes all given configuration entries. This method should check that all given properties are
      * basically removable, as defined by #isRemovable. If any of the passed keys is not removable during this initial
      * check, the operation should not perform any configuration changes and throw a {@link org.apache.tamaya.ConfigException}. If errors
@@ -139,7 +130,7 @@ public interface ConfigChangeRequest {
      * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removed, or the request is read-only.
      */
-    ConfigChangeRequest removeAll(String... keys);
+    ConfigChangeRequest remove(String... keys);
 
     /**
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
@@ -164,4 +155,10 @@ public interface ConfigChangeRequest {
      */
     boolean isClosed();
 
+    /**
+     * Method to set the request id to be used.
+     * @param requestId the id to  be used, not null
+     * @throws IllegalStateException if the request is already closed.
+     */
+    void setRequestId(String requestId);
 }

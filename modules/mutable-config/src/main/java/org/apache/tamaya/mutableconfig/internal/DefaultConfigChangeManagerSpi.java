@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * Mutable Config Request factory that tries to convert given URIs to file references, if successful, it returns
  * ConfigChangeRequests fir .properties and .xml files.
  */
-public class MutablePropertiesConfigSupport implements ConfigChangeManagerSpi{
+public class DefaultConfigChangeManagerSpi implements ConfigChangeManagerSpi{
 
     private static final Logger LOG = Logger.getLogger(XmlPropertiesFileConfigChangeRequest.class.getName());
 

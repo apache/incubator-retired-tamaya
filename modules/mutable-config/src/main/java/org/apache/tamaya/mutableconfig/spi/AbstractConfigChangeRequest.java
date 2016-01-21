@@ -22,15 +22,24 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Base class for implementing a ConfigChangeRequest.
  */
 public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest {
 
-    private final URI uri;
-    private final String requestID = UUID.randomUUID().toString();
+    private final List<URI> uris = new ArrayList<>();
+    private String requestID = UUID.randomUUID().toString();
     /**
      * The Properties.
      */
@@ -44,10 +53,15 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     /**
      * Instantiates a new Abstract config change request.
      *
-     * @param uri the uri
+     * @param uris the uris
      */
-    protected AbstractConfigChangeRequest(URI uri){
-        this.uri = Objects.requireNonNull(uri);
+    protected AbstractConfigChangeRequest(URI... uris){
+        for(URI uri:uris){
+            this.uris.add(Objects.requireNonNull(uri));
+        }
+        if(this.uris.isEmpty()){
+            throw new IllegalArgumentException("At least one URI should be provided.");
+        }
     }
 
     /**
@@ -60,8 +74,8 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     }
 
     @Override
-    public final URI getBackendURI() {
-        return uri;
+    public final Collection<URI> getBackendURIs() {
+        return Collections.unmodifiableCollection(uris);
     }
 
     @Override
@@ -76,6 +90,12 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
 
     @Override
     public abstract boolean exists(String keyExpression);
+
+    @Override
+    public void setRequestId(String requestId) {
+        checkClosed();
+        this.requestID = Objects.requireNonNull(requestId);
+    }
 
     @Override
     public ConfigChangeRequest put(String key, String value) {
@@ -102,13 +122,6 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     public ConfigChangeRequest remove(Collection<String> keys) {
         checkClosed();
         this.removed.addAll(keys);
-        return this;
-    }
-
-    @Override
-    public ConfigChangeRequest removeAll(String... keys) {
-        checkClosed();
-        Collections.addAll(this.removed, keys);
         return this;
     }
 
