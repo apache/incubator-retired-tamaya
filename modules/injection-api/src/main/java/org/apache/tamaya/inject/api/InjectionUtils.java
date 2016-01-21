@@ -57,10 +57,11 @@ public final class InjectionUtils {
     }
 
     /**
-     * Evaluates all absolute configuration key based on the member name found.
+     * Evaluates all absolute configuration keys based on the member name found.
      *
-     * @param areasAnnot the (optional) annotation definining areas to be looked up.
-     * @return the list current keys in order how they should be processed/looked up.
+     * @param member member to analyze.
+     * @param areasAnnot the (optional) annotation defining areas to be looked up.
+     * @return the list of current keys in order how they should be processed/looked up.
      */
     public static List<String> evaluateKeys(Member member, ConfigDefaultSections areasAnnot) {
         List<String> keys = new ArrayList<>();
@@ -86,8 +87,9 @@ public final class InjectionUtils {
     }
 
     /**
-     * Evaluates all absolute configuration key based on the annotations found on a class.
-     *
+     * Evaluates all absolute configuration keys based on the annotations found in a class.
+     * 
+     * @param member member to analyze.
      * @param areasAnnot         the (optional) annotation definining areas to be looked up.
      * @param propertyAnnotation the annotation on field/method level that may defined one or
      *                           several keys to be looked up (in absolute or relative form).

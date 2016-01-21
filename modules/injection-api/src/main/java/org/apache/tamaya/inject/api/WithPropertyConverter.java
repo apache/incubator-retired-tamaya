@@ -27,7 +27,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define a type adapter to be used before injecting a configured keys, or for applying changes.
+ * Annotation to define a type adapter to be used before injecting a configured key, or for applying changes.
  * This will override any other adapter for performing the type conversion before
  * injecting the field keys.
  */
@@ -39,6 +39,7 @@ public @interface WithPropertyConverter {
      * Define a custom adapter or codec that should be used to adapt the configuration entry injected. This overrides any
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
+     * @return adapter used to change the configuration entry.
      */
     Class<? extends PropertyConverter<?>> value();
 

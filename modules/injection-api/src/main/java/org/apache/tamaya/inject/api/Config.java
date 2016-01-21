@@ -84,6 +84,8 @@ public @interface Config {
      * default values can be fixed Strings or even themselves resolvable. For typed configuration of type T entries
      * that are not Strings the default value must be a valid input to the corresponding
      * {@link org.apache.tamaya.spi.PropertyConverter}.
+     * 
+     * @return default value used in case resolution fails.
      */
     @Nonbinding
     String defaultValue() default "";

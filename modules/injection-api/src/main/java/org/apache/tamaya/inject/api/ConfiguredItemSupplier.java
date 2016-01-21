@@ -20,11 +20,11 @@ package org.apache.tamaya.inject.api;
 
 /**
  * Represents a supplier of results.
- * <p>
- * <p>There is no requirement that a new or distinct result be returned each
+ * 
+ * There is no requirement that a new or distinct result be returned each
  * time the supplier is invoked.
- * <p>
- * <p>This is a functional interface,
+ * 
+ * This is a functional interface,
  * whose functional method is {@link #get()}.
  *
  * @param <T> the type of results supplied by this supplier

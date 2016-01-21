@@ -26,8 +26,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define an configuration operator to be used before accessing a configured keys.
- * This allows filtering current configuration, e.g. for realizing views or ensuring security
+ * Annotation to define an configuration operator to be used before accessing a configured key.
+ * This allows filtering the current configuration, e.g. to realize views or ensure security
  * constraints.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,7 +38,8 @@ public @interface WithConfigOperator {
      * Define a custom adapter that should be used to adapt the configuration entry injected. This overrides any
      * general org.apache.tamaya.core.internal registered. If no adapter is defined (default) and no corresponding adapter is
      * registered, it is handled as a deployment error.
+     * @return adapter used to transform the configuration entry.
      */
-    Class<? extends ConfigOperator> value();
+	Class<? extends ConfigOperator> value();
 
 }

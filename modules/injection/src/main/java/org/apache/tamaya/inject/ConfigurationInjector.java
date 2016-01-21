@@ -28,18 +28,20 @@ import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 public interface ConfigurationInjector {
 
     /**
-     * Configured the current instance and reigsterd necessary listener to forward config change events as
+     * Configures the current instance and registers necessary listener to forward config change events as
      * defined by the current annotations in place.
-     *
+     * 
+     * @param <T> the type of the instance.
      * @param instance the instance to be configured
      * @return the configured instance (allows chaining of operations).
      */
     <T> T configure(T instance);
 
     /**
-     * Configured the current instance and reigsterd necessary listener to forward config change events as
+     * Configures the current instance and registers necessary listener to forward config change events as
      * defined by the current annotations in place.
      *
+     * @param <T> the type of the instance.
      * @param instance the instance to be configured
      * @param config the configuration to be used for injection.
      * @return the configured instance (allows chaining of operations).
@@ -47,22 +49,28 @@ public interface ConfigurationInjector {
     <T> T configure(T instance, Configuration config);
 
     /**
-     * Create a template implementting the annotated methods based on current configuration data.
-     *
+     * Creates a template implementing the annotated methods based on current configuration data.
+     * 
+     * @param <T> the type of the template.
      * @param templateType the type of the template to be created.
+     * @return the configured template.
      */
     <T> T createTemplate(Class<T> templateType);
 
     /**
-     * Create a template implementting the annotated methods based on current configuration data.
+     * Creates a template implementting the annotated methods based on current configuration data.
+     * 
+     * @param <T> the type of the template.
      * @param config the configuration to be used for backing the template.
      * @param templateType the type of the template to be created.
+     * @return the configured template.
      */
     <T> T createTemplate(Class<T> templateType, Configuration config);
 
 
     /**
      * Creates a supplier for configured instances of the given type {@code T}.
+     * 
      * @param supplier the supplier to create new instances.
      * @param <T> the target type.
      * @return a supplier creating configured instances of {@code T}.
@@ -71,6 +79,7 @@ public interface ConfigurationInjector {
 
     /**
      * Creates a supplier for configured instances of the given type {@code T}.
+     * 
      * @param supplier the supplier to create new instances.
      * @param config the configuration to be used for backing the supplier.
      * @param <T> the target type.
