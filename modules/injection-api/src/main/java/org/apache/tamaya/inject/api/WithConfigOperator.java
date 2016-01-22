@@ -40,6 +40,6 @@ public @interface WithConfigOperator {
      * registered, it is handled as a deployment error.
      * @return adapter used to transform the configuration entry.
      */
-	Class<? extends ConfigOperator> value();
+    Class<? extends ConfigOperator> value();
 
 }
