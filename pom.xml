@@ -664,6 +664,7 @@ under the License.
                         <include>pom.xml</include>
                     </includes>
                     <excludes>
+                        <exclude>banner.txt</exclude>
                         <exclude>.git</exclude>
                         <exclude>derby.log</exclude>
                         <exclude>**/bootstrap-*</exclude>

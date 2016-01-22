@@ -24,6 +24,7 @@ import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
@@ -40,10 +41,11 @@ public final class ConfigurationProvider {
         if(spi==null){
             throw new IllegalStateException("ConfigurationProviderSpi not available.");
         }
+        BufferedReader reader = null;
         try{
             URL url = ConfigurationProvider.class.getResource("/banner.txt");
             if(url!=null){
-                BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
                 StringBuilder b = new StringBuilder();
                 String line = reader.readLine();
                 while(line != null){
@@ -55,6 +57,15 @@ public final class ConfigurationProvider {
         }
         catch(Exception e){
             System.out.println("************ TAMAYA CONFIG ************");
+        }
+        finally{
+            if(reader!=null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return spi;
     }
