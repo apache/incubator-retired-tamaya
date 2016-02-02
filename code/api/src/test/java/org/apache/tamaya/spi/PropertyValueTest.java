@@ -29,23 +29,24 @@ public class PropertyValueTest {
 
     @Test
     public void testGetKey() throws Exception {
-        PropertyValue pv = PropertyValue.builder("k", "v").build();
+        PropertyValue pv = PropertyValue.builder("k", "v", "testGetKey").build();
         assertEquals("k", pv.getKey());
     }
 
     @Test
     public void testGetValue() throws Exception {
-        PropertyValue pv = PropertyValue.builder("k", "v").build();
+        PropertyValue pv = PropertyValue.builder("k", "v", "testGetKey").build();
         assertEquals("v", pv.getValue());
     }
 
     @Test
     public void testGetContextData() throws Exception {
-        PropertyValue pv = PropertyValue.builder("k", "v")
+        PropertyValue pv = PropertyValue.builder("k", "v", "testGetKey")
                 .addContextData("k", "v2").build();
         assertEquals("v", pv.getValue());
         assertEquals("k", pv.getKey());
-        assertEquals("v2", pv.getContextData().get("_k.k"));
+        assertEquals("v2", pv.get("_k.k"));
+        assertEquals("testGetKey", pv.get("_k.source"));
     }
 
 }

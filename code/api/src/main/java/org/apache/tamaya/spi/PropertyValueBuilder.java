@@ -31,16 +31,17 @@ public class PropertyValueBuilder {
     /** The property value. */
     String value;
     /** additional metadata entries (optional). */
-    Map<String,String> contextData;
+    Map<String,String> contextData = new HashMap<>();
 
     /**
      * Create a new builder instance, for a given
      * @param value the value, not null. If a value is null {@link PropertySource#get(String)} should return
      * {@code null}.
      */
-    public PropertyValueBuilder(String key, String value) {
+    public PropertyValueBuilder(String key, String value, String source) {
         this.key = Objects.requireNonNull(key);
         this.value = Objects.requireNonNull(value);
+        this.contextData.put("_" + key + ".source", Objects.requireNonNull(source));
     }
 
     /**
@@ -63,11 +64,7 @@ public class PropertyValueBuilder {
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setContextData(Map<String, String> contextData) {
-        if(this.contextData==null){
-            this.contextData = new HashMap<>();
-        } else{
-            this.contextData.clear();
-        }
+        this.contextData.clear();
         for(Map.Entry<String,String> en:contextData.entrySet()) {
             this.contextData.put("_"+this.key+'.'+en.getKey(), en.getValue());
         }
@@ -81,9 +78,6 @@ public class PropertyValueBuilder {
      * @return the builder for chaining.
      */
     public PropertyValueBuilder addContextData(String key, Object value) {
-        if(this.contextData==null){
-            this.contextData = new HashMap<>();
-        }
         this.contextData.put("_"+this.key+'.'+key, String.valueOf(Objects.requireNonNull(value)));
         return this;
     }
@@ -99,6 +93,7 @@ public class PropertyValueBuilder {
     @Override
     public String toString() {
         return "PropertyValueBuilder{" +
+                "key='" + key + '\'' +
                 "value='" + value + '\'' +
                 ", contextData=" + contextData +
                 '}';

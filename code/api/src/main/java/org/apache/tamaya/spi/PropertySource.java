@@ -92,10 +92,10 @@ public interface PropertySource {
      * Access a property.
      *
      * @param key the property's key, not null.
-     * @return the property value, including also its metadata. In case a value is null it is valid to return
-     * {#code null} here.
+     * @return the property value map, where {@code map.get(key) == value}, including also any metadata. In case a
+     * value is null, simply return {@code null}.
      */
-    PropertyValue get(String key);
+    Map<String,String> get(String key);
 
     /**
      * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.

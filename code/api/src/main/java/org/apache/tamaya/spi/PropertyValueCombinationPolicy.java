@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spi;
 
+import java.util.Map;
+
 /**
  * Policy that determines how the final value of a configuration entry is evaluated. An instances of this
  * interface can be registered to get control how multiple PropertySources are combined. This is useful in cases
@@ -34,9 +36,9 @@ public interface PropertyValueCombinationPolicy {
     PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = new PropertyValueCombinationPolicy(){
 
         @Override
-        public String collect(String currentValue, String key, PropertySource propertySource) {
-            PropertyValue value = propertySource.get(key);
-            return value!=null?value.getValue():currentValue;
+        public Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource) {
+            Map<String,String> value = propertySource.get(key);
+            return value!=null && value.get(key)!=null?value:currentValue;
         }
 
     };
@@ -47,7 +49,8 @@ public interface PropertyValueCombinationPolicy {
      * when the full configuration property map is accessed by calling
      * {@link org.apache.tamaya.Configuration#getProperties()}.
      *
-     * @param currentValue the current value, including null.
+     * @param currentValue the current value, including metadata entries. If no such key is present the current value
+     *                     is null.
      *                     The collector should either combine the existing value with value from {@code currentValue}
      *                     or replace the value in {@code currentValue} with {@code valueRead}, hereby returning the
      *                     result to be used as new {@code currentValue}.
@@ -56,8 +59,8 @@ public interface PropertyValueCombinationPolicy {
      *                       may be evaluated for additional meta-data, how the given values are to be combined.
      *                       Note that the value returned by a PropertySource can be null. In that case
      *                       {@code currentValue} should be returned in almost all cases.
-     * @return the value to be used for future evaluation.
+     * @return the value to be used for future evaluation, including metadata entries.
      */
-    String collect(String currentValue, String key, PropertySource propertySource);
+    Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource);
 
 }

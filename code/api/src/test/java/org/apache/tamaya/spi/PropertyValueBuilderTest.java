@@ -31,8 +31,28 @@ import static org.junit.Assert.*;
 public class PropertyValueBuilderTest {
 
     @Test
+    public void testKey() throws Exception {
+        PropertyValueBuilder b = new PropertyValueBuilder("k", "v", "testKey");
+        PropertyValue val = b.build();
+        assertEquals(val.getKey(),"k");
+    }
+
+    @Test
+    public void testValue() throws Exception {
+        PropertyValueBuilder b = new PropertyValueBuilder("k", "v", "testValue");
+        PropertyValue val = b.build();
+        assertEquals(val.getValue(),"v");
+        assertEquals(val.getConfigEntries().get("k"),"v");
+    }
+
+    @Test(expected=NullPointerException.class)
+    public void testKeyNullValue() throws Exception {
+        new PropertyValueBuilder("k", null, "testKeyNullValue");
+    }
+
+    @Test
     public void testSetContextData() throws Exception {
-        PropertyValueBuilder b = new PropertyValueBuilder("k", "v");
+        PropertyValueBuilder b = new PropertyValueBuilder("k", "v", "testSetContextData");
         Map<String,String> context = new HashMap<>();
         context.put("source", "testSetContextData");
         context.put("ts", String.valueOf(System.currentTimeMillis()));
@@ -41,8 +61,8 @@ public class PropertyValueBuilderTest {
         b.setContextData(context);
         context.remove("y");
         b.setContextData(context);
-        Map<String,String> contextData = b.build().getContextData();
-        assertEquals(contextData.size(), context.size());
+        PropertyValue contextData = b.build();
+        assertEquals(contextData.getConfigEntries().size(), context.size()+1);
         assertEquals(contextData.get("_k.source"), "testSetContextData");
         assertNotNull(contextData.get("_k.ts"));
         assertNull(contextData.get("_k.y"));
@@ -50,13 +70,12 @@ public class PropertyValueBuilderTest {
 
     @Test
     public void testAddContextData() throws Exception {
-        PropertyValueBuilder b = new PropertyValueBuilder("k", "v");
-        b.addContextData("source", "testAddContextData");
+        PropertyValueBuilder b = new PropertyValueBuilder("k", "v", "testAddContextData");
         b.addContextData("ts", System.currentTimeMillis());
         b.addContextData("y", "yValue");
         b.addContextData("y", "y2");
-        Map<String,String> contextData = b.build().getContextData();
-        assertEquals(contextData.size(), 3);
+        PropertyValue contextData = b.build();
+        assertEquals(contextData.getConfigEntries().size(), 4);
         assertEquals(contextData.get("_k.source"), "testAddContextData");
         assertNotNull(contextData.get("_k.ts"));
         assertEquals(contextData.get("_k.y"), "y2");

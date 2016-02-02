@@ -24,25 +24,25 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A conversion context containing all the required values for implementing conversion. Use the included #Builder
- * for creating new instances of. This class is thread-safe to use. Adding supported formats is synchronized.
+ * A filter context containing all the required values for implementing filtering.
  *
- * @see PropertyConverter
+ * @see PropertyFilter
  */
 public class FilterContext {
 
     private final String key;
     @Experimental
-    private Map<String, String> metaEntries = new HashMap();
+    private Map<String, String> configEntries = new HashMap();
 
     /**
-     * Private constructor used from builder.
-     *
-     * @param builder the builder, not null.
+     * Creates a new FilterContext.
+     * @param key the key under evaluation, not null.
+     * @param configEntries the raw configuration data available in the current evaluation context, not null.
      */
-    protected FilterContext(Builder builder) {
-        this.key = builder.key;
-        this.metaEntries.putAll(builder.metaEntries);
+    public FilterContext(String key, Map<String,String> configEntries) {
+        this.key = Objects.requireNonNull(key);
+        this.configEntries.putAll(configEntries);
+        this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
 
     /**
@@ -77,97 +77,16 @@ public class FilterContext {
      * @return the configuration instance, or null.
      */
     @Experimental
-    public Map<String, String> getMetaEntries() {
-        return metaEntries;
-    }
-
-    /**
-     * Property to check, if the entry filtered is actually accessed as single value, or as part of a full Map
-     * access. For both scenarios filtering may be different.
-     * @return true, if it is a directly accessed key.
-     */
-    @Experimental
-    public boolean isSingleAccessedProperty(){
-        return this.metaEntries.size()==1;
+    public Map<String, String> getConfigEntries() {
+        return configEntries;
     }
 
     @Override
     public String toString() {
         return "FilterContext{" +
                 "key='" + key + '\'' +
-                ", metaEntries=" + metaEntries +
+                ", configEntries=" + configEntries +
                 '}';
     }
 
-    /**
-     * Builder to create new instances of {@link FilterContext}.
-     */
-    public static final class Builder {
-        /**
-         * The accessed key, or null.
-         */
-        private String key;
-        private Map<String, String> metaEntries = new HashMap();
-
-        /**
-         * Creates a new Builder instance.
-         *
-         * @param key the requested key, may be null.
-         */
-        public Builder(String key, String value) {
-            this(key, Collections.<String, String>emptyMap());
-            metaEntries.put(key, value);
-        }
-
-        /**
-         * Creates a new Builder instance.
-         *
-         * @param metaData the configuration, not null.
-         * @param key      the requested key, may be null.
-         */
-        public Builder(String key, Map<String, String> metaData) {
-            this.key = key;
-            this.metaEntries.putAll(metaData);
-        }
-
-        /**
-         * Sets the key.
-         *
-         * @param key the key, not null.
-         * @return the builder instance, for chaining
-         */
-        public Builder setKey(String key) {
-            this.key = Objects.requireNonNull(key);
-            return this;
-        }
-
-        /**
-         * Sets the configuration.
-         *
-         * @param metaProperties the meta configuration, not null
-         * @return the builder instance, for chaining
-         */
-        public Builder setMetaProperties(Map<String, String> metaProperties) {
-            this.metaEntries.putAll(Objects.requireNonNull(metaProperties));
-            return this;
-        }
-
-        /**
-         * Builds a new context instance.
-         *
-         * @return a new context, never null.
-         */
-        public FilterContext build() {
-            return new FilterContext(this);
-        }
-
-
-        @Override
-        public String toString() {
-            return "Builder{" +
-                    "key='" + key + '\'' +
-                    ", metaEntries=" + metaEntries +
-                    '}';
-        }
-    }
 }

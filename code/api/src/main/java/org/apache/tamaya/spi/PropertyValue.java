@@ -18,26 +18,41 @@
  */
 package org.apache.tamaya.spi;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * Class modelling the result of a request for a property value.
+ * Class modelling the result of a request for a property value. A property value is basically identified by its key.
+ * There might be reasons, where one want to further analyze, which PropertySources provided a value and which not, so
+ * it is possible to create a PropertyValue with a null value. Nevertheless in all cases the provider source (typically
+ * the name of the PropertySource) must be set.
  */
 public final class PropertyValue {
     /** The requested key. */
     private String key;
-    /** The value found. */
-    private String value;
     /** Additional metadata provided by thhe provider. */
-    private Map<String,String> contextData;
+    private Map<String,String> configEntries = new HashMap<>();
 
     PropertyValue(PropertyValueBuilder builder){
         this.key = builder.key;
-        this.value = builder.value;
         if(builder.contextData!=null) {
-            this.contextData = new HashMap<>(builder.contextData);
+            this.configEntries.putAll(builder.contextData);
         }
+        this.configEntries.put(key, Objects.requireNonNull(builder.value));
+    }
+
+    /**
+     * Creates a new instance
+     * @param key the key, not null.
+     * @param value the value, not null.
+     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
+     */
+    private PropertyValue(String key, String value, String source){
+        this.key = Objects.requireNonNull(key, "key is required.");
+        this.configEntries.put(key, value);
+        this.configEntries.put("_"+key+".source", Objects.requireNonNull(source, "source is required."));
     }
 
     /**
@@ -54,20 +69,46 @@ public final class PropertyValue {
      * {@link PropertySource#get(String)}.
      */
     public String getValue() {
-        return value;
+        return configEntries.get(key);
     }
 
-    public Map<String, String> getContextData() {
-        return contextData;
+    /**
+     * Creates a full configuration map for this key, value pair and all its meta context data. This map
+     * is also used for subsequent processing, like value filtering.
+     * @return the property value entry map.
+     */
+    public Map<String, String> getConfigEntries() {
+        return Collections.unmodifiableMap(configEntries);
     }
 
     /**
      * Creates a new builder instance.
      * @param key the key, not null.
      * @param value the value.
+     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
      * @return a new builder instance.
      */
-    public static PropertyValueBuilder builder(String key, String value){
-        return new PropertyValueBuilder(key, value);
+    public static PropertyValueBuilder builder(String key, String value, String source){
+        return new PropertyValueBuilder(key, value, source);
+    }
+
+    /**
+     * Creates a new PropertyValue without any metadata..
+     * @param key the key, not null.
+     * @param value the value.
+     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
+     * @return a new builder instance.
+     */
+    public static PropertyValue of(String key, String value, String source){
+        return new PropertyValue(key, value, source);
+    }
+
+    /**
+     * Access the given key from this value. Valid keys are the key or any meta-context key.
+     * @param key the key, not null.
+     * @return the value found, or null.
+     */
+    public String get(String key) {
+        return this.configEntries.get(key);
     }
 }
