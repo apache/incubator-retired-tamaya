@@ -39,11 +39,10 @@ public interface PropertyFilter {
      *     <li>reentrant</li>
      *     <li>thread-safe</li>
      * </ul>
-     *
-     * @param key the key accessed, not null.
-     * @param valueToBeFiltered the value to be filtered, not null.
+     * @param value the value to be filtered, which also can be {@code null} if removed by another filter.
+     * @param context the filter context, not null.
      * @return the filtered value, or {@code null} if the value should be removed alltogether.
      */
-    String filterProperty(String key, String valueToBeFiltered);
+    String filterProperty(String value, FilterContext context);
 
 }

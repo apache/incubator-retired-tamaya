@@ -91,18 +91,17 @@ public interface PropertySource {
     /**
      * Access a property.
      *
-     * //X TODO discuss if the key can be null
      * @param key the property's key, not null.
-     * @return the property's keys.
+     * @return the property value, including also its metadata. In case a value is null it is valid to return
+     * {#code null} here.
      */
-    String get(String key);
+    PropertyValue get(String key);
 
     /**
      * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
      * when the underlying storage does not support iteration of its entries.
      *
      * @return the a corresponding map, never null.
-     * //X TODO or should we just do getPropertyKeys()? Think about security (key) vs easier merging (full map)?
      */
     Map<String,String> getProperties();
 

@@ -35,8 +35,8 @@ public interface PropertyValueCombinationPolicy {
 
         @Override
         public String collect(String currentValue, String key, PropertySource propertySource) {
-            String value = propertySource.get(key);
-            return value!=null?value:currentValue;
+            PropertyValue value = propertySource.get(key);
+            return value!=null?value.getValue():currentValue;
         }
 
     };
