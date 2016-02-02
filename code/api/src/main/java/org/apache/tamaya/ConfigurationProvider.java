@@ -43,7 +43,7 @@ public final class ConfigurationProvider {
         }
         BufferedReader reader = null;
         try{
-            URL url = ConfigurationProvider.class.getResource("/banner.txt");
+            URL url = ConfigurationProvider.class.getResource("/tamaya-banner.txt");
             if(url!=null){
                 reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
                 StringBuilder b = new StringBuilder();
