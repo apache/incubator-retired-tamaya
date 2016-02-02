@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.propertysource;
 
-import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,14 +33,16 @@ public class PropertiesFilePropertySourceTest {
     @Test
     public void testGetOrdinal() {
         Assert.assertEquals(0, testfilePropertySource.getOrdinal());
-        Assert.assertEquals(Integer.parseInt(overrideOrdinalPropertySource.get(PropertySource.TAMAYA_ORDINAL)), overrideOrdinalPropertySource.getOrdinal());
+        Assert.assertEquals(Integer.parseInt(overrideOrdinalPropertySource.get(PropertySource.TAMAYA_ORDINAL)
+                .get(PropertySource.TAMAYA_ORDINAL)),
+                overrideOrdinalPropertySource.getOrdinal());
     }
 
 
     @Test
     public void testGet() {
-        Assert.assertEquals("val3", testfilePropertySource.get("key3"));
-        Assert.assertEquals("myval5", overrideOrdinalPropertySource.get("mykey5"));
+        Assert.assertEquals("val3", testfilePropertySource.get("key3").get("key3"));
+        Assert.assertEquals("myval5", overrideOrdinalPropertySource.get("mykey5").get("mykey5"));
         Assert.assertNull(testfilePropertySource.get("nonpresentkey"));
     }
 

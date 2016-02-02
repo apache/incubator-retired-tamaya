@@ -19,7 +19,10 @@
 package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.PropertyValueBuilder;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,13 +56,14 @@ public abstract class BasePropertySource implements PropertySource{
 
     @Override
     public int getOrdinal() {
-        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
+
         if(configuredOrdinal!=null){
-            try{
-                return Integer.parseInt(configuredOrdinal);
-            } catch(Exception e){
+            try {
+                return Integer.parseInt(configuredOrdinal.getValue());
+            } catch (Exception e) {
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                        "Configured Ordinal is not an int number: " + configuredOrdinal, e);
+                        "Configured Ordinal is not an int number: " + configuredOrdinal.getValue(), e);
             }
         }
         return getDefaultOrdinal();
@@ -74,8 +78,20 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
-        return getProperties().get(key);
+    public PropertyValue get(String key) {
+        Map<String,String> properties = getProperties();
+        String val = properties.get(key);
+        if(val==null){
+            return null;
+        }
+        PropertyValueBuilder b = new PropertyValueBuilder(key, val, getName());
+        String metaKeyStart = "_" + key + ".";
+        for(Map.Entry<String,String> en:properties.entrySet()) {
+            if(en.getKey().startsWith(metaKeyStart)){
+                b.addContextData(en.getKey().substring(metaKeyStart.length()), en.getValue());
+            }
+        }
+        return b.build();
     }
 
     @Override

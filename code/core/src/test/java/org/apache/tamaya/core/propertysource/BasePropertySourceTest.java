@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.core.propertysource;
 
-import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.PropertyValueBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class BasePropertySourceTest {
             }
 
             @Override
-            public String get(String key) {
+            public PropertyValue get(String key) {
                 return null;
             }
 
@@ -59,7 +60,7 @@ public class BasePropertySourceTest {
 
     @Test
     public void testGet() {
-        Assert.assertEquals("1000", new OverriddenOrdinalPropertySource().get(PropertySource.TAMAYA_ORDINAL));
+        Assert.assertEquals("1000", new OverriddenOrdinalPropertySource().get(PropertySource.TAMAYA_ORDINAL).get(PropertySource.TAMAYA_ORDINAL));
     }
 
     private static class OverriddenOrdinalPropertySource extends BasePropertySource {

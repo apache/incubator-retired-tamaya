@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.testdata;
 
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 
 import javax.annotation.Priority;
@@ -29,11 +30,11 @@ import javax.annotation.Priority;
 @Priority(200)
 public class TestRemovingPropertyFilter implements PropertyFilter{
     @Override
-    public String filterProperty(String key, String valueToBeFiltered) {
-        if("name5".equals(key)){
+    public String filterProperty(String valueToBeFiltered, FilterContext context) {
+        if("name5".equals(context.getKey())){
             return null;
         }
-        else if("name3".equals(key)){
+        else if("name3".equals(context.getKey())){
             return "Mapped to name: " + ConfigurationProvider.getConfiguration().get("name");
         }
         return valueToBeFiltered;

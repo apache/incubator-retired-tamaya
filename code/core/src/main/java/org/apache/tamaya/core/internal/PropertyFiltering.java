@@ -19,9 +19,11 @@
 package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,6 +40,7 @@ public final class PropertyFiltering{
      * The logger.
      */
     private static final Logger LOG = Logger.getLogger(PropertyFiltering.class.getName());
+
     /**
      * The maximal number of filter cycles performed before aborting.
      */
@@ -48,25 +51,27 @@ public final class PropertyFiltering{
      */
     private PropertyFiltering(){}
 
-    public static String applyFilter(String key, String unfilteredValue, ConfigurationContext configurationContext) {
+    public static String applyFilter(String key, Map<String,String> configData, ConfigurationContext configurationContext) {
         // Apply filters to values, prevent values filtered to null!
+        String result = configData.get(key);
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             boolean changed = false;
             // Apply filters to values, prevent values filtered to null!
+            FilterContext filterContext = new FilterContext(key, configData);
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                String newValue = filter.filterProperty(key, unfilteredValue);
-                if (newValue != null && !newValue.equals(unfilteredValue)) {
+                String newValue = filter.filterProperty(result, filterContext);
+                if (newValue != null && !newValue.equals(result)) {
                     changed = true;
                     if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.finest("Filter - " + key + ": " + unfilteredValue + " -> " + newValue + " by " + filter);
+                        LOG.finest("Filter - " + key + ": " + result + " -> " + newValue + " by " + filter);
                     }
-                } else if (unfilteredValue != null && !unfilteredValue.equals(newValue)) {
+                } else if (result != null && !result.equals(newValue)) {
                     changed = true;
                     if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.finest("Filter - " + key + ": " + unfilteredValue + " -> " + newValue + " by " + filter);
+                        LOG.finest("Filter - " + key + ": " + result + " -> " + newValue + " by " + filter);
                     }
                 }
-                unfilteredValue = newValue;
+                result = newValue;
             }
             if (!changed) {
                 LOG.finest("Finishing filter loop, no changes detected.");
@@ -81,20 +86,21 @@ public final class PropertyFiltering{
                 }
             }
         }
-        return unfilteredValue;
+        return result;
     }
 
     public static Map<String, String> applyFilters(Map<String, String> inputMap, ConfigurationContext configurationContext) {
         Map<String, String> resultMap = new HashMap<>(inputMap);
         // Apply filters to values, prevent values filtered to null!
+        Map<String, String> metaData = filterMetadata(inputMap);
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             AtomicInteger changes = new AtomicInteger();
-            for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                for (Map.Entry<String, String> entry : inputMap.entrySet()) {
+            for (Map.Entry<String, String> entry : inputMap.entrySet()) {
+                FilterContext filterContext = new FilterContext(entry.getKey(), inputMap);
+                for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
                     final String k = entry.getKey();
                     final String v = entry.getValue();
-
-                    String newValue = filter.filterProperty(k, v);
+                    String newValue = filter.filterProperty(v, filterContext);
                     if (newValue != null && !newValue.equals(v)) {
                         changes.incrementAndGet();
                         LOG.finest("Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);
@@ -126,6 +132,16 @@ public final class PropertyFiltering{
             }
         }
         return resultMap;
+    }
+
+    private static Map<String, String> filterMetadata(Map<String, String> inputMap) {
+        Map<String,String> result = new HashMap<>();
+        for(Map.Entry<String,String> en:inputMap.entrySet()){
+            if(en.getKey().startsWith("_")){
+                result.put(en.getKey(), en.getValue());
+            }
+        }
+        return Collections.unmodifiableMap(result);
     }
 
 }

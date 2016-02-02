@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.testdata;
 
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 
 import javax.annotation.Priority;
@@ -28,8 +29,8 @@ import javax.annotation.Priority;
 @Priority(100)
 public class TestPropertyFilter implements PropertyFilter{
     @Override
-    public String filterProperty(String key, String valueToBeFiltered) {
-        if("name4".equals(key)){
+    public String filterProperty(String valueToBeFiltered, FilterContext context) {
+        if("name4".equals(context.getKey())){
             return valueToBeFiltered + "(filtered)";
         }
         return valueToBeFiltered;

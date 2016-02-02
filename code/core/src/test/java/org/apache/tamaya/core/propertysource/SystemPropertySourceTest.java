@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.core.propertysource;
 
-import org.apache.tamaya.core.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,10 +55,10 @@ public class SystemPropertySourceTest {
     public void testGet() throws Exception {
         String propertyKeyToCheck = System.getProperties().stringPropertyNames().iterator().next();
 
-        String property = testPropertySource.get(propertyKeyToCheck);
+        PropertyValue property = testPropertySource.get(propertyKeyToCheck);
         Assert.assertNotNull("Property '" + propertyKeyToCheck + "' is not present in " +
                 SystemPropertySource.class.getSimpleName(), property);
-        Assert.assertEquals(System.getProperty(propertyKeyToCheck), property);
+        Assert.assertEquals(System.getProperty(propertyKeyToCheck), property.getValue());
     }
 
     @Test

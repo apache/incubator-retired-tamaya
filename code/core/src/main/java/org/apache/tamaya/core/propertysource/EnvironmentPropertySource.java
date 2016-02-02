@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Map;
 
@@ -46,8 +47,8 @@ public class EnvironmentPropertySource implements PropertySource {
     }
 
     @Override
-    public String get(String key) {
-        return getProperties().get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, System.getenv(key), getName());
     }
 
     @Override

@@ -23,7 +23,12 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,12 +66,16 @@ public class DefaultConfiguration implements Configuration {
 
 
     public String get(String key) {
-        return PropertyFiltering.applyFilter(key, evaluteRawValue(key), configurationContext);
+        Map<String,String> value = evaluteRawValue(key);
+        if(value==null || value.get(key)==null){
+            return null;
+        }
+        return PropertyFiltering.applyFilter(key, value, configurationContext);
     }
 
-    protected String evaluteRawValue(String key) {
+    protected Map<String,String> evaluteRawValue(String key) {
         List<PropertySource> propertySources = configurationContext.getPropertySources();
-        String unfilteredValue = null;
+        Map<String,String> unfilteredValue = null;
         PropertyValueCombinationPolicy combinationPolicy = this.configurationContext
                 .getPropertyValueCombinationPolicy();
         for (PropertySource propertySource : propertySources) {

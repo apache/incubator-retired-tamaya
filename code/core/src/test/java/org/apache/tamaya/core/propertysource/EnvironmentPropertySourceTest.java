@@ -45,7 +45,7 @@ public class EnvironmentPropertySourceTest {
     @Test
     public void testGet() throws Exception {
         for (Map.Entry<String, String> envEntry : System.getenv().entrySet()) {
-            assertEquals(envPropertySource.get(envEntry.getKey()), envEntry.getValue());
+            assertEquals(envPropertySource.get(envEntry.getKey()).get(envEntry.getKey()), envEntry.getValue());
         }
     }
 
