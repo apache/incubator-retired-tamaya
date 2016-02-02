@@ -20,6 +20,7 @@
 package org.apache.tamaya.integration.cdi.cfg;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import javax.enterprise.inject.Vetoed;
 import java.util.HashMap;
@@ -50,8 +51,8 @@ class ProvidedPropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
-        return config.get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, config.get(key), getName());
     }
 
     @Override

@@ -50,6 +50,14 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     protected final Set<String> removed = new HashSet<>();
     private boolean closed = false;
 
+    protected Set<String> getRemoved() {
+        return removed;
+    }
+
+    protected Map<String,String> getProperties() {
+        return properties;
+    }
+
     /**
      * Instantiates a new Abstract config change request.
      *

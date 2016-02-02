@@ -20,6 +20,7 @@
 package org.apache.tamaya.integration.cdi.cfg;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import javax.inject.Singleton;
 import java.util.HashMap;
@@ -62,8 +63,8 @@ public class TestPropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
-        return config.get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, config.get(key), getName());
     }
 
     @Override

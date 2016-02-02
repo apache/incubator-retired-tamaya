@@ -19,6 +19,7 @@
 package org.apache.tamaya.resolver;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -85,8 +86,8 @@ public class MyTestPropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
-        return properties.get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, properties.get(key), getName());
     }
 
     @Override

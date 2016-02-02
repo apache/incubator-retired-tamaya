@@ -20,6 +20,7 @@ package org.apache.tamaya.json;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -50,9 +51,9 @@ public abstract class CommonJSONTestCaseCollection {
         PropertySource propertySource = getPropertiesFrom(configURL);
 
         assertThat(propertySource.get("name"), Matchers.notNullValue());
-        assertThat(propertySource.get("name"), equalTo("\u041e\u043b\u0438\u0432\u0435\u0440"));
+        assertThat(propertySource.get("name").getValue(), equalTo("\u041e\u043b\u0438\u0432\u0435\u0440"));
         assertThat(propertySource.get("\u0444\u0430\u043c\u0438\u043b\u0438\u044f"), Matchers.notNullValue());
-        assertThat(propertySource.get("\u0444\u0430\u043c\u0438\u043b\u0438\u044f"), Matchers.equalTo("Fischer"));
+        assertThat(propertySource.get("\u0444\u0430\u043c\u0438\u043b\u0438\u044f").getValue(), Matchers.equalTo("Fischer"));
     }
 
     @Test
@@ -66,16 +67,16 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(properties.getProperties().keySet(), hasSize(5));
 
-        String keyB = properties.get("b");
-        String keyDO = properties.get("d.o");
-        String keyDP = properties.get("d.p");
+        PropertyValue keyB = properties.get("b");
+        PropertyValue keyDO = properties.get("d.o");
+        PropertyValue keyDP = properties.get("d.p");
 
         assertThat(keyB, notNullValue());
-        assertThat(keyB, equalTo("B"));
+        assertThat(keyB.getValue(), equalTo("B"));
         assertThat(keyDO, notNullValue());
-        assertThat(keyDO, equalTo("O"));
+        assertThat(keyDO.getValue(), equalTo("O"));
         assertThat(keyDP, Matchers.notNullValue());
-        assertThat(keyDP, is("P"));
+        assertThat(keyDP.getValue(), is("P"));
     }
 
     @Test
@@ -90,19 +91,19 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(properties.getProperties().keySet(), hasSize(4));
 
-        String keyA = properties.get("a");
-        String keyDO = properties.get("b.o");
-        String keyDP = properties.get("b.p");
-        String keyC = properties.get("c");
+        PropertyValue keyA = properties.get("a");
+        PropertyValue keyDO = properties.get("b.o");
+        PropertyValue keyDP = properties.get("b.p");
+        PropertyValue keyC = properties.get("c");
 
         assertThat(keyA, notNullValue());
-        assertThat(keyA, is("A"));
+        assertThat(keyA.getValue(), is("A"));
         assertThat(keyC, notNullValue());
-        assertThat(keyC, equalTo("C"));
+        assertThat(keyC.getValue(), equalTo("C"));
         assertThat(keyDO, notNullValue());
-        assertThat(keyDO, equalTo("O"));
+        assertThat(keyDO.getValue(), equalTo("O"));
         assertThat(keyDP, notNullValue());
-        assertThat(keyDP, is("P"));
+        assertThat(keyDP.getValue(), is("P"));
     }
 
     @Test(expected = ConfigException.class)
@@ -153,16 +154,16 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(properties.getProperties().keySet(), hasSize(3));
 
-        String keyA = properties.get("a");
-        String keyB = properties.get("b");
-        String keyC = properties.get("c");
+        PropertyValue keyA = properties.get("a");
+        PropertyValue keyB = properties.get("b");
+        PropertyValue keyC = properties.get("c");
 
         assertThat(keyA, notNullValue());
-        assertThat(keyA, equalTo("A"));
+        assertThat(keyA.getValue(), equalTo("A"));
         assertThat(keyB, notNullValue());
-        assertThat(keyB, is("B"));
+        assertThat(keyB.getValue(), is("B"));
         assertThat(keyC, notNullValue());
-        assertThat(keyC, is("C"));
+        assertThat(keyC.getValue(), is("C"));
     }
 
     @Test(expected = ConfigException.class)

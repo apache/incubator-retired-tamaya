@@ -20,6 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +51,7 @@ public final class PropertySourceFunctions {
         }
 
         @Override
-        public String get(String key) {
+        public PropertyValue get(String key) {
             return null;
         }
 
@@ -74,40 +75,6 @@ public final class PropertySourceFunctions {
      * Private singleton constructor.
      */
     private PropertySourceFunctions() {
-    }
-
-    /**
-     * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given section (non recursive). Hereby
-     * the section key is stripped away fromMap the resulting key.
-     * <p>
-     * Metadata is added only for keys that are present on the original configuration.
-     * They are added in the following format:
-     * <pre>
-     *     Given are
-     *       1) a configuration with two entries: entry1, entry 2
-     *       2) metadata as metaKey1=metaValue1, metaKey2=metaValue2
-     *
-     * The final configuration will look like:
-     *
-     *     entry1=entry1Value;
-     *     entry2=entry2Value;
-     *     [meta:metaKey1]entry1=metaValue1
-     *     [meta:metaKey2]entry1=metaValue2
-     *     [meta:metaKey1]entry2=metaValue1
-     *     [meta:metaKey2]entry2=metaValue2
-     * </pre>
-     * <p>
-     * This mechanism allows to add meta information such as origin, sensitivity, to all keys of a current
-     * PropertySource or Configuration. If done on multiple PropertySources that are combined the corresponding
-     * values are visible in synch with the values visible.
-     *
-     * @param propertySource the base propertySource, not null.
-     * @param metaData       the metaData to be added, not null
-     * @return the metadata enriched configuration, not null.
-     */
-    public static PropertySource addMetaData(PropertySource propertySource, Map<String, String> metaData) {
-        return new MetaEnrichedPropertySource(propertySource, metaData);
     }
 
     /**

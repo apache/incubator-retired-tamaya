@@ -28,7 +28,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Change Request implementation based on etcd services.
+ * Change Request implementation based on etcd services. Etcd also supports a ttl to set values only for a defined
+ * number of seconds {@code ttl}. This is also supported by this component by adding ttl as a key parameter, e.g.
+ * {@code changeRequest.set("myTimedKey?ttl=30", "myValue");} will set a key {@code myTimedKey} valid only for
+ * 30 seconds.
  */
 class EtcdConfigChangeRequest extends AbstractConfigChangeRequest{
 
@@ -60,18 +63,32 @@ class EtcdConfigChangeRequest extends AbstractConfigChangeRequest{
         checkClosed();
         for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
             try{
-//                for(String k:getRemoved()){
-//                    Map<String,String> res = accessor.delete(k);
-//                    if(res.get("_ERROR")!=null){
-//                        LOG.info("Failed to remove key from etcd: " + k);
-//                    }
-//                }
-//                for(Map.Entry<String,String> en:getProperties().entrySet()){
-//                    Map<String,String> res = accessor.set(en.getKey(), en.getValue());
-//                    if(res.get("_ERROR")!=null){
-//                        LOG.info("Failed key from etcd: " + en.getKey()  + "=" + en.getValue());
-//                    }
-//                }
+                for(String k:getRemoved()){
+                    Map<String,String> res = accessor.delete(k);
+                    if(res.get("_ERROR")!=null){
+                        LOG.info("Failed to remove key from etcd: " + k);
+                    }
+                }
+                for(Map.Entry<String,String> en:getProperties().entrySet()){
+                    String key = en.getKey();
+                    Integer ttl = null;
+                    int index = en.getKey().indexOf('?');
+                    if(index>0){
+                        key = en.getKey().substring(0, index);
+                        String rawQuery = en.getKey().substring(index+1);
+                        String[] queries = rawQuery.split("&");
+                        for(String query:queries){
+                            if(query.contains("ttl")){
+                                int qIdx = query.indexOf('=');
+                                ttl = qIdx>0?Integer.parseInt(query.substring(qIdx+1).trim()):null;
+                            }
+                        }
+                    }
+                    Map<String,String> res = accessor.set(key, en.getValue(), ttl);
+                    if(res.get("_ERROR")!=null){
+                        LOG.info("Failed key from etcd: " + en.getKey()  + "=" + en.getValue());
+                    }
+                }
             } catch(Exception e){
                 LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
             }

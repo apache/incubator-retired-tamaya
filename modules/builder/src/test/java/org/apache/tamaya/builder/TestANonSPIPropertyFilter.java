@@ -18,11 +18,12 @@
  */
 package org.apache.tamaya.builder;
 
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 
 public class TestANonSPIPropertyFilter implements PropertyFilter {
     @Override
-    public String filterProperty(String key, String value) {
+    public String filterProperty(String value, FilterContext context) {
         String result = value;
 
         if (!result.contains(("ABC"))) {

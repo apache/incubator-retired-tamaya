@@ -21,7 +21,11 @@ package org.apache.tamaya.mutableconfig.internal;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.mutableconfig.spi.AbstractConfigChangeRequest;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
@@ -84,7 +88,12 @@ class PropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
             }
         }
         for(Map.Entry<String,String> en:super.properties.entrySet()){
-            this.properties.put(en.getKey(), en.getValue());
+            int index = en.getKey().indexOf('?');
+            if(index>0){
+                this.properties.put(en.getKey().substring(0, index), en.getValue());
+            }else{
+                this.properties.put(en.getKey(), en.getValue());
+            }
         }
         for(String rmKey:super.removed){
             this.properties.remove(rmKey);

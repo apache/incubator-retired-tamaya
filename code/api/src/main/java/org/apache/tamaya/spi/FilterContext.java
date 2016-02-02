@@ -29,17 +29,22 @@ import java.util.Objects;
  * @see PropertyFilter
  */
 public class FilterContext {
-
+    /** The key. */
     private final String key;
     @Experimental
     private Map<String, String> configEntries = new HashMap();
+    @Experimental
+    private boolean singlePropertyScoped;
+
 
     /**
      * Creates a new FilterContext.
      * @param key the key under evaluation, not null.
+     * @param singlePropertyScope true, if the filtering is done only for one single property accessed explcitily.
      * @param configEntries the raw configuration data available in the current evaluation context, not null.
      */
-    public FilterContext(String key, Map<String,String> configEntries) {
+    public FilterContext(String key, Map<String,String> configEntries, boolean singlePropertyScope) {
+        this.singlePropertyScoped = singlePropertyScope;
         this.key = Objects.requireNonNull(key);
         this.configEntries.putAll(configEntries);
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
@@ -54,6 +59,16 @@ public class FilterContext {
      */
     public String getKey() {
         return key;
+    }
+
+    /**
+     * Method that determines if filtering is done for a single property accessed, or as part of call to
+     * {@code getProperties()}.
+     * @return true, if its scoped to a single property accessed.
+     */
+    @Experimental
+    public boolean isSinglePropertyScoped(){
+        return singlePropertyScoped;
     }
 
     /**

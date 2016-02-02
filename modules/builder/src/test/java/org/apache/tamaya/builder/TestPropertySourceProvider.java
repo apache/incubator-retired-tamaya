@@ -21,6 +21,7 @@ package org.apache.tamaya.builder;
 import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,8 +55,8 @@ public class TestPropertySourceProvider
         }
 
         @Override
-        public String get(String key) {
-            return getProperties().get(key);
+        public PropertyValue get(String key) {
+            return PropertyValue.of(key, getProperties().get(key), getName());
         }
 
         @Override
@@ -73,8 +74,8 @@ public class TestPropertySourceProvider
         }
 
         @Override
-        public String get(String key) {
-            return getProperties().get(key);
+        public PropertyValue get(String key) {
+            return PropertyValue.of(key, getProperties().get(key), getName());
         }
 
         @Override

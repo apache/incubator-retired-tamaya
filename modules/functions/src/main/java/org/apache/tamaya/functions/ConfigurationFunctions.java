@@ -193,7 +193,7 @@ public final class ConfigurationFunctions {
      * @return true, if the entry is exact in this section
      */
     public static boolean isKeyInSection(String key, String sectionKey) {
-        return key.startsWith(sectionKey);
+        return sectionKey.isEmpty() || key.startsWith(sectionKey);
     }
 
     /**
@@ -399,12 +399,10 @@ public final class ConfigurationFunctions {
             @Override
             public String query(Configuration config) {
                 Map<String, String> props = new TreeMap<>(config.getProperties());
-                props.put("{meta}type", "Configuration");
-                props.put("{meta}class", config.getClass().getName());
-                props.put("{meta}timestamp", String.valueOf(System.currentTimeMillis()));
+                props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
                 if(info!=null) {
                     for (Map.Entry<String, String> en : info.entrySet()) {
-                        props.put("{meta}info." + escape(en.getKey()), escape(en.getValue()));
+                        props.put("__" + escape(en.getKey()), escape(en.getValue()));
                     }
                 }
                 StringBuilder builder = new StringBuilder(400).append("{\n");
@@ -443,12 +441,10 @@ public final class ConfigurationFunctions {
             @Override
             public String query(Configuration config) {
                 Map<String, String> props = new TreeMap<>(config.getProperties());
-                props.put("{meta}type", "Configuration");
-                props.put("{meta}class", config.getClass().getName());
-                props.put("{meta}timestamp", String.valueOf(System.currentTimeMillis()));
+                props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
                 if(info!=null) {
                     for (Map.Entry<String, String> en : info.entrySet()) {
-                        props.put("{meta}info." + escape(en.getKey()), escape(en.getValue()));
+                        props.put("__" + escape(en.getKey()), escape(en.getValue()));
                     }
                 }
                 StringBuilder builder = new StringBuilder(400);
@@ -481,12 +477,10 @@ public final class ConfigurationFunctions {
             @Override
             public String query(Configuration config) {
                 Map<String, String> props = new TreeMap<>(config.getProperties());
-                props.put("{meta}type", "Configuration");
-                props.put("{meta}class", config.getClass().getName());
-                props.put("{meta}timestamp", String.valueOf(System.currentTimeMillis()));
+                props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
                 if(info!=null) {
                     for (Map.Entry<String, String> en : info.entrySet()) {
-                        props.put("{meta}info." + escape(en.getKey()), escape(en.getValue()));
+                        props.put("__" + escape(en.getKey()), escape(en.getValue()));
                     }
                 }
                 StringBuilder builder = new StringBuilder(400).append("Configuration:\n");

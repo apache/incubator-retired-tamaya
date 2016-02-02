@@ -19,6 +19,7 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,8 +54,8 @@ class FilteredPropertySource implements PropertySource {
     }
 
     @Override
-    public String get(String key) {
-        return getProperties().get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, getProperties().get(key), getName());
     }
 
     @Override

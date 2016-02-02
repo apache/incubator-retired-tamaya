@@ -88,7 +88,12 @@ class XmlPropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
             }
         }
         for(Map.Entry<String,String> en:super.properties.entrySet()){
-            this.properties.put(en.getKey(), en.getValue());
+            int index = en.getKey().indexOf('?');
+            if(index>0){
+                this.properties.put(en.getKey().substring(0, index), en.getValue());
+            }else{
+                this.properties.put(en.getKey(), en.getValue());
+            }
         }
         for(String rmKey:super.removed){
             this.properties.remove(rmKey);

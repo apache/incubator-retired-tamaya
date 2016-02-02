@@ -16,4 +16,5 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.examples.remote.server.ClientScopeProvider
+org.apache.tamaya.filter.ConfigurationFilter
+org.apache.tamaya.filter.DefaultMetadataFilter

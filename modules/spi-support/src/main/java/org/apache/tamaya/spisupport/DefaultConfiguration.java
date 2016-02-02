@@ -27,6 +27,7 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import java.util.ArrayList;
@@ -70,7 +71,11 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public String get(String key) {
-        return PropertyFiltering.applyFilter(key, evaluteRawValue(key), configurationContext);
+        PropertyValue configData = evaluteRawValue(key);
+        if(configData==null){
+            return null;
+        }
+        return PropertyFiltering.applyFilter(key, configData.getConfigEntries(), configurationContext);
     }
 
     /**
@@ -78,15 +83,18 @@ public class DefaultConfiguration implements Configuration {
      * @param key the key, not null.
      * @return the value, before filtering is applied.
      */
-    protected String evaluteRawValue(String key) {
+    protected PropertyValue evaluteRawValue(String key) {
         List<PropertySource> propertySources = configurationContext.getPropertySources();
-        String unfilteredValue = null;
+        Map<String,String> unfilteredValue = null;
         PropertyValueCombinationPolicy combinationPolicy = this.configurationContext
                 .getPropertyValueCombinationPolicy();
         for (PropertySource propertySource : propertySources) {
             unfilteredValue = combinationPolicy.collect(unfilteredValue, key, propertySource);
         }
-        return unfilteredValue;
+        if(unfilteredValue==null){
+            return null;
+        }
+        return PropertyValue.of(key, unfilteredValue.get(key), unfilteredValue.get("_"+key+".source"));
     }
 
 

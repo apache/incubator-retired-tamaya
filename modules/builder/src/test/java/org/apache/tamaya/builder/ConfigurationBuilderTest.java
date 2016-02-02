@@ -103,7 +103,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("one").when(source).getName();
-        doReturn("a").when(source).get("keyOfA");
+        doReturn(PropertyValue.of("keyOfA","a", "test")).when(source).get("keyOfA");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source);
@@ -121,12 +121,12 @@ public class ConfigurationBuilderTest {
         PropertySource sourceOne = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("one").when(sourceOne).getName();
-        doReturn("b").when(sourceOne).get("keyOfA");
+        doReturn(PropertyValue.of("keyOfA","b", "test")).when(sourceOne).get("keyOfA");
         doReturn(10).when(sourceOne).getOrdinal();
 
         PropertySource sourceTwo = mock(PropertySource.class, NOT_MOCKED_ANSWER);
         doReturn("two").when(sourceTwo).getName();
-        doReturn("a").when(sourceTwo).get("keyOfA");
+        doReturn(PropertyValue.of("keyOfA","a", "test")).when(sourceTwo).get("keyOfA");
         doReturn(10).when(sourceTwo).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne)
@@ -167,12 +167,12 @@ public class ConfigurationBuilderTest {
         PropertySource sourceOne = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("one").when(sourceOne).getName();
-        doReturn("b").when(sourceOne).get("keyOfA");
+        doReturn(PropertyValue.of("keyOfA","b", "test")).when(sourceOne).get("keyOfA");
         doReturn(10).when(sourceOne).getOrdinal();
 
         PropertySource sourceTwo = mock(PropertySource.class, NOT_MOCKED_ANSWER);
         doReturn("two").when(sourceTwo).getName();
-        doReturn("a").when(sourceTwo).get("keyOfA");
+        doReturn(PropertyValue.of("keyOfA","a", "test")).when(sourceTwo).get("keyOfA");
         doReturn(20).when(sourceTwo).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne)
@@ -191,12 +191,12 @@ public class ConfigurationBuilderTest {
         PropertySource sourceOne = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("one").when(sourceOne).getName();
-        doReturn("b").when(sourceOne).get("keyOfA");
+        doReturn(PropertyValue.of("keyOfA","b", "test")).when(sourceOne).get("keyOfA");
         doReturn(30).when(sourceOne).getOrdinal();
 
         PropertySource sourceTwo = mock(PropertySource.class, NOT_MOCKED_ANSWER);
         doReturn("two").when(sourceTwo).getName();
-        doReturn("a").when(sourceTwo).get("keyOfA");
+        doReturn(PropertyValue.of("keyOfA","a", "test")).when(sourceTwo).get("keyOfA");
         doReturn(20).when(sourceTwo).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne, sourceTwo);
@@ -215,13 +215,13 @@ public class ConfigurationBuilderTest {
 
         doReturn("one").when(sourceOne).getName();
         doReturn(null).when(sourceOne).get(anyString());
-        doReturn("b").when(sourceOne).get("b");
+        doReturn(PropertyValue.of("b","b", "test")).when(sourceOne).get("b");
         doReturn(30).when(sourceOne).getOrdinal();
 
         PropertySource sourceTwo = mock(PropertySource.class, NOT_MOCKED_ANSWER);
         doReturn("two").when(sourceTwo).getName();
         doReturn(null).when(sourceTwo).get(anyString());
-        doReturn("a").when(sourceTwo).get("a");
+        doReturn(PropertyValue.of("a","a", "test")).when(sourceTwo).get("a");
         doReturn(30).when(sourceTwo).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne)
@@ -239,13 +239,13 @@ public class ConfigurationBuilderTest {
 
         doReturn("one").when(sourceOne).getName();
         doReturn(null).when(sourceOne).get(anyString());
-        doReturn("b").when(sourceOne).get("b");
+        doReturn(PropertyValue.of("b","b", "test")).when(sourceOne).get("b");
         doReturn(30).when(sourceOne).getOrdinal();
 
         PropertySource sourceTwo = mock(PropertySource.class, NOT_MOCKED_ANSWER);
         doReturn("two").when(sourceTwo).getName();
         doReturn(null).when(sourceTwo).get(anyString());
-        doReturn("a").when(sourceTwo).get("a");
+        doReturn(PropertyValue.of("a","a", "test")).when(sourceTwo).get("a");
         doReturn(30).when(sourceTwo).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(sourceOne, null, sourceTwo);
@@ -285,7 +285,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
-        doReturn("A").when(source).get("key");
+        doReturn(PropertyValue.of("key","A", "test")).when(source).get("key");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -315,7 +315,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
-        doReturn("A").when(source).get("key");
+        doReturn(PropertyValue.of("key","A", "test")).when(source).get("key");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -345,7 +345,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
-        doReturn("A").when(source).get("key");
+        doReturn(PropertyValue.of("key","A", "test")).when(source).get("key");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -378,7 +378,7 @@ public class ConfigurationBuilderTest {
     public void canAddNonSPIPropertyFilter() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
-        doReturn("M").when(source).get("key");
+        doReturn(PropertyValue.of("key","M", "test")).when(source).get("key");
         doReturn("source").when(source).getName();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -397,7 +397,7 @@ public class ConfigurationBuilderTest {
     public void canAddNonSPIPropertyFiltersViaConsecutiveCalls() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
-        doReturn("M").when(source).get("key");
+        doReturn(PropertyValue.of("key","M", "test")).when(source).get("key");
         doReturn("source").when(source).getName();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -418,7 +418,7 @@ public class ConfigurationBuilderTest {
     public void canAddMultipleNonSPIPropertyFiltersWhileOneIsNull() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
-        doReturn("M").when(source).get("key");
+        doReturn(PropertyValue.of("key","M", "test")).when(source).get("key");
         doReturn("source").when(source).getName();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -440,7 +440,7 @@ public class ConfigurationBuilderTest {
     public void overhandedNullPropertyFilterIsSafelyHandled() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
-        doReturn("M").when(source).get("key");
+        doReturn(PropertyValue.of("key","M", "test")).when(source).get("key");
         doReturn("source").when(source).getName();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -460,7 +460,7 @@ public class ConfigurationBuilderTest {
     public void canAddMultipleNonSPIPropertyFilter() {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
-        doReturn("M").when(source).get("key");
+        doReturn(PropertyValue.of("key","M", "test")).when(source).get("key");
         doReturn("source").when(source).getName();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -574,7 +574,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
-        doReturn("A").when(source).get("key");
+        doReturn(PropertyValue.of("key","A", "test")).when(source).get("key");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
@@ -591,7 +591,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
-        doReturn("A").when(source).get("key");
+        doReturn(PropertyValue.of("key","A", "test")).when(source).get("key");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder().addPropertySources(source)
@@ -667,7 +667,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
-        doReturn("A").when(source).get("key");
+        doReturn(PropertyValue.of("key","A", "test")).when(source).get("key");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -708,7 +708,7 @@ public class ConfigurationBuilderTest {
         PropertySource source = mock(PropertySource.class, NOT_MOCKED_ANSWER);
 
         doReturn("source").when(source).getName();
-        doReturn("A").when(source).get("key");
+        doReturn(PropertyValue.of("key","A", "test")).when(source).get("key");
         doReturn(100).when(source).getOrdinal();
 
         ConfigurationBuilder builder = new ConfigurationBuilder();

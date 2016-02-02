@@ -1,0 +1,154 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+= Apache Tamaya -- Extension: Integration with etcd (Core OS)
+
+:name: Tamaya
+:rootpackage: org.apache.tamaya.filter
+:title: Apache Tamaya Extension: Progrmmatic filtering of config entries
+:revdate: January 2016
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+
+'''
+
+<<<
+
+toc::[]
+
+<<<
+:numbered!:
+<<<
+[[Optional]]
+== COnfiguration Filtering (Extension Module)
+=== Overview
+
+The Tamaya filter module provides a simple singleton accessor that allows to explicitly add +PropertyFilter+ instances
+active on the current thread only. This can be very useful in many scenarios. Additionally this module adds
+standard filters that hide metadata entries when the full configuration map is accessed. When keys are accessed
+explcitily no filtering is applied and everything is visible.
+
+=== Compatibility
+
+The module is based on Java 7, so it will not run on Java 7 and beyond.
+
+
+=== Installation
+
+To benefit from configuration builder support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-filter</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+
+=== The Extensions Provided
+
+Tamaya Filter comes basically with 1 artifact:
+
+* The +org.apache.tamaya.filter.ConfigurationFilter+ provides several static methods to register +PropertyFilter+
+instances on the current thread.
+* The +org.apache.tamaya.filter.DefaultMetdataFilter+ is a +PropertyFilter+ with hides all entries starting with
+ an underscore ('_'), when a full property map is accessed.
+
+
+=== The ConfigurationFilter
+
+The accessor mentioned implements the API for for adding 1PropertyFilters+ to the current thread (as thread local):
+
+[source, java]
+-----------------------------------------------
+public final class ConfigurationFilter implements PropertyFilter{
+
+    ...
+
+    /**
+     * Seactivates metadata filtering also on global map access for this thread.
+     * @see #clearFilters()
+     * @param active true,to enable metadata filtering (default).
+     */
+    public static void setMetadataFilter(boolean active);
+
+    /**
+     * Access the filtering configuration that is used for filtering single property values accessed.
+     * @return the filtering config, never null.
+     */
+    public static ProgrammableFilter getSingleFilters();
+
+    /**
+     * Access the filtering configuration that is used for filtering configuration properties accessed as full
+     * map.
+     * @return the filtering config, never null.
+     */
+    public static ProgrammableFilter getMapFilters();
+
+    /**
+     * Removes all programmable filters active on the current thread.
+     */
+    public static void clearFilters();
+
+    ...
+
+}
+-----------------------------------------------
+
+For using regular expression when filtering configuration keys a corresponding implementation of a +PropertyFilter+
+is part of this module, So you can add a customized filter as follows:
+
+[source, java]
+-----------------------------------------------
+try{
+    ConfigurationFilter.getMapFilters().addFilter(new RegexPropertyFilter("\\_.*"));
+
+    // do your code with filtering active
+}
+finally{
+    // cleanup
+    ConfigurationFilter.clearFilters();
+}
+-----------------------------------------------
+
+The +ProgrammableFilter+ is a simple structure just providing some handy accessors to the dynamic thread-local
+managed filters:
+
+[source, java]
+-----------------------------------------------
+public final class ProgrammableFilter implements PropertyFilter{
+
+    public void addFilter(PropertyFilter filter);
+    public void addFilter(int pos, PropertyFilter filter);
+    public PropertyFilter removeFilter(int pos);
+    public void clearFilters();
+    public void setFilters(PropertyFilter... filters);
+    public void setFilters(Collection<PropertyFilter> filters);
+    public List<PropertyFilter> getFilters();
+
+}
+-----------------------------------------------
+

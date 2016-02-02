@@ -62,7 +62,17 @@ public class ConfigChangeManagerTest {
      * @throws Exception the exception
      */
     @Test(expected=NullPointerException.class)
-    public void testNullCreateChangeRequest() throws Exception {
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(null);
+    public void testNullCreateChangeRequest1() throws Exception {
+        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest((URI[])null);
+    }
+
+    /**
+     * Test null create change request.
+     *
+     * @throws Exception the exception
+     */
+    @Test(expected=NullPointerException.class)
+    public void testNullCreateChangeRequest2() throws Exception {
+        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest((String[])null);
     }
 }

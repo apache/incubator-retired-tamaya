@@ -67,14 +67,13 @@ public class FlattenedDefaultPropertySourceTest {
     @Test
     public void testGet() throws Exception {
         FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(createConfigurationData("test2"));
-        assertEquals("aValue", ps.get("a"));
-        assertNotNull(ps.get("section1.sectionKey1"));
-        assertNotNull(ps.get("section2.sectionKey1"));
-        assertNull(ps.get("sectionKey1"));
+        assertEquals("aValue", ps.get("a").get("a"));
+        assertNotNull(ps.get("section1.sectionKey1").get("section1.sectionKey1"));
+        assertNotNull(ps.get("section2.sectionKey1").get("section2.sectionKey1"));
         assertNull(ps.get("sectionKey1"));
         ps = new FlattenedDefaultPropertySource(createConfigurationDataNoDefault("test2"));
-        assertEquals("sectionValue11", ps.get("section1.sectionKey1"));
-        assertEquals("sectionValue21", ps.get("section2.sectionKey1"));
+        assertEquals("sectionValue11", ps.get("section1.sectionKey1").get("section1.sectionKey1"));
+        assertEquals("sectionValue21", ps.get("section2.sectionKey1").get("section2.sectionKey1"));
         assertNull(ps.get("a"));
         assertNull(ps.get("section1"));
     }

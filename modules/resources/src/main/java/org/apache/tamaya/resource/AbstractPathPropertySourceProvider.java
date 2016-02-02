@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValue;
 
 /**
  * Abstract base class that uses a descriptive resource path to define the locations of configuration files to be
@@ -142,10 +143,10 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
 
         @Override
         public int getOrdinal() {
-            String configuredOrdinal = get(TAMAYA_ORDINAL);
+            PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
             if (configuredOrdinal != null) {
                 try {
-                    return Integer.parseInt(configuredOrdinal);
+                    return Integer.parseInt(configuredOrdinal.getValue());
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.WARNING,
                             "Configured Ordinal is not an int number: " + configuredOrdinal, e);
@@ -169,8 +170,8 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         }
 
         @Override
-        public String get(String key) {
-            return properties.get(key);
+        public PropertyValue get(String key) {
+            return PropertyValue.of(key, getProperties().get(key), getName());
         }
 
         @Override

@@ -20,6 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Map;
 import java.util.Objects;
@@ -58,8 +59,8 @@ final class ConfigWrappingPropertySource implements PropertySource {
     }
 
     @Override
-    public String get(String key) {
-        return config.get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, config.get(key), getName());
     }
 
     @Override

@@ -16,31 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.server;
+package org.apache.tamaya.filter;
+
+import org.apache.tamaya.spi.FilterContext;
+import org.apache.tamaya.spi.PropertyFilter;
 
 /**
- * Simple abstraction of the Server interface.
+ * Default property filter that hides metadta entries starting with an '_', similar ti {@code etcd}.
  */
-public interface Server {
-    /**
-     * Starts the server on the given port-
-     * @param port the target port.
-     */
-    void start(int port);
-
-    /**
-     * Checks if the server us started.
-     * @return true if the server us started.
-     */
-    boolean isStarted();
-
-    /**
-     * Stops the server, but does not destroy it, so it might be restarted.
-     */
-    void stop();
-
-    /**
-     * Destroy the server instance.
-     */
-    void destroy();
+public final class DefaultMetadataFilter implements PropertyFilter{
+    @Override
+    public String filterProperty(String valueToBeFiltered, FilterContext context) {
+        if(context.isSinglePropertyScoped()){
+            // When accessing keys explicitly, do not hide anything.
+            return valueToBeFiltered;
+        }
+        if(ConfigurationFilter.THREADED_METADATA_FILTERED.get()) {
+            if (context.getKey().startsWith("_")) {
+                // Hide metadata entries.
+                return null;
+            }
+        }
+        return valueToBeFiltered;
+    }
 }

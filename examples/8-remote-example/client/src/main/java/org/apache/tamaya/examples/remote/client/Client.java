@@ -54,7 +54,7 @@ public class Client {
         if(portValue==null){
             portValue = ConfigurationProvider.getConfiguration().get("client.port");
         }
-        int port = portValue!=null?Integer.parseInt(portValue):8080;
+        int port = portValue!=null?Integer.parseInt(portValue):8055;
         tomcat.setPort(port);
         File base = new File(System.getProperty("java.io.tmpdir")+"/"+getClientId());
         if(!base.exists()){
@@ -84,9 +84,9 @@ public class Client {
      * @return the client identifier to be used.
      */
     public static String getClientId() {
-        String clientId = System.getenv("CLIENT_ID");
+        String clientId = System.getenv("ENV_CLIENT_ID");
         if(clientId == null){
-            clientId = System.getProperty("clientId");
+            clientId = System.getProperty("ENV_CLIENT_ID");
         }
         if(clientId == null){
             clientId = "default";

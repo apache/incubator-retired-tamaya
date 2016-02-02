@@ -23,6 +23,7 @@ import org.apache.tamaya.mutableconfig.spi.ConfigChangeManagerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +41,28 @@ public final class ConfigChangeManager {
 
     /** Singleton constructor. */
     private ConfigChangeManager(){}
+
+    /**
+     * Creates a new change request for the given configurationSource
+     *
+     * @param configurationTargets the configuration targets (String to create URIs) to use to write the changes/config. By passing multiple
+     *                             URIs you can write back changes into multiple configuration backends, e.g.
+     *                             one for redistributing changes using multicast mechanism, a local property file
+     *                             for failover as well as the shared etcd server.
+     * @return a new ChangeRequest
+     * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
+     */
+    public static ConfigChangeRequest createChangeRequest(String... configurationTargets){
+        try {
+            URI[] uris = new URI[configurationTargets.length];
+            for (int i = 0; i < configurationTargets.length; i++) {
+                uris[i] = new URI(configurationTargets[i]);
+            }
+            return createChangeRequest(uris);
+        } catch(URISyntaxException e){
+            throw new ConfigException("Invalid URIs enocuntered in " + Arrays.toString(configurationTargets));
+        }
+    }
 
     /**
      * Creates a new change request for the given configurationSource

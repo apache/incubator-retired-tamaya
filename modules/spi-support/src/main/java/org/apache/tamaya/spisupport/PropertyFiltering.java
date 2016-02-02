@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 
 import java.util.HashMap;
@@ -47,13 +48,14 @@ public final class PropertyFiltering{
      */
     private PropertyFiltering(){}
 
-    public static String applyFilter(String key, String unfilteredValue, ConfigurationContext configurationContext) {
+    public static String applyFilter(String key, Map<String,String> configData, ConfigurationContext configurationContext) {
         // Apply filters to values, prevent values filtered to null!
+        String unfilteredValue = configData.get(key);
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             boolean changed = false;
             // Apply filters to values, prevent values filtered to null!
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                String newValue = filter.filterProperty(key, unfilteredValue);
+                String newValue = filter.filterProperty(unfilteredValue, new FilterContext(key, configData, true));
                 if (newValue != null && !newValue.equals(unfilteredValue)) {
                     changed = true;
                     if (LOG.isLoggable(Level.FINEST)) {
@@ -93,7 +95,7 @@ public final class PropertyFiltering{
                     final String k = entry.getKey();
                     final String v = entry.getValue();
 
-                    String newValue = filter.filterProperty(k, v);
+                    String newValue = filter.filterProperty(k, new FilterContext(k, inputMap, false));
                     if (newValue != null && !newValue.equals(v)) {
                         changes.incrementAndGet();
                         LOG.finest("Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);

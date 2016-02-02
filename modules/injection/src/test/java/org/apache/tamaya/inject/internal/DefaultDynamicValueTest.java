@@ -28,6 +28,7 @@ import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import org.apache.tamaya.Configuration;
@@ -78,8 +79,8 @@ public class DefaultDynamicValueTest {
                 }
 
                 @Override
-                public String get(String key) {
-                    return properties.get(key);
+                public PropertyValue get(String key) {
+                    return PropertyValue.of(key,properties.get(key),getName());
                 }
 
                 @Override

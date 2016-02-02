@@ -58,7 +58,7 @@ public class FrozenPropertySourceTest {
         PropertySource ps = FrozenPropertySource.of(myPS);
         assertNotNull(ps);
         for (Map.Entry<String, String> e : myPS.getProperties().entrySet()) {
-            assertEquals(ps.get(e.getKey()), e.getValue());
+            assertEquals(ps.get(e.getKey()).getValue(), e.getValue());
         }
     }
 

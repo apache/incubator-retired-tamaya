@@ -19,6 +19,7 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,10 +52,10 @@ class ValueMappedPropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
-        String value = this.source.get(key);
+    public PropertyValue get(String key) {
+        PropertyValue value = this.source.get(key);
         if(value!=null) {
-            return valueFilter.mapProperty(key, value);
+            return PropertyValue.of(key, valueFilter.mapProperty(key, value.getValue()), getName());
         }
         return null;
     }

@@ -19,6 +19,7 @@
 package org.apache.tamaya.inject;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +49,8 @@ public class TestPropertySource implements PropertySource {
     }
 
     @Override
-    public String get(String key) {
-        return properties.get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key,properties.get(key),getName());
     }
 
     @Override

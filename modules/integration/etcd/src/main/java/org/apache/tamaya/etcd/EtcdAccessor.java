@@ -55,6 +55,11 @@ public class EtcdAccessor {
 
     /** Timeout in seconds. */
     private int timeout = 2;
+    /** Timeout in seconds. */
+    private int socketTimeout = 1000;
+    /** Timeout in seconds. */
+    private int connectTimeout = 1000;
+
     /** Property that make Johnzon accept commentc. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
     /** The JSON reader factory used. */
@@ -100,8 +105,8 @@ public class EtcdAccessor {
         try {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(serverURL + "/version");
-            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
+            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT)
+            .setSocketTimeout(socketTimeout).setConnectTimeout(timeout).build());
             response = httpclient.execute(httpGet);
             HttpEntity entity;
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -155,16 +160,19 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try {
             HttpGet httpGet = new HttpGet(serverURL + "/v2/keys/"+key);
-            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
+            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT)
+            .setSocketTimeout(socketTimeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
             response = httpclient.execute(httpGet);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
                 JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
                 JsonObject o = reader.readObject();
                 JsonObject node = o.getJsonObject("node");
-                result.put(key, node.getString("value"));
-                result.put("_" + key +".source", "[etcd]"+serverURL);
+                if(node.containsKey("value")) {
+                    result.put(key, node.getString("value"));
+                    result.put("_" + key +".source", "[etcd]"+serverURL);
+                }
                 if(node.containsKey("createdIndex")) {
                     result.put("_" + key +".createdIndex", String.valueOf(node.getInt("createdIndex")));
                 }
@@ -250,8 +258,8 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try{
             HttpPut put = new HttpPut(serverURL + "/v2/keys/"+key);
-            put.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
+            put.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
             List<NameValuePair> nvps = new ArrayList<>();
             nvps.add(new BasicNameValuePair("value", value));
             if(ttlSeconds!=null){
@@ -336,8 +344,8 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try{
             HttpDelete delete = new HttpDelete(serverURL + "/v2/keys/"+key);
-            delete.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
+            delete.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
             response = httpclient.execute(delete);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
@@ -449,8 +457,9 @@ public class EtcdAccessor {
         Map<String,String> result = new HashMap<>();
         try{
             HttpGet get = new HttpGet(serverURL + "/v2/keys/"+directory+"?recursive="+recursive);
-            get.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout).build());
+            get.setConfig(RequestConfig.copy(RequestConfig.DEFAULT)
+                    .setSocketTimeout(socketTimeout)
+                    .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
             response = httpclient.execute(get);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();

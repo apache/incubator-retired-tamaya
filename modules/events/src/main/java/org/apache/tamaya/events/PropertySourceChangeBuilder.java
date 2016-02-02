@@ -19,6 +19,7 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -95,19 +96,19 @@ public final class PropertySourceChangeBuilder {
     public static Collection<PropertyChangeEvent> compare(PropertySource map1, PropertySource map2) {
         List<PropertyChangeEvent> changes = new ArrayList<>();
         for (Map.Entry<String, String> en : map1.getProperties().entrySet()) {
-            String val = map2.get(en.getKey());
+            PropertyValue val = map2.get(en.getKey());
             if (val == null) {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), val, en.getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), val.getValue(), en.getValue()));
             }
         }
         for (Map.Entry<String, String> en : map2.getProperties().entrySet()) {
-            String val = map1.get(en.getKey());
+            PropertyValue val = map1.get(en.getKey());
             if (val == null) {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), null));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), val));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), val.getValue()));
             }
         }
         return changes;
@@ -170,7 +171,7 @@ public final class PropertySourceChangeBuilder {
      * @return the builder for chaining.
      */
     public PropertySourceChangeBuilder remove(String key, String... otherKeys) {
-        String oldValue = this.source.get(key);
+        PropertyValue oldValue = this.source.get(key);
         if (oldValue == null) {
             this.delta.remove(key);
         }

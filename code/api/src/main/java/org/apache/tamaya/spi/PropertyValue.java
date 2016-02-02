@@ -97,9 +97,12 @@ public final class PropertyValue {
      * @param key the key, not null.
      * @param value the value.
      * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
-     * @return a new builder instance.
+     * @return a new property value instance, or null, if the value passed is null..
      */
     public static PropertyValue of(String key, String value, String source){
+        if(value==null){
+            return null;
+        }
         return new PropertyValue(key, value, source);
     }
 

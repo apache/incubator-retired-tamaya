@@ -19,6 +19,7 @@
 package org.apache.tamaya.builder;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,10 +43,10 @@ public class SimplePropertySource implements PropertySource {
 
     @Override
     public int getOrdinal(){
-        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){
             try{
-                return Integer.parseInt(configuredOrdinal);
+                return Integer.parseInt(configuredOrdinal.getValue());
             } catch(Exception e){
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
                         "Configured Ordinal is not an int number: " + configuredOrdinal, e);
@@ -64,7 +65,7 @@ public class SimplePropertySource implements PropertySource {
     }
 
     @Override
-    public String get(String key) {
+    public PropertyValue get(String key) {
         return null;
     }
 

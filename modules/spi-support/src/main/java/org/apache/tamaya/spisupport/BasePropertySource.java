@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,10 +49,10 @@ public abstract class BasePropertySource implements PropertySource{
 
     @Override
     public int getOrdinal() {
-        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){
             try{
-                return Integer.parseInt(configuredOrdinal);
+                return Integer.parseInt(configuredOrdinal.get(TAMAYA_ORDINAL));
             } catch(Exception e){
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
                         "Configured Ordinal is not an int number: " + configuredOrdinal, e);
@@ -69,8 +70,8 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
-        return getProperties().get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, getProperties().get(key), getName());
     }
 
     @Override

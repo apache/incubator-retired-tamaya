@@ -20,6 +20,8 @@ package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.PropertyValueBuilder;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -78,8 +80,8 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
         }
 
         @Override
-        public String get(String key) {
-            return properties.get(key);
+        public PropertyValue get(String key) {
+            return PropertyValue.of(key,properties.get(key), getName());
         }
 
         @Override

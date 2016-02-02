@@ -22,6 +22,7 @@ import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationFormat;
 import org.apache.tamaya.json.JSONFormat;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -119,16 +120,16 @@ public abstract class BaseRemotePropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
-        return getProperties().get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key,getProperties().get(key),getName());
     }
 
     @Override
     public int getOrdinal(){
-        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){
             try{
-                return Integer.parseInt(configuredOrdinal);
+                return Integer.parseInt(configuredOrdinal.getValue());
             } catch(Exception e){
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
                         "Configured Ordinal is not an int number: " + configuredOrdinal, e);

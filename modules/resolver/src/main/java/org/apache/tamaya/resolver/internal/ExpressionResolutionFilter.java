@@ -19,6 +19,7 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -71,14 +72,14 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      * <li><code>\${resolverId:expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
      * </ul>
      *
-     * @param key the key to be filtered
+     * @param context the filter context
      * @param valueToBeFiltered value to be analyzed for expressions
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public String filterProperty(String key, String valueToBeFiltered){
-        LOG.finest("Resolving " + valueToBeFiltered + "(key=" + key + ")");
-        return evaluator.evaluateExpression(key, valueToBeFiltered);
+    public String filterProperty(String valueToBeFiltered, FilterContext context){
+        LOG.finest("Resolving " + valueToBeFiltered + "(key=" + context.getKey() + ")");
+        return evaluator.evaluateExpression(context.getKey(), valueToBeFiltered);
     }
 
 

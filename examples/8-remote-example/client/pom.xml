@@ -46,7 +46,12 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-remote</artifactId>
+            <artifactId>tamaya-etcd</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-filter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

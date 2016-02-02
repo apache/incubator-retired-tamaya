@@ -51,6 +51,7 @@ under the License.
         <module>optional</module>
         <module>classloader-support</module>
         <module>integration</module>
+        <module>filter</module>
     </modules>
 
     <build>

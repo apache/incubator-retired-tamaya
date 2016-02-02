@@ -16,4 +16,14 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.server.internal.DefaultConfigService
+
+scope: java
+server:
+  applicationConnectors:
+  - type: http
+    port: 4001
+  adminConnectors:
+  - type: http
+    port: 4099
+
+

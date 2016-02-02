@@ -19,6 +19,7 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,19 +61,19 @@ class EnrichedPropertySource implements PropertySource {
     }
 
     @Override
-    public String get(String key) {
+    public PropertyValue get(String key) {
         if (overriding) {
             String val = addedProperties.get(key);
             if (val != null) {
-                return val;
+                return PropertyValue.of(key, val, getName());
             }
             return basePropertySource.get(key);
         }
-        String val = basePropertySource.get(key);
+        PropertyValue val = basePropertySource.get(key);
         if (val != null) {
             return val;
         }
-        return addedProperties.get(key);
+        return PropertyValue.of(key, addedProperties.get(key), getName());
 
     }
 

@@ -19,6 +19,7 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -81,8 +82,8 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     }
 
     @Override
-    public String get(String key) {
-        return this.properties.get(key);
+    public PropertyValue get(String key) {
+        return PropertyValue.of(key, this.properties.get(key), getName());
     }
 
     @Override

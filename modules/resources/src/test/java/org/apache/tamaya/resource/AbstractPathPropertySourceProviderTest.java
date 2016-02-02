@@ -19,6 +19,8 @@
 package org.apache.tamaya.resource;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.PropertyValueBuilder;
 import org.junit.Test;
 
 import java.net.URL;
@@ -87,10 +89,10 @@ public class AbstractPathPropertySourceProviderTest {
          * @return the 'importance' aka ordinal of the configured values. The higher, the more important.
          */
         public int getOrdinal() {
-            String configuredOrdinal = get(TAMAYA_ORDINAL);
+            PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
             if (configuredOrdinal != null) {
                 try {
-                    return Integer.parseInt(configuredOrdinal);
+                    return Integer.parseInt(configuredOrdinal.getValue());
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.WARNING,
                             "Configured Ordinal is not an int number: " + configuredOrdinal, e);
@@ -114,7 +116,7 @@ public class AbstractPathPropertySourceProviderTest {
         }
 
         @Override
-        public String get(String key) {
+        public PropertyValue get(String key) {
             return null;
         }
 

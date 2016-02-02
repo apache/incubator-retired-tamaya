@@ -19,8 +19,12 @@
 package org.apache.tamaya.etcd;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.PropertyValueBuilder;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,17 +38,13 @@ public class EtcdPropertySource implements PropertySource{
 
     private String prefix = System.getProperty("tamaya.etcd.prefix", "");
 
-    public EtcdPropertySource(){
-
-
-    }
 
     @Override
     public int getOrdinal() {
-        String configuredOrdinal = get(TAMAYA_ORDINAL);
+        PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){
             try{
-                return Integer.parseInt(configuredOrdinal);
+                return Integer.parseInt(configuredOrdinal.getValue());
             } catch(Exception e){
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
                         "Configured Ordinal is not an int number: " + configuredOrdinal, e);
@@ -67,7 +67,7 @@ public class EtcdPropertySource implements PropertySource{
     }
 
     @Override
-    public String get(String key) {
+    public PropertyValue get(String key) {
         // check prefix, if key does not start with it, it is not part of our name space
         // if so, the prefix part must be removed, so etcd can resolve without it
         if(!key.startsWith(prefix)){
@@ -96,7 +96,7 @@ public class EtcdPropertySource implements PropertySource{
                 props = accessor.get(reqKey);
                 if(!props.containsKey("_ERROR")) {
                     // No repfix mapping necessary here, since we only access/return the value...
-                    return props.get(reqKey);
+                    return new PropertyValueBuilder(key, props.get(reqKey), getName()).setContextData(props).build();
                 } else{
                     LOG.log(Level.FINE, "etcd error on " + accessor.getUrl() + ": " + props.get("_ERROR"));
                 }
@@ -109,7 +109,7 @@ public class EtcdPropertySource implements PropertySource{
 
     @Override
     public Map<String, String> getProperties() {
-        if(EtcdBackends.getEtcdBackends().isEmpty()){
+        if(!EtcdBackends.getEtcdBackends().isEmpty()){
             for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
                 try{
                     Map<String, String> props = accessor.getProperties("");

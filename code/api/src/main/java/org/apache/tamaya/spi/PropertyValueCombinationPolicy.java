@@ -37,8 +37,8 @@ public interface PropertyValueCombinationPolicy {
 
         @Override
         public Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource) {
-            Map<String,String> value = propertySource.get(key);
-            return value!=null && value.get(key)!=null?value:currentValue;
+            PropertyValue value = propertySource.get(key);
+            return value!=null?value.getConfigEntries():currentValue;
         }
 
     };
