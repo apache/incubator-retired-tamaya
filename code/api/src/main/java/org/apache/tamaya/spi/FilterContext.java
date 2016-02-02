@@ -32,7 +32,7 @@ import java.util.Objects;
 public class FilterContext {
 
     private final String key;
-    @org.apache.tamaya.Experimental
+    @Experimental
     private Map<String, String> metaEntries = new HashMap();
 
     /**
@@ -76,7 +76,7 @@ public class FilterContext {
      *
      * @return the configuration instance, or null.
      */
-    @org.apache.tamaya.Experimental
+    @Experimental
     public Map<String, String> getMetaEntries() {
         return metaEntries;
     }
@@ -86,7 +86,7 @@ public class FilterContext {
      * access. For both scenarios filtering may be different.
      * @return true, if it is a directly accessed key.
      */
-    @org.apache.tamaya.Experimental
+    @Experimental
     public boolean isSingleAccessedProperty(){
         return this.metaEntries.size()==1;
     }
