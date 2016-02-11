@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.filter;
+package org.apache.tamaya.filter.internal;
 
+import org.apache.tamaya.filter.ConfigurationFilter;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 
