@@ -31,12 +31,12 @@ import org.apache.tamaya.spi.PropertyFilter;
  *     <li><b>Map</b> filters are applied when values are filtered as part of a full properties access.
  *     Often filtering in these cases is more commonly applied, e.g. you dont want to show up all kind of metadata.
  *     </li>
+ * </ul>
  *     For both variants individual filter rules can be applied here. All filters configured are managed on a
  *     thread-local level, so this class is typically used to temporarely filter out some values. Do not forget to
  *     restore its state, when not using a thread anymore (especially important in multi-threaded environments), not
  *     doing so will create nasty side effects of configuration not being visisble depending on the thread
  *     active.
- * </ul>
  */
 public final class ConfigurationFilter implements PropertyFilter{
 
