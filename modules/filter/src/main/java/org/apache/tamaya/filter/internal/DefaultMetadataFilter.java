@@ -32,7 +32,7 @@ public final class DefaultMetadataFilter implements PropertyFilter{
             // When accessing keys explicitly, do not hide anything.
             return valueToBeFiltered;
         }
-        if(ConfigurationFilter.THREADED_METADATA_FILTERED.get()) {
+        if(ConfigurationFilter.isMetadataFiltered()) {
             if (context.getKey().startsWith("_")) {
                 // Hide metadata entries.
                 return null;

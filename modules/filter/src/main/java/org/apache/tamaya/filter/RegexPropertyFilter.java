@@ -48,7 +48,7 @@ public final class RegexPropertyFilter implements PropertyFilter{
 
     @Override
     public String toString() {
-        return "RegexPredicate{" +
+        return "RegexPropertyFilter{" +
                 "expression='" + expression + '\'' +
                 '}';
     }

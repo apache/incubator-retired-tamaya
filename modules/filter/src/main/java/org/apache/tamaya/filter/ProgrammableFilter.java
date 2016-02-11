@@ -80,8 +80,8 @@ public final class ProgrammableFilter implements PropertyFilter{
      * @param filters the filters to be applied.
      */
     public void setFilters(Collection<PropertyFilter> filters) {
-        filters.clear();
-        filters.addAll(filters);
+        this.filters.clear();
+        this.filters.addAll(filters);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class ProgrammableFilter implements PropertyFilter{
 
     @Override
     public String toString() {
-        return "FilterConfig{" +
+        return "ProgrammableFilter{" +
                 "filters=" + filters +
                 '}';
     }

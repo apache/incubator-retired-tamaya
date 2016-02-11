@@ -62,12 +62,21 @@ public final class ConfigurationFilter implements PropertyFilter{
     };
 
     /**
+     * Flag if metadata entries (starting with an '_') are filtered out on when accessing multiple properties, default
+     * is {@code true}.
+     * @return true, if metadata entries (starting with an '_') are to be filtered.
+     */
+    public static boolean isMetadataFiltered(){
+        return THREADED_METADATA_FILTERED.get();
+    }
+
+    /**
      * Seactivates metadata filtering also on global map access for this thread.
      * @see #clearFilters()
-     * @param active true,to enable metadata filtering (default).
+     * @param filtered true,to enable metadata filtering (default).
      */
-    public static void setMetadataFilter(boolean active){
-        THREADED_METADATA_FILTERED.set(active);
+    public static void setMetadataFiltered(boolean filtered){
+        THREADED_METADATA_FILTERED.set(filtered);
     }
 
     /**
