@@ -61,6 +61,14 @@ public final class ProgrammableFilter implements PropertyFilter{
     }
 
     /**
+     * Removes a filter.
+     * @param filter the filter to be removed, not null.
+     */
+    public void removeFilter(PropertyFilter filter) {
+        filters.remove(filter);
+    }
+
+    /**
      * Clears all filters.
      */
     public void clearFilters(){
@@ -106,6 +114,5 @@ public final class ProgrammableFilter implements PropertyFilter{
                 "filters=" + filters +
                 '}';
     }
-
 
 }

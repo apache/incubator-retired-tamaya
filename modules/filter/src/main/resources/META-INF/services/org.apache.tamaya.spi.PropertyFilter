@@ -17,4 +17,3 @@
 # under the License.
 #
 org.apache.tamaya.filter.ConfigurationFilter
-org.apache.tamaya.filter.DefaultMetadataFilter
