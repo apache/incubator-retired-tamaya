@@ -18,17 +18,56 @@
  */
 package org.apache.tamaya.collections.internal;
 
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  PropertyConverter for gnerating HashSet representation of a values.
  */
 public class TreeSetConverter implements PropertyConverter<TreeSet<?>> {
+
+    private static final Logger LOG = Logger.getLogger(TreeSetConverter.class.getName());
+
+    /** The shared instance, used by other collection converters in this package.*/
+    private static TreeSetConverter INSTANCE = new TreeSetConverter();
+
+    /**
+     * Provide a shared instance, used by other collection converters in this package.
+     * @return the shared instance, never null.
+     */
+    static TreeSetConverter getInstance(){
+        return INSTANCE;
+    }
+
     @Override
-    public TreeSet<?> convert(String value) {
+    public TreeSet convert(String value, ConversionContext context) {
+        List<String> rawList = ArrayListConverter.split(value);
+        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-valueParser");
+        if(converterClass!=null){
+            try {
+                PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
+                TreeSet<Object> mlist = new TreeSet<>();
+                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
+                        TypeLiteral.of(context.getTargetType().getType())).build();
+                for(String raw:rawList){
+                    Object convValue = valueConverter.convert(raw, ctx);
+                    if(convValue!=null){
+                        mlist.add(convValue);
+                        continue;
+                    }
+                }
+                return mlist;
+
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Error convertion config to HashSet type.", e);
+            }
+        }
         return null;
     }
 }

@@ -18,17 +18,63 @@
  */
 package org.apache.tamaya.collections.internal;
 
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  PropertyConverter for gnerating HashMap representation of a values.
  */
-public class HashMapConverter implements PropertyConverter<HashMap<?,?>> {
+public class HashMapConverter implements PropertyConverter<HashMap> {
+    private static final Logger LOG = Logger.getLogger(ArrayListConverter.class.getName());
+
+    /** The shared instance, used by other collection converters in this package.*/
+    private static HashMapConverter INSTANCE = new HashMapConverter();
+
+    /**
+     * Provide a shared instance, used by other collection converters in this package.
+     * @return the shared instance, never null.
+     */
+    static HashMapConverter getInstance(){
+        return INSTANCE;
+    }
+
     @Override
-    public HashMap<?,?> convert(String value) {
+    public HashMap convert(String value, ConversionContext context) {
+        List<String> rawList = ArrayListConverter.split(value);
+        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-valueParser");
+        if(converterClass!=null){
+            try {
+                PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
+                HashMap<String,Object> mlist = new HashMap<>();
+                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
+                        TypeLiteral.of(context.getTargetType().getType())).build();
+                for(String raw:rawList){
+                    String[] items = splitItems(raw);
+                    Object convValue = valueConverter.convert(items[1], ctx);
+                    if(convValue!=null){
+                        mlist.put(items[0], convValue);
+                        continue;
+                    }
+                }
+                return mlist;
+
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Error convertion config to HashMap type.", e);
+            }
+        }
         return null;
+    }
+
+    static String[] splitItems(String raw) {
+        String[] items = new String[2];
+        // check for '[]'
+        // else split with ':'
+        return raw.split("::");
     }
 }

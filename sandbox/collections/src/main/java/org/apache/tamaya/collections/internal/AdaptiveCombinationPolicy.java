@@ -20,9 +20,11 @@ package org.apache.tamaya.collections.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import javax.annotation.Priority;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -40,8 +42,8 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
     private Map<Class, PropertyValueCombinationPolicy> configuredPolicies = new ConcurrentHashMap<>();
 
     @Override
-    public String collect(String currentValue, String key, PropertySource propertySource) {
-        String adaptiveCombinationPolicyClass  = ConfigurationProvider.getConfiguration().get(key+"{combinationPolicy}");
+    public Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource){
+        String adaptiveCombinationPolicyClass  = ConfigurationProvider.getConfiguration().get('_' + key+".combinationPolicy");
         if(adaptiveCombinationPolicyClass!=null){
             PropertyValueCombinationPolicy delegatePolicy = null;
             try{
@@ -57,9 +59,44 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
                 LOG.log(Level.SEVERE, "Error loading configured PropertyValueCombinationPolicy for key: " + key, e);
             }
         }
-        String newValue = propertySource.get(key);
+        // check for default collection combination policies for lists, sets, maps etc.
+        String collectionType = ConfigurationProvider.getConfiguration().get('_' + key+".collection-type");
+        if(collectionType!=null) {
+            if (collectionType.startsWith("java.util.")) {
+                collectionType = collectionType.substring("java.util.".length());
+            }
+            switch(collectionType){
+                case "List":
+                case "ArrayList":
+                case "LinkedList":
+                case "Collection":
+                case "Set":
+                case "HashSet":
+                case "TreeSet":
+                case "SortedSet":
+                case "Map":
+                case "HashMap":
+                case "ConcurrentHashMap":
+                case "TreeMap":
+                case "SortedMap":
+                    PropertyValue newValue = propertySource.get(key);
+                    if(newValue!=null){
+                        Map<String,String> newMapValue = new HashMap<>(currentValue);
+                        String oldVal = newMapValue.get(key);
+                        if(oldVal!=null){
+                            newMapValue.put(key,oldVal + ',' + newValue.getValue());
+                        }
+                        return newMapValue;
+                    }else{
+                        return newValue.getConfigEntries();
+                    }
+                default:
+                    LOG.log(Level.SEVERE, "Unsupported collection-type for key: " + key + ": " + collectionType);
+            }
+        }
+        PropertyValue newValue = propertySource.get(key);
         if(newValue!=null){
-            return newValue;
+            return newValue.getConfigEntries();
         }
         return currentValue;
     }

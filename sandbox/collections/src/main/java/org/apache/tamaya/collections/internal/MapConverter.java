@@ -21,26 +21,16 @@ package org.apache.tamaya.collections.internal;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.TreeMap;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  *  PropertyConverter for gnerating HashMap representation of a values.
  */
-public class TreeMapConverter implements PropertyConverter<TreeMap<?,?>> {
-
-    /** The shared instance, used by other collection converters in this package.*/
-    private static TreeMapConverter INSTANCE = new TreeMapConverter();
-
-    /**
-     * Provide a shared instance, used by other collection converters in this package.
-     * @return the shared instance, never null.
-     */
-    static TreeMapConverter getInstance(){
-        return INSTANCE;
-    }
+public class MapConverter implements PropertyConverter<Map> {
 
     @Override
-    public TreeMap<?, ?> convert(String value, ConversionContext context) {
-        return null;
+    public Map convert(String value, ConversionContext context) {
+        return Collections.unmodifiableMap(HashMapConverter.getInstance().convert(value, context));
     }
 }
