@@ -45,7 +45,7 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 
 /**
- * Configuration resource with a etcd compatible REST API
+ * Configuration resource with an etcd compatible REST API
  * (excluding the blocking API calls).
  */
 @Path("/")
