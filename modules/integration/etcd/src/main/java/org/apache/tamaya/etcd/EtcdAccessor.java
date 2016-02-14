@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.etcd;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,38 +118,31 @@ public class EtcdAccessor {
      * @return the etcd server version, never null.
      */
     public String getVersion() {
-        CloseableHttpResponse response = null;
         String version = "<ERROR>";
         try {
             final CloseableHttpClient httpclient = HttpClients.createDefault();
             final HttpGet httpGet = new HttpGet(serverURL + "/version");
-            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT)
-                    .setSocketTimeout(socketTimeout).setConnectTimeout(timeout).build());
-            response = httpclient.execute(httpGet);
-            HttpEntity entity;
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                entity = response.getEntity();
-                // and ensure it is fully consumed
-                version = EntityUtils.toString(entity);
-                EntityUtils.consume(entity);
+            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
+                    .setConnectTimeout(timeout).build());
+            try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    final HttpEntity entity = response.getEntity();
+                    // and ensure it is fully consumed
+                    version = EntityUtils.toString(entity);
+                    EntityUtils.consume(entity);
+                }
             }
             return version;
         } catch (final Exception e) {
             LOG.log(Level.INFO, "Error getting etcd version from: " + serverURL, e);
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (final IOException e) {
-                    LOG.log(Level.WARNING, "Failed to close http response", e);
-                }
-            }
         }
         return version;
     }
 
     /**
-     * Ask etcd for a single key, value pair. Hereby the response returned from etcd:
+     * Ask etcd for a single key, value pair. Hereby the response returned from
+     * etcd:
+     * 
      * <pre>
      * {
      * "action": "get",
@@ -162,7 +154,9 @@ public class EtcdAccessor {
      * }
      * }
      * </pre>
+     * 
      * is mapped to:
+     * 
      * <pre>
      *     key=value
      *     _key.source=[etcd]http://127.0.0.1:4001
@@ -179,13 +173,13 @@ public class EtcdAccessor {
         final Map<String, String> result = new HashMap<>();
         try {
             final HttpGet httpGet = new HttpGet(serverURL + "/v2/keys/" + key);
-            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT)
-                    .setSocketTimeout(socketTimeout)
+            httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
             try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
                 if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     final HttpEntity entity = response.getEntity();
-                    final JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
+                    final JsonReader reader = readerFactory
+                            .createReader(new StringReader(EntityUtils.toString(entity)));
                     final JsonObject o = reader.readObject();
                     final JsonObject node = o.getJsonObject("node");
                     if (node.containsKey("value")) {
@@ -230,6 +224,7 @@ public class EtcdAccessor {
 
     /**
      * Creates/updates an entry in etcd. The response as follows:
+     * 
      * <pre>
      *     {
      * "action": "set",
@@ -247,7 +242,9 @@ public class EtcdAccessor {
      * }
      * }
      * </pre>
+     * 
      * is mapped to:
+     * 
      * <pre>
      *     key=value
      *     _key.source=[etcd]http://127.0.0.1:4001
@@ -268,7 +265,6 @@ public class EtcdAccessor {
      * @return the result map as described above.
      */
     public Map<String, String> set(String key, String value, Integer ttlSeconds) {
-        CloseableHttpResponse response = null;
         final Map<String, String> result = new HashMap<>();
         try {
             final HttpPut put = new HttpPut(serverURL + "/v2/keys/" + key);
@@ -280,63 +276,42 @@ public class EtcdAccessor {
                 nvps.add(new BasicNameValuePair("ttl", ttlSeconds.toString()));
             }
             put.setEntity(new UrlEncodedFormEntity(nvps));
-            response = httpclient.execute(put);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED ||
-                    response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                final HttpEntity entity = response.getEntity();
-                final JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
-                final JsonObject o = reader.readObject();
-                final JsonObject node = o.getJsonObject("node");
-                if (node.containsKey("createdIndex")) {
-                    result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
-                }
-                if (node.containsKey("modifiedIndex")) {
-                    result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
-                }
-                if (node.containsKey("expiration")) {
-                    result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
-                }
-                if (node.containsKey("ttl")) {
-                    result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
-                }
-                result.put(key, node.getString("value"));
-                result.put("_" + key + ".source", "[etcd]" + serverURL);
-                if (node.containsKey("prevNode")) {
-                    final JsonObject prevNode = node.getJsonObject("prevNode");
-                    if (prevNode.containsKey("createdIndex")) {
-                        result.put("_" + key + ".prevNode.createdIndex", String.valueOf(prevNode.getInt("createdIndex")));
+            try (CloseableHttpResponse response = httpclient.execute(put)) {
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
+                        || response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    final HttpEntity entity = response.getEntity();
+                    final JsonReader reader = readerFactory
+                            .createReader(new StringReader(EntityUtils.toString(entity)));
+                    final JsonObject o = reader.readObject();
+                    final JsonObject node = o.getJsonObject("node");
+                    if (node.containsKey("createdIndex")) {
+                        result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
                     }
-                    if (prevNode.containsKey("modifiedIndex")) {
-                        result.put("_" + key + ".prevNode.modifiedIndex", String.valueOf(prevNode.getInt("modifiedIndex")));
+                    if (node.containsKey("modifiedIndex")) {
+                        result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
                     }
-                    if (prevNode.containsKey("expiration")) {
-                        result.put("_" + key + ".prevNode.expiration", String.valueOf(prevNode.getString("expiration")));
+                    if (node.containsKey("expiration")) {
+                        result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
                     }
-                    if (prevNode.containsKey("ttl")) {
-                        result.put("_" + key + ".prevNode.ttl", String.valueOf(prevNode.getInt("ttl")));
+                    if (node.containsKey("ttl")) {
+                        result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
                     }
-                    result.put("_" + key + ".prevNode.value", prevNode.getString("value"));
+                    result.put(key, node.getString("value"));
+                    result.put("_" + key + ".source", "[etcd]" + serverURL);
+                    parsePrevNode(key, result, node);
+                    EntityUtils.consume(entity);
                 }
-                EntityUtils.consume(entity);
             }
         } catch (final Exception e) {
             LOG.log(Level.INFO, "Error writing to etcd: " + serverURL, e);
             result.put("_ERROR", "Error writing '" + key + "' to etcd: " + serverURL + ": " + e.toString());
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (final IOException e) {
-                    LOG.log(Level.WARNING, "Failed to close http response", e);
-                }
-            }
         }
         return result;
     }
 
-
     /**
      * Deletes a given key. The response is as follows:
+     * 
      * <pre>
      *     _key.source=[etcd]http://127.0.0.1:4001
      *     _key.createdIndex=12
@@ -355,61 +330,61 @@ public class EtcdAccessor {
      * @return the response mpas as described above.
      */
     public Map<String, String> delete(String key) {
-        CloseableHttpResponse response = null;
         final Map<String, String> result = new HashMap<>();
         try {
             final HttpDelete delete = new HttpDelete(serverURL + "/v2/keys/" + key);
             delete.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
-            response = httpclient.execute(delete);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                final HttpEntity entity = response.getEntity();
-                final JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
-                final JsonObject o = reader.readObject();
-                final JsonObject node = o.getJsonObject("node");
-                if (node.containsKey("createdIndex")) {
-                    result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
-                }
-                if (node.containsKey("modifiedIndex")) {
-                    result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
-                }
-                if (node.containsKey("expiration")) {
-                    result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
-                }
-                if (node.containsKey("ttl")) {
-                    result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
-                }
-                if (o.containsKey("prevNode")) {
-                    final JsonObject prevNode = o.getJsonObject("prevNode");
-                    if (prevNode.containsKey("createdIndex")) {
-                        result.put("_" + key + ".prevNode.createdIndex", String.valueOf(prevNode.getInt("createdIndex")));
+            try (CloseableHttpResponse response = httpclient.execute(delete)) {
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    final HttpEntity entity = response.getEntity();
+                    final JsonReader reader = readerFactory
+                            .createReader(new StringReader(EntityUtils.toString(entity)));
+                    final JsonObject o = reader.readObject();
+                    final JsonObject node = o.getJsonObject("node");
+                    if (node.containsKey("createdIndex")) {
+                        result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
                     }
-                    if (prevNode.containsKey("modifiedIndex")) {
-                        result.put("_" + key + ".prevNode.modifiedIndex", String.valueOf(prevNode.getInt("modifiedIndex")));
+                    if (node.containsKey("modifiedIndex")) {
+                        result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
                     }
-                    if (prevNode.containsKey("expiration")) {
-                        result.put("_" + key + ".prevNode.expiration", String.valueOf(prevNode.getString("expiration")));
+                    if (node.containsKey("expiration")) {
+                        result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
                     }
-                    if (prevNode.containsKey("ttl")) {
-                        result.put("_" + key + ".prevNode.ttl", String.valueOf(prevNode.getInt("ttl")));
+                    if (node.containsKey("ttl")) {
+                        result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
                     }
-                    result.put("_" + key + ".prevNode.value", prevNode.getString("value"));
+                    parsePrevNode(key, result, o);
+                    EntityUtils.consume(entity);
                 }
-                EntityUtils.consume(entity);
             }
         } catch (final Exception e) {
             LOG.log(Level.INFO, "Error deleting key '" + key + "' from etcd: " + serverURL, e);
             result.put("_ERROR", "Error deleting '" + key + "' from etcd: " + serverURL + ": " + e.toString());
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (final IOException e) {
-                    LOG.log(Level.WARNING, "Failed to close http response", e);
-                }
-            }
         }
         return result;
+    }
+
+    private static void parsePrevNode(String key, Map<String, String> result, JsonObject o) {
+        if (o.containsKey("prevNode")) {
+            final JsonObject prevNode = o.getJsonObject("prevNode");
+            if (prevNode.containsKey("createdIndex")) {
+                result.put("_" + key + ".prevNode.createdIndex",
+                        String.valueOf(prevNode.getInt("createdIndex")));
+            }
+            if (prevNode.containsKey("modifiedIndex")) {
+                result.put("_" + key + ".prevNode.modifiedIndex",
+                        String.valueOf(prevNode.getInt("modifiedIndex")));
+            }
+            if (prevNode.containsKey("expiration")) {
+                result.put("_" + key + ".prevNode.expiration",
+                        String.valueOf(prevNode.getString("expiration")));
+            }
+            if (prevNode.containsKey("ttl")) {
+                result.put("_" + key + ".prevNode.ttl", String.valueOf(prevNode.getInt("ttl")));
+            }
+            result.put("_" + key + ".prevNode.value", prevNode.getString("value"));
+        }
     }
 
     /**
@@ -424,8 +399,8 @@ public class EtcdAccessor {
     }
 
     /**
-     * Access all properties.
-     * The response of:
+     * Access all properties. The response of:
+     * 
      * <pre>
      * {
      * "action": "get",
@@ -449,7 +424,9 @@ public class EtcdAccessor {
      * }
      * }
      * </pre>
+     * 
      * is mapped to a regular Tamaya properties map as follows:
+     * 
      * <pre>
      *    key1=myvalue
      *     _key1.source=[etcd]http://127.0.0.1:4001
@@ -473,35 +450,28 @@ public class EtcdAccessor {
      * @return all properties read from the remote server.
      */
     public Map<String, String> getProperties(String directory, boolean recursive) {
-        CloseableHttpResponse response = null;
         final Map<String, String> result = new HashMap<>();
         try {
             final HttpGet get = new HttpGet(serverURL + "/v2/keys/" + directory + "?recursive=" + recursive);
-            get.setConfig(RequestConfig.copy(RequestConfig.DEFAULT)
-                    .setSocketTimeout(socketTimeout)
+            get.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
-            response = httpclient.execute(get);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                final HttpEntity entity = response.getEntity();
-                final JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
-                final JsonObject o = reader.readObject();
-                final JsonObject node = o.getJsonObject("node");
-                if (node != null) {
-                    addNodes(result, node);
+            try (CloseableHttpResponse response = httpclient.execute(get)) {
+
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    final HttpEntity entity = response.getEntity();
+                    final JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
+                    final JsonObject o = reader.readObject();
+                    final JsonObject node = o.getJsonObject("node");
+                    if (node != null) {
+                        addNodes(result, node);
+                    }
+                    EntityUtils.consume(entity);
                 }
-                EntityUtils.consume(entity);
             }
         } catch (final Exception e) {
             LOG.log(Level.INFO, "Error reading properties for '" + directory + "' from etcd: " + serverURL, e);
-            result.put("_ERROR", "Error reading properties for '" + directory + "' from etcd: " + serverURL + ": " + e.toString());
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (final IOException e) {
-                    LOG.log(Level.WARNING, "Failed to close http response", e);
-                }
-            }
+            result.put("_ERROR",
+                    "Error reading properties for '" + directory + "' from etcd: " + serverURL + ": " + e.toString());
         }
         return result;
     }
