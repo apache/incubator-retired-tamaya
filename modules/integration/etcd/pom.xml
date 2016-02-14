@@ -30,10 +30,6 @@ under the License.
     <name>Apache Tamaya Integration - etcd</name>
     <packaging>bundle</packaging>
 
-    <properties>
-        <camel.version>2.16.0</camel.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -55,7 +51,7 @@ under the License.
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.tamaya.integration.camel
+                            org.apache.tamaya.etcd
                         </Export-Package>
                     </instructions>
                 </configuration>
@@ -92,7 +88,7 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <artifactId>httpclient-osgi</artifactId>
             <version>4.5.1</version>
         </dependency>
         <dependency>
