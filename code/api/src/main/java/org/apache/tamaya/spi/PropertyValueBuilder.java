@@ -34,9 +34,11 @@ public class PropertyValueBuilder {
     Map<String,String> contextData = new HashMap<>();
 
     /**
-     * Create a new builder instance, for a given
+     * Create a new builder instance, for a given set of parameters.
+     * @param key to access a property value.
      * @param value the value, not null. If a value is null {@link PropertySource#get(String)} should return
      * {@code null}.
+     * @param source property source.
      */
     public PropertyValueBuilder(String key, String value, String source) {
         this.key = Objects.requireNonNull(key);

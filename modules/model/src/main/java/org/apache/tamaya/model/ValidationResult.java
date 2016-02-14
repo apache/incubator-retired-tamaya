@@ -46,6 +46,7 @@ public final class ValidationResult {
      * Creates a new ValidationResult.
      *
      * @param configModel the configModel item, not null.
+     * @return a new validation result containing valid parts of the given model.
      */
     public static ValidationResult ofValid(ConfigModel configModel) {
         return new ValidationResult(configModel, ValidationState.VALID, null);
@@ -55,17 +56,18 @@ public final class ValidationResult {
      * Creates a new ValidationResult.
      *
      * @param configModel the configModel item, not null.
+     * @return a new validation result containing missing parts of the given model.
      */
     public static ValidationResult ofMissing(ConfigModel configModel) {
         return new ValidationResult(configModel, ValidationState.MISSING, null);
     }
 
-
     /**
      * Creates a new ValidationResult.
      *
      * @param configModel the configModel item, not null.
-     *                   @param message Additional message to be shown (optional).
+     * @param message Additional message to be shown (optional).
+     * @return a new validation result containing missing parts of the given model with a message.
      */
     public static ValidationResult ofMissing(ConfigModel configModel, String message) {
         return new ValidationResult(configModel, ValidationState.MISSING, message);
@@ -75,6 +77,8 @@ public final class ValidationResult {
      * Creates a new ValidationResult.
      *
      * @param configModel the configModel item, not null.
+     * @param error error message to add.
+     * @return a new validation result containing erroneous parts of the given model with the given error message.
      */
     public static ValidationResult ofError(ConfigModel configModel, String error) {
         return new ValidationResult(configModel, ValidationState.ERROR, error);
@@ -84,6 +88,8 @@ public final class ValidationResult {
      * Creates a new ValidationResult.
      *
      * @param configModel the configModel item, not null.
+     * @param warning warning message to add.
+     * @return a new validation result containing warning parts of the given model with the given warning message.
      */
     public static ValidationResult ofWarning(ConfigModel configModel, String warning) {
         return new ValidationResult(configModel, ValidationState.WARNING, warning);
@@ -93,15 +99,18 @@ public final class ValidationResult {
      * Creates a new ValidationResult.
      *
      * @param configModel the configModel item, not null.
+     * @param alternativeUsage allows setting a message to indicate non-deprecated replacement, maybe null.
+     * @return a new validation result containing deprecated parts of the given model with an optional message.
      */
-    public static ValidationResult ofDeprecated(ConfigModel configModel, String alternateUsage) {
-        return new ValidationResult(configModel, ValidationState.DEPRECATED, alternateUsage != null ? "Use instead: " + alternateUsage : null);
+    public static ValidationResult ofDeprecated(ConfigModel configModel, String alternativeUsage) {
+        return new ValidationResult(configModel, ValidationState.DEPRECATED, alternativeUsage != null ? "Use instead: " + alternativeUsage : null);
     }
 
     /**
      * Creates a new ValidationResult.
      *
      * @param configModel the configModel item, not null.
+     * @return a new validation result containing deprecated parts of the given model.
      */
     public static ValidationResult ofDeprecated(ConfigModel configModel) {
         return new ValidationResult(configModel, ValidationState.DEPRECATED, null);
@@ -110,10 +119,12 @@ public final class ValidationResult {
     /**
      * Creates a new ValidationResult.
      *
-     * @param key the name/key
+     * @param key the name/model key
+     * @param type model type 
+     * @param provider model provider name
      * @return a corresponding configModel item
      */
-    public static ValidationResult ofUndefined(final String key, final ModelType type, String provider) {
+    public static ValidationResult ofUndefined(final String key, final ModelType type, final String provider) {
         return new ValidationResult(new AbstractModel(key, false, "Undefined key: " + key, provider) {
 
             @Override
@@ -135,6 +146,7 @@ public final class ValidationResult {
      * @param configModel the configModel item, not null.
      * @param result     the configModel result, not null.
      * @param message    the detail message.
+     * @return new validation result.
      */
     public static ValidationResult of(ConfigModel configModel, ValidationState result, String message) {
         return new ValidationResult(configModel, result, message);

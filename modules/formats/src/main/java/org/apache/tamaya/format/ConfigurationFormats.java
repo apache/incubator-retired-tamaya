@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.spi.ServiceContextManager;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -32,6 +30,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Small accessor and management class dealing with {@link org.apache.tamaya.format.ConfigurationFormat}
@@ -65,9 +65,9 @@ public final class ConfigurationFormats {
      * @return the currently available formats, never null.
      */
     public static List<ConfigurationFormat> getFormats(String... formatNames) {
-        List<ConfigurationFormat> result = new ArrayList<>();
-        Set<String> names = new HashSet<>(Arrays.asList(formatNames));
-        for (ConfigurationFormat f : getFormats()) {
+        final List<ConfigurationFormat> result = new ArrayList<>();
+        final Set<String> names = new HashSet<>(Arrays.asList(formatNames));
+        for (final ConfigurationFormat f : getFormats()) {
             if (names.contains(f.getName())) {
                 result.add(f);
             }
@@ -94,13 +94,13 @@ public final class ConfigurationFormats {
     /**
      * Get all currently available formats, ordered by priority.
      *
-     * @param url source to read configuration from. 
+     * @param url source to read configuration from.
      * @return the currently available formats, never null.
      */
     public static List<ConfigurationFormat> getFormats(final URL url) {
-        List<ConfigurationFormat> formats = getFormats();
-        List<ConfigurationFormat> result = new ArrayList<>();
-        for (ConfigurationFormat f : formats) {
+        final List<ConfigurationFormat> formats = getFormats();
+        final List<ConfigurationFormat> result = new ArrayList<>();
+        for (final ConfigurationFormat f : formats) {
             if (f.accepts(url)) {
                 result.add(f);
             }
@@ -117,7 +117,7 @@ public final class ConfigurationFormats {
      * @throws IOException if the resource cannot be read.
      */
     public static ConfigurationData readConfigurationData(final URL url) throws IOException {
-        List<ConfigurationFormat> formats = getFormats(url);
+        final List<ConfigurationFormat> formats = getFormats(url);
         return readConfigurationData(url, formats.toArray(new ConfigurationFormat[formats.size()]));
     }
 
@@ -134,21 +134,20 @@ public final class ConfigurationFormats {
     }
 
     /**
-     *
-     * @param urls the urls from where to read, not null.
+     * @param urls    the urls from where to read, not null.
      * @param formats the formats to try.
      * @return the {@link org.apache.tamaya.format.ConfigurationData} of the files successfully decoded by the
      * given formats.
      */
     public static Collection<ConfigurationData> getPropertySources(Collection<URL> urls, ConfigurationFormat... formats) {
-        List<ConfigurationData> dataRead = new ArrayList<>();
-        for (URL url : urls) {
+        final List<ConfigurationData> dataRead = new ArrayList<>();
+        for (final URL url : urls) {
             try {
-                ConfigurationData data = readConfigurationData(url, formats);
+                final ConfigurationData data = readConfigurationData(url, formats);
                 if (data != null) {
                     dataRead.add(data);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOG.log(Level.SEVERE, "Error reading file: " + url.toExternalForm(), e);
             }
         }
@@ -158,7 +157,7 @@ public final class ConfigurationFormats {
     /**
      * Tries to read configuration data from a given URL, hereby explicitly trying all given formats in order.
      *
-     * @param resource    a descriptive name for the resource, since an InputStream does not have any)
+     * @param resource    a descriptive name for the resource, since an InputStream does not have any
      * @param inputStream the inputStream from where to read, not null.
      * @param formats     the formats to try.
      * @return the ConfigurationData read, or null.
@@ -168,16 +167,17 @@ public final class ConfigurationFormats {
                                                           ConfigurationFormat... formats) throws IOException {
         Objects.requireNonNull(inputStream);
         Objects.requireNonNull(resource);
-        InputStreamFactory isFactory = new InputStreamFactory(inputStream);
-        for (ConfigurationFormat format : formats) {
-            try (InputStream is = isFactory.createInputStream()) {
-                ConfigurationData data = format.readConfiguration(resource, is);
-                if (data != null) {
-                    return data;
+        try (InputStreamFactory isFactory = new InputStreamFactory(inputStream)) {
+            for (final ConfigurationFormat format : formats) {
+                try (InputStream is = isFactory.createInputStream()) {
+                    final ConfigurationData data = format.readConfiguration(resource, is);
+                    if (data != null) {
+                        return data;
+                    }
+                } catch (final Exception e) {
+                    LOG.log(Level.INFO,
+                            "Format " + format.getClass().getName() + " failed to read resource " + resource, e);
                 }
-            } catch (Exception e) {
-                LOG.log(Level.INFO,
-                        "Format " + format.getClass().getName() + " failed to read resource " + resource, e);
             }
         }
         return null;

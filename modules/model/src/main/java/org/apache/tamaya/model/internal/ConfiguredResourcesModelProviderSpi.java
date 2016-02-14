@@ -18,14 +18,6 @@
  */
 package org.apache.tamaya.model.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.ConfigurationFormats;
-import org.apache.tamaya.model.ConfigModel;
-import org.apache.tamaya.model.spi.ConfigModelReader;
-import org.apache.tamaya.model.spi.ModelProviderSpi;
-import org.apache.tamaya.resource.ConfigResources;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -37,46 +29,76 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.format.ConfigurationData;
+import org.apache.tamaya.format.ConfigurationFormats;
+import org.apache.tamaya.model.ConfigModel;
+import org.apache.tamaya.model.spi.ConfigModelReader;
+import org.apache.tamaya.model.spi.ModelProviderSpi;
+import org.apache.tamaya.resource.ConfigResources;
+
 /**
  * ConfigModel provider that reads model metadata from property files from
  * {@code classpath*:META-INF/configmodel.json} in the following format:
  * <pre>
+ *  Example of a configuration metamodel expressed via YAML.
+ *  Structure is shown through indentation (one or more spaces).
+ *  Sequence items are denoted by a dash,
+ *  key value pairs within a map are separated by a colon.
  * </pre>
  */
 public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
 
-    /** The logger. */
+    /**
+     * The logger.
+     */
     private static final Logger LOG = Logger.getLogger(ConfiguredResourcesModelProviderSpi.class.getName());
-    /** The parameter that can be used to configure the location of the configuration model resources. */
+    /**
+     * The parameter that can be used to configure the location of the configuration model resources.
+     */
     private static final String MODEL_RESOURCE_PARAM = "org.apache.tamaya.model.resources";
-    /** The resource class to checked for testing the availability of the resources extension module. */
+    /**
+     * The resource class to checked for testing the availability of the resources extension module.
+     */
     private static final String CONFIG_RESOURCE_CLASS = "org.apache.tamaya.resource.ConfigResource";
-    /** The resource class to checked for testing the availability of the formats extension module. */
+    /**
+     * The resource class to checked for testing the availability of the formats extension module.
+     */
     private static final String CONFIGURATION_FORMATS_CLASS = "org.apache.tamaya.format.ConfigurationFormats";
-    /** Initializes the flag showing if the formats module is present (required). */
+    /**
+     * Initializes the flag showing if the formats module is present (required).
+     */
     private static final boolean AVAILABLE = checkAvailabilityFormats();
-    /** Initializes the flag showing if the resources module is present (optional). */
+    /**
+     * Initializes the flag showing if the resources module is present (optional).
+     */
     private static final boolean RESOURCES_EXTENSION_AVAILABLE = checkAvailabilityResources();
 
-    /** The configModels read. */
+    /**
+     * The configModels read.
+     */
     private List<ConfigModel> configModels = new ArrayList<>();
 
-    /** Initializes the flag showing if the formats module is present (required). */
+    /**
+     * Initializes the flag showing if the formats module is present (required).
+     */
     private static boolean checkAvailabilityFormats() {
         try {
             Class.forName(CONFIGURATION_FORMATS_CLASS);
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }
 
-    /** Initializes the flag showing if the resources module is present (optional). */
+    /**
+     * Initializes the flag showing if the resources module is present (optional).
+     */
     private static boolean checkAvailabilityResources() {
         try {
             Class.forName(CONFIG_RESOURCE_CLASS);
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }
@@ -88,39 +110,39 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
         if (!AVAILABLE) {
             LOG.info("tamaya-format extension is required to read model configuration, No extended model support AVAILABLE.");
         } else {
-            String resources = ConfigurationProvider.getConfiguration().get(MODEL_RESOURCE_PARAM);
-            if(resources==null || resources.trim().isEmpty()){
+            final String resources = ConfigurationProvider.getConfiguration().get(MODEL_RESOURCE_PARAM);
+            if (resources == null || resources.trim().isEmpty()) {
                 LOG.info("Mo model resources location configured in " + MODEL_RESOURCE_PARAM + ".");
                 return;
             }
             Collection<URL> urls;
-            if(RESOURCES_EXTENSION_AVAILABLE){
+            if (RESOURCES_EXTENSION_AVAILABLE) {
                 LOG.info("Using tamaya-resources extension to read model configuration from " + resources);
                 urls = ConfigResources.getResourceResolver().getResources(resources.split(","));
-            } else{
+            } else {
                 LOG.info("Using default classloader resource location to read model configuration from " + resources);
                 urls = new ArrayList<>();
-                for(String resource:resources.split(",")){
-                    if(!resource.trim().isEmpty()){
+                for (final String resource : resources.split(",")) {
+                    if (!resource.trim().isEmpty()) {
                         Enumeration<URL> configs;
                         try {
                             configs = getClass().getClassLoader().getResources(resource);
                             while (configs.hasMoreElements()) {
                                 urls.add(configs.nextElement());
                             }
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                    "Error evaluating config model locations from "+resource, e);
+                                    "Error evaluating config model locations from " + resource, e);
                         }
                     }
                 }
             }
             // Reading configs
-            for(URL config:urls){
+            for (final URL config : urls) {
                 try (InputStream is = config.openStream()) {
-                    ConfigurationData data = ConfigurationFormats.readConfigurationData(config);
+                    final ConfigurationData data = ConfigurationFormats.readConfigurationData(config);
                     configModels.addAll(ConfigModelReader.loadValidations(data.getCombinedProperties(), config.toString()));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE,
                             "Error loading config model data from " + config, e);
                 }
@@ -130,6 +152,7 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
     }
 
 
+    @Override
     public Collection<ConfigModel> getConfigModels() {
         return configModels;
     }

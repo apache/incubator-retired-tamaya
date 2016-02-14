@@ -101,7 +101,6 @@ public final class ConfigurationFunctions {
         }
     };
 
-
     /**
      * Private singleton constructor.
      */
@@ -139,7 +138,6 @@ public final class ConfigurationFunctions {
             }
         };
     }
-
 
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
@@ -311,7 +309,6 @@ public final class ConfigurationFunctions {
         };
     }
 
-
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given section (recursive).
@@ -340,6 +337,7 @@ public final class ConfigurationFunctions {
      * Creates a {@link PropertySource}, based on the given {@link Configuration}. The keys and propertx map
      * are dynamically calculated, so the returned PropertySource is a real dynamic wrapper.
      * @param name the name of the property source, not null.
+     * @param ordinal ordinal of the property source.
      * @param config the config to be mapped, not null.
      * @return a property source wrapping the configuration.
      */
@@ -459,7 +457,7 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Creates a ConfigQuery that creates a plain text formatted ouitput of all properties in the given configuration.
+     * Creates a ConfigQuery that creates a plain text formatted output of all properties in the given configuration.
      *
      * @return the given query.
      */
@@ -468,8 +466,8 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Creates a ConfigQuery that creates a plain text formatted ouitput of all properties in the given configuration.
-     *
+     * Creates a ConfigQuery that creates a plain text formatted output of all properties in the given configuration.
+     * @param info configuration values to use for filtering.
      * @return the given query.
      */
     public static ConfigQuery<String> textInfo(final Map<String, String> info) {
@@ -540,7 +538,7 @@ public final class ConfigurationFunctions {
 
     /**
      * Creates a ConfigQuery that creates a html formatted ouitput of all properties in the given configuration.
-     *
+     * @param info configuration values to use for filtering.
      * @return the given query.
      */
     public static ConfigQuery<String> htmlInfo(final Map<String, String> info) {

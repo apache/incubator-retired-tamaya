@@ -27,7 +27,7 @@ import java.util.Map;
  * properties may be read fromMap single or several sources (composite).
  * PropertySources are the building blocks of the final configuration. </p>
  * <h3>Implementation Requirements</h3>
- * <p>Implementations current this interface must be</p>
+ * <p>Implementations of this interface must be</p>
  * <ul>
  * <li>Thread safe.</li>
  * </ul>
@@ -106,7 +106,7 @@ public interface PropertySource {
     Map<String,String> getProperties();
 
     /**
-     * Determines if this config source could be scanned for its list of properties.
+     * Determines if this config source can be scanned for its list of properties.
      *
      * <p>
      * PropertySources which are not scannable might not be able to find all the
@@ -114,7 +114,7 @@ public interface PropertySource {
      * if the underlying storage doesn't support listing.
      * </p>
      *
-     * @return {@code true} if this PropertySource could be scanned for its list of properties,
+     * @return {@code true} if this PropertySource can be scanned for its list of properties,
      *         {@code false} if it should not be scanned.
      */
     boolean isScannable();

@@ -27,6 +27,7 @@ public interface ConfigDocumentationMBean {
     /**
      * Validates the configuration for the given context.
      *
+     * @param showUndefined allows filtering for undefined configuration elements.
      * @return the validation results, never null.
      */
     String validate(boolean showUndefined);

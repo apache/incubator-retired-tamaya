@@ -80,9 +80,9 @@
       "class": "Section",
       "param0": {
         "type": "String",
-        "description": "a minmally documented String parameter"
+        "description": "a minimally documented String parameter"
       },
-      // A minmally defined String parameter
+      // A minimally defined String parameter
       "param00": {},
       "param1": {
         "type": "String",

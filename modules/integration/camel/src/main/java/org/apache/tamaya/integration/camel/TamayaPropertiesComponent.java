@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.integration.camel;
 
+import java.util.Properties;
+
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.tamaya.ConfigurationProvider;
-
-import java.util.Properties;
 
 /**
  * Default Camel PropertiesComponent that additionally has cfg and tamaya prefixes configured for resolution of
@@ -40,7 +40,8 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
     }
 
     /**
-     * Constructor similar to parent.
+     * Constructor similar to parent with additional locations.
+     * @param locations additional locations for Camel.  
      */
     public TamayaPropertiesComponent(String ... locations){
         super(locations);
@@ -50,7 +51,8 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
     }
 
     /**
-     * Constructor similar to parent.
+     * Constructor similar to parent with only one location.
+     * @param location addition location for Camel.
      */
     public TamayaPropertiesComponent(String location){
         super(location);
@@ -66,7 +68,7 @@ public class TamayaPropertiesComponent extends PropertiesComponent{
      */
     public void setTamayaOverrides(boolean enabled){
         if(enabled){
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.putAll(ConfigurationProvider.getConfiguration().getProperties());
             setOverrideProperties(props);
         } else{

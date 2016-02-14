@@ -85,8 +85,11 @@ public final class ConfigModelManager {
     }
 
     /**
-     * Find the validations by checking the validation's name using the given regular expression.
+     * Find the validations by matching the validation's name against the given model type.
+     * 
      * @param name the name to use, not null.
+     * @param modelType classname of the target model type.  
+     * @param <T> type of the model to filter for.
      * @return the sections defined, never null.
      */
     public static <T extends ConfigModel> T getModel(String name, Class<T> modelType) {
@@ -149,6 +152,7 @@ public final class ConfigModelManager {
      * Validates the given configuration.
      *
      * @param config the configuration to be validated against, not null.
+     * @param showUndefined allows filtering for undefined configuration elements.
      * @return the validation results, never null.
      */
     public static Collection<ValidationResult> validate(Configuration config, boolean showUndefined) {
@@ -215,6 +219,8 @@ public final class ConfigModelManager {
     /**
      * Registers the {@link ConfigDocumentationMBean} mbean for accessing config documentation into the local platform
      * mbean server.
+     * 
+     * @param context allows to specify an additional MBean context, maybe {@code null}. 
      */
     public static void registerMBean(String context) {
         try{

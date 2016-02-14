@@ -19,12 +19,12 @@
 package org.apache.tamaya.optional;
 
 
-import org.apache.tamaya.ConfigurationProvider;
-
 import java.util.Objects;
 
+import org.apache.tamaya.ConfigurationProvider;
+
 /**
- * Simplified configuration API, that can be used by code that only want Tamaya to optionally enhance its configuration
+ * Simplified configuration API, that can be used by code that only wants Tamaya to optionally enhance its configuration
  * mechanism, but by default uses its own configuration by default.
  */
 public final class OptionalConfiguration {
@@ -48,7 +48,7 @@ public final class OptionalConfiguration {
         try {
             Class.forName(TAMAYA_CONFIGURATION);
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }
@@ -58,6 +58,7 @@ public final class OptionalConfiguration {
      * In all other cases {@code null} is returned.
      */
     public static final ValueProvider DEFAULT_PROVIDER = new ValueProvider() {
+        @SuppressWarnings("unchecked")
         @Override
         public <T> T get(String key, Class<T> type) {
             if (String.class == type) {
@@ -93,7 +94,8 @@ public final class OptionalConfiguration {
 
     /**
      * Creates a new instance.
-     * @param policy the policy how a value should be evaluated depending ig Tamaya is availalbe or not.
+     *
+     * @param policy   the policy how a value should be evaluated depending if Tamaya is available or not.
      * @param provider the non Tamaya-based provider to be used to evaluate values.
      */
     private OptionalConfiguration(EvaluationPolicy policy, ValueProvider provider) {
@@ -104,6 +106,8 @@ public final class OptionalConfiguration {
     /**
      * Returns an instance of OptionalConfiguration, which uses the given provider and policy for evaluating the values.
      *
+     * @param policy   the policy how a value should be evaluated depending if Tamaya is available or not.
+     * @param provider the non Tamaya-based provider to be used to evaluate values.
      * @return a default OptionalConfiguration instance, never null.
      */
     public static OptionalConfiguration of(EvaluationPolicy policy, ValueProvider provider) {
@@ -114,6 +118,7 @@ public final class OptionalConfiguration {
      * Returns a default instance, which uses a default provider returning values from system properties and environment
      * only.
      *
+     * @param policy the policy how a value should be evaluated depending if Tamaya is available or not.
      * @return a default OptionalConfiguration instance, never null.
      */
     public static OptionalConfiguration of(EvaluationPolicy policy) {
@@ -133,13 +138,13 @@ public final class OptionalConfiguration {
     /**
      * Access a String value.
      *
-     * @param key the key, not null.
+     * @param key          the key, not null.
      * @param defaultValue the default value, returned if no such key is found in the configuration.
      * @return the value found, or null.
      */
     public String getOrDefault(String key, String defaultValue) {
-        String value = get(key, String.class);
-        if(value==null){
+        final String value = get(key, String.class);
+        if (value == null) {
             return defaultValue;
         }
         return value;
@@ -155,8 +160,8 @@ public final class OptionalConfiguration {
      * @return the value, or null.
      */
     public <T> T get(String key, Class<T> type) {
-        T value = provider.get(key, type);
-        T tamayaValue = getTamaya(key, type);
+        final T value = provider.get(key, type);
+        final T tamayaValue = getTamaya(key, type);
         switch (policy) {
             case OTHER_OVERRIDES_TAMAYA:
                 return value != null ? value : tamayaValue;
@@ -178,15 +183,15 @@ public final class OptionalConfiguration {
     /**
      * Access a String value.
      *
-     * @param key the key, not null.
-     * @param type the target type, not null.
-     * @param <T>  the type param.
+     * @param key          the key, not null.
+     * @param type         the target type, not null.
+     * @param <T>          the type param.
      * @param defaultValue the default value, returned if no such key is found in the configuration.
      * @return the value found, or null.
      */
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-        T value = get(key, type);
-        if(value==null){
+        final T value = get(key, type);
+        if (value == null) {
             return defaultValue;
         }
         return value;
@@ -194,13 +199,14 @@ public final class OptionalConfiguration {
 
     /**
      * Internal method that evaluates a value from Tamaya, when Tamaya is loaded.
-     * @param key the key, not null.
+     *
+     * @param key  the key, not null.
      * @param type the target type, not null.
-     * @param <T> The type param
+     * @param <T>  The type param
      * @return the corresponding value from Tamaya, or null.
      */
     private <T> T getTamaya(String key, Class<T> type) {
-        if(TAMAYA_LOADED){
+        if (TAMAYA_LOADED) {
             return ConfigurationProvider.getConfiguration().get(key, type);
         }
         return null;

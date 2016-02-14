@@ -32,7 +32,7 @@ import java.util.Objects;
 public final class PropertyValue {
     /** The requested key. */
     private String key;
-    /** Additional metadata provided by thhe provider. */
+    /** Additional metadata provided by the provider. */
     private Map<String,String> configEntries = new HashMap<>();
 
     PropertyValue(PropertyValueBuilder builder){
@@ -64,7 +64,7 @@ public final class PropertyValue {
     }
 
     /**
-     * THe value.
+     * The value.
      * @return the value, in case a value is null it is valid to return {#code null} as result for
      * {@link PropertySource#get(String)}.
      */

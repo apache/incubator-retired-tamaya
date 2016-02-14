@@ -23,13 +23,12 @@ import org.apache.tamaya.Configuration;
 import java.util.Collection;
 
 /**
- * Basis structure describing a validated item, by default a parameter or a section.
+ * Base structure describing a validated item, by default a parameter or a section.
  */
 public interface ConfigModel {
 
-
     /**
-     * Get the type of item that is modelled..
+     * Get the type of item that is modelled.
      * @return the modelled type, never null.
      */
     ModelType getType();
@@ -43,11 +42,12 @@ public interface ConfigModel {
      *     Dependency: mydepClassname
      *     CombinationPolicy: a.b.c.MyCombinationPolicyClass
      * </pre>
+     * @return the item's name.
      */
     String getName();
 
     /**
-     * CHeck if this validation is a required one.
+     * Check if this validation is a required one.
      * @return true, if this validation is required.
      */
     boolean isRequired();

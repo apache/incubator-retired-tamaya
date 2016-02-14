@@ -78,7 +78,7 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Calculates the current section key and compares it with the given key.
+     * Calculates the current section key and compares it to the given key.
      *
      * @param key        the fully qualified entry key, not null
      * @param sectionKey the section key, not null
@@ -91,7 +91,7 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Calculates the current section key and compares it with the given section keys.
+     * Calculates the current section key and compares it to the given section keys.
      *
      * @param key         the fully qualified entry key, not null
      * @param sectionKeys the section keys, not null
@@ -107,11 +107,12 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualifies section names. This method should return the sections as accurate as possible,
+     * Return a query to evaluate the set with all fully qualified section names. This method should return the sections as accurate as possible,
      * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @return s set with all sections, never {@code null}.
+     * @param properties properties to find sections in.
+     * @return set with all sections, never {@code null}.
      */
     public static Set<String> sections(Map<String, String> properties) {
         final Set<String> areas = new HashSet<>();
@@ -131,7 +132,8 @@ public final class PropertySourceFunctions {
      * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate
      * as possible, but may not provide a complete set of sections that are finally accessible, especially when the
      * underlying storage does not support key iteration.
-     *
+     * 
+     * @param properties properties to find transitive sections in.
      * @return s set with all transitive sections, never {@code null}.
      */
     public static Set<String> transitiveSections(Map<String, String> properties) {
@@ -156,8 +158,9 @@ public final class PropertySourceFunctions {
      * sections that match the predicate and have properties attached. This method should return the sections as accurate as possible,
      * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
-     *
-     * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
+     * 
+     * @param properties properties to find sections in.
+     * @param predicate A predicate to determine, which sections should be returned, not {@code null}.
      * @return s set with all sections, never {@code null}.
      */
     public static Set<String> sections(Map<String, String> properties, final Predicate<String> predicate) {
@@ -176,7 +179,8 @@ public final class PropertySourceFunctions {
      * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
-     * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
+     * @param properties properties to find transitive sections in.
+     * @param predicate A predicate to determine, which sections should be returned, not {@code null}.
      * @return s set with all transitive sections, never {@code null}.
      */
     public static Set<String> transitiveSections(Map<String, String> properties, Predicate<String> predicate) {
@@ -193,8 +197,9 @@ public final class PropertySourceFunctions {
     /**
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given section (recursive). Hereby
-     * the section key is stripped away fromMap the resulting key.
+     * the section key is stripped away from the Map of the resulting keys.
      *
+     * @param properties properties to find recursive sections in.
      * @param sectionKeys the section keys, not null
      * @return the section configuration, with the areaKey stripped away.
      */
@@ -206,6 +211,7 @@ public final class PropertySourceFunctions {
      * Creates a ConfigOperator that creates a Configuration containing only keys
      * that are contained in the given section (recursive).
      *
+     * @param properties properties to find sections in.
      * @param sectionKeys the section keys, not null
      * @param stripKeys   if set to true, the section key is stripped away fromMap the resulting key.
      * @return the section configuration, with the areaKey stripped away.
@@ -247,6 +253,7 @@ public final class PropertySourceFunctions {
     /**
      * Creates a ConfigOperator that adds the given items.
      *
+     * @param propertySource source property source that is changed.
      * @param items    the items to be added/replaced.
      * @param override if true, all items existing are overridden by the new ones passed.
      * @return the ConfigOperator, never null.
@@ -258,6 +265,7 @@ public final class PropertySourceFunctions {
     /**
      * Creates an operator that adds items to the instance.
      *
+     * @param propertySource source property source that is changed.
      * @param items the items, not null.
      * @return the operator, never null.
      */
@@ -268,6 +276,7 @@ public final class PropertySourceFunctions {
     /**
      * Creates an operator that replaces the given items.
      *
+     * @param propertySource source property source that is changed.
      * @param items the items.
      * @return the operator for replacing the items.
      */
@@ -305,6 +314,8 @@ public final class PropertySourceFunctions {
      * Get a list of all {@link PropertySource} instances managed by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
      *
+     * @param <T> the type of the property source instances requested 
+     * @param type target type to filter for property sources. 
      * @return the list of all {@link PropertySource} instances matching, never null.
      */
     public static <T> Collection<T> getPropertySources(Class<T> type) {
@@ -321,6 +332,8 @@ public final class PropertySourceFunctions {
      * Get a list of all {@link PropertySource} instances managed by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
      *
+     * @param <T> the type of the property source instances requested
+     * @param type target type to filter for property sources. 
      * @return the list of all {@link PropertySource} instances matching, never null.
      */
     public static <T> T getPropertySource(Class<T> type) {

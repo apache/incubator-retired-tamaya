@@ -21,7 +21,7 @@ package org.apache.tamaya.server.spi;
 import org.apache.tamaya.ConfigOperator;
 
 /**
- * Simple registratable provider class to register scopes for the server extension.
+ * Simple registrable provider class to register scopes for the server extension.
  */
 public interface ScopeProvider {
 
@@ -33,6 +33,7 @@ public interface ScopeProvider {
 
     /**
      * Return the scope operator that implements the scope for the given scope id.
+     * @param scopeId target scope id.
      * @return the scope operator, never null.
      */
     ConfigOperator getScope(String scopeId);

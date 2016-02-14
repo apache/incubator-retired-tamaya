@@ -18,18 +18,18 @@
  */
 package org.apache.tamaya.server.spi;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.spi.ServiceContextManager;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.spi.ServiceContextManager;
+
 /**
- * Singleton manager for scopes, used by the server component to filtering returned config.
+ * Singleton manager for scopes, used by the server component to filtering returned configurations.
  */
 public final class ScopeManager {
     /** The logger used. */
@@ -41,11 +41,11 @@ public final class ScopeManager {
      * Singleton constructor.
      */
     private static Map<String, ScopeProvider> initProviders(){
-        Map<String, ScopeProvider> result = new ConcurrentHashMap<>();
-        for(ScopeProvider prov: ServiceContextManager.getServiceContext().getServices(ScopeProvider.class)){
+        final Map<String, ScopeProvider> result = new ConcurrentHashMap<>();
+        for(final ScopeProvider prov: ServiceContextManager.getServiceContext().getServices(ScopeProvider.class)){
             try{
                 result.put(prov.getScopeType(), prov);
-            } catch(Exception e){
+            } catch(final Exception e){
                 LOG.log(Level.WARNING, "Error loading scopes from " + prov, e);
             }
         }
@@ -58,19 +58,20 @@ public final class ScopeManager {
     private ScopeManager(){}
 
     /**
-     * Get the scope given its name.
+     * Get the scope given its id and provider.
      *
-     * @throws ConfigException if no such scope is defined
      * @param scopeId the scope name
+     * @param targetScope name of the targetScope
      * @return the scope matching
+     * @throws ConfigException if no such scope is defined
      */
-    public static ConfigOperator getScope(String scopeId, String target)
+    public static ConfigOperator getScope(String scopeId, String targetScope)
          throws ConfigException {
-        ScopeProvider  prov = scopeProviders.get(scopeId);
+        final ScopeProvider  prov = scopeProviders.get(scopeId);
         if(prov==null){
             throw new ConfigException("No such scope: " + scopeId);
         }
-        return prov.getScope(target);
+        return prov.getScope(targetScope);
     }
 
     /**

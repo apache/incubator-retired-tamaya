@@ -65,6 +65,7 @@ public class ConfigurationExtension implements Extension {
     /**
      * Method that checks the configuration injection points during deployment for available configuration.
      * @param pb the bean to process.
+     * @param beanManager the bean manager to notify about new injections.
      */
     public void retrieveTypes(@Observes final ProcessBean<?> pb, BeanManager beanManager) {
 
@@ -104,7 +105,7 @@ public class ConfigurationExtension implements Extension {
                 }
                 if(value==null){
                     throw new ConfigException(String.format(
-                            "Can't resolve any of the possible config keys: %s. Please provide one of the given keys " +
+                            "Cannot resolve any of the possible configuration keys: %s. Please provide one of the given keys " +
                                     "with a value in your configuration sources.",
                             keys.toString()));
                 }

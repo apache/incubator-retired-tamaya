@@ -18,9 +18,10 @@
  */
 package org.apache.tamaya.server;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.functions.ConfigurationFunctions;
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -38,22 +39,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.io.StringWriter;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.functions.ConfigurationFunctions;
 
 /**
- * Spring boot based configuration service that behavious compatible with etcd REST API (excluded the blocking API
- * calls).
+ * Spring boot based configuration service that is compatible with etcd REST API
+ * (excluding the blocking API calls).
  */
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 public class ConfigurationResource {
     private final String scope;
-    private final AtomicLong readCounter  = new AtomicLong();
-    private final AtomicLong writeCounter  = new AtomicLong();
-    private final AtomicLong deleteCounter  = new AtomicLong();
+    private final AtomicLong readCounter = new AtomicLong();
+    private final AtomicLong writeCounter = new AtomicLong();
+    private final AtomicLong deleteCounter = new AtomicLong();
 
     public ConfigurationResource(String scope) {
         this.scope = scope;
@@ -63,6 +64,7 @@ public class ConfigurationResource {
     @Path("/version")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public String version() {
+        // TODO TAMAYA-139: make version string dynamically calculated based on mvn settings
         String product = VersionProperties.getProduct().replace("\"", "\\\"");
         String version = VersionProperties.getVersion().replace("\"", "\\\"");
 
@@ -76,34 +78,37 @@ public class ConfigurationResource {
     }
 
     /**
-     *
      * This models a etcd2 compliant access point for getting a property value.
-     * @return
+     *
+     * @param recursive NOT YET IMPLEMENTED!
+     * @return all configuration property values.
      */
     @GET
     @Path("/keys")
     public String readConfig(@QueryParam("recursive") Boolean recursive) {
         readCounter.incrementAndGet();
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Map<String,String> children = config.getProperties();
-        JsonArrayBuilder ab = Json.createArrayBuilder();
-        for(Map.Entry<String,String> en: children.entrySet()){
-            Node node = new Node(config, en.getKey(), "node");
+        final Configuration config = ConfigurationProvider.getConfiguration();
+        final Map<String, String> children = config.getProperties();
+        final JsonArrayBuilder ab = Json.createArrayBuilder();
+        for (final Map.Entry<String, String> en : children.entrySet()) {
+            final Node node = new Node(config, en.getKey(), "node");
             ab.add(node.createJsonObject());
         }
-        Node node = new Node(config, null, "node", ab.build());
-        JsonObjectBuilder root = Json.createObjectBuilder().add("action", "get")
+        final Node node = new Node(config, null, "node", ab.build());
+        final JsonObjectBuilder root = Json.createObjectBuilder().add("action", "get")
                 .add("node", node.createJsonObject());
-        StringWriter writer = new StringWriter();
-        JsonWriter jwriter = Json.createWriter(writer);
+        final StringWriter writer = new StringWriter();
+        final JsonWriter jwriter = Json.createWriter(writer);
         jwriter.writeObject(root.build());
         return writer.toString();
     }
 
     /**
      * This models a etcd2 compliant access point for getting a property value.
-     * @param key
-     * @return
+     *
+     * @param key       name of the key to show
+     * @param recursive NOT YET IMPLEMENTED!
+     * @return specific configuration key derived from the given key name.
      */
     @GET
     @Path("/v2/keys/{key}")
@@ -113,44 +118,46 @@ public class ConfigurationResource {
 
     /**
      * This models a etcd2 compliant access point for getting a property value.
-     * @param key
-     * @return
+     *
+     * @param key       name of the key to show
+     * @param recursive NOT YET IMPLEMENTED!
+     * @return configuration value of the given key.
      */
     @GET
     @Path("/keys/{key}")
     public String readConfig(@PathParam("key") String key, @QueryParam("recursive") Boolean recursive) {
         readCounter.incrementAndGet();
-        Configuration config = ConfigurationProvider.getConfiguration();
-        if(key!=null) {
+        final Configuration config = ConfigurationProvider.getConfiguration();
+        if (key != null) {
             if (key.startsWith("/")) {
                 key = key.substring(1);
             }
             if (config.get(key) != null && !recursive) {
-                Node node = new Node(config, key, "node");
-                JsonObjectBuilder root = Json.createObjectBuilder().add("action", "get")
+                final Node node = new Node(config, key, "node");
+                final JsonObjectBuilder root = Json.createObjectBuilder().add("action", "get")
                         .add("node", node.createJsonObject());
-                StringWriter writer = new StringWriter();
-                JsonGenerator gen = Json.createGenerator(writer);
+                final StringWriter writer = new StringWriter();
+                final JsonGenerator gen = Json.createGenerator(writer);
                 gen.write(root.build());
                 return writer.toString();
             }
         }
-        Map<String,String> children = null;
-        if(key==null){
+        Map<String, String> children = null;
+        if (key == null) {
             children = config.getProperties();
-        } else{
+        } else {
             children = config.with(ConfigurationFunctions.section(key)).getProperties();
         }
-        JsonArrayBuilder ab = Json.createArrayBuilder();
-        for(Map.Entry<String,String> en: children.entrySet()){
-            Node node = new Node(config, en.getKey(), "node");
+        final JsonArrayBuilder ab = Json.createArrayBuilder();
+        for (final Map.Entry<String, String> en : children.entrySet()) {
+            final Node node = new Node(config, en.getKey(), "node");
             ab.add(node.createJsonObject());
         }
-        Node node = new Node(config, key, "node", ab.build());
-        JsonObjectBuilder root = Json.createObjectBuilder().add("action", "get")
+        final Node node = new Node(config, key, "node", ab.build());
+        final JsonObjectBuilder root = Json.createObjectBuilder().add("action", "get")
                 .add("node", node.createJsonObject());
-        StringWriter writer = new StringWriter();
-        JsonWriter jwriter = Json.createWriter(writer);
+        final StringWriter writer = new StringWriter();
+        final JsonWriter jwriter = Json.createWriter(writer);
         jwriter.writeObject(root.build());
         return writer.toString();
     }
@@ -158,48 +165,52 @@ public class ConfigurationResource {
     @PUT
     @Path("/v2/keys/{key}")
     public String writeEtcdConfig(@PathParam("key") String key, @javax.ws.rs.FormParam("value") String value,
-                              @FormParam("ttl") Integer ttl) {
+                                  @FormParam("ttl") Integer ttl) {
         return writeConfig(key, value, ttl);
     }
+
     /**
-     * This models a etcd2 compliant access point for getting a property value:
+     * This models a etcd2 compliant access point for setting a property value:
      * <pre>
      *     {
-     "action": "set",
-     "node": {
-     "createdIndex": 3,
-     "key": "/message",
-     "modifiedIndex": 3,
-     "value": "Hello etcd"
-     },
-     "prevNode": {
-     "createdIndex": 2,
-     "key": "/message",
-     "value": "Hello world",
-     "modifiedIndex": 2
-     }
-     }
+     * "action": "set",
+     * "node": {
+     * "createdIndex": 3,
+     * "key": "/message",
+     * "modifiedIndex": 3,
+     * "value": "Hello etcd"
+     * },
+     * "prevNode": {
+     * "createdIndex": 2,
+     * "key": "/message",
+     * "value": "Hello world",
+     * "modifiedIndex": 2
+     * }
+     * }
      * </pre>
-     * @param key
-     * @return
+     *
+     * @param key   name of the key to show
+     * @param value configuration value for the given key
+     * @param ttl   time to live
+     * @return written configuration value.
      */
     @PUT
     @Path("/keys/{key}")
     public String writeConfig(@PathParam("key") String key, @javax.ws.rs.FormParam("value") String value,
                               @FormParam("ttl") Integer ttl) {
         writeCounter.incrementAndGet();
-        Configuration config = ConfigurationProvider.getConfiguration();
-        if(key.startsWith("/")){
+        final Configuration config = ConfigurationProvider.getConfiguration();
+        if (key.startsWith("/")) {
             key = key.substring(1);
         }
-        Node prevNode = new Node(config, key, "prevNode");
+        final Node prevNode = new Node(config, key, "prevNode");
         // TODO implement write! value and ttl as input
-        Node node = new Node(config, key, "node");
-        JsonObjectBuilder root = Json.createObjectBuilder().add("action", "set")
+        final Node node = new Node(config, key, "node");
+        final JsonObjectBuilder root = Json.createObjectBuilder().add("action", "set")
                 .add("node", node.createJsonObject())
                 .add("prevNode", prevNode.createJsonObject());
-        StringWriter writer = new StringWriter();
-        JsonWriter jwriter = Json.createWriter(writer);
+        final StringWriter writer = new StringWriter();
+        final JsonWriter jwriter = Json.createWriter(writer);
         jwriter.writeObject(root.build());
         return writer.toString();
     }
@@ -209,80 +220,60 @@ public class ConfigurationResource {
     public String deleteEtcdConfig(@PathParam("key") String key) {
         return deleteConfig(key);
     }
-    /**
-     * This models a etcd2 compliant access point for getting a property value:
-     * <pre>
-     *     {
-     "action": "set",
-     "node": {
-     "createdIndex": 3,
-     "key": "/message",
-     "modifiedIndex": 3,
-     "value": "Hello etcd"
-     },
-     "prevNode": {
-     "createdIndex": 2,
-     "key": "/message",
-     "value": "Hello world",
-     "modifiedIndex": 2
-     }
-     }
-     * </pre>
-     * @param key
-     * @return
-     */
+
     @DELETE
     @Path("/keys/{key}")
     public String deleteConfig(@PathParam("key") String key) {
         deleteCounter.incrementAndGet();
-        Configuration config = ConfigurationProvider.getConfiguration();
-        if(key.startsWith("/")){
+        final Configuration config = ConfigurationProvider.getConfiguration();
+        if (key.startsWith("/")) {
             key = key.substring(1);
         }
-        Node prevNode = new Node(config, key, "prevNode");
+        final Node prevNode = new Node(config, key, "prevNode");
         // TODO implement write! value and ttl as input
-        Node node = new Node(config, key, "node");
-        JsonObjectBuilder root = Json.createObjectBuilder().add("action", "delete")
+        final Node node = new Node(config, key, "node");
+        final JsonObjectBuilder root = Json.createObjectBuilder().add("action", "delete")
                 .add("node", node.createJsonObject())
                 .add("prevNode", prevNode.createJsonObject());
-        StringWriter writer = new StringWriter();
-        JsonWriter jwriter = Json.createWriter(writer);
+        final StringWriter writer = new StringWriter();
+        final JsonWriter jwriter = Json.createWriter(writer);
         jwriter.writeObject(root.build());
         return writer.toString();
     }
 
-    public long getDeleteCounter(){
+    public long getDeleteCounter() {
         return deleteCounter.get();
     }
 
-    public long getReadCounter(){
+    public long getReadCounter() {
         return readCounter.get();
     }
 
-    public long getWriteCounter(){
+    public long getWriteCounter() {
         return writeCounter.get();
     }
 
     /**
-     * Internal representation of a configuration node as modelled by etc.
+     * Internal representation of a configuration node as modeled by etc.
      */
-    private static final class Node{
+    private static final class Node {
         private Integer createdIndex;
         private Integer modifiedIndex;
-        private String key;
+        private final String key;
         private String value;
-        private String nodeId;
+        private final String nodeId;
         private Integer ttl;
         private String expiration;
-        private JsonArray nodes;
+        private final JsonArray nodes;
 
-        Node(Configuration config, String key, String nodeId){
+        Node(Configuration config, String key, String nodeId) {
             this(config, key, nodeId, null);
         }
-        Node(Configuration config, String key, String nodeId, JsonArray nodes){
+
+        Node(Configuration config, String key, String nodeId, JsonArray nodes) {
             this.key = key;
             this.nodeId = Objects.requireNonNull(nodeId);
-            if(key!=null) {
+            if (key != null) {
                 value = config.get(key);
                 createdIndex = config.getOrDefault("_" + key + ".createdIndex", Integer.class, null);
                 modifiedIndex = config.getOrDefault("_" + key + ".modifiedIndex", Integer.class, null);
@@ -292,29 +283,29 @@ public class ConfigurationResource {
             this.nodes = nodes;
         }
 
-        JsonObject createJsonObject(){
-            JsonObjectBuilder nodeBuilder = Json.createObjectBuilder();
-            if(key!=null) {
+        JsonObject createJsonObject() {
+            final JsonObjectBuilder nodeBuilder = Json.createObjectBuilder();
+            if (key != null) {
                 nodeBuilder.add("key", '/' + key);
-            }else{
+            } else {
                 nodeBuilder.add("dir", true);
             }
-            if(value!=null){
+            if (value != null) {
                 nodeBuilder.add("value", value);
             }
-            if(createdIndex!=null){
+            if (createdIndex != null) {
                 nodeBuilder.add("createdIndex", createdIndex.intValue());
             }
-            if(modifiedIndex!=null){
+            if (modifiedIndex != null) {
                 nodeBuilder.add("modifiedIndex", modifiedIndex.intValue());
             }
-            if(ttl!=null){
+            if (ttl != null) {
                 nodeBuilder.add("ttl", ttl.intValue());
             }
-            if(expiration!=null){
+            if (expiration != null) {
                 nodeBuilder.add("expiration", value);
             }
-            if(nodes!=null){
+            if (nodes != null) {
                 nodeBuilder.add("nodes", nodes);
             }
             return nodeBuilder.build();

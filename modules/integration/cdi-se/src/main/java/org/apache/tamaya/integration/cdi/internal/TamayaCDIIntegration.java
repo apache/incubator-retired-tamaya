@@ -24,15 +24,15 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 
 /**
- * Tamaya main integreation with CDI, storing the BeanManager reference for implementation, where no
+ * Tamaya main integration with CDI, storing the BeanManager reference for implementation, where no
  * JNDI is available or {@code java:comp/env/BeanManager} is not set correctly.
  */
-public class TamayaCDIIntegration implements Extension{
+public class TamayaCDIIntegration implements Extension {
     /** The BeanManager references stored. */
     private static BeanManager beanManager;
 
     /**
-     * Initializes the current BeanMaanager with the instance passed.
+     * Initializes the current BeanManager with the instance passed.
      * @param validation the event
      * @param beanManager the BeanManager instance
      */
@@ -42,7 +42,8 @@ public class TamayaCDIIntegration implements Extension{
     }
 
     /**
-     * Get the current {@link  BeanManager} instance.
+     * Get the current {@link BeanManager} instance.
+     * @return the currently used bean manager.
      */
     public static BeanManager getBeanManager(){
         return beanManager;
