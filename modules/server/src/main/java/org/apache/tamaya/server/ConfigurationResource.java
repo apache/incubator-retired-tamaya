@@ -45,7 +45,7 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 
 /**
- * Spring boot based configuration service that is compatible with etcd REST API
+ * Configuration resource with a etcd compatible REST API
  * (excluding the blocking API calls).
  */
 @Path("/")
