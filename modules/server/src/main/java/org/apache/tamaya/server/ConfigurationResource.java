@@ -63,7 +63,10 @@ public class ConfigurationResource {
     @Path("/version")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public String version() {
-        return "{ \"version\" : \"Apache Tamaya: 0.2-incubating\" }";
+        String product = VersionProperties.getProduct().replace("\"", "\\\"");
+        String version = VersionProperties.getVersion().replace("\"", "\\\"");
+
+        return String.format("{ \"version\" : \"%s: %s\" }", product, version);
     }
 
     @GET
