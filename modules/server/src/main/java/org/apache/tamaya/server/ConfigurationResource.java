@@ -64,7 +64,6 @@ public class ConfigurationResource {
     @Path("/version")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public String version() {
-        // TODO TAMAYA-139: make version string dynamically calculated based on mvn settings
         String product = VersionProperties.getProduct().replace("\"", "\\\"");
         String version = VersionProperties.getVersion().replace("\"", "\\\"");
 

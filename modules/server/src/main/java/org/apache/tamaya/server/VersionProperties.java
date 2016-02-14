@@ -30,7 +30,7 @@ import java.util.Properties;
  * {@value #VERSION_PROPERTY_FILE}.</p>
  */
 public class VersionProperties {
-    private static final String VERSION_PROPERTY_FILE = "/META-INF/server-version.properties";
+    private static final String VERSION_PROPERTY_FILE = "/META-INF/tamaya-server-version.properties";
 
     static {
         try (InputStream resource = VersionProperties.class.getResourceAsStream(VERSION_PROPERTY_FILE)) {

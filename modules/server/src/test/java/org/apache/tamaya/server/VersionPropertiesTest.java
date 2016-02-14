@@ -33,7 +33,7 @@ public class VersionPropertiesTest {
 
     @Test
     public void correctVersionPropertiesAreReadAndSet() throws IOException {
-        InputStream resource = VersionProperties.class.getResourceAsStream("/META-INF/server-version.properties");
+        InputStream resource = VersionProperties.class.getResourceAsStream("/META-INF/tamaya-server-version.properties");
 
         Properties properties = new Properties();
         properties.load(resource);
