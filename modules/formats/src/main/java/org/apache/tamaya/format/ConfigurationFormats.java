@@ -167,7 +167,7 @@ public final class ConfigurationFormats {
                                                           ConfigurationFormat... formats) throws IOException {
         Objects.requireNonNull(inputStream);
         Objects.requireNonNull(resource);
-        try (InputStreamFactory isFactory = new InputStreamFactory(inputStream)) {
+        try(InputStreamFactory isFactory = new InputStreamFactory(inputStream)) {
             for (final ConfigurationFormat format : formats) {
                 try (InputStream is = isFactory.createInputStream()) {
                     final ConfigurationData data = format.readConfiguration(resource, is);

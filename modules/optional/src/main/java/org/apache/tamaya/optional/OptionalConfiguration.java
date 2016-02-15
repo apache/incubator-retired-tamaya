@@ -105,6 +105,8 @@ public final class OptionalConfiguration {
 
     /**
      * Returns an instance of OptionalConfiguration, which uses the given provider and policy for evaluating the values.
+     * @param policy the policy how a value should be evaluated depending if Tamaya is available or not.
+     * @param provider the non Tamaya-based provider to be used to evaluate values.
      *
      * @param policy   the policy how a value should be evaluated depending if Tamaya is available or not.
      * @param provider the non Tamaya-based provider to be used to evaluate values.
@@ -117,7 +119,7 @@ public final class OptionalConfiguration {
     /**
      * Returns a default instance, which uses a default provider returning values from system properties and environment
      * only.
-     *
+     * @param policy the policy how a value should be evaluated depending if Tamaya is available or not.
      * @param policy the policy how a value should be evaluated depending if Tamaya is available or not.
      * @return a default OptionalConfiguration instance, never null.
      */
