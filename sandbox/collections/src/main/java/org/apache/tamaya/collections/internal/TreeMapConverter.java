@@ -26,7 +26,7 @@ import java.util.TreeMap;
 /**
  *  PropertyConverter for gnerating HashMap representation of a values.
  */
-public class TreeMapConverter implements PropertyConverter<TreeMap<?,?>> {
+public class TreeMapConverter implements PropertyConverter<TreeMap> {
 
     /** The shared instance, used by other collection converters in this package.*/
     private static TreeMapConverter INSTANCE = new TreeMapConverter();
@@ -40,7 +40,7 @@ public class TreeMapConverter implements PropertyConverter<TreeMap<?,?>> {
     }
 
     @Override
-    public TreeMap<?, ?> convert(String value, ConversionContext context) {
-        return null;
+    public TreeMap convert(String value, ConversionContext context) {
+        return new TreeMap<>(HashMapConverter.getInstance().convert(value, context));
     }
 }

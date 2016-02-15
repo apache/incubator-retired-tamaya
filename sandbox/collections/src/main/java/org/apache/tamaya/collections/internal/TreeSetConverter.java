@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 /**
  *  PropertyConverter for gnerating HashSet representation of a values.
  */
-public class TreeSetConverter implements PropertyConverter<TreeSet<?>> {
+public class TreeSetConverter implements PropertyConverter<TreeSet> {
 
     private static final Logger LOG = Logger.getLogger(TreeSetConverter.class.getName());
 
@@ -68,6 +68,6 @@ public class TreeSetConverter implements PropertyConverter<TreeSet<?>> {
                 LOG.log(Level.SEVERE, "Error convertion config to HashSet type.", e);
             }
         }
-        return null;
+        return new TreeSet<>(rawList);
     }
 }

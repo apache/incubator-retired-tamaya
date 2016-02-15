@@ -43,6 +43,13 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
 
     @Override
     public Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource){
+        if(key.startsWith("_")){
+            PropertyValue newValue = propertySource.get(key);
+            if(newValue!=null){
+                return newValue.getConfigEntries();
+            }
+            return currentValue;
+        }
         String adaptiveCombinationPolicyClass  = ConfigurationProvider.getConfiguration().get('_' + key+".combinationPolicy");
         if(adaptiveCombinationPolicyClass!=null){
             PropertyValueCombinationPolicy delegatePolicy = null;

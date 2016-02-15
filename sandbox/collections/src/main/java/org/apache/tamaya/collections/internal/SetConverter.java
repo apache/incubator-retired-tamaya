@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  *  PropertyConverter for gnerating a LIST representation of values.
  */
-public class SetConverter implements PropertyConverter<Set<?>> {
+public class SetConverter implements PropertyConverter<Set> {
 
     @Override
     public Set convert(String value, ConversionContext context) {

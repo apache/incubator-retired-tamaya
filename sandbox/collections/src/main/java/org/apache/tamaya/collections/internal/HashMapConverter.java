@@ -24,6 +24,7 @@ import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,13 +69,29 @@ public class HashMapConverter implements PropertyConverter<HashMap> {
                 LOG.log(Level.SEVERE, "Error convertion config to HashMap type.", e);
             }
         }
-        return null;
+        HashMap<String,String> result = new HashMap<>();
+        for(String raw:rawList){
+            String[] items = splitItems(raw);
+            if(items!=null){
+                result.put(items[0], items[1]);
+            }
+        }
+        return result;
     }
 
     static String[] splitItems(String raw) {
-        String[] items = new String[2];
-        // check for '[]'
-        // else split with ':'
-        return raw.split("::");
+        String[] items = raw.split("::");
+        if(items[0].trim().startsWith("[")){
+            items[0]= items[0].trim();
+            items[0] = items[0].substring(1);
+        }else{
+            items[0]= items[0].trim();
+        }
+        if(items[1].trim().endsWith("]")){
+            items[1] = items[1].substring(0,items[1].length()-1);
+        }else{
+            items[1]= items[1].trim();
+        }
+        return items;
     }
 }

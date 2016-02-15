@@ -56,7 +56,7 @@ public class LinkedListConverter implements PropertyConverter<LinkedList> {
                 LOG.log(Level.SEVERE, "Error convertion config to ArrayList type.", e);
             }
         }
-        return null;
+        return new LinkedList(rawList);
     }
 
 }

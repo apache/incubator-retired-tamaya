@@ -48,14 +48,14 @@ public class TypeLiteral<T> implements Serializable {
      * Constructor.
      * @param definedType the defined type.
      */
-    protected TypeLiteral(Type definedType) {
+    public TypeLiteral(Type definedType) {
         this.definedType = definedType;
     }
 
     /**
      * Constructor only for directly implemeting a TypeLiteral hereby dynamically implementing a generic interface.
      */
-    protected TypeLiteral() {
+    public TypeLiteral() {
         this.definedType = getDefinedType(this.getClass());
     }
 
@@ -140,9 +140,7 @@ public class TypeLiteral<T> implements Serializable {
 
         Type superClazz = clazz.getGenericSuperclass();
 
-        if (superClazz.equals(Object.class)) {
-            throw new RuntimeException("Super class must be parametrized type");
-        } else if (superClazz instanceof ParameterizedType) {
+        if (superClazz instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) superClazz;
             Type[] actualArgs = pt.getActualTypeArguments();
 
@@ -153,6 +151,8 @@ public class TypeLiteral<T> implements Serializable {
                 throw new RuntimeException("More than one parametric type");
             }
 
+        } else if (superClazz.equals(Object.class)) {
+            throw new RuntimeException("Super class must be parametrized type");
         } else {
             type = getDefinedType((Class<?>) superClazz);
         }

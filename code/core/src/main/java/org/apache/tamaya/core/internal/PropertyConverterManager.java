@@ -273,6 +273,19 @@ public class PropertyConverterManager {
                 converterList.addAll(converters);
             }
         }
+        // check for parametrized types, ignoring param type
+        // direct mapped converters
+        if(targetType.getType()!=null) {
+            try {
+                readLock.lock();
+                converters = List.class.cast(this.converters.get(TypeLiteral.of(targetType.getRawType())));
+            } finally {
+                readLock.unlock();
+            }
+            if (converters != null) {
+                converterList.addAll(converters);
+            }
+        }
         return converterList;
     }
 
