@@ -31,6 +31,25 @@ public class SetConverter implements PropertyConverter<Set> {
 
     @Override
     public Set convert(String value, ConversionContext context) {
-        return Collections.unmodifiableSet(HashSetConverter.getInstance().convert(value, context));
+        String collectionType = context.getConfiguration().getOrDefault('_' + context.getKey()+".collection-type", "Set");
+        if(collectionType.startsWith("java.util.")){
+            collectionType = collectionType.substring("java.util.".length());
+        }
+        Set result = null;
+        switch(collectionType){
+            case "Set":
+            case "HashSet":
+            default:
+                result = HashSetConverter.getInstance().convert(value, context);
+                break;
+            case "TreeSet":
+                result = TreeSetConverter.getInstance().convert(value, context);
+                break;
+        }
+        if(context.getConfiguration().getOrDefault('_' + context.getKey()+".read-only",
+                Boolean.class, Boolean.TRUE)){
+            return Collections.unmodifiableSet(result);
+        }
+        return result;
     }
 }

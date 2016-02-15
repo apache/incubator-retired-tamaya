@@ -19,6 +19,7 @@
 org.apache.tamaya.collections.internal.ArrayListConverter
 org.apache.tamaya.collections.internal.CollectionConverter
 org.apache.tamaya.collections.internal.HashMapConverter
+org.apache.tamaya.collections.internal.ConcurrentHashMapConverter
 org.apache.tamaya.collections.internal.HashSetConverter
 org.apache.tamaya.collections.internal.LinkedListConverter
 org.apache.tamaya.collections.internal.ListConverter

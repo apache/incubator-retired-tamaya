@@ -24,6 +24,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import javax.annotation.Priority;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,14 +89,21 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
                 case "SortedMap":
                     PropertyValue newValue = propertySource.get(key);
                     if(newValue!=null){
-                        Map<String,String> newMapValue = new HashMap<>(currentValue);
+                        Map<String,String> newMapValue = new HashMap<>();
+                        if(currentValue!=null){
+                            newMapValue.putAll(currentValue);
+                        }
                         String oldVal = newMapValue.get(key);
+                        newMapValue.putAll(newValue.getConfigEntries());
                         if(oldVal!=null){
                             newMapValue.put(key,oldVal + ',' + newValue.getValue());
                         }
                         return newMapValue;
                     }else{
-                        return newValue.getConfigEntries();
+                        if(currentValue!=null){
+                            return currentValue;
+                        }
+                        return Collections.emptyMap();
                     }
                 default:
                     LOG.log(Level.SEVERE, "Unsupported collection-type for key: " + key + ": " + collectionType);

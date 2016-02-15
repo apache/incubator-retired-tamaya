@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  *  PropertyConverter for gnerating HashMap representation of a values.
  */
 public class HashMapConverter implements PropertyConverter<HashMap> {
-    private static final Logger LOG = Logger.getLogger(ArrayListConverter.class.getName());
+    private static final Logger LOG = Logger.getLogger(HashMapConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
     private static HashMapConverter INSTANCE = new HashMapConverter();
@@ -48,7 +48,7 @@ public class HashMapConverter implements PropertyConverter<HashMap> {
     @Override
     public HashMap convert(String value, ConversionContext context) {
         List<String> rawList = ArrayListConverter.split(value);
-        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-valueParser");
+        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();

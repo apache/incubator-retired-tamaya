@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *  PropertyConverter for gnerating HashMap representation of a values.
@@ -31,6 +32,28 @@ public class MapConverter implements PropertyConverter<Map> {
 
     @Override
     public Map convert(String value, ConversionContext context) {
-        return Collections.unmodifiableMap(HashMapConverter.getInstance().convert(value, context));
+        String collectionType = context.getConfiguration().getOrDefault('_' + context.getKey()+".collection-type", "Map");
+        if(collectionType.startsWith("java.util.")){
+            collectionType = collectionType.substring("java.util.".length());
+        }
+        Map result = null;
+        switch(collectionType){
+            case "Map":
+            case "HashMap":
+            default:
+                result = HashMapConverter.getInstance().convert(value, context);
+                break;
+            case "TreeMap":
+                result = TreeMapConverter.getInstance().convert(value, context);
+                break;
+            case "ConcurrentHashMap":
+                result = ConcurrentHashMapConverter.getInstance().convert(value, context);
+                break;
+        }
+        if(context.getConfiguration().getOrDefault('_' + context.getKey()+".read-only",
+                Boolean.class, Boolean.TRUE)){
+            return Collections.unmodifiableMap(result);
+        }
+        return result;
     }
 }

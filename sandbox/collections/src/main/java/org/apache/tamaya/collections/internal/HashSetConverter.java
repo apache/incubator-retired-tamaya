@@ -50,7 +50,7 @@ public class HashSetConverter implements PropertyConverter<HashSet> {
     @Override
     public HashSet convert(String value, ConversionContext context) {
         List<String> rawList = ArrayListConverter.split(value);
-        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-valueParser");
+        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
@@ -70,6 +70,6 @@ public class HashSetConverter implements PropertyConverter<HashSet> {
                 LOG.log(Level.SEVERE, "Error convertion config to HashSet type.", e);
             }
         }
-        return null;
+        return new HashSet(rawList);
     }
 }

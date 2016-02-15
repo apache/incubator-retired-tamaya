@@ -31,6 +31,25 @@ public class ListConverter implements PropertyConverter<List> {
 
     @Override
     public List convert(String value, ConversionContext context) {
-        return Collections.unmodifiableList(ArrayListConverter.getInstance().convert(value, context));
+        String collectionType = context.getConfiguration().getOrDefault('_' + context.getKey()+".collection-type", "List");
+        if(collectionType.startsWith("java.util.")){
+            collectionType = collectionType.substring("java.util.".length());
+        }
+        List result = null;
+        switch(collectionType){
+            case "List":
+            case "ArrayList":
+            default:
+                result = ArrayListConverter.getInstance().convert(value, context);
+                break;
+            case "LinkedList":
+                result = LinkedListConverter.getInstance().convert(value, context);
+                break;
+        }
+        if(context.getConfiguration().getOrDefault('_' + context.getKey()+".read-only",
+                Boolean.class, Boolean.TRUE)){
+            return Collections.unmodifiableList(result);
+        }
+        return result;
     }
 }

@@ -33,10 +33,21 @@ import java.util.logging.Logger;
 public class LinkedListConverter implements PropertyConverter<LinkedList> {
     private static final Logger LOG = Logger.getLogger(LinkedListConverter.class.getName());
 
+    /** The shared instance, used by other collection converters in this package.*/
+    private static LinkedListConverter INSTANCE = new LinkedListConverter();
+
+    /**
+     * Provide a shared instance, used by other collection converters in this package.
+     * @return the shared instance, never null.
+     */
+    static LinkedListConverter getInstance(){
+        return INSTANCE;
+    }
+
     @Override
     public LinkedList convert(String value, ConversionContext context) {
         List<String> rawList = ArrayListConverter.split(value);
-        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-valueParser");
+        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();

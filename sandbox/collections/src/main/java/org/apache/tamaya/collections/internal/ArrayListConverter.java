@@ -47,8 +47,8 @@ public class ArrayListConverter implements PropertyConverter<ArrayList> {
 
     @Override
     public ArrayList convert(String value, ConversionContext context) {
-        List<String> rawList = split(value);
-        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-valueParser");
+        ArrayList<String> rawList = split(value);
+        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
@@ -68,11 +68,11 @@ public class ArrayListConverter implements PropertyConverter<ArrayList> {
                 LOG.log(Level.SEVERE, "Error convertion config to ArrayList type.", e);
             }
         }
-        return null;
+        return rawList;
     }
 
-    static List<String>  split(String value) {
-        List<String> result = new ArrayList<>();
+    static ArrayList<String>  split(String value) {
+        ArrayList<String> result = new ArrayList<>();
         int start = 0;
         int end = value.indexOf(',',start);
         while(end>0) {

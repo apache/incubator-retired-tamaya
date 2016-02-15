@@ -22,16 +22,16 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *  PropertyConverter for gnerating HashMap representation of a values.
+ *  PropertyConverter for gnerating ConcurrentHashMap representation of a values.
  */
-public class ConcurrentHashMapConverter implements PropertyConverter<HashMap> {
-    private static final Logger LOG = Logger.getLogger(ArrayListConverter.class.getName());
+public class ConcurrentHashMapConverter implements PropertyConverter<ConcurrentHashMap> {
+    private static final Logger LOG = Logger.getLogger(ConcurrentHashMapConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
     private static ConcurrentHashMapConverter INSTANCE = new ConcurrentHashMapConverter();
@@ -45,13 +45,13 @@ public class ConcurrentHashMapConverter implements PropertyConverter<HashMap> {
     }
 
     @Override
-    public HashMap convert(String value, ConversionContext context) {
+    public ConcurrentHashMap convert(String value, ConversionContext context) {
         List<String> rawList = ArrayListConverter.split(value);
         String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
-                HashMap<String,Object> mlist = new HashMap<>();
+                ConcurrentHashMap<String,Object> mlist = new ConcurrentHashMap<>();
                 ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
                         TypeLiteral.of(context.getTargetType().getType())).build();
                 for(String raw:rawList){
@@ -68,7 +68,7 @@ public class ConcurrentHashMapConverter implements PropertyConverter<HashMap> {
                 LOG.log(Level.SEVERE, "Error convertion config to HashMap type.", e);
             }
         }
-        HashMap<String,String> result = new HashMap<>();
+        ConcurrentHashMap<String,String> result = new ConcurrentHashMap<>();
         for(String raw:rawList){
             String[] items = splitItems(raw);
             if(items!=null){
