@@ -168,7 +168,7 @@ public class DefaultConfiguration implements Configuration {
     protected <T> T convertValue(String key, String value, TypeLiteral<T> type) {
         if (value != null) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
-            ConversionContext context = new ConversionContext.Builder(this, key, type).build();
+            ConversionContext context = new ConversionContext.Builder(this, this.configurationContext, key, type).build();
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value, context);
@@ -176,7 +176,7 @@ public class DefaultConfiguration implements Configuration {
                         return t;
                     }
                 } catch (Exception e) {
-                    LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
+                    LOG.log(Level.INFO, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
                 }
             }
             throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key +

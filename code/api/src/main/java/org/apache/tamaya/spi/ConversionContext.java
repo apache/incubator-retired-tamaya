@@ -40,6 +40,7 @@ public class ConversionContext {
     private final TypeLiteral<?> targetType;
     private final AnnotatedElement annotatedElement;
     private final List<String> supportedFormats = new ArrayList<>();
+    private final ConfigurationContext configurationContext;
 
     /**
      * Private constructor used from builder.
@@ -51,6 +52,7 @@ public class ConversionContext {
         this.targetType = builder.targetType;
         this.supportedFormats.addAll(builder.supportedFormats);
         this.configuration = builder.configuration;
+        this.configurationContext = builder.configurationContext;
     }
 
     /**
@@ -124,12 +126,18 @@ public class ConversionContext {
                 '}';
     }
 
+    public ConfigurationContext getConfigurationContext() {
+        return configurationContext;
+    }
+
     /**
      * Builder to create new instances of {@link ConversionContext}.
      */
     public static final class Builder{
         /** The backing configuration. */
         private Configuration configuration;
+        /** The configuration context. */
+        private ConfigurationContext configurationContext;
         /** The accessed key, or null. */
         private String key;
         /** The target type. */
@@ -144,7 +152,7 @@ public class ConversionContext {
          * @param targetType the target type
          */
         public Builder(TypeLiteral<?> targetType) {
-            this(null, null, targetType);
+            this(null, null, null, targetType);
         }
 
         /**
@@ -153,7 +161,7 @@ public class ConversionContext {
          * @param targetType the target type
          */
         public Builder(String key, TypeLiteral<?> targetType) {
-            this(null, key, targetType);
+            this(null, null, key, targetType);
         }
 
         /**
@@ -162,9 +170,10 @@ public class ConversionContext {
          * @param key the requested key, may be null.
          * @param targetType the target type
          */
-        public Builder(Configuration configuration, String key, TypeLiteral<?> targetType){
+        public Builder(Configuration configuration, ConfigurationContext context, String key, TypeLiteral<?> targetType){
             this.key = key;
             this.configuration = configuration;
+            this.configurationContext = context;
             this.targetType = Objects.requireNonNull(targetType);
         }
 
@@ -185,6 +194,16 @@ public class ConversionContext {
          */
         public Builder setConfiguration(Configuration configuration){
             this.configuration = Objects.requireNonNull(configuration);
+            return this;
+        }
+
+        /**
+         * Sets the configuration.
+         * @param configurationContext the configuration, not null
+         * @return the builder instance, for chaining
+         */
+        public Builder setConfigurationContext(ConfigurationContext configurationContext){
+            this.configurationContext = Objects.requireNonNull(configurationContext);
             return this;
         }
 
@@ -224,6 +243,7 @@ public class ConversionContext {
         public String toString() {
             return "Builder{" +
                     "configuration=" + configuration +
+                    "context=" + configurationContext +
                     ", key='" + key + '\'' +
                     ", targetType=" + targetType +
                     ", annotatedElement=" + annotatedElement +
