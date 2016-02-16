@@ -31,13 +31,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -227,34 +221,25 @@ public class PropertyConverterManager {
         // direct mapped converters
         try {
             readLock.lock();
-            converters = List.class.cast(this.converters.get(targetType));
+            addConvertersToList(List.class.cast(this.converters.get(targetType)), converterList);
         } finally {
             readLock.unlock();
-        }
-        if (converters != null) {
-            converterList.addAll(converters);
         }
         // transitive converter
         try {
             readLock.lock();
-            converters = List.class.cast(this.transitiveConverters.get(targetType));
+            addConvertersToList(List.class.cast(this.transitiveConverters.get(targetType)), converterList);
         } finally {
             readLock.unlock();
-        }
-        if (converters != null) {
-            converterList.addAll(converters);
         }
         // handling of java.lang wrapper classes
         TypeLiteral<T> boxedType = mapBoxedType(targetType);
         if (boxedType != null) {
             try {
                 readLock.lock();
-                converters = List.class.cast(this.converters.get(boxedType));
+                addConvertersToList(List.class.cast(this.converters.get(boxedType)), converterList);
             } finally {
                 readLock.unlock();
-            }
-            if (converters != null) {
-                converterList.addAll(converters);
             }
         }
         if (converterList.isEmpty()) {
@@ -264,13 +249,10 @@ public class PropertyConverterManager {
                 register(targetType, defaultConverter);
                 try {
                     readLock.lock();
-                    converters = List.class.cast(this.converters.get(targetType));
+                    addConvertersToList(List.class.cast(this.converters.get(targetType)), converterList);
                 } finally {
                     readLock.unlock();
                 }
-            }
-            if (converters != null) {
-                converterList.addAll(converters);
             }
         }
         // check for parametrized types, ignoring param type
@@ -278,15 +260,23 @@ public class PropertyConverterManager {
         if(targetType.getType()!=null) {
             try {
                 readLock.lock();
-                converters = List.class.cast(this.converters.get(TypeLiteral.of(targetType.getRawType())));
+                addConvertersToList(List.class.cast(this.converters.get(
+                        TypeLiteral.of(targetType.getRawType()))), converterList);
             } finally {
                 readLock.unlock();
             }
-            if (converters != null) {
-                converterList.addAll(converters);
-            }
         }
         return converterList;
+    }
+
+    private <T> void addConvertersToList(Collection<PropertyConverter<T>> converters, List<PropertyConverter<T>> converterList) {
+        if (converters != null) {
+            for(PropertyConverter<T> conv:converters) {
+                if(!converterList.contains(conv)) {
+                    converterList.add(conv);
+                }
+            }
+        }
     }
 
     /**
