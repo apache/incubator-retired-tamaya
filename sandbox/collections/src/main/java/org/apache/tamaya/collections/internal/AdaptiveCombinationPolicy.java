@@ -68,6 +68,7 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
             }
         }
         // check for default collection combination policies for lists, sets, maps etc.
+        final String SEPARATOR = ConfigurationProvider.getConfiguration().getOrDefault('_' + key+".collection-separator", ",");
         String collectionType = ConfigurationProvider.getConfiguration().get('_' + key+".collection-type");
         if(collectionType!=null) {
             if (collectionType.startsWith("java.util.")) {
@@ -96,7 +97,7 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
                         String oldVal = newMapValue.get(key);
                         newMapValue.putAll(newValue.getConfigEntries());
                         if(oldVal!=null){
-                            newMapValue.put(key,oldVal + ',' + newValue.getValue());
+                            newMapValue.put(key,oldVal + SEPARATOR + newValue.getValue());
                         }
                         return newMapValue;
                     }else{

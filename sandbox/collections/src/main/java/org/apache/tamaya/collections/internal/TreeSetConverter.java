@@ -47,13 +47,14 @@ public class TreeSetConverter implements PropertyConverter<TreeSet> {
 
     @Override
     public TreeSet convert(String value, ConversionContext context) {
-        List<String> rawList = ArrayListConverter.split(value);
+        List<String> rawList = ItemTokenizer.split(value, context);
         String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
                 TreeSet<Object> mlist = new TreeSet<>();
-                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
+                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(),
+                        context.getConfigurationContext(), context.getKey(),
                         TypeLiteral.of(context.getTargetType().getType())).build();
                 for(String raw:rawList){
                     Object convValue = valueConverter.convert(raw, ctx);

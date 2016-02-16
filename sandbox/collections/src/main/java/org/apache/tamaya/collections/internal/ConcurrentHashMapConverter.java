@@ -46,16 +46,17 @@ public class ConcurrentHashMapConverter implements PropertyConverter<ConcurrentH
 
     @Override
     public ConcurrentHashMap convert(String value, ConversionContext context) {
-        List<String> rawList = ArrayListConverter.split(value);
+        List<String> rawList = ItemTokenizer.split(value, context);
         String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
                 ConcurrentHashMap<String,Object> mlist = new ConcurrentHashMap<>();
-                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
+                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(),
+                        context.getConfigurationContext(), context.getKey(),
                         TypeLiteral.of(context.getTargetType().getType())).build();
                 for(String raw:rawList){
-                    String[] items = splitItems(raw);
+                    String[] items = ItemTokenizer.splitMapEntry(raw, context);
                     Object convValue = valueConverter.convert(items[1], ctx);
                     if(convValue!=null){
                         mlist.put(items[0], convValue);
@@ -70,7 +71,7 @@ public class ConcurrentHashMapConverter implements PropertyConverter<ConcurrentH
         }
         ConcurrentHashMap<String,String> result = new ConcurrentHashMap<>();
         for(String raw:rawList){
-            String[] items = splitItems(raw);
+            String[] items = ItemTokenizer.splitMapEntry(raw, context);
             if(items!=null){
                 result.put(items[0], items[1]);
             }
@@ -78,19 +79,5 @@ public class ConcurrentHashMapConverter implements PropertyConverter<ConcurrentH
         return result;
     }
 
-    static String[] splitItems(String raw) {
-        String[] items = raw.split("::");
-        if(items[0].trim().startsWith("[")){
-            items[0]= items[0].trim();
-            items[0] = items[0].substring(1);
-        }else{
-            items[0]= items[0].trim();
-        }
-        if(items[1].trim().endsWith("]")){
-            items[1] = items[1].substring(0,items[1].length()-1);
-        }else{
-            items[1]= items[1].trim();
-        }
-        return items;
-    }
+
 }

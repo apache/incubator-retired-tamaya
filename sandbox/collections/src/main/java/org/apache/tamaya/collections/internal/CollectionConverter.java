@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  *  PropertyConverter for gnerating a LIST representation of values.

@@ -46,13 +46,14 @@ public class LinkedListConverter implements PropertyConverter<LinkedList> {
 
     @Override
     public LinkedList convert(String value, ConversionContext context) {
-        List<String> rawList = ArrayListConverter.split(value);
+        List<String> rawList = ItemTokenizer.split(value, context);
         String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
         if(converterClass!=null){
             try {
                 PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
                 LinkedList<Object> mlist = new LinkedList<>();
-                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
+                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(),
+                        context.getConfigurationContext(), context.getKey(),
                         TypeLiteral.of(context.getTargetType().getType())).build();
                 for(String raw:rawList){
                     Object convValue = valueConverter.convert(raw, ctx);
