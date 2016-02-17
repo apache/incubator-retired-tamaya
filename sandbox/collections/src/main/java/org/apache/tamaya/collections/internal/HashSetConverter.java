@@ -50,27 +50,16 @@ public class HashSetConverter implements PropertyConverter<HashSet> {
     @Override
     public HashSet convert(String value, ConversionContext context) {
         List<String> rawList = ItemTokenizer.split(value, context);
-        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
-        if(converterClass!=null){
-            try {
-                PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
-                HashSet<Object> mlist = new HashSet<>();
-                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(),
-                        context.getConfigurationContext(), context.getKey(),
-                        TypeLiteral.of(context.getTargetType().getType())).build();
-                for(String raw:rawList){
-                    Object convValue = valueConverter.convert(raw, ctx);
-                    if(convValue!=null){
-                        mlist.add(convValue);
-                        continue;
-                    }
-                }
-                return mlist;
-
-            } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Error convertion config to HashSet type.", e);
+        HashSet<Object> result = new HashSet<>();
+        for(String raw:rawList){
+            String[] items = ItemTokenizer.splitMapEntry(raw, context);
+            Object convValue = ItemTokenizer.convertValue(items[1], context);
+            if(convValue!=null){
+                result.add(convValue);
+            }else{
+                LOG.log(Level.SEVERE, "Failed to convert collection value type for '"+raw+"'.");
             }
         }
-        return new HashSet(rawList);
+        return result;
     }
 }

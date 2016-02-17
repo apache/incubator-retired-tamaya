@@ -33,13 +33,45 @@ import java.util.logging.Logger;
 
 /**
  * PropertyValueCombinationPolicy that allows to configure a PropertyValueCombinationPolicy for each key
- * individually, by adding a configured entry of the form {@code key{combinationPolicy}=fqPolicyClassName}.
+ * individually, by adding a configured entry of the form
+ * {@code _key.combination-policy=collect|override|fqPolicyClassName}.
  */
 @Priority(100)
 public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy {
-
+    /** Logger. */
     private static final Logger LOG = Logger.getLogger(AdaptiveCombinationPolicy.class.getName());
 
+    /**
+     * Collecting combination policy using (optional) {@code item-separator} parameter for determining the sparator
+     * to combine multiple config entries found.
+     */
+    private static final PropertyValueCombinationPolicy COLLECTING_POLICY = new PropertyValueCombinationPolicy(){
+        @Override
+        public Map<String, String> collect(Map<String, String> currentValue, String key, PropertySource propertySource) {
+            // check for default collection combination policies for lists, sets, maps etc.
+            final String SEPARATOR = ConfigurationProvider.getConfiguration().getOrDefault('_' + key+".item-separator", ",");
+            PropertyValue newValue = propertySource.get(key);
+            if(newValue!=null){
+                Map<String,String> newMapValue = new HashMap<>();
+                if(currentValue!=null){
+                    newMapValue.putAll(currentValue);
+                }
+                String oldVal = newMapValue.get(key);
+                newMapValue.putAll(newValue.getConfigEntries());
+                if(oldVal!=null){
+                    newMapValue.put(key,oldVal + SEPARATOR + newValue.getValue());
+                }
+                return newMapValue;
+            }else{
+                if(currentValue!=null){
+                    return currentValue;
+                }
+                return Collections.emptyMap();
+            }
+        }
+    };
+
+    /** Cache for loaded custom combination policies. */
     private Map<Class, PropertyValueCombinationPolicy> configuredPolicies = new ConcurrentHashMap<>();
 
     @Override
@@ -51,69 +83,44 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
             }
             return currentValue;
         }
-        String adaptiveCombinationPolicyClass  = ConfigurationProvider.getConfiguration().get('_' + key+".combinationPolicy");
-        if(adaptiveCombinationPolicyClass!=null){
-            PropertyValueCombinationPolicy delegatePolicy = null;
-            try{
-                Class clazz = Class.forName(adaptiveCombinationPolicyClass);
-                delegatePolicy = configuredPolicies.get(clazz);
-                if(delegatePolicy==null){
-                    delegatePolicy = PropertyValueCombinationPolicy.class.cast(clazz.newInstance());
-                    configuredPolicies.put(clazz, delegatePolicy);
+        String adaptiveCombinationPolicyClass  = ConfigurationProvider.getConfiguration().getOrDefault(
+                '_' + key+".combination-policy", "override");
+        PropertyValueCombinationPolicy combinationPolicy = null;
+        switch(adaptiveCombinationPolicyClass){
+            case "collect":
+            case "COLLECT":
+                if(LOG.isLoggable(Level.FINEST)){
+                    LOG.finest("Using collecting combination policy for key: " + key + ".");
                 }
-                return delegatePolicy.collect(currentValue, key, propertySource);
-            }
-            catch(Exception e){
-                LOG.log(Level.SEVERE, "Error loading configured PropertyValueCombinationPolicy for key: " + key, e);
-            }
-        }
-        // check for default collection combination policies for lists, sets, maps etc.
-        final String SEPARATOR = ConfigurationProvider.getConfiguration().getOrDefault('_' + key+".collection-separator", ",");
-        String collectionType = ConfigurationProvider.getConfiguration().get('_' + key+".collection-type");
-        if(collectionType!=null) {
-            if (collectionType.startsWith("java.util.")) {
-                collectionType = collectionType.substring("java.util.".length());
-            }
-            switch(collectionType){
-                case "List":
-                case "ArrayList":
-                case "LinkedList":
-                case "Collection":
-                case "Set":
-                case "HashSet":
-                case "TreeSet":
-                case "SortedSet":
-                case "Map":
-                case "HashMap":
-                case "ConcurrentHashMap":
-                case "TreeMap":
-                case "SortedMap":
-                    PropertyValue newValue = propertySource.get(key);
-                    if(newValue!=null){
-                        Map<String,String> newMapValue = new HashMap<>();
-                        if(currentValue!=null){
-                            newMapValue.putAll(currentValue);
-                        }
-                        String oldVal = newMapValue.get(key);
-                        newMapValue.putAll(newValue.getConfigEntries());
-                        if(oldVal!=null){
-                            newMapValue.put(key,oldVal + SEPARATOR + newValue.getValue());
-                        }
-                        return newMapValue;
-                    }else{
-                        if(currentValue!=null){
-                            return currentValue;
-                        }
-                        return Collections.emptyMap();
+                combinationPolicy = COLLECTING_POLICY;
+                break;
+            case "override":
+            case "OVERRIDE":
+                if(LOG.isLoggable(Level.FINEST)){
+                    LOG.finest("Using default (overriding) combination policy for key: " + key + ".");
+                }
+                combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+                break;
+            default:
+                try{
+                    Class<PropertyValueCombinationPolicy> clazz = (Class<PropertyValueCombinationPolicy>)
+                            Class.forName(adaptiveCombinationPolicyClass);
+                    combinationPolicy = configuredPolicies.get(clazz);
+                    if(combinationPolicy==null){
+                        combinationPolicy = clazz.newInstance();
+                        configuredPolicies.put(clazz, combinationPolicy);
                     }
-                default:
-                    LOG.log(Level.SEVERE, "Unsupported collection-type for key: " + key + ": " + collectionType);
-            }
+                    if(LOG.isLoggable(Level.FINEST)){
+                        LOG.finest("Using custom combination policy "+adaptiveCombinationPolicyClass+" for " +
+                                "key: " + key + ".");
+                    }
+                }
+                catch(Exception e){
+                    LOG.log(Level.SEVERE, "Error loading configured PropertyValueCombinationPolicy for " +
+                            "key: " + key + ", using default (overriding) policy.", e);
+                    combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+                }
         }
-        PropertyValue newValue = propertySource.get(key);
-        if(newValue!=null){
-            return newValue.getConfigEntries();
-        }
-        return currentValue;
+        return combinationPolicy.collect(currentValue, key, propertySource);
     }
 }

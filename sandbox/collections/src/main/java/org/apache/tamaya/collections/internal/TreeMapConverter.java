@@ -21,12 +21,17 @@ package org.apache.tamaya.collections.internal;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.util.List;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  PropertyConverter for gnerating HashMap representation of a values.
  */
 public class TreeMapConverter implements PropertyConverter<TreeMap> {
+    /** Logger used. */
+    private static final Logger LOG = Logger.getLogger(HashMapConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
     private static TreeMapConverter INSTANCE = new TreeMapConverter();
@@ -41,6 +46,17 @@ public class TreeMapConverter implements PropertyConverter<TreeMap> {
 
     @Override
     public TreeMap convert(String value, ConversionContext context) {
-        return new TreeMap<>(HashMapConverter.getInstance().convert(value, context));
+        List<String> rawList = ItemTokenizer.split(value, context);
+        TreeMap result = new TreeMap();
+        for(String raw:rawList){
+            String[] items = ItemTokenizer.splitMapEntry(raw, context);
+            Object convValue = ItemTokenizer.convertValue(items[1], context);
+            if(convValue!=null){
+                result.put(items[0], convValue);
+            }else{
+                LOG.log(Level.SEVERE, "Failed to convert collection value type for '"+raw+"'.");
+            }
+        }
+        return result;
     }
 }

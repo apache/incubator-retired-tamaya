@@ -50,7 +50,8 @@ final class ItemTokenizer {
      */
     public static List<String> split(String value, ConversionContext context){
         return split(value, ConfigurationProvider.getConfiguration().getOrDefault(
-                '_' + context.getKey()+".collection-separator", ","));
+                '_' + context.getKey()+"." +
+                        "item-separator", ","));
     }
 
     /**
@@ -91,7 +92,7 @@ final class ItemTokenizer {
      */
     public static String[] splitMapEntry(String mapEntry, ConversionContext context){
         return splitMapEntry(mapEntry, ConfigurationProvider.getConfiguration().getOrDefault(
-                '_' + context.getKey()+".collection-map-separator", ","));
+                '_' + context.getKey()+".map-entry-separator", "::"));
     }
 
     /**

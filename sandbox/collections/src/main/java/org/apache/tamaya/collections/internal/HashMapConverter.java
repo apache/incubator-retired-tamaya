@@ -47,51 +47,18 @@ public class HashMapConverter implements PropertyConverter<HashMap> {
     @Override
     public HashMap convert(String value, ConversionContext context) {
         List<String> rawList = ItemTokenizer.split(value, context);
-        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
-        if(converterClass!=null){
-            try {
-                PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
-                HashMap<String,Object> mlist = new HashMap<>();
-                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(),
-                        context.getConfigurationContext(), context.getKey(),
-                        TypeLiteral.of(context.getTargetType().getType())).build();
-                for(String raw:rawList){
-                    String[] items = splitItems(raw);
-                    Object convValue = valueConverter.convert(items[1], ctx);
-                    if(convValue!=null){
-                        mlist.put(items[0], convValue);
-                        continue;
-                    }
-                }
-                return mlist;
-
-            } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Error convertion config to HashMap type.", e);
-            }
-        }
-        HashMap<String,String> result = new HashMap<>();
+        HashMap result = new HashMap(rawList.size());
         for(String raw:rawList){
-            String[] items = splitItems(raw);
-            if(items!=null){
-                result.put(items[0], items[1]);
+            String[] items = ItemTokenizer.splitMapEntry(raw, context);
+            Object convValue = ItemTokenizer.convertValue(items[1], context);
+            if(convValue!=null){
+                result.put(items[0], convValue);
+            }else{
+                LOG.log(Level.SEVERE, "Failed to convert collection value type for '"+raw+"'.");
             }
         }
         return result;
     }
 
-    static String[] splitItems(String raw) {
-        String[] items = raw.split("::");
-        if(items[0].trim().startsWith("[")){
-            items[0]= items[0].trim();
-            items[0] = items[0].substring(1);
-        }else{
-            items[0]= items[0].trim();
-        }
-        if(items[1].trim().endsWith("]")){
-            items[1] = items[1].substring(0,items[1].length()-1);
-        }else{
-            items[1]= items[1].trim();
-        }
-        return items;
-    }
+
 }

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.Currency;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -74,5 +75,25 @@ public class CollectionAdvancedTests {
         assertEquals("(A)", items.get(0));
         assertEquals("(B)", items.get(1));
         assertEquals("(C)", items.get(2));
+    }
+
+    /**
+     * Redefined map format parsing, Config is as follows:
+     * <pre>
+     *  redefined-map=0==none | 1==single | 2==any
+     *  _redefined-map.map-entry-separator===
+     *  _redefined-map.item-separator=|
+     * </pre>
+     */
+    @Test
+    public void testCustomMapParser(){
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Map<String,String> items = config.get("redefined-map", Map.class);
+        assertNotNull(items);
+        assertFalse(items.isEmpty());
+        assertEquals(3, items.size());
+        assertEquals("none", items.get("0"));
+        assertEquals("single", items.get("1"));
+        assertEquals("any", items.get("2"));
     }
 }

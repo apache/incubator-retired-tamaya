@@ -48,10 +48,7 @@ public class ArrayListConverter implements PropertyConverter<ArrayList> {
 
     @Override
     public ArrayList convert(String value, ConversionContext context) {
-        final String SEPARATOR = ConfigurationProvider.getConfiguration().getOrDefault(
-                '_' + context.getKey()+".collection-separator", ",");
-        List<String> rawList = ItemTokenizer.split(value, SEPARATOR);
-
+        List<String> rawList = ItemTokenizer.split(value, context);
         ArrayList<Object> mlist = new ArrayList<>();
         for(String raw:rawList){
             Object convValue = ItemTokenizer.convertValue(raw, context);

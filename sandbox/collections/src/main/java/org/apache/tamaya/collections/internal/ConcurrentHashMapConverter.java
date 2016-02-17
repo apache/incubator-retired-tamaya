@@ -22,6 +22,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -47,33 +48,14 @@ public class ConcurrentHashMapConverter implements PropertyConverter<ConcurrentH
     @Override
     public ConcurrentHashMap convert(String value, ConversionContext context) {
         List<String> rawList = ItemTokenizer.split(value, context);
-        String converterClass = context.getConfiguration().get('_' + context.getKey()+".collection-parser");
-        if(converterClass!=null){
-            try {
-                PropertyConverter<?> valueConverter = (PropertyConverter<?>) Class.forName(converterClass).newInstance();
-                ConcurrentHashMap<String,Object> mlist = new ConcurrentHashMap<>();
-                ConversionContext ctx = new ConversionContext.Builder(context.getConfiguration(),
-                        context.getConfigurationContext(), context.getKey(),
-                        TypeLiteral.of(context.getTargetType().getType())).build();
-                for(String raw:rawList){
-                    String[] items = ItemTokenizer.splitMapEntry(raw, context);
-                    Object convValue = valueConverter.convert(items[1], ctx);
-                    if(convValue!=null){
-                        mlist.put(items[0], convValue);
-                        continue;
-                    }
-                }
-                return mlist;
-
-            } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Error convertion config to HashMap type.", e);
-            }
-        }
-        ConcurrentHashMap<String,String> result = new ConcurrentHashMap<>();
+        ConcurrentHashMap result = new ConcurrentHashMap(rawList.size());
         for(String raw:rawList){
             String[] items = ItemTokenizer.splitMapEntry(raw, context);
-            if(items!=null){
-                result.put(items[0], items[1]);
+            Object convValue = ItemTokenizer.convertValue(items[1], context);
+            if(convValue!=null){
+                result.put(items[0], convValue);
+            }else{
+                LOG.log(Level.SEVERE, "Failed to convert collection value type for '"+raw+"'.");
             }
         }
         return result;
