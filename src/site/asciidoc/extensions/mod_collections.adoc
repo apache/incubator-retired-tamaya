@@ -15,12 +15,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-= Apache Tamaya -- Extension: Integration with Apache Camel
+= Apache Tamaya -- Extension: Collection Support
 
 :name: Tamaya
-:rootpackage: org.apache.tamaya.integration.camel
-:title: Apache Tamaya Extension: Integration with Apache Camel
-:revdate: December 2015
+:rootpackage: org.apache.tamaya.collection
+:title: Apache Tamaya Extension: Collection Support
+:revdate: February 2016
 :authorinitials: ATR
 :author: Anatole Tresch
 :email: <anatole@apache.org>
@@ -41,12 +41,12 @@ toc::[]
 :numbered!:
 <<<
 [[Optional]]
-== Integration with Apache Camel (Extension Module)
+== Tamaya Collection Support (Extension Module)
 === Overview
 
-The Tamaya Camel integration module provides different artifacts which allows integration of Apachae Tamaya
-configuration with Apache Camel.
-
+All configuration in Tamaya is expressed as simple key, value pairs. Nevertheless this concept allows similarly
+the modelling of collection typed values such as lists, sets, maps or simple collections of things. The Tamaya
+Collections extension adds this functionality to the Tamaya eco-system.
 
 === Compatibility
 
@@ -55,109 +55,213 @@ The module is based on Java 7, so it will not run on Java 7 and beyond.
 
 === Installation
 
-To benefit from configuration builder support you only must add the corresponding dependency to your module:
+To use Tamaya collection support you only must add the corresponding dependency to your module:
 
 [source, xml]
 -----------------------------------------------
 <dependency>
   <groupId>org.apache.tamaya.ext</groupId>
-  <artifactId>tamaya-camel</artifactId>
+  <artifactId>tamaya-collections</artifactId>
   <version>{tamayaVersion}</version>
 </dependency>
 -----------------------------------------------
 
 
-=== The Extensions Provided
+=== Overview
 
-Camel integration comes basically with three artifacts:
-
-* A Camel +ResolverFunction+ implementation adding explicit property resolution
-  (+org.apache.tamaya.integration.camel.TamayaPropertyResolver+).
-* A Camel +PropertiesComponent+ implementation, which allows implicitly preconfigures the resolvers from above and
-  additionally allows using Tamaya configuration as Camel _overrides_
-  (+org.apache.tamaya.integration.camel.TamayaPropertiesComponent+).
-
-
-=== Configuring using Camel Java DSL
-
-Camel integration using Java DSL is basically simple:
+Tamaya Collections adds +PropertyConverter+ implementations that are able to access configuration data
+as lists, maps or sets. By default this works out of the box as easy as accessing any other type of
+configuration data, e.g.
 
 [source, java]
 -----------------------------------------------
-import org.apache.tamaya.integration.camel.TamayaPropertiesComponent;
+Configuration config = ConfigurationProvider.getConfiguration();
 
-camelContext.addComponent("properties", new TamayaPropertiesComponent());
+// Without any content specification, a list of String is returned.
+List<String> simpleList = config.get("my.list.config.entry", List.class);
+
+// Using a TypeLiteral allows to use every convertible sub type supported by the system.
+List<Integer> intList = config.get("my.list.config.entry", new TypeLiteral<List<Integer>>(){});
 -----------------------------------------------
 
-Given so you can then use +cfg+ or +tamaya+ as prefix for resolving entries with Tamaya as follows:
+Configuration in that case, by default, is a simple comma-separated list of entries, e.g.
 
-[source, java]
+[source, properties]
 -----------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        from("direct:hello1").transform().simple("{{cfg:message}}");
-    }
-};
-camelContext.addRoutes(builder);
-builder = new RouteBuilder() {
-    public void configure() {
-        from("direct:hello2").transform().simple("{{tamaya:message}}");
-    }
-};
-camelContext.addRoutes(builder);
+my.list.config.entry=1,34454,23,344545,3445
 -----------------------------------------------
 
+Additionally the module allows adding additional meta-entries, which allows to tweak some of the
+inner-workings, e.g.
 
-Optionally you can also configure +TamayaPropertiesComponent+ that all currently known Tamaya properties are used
-as Camel overrides, meaning they are evaluated prior to all other available resolver functions in the Camel
-+PropertiesComponent+:
+* using your own +PropertyConverter+ implementation for parsing entries.
+* specifying a custom separator String to be used to split the items (default is {{','}}.
+* specifying a custom separator String to be used to split key/value paris when parsing map entries.
+* specifying the implementation type of the collection instance to be returned.
+* specifying if the resulting collection should be returned as a modifiable collection.
 
-[source, java]
+=== Supported Types
+
+This module supports the following types:
+
+* +java.util.Collection+
+* +java.util.List+
+* +java.util.ArrayList+
+* +java.util.LinkedList+
+* +java.util.Set+
+* +java.util.SortedSet+
+* +java.util.TreeSet+
+* +java.util.HashSet+
+* +java.util.Map+
+* +java.util.SortedMap+
+* +java.util.HashMap+
+* +java.util.TreeMap+
+
+Hereby the type is determined primarly by the parameter type accessed, e.g.
++config.get("mylist", ArrayList.class)+ will always return an +ArrayList+
+as result.
+
+==== Configuring the target implementation type
+
+Tamaya Collections allows you to configure the target collection type by adding the
+following meta-configuration entry (shown for the +mylist+ entry). Hereby the package part +java.util.+
+can be ommitted:
+
+[ source, properties]
 -----------------------------------------------
-TamayaPropertiesComponent props = new TamayaPropertiesComponent();
-props.setTamayaOverrides(true);
+mylist=a,b,c
+_mylist.collection-type=LinkedList
 -----------------------------------------------
 
+When calling +config.get("mylist", ArrayList.class)+ this parameter does not have any effect, so you will still
+get an +ArrayList+ as a result. However when you call +config.get("mylist", List.class)+ you will
+get a +LinkedList+ as implementation type.
 
-=== Configuring using Camel XML DSL
+This mechanism similarly applies to all kind of collections, so you can use it similarly to define the implementation
+type returned when accessing +List+, +Map+ or +Collection+.
 
-Camel integration using XML DSL is basically very similar. You just have to add the +properties+ component as bean
-as well. All other configuration parameters (e.g. file URIs are similar supported). In the example code below we
-again use Tamaya as the main configuration solutions only using Camel's default behaviour as a fallback:
 
-[source, xml]
+=== Collecting Configuration Entries instead of Overriding
+
+By default Tamaya applies always an overriding +CombinationPolicy+, where only the configuration entry for
+the most significant configuration entry is used. In case of collections (and maybe also other use cases),
+overriding is not always the mechanism of choice. E.g. when you want to have all entries added to your
+configuration to be *combined* to a new entry containing all values provided by any property sources.
+
+Therefore Tamaya Collections also provides a more sophistiated +CombinationPolicy+ (automatically configured)
+that allows to adapt the way how configuration entries are combined. All you must do is declaring
+the mechanism to be applied by an according meta-configuration parameter, e.g. for +my.list+ your config may
+look as follows:
+
+[source, properties]
 -----------------------------------------------
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
+# from PropertSource 1
+my.list=1,2,3
 
-    <routeContext id="myCoolRoutes" xmlns="http://camel.apache.org/schema/spring">
-        <route id="r1">
-            <from uri="direct:hello1"/>
-            <transform>
-                <simple>{{message}}</simple>
-            </transform>
-        </route>
-        <route id="r2">
-            <from uri="direct:hello2"/>
-            <transform>
-                <simple>{{cfg:message}}</simple>
-            </transform>
-        </route>
-        <route id="r3">
-            <from uri="direct:hello3"/>
-            <transform>
-                <simple>{{tamaya:message}}</simple>
-            </transform>
-        </route>
-    </routeContext>
+# from PropertSource 2
+my.list=4,5,6
 
-    <bean id="properties" class="org.apache.tamaya.integration.camel.TamayaPropertiesComponent">
-        <property name="tamayaOverrides" value="true"/>
-    </bean>
+# without any additional meta-info these entries would be combined to
+my.list=4,5,6
+-----------------------------------------------
 
-</beans>
+With Tamaya Collections you can now configure the combination policy as follows:
+
+[source, properties]
+-----------------------------------------------
+# use one of the default policies: override / collect
+_my.list.combination-policy=collect
+
+# use an custom CombinationPolicy to combine the values
+_my.list.combination-policy=com.mycomp.app.MyCombincationPolicy
+-----------------------------------------------
+
+So declaring the +collect+ policy the resulting raw output of the entry looks as follows:
+
+[source, properties]
+-----------------------------------------------
+# result when applying the collect policy:
+my.list=1,2,3,4,5,6
+-----------------------------------------------
+
+The customizable policy mechanism of Tamaya Collections also honors the +item-separator+ meta-configuration
+parameter explained later in this document.
+
+
+=== Format of Collection Configuration
+
+By default collections are modelled as simple String values, that are tokenized into individual parts using a
+defined +item-separator+ (by default +','+). So a given configuration entry of +1,2,3+ is mapped to +"1","2","3".
+If the target context type is something different than String the smae conversion logic is used as when mapping
+configuration parameters directly to non-String target types (implemented as +PropertyConverter+ classes, manahed
+within the current +ConfigurationContext+. The procedure is identical for all collection types, including +Map+ types,
+with the difference that each token in the list is parsed once more for separating it into a +key+ and a +value+.
+The default separator for map entries hereby is +"::"+. Map keys, as of now, are always of type +String+, whereas
+for values the same logic is applied as for non-map collection types.
+
+[source, properties]
+-----------------------------------------------
+# a list, using the default format
+list=1,2,3,4,5,6
+
+# a map, using the default format
+map=a::b, c::d
+-----------------------------------------------
+
+==== Trimming of entries
+
+By default all tokens parsed are trimmed _before_ adding them to the final collection. In case of map entries this is
+also the case for key/value entries. So the following configuration results in the identical values for
++list1,list2+ and +map1,map2+:
+
+[source, properties]
+-----------------------------------------------
+# a list, using the default format
+list1=1,2,3,4,5,6
+list2=1, 2, 3, 4, 5, 6
+
+# a map, using the default format
+map1=a::b, c::d
+map2=a :: b, c :: d
+-----------------------------------------------
+
+Nevertheless truncation can be controlled by the usage of brackets, e.g. the last list or map entry will have a single
+space character as value:
+
+[source, properties]
+-----------------------------------------------
+# a list, with a ' ' value at the end
+list3=1, 2, 3, 4, 5, [ ]
+
+# a map, with a ' ' value for key '0'
+map3=1 :: a, 2 :: b, 0::[ ]
+-----------------------------------------------
+
+Hereby +\[+ escapes the sequence.
+
+
+==== Customizing the format
+
+The item and entry separators (by default +','+ and +"::"+) can be customized by setting corresponding meta-data
+entries as follows, resulting in the same values as in the prevoius listing:
+
+[source, properties]
+-----------------------------------------------
+# a list, with a ' ' value at the end
+list3=1__2__3__ 4__ 5__[ ]
+_list3.item-separator=__
+
+# a map, with a ' ' value for key '0'
+map3=1->a, 2->b, 0->[ ]
+_map3.map-entry-separator=->
+-----------------------------------------------
+
+Of course these settings also can be combined:
+
+[source, properties]
+-----------------------------------------------
+# a reformatted map
+redefined-map=0==none | 1==single | 2==any
+_redefined-map.map-entry-separator===
+_redefined-map.item-separator=|
 -----------------------------------------------
