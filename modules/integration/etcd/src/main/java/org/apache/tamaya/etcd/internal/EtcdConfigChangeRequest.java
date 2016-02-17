@@ -20,7 +20,7 @@ package org.apache.tamaya.etcd.internal;
 
 import org.apache.tamaya.etcd.EtcdAccessor;
 import org.apache.tamaya.etcd.EtcdBackends;
-import org.apache.tamaya.mutableconfig.spi.AbstractConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpiSpi;
 
 import java.net.URI;
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * {@code changeRequest.set("myTimedKey?ttl=30", "myValue");} will set a key {@code myTimedKey} valid only for
  * 30 seconds.
  */
-class EtcdConfigChangeRequest extends AbstractConfigChangeRequest{
+class EtcdConfigChangeRequest extends AbstractMutableConfigurationBackendSpiSpi {
 
     private static final Logger LOG = Logger.getLogger(EtcdConfigChangeRequest.class.getName());
 
@@ -42,7 +42,7 @@ class EtcdConfigChangeRequest extends AbstractConfigChangeRequest{
     }
 
     @Override
-    public boolean exists(String keyExpression) {
+    public boolean isExisting(String keyExpression) {
         for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
             try{
                 Map<String,String> props = accessor.get(keyExpression);
@@ -60,16 +60,15 @@ class EtcdConfigChangeRequest extends AbstractConfigChangeRequest{
 
     @Override
     protected void commitInternal() {
-        checkClosed();
         for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
             try{
-                for(String k:getRemoved()){
+                for(String k: getRemovedProperties()){
                     Map<String,String> res = accessor.delete(k);
                     if(res.get("_ERROR")!=null){
                         LOG.info("Failed to remove key from etcd: " + k);
                     }
                 }
-                for(Map.Entry<String,String> en:getProperties().entrySet()){
+                for(Map.Entry<String,String> en:getAddedProperties().entrySet()){
                     String key = en.getKey();
                     Integer ttl = null;
                     int index = en.getKey().indexOf('?');

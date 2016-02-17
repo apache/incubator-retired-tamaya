@@ -69,7 +69,7 @@ public class EtcdPropertySource implements PropertySource{
     @Override
     public PropertyValue get(String key) {
         // check prefix, if key does not start with it, it is not part of our name space
-        // if so, the prefix part must be removed, so etcd can resolve without it
+        // if so, the prefix part must be removedProperties, so etcd can resolve without it
         if(!key.startsWith(prefix)){
             return null;
         } else{

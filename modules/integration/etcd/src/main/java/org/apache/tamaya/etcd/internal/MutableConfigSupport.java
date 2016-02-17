@@ -18,15 +18,15 @@
  */
 package org.apache.tamaya.etcd.internal;
 
-import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeManagerSpi;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendSpi;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendProviderSpi;
 
 import java.net.URI;
 
 /**
  * Created by atsticks on 15.01.16.
  */
-public class MutableConfigSupport implements ConfigChangeManagerSpi{
+public class MutableConfigSupport implements MutableConfigurationBackendProviderSpi {
 
     private URI backendURI;
 
@@ -35,7 +35,7 @@ public class MutableConfigSupport implements ConfigChangeManagerSpi{
     }
 
     @Override
-    public ConfigChangeRequest createChangeRequest(URI uri) {
+    public MutableConfigurationBackendSpi getBackend(URI uri) {
         if(backendURI.equals(uri)) {
             return new EtcdConfigChangeRequest(backendURI);
         }
