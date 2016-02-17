@@ -100,9 +100,9 @@ very carefully and especially give us feedback, so we can improve them before pr
 |=======
 |_Artifact_                                 |_Description_                                          |_Links_
 |+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.                         | link:mod_jodatime.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-staged+      |Simple configuration extension to add staged config.   |link:mod_metamodel-staged.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-collections+ |Collections support.                                   | -
-|+org.apache.tamaya.ext:tamaya-ui+          |JSF based UI for Managing Configuration.               | -
+|+org.apache.tamaya.ext:tamaya-staged+      |Simple configuration extension to add staged config.   | link:mod_metamodel-staged.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-collections+ |Collections support.                                   | link:mod_collections.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-ui+          |UI for Managing Configuration.                         | -
 |=======
 
 
