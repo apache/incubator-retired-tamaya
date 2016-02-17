@@ -20,6 +20,7 @@ package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.BaseDynamicValue;
 import org.apache.tamaya.inject.api.DynamicValue;
@@ -382,7 +383,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 value = configuration.get(key, targetType);
             } else {
                 String source = configuration.get(key);
-                ConversionContext ctx = new ConversionContext.Builder(configuration, key, targetType).build();
+                ConversionContext ctx = new ConversionContext.Builder(configuration,
+                        ConfigurationProvider.getConfigurationContext(), key, targetType).build();
                 value = propertyConverter.convert(source, ctx);
             }
 

@@ -187,7 +187,8 @@ final class InjectionHelper {
         } else {
             List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                     .getPropertyConverters(targetType);
-            ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(), key,targetType)
+            ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
+                    ConfigurationProvider.getConfigurationContext(), key,targetType)
                     .setAnnotatedElement(element).build();
             for (PropertyConverter<T> converter : converters) {
                 adaptedValue = converter.convert(configValue, ctx);

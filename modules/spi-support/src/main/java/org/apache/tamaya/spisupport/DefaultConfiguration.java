@@ -185,7 +185,7 @@ public class DefaultConfiguration implements Configuration {
     protected <T> T convertValue(String key, String value, TypeLiteral<T> type) {
         if (value != null) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
-            ConversionContext context = new ConversionContext.Builder(this, key, type).build();
+            ConversionContext context = new ConversionContext.Builder(this, configurationContext, key, type).build();
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value, context);

@@ -98,7 +98,8 @@ public class ConfigurationProducer {
                 break;
             }
         }
-        ConversionContext.Builder builder = new ConversionContext.Builder(config, keyFound, TypeLiteral.of(toType));
+        ConversionContext.Builder builder = new ConversionContext.Builder(config,
+                ConfigurationProvider.getConfigurationContext(), keyFound, TypeLiteral.of(toType));
         if (injectionPoint.getMember() instanceof AnnotatedElement) {
             builder.setAnnotatedElement((AnnotatedElement) injectionPoint.getMember());
         }

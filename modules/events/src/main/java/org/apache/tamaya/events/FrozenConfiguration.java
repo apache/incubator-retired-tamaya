@@ -116,7 +116,8 @@ public final class FrozenConfiguration implements Configuration, Serializable {
         if (value != null) {
             List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                     .getPropertyConverters(type);
-            ConversionContext context = new ConversionContext.Builder(this,key,type).build();
+            ConversionContext context = new ConversionContext.Builder(this,
+                    ConfigurationProvider.getConfigurationContext(), key,type).build();
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value, context);
