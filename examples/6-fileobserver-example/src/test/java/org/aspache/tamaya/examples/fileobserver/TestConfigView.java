@@ -116,7 +116,7 @@ public class TestConfigView implements ConfigOperator{
                     List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                             .getPropertyConverters(type);
                     ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
-                            key, type).build();
+                            ConfigurationProvider.getConfigurationContext(), key, type).build();
                     for (PropertyConverter<T> converter : converters) {
                         try {
                             T t = converter.convert(value, ctx);
