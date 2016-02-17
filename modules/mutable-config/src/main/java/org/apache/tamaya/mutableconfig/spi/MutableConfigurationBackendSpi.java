@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.mutableconfig;
+package org.apache.tamaya.mutableconfig.spi;
+
+import org.apache.tamaya.Configuration;
 
 import java.net.URI;
 import java.util.Collection;
@@ -24,30 +26,20 @@ import java.util.Map;
 
 
 /**
- * This interface extends the Configuration interface hereby adding methods to change configuration entries.
- * Hereby not all configuration entries are necessarily mutable, since some entries may be read from non
- * mutable areas of configuration. Of course, it is always possible to add a mutable shadow layer on top of all
- * configuration to enable whatever changes applied. The exact management and storage persistence algorithm should be
- * transparent.<br>
- * As a consequence clients should first check, using the corresponding methods, if entries are to edited or removed
+ * This interface models a writable backend for configuration data.
+ *
+ * As a consequence clients should first check, using the corresponding methods, if entries are to edited or removedProperties
  * actually are eligible for change/creation or removal.
  */
-public interface ConfigChangeRequest {
+public interface MutableConfigurationBackendSpi {
 
     /**
-     * Get the unique id of this change request (UUID).
-     *
-     * @return the unique id of this change request (UUID).
-     */
-    String getRequestID();
-
-    /**
-     * Identifies the configuration backends that participate in this request instance and which are
+     * Identifies the configuration backend that is targeted by this instance and which is
      * also responsible for writing back the changes applied.
      *
      * @return the backend URI, never null.
      */
-    Collection<URI> getBackendURIs();
+    URI getBackendURI();
 
     /**
      * Checks if a configuration key is writable (or it can be added).
@@ -60,7 +52,7 @@ public interface ConfigChangeRequest {
 
     /**
      * Checks if a configuration key is removable. This also implies that it is writable, but there might be writable
-     * keys that cannot be removed.
+     * keys that cannot be removedProperties.
      *
      * @param keyExpression the keyExpression the key to be cheched for write access (including creation), not null.
      *                      Here this could also
@@ -70,7 +62,7 @@ public interface ConfigChangeRequest {
     boolean isRemovable(String keyExpression);
 
     /**
-     * Checks if any keys of the given type already exist in the backend. <b>NOTE:</b> there may be backends that
+     * Checks if any keys of the given type already exist in the write backend. <b>NOTE:</b> there may be backends that
      * are not able to support lookups with regular expressions. In most such cases you should pass the keys to
      * lookup explicitly.
      *
@@ -78,7 +70,7 @@ public interface ConfigChangeRequest {
      *                      also be a regular expression, such "as a.b.c.*".
      * @return true, if there is any key found matching the expression.
      */
-    boolean exists(String keyExpression);
+    boolean isExisting(String keyExpression);
 
     /**
      * Sets a property.
@@ -88,7 +80,7 @@ public interface ConfigChangeRequest {
      * @return the former property value, or null.
      * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
      */
-    ConfigChangeRequest put(String key, String value);
+    void put(String key, String value);
 
     /**
      * Puts all given configuration entries. This method should check that all given properties are
@@ -102,7 +94,7 @@ public interface ConfigChangeRequest {
      * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request is read-only.
      */
-    ConfigChangeRequest putAll(Map<String, String> properties);
+    void putAll(Map<String, String> properties);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -112,11 +104,11 @@ public interface ConfigChangeRequest {
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
-     * @param keys the property's keys to be removed, not null.
+     * @param keys the property's keys to be removedProperties, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removed, or the request is read-only.
+     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
-    ConfigChangeRequest remove(Collection<String> keys);
+    void remove(Collection<String> keys);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -126,39 +118,26 @@ public interface ConfigChangeRequest {
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
-     * @param keys the property's keys to be removed, not null.
+     * @param keys the property's keys to be removedProperties, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removed, or the request is read-only.
+     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
-    ConfigChangeRequest remove(String... keys);
+    void remove(String... keys);
 
     /**
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
      * the corresponding configuration backend.
-     * " @throws ConfigException if the request already has been committed or cancelled, or the commit fails.
+     *
+     * NOTE that changes applied must not necessarily be visible in the current {@link Configuration} instance,
+     * since visibility of changes also depends on the ordinals set on the {@link org.apache.tamaya.spi.PropertySource}s
+     * configured.
+     * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.
      */
     void commit();
 
     /**
-     * Cancel the given request, leaving everything unchanged. Cancelled requests are read-only and can not be used
-     * for preparing/submitting any configuration changes.
-     *
-     * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled.
+     * Rollback any changes leaving everything unchanged. This will rollback all changes applied since the last commit.
      */
-    void cancel();
+    void rollback();
 
-    /**
-     * Operation to check, if the current request is closed (either commited or cancelled). Closed requests are
-     * read-only and can not be used for preparing/submitting any configuration changes.
-     *
-     * @return true, if this instance is closed.
-     */
-    boolean isClosed();
-
-    /**
-     * Method to set the request id to be used.
-     * @param requestId the id to  be used, not null
-     * @throws IllegalStateException if the request is already closed.
-     */
-    void setRequestId(String requestId);
 }

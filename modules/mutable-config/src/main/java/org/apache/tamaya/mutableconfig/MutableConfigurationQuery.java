@@ -35,12 +35,12 @@ import java.util.UUID;
 
 
 /**
- * Accessor for creating {@link ConfigChangeRequest} instances to change and commit configuration.
+ * Accessor for creating {@link MutableConfiguration} instances to change and commit configuration.
  */
-public final class ConfigChangeManager {
+public final class MutableConfigurationQuery {
 
     /** Singleton constructor. */
-    private ConfigChangeManager(){}
+    private MutableConfigurationQuery(){}
 
     /**
      * Creates a new change request for the given configurationSource
@@ -52,7 +52,7 @@ public final class ConfigChangeManager {
      * @return a new ChangeRequest
      * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
      */
-    public static ConfigChangeRequest createChangeRequest(String... configurationTargets){
+    public static MutableConfiguration createChangeRequest(String... configurationTargets){
         try {
             URI[] uris = new URI[configurationTargets.length];
             for (int i = 0; i < configurationTargets.length; i++) {
@@ -74,15 +74,15 @@ public final class ConfigChangeManager {
      * @return a new ChangeRequest
      * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
      */
-    public static ConfigChangeRequest createChangeRequest(URI... configurationTargets){
+    public static MutableConfiguration createChangeRequest(URI... configurationTargets){
         if(Objects.requireNonNull(configurationTargets).length==0){
             throw new IllegalArgumentException("At least one target URI is required.");
         }
-        List<ConfigChangeRequest> targets = new ArrayList<>();
+        List<MutableConfiguration> targets = new ArrayList<>();
         for(ConfigChangeManagerSpi spi:ServiceContextManager.getServiceContext()
                 .getServices(ConfigChangeManagerSpi.class)){
             for(URI target:configurationTargets) {
-                ConfigChangeRequest req = spi.createChangeRequest(target);
+                MutableConfiguration req = spi.createChangeRequest(target);
                 if (req != null) {
                     targets.add(req);
                 }
@@ -102,15 +102,15 @@ public final class ConfigChangeManager {
     /**
      * Compound request that contains internally multiple change requests. Changes are committed to all members.
      */
-    private static final class CompoundConfigChangeRequest implements ConfigChangeRequest{
+    private static final class CompoundConfigChangeRequest implements MutableConfiguration {
 
-        private final List<ConfigChangeRequest> targets;
+        private final List<MutableConfiguration> targets;
         private final List<URI> backendURIs = new ArrayList<>();
         private String requestId = UUID.randomUUID().toString();
 
-        CompoundConfigChangeRequest(List<ConfigChangeRequest> targets){
+        CompoundConfigChangeRequest(List<MutableConfiguration> targets){
             this.targets = targets;
-            for(ConfigChangeRequest req:targets){
+            for(MutableConfiguration req:targets){
                 req.setRequestId(requestId);
                 backendURIs.addAll(req.getBackendURIs());
             }
@@ -128,7 +128,7 @@ public final class ConfigChangeManager {
 
         @Override
         public boolean isWritable(String keyExpression) {
-            for(ConfigChangeRequest req:targets){
+            for(MutableConfiguration req:targets){
                 if(req.isWritable(keyExpression)){
                     return true;
                 }
@@ -138,7 +138,7 @@ public final class ConfigChangeManager {
 
         @Override
         public boolean isRemovable(String keyExpression) {
-            for(ConfigChangeRequest req:targets){
+            for(MutableConfiguration req:targets){
                 if(req.isRemovable(keyExpression)){
                     return true;
                 }
@@ -148,7 +148,7 @@ public final class ConfigChangeManager {
 
         @Override
         public boolean exists(String keyExpression) {
-            for(ConfigChangeRequest req:targets){
+            for(MutableConfiguration req:targets){
                 if(req.exists(keyExpression)){
                     return true;
                 }
@@ -157,8 +157,8 @@ public final class ConfigChangeManager {
         }
 
         @Override
-        public ConfigChangeRequest put(String key, String value) {
-            for(ConfigChangeRequest req:targets){
+        public MutableConfiguration put(String key, String value) {
+            for(MutableConfiguration req:targets){
                 if(req.isWritable(key)){
                     req.put(key, value);
                 }
@@ -167,8 +167,8 @@ public final class ConfigChangeManager {
         }
 
         @Override
-        public ConfigChangeRequest putAll(Map<String, String> properties) {
-            for(ConfigChangeRequest req:targets){
+        public MutableConfiguration putAll(Map<String, String> properties) {
+            for(MutableConfiguration req:targets){
                 for(Map.Entry<String,String> en:properties.entrySet()) {
                     if (req.isWritable(en.getKey())) {
                         req.put(en.getKey(), en.getValue());
@@ -179,8 +179,8 @@ public final class ConfigChangeManager {
         }
 
         @Override
-        public ConfigChangeRequest remove(String... keys) {
-            for(ConfigChangeRequest req:targets){
+        public MutableConfiguration remove(String... keys) {
+            for(MutableConfiguration req:targets){
                 for(String key:keys){
                     if (req.isRemovable(key)) {
                         req.remove(key);
@@ -191,8 +191,8 @@ public final class ConfigChangeManager {
         }
 
         @Override
-        public ConfigChangeRequest remove(Collection<String> keys) {
-            for(ConfigChangeRequest req:targets){
+        public MutableConfiguration remove(Collection<String> keys) {
+            for(MutableConfiguration req:targets){
                 for(String key:keys){
                     if (req.isRemovable(key)) {
                         req.remove(key);
@@ -204,21 +204,21 @@ public final class ConfigChangeManager {
 
         @Override
         public void commit() {
-            for(ConfigChangeRequest req:targets){
+            for(MutableConfiguration req:targets){
                 req.commit();
             }
         }
 
         @Override
-        public void cancel() {
-            for(ConfigChangeRequest req:targets){
-                req.cancel();
+        public void rollback() {
+            for(MutableConfiguration req:targets){
+                req.rollback();
             }
         }
 
         @Override
         public boolean isClosed() {
-            for(ConfigChangeRequest req:targets){
+            for(MutableConfiguration req:targets){
                 if(req.isClosed()){
                     return true;
                 }

@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeManagerSpi;
+import org.apache.tamaya.mutableconfig.MutableConfiguration;
+import org.apache.tamaya.mutableconfig.spi.ConfigurationBackendSpi;
 
 import java.io.File;
 import java.net.URI;
@@ -30,12 +30,12 @@ import java.util.logging.Logger;
  * Mutable Config Request factory that tries to convert given URIs to file references, if successful, it returns
  * ConfigChangeRequests fir .properties and .xml files.
  */
-public class DefaultConfigChangeManagerSpi implements ConfigChangeManagerSpi{
+public class DefaultConfigurationBackendSpi implements ConfigurationBackendSpi {
 
     private static final Logger LOG = Logger.getLogger(XmlPropertiesFileConfigChangeRequest.class.getName());
 
     @Override
-    public ConfigChangeRequest createChangeRequest(URI uri) {
+    public MutableConfiguration getBackend(URI uri) {
         try{
             File f = new File(uri);
             if(f.getName().endsWith(".properties")){

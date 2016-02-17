@@ -19,51 +19,49 @@
 package org.apache.tamaya.mutableconfig.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.mutableconfig.spi.AbstractConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpiSpi;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Change Request implementation based on .xml properties file.
+ * Change Request implementation based on .properties file.
  */
-class XmlPropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
+class PropertiesFileConfigBackendSpi extends AbstractMutableConfigurationBackendSpiSpi {
 
-    private static final Logger LOG = Logger.getLogger(XmlPropertiesFileConfigChangeRequest.class.getName());
+    private static final Logger LOG = Logger.getLogger(PropertiesFileConfigBackendSpi.class.getName());
 
     private final File file;
 
     private final Properties properties = new Properties();
 
     /**
-     * Instantiates a new Xml properties file config change request.
+     * Instantiates a new Properties file config change request.
      *
      * @param file the file
      */
-    XmlPropertiesFileConfigChangeRequest(File file){
+    PropertiesFileConfigBackendSpi(File file){
         super(file.toURI());
         this.file = file;
         if(file.exists()) {
-            for(URI uri:getBackendURIs()) {
-                try (InputStream is = uri.toURL().openStream()) {
-                    properties.loadFromXML(is);
-                } catch (Exception e) {
-                    LOG.log(Level.SEVERE, "Failed to load properties from " + file, e);
-                }
+            try (InputStream is = getBackendURI().toURL().openStream()) {
+                properties.load(is);
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Failed to load properties from " + file, e);
             }
         }
     }
 
     @Override
-    public boolean exists(String keyExpression) {
+    public boolean isExisting(String keyExpression) {
         if(properties.containsKey(keyExpression)){
             return true;
         }
@@ -87,7 +85,7 @@ class XmlPropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
                 throw new ConfigException("Failed to create config file " + file, e);
             }
         }
-        for(Map.Entry<String,String> en:super.properties.entrySet()){
+        for(Map.Entry<String,String> en:super.addedProperties.entrySet()){
             int index = en.getKey().indexOf('?');
             if(index>0){
                 this.properties.put(en.getKey().substring(0, index), en.getValue());
@@ -95,11 +93,11 @@ class XmlPropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
                 this.properties.put(en.getKey(), en.getValue());
             }
         }
-        for(String rmKey:super.removed){
+        for(String rmKey:super.removedProperties){
             this.properties.remove(rmKey);
         }
         try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
-            properties.storeToXML(bos, "Properties written from Tamaya, request: " + getRequestID());
+            properties.store(bos, "Properties written from Tamaya on : " + new Date());
             bos.flush();
         }
         catch(Exception e){
@@ -109,7 +107,7 @@ class XmlPropertiesFileConfigChangeRequest extends AbstractConfigChangeRequest{
 
     @Override
     public String toString() {
-        return "XmlPropertiesFileConfigChangeRequest{" +
+        return "PropertiesFileConfigBackend{" +
                 "file=" + file +
                 '}';
     }

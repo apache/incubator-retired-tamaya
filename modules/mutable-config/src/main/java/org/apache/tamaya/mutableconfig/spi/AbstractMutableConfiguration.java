@@ -19,7 +19,7 @@
 package org.apache.tamaya.mutableconfig.spi;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.MutableConfiguration;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.UUID;
 /**
  * Base class for implementing a ConfigChangeRequest.
  */
-public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest {
+public abstract class AbstractMutableConfiguration implements MutableConfiguration {
 
     private final List<URI> uris = new ArrayList<>();
     private String requestID = UUID.randomUUID().toString();
@@ -63,7 +63,7 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
      *
      * @param uris the uris
      */
-    protected AbstractConfigChangeRequest(URI... uris){
+    protected AbstractMutableConfiguration(URI... uris){
         for(URI uri:uris){
             this.uris.add(Objects.requireNonNull(uri));
         }
@@ -106,28 +106,28 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     }
 
     @Override
-    public ConfigChangeRequest put(String key, String value) {
+    public MutableConfiguration put(String key, String value) {
         checkClosed();
         this.properties.put(key, value);
         return this;
     }
 
     @Override
-    public ConfigChangeRequest putAll(Map<String, String> properties) {
+    public MutableConfiguration putAll(Map<String, String> properties) {
         checkClosed();
         this.properties.putAll(properties);
         return this;
     }
 
     @Override
-    public ConfigChangeRequest remove(String... keys) {
+    public MutableConfiguration remove(String... keys) {
         checkClosed();
         Collections.addAll(this.removed, keys);
         return this;
     }
 
     @Override
-    public ConfigChangeRequest remove(Collection<String> keys) {
+    public MutableConfiguration remove(Collection<String> keys) {
         checkClosed();
         this.removed.addAll(keys);
         return this;
@@ -146,7 +146,7 @@ public abstract class AbstractConfigChangeRequest implements ConfigChangeRequest
     protected abstract void commitInternal();
 
     @Override
-    public final void cancel() {
+    public final void rollback() {
         checkClosed();
         closed = true;
     }

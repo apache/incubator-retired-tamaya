@@ -27,9 +27,9 @@ import java.net.URI;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link ConfigChangeManager}.
+ * Tests for {@link MutableConfigurationQuery}.
  */
-public class ConfigChangeManagerTest {
+public class MutableConfigurationQueryTest {
 
     /**
      * Test create change request.
@@ -39,10 +39,10 @@ public class ConfigChangeManagerTest {
     @Test
     public void testCreateChangeRequest() throws Exception {
         File f = File.createTempFile("ConfigChangeRequest",".properties");
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(f.toURI());
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
         assertNotNull(req);
         f = File.createTempFile("ConfigChangeRequest",".xml");
-        req = ConfigChangeManager.createChangeRequest(f.toURI());
+        req = MutableConfigurationQuery.createChangeRequest(f.toURI());
         assertNotNull(req);
     }
 
@@ -53,7 +53,7 @@ public class ConfigChangeManagerTest {
      */
     @Test(expected=ConfigException.class)
     public void testInvalidCreateChangeRequest() throws Exception {
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(new URI("foo:bar"));
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(new URI("foo:bar"));
     }
 
     /**
@@ -63,7 +63,7 @@ public class ConfigChangeManagerTest {
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateChangeRequest1() throws Exception {
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest((URI[])null);
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest((URI[])null);
     }
 
     /**
@@ -73,6 +73,6 @@ public class ConfigChangeManagerTest {
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateChangeRequest2() throws Exception {
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest((String[])null);
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest((String[])null);
     }
 }

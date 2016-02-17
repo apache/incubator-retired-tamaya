@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.mutableconfig.ConfigChangeManager;
-import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.MutableConfigurationQuery;
+import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.junit.Test;
 
 import java.io.File;
@@ -31,11 +31,11 @@ import java.util.Properties;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link PropertiesFileConfigChangeRequest}.
+ * Tests for {@link PropertiesFileConfigBackend}.
  */
-public class PropertiesFileConfigChangeRequestTest {
+public class PropertiesFileConfigBackendTest {
     /**
-     * Test read write properties with cancel.
+     * Test read write properties with rollback.
      *
      * @throws IOException the io exception
      */
@@ -43,13 +43,13 @@ public class PropertiesFileConfigChangeRequestTest {
     public void testReadWriteProperties_WithCancel() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCancel",".properties");
         f.delete();
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(f.toURI());
-        assertTrue(req instanceof PropertiesFileConfigChangeRequest);
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
+        assertTrue(req instanceof PropertiesFileConfigBackend);
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
         cm.put("key3", "value3");
-        req.cancel();;
+        req.rollback();;
         assertTrue(req.isClosed());
         assertFalse(f.exists());
     }
@@ -63,8 +63,8 @@ public class PropertiesFileConfigChangeRequestTest {
     public void testReadWriteProperties_WithCommit() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCommit",".properties");
         f.delete();
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(f.toURI());
-        assertTrue(req instanceof PropertiesFileConfigChangeRequest);
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
+        assertTrue(req instanceof PropertiesFileConfigBackend);
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
@@ -73,7 +73,7 @@ public class PropertiesFileConfigChangeRequestTest {
         req.commit();;
         assertTrue(req.isClosed());
         assertTrue(f.exists());
-        ConfigChangeRequest req2 = ConfigChangeManager.createChangeRequest(f.toURI());
+        MutableConfiguration req2 = MutableConfigurationQuery.createChangeRequest(f.toURI());
         assertTrue(req != req2);
         req2.remove("foo");
         req2.remove("key3");
@@ -97,7 +97,7 @@ public class PropertiesFileConfigChangeRequestTest {
     public void testReadWriteXmlProperties_WithCommit() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCommit",".xml");
         f.delete();
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(f.toURI());
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
         assertTrue(req instanceof XmlPropertiesFileConfigChangeRequest);
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
@@ -107,7 +107,7 @@ public class PropertiesFileConfigChangeRequestTest {
         req.commit();;
         assertTrue(req.isClosed());
         assertTrue(f.exists());
-        ConfigChangeRequest req2 = ConfigChangeManager.createChangeRequest(f.toURI());
+        MutableConfiguration req2 = MutableConfigurationQuery.createChangeRequest(f.toURI());
         assertTrue(req != req2);
         req2.remove("foo");
         req2.remove("key3");
@@ -128,7 +128,7 @@ public class PropertiesFileConfigChangeRequestTest {
         f1.delete();
         File f2 = File.createTempFile("testReadWrite_Compound",".properties");
         f2.delete();
-        ConfigChangeRequest req = ConfigChangeManager.createChangeRequest(f1.toURI(),f2.toURI());
+        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f1.toURI(),f2.toURI());
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
@@ -138,7 +138,7 @@ public class PropertiesFileConfigChangeRequestTest {
         assertTrue(req.isClosed());
         assertTrue(f1.exists());
         assertTrue(f2.exists());
-        ConfigChangeRequest req2 = ConfigChangeManager.createChangeRequest(f1.toURI(),f2.toURI());
+        MutableConfiguration req2 = MutableConfigurationQuery.createChangeRequest(f1.toURI(),f2.toURI());
         assertTrue(req != req2);
         req2.remove("foo");
         req2.remove("key3");

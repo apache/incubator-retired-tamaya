@@ -18,22 +18,23 @@
  */
 package org.apache.tamaya.mutableconfig.spi;
 
-import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.MutableConfiguration;
+import org.apache.tamaya.mutableconfig.MutableConfigurationQuery;
 
 import java.net.URI;
 
 /**
- * Provider SPI for the {@link org.apache.tamaya.mutableconfig.ConfigChangeManager}. Providers may override
+ * Provider SPI used by {@link MutableConfigurationQuery}. Providers may override
  * other providers registering with a higher {@link javax.annotation.Priority} value annotated.
  */
-public interface ConfigChangeManagerSpi {
+public interface MutableConfigurationBackendProviderSpi {
 
    /**
-    * Creates a new change request for the given Configuration.
+    * Creates a new configuration backend for applying changes to.
     *
     * @param backendURI the backend uri
-    * @return a new ChangeRequest, or null if the given backend URI cannot be edited.
+    * @return the requested backend, or null if the given backend URI is not supported by the given SPI.
     */
-   ConfigChangeRequest createChangeRequest(URI backendURI);
+   MutableConfigurationBackend getBackend(URI backendURI);
 
 }
