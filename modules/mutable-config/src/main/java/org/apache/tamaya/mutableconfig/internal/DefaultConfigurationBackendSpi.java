@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.mutableconfig.MutableConfiguration;
-import org.apache.tamaya.mutableconfig.spi.ConfigurationBackendSpi;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendSpi;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendProviderSpi;
 
 import java.io.File;
 import java.net.URI;
@@ -30,18 +30,18 @@ import java.util.logging.Logger;
  * Mutable Config Request factory that tries to convert given URIs to file references, if successful, it returns
  * ConfigChangeRequests fir .properties and .xml files.
  */
-public class DefaultConfigurationBackendSpi implements ConfigurationBackendSpi {
+public class DefaultConfigurationBackendSpi implements MutableConfigurationBackendProviderSpi {
 
-    private static final Logger LOG = Logger.getLogger(XmlPropertiesFileConfigChangeRequest.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultConfigurationBackendSpi.class.getName());
 
     @Override
-    public MutableConfiguration getBackend(URI uri) {
+    public MutableConfigurationBackendSpi getBackend(URI uri) {
         try{
             File f = new File(uri);
             if(f.getName().endsWith(".properties")){
-                return new PropertiesFileConfigChangeRequest(f);
+                return new PropertiesFileConfigBackendSpi(f);
             }else if(f.getName().endsWith(".xml")){
-                return new XmlPropertiesFileConfigChangeRequest(f);
+                return new XmlPropertiesFileConfigBackendSpi(f);
             }
         } catch(Exception e){
             LOG.log(Level.FINEST, "URI not convertible to file, ignoring " + uri, e);

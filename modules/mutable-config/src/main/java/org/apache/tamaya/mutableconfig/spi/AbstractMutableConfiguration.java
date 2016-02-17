@@ -18,72 +18,35 @@
  */
 package org.apache.tamaya.mutableconfig.spi;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Base class for implementing a ConfigChangeRequest.
  */
 public abstract class AbstractMutableConfiguration implements MutableConfiguration {
 
-    private final List<URI> uris = new ArrayList<>();
-    private String requestID = UUID.randomUUID().toString();
     /**
      * The Properties.
      */
-    protected final Map<String,String> properties = new HashMap<>();
+    protected final Map<String,String> addedProperties = new HashMap<>();
     /**
      * The Removed.
      */
-    protected final Set<String> removed = new HashSet<>();
-    private boolean closed = false;
+    protected final Set<String> removedProperties = new HashSet<>();
 
-    protected Set<String> getRemoved() {
-        return removed;
+    protected Set<String> getRemovedProperties() {
+        return removedProperties;
     }
 
-    protected Map<String,String> getProperties() {
-        return properties;
-    }
-
-    /**
-     * Instantiates a new Abstract config change request.
-     *
-     * @param uris the uris
-     */
-    protected AbstractMutableConfiguration(URI... uris){
-        for(URI uri:uris){
-            this.uris.add(Objects.requireNonNull(uri));
-        }
-        if(this.uris.isEmpty()){
-            throw new IllegalArgumentException("At least one URI should be provided.");
-        }
-    }
-
-    /**
-     * Get the unique id of this change request (UUID).
-     * @return the unique id of this change request (UUID).
-     */
-    @Override
-    public String getRequestID(){
-        return requestID;
-    }
-
-    @Override
-    public final Collection<URI> getBackendURIs() {
-        return Collections.unmodifiableCollection(uris);
+    protected Map<String,String> getAddedProperties() {
+        return addedProperties;
     }
 
     @Override
@@ -97,47 +60,37 @@ public abstract class AbstractMutableConfiguration implements MutableConfigurati
     }
 
     @Override
-    public abstract boolean exists(String keyExpression);
-
-    @Override
-    public void setRequestId(String requestId) {
-        checkClosed();
-        this.requestID = Objects.requireNonNull(requestId);
-    }
+    public abstract boolean isExisting(String keyExpression);
 
     @Override
     public MutableConfiguration put(String key, String value) {
-        checkClosed();
-        this.properties.put(key, value);
+        this.addedProperties.put(key, value);
         return this;
     }
 
     @Override
     public MutableConfiguration putAll(Map<String, String> properties) {
-        checkClosed();
-        this.properties.putAll(properties);
+        this.addedProperties.putAll(properties);
         return this;
     }
 
     @Override
     public MutableConfiguration remove(String... keys) {
-        checkClosed();
-        Collections.addAll(this.removed, keys);
+        Collections.addAll(this.removedProperties, keys);
         return this;
     }
 
     @Override
     public MutableConfiguration remove(Collection<String> keys) {
-        checkClosed();
-        this.removed.addAll(keys);
+        this.removedProperties.addAll(keys);
         return this;
     }
 
     @Override
     public final void commit() {
-        checkClosed();
         commitInternal();
-        closed = true;
+        this.removedProperties.clear();
+        this.addedProperties.clear();
     }
 
     /**
@@ -147,21 +100,7 @@ public abstract class AbstractMutableConfiguration implements MutableConfigurati
 
     @Override
     public final void rollback() {
-        checkClosed();
-        closed = true;
-    }
-
-    @Override
-    public final boolean isClosed() {
-        return closed;
-    }
-
-    /**
-     * Check closed.
-     */
-    protected void checkClosed(){
-        if(closed){
-            throw new ConfigException("Change request already closed.");
-        }
+        this.removedProperties.clear();
+        this.addedProperties.clear();
     }
 }

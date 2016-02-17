@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-= Apache Tamaya -- Extension: Events
+= Apache Tamaya -- Extension: Mutable Configuration
 
 :name: Tamaya
 :rootpackage: org.apache.tamaya.mutableconfig
@@ -47,9 +47,8 @@ toc::[]
 == Tamaya Mutable Configuration (Extension Module)
 === Overview
 
-Tamaya Configuration by default is read-only, which covers must of the use cases. Make it writable through out
-creates also a bunch of new issues, especially with distributed configuration services and eventual consistency.
-Therefore mutability of configuration is modelled in Tamaya as a separate concern. This module defines the API
+Tamaya Configuration by default is read-only, which covers must of the use cases. But there are many legit use cases
+where configuration should be written back to some backend systems or the local file system. This module defines the API
 to be used, whereas multiple mutable backends can register their mechanism to write configuration properties.
 
 === Compatibility
@@ -71,29 +70,26 @@ To benefit from configuration mutability support you only must add the correspon
 
 === Core Architecture
 
-The core of the module is the +ConfigChangeManager+ singleton, which creates a +ConfigChangeReuqest+ class for
-one or multiple +configurationTargets+ passed. The supported target +URIs+ hereby are determined (and must be
-documented) by the registered backend spis. If not sure you can call +getSupportedURIInfo()+ to see, which kind of URI's
-supported.
+The core of the module is the +MutableConfigQuery+ singleton, which is a +ConfigQuery+ that creates a new
++Mutableonfiguration+ based on a +Configuration+ and a set of target backend +URIs+. If not sure you can call
++getSupportedURIInfo()+ to see, which kind of URI's are  currently supported.
 As an example writing configuration entries to an +etcd+ server can be done as follows:
 
 [source,java]
-.Writing configuration to etcd
+.Accessing a mutable configuration backed by etcd
 --------------------------------------------
-ConfigChangeRequest request = ConfigChangeManager.createChangeRequest(
-    new URI("etc:http://127.0.0.1:4441"),
-    new URI("file:/home/etcd/backup-config.properties"));
-ChangeSummary summary = request
-                .set("newKey", "newValue").set("anotherKey", "updatedValue")
-                .remove("valueNotValid")
-                .commit();
+MutableConfiguration config = ConfigChangeManager.getConfiguration().query(
+    MutableConfigurationQuery.of("etc:http://127.0.0.1:4441", "file:/home/etcd/backup-config.properties");
+config.set("newKey", "newValue").set("anotherKey", "updatedValue")
+      .remove("valueNotValid")
+      .commit();
 --------------------------------------------
 
 The effective effect of your changes to the overall configuration changes cannot be easily predicted, since it depends
 on several aspects:
 
 . is the corresponding configuration resource configured as part of the current system's configuration?
-. what is the +PropertySource's+ ordinal? Is it overriding or overriden by other sources?
+. what is the +PropertySource's+ ordinal? Is it overriding or overridden by other sources?
 . is the change directly visible to the configuration system? E.g. injected values are normally not updated,
   whereas injecting a +DynamicValue<T>+ instance allows to detect and react single value changes. Also the
   +PropertySources+ implementation must be able to detect any configuration changes and adapt its values returned
@@ -101,21 +97,22 @@ on several aspects:
 . Is configuration cached, or written/collected directly on access?
 . can the changes applied be committed at all?
 
-So it is part of your application configuration design to clearly define, which confoguration may be read-only, which
-may be mutable, how overridings should work and to which backends finally any changes should be written back. To
-support such fine granular scenarios the +ConfigChangeRequest+ interface also has methods to determine if a key
-is writable at all for a given configuration target:
+So it is part of your application configuration design to clearly define, which configuration may be read-only, which
+may be mutable, how overriding should work and to which backends finally any changes should be written back. To
+support such fine granular scenarios a +MutableConfiguration+ also offers methods to determine if a key
+is writable at all or can be removed or updated:
 
 [source,java]
 .Checking for mutability
 --------------------------------------------
-ConfigChangeRequest request = ConfigChangeManager.createChangeRequest(new URI("file://$USER_HOME/.myapp/mapp.properties"));
-if(request,isWritable("mycluster.shared.appKey")){
-    request.set("newKey", "newValue")
+MutableConfiguration config = ConfigChangeManager.getConfiguration().query(
+    MutableConfigurationQuery.of("etc:http://127.0.0.1:4441", "file:/home/etcd/backup-config.properties");
+if(config,isWritable("mycluster.shared.appKey")){
+    config.set("newKey", "newValue")
     .remove("valueNotValid")
      .commit();
 }else{
-    request.cancel();
+    config.rollbacks();
 }
 --------------------------------------------
 
@@ -126,22 +123,39 @@ several ways, e.g. by:
 
 * using the _tamaya-events_ extension, which can be used to observe the system's configuration and
   publishing events when things have been changed.
-* The SPI implementing the +ConfigChangeManagerSpi+ may inform/update any affected +PropertySource,
+* The SPI implementing the +MutableConfigurationBackendSpi+ may inform/update any affected +PropertySource,
   PropertySourceProvider+ instances about the changes applied.
+
+=== Supported Backends modules
+
+Multiple backends are supported. E.g. the _etcd_ and _consul_ integration modules of Tamaya also registers
+corresponding SPI implementations/backends. By default the following backends are available:
+
+* +.properties+ resources, e.g. files or resources located on a web server, following the +java.util.Properties+
+  format.
+* +.xml+ resources, e.g. files or resources located on a web server, following the +java.util.Properties+ XML format.
 
 
 === SPIs
 
-The module defines only one single SPI, that must be implemented to implement the fabric method
-+createChangeRequest(URI)+ of the +ConfigChangeManager+ singleton:
+The module defines only one single SPI +MutableConfigurationBackendProviderSpi+, that must be implemented. It
+defines a fabric method +MutableConfigurationBackendSpi getBackend(URI)+ used by the +MutableConfigurationQuery+
+accessor:
 
 [source,java]
 .SPI: ConfigEventSpi
 --------------------------------------------------
-public interface ConfigChangeManagerSpi {
-    ConfigChangeRequest createChangeRequest(URI backendURI);
+public interface MutableConfigurationBackendProviderSpi {
+    MutableConfigurationBackendSpi getBackend(URI backendURI);
 }
 --------------------------------------------------
 
 Implementations are registered with the current +ServiceContext+, be default as with
  +java.util.ServiceLoader+.
+
+
+As convenience the following base classes are provided:
+
+* +org.apache.tamaya.mutableconfig.spi.AbstractMutableConfiguration+ simplifying implementation of +MutableConfiguration+.
+* +org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpi+ simplifying the implemenation of
+  +MutableConfigurationBackendSpi+.

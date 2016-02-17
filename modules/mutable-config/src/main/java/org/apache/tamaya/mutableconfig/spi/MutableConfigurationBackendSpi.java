@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.mutableconfig.spi;
 
-import org.apache.tamaya.Configuration;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -128,7 +126,7 @@ public interface MutableConfigurationBackendSpi {
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
      * the corresponding configuration backend.
      *
-     * NOTE that changes applied must not necessarily be visible in the current {@link Configuration} instance,
+     * NOTE that changes applied must not necessarily be visible in the current {@link org.apache.tamaya.Configuration} instance,
      * since visibility of changes also depends on the ordinals set on the {@link org.apache.tamaya.spi.PropertySource}s
      * configured.
      * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.

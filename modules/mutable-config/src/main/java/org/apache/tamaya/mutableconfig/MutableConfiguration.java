@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.mutableconfig;
 
+import org.apache.tamaya.Configuration;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -28,21 +30,16 @@ import java.util.Map;
  * Hereby not all configuration entries are necessarily mutable, since some entries may be read from non
  * mutable areas of configuration. Of course, it is always possible to add a mutable shadow layer on top of all
  * configuration to enable whatever changes applied. The exact management and storage persistence algorithm should be
- * transparent.<br>
- * As a consequence clients should first check, using the corresponding methods, if entries are to edited or removed
+ * transparent.
+ *
+ * As a consequence clients should first check, using the corresponding methods, if entries are to edited or
+ * removedProperties
  * actually are eligible for change/creation or removal.
  */
-public interface MutableConfiguration {
+public interface MutableConfiguration extends Configuration {
 
     /**
-     * Get the unique id of this change request (UUID).
-     *
-     * @return the unique id of this change request (UUID).
-     */
-    String getRequestID();
-
-    /**
-     * Identifies the configuration backends that participate in this request instance and which are
+     * Identifies the configuration backends that are targeted by this instance and which are
      * also responsible for writing back the changes applied.
      *
      * @return the backend URI, never null.
@@ -60,7 +57,7 @@ public interface MutableConfiguration {
 
     /**
      * Checks if a configuration key is removable. This also implies that it is writable, but there might be writable
-     * keys that cannot be removed.
+     * keys that cannot be removedProperties.
      *
      * @param keyExpression the keyExpression the key to be cheched for write access (including creation), not null.
      *                      Here this could also
@@ -70,7 +67,7 @@ public interface MutableConfiguration {
     boolean isRemovable(String keyExpression);
 
     /**
-     * Checks if any keys of the given type already exist in the backend. <b>NOTE:</b> there may be backends that
+     * Checks if any keys of the given type already exist in the write backend. <b>NOTE:</b> there may be backends that
      * are not able to support lookups with regular expressions. In most such cases you should pass the keys to
      * lookup explicitly.
      *
@@ -78,7 +75,7 @@ public interface MutableConfiguration {
      *                      also be a regular expression, such "as a.b.c.*".
      * @return true, if there is any key found matching the expression.
      */
-    boolean exists(String keyExpression);
+    boolean isExisting(String keyExpression);
 
     /**
      * Sets a property.
@@ -93,28 +90,32 @@ public interface MutableConfiguration {
     /**
      * Puts all given configuration entries. This method should check that all given properties are
      * basically removable, as defined by #isWritable. If any of the passed keys is not writable during this initial
-     * check, the operation should not perform any configuration changes and throw a {@link org.apache.tamaya.ConfigException}. If errors
-     * occur afterwards, when the properties are effectively written back to the backends, the errors should be
-     * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
-     * remove all entries as far as possible and abort the writing operation.
+     * check, the operation should not perform any configuration changes and throw a
+     * {@link org.apache.tamaya.ConfigException}. If errors occur afterwards, when the properties are effectively
+     * written back to the backends, the errors should be collected and returned as part of the ConfigException
+     * payload. Nevertheless the operation should in that case remove all entries as far as possible and abort the
+     * writing operation.
      *
      * @param properties the properties tobe written, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request is read-only.
+     * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request
+     * is read-only.
      */
     MutableConfiguration putAll(Map<String, String> properties);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
      * basically removable, as defined by #isRemovable. If any of the passed keys is not removable during this initial
-     * check, the operation should not perform any configuration changes and throw a {@link org.apache.tamaya.ConfigException}. If errors
+     * check, the operation should not perform any configuration changes and throw a
+     * {@link org.apache.tamaya.ConfigException}. If errors
      * occur afterwards, when the properties are effectively written back to the backends, the errors should be
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
-     * @param keys the property's keys to be removed, not null.
+     * @param keys the property's keys to be removedProperties, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removed, or the request is read-only.
+     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the
+     * request is read-only.
      */
     MutableConfiguration remove(Collection<String> keys);
 
@@ -126,39 +127,26 @@ public interface MutableConfiguration {
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
-     * @param keys the property's keys to be removed, not null.
+     * @param keys the property's keys to be removedProperties, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removed, or the request is read-only.
+     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
     MutableConfiguration remove(String... keys);
 
     /**
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
      * the corresponding configuration backend.
-     * " @throws ConfigException if the request already has been committed or cancelled, or the commit fails.
+     *
+     * NOTE that changes applied must not necessarily be visible in the current {@link Configuration} instance,
+     * since visibility of changes also depends on the ordinals set on the {@link org.apache.tamaya.spi.PropertySource}s
+     * configured.
+     * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.
      */
     void commit();
 
     /**
-     * Cancel the given request, leaving everything unchanged. Cancelled requests are read-only and can not be used
-     * for preparing/submitting any configuration changes.
-     *
-     * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled.
+     * Rollback any changes leaving everything unchanged. This will rollback all changes applied since the last commit.
      */
-    void cancel();
+    void rollback();
 
-    /**
-     * Operation to check, if the current request is closed (either commited or cancelled). Closed requests are
-     * read-only and can not be used for preparing/submitting any configuration changes.
-     *
-     * @return true, if this instance is closed.
-     */
-    boolean isClosed();
-
-    /**
-     * Method to set the request id to be used.
-     * @param requestId the id to  be used, not null
-     * @throws IllegalStateException if the request is already closed.
-     */
-    void setRequestId(String requestId);
 }

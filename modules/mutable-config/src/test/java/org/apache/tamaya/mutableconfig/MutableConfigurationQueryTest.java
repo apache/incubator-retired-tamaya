@@ -19,6 +19,7 @@
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import java.io.File;
@@ -39,10 +40,12 @@ public class MutableConfigurationQueryTest {
     @Test
     public void testCreateChangeRequest() throws Exception {
         File f = File.createTempFile("ConfigChangeRequest",".properties");
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f.toURI()));
         assertNotNull(req);
         f = File.createTempFile("ConfigChangeRequest",".xml");
-        req = MutableConfigurationQuery.createChangeRequest(f.toURI());
+        req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f.toURI()));
         assertNotNull(req);
     }
 
@@ -53,7 +56,8 @@ public class MutableConfigurationQueryTest {
      */
     @Test(expected=ConfigException.class)
     public void testInvalidCreateChangeRequest() throws Exception {
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(new URI("foo:bar"));
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(new URI("foo:bar")));
     }
 
     /**
@@ -63,7 +67,8 @@ public class MutableConfigurationQueryTest {
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateChangeRequest1() throws Exception {
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest((URI[])null);
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of((URI[])null));
     }
 
     /**
@@ -73,6 +78,7 @@ public class MutableConfigurationQueryTest {
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateChangeRequest2() throws Exception {
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest((String[])null);
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of((String[])null));
     }
 }

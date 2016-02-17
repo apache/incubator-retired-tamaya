@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.mutableconfig.MutableConfigurationQuery;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.junit.Test;
@@ -31,7 +32,7 @@ import java.util.Properties;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link PropertiesFileConfigBackend}.
+ * Tests for {@link PropertiesFileConfigBackendSpi}.
  */
 public class PropertiesFileConfigBackendTest {
     /**
@@ -43,14 +44,13 @@ public class PropertiesFileConfigBackendTest {
     public void testReadWriteProperties_WithCancel() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCancel",".properties");
         f.delete();
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
-        assertTrue(req instanceof PropertiesFileConfigBackend);
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f.toURI()));
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
         cm.put("key3", "value3");
         req.rollback();;
-        assertTrue(req.isClosed());
         assertFalse(f.exists());
     }
 
@@ -63,17 +63,17 @@ public class PropertiesFileConfigBackendTest {
     public void testReadWriteProperties_WithCommit() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCommit",".properties");
         f.delete();
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
-        assertTrue(req instanceof PropertiesFileConfigBackend);
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f.toURI()));
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
         cm.put("key3", "value3");
         req.putAll(cm);
         req.commit();;
-        assertTrue(req.isClosed());
         assertTrue(f.exists());
-        MutableConfiguration req2 = MutableConfigurationQuery.createChangeRequest(f.toURI());
+        MutableConfiguration req2 = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f.toURI()));
         assertTrue(req != req2);
         req2.remove("foo");
         req2.remove("key3");
@@ -97,17 +97,17 @@ public class PropertiesFileConfigBackendTest {
     public void testReadWriteXmlProperties_WithCommit() throws IOException {
         File f = File.createTempFile("testReadWriteProperties_WithCommit",".xml");
         f.delete();
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f.toURI());
-        assertTrue(req instanceof XmlPropertiesFileConfigChangeRequest);
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f.toURI()));
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
         cm.put("key3", "value3");
         req.putAll(cm);
         req.commit();;
-        assertTrue(req.isClosed());
         assertTrue(f.exists());
-        MutableConfiguration req2 = MutableConfigurationQuery.createChangeRequest(f.toURI());
+        MutableConfiguration req2 = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f.toURI()));
         assertTrue(req != req2);
         req2.remove("foo");
         req2.remove("key3");
@@ -128,17 +128,18 @@ public class PropertiesFileConfigBackendTest {
         f1.delete();
         File f2 = File.createTempFile("testReadWrite_Compound",".properties");
         f2.delete();
-        MutableConfiguration req = MutableConfigurationQuery.createChangeRequest(f1.toURI(),f2.toURI());
+        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f1.toURI(), f2.toURI()));
         req.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
         cm.put("key3", "value3");
         req.putAll(cm);
         req.commit();;
-        assertTrue(req.isClosed());
         assertTrue(f1.exists());
         assertTrue(f2.exists());
-        MutableConfiguration req2 = MutableConfigurationQuery.createChangeRequest(f1.toURI(),f2.toURI());
+        MutableConfiguration req2 = ConfigurationProvider.getConfiguration().query(
+                MutableConfigurationQuery.of(f1.toURI(), f2.toURI()));
         assertTrue(req != req2);
         req2.remove("foo");
         req2.remove("key3");
