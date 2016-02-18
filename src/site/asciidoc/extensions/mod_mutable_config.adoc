@@ -128,8 +128,9 @@ several ways, e.g. by:
 
 === Supported Backends modules
 
-Multiple backends are supported. E.g. the _etcd_ and _consul_ integration modules of Tamaya also registers
-corresponding SPI implementations/backends. By default the following backends are available:
+Multiple backends are supported. E.g. the _etcd_ integration module of Tamaya also registers
+corresponding SPI implementations/backends. By default the module itself ships
+the following backends:
 
 * +.properties+ resources, e.g. files or resources located on a web server, following the +java.util.Properties+
   format.
