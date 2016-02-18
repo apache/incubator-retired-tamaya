@@ -47,7 +47,7 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
     /**
      * URIs used by this query instance to identify the backends to use for write operations.
      */
-    private List<MutableConfigurationBackendSpi> targets = new ArrayList<>();
+    private final List<MutableConfigurationBackendSpi> targets = new ArrayList<>();
 
     /** Singleton constructor. */
     private MutableConfigurationQuery(List<MutableConfigurationBackendSpi> targets){
@@ -77,7 +77,7 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
             }
             return of(uris);
         } catch(URISyntaxException e){
-            throw new ConfigException("Invalid URIs enocuntered in " + Arrays.toString(configurationTargets));
+            throw new ConfigException("Invalid URIs encountered in " + Arrays.toString(configurationTargets));
         }
     }
 
@@ -129,7 +129,7 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
 
         @Override
         public List<URI> getBackendURIs() {
-            List<URI> result = new ArrayList<>(getBackendURIs().size());
+            List<URI> result = new ArrayList<>(targets.size());
             for(MutableConfigurationBackendSpi backend: targets){
                 result.add(backend.getBackendURI());
             }

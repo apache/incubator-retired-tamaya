@@ -59,9 +59,9 @@ public interface MutableConfiguration extends Configuration {
      * Checks if a configuration key is removable. This also implies that it is writable, but there might be writable
      * keys that cannot be removedProperties.
      *
-     * @param keyExpression the keyExpression the key to be cheched for write access (including creation), not null.
+     * @param keyExpression the keyExpression the key to be checked for write access (including creation), not null.
      *                      Here this could also
-     *                      be a regulat expression, such "as a.b.c.*".
+     *                      be a regular expression, such "as a.b.c.*".
      * @return the boolean
      */
     boolean isRemovable(String keyExpression);

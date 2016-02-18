@@ -52,9 +52,9 @@ public interface MutableConfigurationBackendSpi {
      * Checks if a configuration key is removable. This also implies that it is writable, but there might be writable
      * keys that cannot be removedProperties.
      *
-     * @param keyExpression the keyExpression the key to be cheched for write access (including creation), not null.
+     * @param keyExpression the keyExpression the key to be checked for write access (including creation), not null.
      *                      Here this could also
-     *                      be a regulat expression, such "as a.b.c.*".
+     *                      be a regular expression, such "as a.b.c.*".
      * @return the boolean
      */
     boolean isRemovable(String keyExpression);
@@ -75,7 +75,6 @@ public interface MutableConfigurationBackendSpi {
      *
      * @param key   the property's key, not null.
      * @param value the property's value, not null.
-     * @return the former property value, or null.
      * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
      */
     void put(String key, String value);
@@ -89,7 +88,6 @@ public interface MutableConfigurationBackendSpi {
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param properties the properties tobe written, not null.
-     * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request is read-only.
      */
     void putAll(Map<String, String> properties);
@@ -103,7 +101,6 @@ public interface MutableConfigurationBackendSpi {
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param keys the property's keys to be removedProperties, not null.
-     * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
     void remove(Collection<String> keys);
@@ -117,7 +114,6 @@ public interface MutableConfigurationBackendSpi {
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param keys the property's keys to be removedProperties, not null.
-     * @return the config change request
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
     void remove(String... keys);
