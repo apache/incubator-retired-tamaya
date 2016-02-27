@@ -85,7 +85,7 @@ class EtcdMutableConfigurationBackend extends AbstractMutableConfigurationBacken
                     }
                     Map<String,String> res = accessor.set(key, en.getValue(), ttl);
                     if(res.get("_ERROR")!=null){
-                        LOG.info("Failed key from etcd: " + en.getKey()  + "=" + en.getValue());
+                        LOG.info("Failed to add key to etcd: " + en.getKey()  + "=" + en.getValue());
                     }
                 }
             } catch(Exception e){

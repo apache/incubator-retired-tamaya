@@ -37,7 +37,7 @@ public class MutableConfigSupport implements MutableConfigurationBackendProvider
     @Override
     public MutableConfigurationBackendSpi getBackend(URI uri) {
         if(backendURI.equals(uri)) {
-            return new EtcdConfigChangeRequest(backendURI);
+            return new EtcdMutableConfigurationBackend(backendURI);
         }
         return null;
     }
