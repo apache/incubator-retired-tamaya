@@ -53,6 +53,7 @@ under the License.
         <module>classloader-support</module>
         <module>integration</module>
         <module>filter</module>
+        <module>collections</module>
     </modules>
 
     <build>
