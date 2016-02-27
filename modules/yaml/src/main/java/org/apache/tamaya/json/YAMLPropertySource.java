@@ -18,55 +18,34 @@
  */
 package org.apache.tamaya.json;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
-import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReaderFactory;
-import javax.json.JsonStructure;
 
-import static java.lang.String.format;
 
 /**
  * Property source based on a JSON file.
  */
-public class JSONPropertySource implements PropertySource {
-    /** Constant for enabling comments in Johnzon. */
-    public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
-
+public class YAMLPropertySource implements PropertySource {
     /** The underlying resource. */
     private final URL urlResource;
     /** The values read. */
     private final Map<String, String> values;
     /** The evaluated ordinal. */
     private int ordinal;
-    /** The JSON reader factory used. */
-    private JsonReaderFactory readerFactory = initReaderFactory();
-
-    /** Initializes the factory to be used for creating readers. */
-    private JsonReaderFactory initReaderFactory() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
-       return Json.createReaderFactory(config);
-    }
+    /** The format implementation used for parsing. */
+    private YAMLFormat format = new YAMLFormat();
 
     /**
      * Constructor, hereby using 0 as the default ordinal.
      * @param resource the resource modelled as URL, not null.
      */
-    public JSONPropertySource(URL resource) {
+    public YAMLPropertySource(URL resource) {
         this(resource, 0);
     }
 
@@ -75,18 +54,14 @@ public class JSONPropertySource implements PropertySource {
      * @param resource the resource modelled as URL, not null.
      * @param defaultOrdinal the defaultOrdinal to be used.
      */
-    public JSONPropertySource(URL resource, int defaultOrdinal) {
+    public YAMLPropertySource(URL resource, int defaultOrdinal) {
         urlResource = Objects.requireNonNull(resource);
         this.ordinal = defaultOrdinal; // may be overriden by read...
-        this.values = readConfig(urlResource);
+        this.values = format.readConfig(urlResource);
         if (this.values.containsKey(TAMAYA_ORDINAL)) {
             this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
         }
-        Map<String, Object> config = new HashMap<>();
-        config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
-        this.readerFactory = Json.createReaderFactory(config);
     }
-
 
     @Override
     public int getOrdinal() {
@@ -117,30 +92,6 @@ public class JSONPropertySource implements PropertySource {
         return Collections.unmodifiableMap(values);
     }
 
-    /**
-     * Reads the configuration.
-     * @param urlResource soure of the configuration.
-     * @return the configuration read from the given resource URL.
-     * @throws ConfigException if resource URL cannot be read.
-     */
-    protected Map<String, String> readConfig(URL urlResource) {
-        try (InputStream is = urlResource.openStream()) {
-            JsonStructure root = this.readerFactory.createReader(is, Charset.forName("UTF-8")).read();
-
-            // Test added. H. Saly, 15. Aug. 2015
-            if (!(root instanceof JsonObject)) {
-                throw new ConfigException("Currently only JSON objects are supported");
-            }
-
-            Map<String, String> values = new HashMap<>();
-            JSONVisitor visitor = new JSONVisitor((JsonObject)root, values);
-            visitor.run();
-            return values;
-        }
-        catch (Throwable t) {
-            throw new ConfigException(format("Failed to read properties from %s", urlResource.toExternalForm()), t);
-        }
-    }
 
     @Override
     public boolean isScannable() {

@@ -28,29 +28,27 @@ import java.net.URL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-public class YAMLPropertySourceTest extends CommonJSONTestCaseCollection {
+public class YAMLPropertySourceTest {
 
     @Test
-    public void tamayaOrdinalKeywordIsNotPropagatedAsNormalProperty() throws Exception {
-        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
+    public void testYamlWithOrdinal() throws Exception {
+        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/test-with-prio.yaml");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        JSONPropertySource source = new JSONPropertySource(configURL, 4);
-        assertEquals(source.get(PropertySource.TAMAYA_ORDINAL).getValue(), "16784");
+        YAMLPropertySource source = new YAMLPropertySource(configURL, 4);
+        assertEquals(source.getOrdinal(), 16784);
     }
     
-    @Test(expected=ConfigException.class)
-    public void testDoNotAcceptJsonArrays() throws Exception {
-        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/invalid/array.json");
+    @Test
+    public void testYamlDefaultOrdinal() throws Exception {
+        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/test.yaml");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        new JSONPropertySource(configURL);
+        YAMLPropertySource source = new YAMLPropertySource(configURL, 4);
+        assertEquals(source.getOrdinal(), 4);
     }
 
-    @Override
-    PropertySource getPropertiesFrom(URL source) throws Exception {
-        return new JSONPropertySource(source);
-    }
+
 }

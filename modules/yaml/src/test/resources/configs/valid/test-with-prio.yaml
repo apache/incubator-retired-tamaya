@@ -19,6 +19,10 @@
 version: 1.0
 released: 2012-11-30
 
+# tamaya specifics...
+tamaya:
+    ordinal: 16784
+
 # Connection parameters
 connection:
     url: jdbc:mysql://localhost:3306/db

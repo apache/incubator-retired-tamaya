@@ -24,52 +24,50 @@ import org.apache.tamaya.format.FlattenedDefaultPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class YAMLFormatTest extends CommonJSONTestCaseCollection {
-    private final JSONFormat format = new JSONFormat();
+public class YAMLFormatTest {
+    private final YAMLFormat format = new YAMLFormat();
+
+    @Test
+    public void testAcceptURL() throws MalformedURLException {
+        assertTrue(format.accepts(new URL("http://127.0.0.1/anyfile.yaml")));
+    }
+
+    @Test
+    public void testAcceptURL_BC1() throws MalformedURLException {
+        assertFalse(format.accepts(new URL("http://127.0.0.1/anyfile.YAML")));
+    }
 
     @Test(expected = NullPointerException.class)
-    public void acceptsNeedsNonNullParameter() throws Exception {
-        format.accepts(null);
+    public void testAcceptURL_BC2() throws MalformedURLException {
+        assertFalse(format.accepts(null));
     }
 
     @Test
-    public void aNonJSONFileBasedURLIsNotAccepted() throws Exception {
-        URL url = new URL("file:///etc/service/conf.conf");
-
-        assertThat(format.accepts(url), is(false));
+    public void testAcceptURL_BC3() throws MalformedURLException {
+        assertFalse(format.accepts(new URL("http://127.0.0.1/anyfile.docx")));
     }
 
     @Test
-    public void aJSONFileBasedURLIsAccepted() throws Exception {
-        URL url = new URL("file:///etc/service/conf.json");
-
-        assertThat(format.accepts(url), is(true));
-    }
-
-    @Test
-    public void aHTTPBasedURLIsNotAccepted() throws Exception {
-        URL url = new URL("http://nowhere.somewhere/conf.json");
-        assertThat(format.accepts(url), is(true));
-    }
-
-    @Test
-    public void aFTPBasedURLIsNotAccepted() throws Exception {
-        URL url = new URL("ftp://nowhere.somewhere/a/b/c/d/conf.json");
-
-        assertThat(format.accepts(url), is(true));
-    }
-
-    @Override
-    PropertySource getPropertiesFrom(URL source) throws Exception {
-        try (InputStream is = source.openStream()) {
-            ConfigurationData data = format.readConfiguration(source.toString(), is);
-            return new FlattenedDefaultPropertySource(data);
+    public void testRead() throws IOException {
+        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
+        assertTrue(format.accepts(configURL));
+        ConfigurationData data = format.readConfiguration(configURL.toString(), configURL.openStream());
+        assertNotNull(data);
+        for(Map.Entry<String,String> en:data.getDefaultProperties().entrySet()) {
+            System.out.println(en.getKey() + " -> " + en.getValue());
         }
     }
+
 }
