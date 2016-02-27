@@ -90,14 +90,14 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
             case "collect":
             case "COLLECT":
                 if(LOG.isLoggable(Level.FINEST)){
-                    LOG.finest("Using collecting combination policy for key: " + key + ".");
+                    LOG.finest("Using collecting combination policy for key: " + key + "");
                 }
                 combinationPolicy = COLLECTING_POLICY;
                 break;
             case "override":
             case "OVERRIDE":
                 if(LOG.isLoggable(Level.FINEST)){
-                    LOG.finest("Using default (overriding) combination policy for key: " + key + ".");
+                    LOG.finest("Using default (overriding) combination policy for key: " + key + "");
                 }
                 combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
                 break;
@@ -112,7 +112,7 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
                     }
                     if(LOG.isLoggable(Level.FINEST)){
                         LOG.finest("Using custom combination policy "+adaptiveCombinationPolicyClass+" for " +
-                                "key: " + key + ".");
+                                "key: " + key + "");
                     }
                 }
                 catch(Exception e){
