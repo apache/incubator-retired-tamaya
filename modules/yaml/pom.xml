@@ -26,13 +26,14 @@ under the License.
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>tamaya-json</artifactId>
-    <name>Apache Tamaya Modules - JSON Support</name>
+    <artifactId>tamaya-yaml</artifactId>
+    <name>Apache Tamaya Modules - YAML Support</name>
     <packaging>bundle</packaging>
-    <inceptionYear>2015</inceptionYear>
+    <inceptionYear>2016</inceptionYear>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
+        <snakeyaml.version>1.17</snakeyaml.version>
     </properties>
 
     <dependencies>
@@ -56,44 +57,13 @@ under the License.
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-json_1.0_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.johnzon</groupId>
-             <artifactId>johnzon-core</artifactId>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-container-managed</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-container-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-main</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-protocol-arquillian</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-protocol-wire</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.daemon</groupId>
-            <artifactId>arquillian-daemon-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
