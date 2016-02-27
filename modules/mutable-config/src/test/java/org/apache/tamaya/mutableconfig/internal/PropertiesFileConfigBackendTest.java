@@ -50,7 +50,7 @@ public class PropertiesFileConfigBackendTest {
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
         cm.put("key3", "value3");
-        req.rollback();;
+        req.rollback();
         assertFalse(f.exists());
     }
 
@@ -70,7 +70,7 @@ public class PropertiesFileConfigBackendTest {
         cm.put("key2", "value2");
         cm.put("key3", "value3");
         req.putAll(cm);
-        req.commit();;
+        req.commit();
         assertTrue(f.exists());
         MutableConfiguration req2 = ConfigurationProvider.getConfiguration().query(
                 MutableConfigurationQuery.of(f.toURI()));
@@ -104,7 +104,7 @@ public class PropertiesFileConfigBackendTest {
         cm.put("key2", "value2");
         cm.put("key3", "value3");
         req.putAll(cm);
-        req.commit();;
+        req.commit();
         assertTrue(f.exists());
         MutableConfiguration req2 = ConfigurationProvider.getConfiguration().query(
                 MutableConfigurationQuery.of(f.toURI()));
@@ -135,7 +135,7 @@ public class PropertiesFileConfigBackendTest {
         cm.put("key2", "value2");
         cm.put("key3", "value3");
         req.putAll(cm);
-        req.commit();;
+        req.commit();
         assertTrue(f1.exists());
         assertTrue(f2.exists());
         MutableConfiguration req2 = ConfigurationProvider.getConfiguration().query(
