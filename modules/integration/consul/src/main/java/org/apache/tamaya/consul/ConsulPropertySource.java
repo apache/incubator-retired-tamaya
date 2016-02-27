@@ -18,6 +18,11 @@
  */
 package org.apache.tamaya.consul;
 
+import com.google.common.base.Optional;
+import com.google.common.net.HostAndPort;
+import com.orbitz.consul.Consul;
+import com.orbitz.consul.KeyValueClient;
+import com.orbitz.consul.model.kv.Value;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
@@ -29,14 +34,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Propertysource that is reading configuration from a configured etcd endpoint. Setting
- * {@code etcd.prefix} as system property maps the etcd based onfiguration
- * to this prefix namespace. Etcd servers are configured as {@code etcd.server.urls} system or environment property.
+ * Propertysource that is reading configuration from a configured consul endpoint. Setting
+ * {@code consul.prefix} as system property maps the consul based onfiguration
+ * to this prefix namespace. Consul servers are configured as {@code consul.urls} system or environment property.
  */
 public class ConsulPropertySource implements PropertySource{
     private static final Logger LOG = Logger.getLogger(ConsulPropertySource.class.getName());
 
-    private String prefix = System.getProperty("tamaya.etcd.prefix", "");
+    private String prefix = System.getProperty("tamaya.consul.prefix", "");
 
 
     @Override
@@ -63,7 +68,7 @@ public class ConsulPropertySource implements PropertySource{
 
     @Override
     public String getName() {
-        return "etcd";
+        return "consul";
     }
 
     @Override
@@ -75,7 +80,6 @@ public class ConsulPropertySource implements PropertySource{
         } else{
             key = key.substring(prefix.length());
         }
-        Map<String,String> props;
         String reqKey = key;
         if(key.startsWith("_")){
             reqKey = key.substring(1);
@@ -91,17 +95,25 @@ public class ConsulPropertySource implements PropertySource{
                 reqKey = reqKey.substring(0,reqKey.length()-".source".length());
             }
         }
-        for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
+        for(HostAndPort hostAndPort: ConsulBackends.getConsulBackends()){
             try{
-                props = accessor.get(reqKey);
-                if(!props.containsKey("_ERROR")) {
+                Consul consul = Consul.builder().withHostAndPort(hostAndPort).build();
+                KeyValueClient kvClient = consul.keyValueClient();
+                Optional<Value> valueOpt = kvClient.getValue(reqKey);
+                if(!valueOpt.isPresent()) {
+                    LOG.log(Level.FINE, "key not found in consul: " + reqKey);
+                }else{
                     // No repfix mapping necessary here, since we only access/return the value...
-                    return new PropertyValueBuilder(key, props.get(reqKey), getName()).setContextData(props).build();
-                } else{
-                    LOG.log(Level.FINE, "etcd error on " + accessor.getUrl() + ": " + props.get("_ERROR"));
+                    Value value = valueOpt.get();
+                    Map<String,String> props = new HashMap<>();
+                    props.put(reqKey+".createIndex", String.valueOf(value.getCreateIndex()));
+                    props.put(reqKey+".modifyIndex", String.valueOf(value.getModifyIndex()));
+                    props.put(reqKey+".lockIndex", String.valueOf(value.getLockIndex()));
+                    props.put(reqKey+".flags", String.valueOf(value.getFlags()));
+                    return new PropertyValueBuilder(key, value.getValue().get(), getName()).setContextData(props).build();
                 }
             } catch(Exception e){
-                LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
+                LOG.log(Level.FINE, "etcd access failed on " + hostAndPort + ", trying next...", e);
             }
         }
         return null;
@@ -109,20 +121,25 @@ public class ConsulPropertySource implements PropertySource{
 
     @Override
     public Map<String, String> getProperties() {
-        if(!EtcdBackends.getEtcdBackends().isEmpty()){
-            for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
-                try{
-                    Map<String, String> props = accessor.getProperties("");
-                    if(!props.containsKey("_ERROR")) {
-                        return mapPrefix(props);
-                    } else{
-                        LOG.log(Level.FINE, "etcd error on " + accessor.getUrl() + ": " + props.get("_ERROR"));
-                    }
-                } catch(Exception e){
-                    LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
-                }
-            }
-        }
+//        for(HostAndPort hostAndPort: ConsulBackends.getConsulBackends()){
+//            try{
+//                Consul consul = Consul.builder().withHostAndPort(hostAndPort).build();
+//                KeyValueClient kvClient = consul.keyValueClient();
+//                Optional<Value> valueOpt = kvClient.getValue(reqKey);
+//                try{
+//                    Map<String, String> props = kvClient.getProperties("");
+//                    if(!props.containsKey("_ERROR")) {
+//                        return mapPrefix(props);
+//                    } else{
+//                        LOG.log(Level.FINE, "consul error on " + hostAndPort + ": " + props.get("_ERROR"));
+//                    }
+//                } catch(Exception e){
+//                    LOG.log(Level.FINE, "consul access failed on " + hostAndPort + ", trying next...", e);
+//                }
+//            } catch(Exception e){
+//                LOG.log(Level.FINE, "etcd access failed on " + hostAndPort + ", trying next...", e);
+//            }
+//        }
         return Collections.emptyMap();
     }
 
@@ -143,6 +160,6 @@ public class ConsulPropertySource implements PropertySource{
 
     @Override
     public boolean isScannable() {
-        return true;
+        return false;
     }
 }

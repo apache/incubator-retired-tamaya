@@ -31,13 +31,13 @@ public class MutableConfigSupport implements MutableConfigurationBackendProvider
     private URI backendURI;
 
     public MutableConfigSupport(){
-        backendURI = URI.create("config:etcd");
+        backendURI = URI.create("config:consul");
     }
 
     @Override
     public MutableConfigurationBackendSpi getBackend(URI uri) {
         if(backendURI.equals(uri)) {
-            return new EtcdConfigChangeRequest(backendURI);
+            return new ConsulMutableConfigurationBackend(backendURI);
         }
         return null;
     }

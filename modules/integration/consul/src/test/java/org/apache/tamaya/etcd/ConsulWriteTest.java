@@ -19,9 +19,14 @@
 package org.apache.tamaya.etcd;
 
 import com.google.common.net.HostAndPort;
+import org.apache.tamaya.consul.ConsulPropertySource;
+import org.apache.tamaya.consul.internal.MutableConfigSupport;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendSpi;
 import org.junit.BeforeClass;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,60 +40,22 @@ public class ConsulWriteTest {
 
     private static HostAndPort accessor;
     static boolean execute = false;
+    private static ConsulPropertySource readingSource;
+    private static MutableConfigurationBackendSpi writer;
 
     @BeforeClass
-    public static void setup() throws MalformedURLException {
-        accessor = new HostAndPort("192.168.99.105:4001");
-        if(!accessor.getVersion().contains("etcd")){
-            System.out.println("Disabling etcd tests, etcd not accessible at: " + System.getProperty("etcd.server.urls"));
-            System.out.println("Configure etcd with -Detcd.server.urls=http://<IP>:<PORT>");
-        }
-        else{
-            execute = true;
-        }
-    }
-
-    @org.junit.Test
-    public void testGetVersion() throws Exception {
-        if(!execute)return;
-        assertEquals(accessor.getVersion(), "etcd 0.4.9");
-    }
-
-    @org.junit.Test
-    public void testGet() throws Exception {
-        if(!execute)return;
-        Map<String,String> result = accessor.get("test1");
-        assertNotNull(result);
+    public static void setup() throws MalformedURLException, URISyntaxException {
+        System.setProperty("consul.urls", "http://127.0.0.1:8300");
+        accessor = HostAndPort.fromString("127.0.0.1:8500");
+        readingSource = new ConsulPropertySource();
+        writer = new MutableConfigSupport().getBackend(new URI("config:consul"));
     }
 
     @org.junit.Test
     public void testSetNormal() throws Exception {
-        if(!execute)return;
+        if (!execute) return;
         String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testSetNormal", value);
-        assertNull(result.get("_testSetNormal.ttl"));
-        assertEquals(accessor.get("testSetNormal").get("testSetNormal"), value);
-    }
-
-    @org.junit.Test
-    public void testSetNormal2() throws Exception {
-        if(!execute)return;
-        String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testSetNormal2", value, null);
-        assertNull(result.get("_testSetNormal2.ttl"));
-        assertEquals(accessor.get("testSetNormal2").get("testSetNormal2"), value);
-    }
-
-    @org.junit.Test
-    public void testSetWithTTL() throws Exception {
-        if(!execute)return;
-        String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testSetWithTTL", value, 1);
-        assertNotNull(result.get("_testSetWithTTL.ttl"));
-        assertEquals(accessor.get("testSetWithTTL").get("testSetWithTTL"), value);
-        Thread.sleep(2000L);
-        result = accessor.get("testSetWithTTL");
-        assertNull(result.get("testSetWithTTL"));
+        writer.put("testSetNormal", value);
     }
 
 
@@ -96,22 +63,17 @@ public class ConsulWriteTest {
     public void testDelete() throws Exception {
         if(!execute)return;
         String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testDelete", value, null);
-        assertEquals(accessor.get("testDelete").get("testDelete"), value);
-        assertNotNull(result.get("_testDelete.createdIndex"));
-        result = accessor.delete("testDelete");
-        assertEquals(result.get("_testDelete.prevNode.value"),value);
-        assertNull(accessor.get("testDelete").get("testDelete"));
+        writer.put("testDelete", value);
+        assertEquals(readingSource.get("testDelete").get("testDelete"), value);
+        assertNotNull(readingSource.get("_testDelete.createdIndex"));
+        writer.remove("testDelete");
+        assertNull(readingSource.get("testDelete").get("testDelete"));
     }
 
     @org.junit.Test
     public void testGetProperties() throws Exception {
         if(!execute)return;
-        String value = UUID.randomUUID().toString();
-        accessor.set("testGetProperties1", value);
-        Map<String,String> result = accessor.getProperties("");
-        assertNotNull(result);
-        assertEquals(result.get("testGetProperties1"), value);
-        assertNotNull(result.get("_testGetProperties1.createdIndex"));
+        Map<String,String> result = readingSource.getProperties();
+        assertTrue(result.isEmpty());
     }
 }

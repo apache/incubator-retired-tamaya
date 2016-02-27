@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.etcd.internal.MutableConfigSupport
+org.apache.tamaya.consul.internal.MutableConfigSupport

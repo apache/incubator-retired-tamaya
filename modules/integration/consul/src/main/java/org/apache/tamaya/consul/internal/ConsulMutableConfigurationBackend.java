@@ -18,19 +18,20 @@
  */
 package org.apache.tamaya.consul.internal;
 
+import com.google.common.net.HostAndPort;
+import com.orbitz.consul.Consul;
+import com.orbitz.consul.KeyValueClient;
 import org.apache.tamaya.consul.ConsulBackends;
 import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpiSpi;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Change Request implementation based on etcd services. Etcd also supports a ttl to set values only for a defined
- * number of seconds {@code ttl}. This is also supported by this component by adding ttl as a key parameter, e.g.
- * {@code changeRequest.set("myTimedKey?ttl=30", "myValue");} will set a key {@code myTimedKey} valid only for
- * 30 seconds.
+ * Change Request implementation based on consul services.
  */
 class ConsulMutableConfigurationBackend extends AbstractMutableConfigurationBackendSpiSpi {
 
@@ -42,15 +43,14 @@ class ConsulMutableConfigurationBackend extends AbstractMutableConfigurationBack
 
     @Override
     public boolean isExisting(String keyExpression) {
-        for(EtcdAccessor accessor: ConsulBackends.getEtcdBackends()){
+        for(HostAndPort hostAndPort: ConsulBackends.getConsulBackends()){
             try{
-                Map<String,String> props = accessor.get(keyExpression);
-                if(!props.containsKey("_ERROR")) {
-                    // No repfix mapping necessary here, since we only access/return the value...
-                    return props.get(keyExpression)!=null;
-                }
+                Consul consul = Consul.builder().withHostAndPort(hostAndPort).build();
+                KeyValueClient kvClient = consul.keyValueClient();
+                List<String> keys = kvClient.getKeys(keyExpression);
+                return !keys.isEmpty();
             } catch(Exception e){
-                LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
+                LOG.log(Level.FINE, "consul access failed on " + hostAndPort + ", trying next...", e);
             }
         }
         return false;
@@ -59,36 +59,28 @@ class ConsulMutableConfigurationBackend extends AbstractMutableConfigurationBack
 
     @Override
     protected void commitInternal() {
-        for(EtcdAccessor accessor: ConsulBackends.getEtcdBackends()){
+        for(HostAndPort hostAndPort: ConsulBackends.getConsulBackends()){
             try{
+                Consul consul = Consul.builder().withHostAndPort(hostAndPort).build();
+                KeyValueClient kvClient = consul.keyValueClient();
+
                 for(String k: getRemovedProperties()){
-                    Map<String,String> res = accessor.delete(k);
-                    if(res.get("_ERROR")!=null){
-                        LOG.info("Failed to remove key from etcd: " + k);
+                    try{
+                        kvClient.deleteKey(k);
+                    } catch(Exception e){
+                        LOG.info("Failed to remove key from consul: " + k);
                     }
                 }
                 for(Map.Entry<String,String> en:getAddedProperties().entrySet()){
                     String key = en.getKey();
-                    Integer ttl = null;
-                    int index = en.getKey().indexOf('?');
-                    if(index>0){
-                        key = en.getKey().substring(0, index);
-                        String rawQuery = en.getKey().substring(index+1);
-                        String[] queries = rawQuery.split("&");
-                        for(String query:queries){
-                            if(query.contains("ttl")){
-                                int qIdx = query.indexOf('=');
-                                ttl = qIdx>0?Integer.parseInt(query.substring(qIdx+1).trim()):null;
-                            }
-                        }
-                    }
-                    Map<String,String> res = accessor.set(key, en.getValue(), ttl);
-                    if(res.get("_ERROR")!=null){
-                        LOG.info("Failed key from etcd: " + en.getKey()  + "=" + en.getValue());
+                    try{
+                        kvClient.putValue(key,en.getValue());
+                    }catch(Exception e) {
+                        LOG.info("Failed to add key to consul: " + en.getKey() + "=" + en.getValue());
                     }
                 }
             } catch(Exception e){
-                LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
+                LOG.log(Level.FINE, "consul access failed on " + hostAndPort + ", trying next...", e);
             }
         }
     }

@@ -18,48 +18,42 @@
  */
 package org.apache.tamaya.consul;
 
+import com.google.common.net.HostAndPort;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Singleton that reads and stores the current etcd setup, especially the possible URLs to be used.
+ * Singleton that reads and stores the current consul setup, especially the possible host:ports to be used.
  */
 public final class ConsulBackends {
 
     private static final Logger LOG = Logger.getLogger(ConsulBackends.class.getName());
-    private static List<EtcdAccessor> etcdBackends = new ArrayList<>();
+    private static List<HostAndPort> consulBackends = new ArrayList<>();
 
     static{
-        int timeout = 2;
-        String val = System.getProperty("tamaya.etcd.timeout");
-        if(val == null){
-            val = System.getenv("tamaya.etcd.timeout");
-        }
-        if(val!=null){
-            timeout = Integer.parseInt(val);
-        }
-        String serverURLs = System.getProperty("tamaya.etcd.server.urls");
+        String serverURLs = System.getProperty("tamaya.consul.urls");
         if(serverURLs==null){
-            serverURLs = System.getenv("tamaya.etcd.server.urls");
+            serverURLs = System.getenv("tamaya.consul.urls");
         }
         if(serverURLs==null){
-            serverURLs = "http://127.0.0.1:4001";
+            serverURLs = "127.0.0.1:8300";
         }
         for(String url:serverURLs.split("\\,")) {
             try{
-                etcdBackends.add(new EtcdAccessor(url.trim(), timeout));
-                LOG.info("Using etcd endoint: " + url);
+                consulBackends.add(HostAndPort.fromString(url.trim()));
+                LOG.info("Using consul endoint: " + url);
             } catch(Exception e){
-                LOG.log(Level.SEVERE, "Error initializing etcd accessor for URL: " + url, e);
+                LOG.log(Level.SEVERE, "Error initializing consul accessor for URL: " + url, e);
             }
         }
     }
 
     private ConsulBackends(){}
 
-    public static List<EtcdAccessor> getEtcdBackends(){
-        return etcdBackends;
+    public static List<HostAndPort> getConsulBackends(){
+        return consulBackends;
     }
 }

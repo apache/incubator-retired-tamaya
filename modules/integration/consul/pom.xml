@@ -26,7 +26,7 @@ under the License.
         <version>0.2-incubating-SNAPSHOT</version>
     </parent>
 
-    <artifactId>tamaya-etcd</artifactId>
+    <artifactId>tamaya-consul</artifactId>
     <name>Apache Tamaya Integration - consul</name>
     <packaging>bundle</packaging>
 

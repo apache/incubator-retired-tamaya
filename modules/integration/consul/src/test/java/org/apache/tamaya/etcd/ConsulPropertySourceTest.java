@@ -36,7 +36,7 @@ public class ConsulPropertySourceTest {
 
     @BeforeClass
     public static void setup(){
-        System.setProperty("etcd.server.urls", "http://8.8.8.8:4001,http://192.168.99.105:4001");
+        System.setProperty("consul.urls", "http://127.0.0.1:8300");
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ConsulPropertySourceTest {
 
     @Test
     public void testGetName() throws Exception {
-        assertEquals("etcd", propertySource.getName());
+        assertEquals("consul", propertySource.getName());
     }
 
     @Test
@@ -70,6 +70,6 @@ public class ConsulPropertySourceTest {
 
     @Test
     public void testIsScannable() throws Exception {
-        assertTrue(propertySource.isScannable());
+        assertFalse(propertySource.isScannable());
     }
 }
