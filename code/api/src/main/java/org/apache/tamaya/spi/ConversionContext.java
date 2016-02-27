@@ -59,7 +59,7 @@ public class ConversionContext {
      * Get the key accessed. This information is very useful to evaluate additional metadata needed to determine/
      * control further aspects of the conversion.
      * @return the key. This may be null in case where a default value has to be converted and no unique underlying
-     * key/value configuration is present..
+     * key/value configuration is present.
      */
     public String getKey(){
         return key;
@@ -75,7 +75,7 @@ public class ConversionContext {
 
     /**
      * Get the annotated element, if conversion is performed using injection mechanisms.
-     * @return the annotated element, or null..
+     * @return the annotated element, or null.
      */
     public AnnotatedElement getAnnotatedElement(){
         return annotatedElement;
@@ -167,10 +167,11 @@ public class ConversionContext {
         /**
          * Creates a new Builder instance.
          * @param configuration the configuration, not null.
+         * @param configurationContext configuration context, not null.
          * @param key the requested key, may be null.
          * @param targetType the target type
          */
-        public Builder(Configuration configuration, ConfigurationContext context, String key, TypeLiteral<?> targetType){
+        public Builder(Configuration configuration, ConfigurationContext configurationContext, String key, TypeLiteral<?> targetType){
             this.key = key;
             this.configuration = configuration;
             this.configurationContext = context;

@@ -78,8 +78,9 @@ public class YAMLFormat implements ConfigurationFormat {
     /**
      * Reads the configuration.
      * @param inputStream the input stream, not null.
-     * @return the configuration read from the given resource URL.
-     * @throws ConfigException if resource URL cannot be read.
+     * @param resource resource URI, not null.
+     * @return the configuration read from the given resource URI.
+     * @throws ConfigException if resource URI cannot be read.
      */
     protected Map<String, String> readConfig(String resource, InputStream inputStream) {
         try{
