@@ -45,10 +45,8 @@ toc::[]
 === Overview
 
 The Tamaya etcd integration module provides different artifacts which allows integration of Apachae Tamaya
-configuration with etcd. Basically the module supports read-only integration.
-
-NOTE: The etcd backend itself also has methods that allow writing to the etcd cluster back. Once Tamaya's writable
-      feature will be ready for broader usage (currently it is in the sandbox).
+configuration with etcd. Basically the module supports read-only integration (as a +EtcdPropertySource+ as well
+as a support for +MutableConfiguration+ as defined by the +tamaya-mutable-config+ extension module.
 
 
 === Compatibility
@@ -78,10 +76,10 @@ ETcd integration comes basically with 2 artifacts:
   (+org.apache.tamaya.etcd.EtcdAccessor+). The accessor basically provides a simple Java API for communicating
   with etcd server. The accessor hereby allows reading of single properties, or whole subtrees. Also the basic non
   atomic write methods are implemented.
-* The +org.apache.tamaya.etcd.EtcdPropertySource+ is a +PropertySource+ with a default ordinal of 100 and the name 'etcd', which is
-  automatically registered.
+* The +org.apache.tamaya.etcd.EtcdPropertySource+ is a +PropertySource+ with a default ordinal of 100 and the name
+  'etcd', which is automatically registered.
 * If the +tamaya-mutable-config+ module is loaded it is possible to write property values back into the etcd cluster,
-  by accessing a +ConfigChangeRequest+ using the URI +config:etcd+.
+  by accessing a +MutableConfiguration+ using the URI +config:etcd+.
 
 === The EtcdAccessor
 
@@ -209,11 +207,11 @@ public class EtcdAccessor {
 
 === The EtcdPropertySource
 
-The +EtcdPropertySource+ is automatically registered and requires the etcd servers to be  used to be configured. This
+The +EtcdPropertySource+ is automatically registered and allows to configure the etcd servers to be used. This
 enables to use e.g. in Docker environments the docker environment configuration mechanisms to configure Tamaya running
-in microservice containers to connect with the according etcd container cluster:
+in microservice containers to connect with the according etcd cluster:
 
-* The property source reads the +tamaya.etcd.server.urls+ system property to evaluate possible etcd servers
+* The property source reads the +tamaya.etcd.server.urls+ system and environment property to evaluate possible etcd servers
   (comma separated), which can be connected to. On error the API just performs a Round-Robin through the list of
   configured servers. Without any configuration +http://127.0.0.1:4001+ is used. If no connection to any etcd
   server can be established a warning will be logged, but deployment will not fail.

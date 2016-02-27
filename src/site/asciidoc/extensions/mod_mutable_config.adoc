@@ -73,20 +73,25 @@ To benefit from configuration mutability support you only must add the correspon
 The core of the module is the +MutableConfigQuery+ singleton, which is a +ConfigQuery+ that creates a new
 +Mutableonfiguration+ based on a +Configuration+ and a set of target backend +URIs+. If not sure you can call
 +getSupportedURIInfo()+ to see, which kind of URI's are  currently supported.
-As an example writing configuration entries to an +etcd+ server can be done as follows:
+On top of this API you also must have the correponding implementations installed that provide the backend logic needed
+to write the changes back. This module by default supports writing back to files only. As an example how to write
+configuration entries back refer to the following snippet:
 
 [source,java]
 .Accessing a mutable configuration backed by etcd
 --------------------------------------------
 MutableConfiguration config = ConfigChangeManager.getConfiguration().query(
-    MutableConfigurationQuery.of("etc:http://127.0.0.1:4441", "file:/home/etcd/backup-config.properties");
-config.set("newKey", "newValue").set("anotherKey", "updatedValue")
+    MutableConfigurationQuery.of("file:/home/etcd/backup-config.properties");
+
+config.set("newKey", "newValue")
+      .set("anotherKey", "updatedValue")
       .remove("valueNotValid")
       .commit();
 --------------------------------------------
 
-The effective effect of your changes to the overall configuration changes cannot be easily predicted, since it depends
-on several aspects:
+Hereby it is also possible to provide multiple URLS that allows you to write your configuration chnges back to multiple
+backends in one go. Also be aware that the effective effect of your changes to the overall configuration changes cannot
+be easily predicted, since it depends on several aspects:
 
 . is the corresponding configuration resource configured as part of the current system's configuration?
 . what is the +PropertySource's+ ordinal? Is it overriding or overridden by other sources?
@@ -106,13 +111,14 @@ is writable at all or can be removed or updated:
 .Checking for mutability
 --------------------------------------------
 MutableConfiguration config = ConfigChangeManager.getConfiguration().query(
-    MutableConfigurationQuery.of("etc:http://127.0.0.1:4441", "file:/home/etcd/backup-config.properties");
+    MutableConfigurationQuery.of("file:/home/etcd/backup-config.properties");
+
 if(config,isWritable("mycluster.shared.appKey")){
     config.set("newKey", "newValue")
-    .remove("valueNotValid")
-     .commit();
+          .remove("valueNotValid")
+          .commit();
 }else{
-    config.rollbacks();
+    config.rollback();
 }
 --------------------------------------------
 
@@ -144,7 +150,7 @@ defines a fabric method +MutableConfigurationBackendSpi getBackend(URI)+ used by
 accessor:
 
 [source,java]
-.SPI: ConfigEventSpi
+.SPI: MutableConfigurationBackendProviderSpi
 --------------------------------------------------
 public interface MutableConfigurationBackendProviderSpi {
     MutableConfigurationBackendSpi getBackend(URI backendURI);

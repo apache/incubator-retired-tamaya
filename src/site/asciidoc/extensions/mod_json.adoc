@@ -18,7 +18,7 @@
 = Apache Tamaya -- Extension: Builder
 
 :name: Tamaya
-:rootpackage: org.apache.tamaya.builder
+:rootpackage: org.apache.tamaya.json
 :title: Apache Tamaya Extension: JSON
 :revnumber: 0.1.1
 :revremark: Incubator
@@ -91,7 +91,7 @@ For reading JSON based onfiguration most easily a +JSONFormat+ can be provided:
 [source, java]
 -----------------------------------------------
 ConfigurationData dataRead = ConfigurationFormats.readConfig(
-    getClassLoader().getResource("myFileConfig.json"), new JSonFOrmat()));
+    getClassLoader().getResource("myFileConfig.json"), new JSONFormat()));
 -----------------------------------------------
 
 === Examples
