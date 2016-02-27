@@ -73,6 +73,7 @@ NOTE All extensions currently run on Java 7 as well as on Java 8.
 |+org.apache.tamaya.ext:tamaya-remote+        |Provides remote configuration support.                 |link:mod_remote.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-resources+     |Provides ant-style resource path resolution  |link:mod_resources.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a REST service.     |link:mod_server.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-yaml+          |Support for using yaml as a configuration format.      |link:mod_yaml.html[Documentation]
 |=======
 
 == Integrations
@@ -87,6 +88,7 @@ from a sledgehammer to a scalpell:
 |+org.apache.tamaya.ext:tamaya-camel+       | Integration for Apache Camel.                | link:mod_camel.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-spring+      | Integration for Spring / Spring Boot.        | link:mod_spring.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-osgi+        | Integration for OSGI containers.             | link:mod_osgi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-consul+      | Integration with consul clusters.            | link:mod_consul.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-etcd+        | Integration with etcd clusters.              | link:mod_etcd.html[Documentation]
 |=======
 
@@ -108,7 +110,7 @@ very carefully and especially give us feedback, so we can improve them before pr
 
 == Integrations in Experimental Stage
 
-Integrations in _experimental mode_ may still be under discussions. API changes may still happen, so use them
+Integrations in _experimental mode_ may still be under discussions, or may even not compile ! API changes may still happen, so use them
 very carefully and especially give us feedback, so we can improve them before progressing to _draft_ state.
 
 [width="100%",frame="1",options="header",grid="all"]
