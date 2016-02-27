@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.collections.internal;
 
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -34,7 +33,7 @@ public class LinkedListConverter implements PropertyConverter<LinkedList> {
     private static final Logger LOG = Logger.getLogger(LinkedListConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
-    private static LinkedListConverter INSTANCE = new LinkedListConverter();
+    private static final LinkedListConverter INSTANCE = new LinkedListConverter();
 
     /**
      * Provide a shared instance, used by other collection converters in this package.

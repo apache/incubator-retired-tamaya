@@ -49,7 +49,7 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
         @Override
         public Map<String, String> collect(Map<String, String> currentValue, String key, PropertySource propertySource) {
             // check for default collection combination policies for lists, sets, maps etc.
-            final String SEPARATOR = ConfigurationProvider.getConfiguration().getOrDefault('_' + key+".item-separator", ",");
+            final String separator = ConfigurationProvider.getConfiguration().getOrDefault('_' + key+".item-separator", ",");
             PropertyValue newValue = propertySource.get(key);
             if(newValue!=null){
                 Map<String,String> newMapValue = new HashMap<>();
@@ -59,7 +59,7 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
                 String oldVal = newMapValue.get(key);
                 newMapValue.putAll(newValue.getConfigEntries());
                 if(oldVal!=null){
-                    newMapValue.put(key,oldVal + SEPARATOR + newValue.getValue());
+                    newMapValue.put(key,oldVal + separator + newValue.getValue());
                 }
                 return newMapValue;
             }else{
@@ -114,8 +114,7 @@ public class AdaptiveCombinationPolicy implements PropertyValueCombinationPolicy
                         LOG.finest("Using custom combination policy "+adaptiveCombinationPolicyClass+" for " +
                                 "key: " + key + "");
                     }
-                }
-                catch(Exception e){
+                } catch(Exception e){
                     LOG.log(Level.SEVERE, "Error loading configured PropertyValueCombinationPolicy for " +
                             "key: " + key + ", using default (overriding) policy.", e);
                     combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;

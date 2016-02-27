@@ -18,13 +18,10 @@
  */
 package org.apache.tamaya.collections.internal;
 
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +34,7 @@ public class HashSetConverter implements PropertyConverter<HashSet> {
     private static final Logger LOG = Logger.getLogger(HashSetConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
-    private static HashSetConverter INSTANCE = new HashSetConverter();
+    private static final HashSetConverter INSTANCE = new HashSetConverter();
 
     /**
      * Provide a shared instance, used by other collection converters in this package.

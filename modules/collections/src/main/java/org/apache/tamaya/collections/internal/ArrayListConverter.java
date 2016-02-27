@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.collections.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -36,7 +34,7 @@ public class ArrayListConverter implements PropertyConverter<ArrayList> {
     private static final Logger LOG = Logger.getLogger(ArrayListConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
-    private static ArrayListConverter INSTANCE = new ArrayListConverter();
+    private static final ArrayListConverter INSTANCE = new ArrayListConverter();
 
     /**
      * Provide a shared instance, used by other collection converters in this package.

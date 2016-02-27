@@ -67,7 +67,7 @@ final class ItemTokenizer {
         int start = 0;
         int end = value.indexOf(separator,start);
         while(end>0) {
-            if (end>0 && (value.charAt(end - 1) != '\\')) {
+            if (value.charAt(end - 1) != '\\') {
                 result.add(value.substring(start, end));
                 start = end + separator.length();
                 end = value.indexOf(separator,start);

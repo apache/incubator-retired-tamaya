@@ -37,13 +37,13 @@ public class SetConverter implements PropertyConverter<Set> {
         }
         Set result = null;
         switch(collectionType){
+            case "TreeSet":
+                result = TreeSetConverter.getInstance().convert(value, context);
+                break;
             case "Set":
             case "HashSet":
             default:
                 result = HashSetConverter.getInstance().convert(value, context);
-                break;
-            case "TreeSet":
-                result = TreeSetConverter.getInstance().convert(value, context);
                 break;
         }
         if(context.getConfiguration().getOrDefault('_' + context.getKey()+".read-only",

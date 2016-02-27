@@ -18,11 +18,9 @@
  */
 package org.apache.tamaya.collections.internal;
 
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -35,7 +33,7 @@ public class ConcurrentHashMapConverter implements PropertyConverter<ConcurrentH
     private static final Logger LOG = Logger.getLogger(ConcurrentHashMapConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
-    private static ConcurrentHashMapConverter INSTANCE = new ConcurrentHashMapConverter();
+    private static final ConcurrentHashMapConverter INSTANCE = new ConcurrentHashMapConverter();
 
     /**
      * Provide a shared instance, used by other collection converters in this package.

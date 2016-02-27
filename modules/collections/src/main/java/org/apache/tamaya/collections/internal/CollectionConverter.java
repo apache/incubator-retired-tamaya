@@ -37,11 +37,6 @@ public class CollectionConverter implements PropertyConverter<Collection> {
         }
         Collection result = null;
         switch(collectionType){
-            case "List":
-            case "ArrayList":
-            default:
-                result = ArrayListConverter.getInstance().convert(value, context);
-                break;
             case "LinkedList":
                 result = LinkedListConverter.getInstance().convert(value, context);
                 break;
@@ -52,6 +47,11 @@ public class CollectionConverter implements PropertyConverter<Collection> {
             case "SortedSet":
             case "TreeSet":
                 result = TreeSetConverter.getInstance().convert(value, context);
+                break;
+            case "List":
+            case "ArrayList":
+            default:
+                result = ArrayListConverter.getInstance().convert(value, context);
                 break;
         }
         if(context.getConfiguration().getOrDefault('_' + context.getKey()+".read-only",

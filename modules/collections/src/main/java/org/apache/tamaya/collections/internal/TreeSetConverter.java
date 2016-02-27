@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.collections.internal;
 
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -35,7 +34,7 @@ public class TreeSetConverter implements PropertyConverter<TreeSet> {
     private static final Logger LOG = Logger.getLogger(TreeSetConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
-    private static TreeSetConverter INSTANCE = new TreeSetConverter();
+    private static final TreeSetConverter INSTANCE = new TreeSetConverter();
 
     /**
      * Provide a shared instance, used by other collection converters in this package.

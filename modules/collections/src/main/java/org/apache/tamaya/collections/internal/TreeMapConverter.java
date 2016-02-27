@@ -34,7 +34,7 @@ public class TreeMapConverter implements PropertyConverter<TreeMap> {
     private static final Logger LOG = Logger.getLogger(HashMapConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
-    private static TreeMapConverter INSTANCE = new TreeMapConverter();
+    private static final TreeMapConverter INSTANCE = new TreeMapConverter();
 
     /**
      * Provide a shared instance, used by other collection converters in this package.

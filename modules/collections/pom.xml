@@ -22,7 +22,7 @@ under the License.
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-sandbox</artifactId>
+        <artifactId>tamaya-extensions</artifactId>
         <version>0.2-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>

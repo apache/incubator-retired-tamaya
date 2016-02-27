@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.collections.internal;
 
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -34,7 +33,7 @@ public class HashMapConverter implements PropertyConverter<HashMap> {
     private static final Logger LOG = Logger.getLogger(HashMapConverter.class.getName());
 
     /** The shared instance, used by other collection converters in this package.*/
-    private static HashMapConverter INSTANCE = new HashMapConverter();
+    private static final HashMapConverter INSTANCE = new HashMapConverter();
 
     /**
      * Provide a shared instance, used by other collection converters in this package.
