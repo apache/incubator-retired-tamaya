@@ -41,6 +41,7 @@ under the License.
         <module>injection-api</module>
         <module>injection</module>
         <module>json</module>
+        <module>yaml</module>
         <module>resolver</module>
         <module>resources</module>
         <module>functions</module>
