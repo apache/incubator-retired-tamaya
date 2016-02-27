@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.etcd.internal;
+package org.apache.tamaya.consul.internal;
 
-import org.apache.tamaya.etcd.EtcdAccessor;
-import org.apache.tamaya.etcd.EtcdBackends;
+import org.apache.tamaya.consul.ConsulBackends;
 import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpiSpi;
 
 import java.net.URI;
@@ -33,17 +32,17 @@ import java.util.logging.Logger;
  * {@code changeRequest.set("myTimedKey?ttl=30", "myValue");} will set a key {@code myTimedKey} valid only for
  * 30 seconds.
  */
-class EtcdConfigChangeRequest extends AbstractMutableConfigurationBackendSpiSpi {
+class ConsulMutableConfigurationBackend extends AbstractMutableConfigurationBackendSpiSpi {
 
-    private static final Logger LOG = Logger.getLogger(EtcdConfigChangeRequest.class.getName());
+    private static final Logger LOG = Logger.getLogger(ConsulMutableConfigurationBackend.class.getName());
 
-    EtcdConfigChangeRequest(URI uri){
+    ConsulMutableConfigurationBackend(URI uri){
         super(uri);
     }
 
     @Override
     public boolean isExisting(String keyExpression) {
-        for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
+        for(EtcdAccessor accessor: ConsulBackends.getEtcdBackends()){
             try{
                 Map<String,String> props = accessor.get(keyExpression);
                 if(!props.containsKey("_ERROR")) {
@@ -60,7 +59,7 @@ class EtcdConfigChangeRequest extends AbstractMutableConfigurationBackendSpiSpi 
 
     @Override
     protected void commitInternal() {
-        for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
+        for(EtcdAccessor accessor: ConsulBackends.getEtcdBackends()){
             try{
                 for(String k: getRemovedProperties()){
                     Map<String,String> res = accessor.delete(k);
