@@ -174,7 +174,7 @@ public class ConversionContext {
         public Builder(Configuration configuration, ConfigurationContext configurationContext, String key, TypeLiteral<?> targetType){
             this.key = key;
             this.configuration = configuration;
-            this.configurationContext = context;
+            this.configurationContext = configurationContext;
             this.targetType = Objects.requireNonNull(targetType);
         }
 
