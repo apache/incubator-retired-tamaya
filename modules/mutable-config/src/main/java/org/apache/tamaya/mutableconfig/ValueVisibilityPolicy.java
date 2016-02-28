@@ -20,22 +20,23 @@ package org.apache.tamaya.mutableconfig;
 
 /**
  * Policy that can be passed when creating a {@link MutableConfigurationQuery} to define how existing values from
- * the base configuration should be handled. The corresponding behaviour is immedeately activen, it does not
+ * the base configuration should be handled. The corresponding behaviour is immedeately active, it does not
  * require a {@code commit()}. Nevertheless cleaning up all changes will reverse any changes and also related
  * effects.
  */
 public enum ValueVisibilityPolicy {
-    /**
-     * Entries from the base configuration are hidden by the entries edited. This gives you the best control on your
-     * changes applied, but probably will not match the behaviour of your default configuration, since the effective
-     * ordinals of your PropertySources may determine other overriding behaviour.
-     */
-    CHANGES,
 
     /**
-     * Entries added are also added to the overall configuration for read access before committed, but any existing
-     * values are never overridden.
+     * Entries added are also added to the mutable configuration for read access before committed. This is also
+     * the default policy used.
      */
     CONFIG,
+
+    /**
+     * Entries from the base configuration are hidden or overridden by the entries edited. This gives you the best
+     * control on your changes applied, but probably will not match the behaviour of your default configuration,
+     * since the effective ordinals of your PropertySources may determine other overriding behaviour.
+     */
+    CHANGES
 
 }
