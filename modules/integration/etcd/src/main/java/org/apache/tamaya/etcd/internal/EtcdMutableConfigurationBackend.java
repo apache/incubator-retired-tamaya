@@ -20,7 +20,8 @@ package org.apache.tamaya.etcd.internal;
 
 import org.apache.tamaya.etcd.EtcdAccessor;
 import org.apache.tamaya.etcd.EtcdBackends;
-import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpiSpi;
+import org.apache.tamaya.etcd.EtcdPropertySource;
+import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpi;
 
 import java.net.URI;
 import java.util.Map;
@@ -33,12 +34,12 @@ import java.util.logging.Logger;
  * {@code changeRequest.set("myTimedKey?ttl=30", "myValue");} will set a key {@code myTimedKey} valid only for
  * 30 seconds.
  */
-class EtcdMutableConfigurationBackend extends AbstractMutableConfigurationBackendSpiSpi {
+class EtcdMutableConfigurationBackend extends AbstractMutableConfigurationBackendSpi {
 
     private static final Logger LOG = Logger.getLogger(EtcdMutableConfigurationBackend.class.getName());
 
     EtcdMutableConfigurationBackend(URI uri){
-        super(uri);
+        super(uri, new EtcdPropertySource());
     }
 
     @Override

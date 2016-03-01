@@ -22,7 +22,8 @@ import com.google.common.net.HostAndPort;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import org.apache.tamaya.consul.ConsulBackends;
-import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpiSpi;
+import org.apache.tamaya.consul.ConsulPropertySource;
+import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpi;
 
 import java.net.URI;
 import java.util.List;
@@ -33,12 +34,12 @@ import java.util.logging.Logger;
 /**
  * Change Request implementation based on consul services.
  */
-class ConsulMutableConfigurationBackend extends AbstractMutableConfigurationBackendSpiSpi {
+class ConsulMutableConfigurationBackend extends AbstractMutableConfigurationBackendSpi {
 
     private static final Logger LOG = Logger.getLogger(ConsulMutableConfigurationBackend.class.getName());
 
     ConsulMutableConfigurationBackend(URI uri){
-        super(uri);
+        super(uri, new ConsulPropertySource());
     }
 
     @Override
