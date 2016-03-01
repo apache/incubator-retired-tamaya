@@ -20,7 +20,6 @@ package org.apache.tamaya.resource;
 
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Delegate interface for loading URLs from a given data resource locator pattern String.

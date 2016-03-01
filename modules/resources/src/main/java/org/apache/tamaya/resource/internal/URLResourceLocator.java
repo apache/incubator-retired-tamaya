@@ -21,7 +21,6 @@ package org.apache.tamaya.resource.internal;
 import org.apache.tamaya.resource.ResourceLocator;
 
 import javax.annotation.Priority;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;

@@ -20,12 +20,9 @@ package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.resource.BaseResourceResolver;
 import org.apache.tamaya.resource.ResourceLocator;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +45,7 @@ public class DefaultResourceResolver extends BaseResourceResolver {
                 Collection<URL> found = locator.lookup(classLoader, expression);
                 if(!found.isEmpty()) {
                     resources.addAll(found);
+                    break;
                 }
             }
         }

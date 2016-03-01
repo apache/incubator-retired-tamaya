@@ -18,10 +18,6 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-
-import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 

@@ -19,11 +19,8 @@
 package org.apache.tamaya.resource;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.ServiceContextManager;
 
-import java.net.URI;
 
 /**
  * Singleton Accessor for accessing the current {@link org.apache.tamaya.resource.ResourceResolver} instance.
@@ -50,21 +47,5 @@ public final class ConfigResources {
         return resolver;
     }
 
-    /**
-     * Access a PropertySource for a given URI.
-     * @param uri the target uri, pointing to a file, a remote location or something else.
-     * @return a {@link PropertySource} for accessing the configuration data, or {@link PropertySource.EMPTY}.
-     */
-    public static PropertySource getPropertySource(URI uri){
-        return getResourceResolver().getPropertySource(uri);
-    }
 
-    /**
-     * Access a PropertySourceProvider for a given URI, that may point to several resources.
-     * @param uri the target uri, pointing to one or many resources, a remote location or something else.
-     * @return a {@link PropertySource} for accessing the configuration data, or {@link PropertySourceProvider.EMPTY}.
-     */
-    public static PropertySourceProvider getPropertySourceProvider(URI uri){
-        return getResourceResolver().getPropertySourceProvider(uri);
-    }
 }
