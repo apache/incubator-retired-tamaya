@@ -18,6 +18,9 @@
  */
 package org.apache.tamaya.mutableconfig.spi;
 
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -78,6 +81,14 @@ public interface MutableConfigurationBackendSpi {
      * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
      */
     void put(String key, String value);
+
+
+    /**
+     * Access a {@link org.apache.tamaya.spi.PropertySource} for reading any properties from the write target.
+     * @return the {@link org.apache.tamaya.spi.PropertySource} never {@code null}. In case of a write only
+     * data sink, simply return PropertySource.EMPTY.
+     */
+    PropertySource getBackendPropertySource();
 
     /**
      * Puts all given configuration entries. This method should check that all given properties are

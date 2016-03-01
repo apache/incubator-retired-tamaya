@@ -39,12 +39,12 @@ import java.util.Map;
 public interface MutableConfiguration extends Configuration {
 
     /**
-     * Identifies the configuration backends that are targeted by this instance and which are
+     * Identifies the configuration backend that are targeted by this instance and which are
      * also responsible for writing back the changes applied.
      *
      * @return the backend URI, never null.
      */
-    Collection<URI> getBackendURIs();
+    URI getBackendURI();
 
     /**
      * Checks if a configuration key is writable (or it can be added).

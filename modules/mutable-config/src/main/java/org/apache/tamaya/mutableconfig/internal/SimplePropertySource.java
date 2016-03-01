@@ -18,25 +18,48 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.ConfigException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Simple implementation of a {@link org.apache.tamaya.spi.PropertySource} for properties-files.
  */
-public class SimplePropertySource extends BasePropertySource {
+class SimplePropertySource extends BasePropertySource {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOG = Logger.getLogger(SimplePropertySource.class.getName());
+    /**
+     * Default update interval is 1 minute.
+     */
+    private static final long DEFAULT_UPDATE_INTERVAL = 60000L;
+
     /**
      * The property source name.
      */
     private String name;
+
+    /**
+     * The configuration resource's URL.
+     */
+    private URL resource;
+
+    /**
+     * Timestamp of last read.
+     */
+    private long lastRead;
+
+    /**
+     * Interval, when the resource should try to update its contents.
+     */
+    private long updateInterval = DEFAULT_UPDATE_INTERVAL;
     /**
      * The current properties.
      */
@@ -49,11 +72,12 @@ public class SimplePropertySource extends BasePropertySource {
      */
     public SimplePropertySource(File propertiesLocation) {
         super(0);
+        this.name = propertiesLocation.toString();
         try {
-            this.properties = load(propertiesLocation.toURI().toURL());
-            this.name = propertiesLocation.toString();
-        } catch (IOException e) {
-            throw new ConfigException("Failed to load properties from " + propertiesLocation, e);
+            this.resource = propertiesLocation.toURI().toURL();
+            load();
+        } catch (MalformedURLException e) {
+            LOG.log(Level.SEVERE, "Cannot convert file to URL: " + propertiesLocation, e);
         }
     }
 
@@ -64,8 +88,9 @@ public class SimplePropertySource extends BasePropertySource {
      */
     public SimplePropertySource(URL propertiesLocation) {
         super(0);
-        this.properties = load(propertiesLocation);
-        this.name = propertiesLocation.toExternalForm();
+        this.name = propertiesLocation.toString();
+        this.resource = propertiesLocation;
+        load();
     }
 
     /**
@@ -76,8 +101,8 @@ public class SimplePropertySource extends BasePropertySource {
      */
     public SimplePropertySource(String name, Map<String, String> properties) {
         super(0);
-        this.properties = new HashMap<>(properties);
         this.name = Objects.requireNonNull(name);
+        this.properties = new HashMap<>(properties);
     }
 
     /**
@@ -88,8 +113,9 @@ public class SimplePropertySource extends BasePropertySource {
      */
     public SimplePropertySource(String name, URL propertiesLocation) {
         super(0);
-        this.properties = load(propertiesLocation);
         this.name = Objects.requireNonNull(name);
+        this.resource = propertiesLocation;
+        load();
     }
 
     @Override
@@ -99,19 +125,25 @@ public class SimplePropertySource extends BasePropertySource {
 
     @Override
     public Map<String, String> getProperties() {
+        checkLoad();
         return this.properties;
+    }
+
+    private void checkLoad() {
+        if(resource!=null && (lastRead+updateInterval)<System.currentTimeMillis()){
+            load();
+        }
     }
 
     /**
      * loads the Properties from the given URL
      *
-     * @param propertiesFile {@link URL} to load Properties from
      * @return loaded {@link Properties}
      * @throws IllegalStateException in case of an error while reading properties-file
      */
-    private Map<String, String> load(URL propertiesFile) {
+    private void load() {
         Map<String, String> properties = new HashMap<>();
-        try (InputStream stream = propertiesFile.openStream()) {
+        try (InputStream stream = resource.openStream()) {
             Properties props = new Properties();
             if (stream != null) {
                 props.load(stream);
@@ -119,10 +151,13 @@ public class SimplePropertySource extends BasePropertySource {
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
             }
+            this.lastRead = System.currentTimeMillis();
+            this.properties = properties;
+            LOG.log(Level.FINEST, "Loaded properties from " + resource);
         } catch (IOException e) {
-            throw new ConfigException("Error loading properties " + propertiesFile, e);
+            LOG.log(Level.FINEST, "Cannot load properties from " + resource, e);
+            this.properties = Collections.emptyMap();
         }
-        return properties;
     }
 
 }

@@ -68,7 +68,7 @@ public class MutableConfigurationQueryTest {
     @Test(expected=NullPointerException.class)
     public void testNullCreateChangeRequest1() throws Exception {
         MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
-                MutableConfigurationQuery.of((URI[])null));
+                MutableConfigurationQuery.of((URI)null));
     }
 
     /**
@@ -79,6 +79,6 @@ public class MutableConfigurationQueryTest {
     @Test(expected=NullPointerException.class)
     public void testNullCreateChangeRequest2() throws Exception {
         MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
-                MutableConfigurationQuery.of((String[])null));
+                MutableConfigurationQuery.of((String)null));
     }
 }

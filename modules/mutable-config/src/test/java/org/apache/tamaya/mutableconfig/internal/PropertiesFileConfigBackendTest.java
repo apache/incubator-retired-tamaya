@@ -122,41 +122,4 @@ public class PropertiesFileConfigBackendTest {
         assertEquals("value4", props.getProperty("key4"));
     }
 
-    @Test
-    public void testReadWrite_Compound() throws IOException {
-        File f1 = File.createTempFile("testReadWrite_Compound",".xml");
-        f1.delete();
-        File f2 = File.createTempFile("testReadWrite_Compound",".properties");
-        f2.delete();
-        MutableConfiguration req = ConfigurationProvider.getConfiguration().query(
-                MutableConfigurationQuery.of(f1.toURI(), f2.toURI()));
-        req.put("key1", "value1");
-        Map<String,String> cm = new HashMap<>();
-        cm.put("key2", "value2");
-        cm.put("key3", "value3");
-        req.putAll(cm);
-        req.commit();
-        assertTrue(f1.exists());
-        assertTrue(f2.exists());
-        MutableConfiguration req2 = ConfigurationProvider.getConfiguration().query(
-                MutableConfigurationQuery.of(f1.toURI(), f2.toURI()));
-        assertTrue(req != req2);
-        req2.remove("foo");
-        req2.remove("key3");
-        req2.put("key1", "value1.2");
-        req2.put("key4", "value4");
-        req2.commit();
-        Properties props = new Properties();
-        props.load(f2.toURL().openStream());
-        assertEquals(3, props.size());
-        assertEquals("value1.2", props.getProperty("key1"));
-        assertEquals("value2", props.getProperty("key2"));
-        assertEquals("value4", props.getProperty("key4"));
-        props = new Properties();
-        props.loadFromXML(f1.toURL().openStream());
-        assertEquals(3, props.size());
-        assertEquals("value1.2", props.getProperty("key1"));
-        assertEquals("value2", props.getProperty("key2"));
-        assertEquals("value4", props.getProperty("key4"));
-    }
 }

@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.mutableconfig.spi;
 
+import org.apache.tamaya.spi.PropertySource;
+
 import java.net.URI;
 import java.util.*;
 
@@ -26,32 +28,57 @@ import java.util.*;
  */
 public abstract class AbstractMutableConfigurationBackendSpi implements MutableConfigurationBackendSpi {
 
+    /** The URI identifying the current backend. */
     private final URI backendURI;
 
     /**
-     * The Properties.
+     * The property source containing the current backend property data.
+     */
+    private PropertySource backendPropertySource;
+
+    /**
+     * The added or changed properties (uncommitted)..
      */
     protected final Map<String,String> addedProperties = new HashMap<>();
     /**
-     * The Removed.
+     * The removed properties (uncommitted).
      */
     protected final Set<String> removedProperties = new HashSet<>();
 
+    /**
+     * Get the uncommitted removed properties.
+     * @return the uncommitted removed properties, never null.
+     */
     protected Set<String> getRemovedProperties() {
         return removedProperties;
     }
 
+    /**
+     * Get the uncommitted properties added or updated so far.
+     * @return the uncommitted properties added or updated, never null.
+     */
     protected Map<String,String> getAddedProperties() {
         return addedProperties;
     }
 
-    protected AbstractMutableConfigurationBackendSpi(URI backendURI){
+    /**
+     * Creates a new instance.
+     * @param backendURI the backend URI, not null.
+     * @param backendPropertySource the backend property source, not null.
+     */
+    protected AbstractMutableConfigurationBackendSpi(URI backendURI, PropertySource backendPropertySource){
         this.backendURI = Objects.requireNonNull(backendURI);
+        this.backendPropertySource = Objects.requireNonNull(backendPropertySource);
     }
 
     @Override
     public URI getBackendURI() {
         return backendURI;
+    }
+
+    @Override
+    public PropertySource getBackendPropertySource(){
+        return backendPropertySource;
     }
 
     @Override

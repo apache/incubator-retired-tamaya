@@ -29,61 +29,58 @@ import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendSpi;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendProviderSpi;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 
 /**
- * Accessor for creating {@link MutableConfiguration} instances to change and commit configuration.
+ * Accessor for creating {@link MutableConfiguration} instances to change configuration and commit changes.
  */
 public final class MutableConfigurationQuery implements ConfigQuery<MutableConfiguration> {
 
     /**
      * URIs used by this query instance to identify the backends to use for write operations.
      */
-    private final List<MutableConfigurationBackendSpi> targets = new ArrayList<>();
+    private final MutableConfigurationBackendSpi target;
 
     private ValueVisibilityPolicy valueVisibilityPolicy;
 
     /** Singleton constructor. */
-    private MutableConfigurationQuery(ValueVisibilityPolicy valueVisibilityPolicy, List<MutableConfigurationBackendSpi> targets){
-        this.targets.addAll(targets);
+    private MutableConfigurationQuery(MutableConfigurationBackendSpi target, ValueVisibilityPolicy valueVisibilityPolicy){
+        this.target = Objects.requireNonNull(target);
         this.valueVisibilityPolicy = valueVisibilityPolicy;
     }
 
     @Override
     public MutableConfiguration query(Configuration config) {
-        return new DefaultMutableConfiguration(valueVisibilityPolicy, config, targets);
+        return new DefaultMutableConfiguration(target, valueVisibilityPolicy, config);
     }
 
     /**
-     * Creates a new change request for the given configurationSource
+     * Creates a new {@link MutableConfigurationQuery} for the given configuration target.
      *
-     * @param configurationTargets the configuration targets (String to create URIs) to use to write the changes/config. By passing multiple
+     * @param configurationTarget the configuration targets (String to create URIs) to use to write the changes/config. By passing multiple
      *                             URIs you can write back changes into multiple configuration backends, e.g.
      *                             one for redistributing changes using multicast mechanism, a local property file
      *                             for failover as well as the shared etcd server.
      * @return a new ChangeRequest
      * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
      */
-    public static MutableConfigurationQuery of(String... configurationTargets){
-        return of(ValueVisibilityPolicy.CONFIG, configurationTargets);
+    public static MutableConfigurationQuery of(String configurationTarget){
+        return of(configurationTarget, ValueVisibilityPolicy.CONFIG);
     }
 
     /**
-     * Creates a new change request for the given configurationSource
+     * Creates a new {@link MutableConfigurationQuery} for the given configuration target and visibility policy.
      *
-     * @param configurationTargets the configuration targets (String to create URIs) to use to write the changes/config. By passing multiple
+     * @param configurationTarget the configuration targets (String to create URIs) to use to write the changes/config. By passing multiple
      *                             URIs you can write back changes into multiple configuration backends, e.g.
      *                             one for redistributing changes using multicast mechanism, a local property file
      *                             for failover as well as the shared etcd server.
@@ -92,35 +89,32 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
      * @return a new ChangeRequest
      * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
      */
-    public static MutableConfigurationQuery of(ValueVisibilityPolicy valueVisibilityPolicy, String... configurationTargets){
+    public static MutableConfigurationQuery of(String configurationTarget, ValueVisibilityPolicy valueVisibilityPolicy){
         try {
-            URI[] uris = new URI[configurationTargets.length];
-            for (int i = 0; i < configurationTargets.length; i++) {
-                uris[i] = new URI(configurationTargets[i]);
-            }
-            return of(valueVisibilityPolicy, uris);
+            URI uri = new URI(configurationTarget);
+            return of(uri, valueVisibilityPolicy);
         } catch(URISyntaxException e){
-            throw new ConfigException("Invalid URIs encountered in " + Arrays.toString(configurationTargets));
+            throw new ConfigException("Invalid URI " + configurationTarget);
         }
     }
 
     /**
-     * Creates a new change request for the given configurationSource
+     * Creates a new {@link MutableConfigurationQuery} for the given configuration target.
      *
-     * @param configurationTargets the configuration targets to use to write the changes/config. By passing multiple
+     * @param configurationTarget the configuration targets to use to write the changes/config. By passing multiple
      *                             URIs you can write back changes into multiple configuration backends, e.g.
      *                             one for redistributing changes using multicast mechanism, a local property file
      *                             for failover as well as the shared etcd server.
      * @return a new ChangeRequest
      * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
      */
-    public static MutableConfigurationQuery of(URI... configurationTargets){
-        return of(ValueVisibilityPolicy.CONFIG, configurationTargets);
+    public static MutableConfigurationQuery of(URI configurationTarget){
+        return of(configurationTarget, ValueVisibilityPolicy.CONFIG);
     }
     /**
-     * Creates a new change request for the given configurationSource
+     * Creates a new {@link MutableConfigurationQuery} for the given configuration target and visibility policy.
      *
-     * @param configurationTargets the configuration targets to use to write the changes/config. By passing multiple
+     * @param configurationTarget the configuration targets to use to write the changes/config. By passing multiple
      *                             URIs you can write back changes into multiple configuration backends, e.g.
      *                             one for redistributing changes using multicast mechanism, a local property file
      *                             for failover as well as the shared etcd server.
@@ -129,25 +123,89 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
      * @return a new ChangeRequest
      * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
      */
-    public static MutableConfigurationQuery of(ValueVisibilityPolicy valueVisibilityPolicy, URI... configurationTargets){
-        if(Objects.requireNonNull(configurationTargets).length==0){
-            throw new IllegalArgumentException("At least one target URI is required.");
-        }
-        List<MutableConfigurationBackendSpi> targets = new ArrayList<>();
+    public static MutableConfigurationQuery of(URI configurationTarget, ValueVisibilityPolicy valueVisibilityPolicy){
+        MutableConfigurationBackendSpi target = null;
         for(MutableConfigurationBackendProviderSpi spi:ServiceContextManager.getServiceContext()
                 .getServices(MutableConfigurationBackendProviderSpi.class)){
-            for(URI target:configurationTargets) {
-                MutableConfigurationBackendSpi req = spi.getBackend(target);
-                if (req != null) {
-                    targets.add(req);
-                }
+            MutableConfigurationBackendSpi req = spi.getBackend(Objects.requireNonNull(configurationTarget));
+            if (req != null) {
+                target = req;
+                break;
             }
         }
-        if(targets.isEmpty()) {
-            throw new ConfigException("Not an editable configuration target for: " +
-                    Arrays.toString(configurationTargets));
+        if(target==null) {
+            throw new ConfigException("Not an editable configuration target: " +
+                    configurationTarget);
         }
-        return new MutableConfigurationQuery(Objects.requireNonNull(valueVisibilityPolicy), targets);
+        return new MutableConfigurationQuery(target, Objects.requireNonNull(valueVisibilityPolicy));
+    }
+
+
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given configuration target.
+     *
+     * @param configurationTarget the configuration targets (String to create URIs) to use to write the changes/config. By passing multiple
+     *                             URIs you can write back changes into multiple configuration backends, e.g.
+     *                             one for redistributing changes using multicast mechanism, a local property file
+     *                             for failover as well as the shared etcd server.
+     * @return a new ChangeRequest
+     * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
+     */
+    public static MutableConfiguration createMutableConfiguration(String configurationTarget){
+        return createMutableConfiguration(configurationTarget, ValueVisibilityPolicy.CONFIG);
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given configuration target and visibility policy.
+     *
+     * @param configurationTarget the configuration targets (String to create URIs) to use to write the changes/config. By passing multiple
+     *                             URIs you can write back changes into multiple configuration backends, e.g.
+     *                             one for redistributing changes using multicast mechanism, a local property file
+     *                             for failover as well as the shared etcd server.
+     * @param valueVisibilityPolicy the policy that defines how values edited, added or removed are reflected in the read
+     *                         accesses of the {@link MutableConfiguration} created.
+     * @return a new ChangeRequest
+     * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
+     */
+    public static MutableConfiguration createMutableConfiguration(String configurationTarget,
+                                                                  ValueVisibilityPolicy valueVisibilityPolicy){
+        try {
+            URI uri = new URI(configurationTarget);
+            return createMutableConfiguration(uri, valueVisibilityPolicy);
+        } catch(URISyntaxException e){
+            throw new ConfigException("Invalid URI " + configurationTarget);
+        }
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given configuration target.
+     *
+     * @param configurationTarget the configuration targets to use to write the changes/config. By passing multiple
+     *                             URIs you can write back changes into multiple configuration backends, e.g.
+     *                             one for redistributing changes using multicast mechanism, a local property file
+     *                             for failover as well as the shared etcd server.
+     * @return a new ChangeRequest
+     * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
+     */
+    public static MutableConfiguration createMutableConfiguration(URI configurationTarget){
+        return createMutableConfiguration(configurationTarget, ValueVisibilityPolicy.CONFIG);
+    }
+    /**
+     * Creates a new {@link MutableConfiguration} for the given configuration target and visibility policy.
+     *
+     * @param configurationTarget the configuration targets to use to write the changes/config. By passing multiple
+     *                             URIs you can write back changes into multiple configuration backends, e.g.
+     *                             one for redistributing changes using multicast mechanism, a local property file
+     *                             for failover as well as the shared etcd server.
+     * @param valueVisibilityPolicy the policy that defines how values edited, added or removed are reflected in the read
+     *                         accesses of the {@link MutableConfiguration} created.
+     * @return a new ChangeRequest
+     * @throws org.apache.tamaya.ConfigException if the given configurationSource cannot be edited.
+     */
+    public static MutableConfiguration createMutableConfiguration(URI configurationTarget,
+                                                                  ValueVisibilityPolicy valueVisibilityPolicy){
+        return Configuration.EMPTY.query(of(configurationTarget, valueVisibilityPolicy));
     }
 
 
@@ -157,72 +215,49 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
     private static final class DefaultMutableConfiguration extends AbstractMutableConfiguration
             implements MutableConfiguration {
 
-        private final List<MutableConfigurationBackendSpi> targets;
+        private final MutableConfigurationBackendSpi target;
         private final Configuration config;
         private ValueVisibilityPolicy valueVisibilityPolicy;
 
-        DefaultMutableConfiguration(ValueVisibilityPolicy valueVisibilityPolicy, Configuration config, List<MutableConfigurationBackendSpi> targets){
-            this.targets = Objects.requireNonNull(targets);
+        DefaultMutableConfiguration(MutableConfigurationBackendSpi target, ValueVisibilityPolicy valueVisibilityPolicy, Configuration config){
+            this.target = Objects.requireNonNull(target);
             this.config = Objects.requireNonNull(config);
             this.valueVisibilityPolicy = valueVisibilityPolicy;
         }
 
         @Override
-        public List<URI> getBackendURIs() {
-            List<URI> result = new ArrayList<>(targets.size());
-            for(MutableConfigurationBackendSpi backend: targets){
-                result.add(backend.getBackendURI());
-            }
-            return Collections.unmodifiableList(result);
+        public URI getBackendURI() {
+            return target.getBackendURI();
         }
 
         @Override
         public boolean isWritable(String keyExpression) {
-            for(MutableConfigurationBackendSpi req:targets){
-                if(req.isWritable(keyExpression)){
-                    return true;
-                }
-            }
-            return false;
+            return target.isWritable(keyExpression);
         }
 
         @Override
         public boolean isRemovable(String keyExpression) {
-            for(MutableConfigurationBackendSpi req:targets){
-                if(req.isRemovable(keyExpression)){
-                    return true;
-                }
-            }
-            return false;
+            return target.isRemovable(keyExpression);
         }
 
         @Override
         public boolean isExisting(String keyExpression) {
-            for(MutableConfigurationBackendSpi req:targets){
-                if(req.isExisting(keyExpression)){
-                    return true;
-                }
-            }
-            return false;
+            return target.isExisting(keyExpression);
         }
 
         @Override
         public MutableConfiguration put(String key, String value) {
-            for(MutableConfigurationBackendSpi req:targets){
-                if(req.isWritable(key)){
-                    req.put(key, value);
-                }
+            if(target.isWritable(key)){
+                target.put(key, value);
             }
-            return super.put(key, value);
+            return this;
         }
 
         @Override
         public MutableConfiguration putAll(Map<String, String> properties) {
-            for(MutableConfigurationBackendSpi req:targets){
-                for(Map.Entry<String,String> en:properties.entrySet()) {
-                    if (req.isWritable(en.getKey())) {
-                        req.put(en.getKey(), en.getValue());
-                    }
+            for(Map.Entry<String,String> en:properties.entrySet()) {
+                if (target.isWritable(en.getKey())) {
+                    target.put(en.getKey(), en.getValue());
                 }
             }
             return super.putAll(properties);
@@ -230,11 +265,9 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
 
         @Override
         public MutableConfiguration remove(String... keys) {
-            for(MutableConfigurationBackendSpi req:targets){
-                for(String key:keys){
-                    if (req.isRemovable(key)) {
-                        req.remove(key);
-                    }
+            for(String key:keys){
+                if (target.isRemovable(key)) {
+                    target.remove(key);
                 }
             }
             return super.remove(keys);
@@ -242,11 +275,9 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
 
         @Override
         public MutableConfiguration remove(Collection<String> keys) {
-            for(MutableConfigurationBackendSpi req:targets){
-                for(String key:keys){
-                    if (req.isRemovable(key)) {
-                        req.remove(key);
-                    }
+            for(String key:keys){
+                if (target.isRemovable(key)) {
+                    target.remove(key);
                 }
             }
             return super.remove(keys);
@@ -254,9 +285,7 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
 
         @Override
         protected void commitInternal() {
-            for(MutableConfigurationBackendSpi req:targets){
-                req.commit();
-            }
+            target.commit();
         }
 
         @Override
@@ -268,12 +297,23 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
                     if(removed){
                         return null;
                     }
-                    return addedOrUpdated!=null?addedOrUpdated:this.config.get(key);
+                    return addedOrUpdated!=null?addedOrUpdated:getInternal(key);
                 case CONFIG:
                 default:
-                    String val = this.config.get(key);
+                    String val = getInternal(key);
                     return val == null?addedOrUpdated:val;
             }
+        }
+
+        private String getInternal(String key) {
+           Map<String,String> props = this.config.getProperties();
+            if(props.isEmpty()){
+                PropertyValue val = this.target.getBackendPropertySource().get(key);
+                if(val!=null){
+                    return val.getValue();
+                }
+            }
+            return this.config.get(key);
         }
 
         @Override
@@ -301,7 +341,7 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
         public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
             String val = get(key);
             if(val==null) {
-                return config.getOrDefault(key, type, defaultValue);
+                return defaultValue;
             }
             for(PropertyConverter conv: ConfigurationProvider.getConfigurationContext().getPropertyConverters(type)){
                 Object o = conv.convert(val, new ConversionContext.Builder(key, type).setConfiguration(config).build());
@@ -314,7 +354,12 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
 
         @Override
         public Map<String, String> getProperties() {
-            Map<String, String> configProps = new HashMap<>(config.getProperties());
+            Map<String, String> configProps = new HashMap<>();
+            if(config.getProperties().isEmpty()) {
+                configProps.putAll(target.getBackendPropertySource().getProperties());
+            }else{
+                configProps.putAll(config.getProperties());
+            }
             switch(valueVisibilityPolicy){
                 case CHANGES:
                     for(String key:removedProperties){
@@ -350,7 +395,7 @@ public final class MutableConfigurationQuery implements ConfigQuery<MutableConfi
         public String toString() {
             return "DefaultMutableConfiguration{" +
                     "config=" + config +
-                    ", targets=" + targets +
+                    ", target=" + target +
                     '}';
         }
     }

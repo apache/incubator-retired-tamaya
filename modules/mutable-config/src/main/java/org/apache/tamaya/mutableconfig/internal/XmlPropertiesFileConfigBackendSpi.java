@@ -19,7 +19,7 @@
 package org.apache.tamaya.mutableconfig.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpiSpi;
+import org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpi;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 /**
  * Change Request implementation based on .xml properties file.
  */
-class XmlPropertiesFileConfigBackendSpi extends AbstractMutableConfigurationBackendSpiSpi {
+class XmlPropertiesFileConfigBackendSpi extends AbstractMutableConfigurationBackendSpi {
 
     private static final Logger LOG = Logger.getLogger(XmlPropertiesFileConfigBackendSpi.class.getName());
 
@@ -49,7 +49,7 @@ class XmlPropertiesFileConfigBackendSpi extends AbstractMutableConfigurationBack
      * @param file the file
      */
     XmlPropertiesFileConfigBackendSpi(File file){
-        super(file.toURI());
+        super(file.toURI(), new SimplePropertySource(file));
         this.file = file;
         if(file.exists()) {
             try (InputStream is = getBackendURI().toURL().openStream()) {
