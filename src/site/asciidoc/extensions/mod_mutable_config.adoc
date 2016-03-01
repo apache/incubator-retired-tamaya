@@ -74,13 +74,13 @@ The core of the module is the +MutableConfigQuery+ singleton, which is a +Config
 +Mutableonfiguration+ based on a +Configuration+ and a set of target backend +URIs+. If not sure you can call
 +getSupportedURIInfo()+ to see, which kind of URI's are  currently supported.
 On top of this API you also must have the correponding implementations installed that provide the backend logic needed
-to write the changes back. This module by default supports writing back to files only. As an example how to write
-configuration entries back refer to the following snippet:
+to write the changes back. This module by default supports writing back to properties and xml-properties files only.
+As an example how to write configuration entries back refer to the following snippets:
 
 [source,java]
-.Accessing a mutable configuration backed by etcd
+.Accessing and updating a mutable configuration backed by etcd
 --------------------------------------------
-MutableConfiguration config = ConfigChangeManager.getConfiguration().query(
+MutableConfiguration config = Configuration.EMPTY.query(
     MutableConfigurationQuery.of("file:/home/etcd/backup-config.properties");
 
 config.set("newKey", "newValue")
@@ -89,8 +89,39 @@ config.set("newKey", "newValue")
       .commit();
 --------------------------------------------
 
-Hereby it is also possible to provide multiple URLS that allows you to write your configuration chnges back to multiple
-backends in one go. Also be aware that the effective effect of your changes to the overall configuration changes cannot
+[source,java]
+.Accessing and updating a mutable configuration backed by a properties file
+--------------------------------------------
+MutableConfiguration config = Configuration.EMPTY.query(
+    MutableConfigurationQuery.of("file:/home/user/.backup-config.properties");
+
+config.set("newKey", "newValue")
+      .set("anotherKey", "updatedValue")
+      .remove("valueNotValid")
+      .commit();
+--------------------------------------------
+
+Both snippets above will contain values only
+
+* added or updated (uncommitted)
+* already existing in the configuration bakend, but not removed (uncommitted).
+
+This is the case because we provide an EMPTY configuration as a starting point. We can also combine this feature with
+the current +Configuration+, which then will make the effevtive configuration values visible as well:
+
+[source,java]
+.Creating a mutable configuration based on the current config
+--------------------------------------------
+MutableConfiguration config = ConfigurationProvider.getConfiguration().query(
+    MutableConfigurationQuery.of("file:/home/user/.backup-config.properties");
+
+config.set("newKey", "newValue")
+      .set("anotherKey", "updatedValue")
+      .remove("valueNotValid")
+      .commit();
+--------------------------------------------
+
+Please be aware that the effective effect of your changes to the overall configuration, cannot
 be easily predicted, since it depends on several aspects:
 
 . is the corresponding configuration resource configured as part of the current system's configuration?
@@ -110,7 +141,7 @@ is writable at all or can be removed or updated:
 [source,java]
 .Checking for mutability
 --------------------------------------------
-MutableConfiguration config = ConfigChangeManager.getConfiguration().query(
+MutableConfiguration config = Configuration.EMPTY.query(
     MutableConfigurationQuery.of("file:/home/etcd/backup-config.properties");
 
 if(config,isWritable("mycluster.shared.appKey")){
@@ -120,6 +151,15 @@ if(config,isWritable("mycluster.shared.appKey")){
 }else{
     config.rollback();
 }
+--------------------------------------------
+
+Finally since the creation if a +MutableConfiguration+ based on an empty configuration instance is so common, it is
+possible to directlky create one:
+
+[source,java]
+.Checking for mutability
+--------------------------------------------
+MutableConfiguration config = MutableConfigurationQuery.createMutableConfiguration("file:/home/etcd/backup-config.properties");
 --------------------------------------------
 
 === Configuration Changes
@@ -164,5 +204,5 @@ Implementations are registered with the current +ServiceContext+, be default as 
 As convenience the following base classes are provided:
 
 * +org.apache.tamaya.mutableconfig.spi.AbstractMutableConfiguration+ simplifying implementation of +MutableConfiguration+.
-* +org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpi+ simplifying the implemenation of
+* +org.apache.tamaya.mutableconfig.spi.AbstractMutableConfigurationBackendSpi+ simplifying the implementation of
   +MutableConfigurationBackendSpi+.
