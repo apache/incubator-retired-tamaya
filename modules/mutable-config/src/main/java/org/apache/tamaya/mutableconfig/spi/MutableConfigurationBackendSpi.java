@@ -19,7 +19,6 @@
 package org.apache.tamaya.mutableconfig.spi;
 
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
 
 import java.net.URI;
 import java.util.Collection;
