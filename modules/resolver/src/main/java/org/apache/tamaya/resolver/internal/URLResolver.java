@@ -60,7 +60,7 @@ public final class URLResolver implements ExpressionResolver {
             }
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);
-            return null;
+            return '['+expression+']';
         }
     }
 
