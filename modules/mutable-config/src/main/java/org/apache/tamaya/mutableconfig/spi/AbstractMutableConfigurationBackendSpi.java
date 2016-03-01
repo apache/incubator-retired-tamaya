@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * Base class for implementing a MutableConfigurationBackend.
  */
-public abstract class AbstractMutableConfigurationBackendSpiSpi implements MutableConfigurationBackendSpi {
+public abstract class AbstractMutableConfigurationBackendSpi implements MutableConfigurationBackendSpi {
 
     private final URI backendURI;
 
@@ -45,7 +45,7 @@ public abstract class AbstractMutableConfigurationBackendSpiSpi implements Mutab
         return addedProperties;
     }
 
-    protected AbstractMutableConfigurationBackendSpiSpi(URI backendURI){
+    protected AbstractMutableConfigurationBackendSpi(URI backendURI){
         this.backendURI = Objects.requireNonNull(backendURI);
     }
 
