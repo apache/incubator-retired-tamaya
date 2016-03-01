@@ -19,6 +19,7 @@
 package org.apache.tamaya.spi;
 
 
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -48,6 +49,41 @@ public interface PropertySource {
      * property name to override default tamaya ordinals
      */
     String TAMAYA_ORDINAL = "tamaya.ordinal";
+
+    /**
+     * A resusable instance of an empty PropertySource.
+     */
+    PropertySource EMPTY = new PropertySource() {
+        @Override
+        public int getOrdinal() {
+            return Integer.MIN_VALUE;
+        }
+
+        @Override
+        public String getName() {
+            return "<empty>";
+        }
+
+        @Override
+        public PropertyValue get(String key) {
+            return null;
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public boolean isScannable() {
+            return false;
+        }
+
+        @Override
+        public String toString(){
+            return "PropertySource.EMPTY";
+        }
+    };
 
 
     /**

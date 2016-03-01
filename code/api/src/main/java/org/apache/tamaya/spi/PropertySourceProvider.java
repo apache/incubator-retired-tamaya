@@ -19,6 +19,7 @@
 package org.apache.tamaya.spi;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * <p>Implement this interfaces to provide a PropertySource provider which
@@ -34,6 +35,22 @@ import java.util.Collection;
  * META-INF/services/org.apache.tamaya.spi.PropertySourceProvider</p>
  */
 public interface PropertySourceProvider {
+
+    /**
+     * A resusable instance of an empty PropertySource.
+     */
+    PropertySourceProvider EMPTY = new PropertySourceProvider() {
+
+        @Override
+        public Collection<PropertySource> getPropertySources() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public String toString(){
+            return "PropertySourceProvider(empty)";
+        }
+    };
 
     /**
      * @return For each e.g. property file, we return a single PropertySource

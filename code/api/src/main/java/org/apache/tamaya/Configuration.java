@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya;
 
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -44,6 +45,61 @@ import java.util.Map;
  * this library at all.</p>
  */
 public interface Configuration {
+
+    /**
+     * Empty instance usable, where a configuration is required but no one is avilable.
+     */
+    Configuration EMPTY = new Configuration(){
+        @Override
+        public String get(String key) {
+            return null;
+        }
+
+        @Override
+        public String getOrDefault(String key, String defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public <T> T get(String key, Class<T> type) {
+            return null;
+        }
+
+        @Override
+        public <T> T get(String key, TypeLiteral<T> type) {
+            return null;
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public Configuration with(ConfigOperator operator) {
+            return operator.operate(this);
+        }
+
+        @Override
+        public <T> T query(ConfigQuery<T> query) {
+            return query.query(this);
+        }
+
+        @Override
+        public String toString(){
+            return "Configuration.EMPTY";
+        }
+    };
 
     /**
      * Access a property.
