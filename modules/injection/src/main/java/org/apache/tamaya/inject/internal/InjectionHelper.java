@@ -184,11 +184,14 @@ final class InjectionHelper {
         }
         if (String.class == targetType.getType()) {
             return (T) configValue;
-        } else {
+        } else{
+            if(configValue==null) {
+                return null;
+            }
             List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
                     .getPropertyConverters(targetType);
             ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
-                    ConfigurationProvider.getConfigurationContext(), key,targetType)
+                    ConfigurationProvider.getConfigurationContext(), key, targetType)
                     .setAnnotatedElement(element).build();
             for (PropertyConverter<T> converter : converters) {
                 adaptedValue = converter.convert(configValue, ctx);
@@ -196,8 +199,8 @@ final class InjectionHelper {
                     return adaptedValue;
                 }
             }
-            throw new ConfigException("Non convertible property type: " + element);
         }
+        throw new ConfigException("Non convertible property type: " + element);
     }
 
     /**
