@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -73,7 +74,9 @@ public class DateTimeConverter implements PropertyConverter<DateTime> {
     }
 
     @Override
-    public DateTime convert(String value) {
+    public DateTime convert(String value, ConversionContext context) {
+        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+
         String trimmed = Objects.requireNonNull(value).trim();
         DateTime result = null;
 

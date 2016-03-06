@@ -21,6 +21,7 @@ package org.apache.tamaya.jodatime;
 
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
 import java.util.List;
@@ -32,12 +33,17 @@ import static org.hamcrest.Matchers.notNullValue;
 public class DateTimeZoneConverterIT {
     @Test
     public void dateTimeZoneConverterCanBeFoundAsServiceProvider() {
-        List<PropertyConverter> formats = ServiceContext.getInstance()
-                                                        .getServices(PropertyConverter.class);
+        List<PropertyConverter> formats = ServiceContextManager.getServiceContext()
+                                                               .getServices(PropertyConverter.class);
 
-        PropertyConverter<?> converter = formats.stream()
-                                             .filter(s -> s instanceof DateTimeZoneConverter)
-                                             .findFirst().get();
+        PropertyConverter<?> converter = null;
+
+        for (PropertyConverter format : formats) {
+            if (format instanceof DateTimeZoneConverter) {
+                converter = format;
+                break;
+            }
+        }
 
         assertThat("Converter not found via service context.", converter, notNullValue());
         assertThat(converter, instanceOf(DateTimeZoneConverter.class));

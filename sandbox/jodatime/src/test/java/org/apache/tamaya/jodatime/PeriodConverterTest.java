@@ -18,10 +18,13 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -60,11 +63,19 @@ public class PeriodConverterTest {
 
         };
 
+        ConversionContext context = Mockito.mock(ConversionContext.class);
+
         for (Object[] pair : inputResultPairs) {
-            Period period = converter.convert((String) pair[0]);
+            Period period = converter.convert((String) pair[0], context);
 
             assertThat("Converter failed to convert input value " + pair[0], period, notNullValue());
             assertThat(period, equalTo((Period)pair[1]));
         }
+    }
+
+    @Ignore
+    @Test
+    public void allSupportedFormatsAreAddedToTheConversionContext() {
+        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
     }
 }

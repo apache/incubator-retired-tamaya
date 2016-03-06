@@ -18,10 +18,13 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -62,8 +65,10 @@ public class DateTimeConverterTest {
              {"2007-08-31T16:47:01+00:00 ", FORMATTER.parseDateTime("2007-08-31T16:47:01.0+00:00")},
         };
 
+        ConversionContext context = Mockito.mock(ConversionContext.class);
+
         for (Object[] pair : inputResultPairs) {
-            DateTime date = converter.convert((String)pair[0]);
+            DateTime date = converter.convert((String)pair[0], context);
 
             assertThat("Converter failed to convert input value " + pair[0], date, notNullValue());
             assertThat(date.isEqual((DateTime)pair[1]), is(true));
@@ -76,11 +81,18 @@ public class DateTimeConverterTest {
              "00:00", "a", "-", "+ :00", "+00:"
         };
 
+        ConversionContext context = Mockito.mock(ConversionContext.class);
+
         for (String input : inputValues) {
-            DateTime date = converter.convert(input);
+            DateTime date = converter.convert(input, context);
 
             assertThat(date, nullValue());
         }
     }
 
+    @Ignore
+    @Test
+    public void allSupportedFormatsAreAddedToTheConversionContext() {
+        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+    }
 }

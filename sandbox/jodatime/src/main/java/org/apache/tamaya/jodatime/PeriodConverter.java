@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.joda.time.MutablePeriod;
 import org.joda.time.Period;
@@ -33,13 +34,12 @@ import java.util.regex.Pattern;
  * given period into a {@link org.joda.time.Period} instance.</p>
  *
  * <p>This converter supports the following string representations of a
- * period:
+ * period:</p>
  *
  *   <ol>
  *     <li>Alternatice format ({@code Pyyyy-mm-ddThh:mm:ss})</li>
  *     <li>ISO format ({@code PyYmMwWdDThHmMsS})</li>
  *   </ol>
- * </p>
  *
  *
  */
@@ -59,7 +59,9 @@ public class PeriodConverter implements PropertyConverter<org.joda.time.Period> 
     private final static Pattern ALTERNATIVE_PATTERN = Pattern.compile(ALTERNATIVE_REGEX);
 
     @Override
-    public Period convert(String value) {
+    public Period convert(String value, ConversionContext context) {
+        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+
         String trimmed = Objects.requireNonNull(value).trim();
         MutablePeriod result = null;
 

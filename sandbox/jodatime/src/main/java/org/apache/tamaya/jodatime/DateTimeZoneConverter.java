@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.joda.time.DateTimeZone;
 
@@ -29,7 +30,9 @@ public class DateTimeZoneConverter implements PropertyConverter<DateTimeZone> {
     private static final Pattern IS_INTEGER_VALUE = Pattern.compile("(\\+|-)?\\d+");
 
     @Override
-    public DateTimeZone convert(String value) {
+    public DateTimeZone convert(String value, ConversionContext context) {
+        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+
         String trimmed = requireNonNull(value).trim();
 
         DateTimeZone result = null;

@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.joda.time.DateTimeZone;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -49,8 +52,10 @@ public class DateTimeZoneConverterTest {
              {"+04:00", DateTimeZone.forID("+04:00")},
         };
 
+        ConversionContext context = Mockito.mock(ConversionContext.class);
+
         for (Object[] pair : inputResultPairs) {
-            DateTimeZone zone = converter.convert((String) pair[0]);
+            DateTimeZone zone = converter.convert((String) pair[0], context);
 
             assertThat("Converter failed to convert input value " + pair[0], zone, notNullValue());
             assertThat(zone, equalTo((DateTimeZone)pair[1]));
@@ -67,10 +72,19 @@ public class DateTimeZoneConverterTest {
              "2007-08-01+00:00"
         };
 
+        ConversionContext context = Mockito.mock(ConversionContext.class);
+
         for (String input : inputValues) {
-            DateTimeZone date = converter.convert(input);
+            DateTimeZone date = converter.convert(input, context);
 
             assertThat(date, nullValue());
         }
     }
+
+    @Ignore
+    @Test
+    public void allSupportedFormatsAreAddedToTheConversionContext() {
+        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+    }
+
 }
