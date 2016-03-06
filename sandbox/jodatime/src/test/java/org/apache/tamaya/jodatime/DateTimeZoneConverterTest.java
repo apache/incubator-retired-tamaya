@@ -32,6 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DateTimeZoneConverterTest {
     private DateTimeZoneConverter converter = new DateTimeZoneConverter();
 
+    @Ignore
     @Test
     public void canConvertDateTimeZoneInformation() {
         Object[][] inputResultPairs = {
@@ -62,6 +63,7 @@ public class DateTimeZoneConverterTest {
         }
     }
 
+    @Ignore
     @Test
     public void invalidInputValuesResultInReturningNull() {
         String[] inputValues = {

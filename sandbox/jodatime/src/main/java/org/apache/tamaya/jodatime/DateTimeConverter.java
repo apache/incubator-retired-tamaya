@@ -47,24 +47,40 @@ import java.util.Objects;
  * </ul>
  */
 public class DateTimeConverter implements PropertyConverter<DateTime> {
+    static final String PARSER_FORMATS[] = {
+        "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSz",
+        "yyyy-MM-dd'T'HH:mm:ss.SSS z",
+        "yyyy-MM-dd'T'HH:mm:ssZ",
+        "yyyy-MM-dd'T'HH:mm:ssz",
+        "yyyy-MM-dd'T'HH:mm:ss z",
+        "yyyy-MM-dd'T'HH:mmZ",
+        "yyyy-MM-dd'T'HH:mmz",
+        "yyyy-MM-dd'T'HH:mm z",
+        "yyyy-MM-dd'T'HHZ",
+        "yyyy-MM-dd'T'HHz",
+        "yyyy-MM-dd'T'HH z",
+    };
+
+
     // The DateTimeFormatter returned by ISODateTimeFormat are thread safe
     // according to the JavaDoc of JodaTime
-    private final static DateTimeParser FORMATS[] = {
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS z").getParser(),
+    final static DateTimeParser FORMATS[] = {
+         DateTimeFormat.forPattern(PARSER_FORMATS[0]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[1]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[2]).getParser(),
 
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssz").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss z").getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[3]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[4]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[5]).getParser(),
 
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mmZ").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mmz").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm z").getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[6]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[7]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[8]).getParser(),
 
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HHZ").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HHz").getParser(),
-         DateTimeFormat.forPattern("yyyy-MM-dd'T'HH z").getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[9]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[10]).getParser(),
+         DateTimeFormat.forPattern(PARSER_FORMATS[11]).getParser(),
     };
 
     protected static final DateTimeFormatter formatter;
@@ -75,7 +91,7 @@ public class DateTimeConverter implements PropertyConverter<DateTime> {
 
     @Override
     public DateTime convert(String value, ConversionContext context) {
-        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+        context.addSupportedFormats(DateTimeConverter.class, PARSER_FORMATS);
 
         String trimmed = Objects.requireNonNull(value).trim();
         DateTime result = null;

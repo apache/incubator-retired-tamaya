@@ -18,7 +18,9 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -30,6 +32,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyVararg;
+import static org.mockito.Mockito.doCallRealMethod;
 
 public class DateTimeConverterTest {
     /*
@@ -90,9 +99,18 @@ public class DateTimeConverterTest {
         }
     }
 
-    @Ignore
     @Test
     public void allSupportedFormatsAreAddedToTheConversionContext() {
-        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(DateTime.class)).build();
+
+        converter.convert("2007-08-31T16+00:00", context);
+
+        assertThat(context.getSupportedFormats(), hasSize(DateTimeConverter.PARSER_FORMATS.length));
+
+        for (String format : DateTimeConverter.PARSER_FORMATS) {
+            String expected = format + " (" + DateTimeConverter.class.getSimpleName() + ")";
+            assertThat(context.getSupportedFormats(), hasItem(expected));
+        }
+
     }
 }

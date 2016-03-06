@@ -40,6 +40,7 @@ public class PeriodConverterTest {
 
     private static PeriodFormatter FORMATTER = ISOPeriodFormat.standard();
 
+    @Ignore
     @Test
     public void canConvertPropertiesInAllSupportedFormats() {
         Object[][] inputResultPairs = {
