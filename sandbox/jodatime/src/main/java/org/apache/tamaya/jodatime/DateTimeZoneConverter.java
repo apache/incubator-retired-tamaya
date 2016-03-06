@@ -26,14 +26,25 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Converter, converting from {@code String} to Joda-Time's
+ * {@code DateTimeZone}.
+ *
+ * This converter supports the conversion from a numerich time zone
+ * information in the format {@code [+-]hh:mm} as well as from
+ * all time zone ids supported by Joda Time.
+ *
+ * @see DateTimeZone
+ * @see DateTimeZone#getAvailableIDs()
+ */
 public class DateTimeZoneConverter implements PropertyConverter<DateTimeZone> {
-    private static final Pattern IS_INTEGER_VALUE = Pattern.compile("(\\+|-)?\\d+");
+    private static final String PATTERN_REGEX = "(\\+|-)?\\d+";
+    private static final Pattern IS_INTEGER_VALUE = Pattern.compile(PATTERN_REGEX);
 
     @Override
     public DateTimeZone convert(String value, ConversionContext context) {
-        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
-
         String trimmed = requireNonNull(value).trim();
+        addSupportedFormats(context);
 
         DateTimeZone result = null;
 
@@ -50,6 +61,11 @@ public class DateTimeZoneConverter implements PropertyConverter<DateTimeZone> {
         }
 
         return result;
+    }
+
+    private void addSupportedFormats(ConversionContext context) {
+        context.addSupportedFormats(DateTimeZoneConverter.class, "Time zone in the form [+-]hh:mm via the regex " + PATTERN_REGEX);
+        context.addSupportedFormats(DateTimeZoneConverter.class, "All time zone ids supported by Joda Time");
     }
 
     private boolean isSingleIntegerValue(String value) {

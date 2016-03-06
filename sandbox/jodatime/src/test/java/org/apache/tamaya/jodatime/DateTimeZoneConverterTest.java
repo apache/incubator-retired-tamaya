@@ -18,7 +18,9 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.ConversionContext.Builder;
 import org.joda.time.DateTimeZone;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,11 +30,13 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 
 public class DateTimeZoneConverterTest {
     private DateTimeZoneConverter converter = new DateTimeZoneConverter();
 
-    @Ignore
     @Test
     public void canConvertDateTimeZoneInformation() {
         Object[][] inputResultPairs = {
@@ -63,7 +67,6 @@ public class DateTimeZoneConverterTest {
         }
     }
 
-    @Ignore
     @Test
     public void invalidInputValuesResultInReturningNull() {
         String[] inputValues = {
@@ -83,10 +86,19 @@ public class DateTimeZoneConverterTest {
         }
     }
 
-    @Ignore
     @Test
     public void allSupportedFormatsAreAddedToTheConversionContext() {
-        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+        String firstFormat = "Time zone in the form [+-]hh:mm via the regex (\\+|-)?\\d+ (DateTimeZoneConverter)";
+        String secondFormat = "All time zone ids supported by Joda Time (DateTimeZoneConverter)";
+
+        ConversionContext context = new Builder(TypeLiteral.of(DateTimeZone.class)).build();
+
+        DateTimeZone result = converter.convert("+01:00", context);
+
+        assertThat(result, notNullValue());
+        assertThat(context.getSupportedFormats(), hasSize(2));
+        assertThat(context.getSupportedFormats(), hasItem(firstFormat));
+        assertThat(context.getSupportedFormats(), hasItem(secondFormat));
     }
 
 }
