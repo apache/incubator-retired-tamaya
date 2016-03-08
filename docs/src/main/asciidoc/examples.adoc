@@ -77,3 +77,6 @@ adapted.
 This example shows how to build a +Configuration+ using a simple pure SE builder API as provided by the
 _builder extension_.
 
+=== Remote
+
+THe remote example shows a simple setup where parts of the +Configuration+ are read remotedly.

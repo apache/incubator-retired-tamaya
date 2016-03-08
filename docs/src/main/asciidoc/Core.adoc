@@ -157,26 +157,11 @@ due to several reasons:
 [[CorePropertySources]]
 == Configuration Setup in Core
 
-Tamaya Core provides a minimal, but already powerful configuration setting, that allows you to configure SE
-applications already easily. Basically you can provide configuration properties using the following formats and
-locations (from weakest to strongest):
+Tamaya Core provides a minimal configuration setting, that allows you to configure SE
+applications already easily. Basically configuration is built  up by default as follows:
 
 . Read environment properties and add them prefixed with +env.+
-. Read all files found in +META-INF/cfg/defaults.properties+
-. Read all files found in +META-INF/cfg/${tamaya.stage}/defaults.properties+
-. Read all files found in +META-INF/cfg/config.properties+
-. Read all files found in +META-INF/cfg/${tamaya.stage}/config.properties+
-. Read current system properties.
-
-Hereby +tamaya.stage+ can be set by setting an according environment property, or by applying (overriding any environment
-property) a corresponding system property:
-
-[source, listing]
------------------------------------------
--Dtamaya.stage=test
------------------------------------------
-
-If not set the staging locations will be ignored.
+. Read all files found at +META-INF/javaconfiguration.properties+
 
 
 === Overview of Registered Default Property Sources and Providers

@@ -95,7 +95,7 @@ Nevertheless there are a few things that are not part of Tamaya:
   your enterprise context, such as supported file locations, formats, overriding and filter rules etc.
 
 
-[[WhatCanIDoEithTamaya]]
+[[WhatCanIDoWithTamaya]]
 === And what can I do with Apache Tamaya?
 
 There are basically two main usage scenarios, which are synergetic:
@@ -172,8 +172,7 @@ to go, but you may want to add additional extensions that provide more features 
 
 
 === Required Java version
-The full API is based on Java SE 8.0 language features, whereas a compatible implementation of API and Core
-is similarly available for Java SE 7 as well.
+The API is based on Java SE 7.0 language features.
 
 
 == Where should I continue
@@ -193,15 +192,11 @@ Finally
 
 Javadoc of the current API
 
-* link:API.html[General API Documentation] and link:../javadoc/api/java7/index.html[API Javadoc for Java7] /
-  link:../javadoc/api/java8/index.html[API Javadoc for Java8]
+* link:API.html[General API Documentation] and link:../javadoc/api/index.html[API Javadoc]
 
 Javadoc of the current Core Implementation
 
-* link:Core.html[General Core Documentation] and link:../javadoc/core/java7/index.html[Core Javadoc for Java7] /
-  link:../javadoc/core/java8/index.html[Core Javadoc for Java8]
-
-Javadoc of the current Extension Modules
+* link:Core.html[General Core Documentation] and link:../javadoc/core/index.html[Core Javadoc for Java7]
 
 
 === Examples

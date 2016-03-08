@@ -76,22 +76,21 @@ The API provides the artifacts as described in the link:CoreDesign.html[Core Des
 * A simple but complete SE *API* for accessing key/value based _Configuration_:
   ** +Configuration+ hereby models configuration, the main interface of Tamaya. +Configuration+ provides
      *** access to literal key/value pairs.
-     *** functional extension points (+with,query+) based on +UnaryOperator<Configuration>+ (operator) and
-         +Function<Configuration,T>+ (query).
-  ** +ConfigurationProvider+ provides the static entry point for accessing configuration.
-  ** +ConfigProvider+ provides static access to the current +Configuration+ (default configuration)
+     *** functional extension points (+with, query+) using a unary +ConfigOperator+ or
+         a function +ConfigurationQuery<T>+.
+  ** +ConfigurationProvider+ provides with +getConfiguration()+ the static entry point for accessing configuration.
   ** +ConfigException+ defines a runtime exception for usage by the configuration system.
-  ** +TypeLiteral+ provides a possibility to type safe define the target type to be returned by a registered
+  ** +TypeLiteral+ provides a possibility to type safely define the target type to be returned by a registered
      +PropertyProvider+.
-  ** +PropertyConverter+, which defines conversion of String values into any required target types.
+  ** +PropertyConverter+, which defines conversion of configuration values (String) into any required target type.
 
 * Additionally the *SPI* provides:
-  ** _PropertySource:_ is the the SPI for adding configuration data. A +PropertySource+
-     hereby
-     *** is designed as a minimalistic data interface to be implemented by any kind of data providers (local or remote)
-     *** provides data key/value pairs in raw format as String key/values only
-     *** can optionally support scanning of its provided values
-  ** _PropertySourceProvider:_ allows to add property sources dynamically.
+  ** _PropertySource:_ is the the SPI for adding configuration data. A +PropertySource+ hereby
+     *** is designed as a minimalistic interface that be implemented by any kind of data provider (local or remote)
+     *** provides single access for key/value pairs in raw format as String key/values only (+getPropertyValue+).
+     *** can optionally support scanning of its provided values, implementing +getProperties()+.
+  ** _PropertySourceProvider:_ allows to register multiple property sources dynamically, e.g. all config files found in
+     file system folder..
   ** +ConfigurationProviderSpi+ defines the SPI that is used as a backing bean for the +ConfigurationProvider+
      singleton.
   ** +PropertyFilter+, which allows filtering of property values prior getting returned to the caller.
@@ -102,7 +101,7 @@ The API provides the artifacts as described in the link:CoreDesign.html[Core Des
   ** +ServiceContext+, which provides access to the components loaded, depending on the current runtime stack.
   ** +ServiceContextManager+ provides static access to the +ServiceContext+ loaded.
 
-This is also reflected in the main parts of the API, which is quite small:
+This is also reflected in the main packages of the API:
 
 * +org.apache.tamaya+ contains the main API abstractions used by users.
 * +org.apache.tamaya.spi+ contains the SPI interfaces to be implemented by implementations and the +ServiceContext+
@@ -184,8 +183,11 @@ property map, but also supports type safe access:
 --------------------------------------------
 public interface Configuration{
     String get(String key);
+    String getOrDefault(String key, String value);
     <T> T get(String key, Class<T> type);
+    <T> T getOrDefault(String key, Class<T> type, T defaultValue);
     <T> T get(String key, TypeLiteral<T> type);
+    <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue);
     Map<String,String> getProperties();
 
     // extension points
@@ -200,6 +202,7 @@ Hereby
 * +with, query+ provide the extension points for adding additional functionality.
 * +getProperties()+ provides access to all key/values, whereas entries from non scannable property sources may not
   be included.
+* +getOrDefault+ allows to pass default values as needed, returned if the requested value evaluated to +null+.
 
 The class +TypeLiteral+ is basically similar to the same class provided with CDI:
 
@@ -249,10 +252,13 @@ configured String values into the required target type. This is achieved with th
 [source,java]
 --------------------------------------------
 public interface PropertyConverter<T>{
-    T convert(String value);
+    T convert(String value, ConversionContext context);
     //X TODO Collection<String> getSupportedFormats();
 }
 --------------------------------------------
+
+The +ConversionContext+ contains additional meta-information for the accessed key, inclusing the key'a name and
+additional metadata.
 
 +PropertyConverter+ instances can be implemented and registered by default using the +ServiceLoader+. Hereby
 a configuration String value is passed to all registered converters for a type in order of their annotated +@Priority+
@@ -283,7 +289,7 @@ use Lambdas and method references in Java 8:
 [source,java]
 .Applying a +ConfigurationQuery+ using a method reference
 --------------------------------------------
-ConfigSecurity securityContext = Configuration.current().query(ConfigSecurity::targetSecurityContext);
+ConfigSecurity securityContext = ConfigurationProvider.getConfiguration().query(ConfigSecurity::targetSecurityContext);
 --------------------------------------------
 
 NOTE: +ConfigSecurity+ is an arbitrary class only for demonstration purposes.
@@ -296,7 +302,7 @@ Operator calls basically look similar:
 --------------------------------------------
 Configuration secured = ConfigurationProvider.getConfiguration()
                            .with((config) ->
-                                 config.getOptional("foo").isPresent()?;
+                                 config.get("foo")!=null?;
                                  FooFilter.apply(config):
                                  config);
 --------------------------------------------
@@ -404,7 +410,7 @@ A +PropertyFilter+ is defined as follows:
 --------------------------------------------
 // Functional Interface
 public interface PropertyConverter{
-    String filterProperty(String key, String valueToBeFiltered);
+    String filterProperty(String value, ConversionContext context);
 }
 --------------------------------------------
 
@@ -414,6 +420,7 @@ Hereby:
 * non null values are used as the current value of the key. Nevertheless for resolving multi-step dependencies
   filter evaluation has to be continued as long as filters are still changing some of the values to be returned.
   To prevent possible endless loops after a defined number of loops evaluation is stopped.
+* +ConversionContext+ provides additional metdata, inclusing the key accessed, which is useful in many use cases.
 
 This method is called each time a single entry is accessed, and for each property in a full properties result.
 
@@ -425,19 +432,25 @@ This interface can be implemented optional. It can be used to adapt the way how 
 build up the final Configuration to be passed over to the +PropertyFilters+. The default implementation is just
 overriding all values read before with the new value read. Nevertheless for collections and other use cases it is
 often useful to have alternate combination policies in place, e.g. for combining values from previous sources with the
-new value.
+new value. Finally looking at the method's signature it may be surprising to find a +Map+ for the value. The basic
+value hereby is defined by +currentValue.get(key)+. Nevertheless the +Map+ may also contain additional meta entries,
+which may be considered by the policy implementation.
 
 [source,java]
 --------------------------------------------
 // FunctionalInterface
 public interface PropertyValueCombinationPolicy{
 
-   public final PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR =
-           (current, key, propertySource) -> Optional.ofNullable(propertySource.get(key))
-                                                     .filter(s -> !s.isEmpty())
-                                                     .orElse(current);
+   PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = new PropertyValueCombinationPolicy(){
+       @Override
+       public Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource) {
+           PropertyValue value = propertySource.get(key);
+           return value!=null?value.getConfigEntries():currentValue;
+       }
+   };
 
-   String collect(String currentValue, String key, PropertySource propertySource);
+   String collect(Map<String,String> currentValue currentValue, String key, PropertySource propertySource);
+
 }
 --------------------------------------------
 
