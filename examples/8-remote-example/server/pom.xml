@@ -21,7 +21,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.examples</groupId>
         <artifactId>tamaya-example-remote</artifactId>
-        <version>0.2-incubating-SNAPSHOT</version>
+        <version>0.2-incubating</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-example-remote-server</artifactId>
@@ -118,7 +118,7 @@ under the License.
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.apache.tamaya.server.ConfigServiceApp</mainClass>
                                 </transformer>
