@@ -34,26 +34,27 @@ under the License.
 
     <modules>
         <module>builder</module>
-        <module>mutable-config</module>
-        <module>spi-support</module>
+        <module>classloader-support</module>
+        <module>collections</module>
         <module>events</module>
+        <module>filter</module>
         <module>formats</module>
-        <module>injection-api</module>
+        <module>functions</module>
         <module>injection</module>
+        <module>injection-api</module>
+
+        <module>integration</module>
+
         <module>json</module>
-        <module>yaml</module>
+        <module>management</module>
+        <module>model</module>
+        <module>mutable-config</module>
+        <module>optional</module>
         <module>resolver</module>
         <module>resources</module>
-        <module>functions</module>
-        <module>model</module>
-        <module>management</module>
         <module>server</module>
-        <module>remote</module>
-        <module>optional</module>
-        <module>classloader-support</module>
-        <module>integration</module>
-        <module>filter</module>
-        <module>collections</module>
+        <module>spi-support</module>
+        <module>yaml</module>
     </modules>
 
     <build>

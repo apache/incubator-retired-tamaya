@@ -27,7 +27,6 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
 
-    <groupId>org.apache.tamaya.ext.model</groupId>
     <artifactId>tamaya-model</artifactId>
     <name>Apache Tamaya Modules - Configuration Model Infrastructure</name>
     <description>This extension module provides functionality to describe, document and

@@ -30,10 +30,10 @@ under the License.
 
     <dependencySets>
         <dependencySet>
-            <outputDirectory>java7/lib</outputDirectory>
+            <outputDirectory>java/lib</outputDirectory>
             <includes>
-                <include>org.apache.tamaya:tamaya-java7-api</include>
-                <include>org.apache.tamaya:tamaya-java7-core</include>
+                <include>org.apache.tamaya:tamaya-api</include>
+                <include>org.apache.tamaya:tamaya-core</include>
             </includes>
             <excludes>
                 <exclude>*:*:*:sources</exclude>
@@ -41,49 +41,24 @@ under the License.
             </excludes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>java7/sources</outputDirectory>
-            <includes>
-                <include>org.apache.tamaya:tamaya-java7-api:*:sources</include>
-                <include>org.apache.tamaya:tamaya-java7-core:*:sources</include>
-            </includes>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>java7/javadoc</outputDirectory>
-            <includes>
-                <include>org.apache.tamaya:tamaya-java7-api:*:javadoc</include>
-                <include>org.apache.tamaya:tamaya-java7-core:*:javadoc</include>
-            </includes>
-        </dependencySet>
-
-        <dependencySet>
-            <outputDirectory>java8/lib</outputDirectory>
-            <includes>
-                <include>org.apache.tamaya:tamaya-api</include>
-                <include>org.apache.tamaya:tamaya-core</include>
-            </includes>
-            <excludes>
-                <exclude>*:*:sources</exclude>
-                <exclude>*:*:javadoc</exclude>
-            </excludes>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>java8/sources</outputDirectory>
+            <outputDirectory>java/sources</outputDirectory>
             <includes>
                 <include>org.apache.tamaya:tamaya-api:*:sources</include>
                 <include>org.apache.tamaya:tamaya-core:*:sources</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>java8/javadoc</outputDirectory>
+            <outputDirectory>java/javadoc</outputDirectory>
             <includes>
                 <include>org.apache.tamaya:tamaya-api:*:javadoc</include>
                 <include>org.apache.tamaya:tamaya-core:*:javadoc</include>
             </includes>
         </dependencySet>
 
-        <!-- Tamaya modules -->
 
-        <!-->>> Builder module -->
+        <!-- ***** modules ***** -->
+
+        <!-- Builder module -->
         <dependencySet>
             <outputDirectory>modules/builder/lib</outputDirectory>
             <includes>
@@ -97,16 +72,41 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< Builder module -->
-
-        <!-->>> Events module -->
+        <!-- Classloader Support module -->
+        <dependencySet>
+            <outputDirectory>modules/classloader-support/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-classloader-support</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/classloader-support/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-classloader-support:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- Collections module -->
+        <dependencySet>
+            <outputDirectory>modules/collections/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-collections</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/collections/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-collections:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- Events module -->
         <dependencySet>
             <outputDirectory>modules/events/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-events</include>
             </includes>
         </dependencySet>
-
         <dependencySet>
             <outputDirectory>modules/events/api</outputDirectory>
             <includes>
@@ -114,16 +114,27 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< Events module -->
-
-        <!-->>> Formats module -->
+        <!-- Filter module -->
+        <dependencySet>
+            <outputDirectory>modules/filter/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-filter</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/filter/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-filter:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--Formats module -->
         <dependencySet>
             <outputDirectory>modules/formats/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-formats</include>
             </includes>
         </dependencySet>
-
         <dependencySet>
             <outputDirectory>modules/formats/api</outputDirectory>
             <includes>
@@ -131,24 +142,27 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< Formats module -->
-
-        <!-->>> Injection module -->
+        <!--Functions module -->
+        <dependencySet>
+            <outputDirectory>modules/functions/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-functions</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/functions/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-functions:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!--Injection module -->
         <dependencySet>
             <outputDirectory>modules/injection/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-injection</include>
-                <include>org.apache.tamaya.ext:tamaya-events</include>
-                <include>org.apache.tamaya.ext:tamaya-resolver</include>
             </includes>
-            <excludes>
-                <exclude>org.apache.tamaya.ext:tamaya-events:*:javadoc</exclude>
-                <exclude>org.apache.tamaya.ext:tamaya-events:*:sources</exclude>
-                <exclude>org.apache.tamaya.ext:tamaya-resolver:*:javadoc</exclude>
-                <exclude>org.apache.tamaya.ext:tamaya-resolver:*:sources</exclude>
-            </excludes>
         </dependencySet>
-
         <dependencySet>
             <outputDirectory>modules/injection/api</outputDirectory>
             <includes>
@@ -156,9 +170,22 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< Injection module -->
+        <!--Injection API module -->
+        <dependencySet>
+            <outputDirectory>modules/injection-api/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-injection-api</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/injection-api/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-injection-api:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
 
-        <!-->>> JSON module -->
+        <!-- JSON module -->
         <dependencySet>
             <outputDirectory>modules/json/lib</outputDirectory>
             <includes>
@@ -166,7 +193,6 @@ under the License.
                 <include>com.fasterxml.jackson.core:*</include>
             </includes>
         </dependencySet>
-
         <dependencySet>
             <outputDirectory>modules/json/api</outputDirectory>
             <includes>
@@ -174,21 +200,69 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< JSON module -->
-
-        <!-->>> Resolver module -->
+        <!-- Management module -->
+        <dependencySet>
+            <outputDirectory>modules/management/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-management</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/management/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-management:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- Model module -->
+        <dependencySet>
+            <outputDirectory>modules/model/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-model</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/model/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-model:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- mutable config -->
+        <dependencySet>
+            <outputDirectory>modules/mutable-config/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-mutable-config</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/mutable-config/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-mutable-config:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- optional module -->
+        <dependencySet>
+            <outputDirectory>modules/optional/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-optional</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/optional/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-optional:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- Resolver module -->
         <dependencySet>
             <outputDirectory>modules/resolver/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-resolver</include>
-                <include>org.apache.tamaya.ext:tamaya-resources</include>
             </includes>
-            <excludes>
-                <exclude>org.apache.tamaya.ext:tamaya-resources:*:javadoc</exclude>
-                <exclude>org.apache.tamaya.ext:tamaya-resources:*:sources</exclude>
-            </excludes>
         </dependencySet>
-
         <dependencySet>
             <outputDirectory>modules/resolver/api</outputDirectory>
             <includes>
@@ -196,25 +270,163 @@ under the License.
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< Resolver module -->
-
-        <!-->>> Resources module -->
+        <!-- Resources module -->
         <dependencySet>
             <outputDirectory>modules/resources/lib</outputDirectory>
             <includes>
                 <include>org.apache.tamaya.ext:tamaya-resources</include>
             </includes>
         </dependencySet>
-
         <dependencySet>
             <outputDirectory>modules/resources/api</outputDirectory>
             <includes>
-                <include>org.apache.tamaya.ext:tamaya-resources:*:javadoc</include>
+                <include>org.apache.tamaya.ext:tamaya-resolver:*:javadoc</include>
             </includes>
             <unpack>true</unpack>
         </dependencySet>
-        <!--<<< Resources module -->
+        <!-- Server module -->
+        <dependencySet>
+            <outputDirectory>modules/server/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-server</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/server/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-server:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- spi-support module -->
+        <dependencySet>
+            <outputDirectory>modules/spi-support/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-spi-support</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/spi-support/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-spi-support:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- yaml module -->
+        <dependencySet>
+            <outputDirectory>modules/yaml/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-yaml</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/yaml/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-yaml:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
 
+        <!-- ***** Integrations -->
+
+        <!-- camel module -->
+        <dependencySet>
+            <outputDirectory>modules/camel/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-camel</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/camel/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-camel:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- cdi module -->
+        <dependencySet>
+            <outputDirectory>modules/cdi/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-cdi</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/cdi/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-cdi:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- cdi-se module -->
+        <dependencySet>
+            <outputDirectory>modules/cdi-se/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-cdi-se</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/cdi-se/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-cdi-se:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- consul module -->
+        <dependencySet>
+            <outputDirectory>modules/consul/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-consul</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/consul/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-consul:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- etcd module -->
+        <dependencySet>
+            <outputDirectory>modules/etcd/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-etcd</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/etcd/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-etcd:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- osgi module -->
+        <dependencySet>
+            <outputDirectory>modules/osgi/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-osgi</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/osgi/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-osgi:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+        <!-- spring module -->
+        <dependencySet>
+            <outputDirectory>modules/spring/lib</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-spring</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/spring/api</outputDirectory>
+            <includes>
+                <include>org.apache.tamaya.ext:tamaya-spring:*:javadoc</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
     </dependencySets>
 
     <fileSets>
