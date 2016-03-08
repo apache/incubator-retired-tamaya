@@ -1,0 +1,123 @@
+
+Release Notes - Tamaya - Version 0.2-incubating
+
+<h2>        Sub-task
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-86'>TAMAYA-86</a>] -         Support for org.joda.time.DateTime
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-87'>TAMAYA-87</a>] -         Support for org.joda.time.DateTimeZone
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-96'>TAMAYA-96</a>] -         Integrate the quickstart guide in the new homepage
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-97'>TAMAYA-97</a>] -         Integrate the JavaDoc of the current version of Tamaya into the new homepage
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-106'>TAMAYA-106</a>] -         Add standard Maven project reports to the new site
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-118'>TAMAYA-118</a>] -         Integrate the the information how to get the source of TAMAYA in the new homepage
+    </li>
+</ul>
+
+<h2>        Bug
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-49'>TAMAYA-49</a>] -         create a Java7 compatible API
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-67'>TAMAYA-67</a>] -         PropertyConverter: add info for supported formats
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-107'>TAMAYA-107</a>] -         ServiceContext SPI is not backward compatible
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-108'>TAMAYA-108</a>] -         Injection is also tried on non configured types and fields.
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-109'>TAMAYA-109</a>] -         ServiceContextManager fails to correctly select the ServiceContext in case of multiples
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-127'>TAMAYA-127</a>] -         NoSuchElementException when using resolver and property values containing an incomplete token
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-130'>TAMAYA-130</a>] -         Add Camel integration
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-131'>TAMAYA-131</a>] -         typo in quickstart maven url
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-134'>TAMAYA-134</a>] -         Fix javadoc issues before releasing 0.2
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-136'>TAMAYA-136</a>] -         Return structure when accessing a singletPropertyValue
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-138'>TAMAYA-138</a>] -         Parent pom contains invalid Arquillian groupId
+    </li>
+</ul>
+
+<h2>        Improvement
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-50'>TAMAYA-50</a>] -         add test ServiceContextManager
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-92'>TAMAYA-92</a>] -         Replace Jackson with Apache Johnzon
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-93'>TAMAYA-93</a>] -         Check and Fix Delivery / Distribution Issues
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-94'>TAMAYA-94</a>] -         Make the builder module Java 7 compatible
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-113'>TAMAYA-113</a>] -         Remove Java 8 related parts
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-114'>TAMAYA-114</a>] -         Add module with reusable SPI base classes
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-123'>TAMAYA-123</a>] -         Render modules into OSGI bundles
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-124'>TAMAYA-124</a>] -         Move Injection Annotation shared by SE and EE support into common module
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-125'>TAMAYA-125</a>] -         Remove Event Support from injection module (should be part of event module)
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-126'>TAMAYA-126</a>] -         Make thee resources module Java 7 compatible
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-132'>TAMAYA-132</a>] -         Remove @ConfigDefault in favour of @Config(defaultValue=...)
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-137'>TAMAYA-137</a>] -         Enhance filter API adding a FilterContext
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-139'>TAMAYA-139</a>] -         Integrate maven version of Tamaya into JSON being exposed in its implementation
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-140'>TAMAYA-140</a>] -         Update to latest httpcore (4.4.4) / update to latest httpclient
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-141'>TAMAYA-141</a>] -         org.apache.tamaya.etcd.EtcdAccessor should use try with resources when performing http requests
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-142'>TAMAYA-142</a>] -         Etcd module - fix OSGi declarations
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-143'>TAMAYA-143</a>] -         Add support for consul (Hashicorp) as read/write backend
+    </li>
+</ul>
+
+<h2>        New Feature
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-70'>TAMAYA-70</a>] -         JMX interface for Tamaya
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-71'>TAMAYA-71</a>] -         Support YAML as configuration format
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-110'>TAMAYA-110</a>] -         Add Support for integrating with Spring Environment and Configuration.
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-111'>TAMAYA-111</a>] -         Add Classloader aware ServiceContext
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-112'>TAMAYA-112</a>] -         Add Module Support for Collections
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-115'>TAMAYA-115</a>] -         Add Support for dynamic configuration observer mechanism
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-116'>TAMAYA-116</a>] -         Integrate Sabot implementation with Tamaya
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-120'>TAMAYA-120</a>] -         Add Observer for triggering events on certain configuration key ranges.
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-121'>TAMAYA-121</a>] -         Add OSGI Fragment to replace ConfigurationAdmin
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-128'>TAMAYA-128</a>] -         Adding ConversionContext to converter params
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-133'>TAMAYA-133</a>] -         Add PropertySource which connects to a etcd server
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-135'>TAMAYA-135</a>] -         Add support for changing of configuration sources.
+    </li>
+</ul>
+
+<h2>        Task
+</h2>
+<ul>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-42'>TAMAYA-42</a>] -         Implement Basic Infrastructure
+    </li>
+    <li>[<a href='https://issues.apache.org/jira/browse/TAMAYA-51'>TAMAYA-51</a>] -         change version to 0.2-incubating-SNAPSHOT
+    </li>
+</ul>
