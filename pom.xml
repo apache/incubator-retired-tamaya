@@ -26,7 +26,7 @@ under the License.
     </parent>
     <groupId>org.apache.tamaya</groupId>
     <artifactId>tamaya-all</artifactId>
-    <version>0.2-incubating</version>
+    <version>0.3-incubating-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Apache Tamaya</name>
@@ -103,7 +103,7 @@ under the License.
         <url>
             https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
         </url>
-      <tag>0.2-incubating</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <issueManagement>
