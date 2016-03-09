@@ -21,13 +21,15 @@ package org.apache.tamaya.core.propertysource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} provides all Properties which are set
  * via
  * {@code export myprop=myval} on UNIX Systems or
- * {@code set myprop=myval} on Windows
+ * {@code set myprop=myval} on Windows. You can disable this feature by setting {@code tamaya.envprops.disable}
+ * or {@code tamaya.defaults.disable}.
  */
 public class EnvironmentPropertySource implements PropertySource {
 
@@ -36,6 +38,25 @@ public class EnvironmentPropertySource implements PropertySource {
      */
     public static final int DEFAULT_ORDINAL = 300;
 
+    private final boolean disabled = evaluateDisabled();
+
+    private boolean evaluateDisabled() {
+        String value = System.getProperty("tamaya.envprops.disable");
+        if(value==null){
+            value = System.getenv("tamaya.envprops.disable");
+        }
+        if(value==null){
+            value = System.getProperty("tamaya.defaults.disable");
+        }
+        if(value==null){
+            value = System.getenv("tamaya.defaults.disable");
+        }
+        if(value==null){
+            return false;
+        }
+        return value.isEmpty() || Boolean.parseBoolean(value);
+    }
+
     @Override
     public int getOrdinal() {
         return DEFAULT_ORDINAL;
@@ -43,18 +64,26 @@ public class EnvironmentPropertySource implements PropertySource {
 
     @Override
     public String getName() {
+        if(disabled){
+            return "environment-properties(disabled)";
+        }
         return "environment-properties";
     }
 
     @Override
     public PropertyValue get(String key) {
+        if(disabled){
+            return null;
+        }
         return PropertyValue.of(key, System.getenv(key), getName());
     }
 
     @Override
     public Map<String, String> getProperties() {
+        if(disabled){
+            return Collections.emptyMap();
+        }
         return System.getenv(); // already a map and unmodifiable
-
     }
 
     @Override

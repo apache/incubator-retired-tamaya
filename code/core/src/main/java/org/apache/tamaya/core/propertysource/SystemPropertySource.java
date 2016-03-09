@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties.
+ * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties. You can disable this feature by
+ * setting {@code tamaya.envprops.disable} or {@code tamaya.defaults.disable}.
  */
 public class SystemPropertySource implements PropertySource {
 
@@ -44,6 +45,26 @@ public class SystemPropertySource implements PropertySource {
      * so we can check if we need to reload
      */
     private int previousHash;
+
+    private final boolean disabled = evaluateDisabled();
+
+    private boolean evaluateDisabled() {
+        String value = System.getProperty("tamaya.sysprops.disable");
+        if(value==null){
+            value = System.getenv("tamaya.sysprops.disable");
+        }
+        if(value==null){
+            value = System.getProperty("tamaya.defaults.disable");
+        }
+        if(value==null){
+            value = System.getenv("tamaya.defaults.disable");
+        }
+        if(value==null){
+            return false;
+        }
+        return value.isEmpty() || Boolean.parseBoolean(value);
+    }
+
 
 
     public SystemPropertySource() {
@@ -67,16 +88,25 @@ public class SystemPropertySource implements PropertySource {
 
     @Override
     public String getName() {
+        if(disabled){
+            return "system-properties(disabled)";
+        }
         return "system-properties";
     }
 
     @Override
     public PropertyValue get(String key) {
+        if(disabled){
+            return null;
+        }
         return PropertyValue.of(key, System.getProperty(key), getName());
     }
 
     @Override
     public Map<String, String> getProperties() {
+        if(disabled){
+            return Collections.emptyMap();
+        }
         // only need to reload and fill our map if something has changed
         // synchronization was removed, Instance was marked as volatile. In the worst case it
         // is reloaded twice, but the values will be the same.

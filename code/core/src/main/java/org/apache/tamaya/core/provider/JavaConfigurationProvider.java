@@ -32,14 +32,38 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * Provider which reads all {@code javaconfiguration.properties} files from classpath
+ * Provider which reads all {@code javaconfiguration.properties} files from classpath. By setting
+ * {@code tamaya.defaultprops.disable} or {@code tamaya.defaults.disable} as system or environment property this feature
+ * can be disabled.
  */
 public class JavaConfigurationProvider implements PropertySourceProvider {
     /** Default location in the classpath, where Tamaya looks for configuration by default. */
     public static final String DEFAULT_PROPERTIES_FILE_NAME="META-INF/javaconfiguration.properties";
 
+    private final boolean disabled = evaluateDisabled();
+
+    private boolean evaluateDisabled() {
+        String value = System.getProperty("tamaya.defaultprops.disable");
+        if(value==null){
+            value = System.getenv("tamaya.defaultprops.disable");
+        }
+        if(value==null){
+            value = System.getProperty("tamaya.defaults.disable");
+        }
+        if(value==null){
+            value = System.getenv("tamaya.defaults.disable");
+        }
+        if(value==null){
+            return false;
+        }
+        return value.isEmpty() || Boolean.parseBoolean(value);
+    }
+
     @Override
     public Collection<PropertySource> getPropertySources() {
+        if(disabled){
+            return Collections.emptySet();
+        }
         List<PropertySource> propertySources = new ArrayList<>();
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
