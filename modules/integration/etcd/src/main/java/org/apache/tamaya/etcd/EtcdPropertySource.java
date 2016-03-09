@@ -32,12 +32,25 @@ import java.util.logging.Logger;
  * Propertysource that is reading configuration from a configured etcd endpoint. Setting
  * {@code etcd.prefix} as system property maps the etcd based onfiguration
  * to this prefix namespace. Etcd servers are configured as {@code etcd.server.urls} system or environment property.
+ * ETcd can be disabled by setting {@code tamaya.etcdprops.disable} either as env or system property.
  */
 public class EtcdPropertySource implements PropertySource{
     private static final Logger LOG = Logger.getLogger(EtcdPropertySource.class.getName());
 
     private String prefix = System.getProperty("tamaya.etcd.prefix", "");
 
+    private final boolean disabled = evaluateDisabled();
+
+    private boolean evaluateDisabled() {
+        String value = System.getProperty("tamaya.etcdprops.disable");
+        if(value==null){
+            value = System.getenv("tamaya.etcdprops.disable");
+        }
+        if(value==null){
+            return false;
+        }
+        return value.isEmpty() || Boolean.parseBoolean(value);
+    }
 
     @Override
     public int getOrdinal() {
@@ -58,7 +71,7 @@ public class EtcdPropertySource implements PropertySource{
      * @return the  default ordinal used, by default 0.
      */
     public int getDefaultOrdinal(){
-        return 100;
+        return 1000;
     }
 
     @Override
@@ -68,6 +81,9 @@ public class EtcdPropertySource implements PropertySource{
 
     @Override
     public PropertyValue get(String key) {
+        if(disabled){
+            return null;
+        }
         // check prefix, if key does not start with it, it is not part of our name space
         // if so, the prefix part must be removedProperties, so etcd can resolve without it
         if(!key.startsWith(prefix)){
@@ -109,6 +125,9 @@ public class EtcdPropertySource implements PropertySource{
 
     @Override
     public Map<String, String> getProperties() {
+        if(disabled){
+            return Collections.emptyMap();
+        }
         if(!EtcdBackends.getEtcdBackends().isEmpty()){
             for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
                 try{
