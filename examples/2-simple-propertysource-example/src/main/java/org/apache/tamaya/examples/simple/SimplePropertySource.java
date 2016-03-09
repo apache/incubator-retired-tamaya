@@ -33,10 +33,11 @@ import java.util.Properties;
  */
 public class SimplePropertySource extends BasePropertySource{
 
+    public static final String CONFIG_PROPERTIES_LOCATION = "META-INF/MyOtherConfigProperties.properties";
     private Map<String,String> props = new HashMap<>();
 
     public SimplePropertySource() throws IOException {
-        URL url = ClassLoader.getSystemClassLoader().getResource("META-INF/MyOtherConfigProperties.properties");
+        URL url = ClassLoader.getSystemClassLoader().getResource(CONFIG_PROPERTIES_LOCATION);
         Properties properties = new Properties();
         try(InputStream is = url.openStream()){
             properties.load(is);
@@ -51,7 +52,7 @@ public class SimplePropertySource extends BasePropertySource{
 
     @Override
     public String getName() {
-        return "META-INF/MyOtherConfigProperties.properties";
+        return CONFIG_PROPERTIES_LOCATION;
     }
 
     @Override
