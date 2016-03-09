@@ -409,8 +409,8 @@ A +PropertyFilter+ is defined as follows:
 [source,java]
 --------------------------------------------
 // Functional Interface
-public interface PropertyConverter{
-    String filterProperty(String value, ConversionContext context);
+public interface PropertyFilter{
+    String filterProperty(String value, FilterContext context);
 }
 --------------------------------------------
 
@@ -420,7 +420,7 @@ Hereby:
 * non null values are used as the current value of the key. Nevertheless for resolving multi-step dependencies
   filter evaluation has to be continued as long as filters are still changing some of the values to be returned.
   To prevent possible endless loops after a defined number of loops evaluation is stopped.
-* +ConversionContext+ provides additional metdata, inclusing the key accessed, which is useful in many use cases.
+* +FilterContext+ provides additional metdata, inclusing the key accessed, which is useful in many use cases.
 
 This method is called each time a single entry is accessed, and for each property in a full properties result.
 
@@ -441,15 +441,18 @@ which may be considered by the policy implementation.
 // FunctionalInterface
 public interface PropertyValueCombinationPolicy{
 
-   PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = new PropertyValueCombinationPolicy(){
+   PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR =
+     new PropertyValueCombinationPolicy(){
        @Override
-       public Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource) {
+       public Map<String,String> collect(Map<String,String> currentValue, String key,
+                                         PropertySource propertySource) {
            PropertyValue value = propertySource.get(key);
            return value!=null?value.getConfigEntries():currentValue;
        }
    };
 
-   String collect(Map<String,String> currentValue currentValue, String key, PropertySource propertySource);
+   String collect(Map<String,String> currentValue currentValue, String key,
+                  PropertySource propertySource);
 
 }
 --------------------------------------------
@@ -471,7 +474,7 @@ ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
 The +ConfigurationContext+ provides access to the internal building blocks that determine the final +Configuration+:
 
 * +PropertySources+ registered (including the PropertySources provided from +PropertySourceProvider+ instances).
-* +PropertyFilter+ registered that filter values before they are returned to the client
+* +PropertyFilters+ registered, which filter values before they are returned to the client
 * +PropertyConverter+ instances that provide conversion functionality for converting String values to any other types.
 * the current +PropertyValueCombinationPolicy+ that determines how property values from different PropertySources are
   combined to the final property value returned to the client.
@@ -480,8 +483,8 @@ The +ConfigurationContext+ provides access to the internal building blocks that 
 [[Mutability]]
 ==== Changing the current Configuration Context
 
-By default the +ConfigurationContext+ is not mutable once it is created. In most cases mutability is also not wanted
-or at least not a needed feature. Nevertheless there are use cases where the current +ConfigurationContext+ (and
+By default the +ConfigurationContext+ is not mutable once it is created. In many cases mutability is also not needed
+or even not wanted. Nevertheless there are use cases where the current +ConfigurationContext+ (and
 consequently +Configuration+) must be adapted:
 
 * New configuration files where detected in a folder observed by Tamaya.
@@ -512,7 +515,7 @@ ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider
 ConfigurationContextBuilder emptyContextBuilder = ConfigurationProvider.getConfigurationContextBuilder();
 --------------------------------------------
 
-With such a builder a nre +ConfigurationContext+ can be created and then applied:
+With such a builder a new +ConfigurationContext+ can be created and then applied:
 
 [source,java]
 .Creating and applying a new +ConfigurationContext+
@@ -523,9 +526,8 @@ ConfigurationContext context = preinitializedContextBuilder.addPropertySources(n
 ConfigurationProvider.setConfigurationContext(context);
 --------------------------------------------
 
-Hereby +ConfigurationProvider.setConfigurationContext(context)+ can throw a +UnsupportedOperationException+. if not
-sure one may access the method +boolean ConfigurationProvider.isConfigurationContextSettable()+ to check if the current
-+ConfigurationContext+ is mutable.
+Hereby +ConfigurationProvider.setConfigurationContext(context)+ can throw an +UnsupportedOperationException+.
+This can be checked by calling the method +boolean ConfigurationProvider.isConfigurationContextSettable()+.
 
 
 [[ConfigurationProviderSpi]]
@@ -586,27 +588,18 @@ very similar to *Map<String,String>*, whereas in Java 8 additionally usage of _O
 --------------------------------------------
 Configuration config = ConfigurationProvider.getConfiguration();
 String myKey = config.get("myKey");                         // may return null
-int myLimit = config.getInt("all.size.limit").getAsInt();   // Never returns null
---------------------------------------------
-
-In Java 8 the following would be possible as well:
-
-[source,java]
---------------------------------------------
-int myLimit = config.getOptionalInt("all.size.limit").getAsInt(); // OptionalInt
-Class<T> targetClass = config.get("myClass", Class.class);        // Optional<Class>, returns  never null
+int myLimit = config.get("all.size.limit", int.class);
 --------------------------------------------
 
 
 ### Environment and System Properties
 
-By default environment and system properties are provided automatically as part of the default _Configuration_. The
-environment properties hereby are prefixed with _env._. So we can access the current _PROMPT_ environment variable
-as follows:
+By default environment and system properties are included into the _Configuration_. So we can access the current
+_PROMPT_ environment variable as follows:
 
 [source,java]
 --------------------------------------------
-String prompt = ConfigurationProvider.getConfiguration().get("env.PROMPT");
+String prompt = ConfigurationProvider.getConfiguration().get("PROMPT");
 --------------------------------------------
 
 Similary the system properties are directly applied to the _Configuration_. So if we pass the following system
@@ -621,39 +614,39 @@ we can access it as follows:
 
 [source,java]
 --------------------------------------------
-boolean useMySystem = ConfigurationProvider.getBoolean("use.my.system.answer");
+boolean useMySystem = ConfigurationProvider.getConfiguration().get("use.my.system.answer", boolean.class);
 --------------------------------------------
 
 
 ### Adding a Custom Configuration
 
 Adding a classpath based configuration is simply as well: just implement an according _PropertySource_. With the
-Tamaya core module you just have to perform the following steps:
+_tamaya-spi-support_ module you just have to perform a few steps:
 
 . Define a PropertySource as follows:
 
 [source,java]
 --------------------------------------------
-  public class MyPropertySource extends PropertiesFilePropertySource{
+  public class MyPropertySource extends PropertiesResourcePropertySource{
 
     public MyPropertySource(){
-        super(ClassLoader.getSystemClassLoader().getResource("META-INF/cfg/myconfig.properties"));
+        super(ClassLoader.getSystemClassLoader().getResource("META-INF/cfg/myconfig.properties"), DEFAULT_ORDINAL);
     }
   }
 --------------------------------------------
 
-. Register the new PropertySource using the ServiceLoader by adding the following file:
+Then register +MyPropertySource+ using the +ServiceLoader+ by adding the following file:
 
 [source,listing]
 --------------------------------------------
 META-INF/services/org.apache.tamaya.spi.PropertySource
 --------------------------------------------
 
-And adding there the entry for the new PropertySource:
+...containing the following line:
 
 [source,listing]
 --------------------------------------------
-comp.mapackage.MyPropertySource
+com.mypackage.MyPropertySource
 --------------------------------------------
 
 

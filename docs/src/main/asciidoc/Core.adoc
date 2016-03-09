@@ -167,20 +167,16 @@ applications already easily. Basically configuration is built  up by default as 
 === Overview of Registered Default Property Sources and Providers
 
 The Tamaya Core implementation provides a couple of default +PropertySource+ implementations, which are automatically
-registered. They are all in the package +org.apache.tamaya.core.propertysource+:
+registered. They are all in the package +org.apache.tamaya.core.propertysource+ and
++org.apache.tamaya.core.provider+:
 
 [width="100%",frame="1",options="header",grid="all"]
 |=======
 |_Type_                                   |_Class Name_                   |_Ordinal Used_
+|META-INF/javaconfiguration.properties    |JavaConfigurationProvider      |0
 |Environment Properties                   |EnvironmentPropertySource      |300
 |System Properties                        |SystemPropertySource           |400
-|Base Implementation                      |BasePropertySource             |1000
-|Properties Implementation                |PropertiesPropertySource       |1000
-|Properties Implementation based on a URL |PropertiesFilePropertySource   |1000
 |=======
-
-There is also a class +DefaultOrdinal+, which defines several default ordinals. Beside the ordinals for system
-and environment properties above, there may additional default ordinals defined in the future.
 
 
 === Abstract Class PropertiesFilePropertySource
