@@ -32,7 +32,6 @@ import static org.joda.time.format.ISODateTimeFormat.dateTime;
 
 public class FullStackIT {
 
-    @Ignore
     @Test
     public void retrieveJodaTimeValuesFromConfiguration() {
 
@@ -47,7 +46,6 @@ public class FullStackIT {
         assertThat(dateTimeValue, equalTo(dateTime().parseDateTime("2010-08-08T14:00:15.5+10:00")));
     }
 
-    @Ignore
     @Test
     public void retrieveDateTimeZoneValueFromConfiguration() {
         Configuration configuration = ConfigurationProvider.getConfiguration();
