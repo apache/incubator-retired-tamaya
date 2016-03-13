@@ -18,22 +18,32 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.mutableconfig.MutableConfiguration;
-import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
-import org.apache.tamaya.mutableconfig.propertysources.MutablePropertiesPropertySource;
-import org.junit.Test;
+import org.apache.tamaya.mutableconfig.propertysources.MutableXmlPropertiesPropertySource;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import static org.junit.Assert.*;
 
 /**
- * Tests for {@link MutablePropertiesPropertySource}.
+ * Writable test property source based on the {@link MutableXmlPropertiesPropertySource}.
  */
-public class PropertiesFileConfigBackendTest {
+public class WritableXmlPropertiesSource extends MutableXmlPropertiesPropertySource {
+
+    public static File target = createFile();
+
+    private static File createFile() {
+        try {
+            return File.createTempFile("writableProps",".xml");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Cannot init test.", e);
+        }
+    }
+
+    /**
+     * Creates a new Properties based PropertySource based on the given URL.
+     */
+    public WritableXmlPropertiesSource() throws IOException {
+        super(target, 200);
+    }
 
 }

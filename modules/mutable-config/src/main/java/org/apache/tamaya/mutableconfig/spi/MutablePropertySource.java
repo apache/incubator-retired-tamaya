@@ -20,9 +20,9 @@ package org.apache.tamaya.mutableconfig.spi;
 
 import org.apache.tamaya.spi.PropertySource;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -31,46 +31,24 @@ import java.util.Map;
  * As a consequence clients should first check, using the corresponding methods, if entries are to edited or removedProperties
  * actually are eligible for change/creation or removal.
  */
-public interface MutableConfigurationBackendSpi {
-
-    /**
-     * Identifies the configuration backend that is targeted by this instance and which is
-     * also responsible for writing back the changes applied.
-     *
-     * @return the backend URI, never null.
-     */
-    URI getBackendURI();
+public interface MutablePropertySource extends PropertySource {
 
     /**
      * Checks if a configuration key is writable (or it can be added).
      *
-     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
-     *                      be a regular expression, such "as a.b.c.*".
-     * @return the boolean
+     * @param key the key to be checked for write access (including creation), not null.
+     * @return true if the key can be added or updated.
      */
-    boolean isWritable(String keyExpression);
+    boolean isWritable(String key);
 
     /**
      * Checks if a configuration key is removable. This also implies that it is writable, but there might be writable
      * keys that cannot be removedProperties.
      *
-     * @param keyExpression the keyExpression the key to be checked for write access (including creation), not null.
-     *                      Here this could also
-     *                      be a regular expression, such "as a.b.c.*".
-     * @return the boolean
+     * @param key the key to be checked for removal, not null.
+     * @return true, if the key can be removed.
      */
-    boolean isRemovable(String keyExpression);
-
-    /**
-     * Checks if any keys of the given type already exist in the write backend. <b>NOTE:</b> there may be backends that
-     * are not able to support lookups with regular expressions. In most such cases you should pass the keys to
-     * lookup explicitly.
-     *
-     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could
-     *                      also be a regular expression, such "as a.b.c.*".
-     * @return true, if there is any key found matching the expression.
-     */
-    boolean isExisting(String keyExpression);
+    boolean isRemovable(String key);
 
     /**
      * Sets a property.
@@ -79,15 +57,8 @@ public interface MutableConfigurationBackendSpi {
      * @param value the property's value, not null.
      * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
      */
-    void put(String key, String value);
+    MutablePropertySource put(UUID transactionId, String key, String value);
 
-
-    /**
-     * Access a {@link org.apache.tamaya.spi.PropertySource} for reading any properties from the write target.
-     * @return the {@link org.apache.tamaya.spi.PropertySource} never {@code null}. In case of a write only
-     * data sink, simply return PropertySource.EMPTY.
-     */
-    PropertySource getBackendPropertySource();
 
     /**
      * Puts all given configuration entries. This method should check that all given properties are
@@ -100,7 +71,7 @@ public interface MutableConfigurationBackendSpi {
      * @param properties the properties tobe written, not null.
      * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request is read-only.
      */
-    void putAll(Map<String, String> properties);
+    MutablePropertySource putAll(UUID transactionId, Map<String, String> properties);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -113,7 +84,7 @@ public interface MutableConfigurationBackendSpi {
      * @param keys the property's keys to be removedProperties, not null.
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
-    void remove(Collection<String> keys);
+    MutablePropertySource remove(UUID transactionId, Collection<String> keys);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -126,7 +97,7 @@ public interface MutableConfigurationBackendSpi {
      * @param keys the property's keys to be removedProperties, not null.
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
-    void remove(String... keys);
+    MutablePropertySource remove(UUID transactionId, String... keys);
 
     /**
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
@@ -136,12 +107,19 @@ public interface MutableConfigurationBackendSpi {
      * since visibility of changes also depends on the ordinals set on the {@link org.apache.tamaya.spi.PropertySource}s
      * configured.
      * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.
+     * @param transactionId the transaction id, not null.
      */
-    void commit();
+    void commitTransaction(UUID transactionId);
 
     /**
      * Rollback any changes leaving everything unchanged. This will rollback all changes applied since the last commit.
+     * @param transactionId the transaction id, not null.
      */
-    void rollback();
+    void rollbackTransaction(UUID transactionId);
 
+    /**
+     * Start a new transaction context with the given isolation policy.
+     * @param transactionId the transaction id, not null.
+     */
+    void startTransaction(UUID transactionId);
 }

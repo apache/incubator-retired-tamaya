@@ -18,22 +18,19 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
-import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
-import org.apache.tamaya.mutableconfig.propertysources.MutablePropertiesPropertySource;
-import org.junit.Test;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import static org.junit.Assert.*;
 
 /**
- * Tests for {@link MutablePropertiesPropertySource}.
+ * SPI implementation that creates instances of {@link DefaultMutableConfiguration}, hereby for
+ * each instance of {@link Configuration} a new instance has to be returned.
  */
-public class PropertiesFileConfigBackendTest {
+public class DefaultMutableConfigurationSpi implements MutableConfigurationProviderSpi{
 
+    @Override
+    public MutableConfiguration createMutableConfiguration(Configuration configuration) {
+        return new DefaultMutableConfiguration(configuration);
+    }
 }
