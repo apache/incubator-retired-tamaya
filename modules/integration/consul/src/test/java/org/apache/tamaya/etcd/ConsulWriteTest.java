@@ -21,7 +21,7 @@ package org.apache.tamaya.etcd;
 import com.google.common.net.HostAndPort;
 import org.apache.tamaya.consul.ConsulPropertySource;
 import org.apache.tamaya.consul.internal.MutableConfigSupport;
-import org.apache.tamaya.mutableconfig.spi.MutableConfigurationBackendSpi;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.junit.BeforeClass;
 
 import java.net.MalformedURLException;
@@ -41,7 +41,7 @@ public class ConsulWriteTest {
     private static HostAndPort accessor;
     static boolean execute = false;
     private static ConsulPropertySource readingSource;
-    private static MutableConfigurationBackendSpi writer;
+    private static MutablePropertySource writer;
 
     @BeforeClass
     public static void setup() throws MalformedURLException, URISyntaxException {

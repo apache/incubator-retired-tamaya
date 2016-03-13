@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.etcd;
 
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.mutableconfig.propertysources.AbstractMutablePropertySource;
+import org.apache.tamaya.mutableconfig.propertysources.TransactionContext;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
 
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
  * to this prefix namespace. Etcd servers are configured as {@code etcd.server.urls} system or environment property.
  * ETcd can be disabled by setting {@code tamaya.etcdprops.disable} either as env or system property.
  */
-public class EtcdPropertySource implements PropertySource{
+public class EtcdPropertySource extends AbstractMutablePropertySource{
     private static final Logger LOG = Logger.getLogger(EtcdPropertySource.class.getName());
 
     private String prefix = System.getProperty("tamaya.etcd.prefix", "");
@@ -163,5 +164,43 @@ public class EtcdPropertySource implements PropertySource{
     @Override
     public boolean isScannable() {
         return true;
+    }
+
+    @Override
+    protected void commitInternal(TransactionContext context) {
+        for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
+            try{
+                for(String k: context.getRemovedProperties()){
+                    Map<String,String> res = accessor.delete(k);
+                    if(res.get("_ERROR")!=null){
+                        LOG.info("Failed to remove key from etcd: " + k);
+                    }
+                }
+                for(Map.Entry<String,String> en:context.getAddedProperties().entrySet()){
+                    String key = en.getKey();
+                    Integer ttl = null;
+                    int index = en.getKey().indexOf('?');
+                    if(index>0){
+                        key = en.getKey().substring(0, index);
+                        String rawQuery = en.getKey().substring(index+1);
+                        String[] queries = rawQuery.split("&");
+                        for(String query:queries){
+                            if(query.contains("ttl")){
+                                int qIdx = query.indexOf('=');
+                                ttl = qIdx>0?Integer.parseInt(query.substring(qIdx+1).trim()):null;
+                            }
+                        }
+                    }
+                    Map<String,String> res = accessor.set(key, en.getValue(), ttl);
+                    if(res.get("_ERROR")!=null){
+                        LOG.info("Failed to add key to etcd: " + en.getKey()  + "=" + en.getValue());
+                    }
+                }
+                // success, stop here
+                break;
+            } catch(Exception e){
+                LOG.log(Level.FINE, "etcd access failed on " + accessor.getUrl() + ", trying next...", e);
+            }
+        }
     }
 }

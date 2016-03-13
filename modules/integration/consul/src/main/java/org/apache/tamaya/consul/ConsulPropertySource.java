@@ -23,7 +23,8 @@ import com.google.common.net.HostAndPort;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.model.kv.Value;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.mutableconfig.propertysources.AbstractMutablePropertySource;
+import org.apache.tamaya.mutableconfig.propertysources.TransactionContext;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
 
@@ -38,7 +39,7 @@ import java.util.logging.Logger;
  * {@code consul.prefix} as system property maps the consul based onfiguration
  * to this prefix namespace. Consul servers are configured as {@code consul.urls} system or environment property.
  */
-public class ConsulPropertySource implements PropertySource{
+public class ConsulPropertySource extends AbstractMutablePropertySource {
     private static final Logger LOG = Logger.getLogger(ConsulPropertySource.class.getName());
 
     private String prefix = System.getProperty("tamaya.consul.prefix", "");
@@ -161,5 +162,35 @@ public class ConsulPropertySource implements PropertySource{
     @Override
     public boolean isScannable() {
         return false;
+    }
+
+    @Override
+    protected void commitInternal(TransactionContext context) {
+        for(HostAndPort hostAndPort: ConsulBackends.getConsulBackends()){
+            try{
+                Consul consul = Consul.builder().withHostAndPort(hostAndPort).build();
+                KeyValueClient kvClient = consul.keyValueClient();
+
+                for(String k: context.getRemovedProperties()){
+                    try{
+                        kvClient.deleteKey(k);
+                    } catch(Exception e){
+                        LOG.info("Failed to remove key from consul: " + k);
+                    }
+                }
+                for(Map.Entry<String,String> en:context.getAddedProperties().entrySet()){
+                    String key = en.getKey();
+                    try{
+                        kvClient.putValue(key,en.getValue());
+                    }catch(Exception e) {
+                        LOG.info("Failed to add key to consul: " + en.getKey() + "=" + en.getValue());
+                    }
+                }
+                // success: stop here
+                break;
+            } catch(Exception e){
+                LOG.log(Level.FINE, "consul access failed on " + hostAndPort + ", trying next...", e);
+            }
+        }
     }
 }
