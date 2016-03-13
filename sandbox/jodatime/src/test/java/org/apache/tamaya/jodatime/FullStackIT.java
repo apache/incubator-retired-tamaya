@@ -20,10 +20,16 @@ package org.apache.tamaya.jodatime;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.MutablePeriod;
+import org.joda.time.Period;
+import org.joda.time.format.ISOPeriodFormat;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -32,7 +38,6 @@ import static org.joda.time.format.ISODateTimeFormat.dateTime;
 
 public class FullStackIT {
 
-    @Ignore
     @Test
     public void retrieveJodaTimeValuesFromConfiguration() {
 
@@ -47,7 +52,6 @@ public class FullStackIT {
         assertThat(dateTimeValue, equalTo(dateTime().parseDateTime("2010-08-08T14:00:15.5+10:00")));
     }
 
-    @Ignore
     @Test
     public void retrieveDateTimeZoneValueFromConfiguration() {
         Configuration configuration = ConfigurationProvider.getConfiguration();
@@ -63,5 +67,21 @@ public class FullStackIT {
 
         assertThat(zoneBAsString, equalTo("+01:00"));
         assertThat(zoneB, equalTo(DateTimeZone.forOffsetHours(1)));
+    }
+
+    @Test
+    public void retrievePeriodValueFromConfiguration() {
+        Configuration configuration = ConfigurationProvider.getConfiguration();
+
+        MutablePeriod referenceValue = new MutablePeriod();
+
+        ISOPeriodFormat.standard().getParser().parseInto(referenceValue, "P1Y1M1W1DT1H1M1S", 0,
+                                                         Locale.ENGLISH);
+
+        String periodAsString = configuration.get("periodValueA");
+        Period period = configuration.get("periodValueA", Period.class);
+
+        assertThat(periodAsString, equalTo("P1Y1M1W1DT1H1M1S"));
+        assertThat(period, equalTo(referenceValue.toPeriod()));
     }
 }

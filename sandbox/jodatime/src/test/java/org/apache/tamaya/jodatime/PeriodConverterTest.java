@@ -18,7 +18,9 @@
  */
 package org.apache.tamaya.jodatime;
 
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
+import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
@@ -28,7 +30,10 @@ import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 
 public class PeriodConverterTest {
     /*
@@ -40,7 +45,6 @@ public class PeriodConverterTest {
 
     private static PeriodFormatter FORMATTER = ISOPeriodFormat.standard();
 
-    @Ignore
     @Test
     public void canConvertPropertiesInAllSupportedFormats() {
         Object[][] inputResultPairs = {
@@ -57,11 +61,7 @@ public class PeriodConverterTest {
              {"P1YT1S", FORMATTER.parsePeriod("P1Y0M0W0DT0H0M1S")},
 
              // Alternative format
-             {"P0002-03-00T00:00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")},
-             {"P0002-03T00:00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")},
-             {"P0002T00:00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")},
-             {"P0002T00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")}
-
+             {"P0002-03-00T00:00:05", FORMATTER.parsePeriod("P2Y3M0W0DT0H0M5S")}
         };
 
         ConversionContext context = Mockito.mock(ConversionContext.class);
@@ -74,9 +74,33 @@ public class PeriodConverterTest {
         }
     }
 
-    @Ignore
+    @Test
+    public void invalidInputValuesResultInReturningNull() {
+        String[] inputValues = {
+            "P0002-03T00:00:05",
+            "P0002T00:00:05",
+            "P0002T00:05"
+        };
+
+        ConversionContext context = Mockito.mock(ConversionContext.class);
+
+        for (String input : inputValues) {
+            Period period = converter.convert(input, context);
+
+            assertThat(period, nullValue());
+        }
+    }
+
     @Test
     public void allSupportedFormatsAreAddedToTheConversionContext() {
-        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
+        String name = PeriodConverter.class.getSimpleName();
+
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Period.class)).build();
+
+        converter.convert("P7Y0M0W0DT0H0M0S", context);
+
+        assertThat(context.getSupportedFormats(), hasSize(2));
+        assertThat(context.getSupportedFormats(), hasItem("PyYmMwWdDThHmMsS (" + name + ")"));
+        assertThat(context.getSupportedFormats(), hasItem("Pyyyy-mm-ddThh:mm:ss (" + name + ")"));
     }
 }

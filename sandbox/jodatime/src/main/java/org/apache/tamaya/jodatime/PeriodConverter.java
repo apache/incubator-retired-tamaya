@@ -37,11 +37,9 @@ import java.util.regex.Pattern;
  * period:</p>
  *
  *   <ol>
- *     <li>Alternatice format ({@code Pyyyy-mm-ddThh:mm:ss})</li>
+ *     <li>Alternative format ({@code Pyyyy-mm-ddThh:mm:ss})</li>
  *     <li>ISO format ({@code PyYmMwWdDThHmMsS})</li>
  *   </ol>
- *
- *
  */
 public class PeriodConverter implements PropertyConverter<org.joda.time.Period> {
 
@@ -60,11 +58,11 @@ public class PeriodConverter implements PropertyConverter<org.joda.time.Period> 
 
     @Override
     public Period convert(String value, ConversionContext context) {
-        if (true == true) throw new RuntimeException("Method must catch up with the current API!");
-
         String trimmed = Objects.requireNonNull(value).trim();
-        MutablePeriod result = null;
 
+        addSupportedFormats(context);
+
+        MutablePeriod result = null;
         PeriodParser format = null;
 
         if (isISOFormat(trimmed)) {
@@ -83,6 +81,11 @@ public class PeriodConverter implements PropertyConverter<org.joda.time.Period> 
         }
 
         return result != null ? result.toPeriod() : null;
+    }
+
+    private void addSupportedFormats(ConversionContext context) {
+        context.addSupportedFormats(PeriodConverter.class, "PyYmMwWdDThHmMsS");
+        context.addSupportedFormats(PeriodConverter.class, "Pyyyy-mm-ddThh:mm:ss");
     }
 
     private boolean isISOFormat(String value) {
