@@ -87,7 +87,9 @@ public final class ConfigurationProvider {
      * Get access to the current ConfigurationContext.
      *
      * @return the current ConfigurationContext, never null.
+     * @deprecated Use {@link Configuration#getContext()} instead of.
      */
+    @Deprecated
     public static ConfigurationContext getConfigurationContext() {
         return PROVIDER_SPI.getConfigurationContext();
     }
