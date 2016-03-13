@@ -21,7 +21,6 @@ package org.apache.tamaya.mutableconfig.internal;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
@@ -87,8 +86,7 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     @Override
     public List<MutablePropertySource> getMutablePropertySources() {
         List<MutablePropertySource> result = new ArrayList<>();
-        ConfigurationContext context = ConfigurationProvider.getConfigurationContext(this.config);
-        for(PropertySource propertySource:context.getPropertySources()) {
+        for(PropertySource propertySource:this.config.getContext().getPropertySources()) {
             if(propertySource instanceof  MutablePropertySource){
                 result.add((MutablePropertySource)propertySource);
             }
@@ -309,6 +307,15 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     }
 
     @Override
+    public ConfigurationContext getContext() {
+        return config.getContext();
+    }
+
+    private Collection<PropertySource> getPropertySources() {
+        return this.config.getContext().getPropertySources();
+    }
+
+    @Override
     public String toString() {
         return "DefaultMutableConfiguration{" +
                 "config=" + config +
@@ -316,8 +323,4 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
                 '}';
     }
 
-    private Collection<PropertySource> getPropertySources() {
-        ConfigurationContext context = ConfigurationProvider.getConfigurationContext(this.config);
-        return context.getPropertySources();
-    }
 }

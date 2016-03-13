@@ -220,4 +220,9 @@ public class DefaultConfiguration implements Configuration {
     public <T> T query(ConfigQuery<T> query) {
         return query.query(this);
     }
+
+    @Override
+    public ConfigurationContext getContext() {
+        return configurationContext;
+    }
 }

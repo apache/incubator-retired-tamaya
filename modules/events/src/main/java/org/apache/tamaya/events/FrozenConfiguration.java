@@ -24,6 +24,8 @@ import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.functions.ConfigurationFunctions;
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -159,6 +161,11 @@ public final class FrozenConfiguration implements Configuration, Serializable {
     @Override
     public <T> T query(ConfigQuery<T> query) {
         return query.query(this);
+    }
+
+    @Override
+    public ConfigurationContext getContext() {
+        return ConfigurationFunctions.emptyConfigurationContext();
     }
 
     @Override
