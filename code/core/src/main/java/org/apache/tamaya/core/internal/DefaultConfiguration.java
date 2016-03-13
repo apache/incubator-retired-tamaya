@@ -203,4 +203,12 @@ public class DefaultConfiguration implements Configuration {
     public <T> T query(ConfigQuery<T> query) {
         return query.query(this);
     }
+
+    /**
+     * Access the configuration's context.
+     * @return the configurastion context-
+     */
+    public ConfigurationContext getConfigurationContext() {
+        return configurationContext;
+    }
 }
