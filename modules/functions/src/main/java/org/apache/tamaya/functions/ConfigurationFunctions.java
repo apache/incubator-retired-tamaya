@@ -22,16 +22,10 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.*;
 
 import java.net.Inet4Address;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -96,8 +90,60 @@ public final class ConfigurationFunctions {
         }
 
         @Override
+        public ConfigurationContext getContext() {
+            return EMPTY_CONFIGURATION_CONTEXT;
+        }
+
+        @Override
         public String toString(){
             return "Configuration<empty>";
+        }
+    };
+
+    private static final ConfigurationContext EMPTY_CONFIGURATION_CONTEXT = new ConfigurationContext() {
+        @Override
+        public void addPropertySources(PropertySource... propertySourcesToAdd) {
+            // ignore
+        }
+
+        @Override
+        public List<PropertySource> getPropertySources() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
+            // ignore
+        }
+
+        @Override
+        public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<PropertyFilter> getPropertyFilters() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
+            return PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        }
+
+        @Override
+        public ConfigurationContextBuilder toBuilder() {
+            throw new UnsupportedOperationException("Cannot build from ConfigurationContext.EMPTY.");
+        }
+
+        @Override
+        public String toString(){
+            return "ConfigurationContext.EMPTY";
         }
     };
 
@@ -583,11 +629,17 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Accesses an empty PropertySource.
-     * @return an empty PropertySource, never null.
+     * Accesses an empty {@link Configuration}.
+     * @return an empty {@link Configuration}, never null.
      */
     public static Configuration emptyConfiguration(){
         return EMPTY_CONFIGURATION;
     }
+
+    /**
+     * Accesses an empty {@link ConfigurationContext}.
+     * @return an empty {@link ConfigurationContext}, never null.
+     */
+    public static ConfigurationContext emptyConfigurationContext(){ return EMPTY_CONFIGURATION_CONTEXT; }
 
 }

@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConfigurationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -107,6 +108,11 @@ class FilteredConfiguration implements Configuration {
     @Override
     public <T> T query(ConfigQuery<T> query) {
         return query.query(this);
+    }
+
+    @Override
+    public ConfigurationContext getContext() {
+        return baseConfiguration.getContext();
     }
 
     @Override
