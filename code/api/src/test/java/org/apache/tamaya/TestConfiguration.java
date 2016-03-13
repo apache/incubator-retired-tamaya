@@ -19,6 +19,8 @@
 package org.apache.tamaya;
 
 
+import org.apache.tamaya.spi.ConfigurationContext;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,6 +122,11 @@ public class TestConfiguration implements Configuration{
     @Override
     public <T> T query(ConfigQuery<T> query) {
         throw new RuntimeException("Method not implemented yet.");
+    }
+
+    @Override
+    public ConfigurationContext getContext() {
+        return null;
     }
 
     @Override

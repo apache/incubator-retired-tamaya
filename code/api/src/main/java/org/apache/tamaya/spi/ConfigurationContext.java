@@ -21,6 +21,7 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TypeLiteral;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -155,4 +156,5 @@ public interface ConfigurationContext {
      * @return a new builder instance, never null.
      */
     ConfigurationContextBuilder toBuilder();
+
 }

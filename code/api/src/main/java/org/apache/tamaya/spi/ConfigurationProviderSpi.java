@@ -39,7 +39,9 @@ public interface ConfigurationProviderSpi {
      * Get access to the current {@link ConfigurationContext}.
      *
      * @return the current {@link ConfigurationContext}, never null.
+     * @deprecated Will be removed in favour of {@link Configuration#getContext()}.
      */
+    @Deprecated
     ConfigurationContext getConfigurationContext();
 
     /**
