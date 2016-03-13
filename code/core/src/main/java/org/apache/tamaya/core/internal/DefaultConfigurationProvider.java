@@ -45,14 +45,6 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
-    public ConfigurationContext getConfigurationContext(Configuration config) {
-        if(config instanceof DefaultConfiguration){
-            return ((DefaultConfiguration)config).getConfigurationContext();
-        }
-        return null;
-    }
-
-    @Override
     public ConfigurationContextBuilder getConfigurationContextBuilder() {
         return ServiceContextManager.getServiceContext().getService(ConfigurationContextBuilder.class);
     }

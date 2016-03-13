@@ -204,6 +204,11 @@ public class DefaultConfiguration implements Configuration {
         return query.query(this);
     }
 
+    @Override
+    public ConfigurationContext getContext() {
+        return this.configurationContext;
+    }
+
     /**
      * Access the configuration's context.
      * @return the configurastion context-
