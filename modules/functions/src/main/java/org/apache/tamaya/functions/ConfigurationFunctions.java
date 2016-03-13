@@ -22,10 +22,22 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 
 import java.net.Inet4Address;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -640,6 +652,8 @@ public final class ConfigurationFunctions {
      * Accesses an empty {@link ConfigurationContext}.
      * @return an empty {@link ConfigurationContext}, never null.
      */
-    public static ConfigurationContext emptyConfigurationContext(){ return EMPTY_CONFIGURATION_CONTEXT; }
+    public static ConfigurationContext emptyConfigurationContext(){
+        return EMPTY_CONFIGURATION_CONTEXT;
+    }
 
 }
