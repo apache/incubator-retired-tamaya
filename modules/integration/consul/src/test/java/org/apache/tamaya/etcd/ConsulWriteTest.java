@@ -20,12 +20,9 @@ package org.apache.tamaya.etcd;
 
 import com.google.common.net.HostAndPort;
 import org.apache.tamaya.consul.ConsulPropertySource;
-import org.apache.tamaya.consul.internal.MutableConfigSupport;
-import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.junit.BeforeClass;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.UUID;
@@ -33,47 +30,47 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 /**
- * Tests for th etcd backend integration. You must have set a system property so, theses tests are executed, e.g.
- * {@code -Detcd.url=http://127.0.0.1:4001}.
+ * Tests for th consul backend integration for writing to the consul backend.
  */
 public class ConsulWriteTest {
 
     private static HostAndPort accessor;
     static boolean execute = false;
-    private static ConsulPropertySource readingSource;
-    private static MutablePropertySource writer;
+    private static ConsulPropertySource propertySource;
 
     @BeforeClass
     public static void setup() throws MalformedURLException, URISyntaxException {
         System.setProperty("consul.urls", "http://127.0.0.1:8300");
         accessor = HostAndPort.fromString("127.0.0.1:8500");
-        readingSource = new ConsulPropertySource();
-        writer = new MutableConfigSupport().getBackend(new URI("config:consul"));
+        propertySource = new ConsulPropertySource();
     }
 
     @org.junit.Test
     public void testSetNormal() throws Exception {
         if (!execute) return;
-        String value = UUID.randomUUID().toString();
-        writer.put("testSetNormal", value);
+        UUID taID = UUID.randomUUID();
+        propertySource.put(taID, "testSetNormal", taID.toString());
+        propertySource.commitTransaction(taID);
     }
 
 
     @org.junit.Test
     public void testDelete() throws Exception {
         if(!execute)return;
-        String value = UUID.randomUUID().toString();
-        writer.put("testDelete", value);
-        assertEquals(readingSource.get("testDelete").get("testDelete"), value);
-        assertNotNull(readingSource.get("_testDelete.createdIndex"));
-        writer.remove("testDelete");
-        assertNull(readingSource.get("testDelete").get("testDelete"));
+        UUID taID = UUID.randomUUID();
+        propertySource.put(taID, "testDelete", taID.toString());
+        propertySource.commitTransaction(taID);
+        assertEquals(propertySource.get("testDelete").getValue(), taID.toString());
+        assertNotNull(propertySource.get("_testDelete.createdIndex"));
+        propertySource.remove(taID, "testDelete");
+        propertySource.commitTransaction(taID);
+        assertNull(propertySource.get("testDelete"));
     }
 
     @org.junit.Test
     public void testGetProperties() throws Exception {
         if(!execute)return;
-        Map<String,String> result = readingSource.getProperties();
+        Map<String,String> result = propertySource.getProperties();
         assertTrue(result.isEmpty());
     }
 }

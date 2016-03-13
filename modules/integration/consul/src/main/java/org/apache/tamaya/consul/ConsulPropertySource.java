@@ -61,10 +61,10 @@ public class ConsulPropertySource extends AbstractMutablePropertySource {
 
     /**
      * Returns the  default ordinal used, when no ordinal is set, or the ordinal was not parseable to an int value.
-     * @return the  default ordinal used, by default 0.
+     * @return the  default ordinal used, by default 1000.
      */
     public int getDefaultOrdinal(){
-        return 100;
+        return 1000;
     }
 
     @Override
