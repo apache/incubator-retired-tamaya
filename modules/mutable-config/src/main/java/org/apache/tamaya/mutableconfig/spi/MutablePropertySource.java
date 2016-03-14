@@ -55,6 +55,8 @@ public interface MutablePropertySource extends PropertySource {
      *
      * @param key   the property's key, not null.
      * @param value the property's value, not null.
+     * @param transactionId the transactionId used to isolate the change, not null.
+     * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
      */
     MutablePropertySource put(UUID transactionId, String key, String value);
@@ -68,7 +70,9 @@ public interface MutablePropertySource extends PropertySource {
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
+     * @param transactionId the transactionId used to isolate the change, not null.
      * @param properties the properties tobe written, not null.
+     * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request is read-only.
      */
     MutablePropertySource putAll(UUID transactionId, Map<String, String> properties);
@@ -81,7 +85,9 @@ public interface MutablePropertySource extends PropertySource {
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
+     * @param transactionId the transactionId used to isolate the change, not null.
      * @param keys the property's keys to be removedProperties, not null.
+     * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
     MutablePropertySource remove(UUID transactionId, Collection<String> keys);
@@ -94,7 +100,9 @@ public interface MutablePropertySource extends PropertySource {
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
+     * @param transactionId the transactionId used to isolate the change, not null.
      * @param keys the property's keys to be removedProperties, not null.
+     * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
     MutablePropertySource remove(UUID transactionId, String... keys);

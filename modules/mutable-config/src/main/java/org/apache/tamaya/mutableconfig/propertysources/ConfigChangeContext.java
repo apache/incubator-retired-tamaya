@@ -30,7 +30,7 @@ import java.util.UUID;
 /**
  * Transactional context used for managing configuration changes within an {@link AbstractMutablePropertySource}.
  */
-public final class TransactionContext{
+public final class ConfigChangeContext {
     /**
      * The transaction id.
      */
@@ -52,7 +52,7 @@ public final class TransactionContext{
      * Creates a new instance bound to the given transaction.
      * @param transactionID the transaction ID, not null.
      */
-    public TransactionContext(UUID transactionID){
+    public ConfigChangeContext(UUID transactionID){
         this.transactionId = Objects.requireNonNull(transactionID);
     }
 
@@ -126,10 +126,10 @@ public final class TransactionContext{
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TransactionContext)) {
+        if (!(o instanceof ConfigChangeContext)) {
             return false;
         }
-        TransactionContext that = (TransactionContext) o;
+        ConfigChangeContext that = (ConfigChangeContext) o;
         return transactionId.equals(that.transactionId);
 
     }

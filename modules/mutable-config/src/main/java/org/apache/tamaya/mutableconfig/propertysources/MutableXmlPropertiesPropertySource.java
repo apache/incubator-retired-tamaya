@@ -78,6 +78,8 @@ public class MutableXmlPropertiesPropertySource extends AbstractMutablePropertyS
      * Creates a new Properties based PropertySource based on the given URL.
      *
      * @param propertiesLocation the URL encoded location, not null.
+     * @param defaultOrdinal the default ordinal to be used, when no ordinal is provided with the property
+     *                       source's properties.
      */
     public MutableXmlPropertiesPropertySource(File propertiesLocation, int defaultOrdinal) {
         super(defaultOrdinal);
@@ -130,16 +132,13 @@ public class MutableXmlPropertiesPropertySource extends AbstractMutablePropertyS
     /**
      * loads the Properties from the given URL
      *
-     * @return loaded {@link Properties}
      * @throws IllegalStateException in case of an error while reading properties-file
      */
     private void load() {
         try (InputStream stream = new FileInputStream(file)) {
             Map<String, String> properties = new HashMap<>();
             Properties props = new Properties();
-            if (stream != null) {
-                props.loadFromXML(stream);
-            }
+            props.loadFromXML(stream);
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
             }
@@ -153,7 +152,7 @@ public class MutableXmlPropertiesPropertySource extends AbstractMutablePropertyS
     }
 
     @Override
-    protected void commitInternal(TransactionContext context) {
+    protected void commitInternal(ConfigChangeContext context) {
         if(context.isEmpty()){
             LOG.info("Nothing to commit for transaction: " + context.getTransactionID());
             return;

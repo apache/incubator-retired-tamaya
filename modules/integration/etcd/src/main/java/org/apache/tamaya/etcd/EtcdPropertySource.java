@@ -19,7 +19,7 @@
 package org.apache.tamaya.etcd;
 
 import org.apache.tamaya.mutableconfig.propertysources.AbstractMutablePropertySource;
-import org.apache.tamaya.mutableconfig.propertysources.TransactionContext;
+import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
 
@@ -167,7 +167,7 @@ public class EtcdPropertySource extends AbstractMutablePropertySource{
     }
 
     @Override
-    protected void commitInternal(TransactionContext context) {
+    protected void commitInternal(ConfigChangeContext context) {
         for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
             try{
                 for(String k: context.getRemovedProperties()){

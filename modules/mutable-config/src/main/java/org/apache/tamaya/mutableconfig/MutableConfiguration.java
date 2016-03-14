@@ -123,7 +123,7 @@ public interface MutableConfiguration extends Configuration {
      * Identifies the configuration backends that supports writing the given key(s).
      * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
      *                      be a regular expression, such "as a.b.c.*".
-     * @return @return the property sources identified, in order of their occurrence/priority (most significant first).
+     * @return the property sources identified, in order of their occurrence/priority (most significant first).
      */
     List<MutablePropertySource> getPropertySourcesThatCanWrite(String keyExpression);
 
@@ -142,7 +142,7 @@ public interface MutableConfiguration extends Configuration {
      * Identifies the configuration backend that know the given key(s) and support removing it/them.
      * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
      *                      be a regular expression, such "as a.b.c.*".
-     * @return @return the property sources identified, in order of their occurrence/priority (most significant first).
+     * @return the property sources identified, in order of their occurrence/priority (most significant first).
      */
     List<MutablePropertySource> getPropertySourcesThatCanRemove(String keyExpression);
 
@@ -161,7 +161,7 @@ public interface MutableConfiguration extends Configuration {
      * Identifies the configuration backend that know the given key(s).
      * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
      *                      be a regular expression, such "as a.b.c.*".
-     * @return @return the property sources identified, in order of their occurrence/priority (most significant first).
+     * @return the property sources identified, in order of their occurrence/priority (most significant first).
      */
     List<MutablePropertySource> getPropertySourcesThatKnow(String keyExpression);
 

@@ -24,7 +24,7 @@ import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.model.kv.Value;
 import org.apache.tamaya.mutableconfig.propertysources.AbstractMutablePropertySource;
-import org.apache.tamaya.mutableconfig.propertysources.TransactionContext;
+import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
 
@@ -165,7 +165,7 @@ public class ConsulPropertySource extends AbstractMutablePropertySource {
     }
 
     @Override
-    protected void commitInternal(TransactionContext context) {
+    protected void commitInternal(ConfigChangeContext context) {
         for(HostAndPort hostAndPort: ConsulBackends.getConsulBackends()){
             try{
                 Consul consul = Consul.builder().withHostAndPort(hostAndPort).build();

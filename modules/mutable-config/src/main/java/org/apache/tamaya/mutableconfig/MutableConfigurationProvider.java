@@ -86,6 +86,7 @@ public final class MutableConfigurationProvider {
     /**
      * This propagation policy writes changes only once to the most significant property source, where a change is
      * applicable.
+     * @return a corresponding {@link ChangePropagationPolicy} implementation, never null.
      */
     public static ChangePropagationPolicy getApplyMostSignificantOnlyChangePolicy(){
         return MOST_SIGNIFICANT_ONLY_POLICY;
@@ -95,6 +96,7 @@ public final class MutableConfigurationProvider {
      * This propagation policy writes changes only once to the most significant property source, where a change is
      * applicable.
      * @param propertySourceNames the names of the mutable property sources to be considered for writing any changes to.
+     * @return a corresponding {@link ChangePropagationPolicy} implementation, never null.
      */
     public static ChangePropagationPolicy getApplySelectiveChangePolicy(String... propertySourceNames){
         return new SelectiveChangeApplyPolicy(propertySourceNames);
@@ -103,6 +105,7 @@ public final class MutableConfigurationProvider {
     /**
      * This propagation policy writes changes only once to the most significant property source, where a change is
      * applicable.
+     * @return a corresponding {@link ChangePropagationPolicy} implementation, never null.
      */
     public static ChangePropagationPolicy getApplyNonePolicy(){
         return NONE_POLICY;

@@ -18,18 +18,8 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.mutableconfig.MutableConfiguration;
-import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
 import org.apache.tamaya.mutableconfig.propertysources.MutablePropertiesPropertySource;
-import org.junit.Test;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for {@link MutablePropertiesPropertySource}.
