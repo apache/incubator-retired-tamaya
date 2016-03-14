@@ -43,7 +43,7 @@ public final class MutableConfigurationProvider {
     /**
      * URIs used by this query instance to identify the backends to use for write operations.
      */
-    private static final MutableConfigurationProviderSpi mutableConfigurationProviderSpi = loadSpi();
+    private static MutableConfigurationProviderSpi mutableConfigurationProviderSpi = loadSpi();
 
     /**
      * SPI loader method.
@@ -53,8 +53,8 @@ public final class MutableConfigurationProvider {
     private static MutableConfigurationProviderSpi loadSpi() {
         try{
             return ServiceContextManager.getServiceContext().getService(
-                    MutableConfigurationProviderSpi.class)  ;      }
-        catch(Exception e){
+                    MutableConfigurationProviderSpi.class)  ;
+        } catch(Exception e){
             throw new ConfigException("Failed to initialize MutableConfigurationProviderSpi - " +
                     "mutable configuration support.");
         }
