@@ -123,11 +123,13 @@ public final class TransactionContext{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TransactionContext)) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TransactionContext)) {
+            return false;
+        }
         TransactionContext that = (TransactionContext) o;
-
         return transactionId.equals(that.transactionId);
 
     }
