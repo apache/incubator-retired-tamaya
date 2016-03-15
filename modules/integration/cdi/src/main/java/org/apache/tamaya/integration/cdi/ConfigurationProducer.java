@@ -99,7 +99,7 @@ public class ConfigurationProducer {
             }
         }
         ConversionContext.Builder builder = new ConversionContext.Builder(config,
-                ConfigurationProvider.getConfigurationContext(), keyFound, TypeLiteral.of(toType));
+                ConfigurationProvider.getConfiguration().getContext(), keyFound, TypeLiteral.of(toType));
         if (injectionPoint.getMember() instanceof AnnotatedElement) {
             builder.setAnnotatedElement((AnnotatedElement) injectionPoint.getMember());
         }
@@ -117,7 +117,7 @@ public class ConfigurationProducer {
                 value = customCnverter.convert(defaultTextValue, conversionContext);
             }
             if (value == null) {
-                List<PropertyConverter<Object>> converters = ConfigurationProvider.getConfigurationContext()
+                List<PropertyConverter<Object>> converters = ConfigurationProvider.getConfiguration().getContext()
                         .getPropertyConverters(TypeLiteral.of(toType));
                 for (PropertyConverter<Object> converter : converters) {
                     try {

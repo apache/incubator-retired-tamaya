@@ -384,7 +384,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             } else {
                 String source = configuration.get(key);
                 ConversionContext ctx = new ConversionContext.Builder(configuration,
-                        ConfigurationProvider.getConfigurationContext(), key, targetType).build();
+                        configuration.getContext(), key, targetType).build();
                 value = propertyConverter.convert(source, ctx);
             }
 

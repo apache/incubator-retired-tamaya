@@ -302,6 +302,7 @@ public class PropertyConverterManager {
      * @param <T>        the type
      * @return the boxed type, or null.
      */
+    @SuppressWarnings("all")
     private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
         Type parameterType = targetType.getType();
         if (parameterType == int.class) {

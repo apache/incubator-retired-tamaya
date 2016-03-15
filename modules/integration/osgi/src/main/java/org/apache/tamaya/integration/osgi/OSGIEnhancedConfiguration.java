@@ -60,7 +60,7 @@ public class OSGIEnhancedConfiguration extends DefaultConfiguration{
      * Configuration wrapped into a Tamaya PropertySource.
      */
     private static final class OSGIConfigurationContext extends DefaultConfigurationContext{
-        private ConfigurationContext tamayaContext = ConfigurationProvider.getConfigurationContext();
+        private ConfigurationContext tamayaContext = ConfigurationProvider.getConfiguration().getContext();
         private OSGIPropertySource osgiPropertySource;
 
         public OSGIConfigurationContext(org.osgi.service.cm.Configuration osgiConfiguration){

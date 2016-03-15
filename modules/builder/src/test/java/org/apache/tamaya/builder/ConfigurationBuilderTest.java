@@ -370,8 +370,7 @@ public class ConfigurationBuilderTest {
     @Test(expected = NullPointerException.class)
     public void canNotAddNullAsPropertyFilter() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
-
-        builder.addPropertyFilters(null);
+        builder.addPropertyFilters((PropertyFilter[])null);
     }
 
     @Test
@@ -505,7 +504,7 @@ public class ConfigurationBuilderTest {
 
     @Test(expected = NullPointerException.class)
     public void cannotAddNullAsPropertyProvider() {
-        new ConfigurationBuilder().addPropertySourceProviders(null);
+        new ConfigurationBuilder().addPropertySourceProviders((PropertySourceProvider[])null);
     }
 
     @Test

@@ -38,6 +38,7 @@ import org.apache.tamaya.inject.api.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContextManager;
@@ -188,11 +189,11 @@ final class InjectionHelper {
             if(configValue==null) {
                 return null;
             }
-            List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
+            ConfigurationContext configContext = ConfigurationProvider.getConfiguration().getContext();
+            List<PropertyConverter<T>> converters = configContext
                     .getPropertyConverters(targetType);
             ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
-                    ConfigurationProvider.getConfigurationContext(), key, targetType)
-                    .setAnnotatedElement(element).build();
+                    configContext, key, targetType).setAnnotatedElement(element).build();
             for (PropertyConverter<T> converter : converters) {
                 adaptedValue = converter.convert(configValue, ctx);
                 if (adaptedValue != null) {

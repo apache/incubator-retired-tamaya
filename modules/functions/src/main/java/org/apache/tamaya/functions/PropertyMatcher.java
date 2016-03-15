@@ -31,7 +31,6 @@ public interface PropertyMatcher {
      * @param key the key, not null
      * @param value, the value, not null
      * @return {@code true} if the entry should match the predicate,
-     * otherwise {@code false}
      */
     boolean test(String key, String value);
 
