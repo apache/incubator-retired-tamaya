@@ -341,6 +341,11 @@ under the License.
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.7.6.201602180812</version>
+                </plugin>
+                <plugin>
                     <groupId>de.saumya.mojo</groupId>
                     <artifactId>gem-maven-plugin</artifactId>
                     <version>${gem.plugin}</version>
@@ -825,6 +830,7 @@ under the License.
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.9</version>
                 <reportSets>
                     <reportSet>
                         <reports>
