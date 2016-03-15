@@ -193,6 +193,8 @@ public interface Configuration{
     // extension points
     Configuration with(ConfigOperator operator);
     <T> T query(ConfigQuery<T> query);
+
+    ConfigurationContext getContext();
 }
 --------------------------------------------
 
@@ -462,13 +464,12 @@ public interface PropertyValueCombinationPolicy{
 ==== The Configuration Context
 
 A +Configuration+ is basically based on a so called +ConfigurationContext+, which is
-managed by the +ConfigurationProvider+. Similarly the current +ConfigurationContext+ can be accessed from the
-+ConfigurationProvider+ singleton:
+accessible from +Configuration.getContext()+:
 
 [source,java]
 .Accessing the current +ConfigurationContext+
 --------------------------------------------
-ConfigurationContext context = ConfigurationProvider.getConfigurationContext();
+ConfigurationContext context = ConfigurationProvider.getConfiguration().getContext();
 --------------------------------------------
 
 The +ConfigurationContext+ provides access to the internal building blocks that determine the final +Configuration+:
@@ -511,7 +512,7 @@ accessed either
 [source,java]
 .Accessing a +ConfigurationContextBuilder+
 --------------------------------------------
-ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfigurationContext().toBuilder();
+ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfiguration().getContext().toBuilder();
 ConfigurationContextBuilder emptyContextBuilder = ConfigurationProvider.getConfigurationContextBuilder();
 --------------------------------------------
 
@@ -520,7 +521,8 @@ With such a builder a new +ConfigurationContext+ can be created and then applied
 [source,java]
 .Creating and applying a new +ConfigurationContext+
 --------------------------------------------
-ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfigurationContext().toBuilder();
+ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfiguration().getContext()
+                                                           .toBuilder();
 ConfigurationContext context = preinitializedContextBuilder.addPropertySources(new MyPropertySource())
                                                            .addPropertyFilter(new MyFilter()).build();
 ConfigurationProvider.setConfigurationContext(context);
