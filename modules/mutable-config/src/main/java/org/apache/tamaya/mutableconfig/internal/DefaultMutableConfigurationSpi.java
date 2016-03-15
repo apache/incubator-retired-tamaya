@@ -27,7 +27,7 @@ import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
  * SPI implementation that creates instances of {@link DefaultMutableConfiguration}, hereby for
  * each instance of {@link Configuration} a new instance has to be returned.
  */
-public class DefaultMutableConfigurationSpi implements MutableConfigurationProviderSpi{
+public class DefaultMutableConfigurationSpi implements MutableConfigurationProviderSpi {
 
     @Override
     public MutableConfiguration createMutableConfiguration(Configuration configuration) {

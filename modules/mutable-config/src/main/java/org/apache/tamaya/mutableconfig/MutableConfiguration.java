@@ -221,5 +221,4 @@ public interface MutableConfiguration extends Configuration {
      */
     MutableConfiguration remove(String... keys);
 
-
 }

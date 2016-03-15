@@ -20,6 +20,7 @@ package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertySource;
@@ -65,8 +66,21 @@ public final class MutableConfigurationProvider {
     private MutableConfigurationProvider(){}
 
     /**
+     * Creates a new {@link MutableConfiguration} for the given default configuration, using all
+     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     *
+     * @return a new MutableConfiguration instance
+     */
+    public static MutableConfiguration getMutableConfiguration(){
+        return mutableConfigurationProviderSpi.createMutableConfiguration(
+                ConfigurationProvider.getConfiguration());
+    }
+
+
+    /**
      * Creates a new {@link MutableConfiguration} for the given configuration, using all
-     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = true}.
+     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     *
      *
      * @param configuration the configuration to use to write the changes/config.
      * @return a new MutableConfiguration instance
