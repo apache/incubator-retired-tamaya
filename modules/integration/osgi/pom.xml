@@ -137,7 +137,7 @@
             <artifactId>arquillian-bom</artifactId>
             <version>1.1.10.Final</version>
             <type>pom</type>
-            <scope>import</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
