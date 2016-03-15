@@ -48,11 +48,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
-                            org.apache.tamaya.integration.osgi.genereal.Activator
+                            org.apache.tamaya.integration.osgi.Activator
                         </Bundle-Activator>
-                        <Private-Package>
-                            org.tamaya.integration.osgi.general
-                        </Private-Package>
                         <Export-Service>
                             org.osgi.service.cm.ConfigurationAdmin
                         </Export-Service>

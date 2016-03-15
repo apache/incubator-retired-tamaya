@@ -177,9 +177,6 @@ under the License.
                             org.apache.tamaya.server,
                             org.apache.tamaya.server.spi
                         </Export-Package>
-                        <Private-Package>
-                            org.apache.tamaya.server.internal
-                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

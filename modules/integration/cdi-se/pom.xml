@@ -60,8 +60,7 @@ under the License.
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.tamaya.integration.cdi,
-                            org.apache.tamaya.integration.cdi.config,
+                            org.apache.tamaya.integration.cdi.config
                         </Export-Package>
                         <Private-Package>
                             org.apache.tamaya.integration.cdi.internal

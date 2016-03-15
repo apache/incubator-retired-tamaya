@@ -27,7 +27,7 @@ import java.util.Properties;
  * at runtime.</p>
  *
  * <p>All information offered by this is loaded from a properties file at
- * {@value #VERSION_PROPERTY_FILE}.</p>
+ * {@link VersionProperties#VERSION_PROPERTY_FILE}.</p>
  */
 public class VersionProperties {
     private static final String VERSION_PROPERTY_FILE = "/META-INF/tamaya-server-version.properties";

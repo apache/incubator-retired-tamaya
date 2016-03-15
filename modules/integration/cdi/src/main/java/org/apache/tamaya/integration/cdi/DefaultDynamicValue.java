@@ -20,7 +20,6 @@ package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.BaseDynamicValue;
 import org.apache.tamaya.inject.api.DynamicValue;

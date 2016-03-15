@@ -169,7 +169,7 @@ public class ParameterModel extends AbstractModel {
                 try {
                     this.type = Class.forName("java.lang."+type);
                 } catch (ClassNotFoundException e2) {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to load parameter type: " + type, e2);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Failed to load parameter type: " + type, e2);
                 }
             }
             return this;

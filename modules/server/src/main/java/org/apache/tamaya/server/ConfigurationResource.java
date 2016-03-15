@@ -188,12 +188,9 @@ public class ConfigurationResource {
      * }
      * </pre>
      *
-     * @param key   name of the key to show
      * @param key name of the key to show
      * @param value configuration value for the given key
      * @param ttl time to live
-     * @return written configuration value.
-     * @param ttl   time to live
      * @return written configuration value.
      */
     @PUT
