@@ -22,7 +22,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya</groupId>
         <artifactId>tamaya-all</artifactId>
-        <version>0.2-incubating-SNAPSHOT</version>
+        <version>0.2-incubating</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -57,7 +57,7 @@ under the License.
         <url>
             https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
         </url>
-      <tag>HEAD</tag>
+      <tag>tamaya-all-0.2-incubating</tag>
   </scm>
 
     <build>
