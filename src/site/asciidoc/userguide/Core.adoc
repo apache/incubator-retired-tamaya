@@ -1,5 +1,5 @@
-Apache Tamaya -- Core
-=====================
+Apache Tamaya -- Core Implementation
+====================================
 :name: Tamaya
 :rootpackage: org.apache.tamaya.core
 :title: Apache Tamaya Core
@@ -35,15 +35,13 @@ Apache Tamaya -- Core
 '''
 
 <<<
-image::http://tamaya.incubator.apache.org/resources/images/logos/logo_wood.png[]
 
 toc::[]
 
 <<<
-:numbered!:
-<<<
+
 [[Core]]
-== Tamaya Core
+== Tamaya Core Implementation
 === Overview
 
 Tamaya Core provides an implementation of the link:API.html[Tamaya Configuration API] and adds additional functionality

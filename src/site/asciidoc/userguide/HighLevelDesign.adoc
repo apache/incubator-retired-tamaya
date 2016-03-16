@@ -36,32 +36,9 @@ Apache Tamaya -- High Level Design
 
 <<<
 
-image::http://tamaya.incubator.apache.org/resources/images/logos/logo_wood.png[]
-
 toc::[]
 
 <<<
-:numbered!:
------------------------------------------------------------
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
------------------------------------------------------------
-
-:numbered:
 
 [[Core Concepts]]
 == The Tamaya Core Parts
@@ -101,7 +78,7 @@ functionality you want. E.g. modules are providing features such as
 All the mentioned artifacts are used to organize configuration in a higly flexible and extendable way. Hereby the
 +PropertySource+ is the key artifact. In general Tamaya organizes Configuration as follows:
 
-image::CoreDesign.png[]
+image::../images/CoreDesign.png[]
 
 Key abstraction hereby is the +ConfigurationContext+, which basically
 
