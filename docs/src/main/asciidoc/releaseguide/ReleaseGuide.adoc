@@ -103,8 +103,7 @@ team should be able to perform the release procedure.
 
 [listing,text]
 ----------------------------------------
-    //install a version of git which is compatible with the release-plugin (e.g. v1.8.3.2)
-    git checkout -b tamaya-[release version]
+    git checkout -b vote-tamaya-[release version]
 
     export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
     mvn release:prepare -DdryRun=true
@@ -112,37 +111,59 @@ team should be able to perform the release procedure.
     //copy prepared workspace (to continue faster if an upload fails in the next step)
 ----------------------------------------
 
-* If something fails you may _reset_ the release branch, switch to the master branch,
-  fix whatever is needed and rebase your release branch to accomodate the latest
-  changes done.
+* If something fails you may switch to the master branch, fix whatever is needed and rebase your release branch to
+  accomodate the latest changes done.
 * On success you can check the release packages from `dist/target`.
 * If everything looks good you can proceed with the release:
 
 [listing,text]
 ----------------------------------------
-    //hint: do not use -DdryRun=true -- since it can break the next step
     export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
+    mvn release:prepare
     mvn release:perform
-
-    // !!!check the created commits including user-name and email
-
-    // login to https://repository.apache.org/ and go to "Staging Repositories"
-    // check esp. .../org/apache/tamaya/tamaya/[version]/tamaya-[version]-source-release.zip
-    // close the repository
-
-    // push the release-branch and tag to a third-party git repo
-    git remote add vote https://github.com/[user]/tamaya-vote
-    git push -u vote master
-    git push vote tamaya-[release version]
-    git push vote --tags
 ----------------------------------------
+
+* check the created commits including user-name and email
+* login to https://repository.apache.org/ and go to "Staging Repositories"
+* check the contents of the newly created tamaya staging repository
+* _close_ the repository to let Nexus do its validations
+* On success:
+* push the release-branch to the git repo
+
+[listing,text]
+----------------------------------------
+git push
+----------------------------------------
+
+* Add the distributiong artifacts to the dev repositories:
+
+[listing,text]
+----------------------------------------
+    svn co https://dist.apache.org/repos/dist/dev/incubator/tamaya/
+    mkdir [version]
+    set RELEASE_HOME='pwd'/[version]
+    cd PROJECT_ROOT
+    cp DISCLAIMER $RELEASE_HOME
+    cp NOTICE $RELEASE_HOME
+    cp LICENCE $RELEASE_HOME
+    cp readme/ReleaseNotes-[version].html $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.zip $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.tar.gz $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.zip $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.tar.gz $RELEASE_HOME
+    // add corresponding asc, md5, sha1 file as well
+    svn add [version]
+    svn commit --username <apacheId>
+----------------------------------------
+
+* Check contents on https://dist.apache.org/repos/dist/dev/incubator/tamaya/[version]
 
 
 == Start the vote
 
 [listing,text]
 ----------------------------------------
-    [VOTE] Release of Apache DeltaSpike [version]
+    [VOTE] Release of Apache Tamaya [version]
 
 
     Hi,
@@ -150,12 +171,12 @@ team should be able to perform the release procedure.
     I was running the needed tasks to get the [version] release of Apache Tamaya out.
     The artifacts are deployed to Nexus [1] (and [2]).
 
-    The tag is available at [3] and will get pushed to the ASF repository once the vote passed.
+    The tag is available at [3] and will renamed once the vote passed.
 
     Please take a look at the artifacts and vote!
 
     Please note:
-    This vote is "majority approval" with a minimum of three +1 votes (see [4]).
+    This vote is a "majority approval" with a minimum of three +1 votes (see [4]).
 
     ------------------------------------------------
     [ ] +1 for community members who have reviewed the bits
@@ -167,13 +188,14 @@ team should be able to perform the release procedure.
     [name]
 
     [1] https://repository.apache.org/content/repositories/...
-    [2] https://repository.apache.org/content/repositories/.../org/apache/tamaya/tamaya/[version]/tamaya-[version]-source-release.zip
-    [3] https://github.com/[user]/tamaya-vote/tree/tamaya-[version]
+    [2] https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.zip
+        https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.zip
+    [3] https://git1-us-west.apache.org/repos/asf?p=incubator-tamaya.git;a=commit;h=2910da468fce16210e6dd77d8ba23ddbdd434efe
     [4] http://www.apache.org/foundation/voting.html#ReleaseVotes
 ----------------------------------------
 
 * Announce the Vote
-  ** Create a link to the release at http://s.apache.org (format Tamaya_[version])
+  ** Create a short link to the release at http://s.apache.org (format Tamaya_[version])
   ** Tweet about the vote via _@TamayaConf_
 
 * After 72 hours close the vote write a reult email, e.g.
@@ -198,11 +220,22 @@ team should be able to perform the release procedure.
 == Perform the release
 
 If the binding majority approved the vote continue:
-git status
-* Login to https://repository.apache.org/ and release the repository
 
-* Merge release branch into master and push the branch and tag to the ASF repository.
-  Always do a merge in this case (not a rebase):
+* Login to https://repository.apache.org/ and _release_ the repository
+* Rename the vote branch:
+
+[listing,text]
+----------------------------------------
+    git branch -m vote-tamaya-[version] tamaya-[version]
+----------------------------------------
+
+* Add a release tag:
+
+----------------------------------------
+    git tag -a tamaya-[version]
+----------------------------------------
+
+* Merge master with the new prepared version:
 
 [listing,text]
 ----------------------------------------
@@ -228,3 +261,13 @@ git status
 ----------------------------------------
 
 
+== Updating the Tamaya Project Site
+
+Currently Tamaya's Site located at https://svn.apache.org/repos/asf/incubator/tamaya/site/trunk must be updated
+manually. This should change in the future (then a simple mvn site site:deploy) should be sufficient. This
+includes:
+
+* Updating the entry pages with the new release
+* Updating the news page with the new release
+* Updating all Javadocs published on the site
+* Updating the documentation htmls generated from asciidoc

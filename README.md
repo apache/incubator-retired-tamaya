@@ -25,4 +25,5 @@ be installed on your computer.
 
 Then you can build Tamaya by the following command:
 
+    $> export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
     $> mvn clean install
