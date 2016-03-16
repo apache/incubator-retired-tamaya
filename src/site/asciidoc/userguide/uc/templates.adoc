@@ -1,0 +1,12 @@
+=== Configuration Templates
+
+Users want to be able to let Tamaya implement an interface template based on configuration.
+This use case is pretty similar to the injection use case. Basically the values are not injected,
+but cached within the template proxy returned, e.g. as +DynamicValue+.
+Similarly it could even be possible to define callback methods (default methods)
+or register listeners to DynamicValue instances returned.
+
+Templates hereby can easily be managed, but provide a excellent mechanism to provide type-safe configuration
+to clients in a very transparent way. Details can be controlled by using the same annotations as for
+normal configuration injection.
+

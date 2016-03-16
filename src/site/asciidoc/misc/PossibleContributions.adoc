@@ -1,0 +1,265 @@
+Apache Tamaya - Possible Tasks
+==============================
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya
+:revnumber: 0.1-SNAPSHOT
+:revremark: Draft
+:revdate: October 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <atsticks@gmail.com>
+:source-highlighter: coderay
+:website: http://tamaya.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+
+'''
+
+<<<
+
+-> add image : : https://raw.githubusercontent.com/JavaConfig/config-api/master/src/main/asciidoc/images/javaconfig.jpg[]
+
+toc::[]
+
+<<<
+:numbered!:
+-----------------------------------------------------------
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-----------------------------------------------------------
+
+:numbered:
+
+<<<
+
+== Introduction
+
+== What is Tamaya
+
+{name} is the Apache standard for flexible and powerful configuration. Objective is to provide flavors for
+Java SE, ME as well as to ship with powerful features for Java EE and Cloud Solutions. All functions provided
+is build on top of a small but very powerful, flexible and extendible API. This API is implemented by a core implementation,
+which then can be extended or adapted for use in different runtime scenarios, such as SE, ME, EE, Spring, OSGI
+and more. Similarly additional modules may be provided that help also existing solution to be plugged into
+{name}, so you can start right away using {name} without having to rebuild/change your existing application.
+
+
+=== Purpose of this Document
+
+The document should help to organize people and ideas around the Apache Tamaya Library. It list possible features,
+ideas and tasks that need to be done. Everybody can have a look at and see, where hos contribution and capabilities
+would fit best.
+
+
+== Main Features
+
+=== Metadata Model
+
+Currently +MetaInfo+ models metadata as a separate constuct. It has been shown that this leads to more complex
+handling when creating composites and makes the API overall more complex. The idea is to model metadata as simple
+key/value pairs, that are part of the provider/configuration data as well, but handled separately. Metadata hereby
+is identified by a starting '_' character in its key. For example refer to the following configuration properties:
+
+[source,listing]
+.Basic Properties
+----------------------------------------------------------------
+a.b.Foo=foo
+a.b.Bar=bar
+a.AnyOther=whatelse
+Something=none
+----------------------------------------------------------------
+
+Now we can model meta-data as follows:
+
+[source,listing]
+.Metadata Properties
+----------------------------------------------------------------
+[a.b].info=An area info
+[a.b.Foo].auth=role1,role2
+[a.b.Foo].encrypt=PGP
+[a.b.Foo].sensitive=true
+[].info=This is a test configuration example.
+----------------------------------------------------------------
+
+The above would model the following:
+
+* The area +a.b+ has the meta property +info+.
+* The entry +a.b.Foo+ has three meta properties +auth,encrypt+ and +sensitive+. These could be interpreted by a security
+  view and used to encrypt the values returned by the configuration instance, if not the current user has one of the
+  specified roles.
+* The last meta data defines an attribute +info+ for the whole provider/configuration (the root area).
+
+Given that the overall entries would be as follows:
+
+[source,listing]
+.Full Properties with Meta Properties
+----------------------------------------------------------------
+[a.b].info=An area info
+a.b.Foo=foo
+[a.b.Foo].auth=role1,role2
+[a.b.Foo].encrypt=PGP
+[a.b.Foo].sensitive=true
+a.b.Bar=bar
+[].info=This is a test configuration example.
+a.AnyOther=whatelse
+Something=none
+----------------------------------------------------------------
+
+The current +MetaInfo+ class could be adapted, so it is reading data from the underlying configuration/provider,
+instead of its own datastructure. This would make a later mapping of configuration and its metadata into DB table, JSON
+etc, much more easier.
+The providers on the other side may suppress any metadata from ordinary output, such
+as +toString()+, Similarly accessing metadata using the official config API (+get, getOrDefault, getAreas+ etc)
+should be disabled. The +MetaInfoBuilder+ must probably as well adapted or redesigned.
+
+
+
+=== Management Client
+
+A nice web-based client to manage configuration data would be nice as well. This also includes a UI for creating new
+configurations.
+
+=== Mapping Configuration to a Database
+
+A flexible mechanism should be implemented that allows the use of databases (SQL/JPA as well as non-SQL) for
+storing/retreiving/managing configuration:
+
+* JPA, Hibernate
+* MongoDB
+* ...
+
+
+=== Integration with Jigsaw
+
+Once Jigsaw is mature and in a usable (still early) stage, examples are to be created and tested, where OSGI is used as
+the basic runtime platform, e.g. Apache Felix, but as well others.
+
+== Distributed/Remote Configuration Support
+
+=== Configuration Distribution Policies
+
+Different configuration distribution policies should be defined any implemented, e.g. distributed cache, restful services,
+web services, EJB/RMI calls, asynchronous queues, publish/subsribe models, ...
+
+
+=== Preferences Support
+
+Write a +PreferencesFactory+ for +java.util.preferences+.
+
+
+== Third Party Integration
+
+=== Integration with Deltaspike Config
+
+Integration with Deltaspike Config should be implemented and discussed with Deltaspike guys.
+
+=== Integration with Spring
+
+A {name} module should be created that allows Spring to be used either as client or configuration provider.
+
+=== Integration with Jetty
+
+A {name} module should be created that allows a Jetty instance to be deployed and started that is (completely)
+configured based on configuration server.
+
+=== Integration with Tomcat
+
+A {name} module should be created that allows a Tomcat instance to be deployed and started that is (completely)
+configured based on configuration server.
+
+=== Configuration of Java EE
+
+In the Java EE area there would be several options:
+
+=== Configuration of Application Servers (administrative resources)
+
+It should be possible to start a application server instance remotely and configure all administrative resources and the
+deployments based on the configuration service, server to be considered maybe
+
+* Wildfly
+* IBM
+* Weblogic
+* Glassfish
+* Apache Geronimo
+
+==== Configuration of Bean Validation
+
+* Add configurable validators.
+* Configure bean validation based on configuration
+* ...
+
+=== JNDI Support
+
+Write a +JCA+ adapter to provide configuration data through JNDI.
+
+==== Configure JSF
+
+Use the JSF +XML Document+ event to completely configure JSF.
+
+==== Configure Web Services
+
+Provide a WebServiceProviderFactory that may be configured.
+
+==== Configure JPA
+
+Provide an implementation that allows configuration of persistence units. Talk with JPA EG people to see if we can
+get an SPI to hook in a stadardized way.
+
+==== Configure EJBs
+
+Provide an implementation that allows configuration of EJBs and MDBs:
+
+* Register beans
+* Unregister/disable beans
+* Intercept beans
+* Support Configuration Injection (in the worst case using a standard Interceptor, provide supporting artifacts to
+  help developers to achive this easily).
+* Talk with EE8 Umbrella EG (Bill Shanon, Linda DeMichels) on a feasible SPI for EE8, if possible join the EG.
+
+==== Configure ...
+
+Just think of any Java EE aspects that might be worth to be configured. If it can be done, e.g. by managing CDI managed
+resources, it might be easy. For others it is a good idea to discuss things with our matter of experts...
+
+== Special Goodies
+
+=== Maintenance Mode Servlet Filter
+
+Provide a servlet filter that is capable of switching to maintenance mode, based on configuration. Similarly also a forwarding
+servlet could be useful, wehere only request based on configuration are forwarded, other might be rejected or dropped
+as configured.
+
+=== Dynamic Camel Routes
+
+Provides dynamic (configurable) Camel routes, e.g. usable within ServiceMix or standalone.
+
+=== Dynamic CXF
+
+Provides dynamic (configurable) CXF adapters, e.g. usable within ServiceMix or standalone.
+
+=== Configurable Apache MQ
+
+Provides an implementation for configuring Apache MQ.
+
+=== Dynamic ...
+
+Interested to see what other ideas are around. Let us know!
+

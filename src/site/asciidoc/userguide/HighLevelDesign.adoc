@@ -1,0 +1,209 @@
+Apache Tamaya -- High Level Design
+==================================
+:name: Tamaya
+:rootpackage: org.apache.tamaya
+:title: Apache Tamaya
+:revnumber: 0.1-SNAPSHOT
+:revremark: Incubator
+:revdate: January 2014
+:longversion: {revnumber} ({revremark}) {revdate}
+:authorinitials: ATR
+:author: Anatole Tresch
+:email: <anatole@apache.org>
+:source-highlighter: coderay
+:website: http://tamaya.incubator.apache.org/
+:toc:
+:toc-placement: manual
+:encoding: UTF-8
+:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+'''
+
+<<<
+
+image::http://tamaya.incubator.apache.org/resources/images/logos/logo_wood.png[]
+
+toc::[]
+
+<<<
+:numbered!:
+-----------------------------------------------------------
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-----------------------------------------------------------
+
+:numbered:
+
+[[Core Concepts]]
+== The Tamaya Core Parts
+Though Tamaya is a very powerful and flexible solution there are basically only a few simple core concepts required
+that build the base of all the other mechanisms:
+
+The *API* (package +org.apache.tamaya+) provides
+
+* A simple but complete SE *API* for accessing key/value based _Configuration_:
+  ** +Configuration+ hereby models configuration, the main interface of Tamaya, providing key/value pairs as raw
+     (String-based) key/value pairs, allowing also access to typed values.
+  ** +ConfigurationProvider+ provides the static entry point for accessing configuration.
+
+The *SPI* (package +org.apache.tamaya.spi+) provides:
+  ** A simple minimalistic model for configuration data, called _PropertySource_.
+  ** Several extension points for adding additional configuration property sources or adapting the internal workings
+     of the overall system.
+  ** A +ServiceContext / ServiceContextManager+ that controls the loading of the components in Tamaya. This allows to
+     adapt the behaviour depending on the runtime environment in use, e.g. a Java standalone application, an OSGI
+     container or a Java EE application server.
+
+Tamaya *Modules* finally allow to add additional functionality to customize your configuration solution with the
+functionality you want. E.g. modules are providing features such as
+
+* Configuration _injection_
+* _Dynamic placeholders_ and resolution mechanism for configuration values
+* Abstractions for reusable _configuration formats_
+* Dynamic configuration updates and change events
+* Support for OSGI/Java EE Classloading
+* A configuration server/client
+* and more...
+
+
+== How Tamaya organizes Configuration
+=== Overview
+
+All the mentioned artifacts are used to organize configuration in a higly flexible and extendable way. Hereby the
++PropertySource+ is the key artifact. In general Tamaya organizes Configuration as follows:
+
+image::CoreDesign.png[]
+
+Key abstraction hereby is the +ConfigurationContext+, which basically
+
+* an ordered chain of +PropertySource+ instances. This chain is used to evaluate raw configuration values.
+* a set of +PropertyFilter+ instances that filter the raw values evaluated from the property source chain.
+* a set of +PropertyConverter+ that convert String values into typed values when needed.
+
+In most standalone use cases only one +ConfigurationContext+ will be active at a time. But in more complex scenarios,
+such as Java EE also multiple contexts could be active that are active depending on the current runtime context
+(e.g. attached to the corresponding classloader(s)). These aspects are basically handled by the
++ConfigurationProvider+ and its corresponding SPIs.
+
+=== Loading the current _ConfigurationContext_
+
+The +ConfigurationContext+ is the core of Tamaya. It manages all configuration sources and additional components
+required to evaluate a concrete configuration value:
+
+* Tamaya loads all available +PropertySource+ instances. Hereby +PropertySource+ instances can be
+  ** Directly registered (using the mechanism defined by the current +ServiceContext+ implementation, by default
+     the Java +ServiceLoader+.
+  ** Provided by a registered instance of +PropertySourceProvider+.
+* All loaded property sources are _ordered based on each ordinal_, returned from +PropertySource.getOrdinal()+ as
+  an ordered chain of PropertySources, building up the ordered chain of +PropertySource+ instances used for raw
+  configuration value evaluation.
+* Tamaya loads all available +PropertyFilter+ instances. Hereby +PropertyFilter+ instances can be registered
+  by default using the Java +ServiceLoader+ API. The +PropertyFilter+ instances loaded are ordered based on the
+  +@Priority+ annotations found on each filter. If no priority annotation is present, +0+ is assumed.
+* Tamaya loads all available +PropertyConverter+ instances. Hereby +PropertyConverter+ instances can be registered
+  by default using the Java +ServiceLoader+ API. The +PropertyConverter+ instances loaded are ordered based on the
+  +@Priority+ annotations found on each filter. If no priority annotation is present, +0+ is assumed. It is
+  possible to register multiple converters for the same target type.
+
+=== Evaluating raw property values
+When evaluating a concrete configuration value for a given key, Tamaya iterates through this chain of registered
+PropertySources. Hereby the final value, by default, is determined by the last non-null value returned from a
++PropertySource+.
+
+Since the ladder may not always be appropriate, e.g. when values should be combined instead of overridden, a
+instance of +PropertyValueCombinationPolicy+ can be registered, which allows to add more detailed behaviour how values
+are combined.
+
+Access to the complete configuration +Map+ is performing the same resolution and combination algorithm, but for all
+key/value pairs available.
+
+=== Filtering the raw properties:
+Each raw configuration value evaluated is filtered by the ordered filter chain, as long as there are any changes
+applied by any of the filters called. This ensures that also transitive replacements by filters are possible.
+If, after a configurable number of evaluation loops still values are changes during each loop, the filtering
+process is aborted, since a non-resolvable circular filter issue is assumed.
+
+The output is the final configuration value as type +String+.
+
+=== Applying type conversion:
+Finally, if the required target type, does not match +Java.lang.String+, all registered +PropertyConverter+
+instances targeting the corresponding target type are asked to convert the given (String-based) configuration
+entry to the required (non String) target type.
+
+Hereby the first _non-null_ value returned by a +PropertyConverter+ is used as the final typed configuration value and
+returned to the caller.
+
+=== Advanced Features
+Basically the bahaviour of Tamaya can be customized using the following mechanisms. Basically configuration can be
+provided using the following mechanism:
+
+* Registering additional (default) +PropertySource+ instances. Depending on their _ordinal value_ they
+  will override or extend existing configuration.
+* Registering additional (default) +PropertySourceProvider+ instances.that can provide multiple +PropertySource+
+  instances.
+
+Additionally Tamaya provides hooks for further adapting the internal workings:
+
+* Adapting the way how multiple entries with the same key are combined (+PropertyValueCombinationPolicy+). This
+  may be useful, if overriding is not the way how entries of the same key should be combined. An example, where
+  such an alternate scenario is useful are list entries, that combine all entries encountered to a collecting
+  list entry.
+* Adding additional support for new target types configurable by registering additional +PropertyConverter+
+  instances. This can be used for adding support for new types as well as for adding support for additional
+  formats.
+* Complex extensions may adapt the complete +ConfigurationContext+, using the +ConfigurationContextBuilder+ and
+  reapply the changed instance using +ConfigurationProvider.setConfigurationContext(ConfigurationContext)+.
+  This is one example how to react on dynamic changes detected on configuration files read.
+* Registering additional +PropertyFilter+ instances, that filter the configuration values extracted.
+* Registering an alternate +ServiceContext+ to support alternate runtime containers, e.g. a CDI container.
+* A combination of all above.
+
+Additionally instances of +ConfigOperator, ConfigQuery+ can be provided that provide additional functionality
+that should not be globally visible. It is recommended to provide them from a singleton accessor, hereby hiding
+the effective implementation classes.
+
+== Component Loading
+
+As mentioned the component loading of Tamaya can be adapted. By default the JDK +ServiceLoader+ API is used to determine a +ServiceContext+ implementation that should control
+Tamaya's overall component loading. If not found, a default implementation is registered, which relies on the
+Java +hava.util.ServiceLoader+ mechanism. This behaviour can be changed by implementing your own version
+of the +ServiceContext+ interface, annotating it with a +@Priority+ annotation and registering it using the
++java.util.ServiceLoader+ mechanism.
+
+== Compatibility
+
+The Tamaya API is compatible with Java 7 and beyond.
+
+== Further Documentation
+
+Being here we recommend to have a look at the more detailed documentation of Tamaya's link:API.html[API] and
+link:SPI.html[SPI], and of its current available link:modules.html[modules].
