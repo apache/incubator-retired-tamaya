@@ -1,4 +1,0 @@
-=== Scannable Properties
-
-If possible configuration should be scannable, meaning it should be possible to evaluate the keys available.
-The corresponding capabilities should be accessible by a +isScannable()+ method.

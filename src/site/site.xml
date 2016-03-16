@@ -40,16 +40,17 @@ under the License.
 
         <menu name="Documentation">
             <item name="Quickstart" href="quickstart.html"/>
+            <item name="User Guide" href="userguide/index.html"/>
             <item name="Extension Guide" href="extensions/index.html"/>
             <item name="${project.version} JavaDoc" target="" href="apidocs/index.html"/>
         </menu>
 
         <menu name="Development">
-            <item name="Release Guide" href="release-guide.html"/>
-            <item name="Development Guide" href="devguide/"/>
+            <item name="Sources" href="source.html"/>
             <item name="Community" href="community.html"/>
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAMAYA" target="_blank"/>
-            <item name="Sources" href="source.html"/>
+            <item name="Development Guide" href="devguide/"/>
+            <item name="Release Guide" href="release-guide.html"/>
         </menu>
 
         <menu name="Reports" ref="reports">
@@ -58,7 +59,6 @@ under the License.
         <menu name="Releases">
             <item name="Download" href="download.html"/>
             <item name="Release History" href="history.html"/>
-
         </menu>
 
     </body>

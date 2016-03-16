@@ -1,7 +1,225 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+// .
+//   http://www.apache.org/licenses/LICENSE-2.0
+// .
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
 = Apache Tamaya -- Release Guide
 
-This document contains the guidelines for Tamaya.
+include::temp-properties-files-for-site/attributes.adoc[]
 
-TDB
+Performing a release requires several steps. This document describes each step, so everybody in the committer's
+team should be able to perform the release procedure.
 
-// Add an instruction to always add the release to the release overview page
+
+== Tell the others you would proceed with the release procedure
+
+[listing,text]
+----------------------------------------
+    first steps for the next release
+
+    hi @ all,
+
+    if there are no objections, i'll start with the first steps for the next release (review, documentation,...).
+    it would be great to start with the release procedure next week.
+
+    regards,
+    [name]
+----------------------------------------
+
+
+== Check everything is ready
+
+* Check the jenkins builds.
+* Ensure all JIRA-tickets targeting the release are resolved. If not, get in contact with the ticket
+  owner/assignee to check
+  ** if the ticket can be postponed for the next release
+  ** how long it takes to resolve it and if one can help.
+
+
+== Prepare the release
+
+* Create release notes and commit them to `tamaya/readme/` (format `ReleaseNotes-[version].html`)
+* Create a release branch in git and switch to this branch:
+
+[listing,text]
+----------------------------------------
+    git checkout -b vote-tamaya-[release version]
+
+    export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
+    mvn release:prepare -DdryRun=true
+
+    //copy prepared workspace (to continue faster if an upload fails in the next step)
+----------------------------------------
+
+* If something fails you may switch to the master branch, fix whatever is needed and rebase your release branch to
+  accomodate the latest changes done.
+* On success you can check the release packages from `dist/target`.
+* If everything looks good you can proceed with the release:
+
+[listing,text]
+----------------------------------------
+    export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
+    mvn release:prepare
+    mvn release:perform
+----------------------------------------
+
+* check the created commits including user-name and email
+* login to https://repository.apache.org/ and go to "Staging Repositories"
+* check the contents of the newly created tamaya staging repository
+* _close_ the repository to let Nexus do its validations
+* On success:
+* push the release-branch to the git repo
+
+[listing,text]
+----------------------------------------
+git push
+----------------------------------------
+
+* Add the distributiong artifacts to the dev repositories:
+
+[listing,text]
+----------------------------------------
+    svn co https://dist.apache.org/repos/dist/dev/incubator/tamaya/
+    mkdir [version]
+    set RELEASE_HOME='pwd'/[version]
+    cd PROJECT_ROOT
+    cp DISCLAIMER $RELEASE_HOME
+    cp NOTICE $RELEASE_HOME
+    cp LICENCE $RELEASE_HOME
+    cp readme/ReleaseNotes-[version].html $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.zip $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.tar.gz $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.zip $RELEASE_HOME
+    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.tar.gz $RELEASE_HOME
+    // add corresponding asc, md5, sha1 file as well
+    svn add [version]
+    svn commit --username <apacheId>
+----------------------------------------
+
+* Check contents on https://dist.apache.org/repos/dist/dev/incubator/tamaya/[version]
+
+
+== Start the vote
+
+[listing,text]
+----------------------------------------
+    [VOTE] Release of Apache Tamaya [version]
+
+
+    Hi,
+
+    I was running the needed tasks to get the [version] release of Apache Tamaya out.
+    The artifacts are deployed to Nexus [1] (and [2]).
+
+    The tag is available at [3] and will renamed once the vote passed.
+
+    Please take a look at the artifacts and vote!
+
+    Please note:
+    This vote is a "majority approval" with a minimum of three +1 votes (see [4]).
+
+    ------------------------------------------------
+    [ ] +1 for community members who have reviewed the bits
+    [ ] +0
+    [ ] -1 for fatal flaws that should cause these bits not to be released, and why..............
+    ------------------------------------------------
+
+    Thanks,
+    [name]
+
+    [1] https://repository.apache.org/content/repositories/...
+    [2] https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.zip
+        https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.zip
+    [3] https://git1-us-west.apache.org/repos/asf?p=incubator-tamaya.git;a=commit;h=2910da468fce16210e6dd77d8ba23ddbdd434efe
+    [4] http://www.apache.org/foundation/voting.html#ReleaseVotes
+----------------------------------------
+
+* Announce the Vote
+  ** Create a short link to the release at http://s.apache.org (format Tamaya_[version])
+  ** Tweet about the vote via _@TamayaConf_
+
+* After 72 hours close the vote write a reult email, e.g.
+
+[listing,text]
+----------------------------------------
+    [Result] (was: Re: [VOTE] Release of Apache Tamaya [version])
+
+    thank you for voting!
+
+    X binding +1 votes (pmc):
+    [list]
+
+    Y non-binding +1 votes:
+    [list]
+
+    Z -1 votes
+    [list]
+----------------------------------------
+
+
+== Perform the release
+
+If the binding majority approved the vote continue:
+
+* Login to https://repository.apache.org/ and _release_ the repository
+* Rename the vote branch:
+
+[listing,text]
+----------------------------------------
+    git branch -m vote-tamaya-[version] tamaya-[version]
+----------------------------------------
+
+* Add a release tag:
+
+----------------------------------------
+    git tag -a tamaya-[version]
+----------------------------------------
+
+* Merge master with the new prepared version:
+
+[listing,text]
+----------------------------------------
+    git checkout master
+    git merge tamaya-[version]
+    git push origin tamaya-[version]
+    git push origin master
+----------------------------------------
+
+* Close the release and corresponding tickets at JIRA
+
+* Wait some minutes and check `http://repo2.maven.org/maven2/org/apache/tamaya`
+
+* Upload the distribution Artifacts
+
+[listing,text]
+----------------------------------------
+    svn co https://dist.apache.org/repos/dist/release/incubator/tamaya/
+    mkdir [version]
+    // add and commit the artifacts (*source-release.zip, *bin-release.zip + asc, md5, sha1)
+    // use the artifacts from:
+    //  http://repo1.maven.org/maven2/org/apache/tamaya/tamaya-distribution/[version]/
+----------------------------------------
+
+
+== Updating the Tamaya Project Site
+
+Currently Tamaya's Site located at https://svn.apache.org/repos/asf/incubator/tamaya/site/trunk must be updated
+manually. This should change in the future (then a simple mvn site site:deploy) should be sufficient. This
+includes:
+
+* Updating the entry pages with the new release
+* Updating the news page with the new release
+* Updating all Javadocs published on the site
+* Updating the documentation htmls generated from asciidoc

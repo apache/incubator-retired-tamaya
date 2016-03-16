@@ -29,11 +29,9 @@ under the License.
     </formats>
 
     <fileSets>
-
         <fileSet>
-            <directory>${project.build.directory}/adocs</directory>
+            <directory>${project.directory}/../src/site/asciidoc</directory>
             <outputDirectory>docs</outputDirectory>
-
         </fileSet>
     </fileSets>
 </assembly>
