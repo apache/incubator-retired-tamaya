@@ -63,6 +63,46 @@ under the License.
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <!--
+                             ! This directory is to store  Maven properties exported to a file
+                             ! which will be included by various Asciidoctor documents
+                             ! to share global properties/attributes.
+                             !
+                             ! see https://github.com/asciidoctor/asciidoctor-maven-plugin/issues/170
+                             !-->
+                            <directory>${project.basedir}/temp-properties-files-for-site</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bal</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/../src/site/asciidoc/temp-properties-files-for-site</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>de.saumya.mojo</groupId>
                 <artifactId>gem-maven-plugin</artifactId>
                 <configuration>

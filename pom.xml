@@ -808,6 +808,7 @@ under the License.
                 <maven.javadoc.skip>true</maven.javadoc.skip>
                 <source.skip>true</source.skip>
                 <assembly.skipAssembly>true</assembly.skipAssembly>
+                <maven.test.skip>true</maven.test.skip>
             </properties>
         </profile>
 
