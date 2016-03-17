@@ -17,28 +17,9 @@
 
 = Apache Tamaya -- Extension: Spring Integration
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.integration.spring
-:title: Apache Tamaya Extension: Spring Integration
-:revdate: November 2015
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Remote]]
 == Tamaya Spring Integration (Extension Module)
 === Overview

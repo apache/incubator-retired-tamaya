@@ -19,20 +19,6 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.builder
-:title: Apache Tamaya Extension: Builder
-:revnumber: 0.1.1
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: OBF
-:author: Oliver B. Fischer
-:email: <plexus@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:encoding: UTF-8
-:numbered:
 
 [[BuilderCore]]
 == Tamaya Builder (Extension Module)

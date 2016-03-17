@@ -17,29 +17,9 @@
 
 = Apache Tamaya -- Extension: Integration with etcd (Core OS)
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.integration.etcd
-:title: Apache Tamaya Extension: Integration with etcd service
-:revdate: January 2016
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Optional]]
 == Integration with etcd (Extension Module)
 === Overview

@@ -15,15 +15,15 @@
 // specific language governing permissions and limitations
 // under the License.
 
-= Apache Tamaya -- Release Guide
-
 include::temp-properties-files-for-site/attributes.adoc[]
+
+== Apache Tamaya -- Release Guide
 
 Performing a release requires several steps. This document describes each step, so everybody in the committer's
 team should be able to perform the release procedure.
 
 
-== Tell the others you would proceed with the release procedure
+=== Tell the others you would proceed with the release procedure
 
 [listing,text]
 ----------------------------------------
@@ -39,7 +39,7 @@ team should be able to perform the release procedure.
 ----------------------------------------
 
 
-== Check everything is ready
+=== Check everything is ready
 
 * Check the jenkins builds.
 * Ensure all JIRA-tickets targeting the release are resolved. If not, get in contact with the ticket
@@ -48,7 +48,7 @@ team should be able to perform the release procedure.
   ** how long it takes to resolve it and if one can help.
 
 
-== Prepare the release
+=== Prepare the release
 
 * Create release notes and commit them to `tamaya/readme/` (format `ReleaseNotes-[version].html`)
 * Create a release branch in git and switch to this branch:
@@ -111,7 +111,7 @@ git push
 * Check contents on https://dist.apache.org/repos/dist/dev/incubator/tamaya/[version]
 
 
-== Start the vote
+=== Start the vote
 
 [listing,text]
 ----------------------------------------
@@ -213,7 +213,7 @@ If the binding majority approved the vote continue:
 ----------------------------------------
 
 
-== Updating the Tamaya Project Site
+=== Updating the Tamaya Project Site
 
 Currently Tamaya's Site located at https://svn.apache.org/repos/asf/incubator/tamaya/site/trunk must be updated
 manually. This should change in the future (then a simple mvn site site:deploy) should be sufficient. This

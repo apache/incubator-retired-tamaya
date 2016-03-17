@@ -151,12 +151,12 @@ under the License.
     <developers>
         <developer>
             <name>Anatole Tresch</name>
-            <id>atsticks</id>
-            <email>atsticks -at- apache.org</email>
+            <id>anatole</id>
+            <email>anatole -at- apache.org</email>
             <roles>
                 <role>PMC</role>
             </roles>
-            <timezone />
+            <timezone>+1</timezone>
         </developer>
 
         <developer>
@@ -198,7 +198,7 @@ under the License.
                 <role>PMC</role>
             </roles>
             <email>plexus@apache.org</email>
-            <timezone>-1</timezone>
+            <timezone>+1</timezone>
         </developer>
     </developers>
 

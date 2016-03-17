@@ -17,32 +17,9 @@
 
 = Apache Tamaya -- Extension: Remote Configuration
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.remote
-:title: Apache Tamaya Extension: Remote Configuration
-:revnumber: 0.1.1
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Remote]]
 == Tamaya Remote Configuration (Extension Module)
 === Overview

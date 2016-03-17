@@ -1,6 +1,0 @@
-=== External Configuration
-
-Users want to be able to replace, override, extend or adapt any parts or all of an existing configuration from
-external sources.
-This also must be the case for multi-context environments, where the context identifiers are
-the only way to link to the correct remote configuration.

@@ -17,29 +17,8 @@
 
 = Apache Tamaya -- Extension: Classloader Isolation Support
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.clsupport
-:title: Apache Tamaya Extension: Classloader Isolation Support
-:revdate: September 2015
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
 [[Remote]]
 == Tamaya Classloader Aware ServiceContext (Extension Module)
 === Overview

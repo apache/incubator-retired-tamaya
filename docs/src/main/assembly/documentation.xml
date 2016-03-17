@@ -30,7 +30,7 @@ under the License.
 
     <fileSets>
         <fileSet>
-            <directory>${project.directory}/../src/site/asciidoc</directory>
+            <directory>${project.build.directory}/adocs</directory>
             <outputDirectory>docs</outputDirectory>
         </fileSet>
     </fileSets>

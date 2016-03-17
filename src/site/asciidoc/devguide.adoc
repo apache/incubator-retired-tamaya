@@ -1,25 +1,27 @@
-= Apache Tamaya -- Development Guide
-//:name: Tamaya
-//:rootpackage: org.apache.tamaya
-//:title: Apache Tamaya
-//:revnumber: 0.1-SNAPSHOT
-//:revremark: Incubator
-//:revdate: November 2014
-//:longversion: {revnumber} ({revremark}) {revdate}
-//:authorinitials: ATR
-//:author: Anatole Tresch
-//:email: <anatole@apache.org>
-:source-highlighter: coderay
-//:website: http://tamaya.incubator.apache.org/
-:toc:
-//:toc-placement: manual
-:encoding: UTF-8
-:numbered:
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+// .
+//   http://www.apache.org/licenses/LICENSE-2.0
+// .
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
 
+include::temp-properties-files-for-site/attributes.adoc[]
 
-== Suggested Git Workflows
+== Apache Tamaya -- Development Guide
 
-=== Avoid git pull!
+=== Suggested Git Workflows
+
+==== Avoid git pull!
 
 `git pull` should never get invoked if you have dirty files lying around
 or if your branch is ahead of master. This will always lead to
@@ -29,7 +31,7 @@ some dirty artifacts in the commit history:
 Merge branch 'master' of http://git-wip-us.apache.org/tamaya into master
 ----
 
-=== Use git pull --rebase
+==== Use git pull --rebase
 
 An easy version for getting rid of the auto-merges is using
 
@@ -41,7 +43,7 @@ Please note that this sometimes trashes your working tree if there
 are unmergeable files around. Cleaning this up with a forced manual
 rebase is not something we would recommend for a git beginner.
 
-=== Working in an own branch
+==== Working in an own branch
 
 This is actually the suggested way to prevent auto-merges. Create an own
 branch where you do your feature work. Either do all your work in one
@@ -91,9 +93,9 @@ $ git push
 ----
 
 [[contributing-workflow]]
-== Contribution workflow
+=== Contribution workflow
 
-=== Creating patches
+==== Creating patches
 
 You should use the following workflow, if you plan to contribute
 patches or new features to Tamaya.
@@ -143,7 +145,7 @@ $ git format-patch --stdout master > ../TAMAYA-XXX.patch
 
 Please attach the resulting patch file to the correspoding JIRA issue.
 
-=== Applying patches
+==== Applying patches
 
 If you are a committer and want to apply a patch you should do so in a separate branch.
 
@@ -167,7 +169,7 @@ $ git merge TAMAYA-XXX
 $ git branch -d TAMAYA-XXX
 ----
 
-=== Discussion workflow (optional)
+==== Discussion workflow (optional)
 
 All discussions which lead to a decision take place on the mailing list. 
 Sometimes it's required to show-case an idea esp. if the solution is 
@@ -180,7 +182,7 @@ Google-Code,... The only important part here is that such branches
 *NEVER* get pushed to the main Apache repository to keep the commit history 
 as clean as possible.
 
-=== Initial setup
+==== Initial setup
 
 ----
 $ git clone https://git-wip-us.apache.org/repos/asf/incubator-tamaya.git
@@ -188,7 +190,7 @@ $ git remote add discuss https://[username]@github.com/[username]/[repo-name].gi
 $ git push -u discuss master
 ----
 
-=== Branches for discussions
+==== Branches for discussions
 
 ----
 $ git checkout -b TAMAYA-XXX # 1-n commits
@@ -199,7 +201,7 @@ $ git push discuss TAMAYA-XXX # share the link to the branch for the discussions
 has to follow the steps described above for the basic workflow to keep the commit history simple, clean and straight.
 A contributor has to follow the steps described above for creating a patch.*
 
-=== Delete the branch again
+==== Delete the branch again
 
 ----
 $ git push discuss :TAMAYA-XXX

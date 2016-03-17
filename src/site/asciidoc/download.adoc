@@ -20,9 +20,7 @@
 include::temp-properties-files-for-site/attributes.adoc[]
 :linkattrs: true
 
-= Downloading Apache Tamaya
-
-// @todo Is a ToC here really required? :toc:
+== Downloading Apache Tamaya
 
 The latest release is Apache Tamaya {tamaya_version_current}.
 You can download it it from the

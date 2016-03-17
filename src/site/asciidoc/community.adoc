@@ -17,15 +17,16 @@
 // under the License.
 //
 
+include::temp-properties-files-for-site/attributes.adoc[]
 
-= Community
+== Community
 :toc:
 :sectnums:
 
 // Document properties
 :twitterhandle: tamayaconf
 
-== Users
+=== Users
 
 // todo Fix the links when finishing the new homepage, Oliver B. Fischer, 2015-09-12
 If you are a new user and you would like to participate in Tamaya
@@ -44,7 +45,7 @@ You are very welcome to follow our twitter account
 http://twitter.com/{twitterhandle}[@{twitterhandle}^] and spread the word
 of Tamaya with tweets, blog entries,...
 
-== Getting Involved
+=== Getting Involved
 
 Everybody is welcome to get involved with our community. You can find general
 information at http://apache.org/foundation/getinvolved.html and
@@ -59,7 +60,7 @@ documentation.html[instructions about the Documentation]
 that addresses how to contribute, render and publish it.
 
 
-=== Contributors
+==== Contributors
 
 Before you get a committer you have to contribute to our effort.
 E.g. you can help users, participate in discussions on the dev list,
@@ -69,14 +70,14 @@ or http://www.apache.org/licenses/cla-corporate.txt[Software Grant and Corporate
 and send it to secretary at apache dot org (or fax it) as early as possible.
 
 If you would like to submit a patch through Jira, you can have a look at the
-link:devguide/050-gitworkflow.html[suggested Git approach].
+link:devguide.html[suggested Git approach].
 
 // todo Fix the link when finishing the new homepage, Oliver B. Fischer, 2015-09-12
 The lists of current contributors and committers can be found
 on the link:contributors.html[contributers page^].
 
 
-=== Committers
+==== Committers
 
 Before you read this section, please ensure that you have read
 the contributor section. All of you are welcome to join our development effort.

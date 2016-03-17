@@ -15,30 +15,22 @@
 // specific language governing permissions and limitations
 // under the License.
 
-Apache Tamaya -- User Guide
-===========================
-:title: Apache Tamaya User Guide
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:encoding: UTF-8
+include::temp-properties-files-for-site/attributes.adoc[]
+
+== Apache Tamaya -- User Guide
 
 This user guide contains detailed documentation on Tamaya's architecture, design and core API. Also included are
 references to additional project documentation such as use cases and derived requirements.
 
-== General Project Documentation
+toc::[]
 
-* link:usecases.html[Use Cases]
-* link:Requirements.html[Requirements]
 
-== Architecture, Design and Core API
+include::usecases.adoc[]
 
-* link:HighLevelDesign.html[High Level Design]
-* link:API.html[Core API design documentation]
-* link:Core.html[Core implementation design documentation]
+include::Requirements.adoc[]
 
-== Examples
+include::HighLevelDesign.adoc[]
+include::API.adoc[]
+include::Core.adoc[]
 
-Find link:examples.html[here] also an overview of Tamaya's example projects.
+include::examples.adoc[]

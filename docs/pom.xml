@@ -97,11 +97,12 @@ under the License.
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
+                            <sourceDirectory>${project.basedir}/../src/site/asciidoc</sourceDirectory>
                             <attributes>
                                 <tamayaVersion>${project.version}</tamayaVersion>
                             </attributes>
-                            <baseDir>${project.basedir}</baseDir>
-                            <imagesDir>${project.basedir}/src/main/images/</imagesDir>
+                            <projectDirectory>${project.basedir}/../src/site/asciidoc</projectDirectory>
+                            <!--<imagesDir>${project.basedir}/../src/site/asciidoc/</imagesDir>-->
                             <outputDirectory>${project.build.directory}/adocs</outputDirectory>
                             <sourceHighlighter>coderay</sourceHighlighter>
                             <backend>html</backend>

@@ -17,32 +17,9 @@
 
 = Apache Tamaya -- Extension: Events
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.ext.events
-:title: Apache Tamaya Extension: Events
-:revnumber: 0.1.1
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Core]]
 == Tamaya Events (Extension Module)
 === Overview

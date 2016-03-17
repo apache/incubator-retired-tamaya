@@ -1,21 +1,3 @@
-Apache Tamaya -- Core Implementation
-====================================
-:name: Tamaya
-:rootpackage: org.apache.tamaya.core
-:title: Apache Tamaya Core
-:revnumber: 0.1.1
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -34,11 +16,7 @@ Apache Tamaya -- Core Implementation
 // under the License.
 '''
 
-<<<
-
-toc::[]
-
-<<<
+include::temp-properties-files-for-site/attributes.adoc[]
 
 [[Core]]
 == Tamaya Core Implementation
@@ -243,4 +221,4 @@ The Core module only implements the link:API.html[API]. Many users require/wish 
 configuration system. Fortunately there are numerous extensions available that add further functionality.
 Loading extensions hereby is trivial: you only are required to add the corresponding dependency to the classpath.
 
-For detailed information on the extensions available refer to the link:../extensions/index.html[extensions documentation].
+For detailed information on the extensions available refer to the link:extensions.html[extensions documentation].

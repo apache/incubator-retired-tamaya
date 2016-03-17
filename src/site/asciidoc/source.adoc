@@ -17,8 +17,7 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-
-= Sources of Apache Tamaya
+== Sources of Apache Tamaya
 
 The current source code can be found at:
 
@@ -33,4 +32,4 @@ The GitHub mirror also provides the project as downloadable zip archive.
 == Contributions
 
 If you like to contribute to Apache Tamaya please also refer also to our
-<<devguide/index.adoc#contributing-workflow,section on contributing to Apache Tamaya>>.
+<<devguide.adoc#contributing-workflow,section on contributing to Apache Tamaya>>.

@@ -17,29 +17,8 @@
 
 = Apache Tamaya -- Extension: Collection Support
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.collection
-:title: Apache Tamaya Extension: Collection Support
-:revdate: February 2016
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
 [[Optional]]
 == Tamaya Collection Support (Extension Module)
 === Overview

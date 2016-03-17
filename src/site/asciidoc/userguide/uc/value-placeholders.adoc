@@ -1,8 +1,0 @@
-=== Value Placeholders
-
-Users just want to to be able to add placeholders to the values of configuration (not the keys). The mechanisms for
-resolving the placeholders hereby should be not constraint to one single lanmguage like EL. Instead of different
-replacement strategies should be selectable, e.g. by prefixing an expression with the name of the resolver that
-should do the work (eg +"blabla ${env:HOME} using Java version ${sys:java.version}."+.
-This allows resolution mechanism to be isolated easily and also allows to use simpler mechanisms, if no more complex
-ones like EL are required. This is especially useful to deal with low resource environment like ME.

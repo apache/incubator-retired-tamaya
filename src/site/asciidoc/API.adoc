@@ -1,21 +1,3 @@
-Apache Tamaya -- API
-====================
-:name: Tamaya
-:rootpackage: org.apache.tamaya
-:title: Apache Tamaya
-:revnumber: 0.1-SNAPSHOT
-:revremark: Incubator
-:revdate: January 2014
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -34,19 +16,18 @@ Apache Tamaya -- API
 // under the License.
 '''
 
-<<<
-toc::[]
-<<<
+include::temp-properties-files-for-site/attributes.adoc[]
 
 [[CoreDesign]]
-== The Tamaya Core Design
+== Apache Tamaya -- API
+
 Though Tamaya is a very powerful and flexible solution there are basically only a few simple core concepts required
 that build the base of all the other mechanisms. As a starting point we recommend you read the corresponding
-link:CoreDesign.html[Core Design Documentation]
+llink:HighLevelDesign.html[High Level Design Documentation]
 
 [[API]]
 == The Tamaya API
-The API provides the artifacts as described in the link:CoreDesign.html[Core Design Documentation], which are:
+The API provides the artifacts as described in the link:HighLevelDesign.html[High Level Design Documentation], which are:
 
 * A simple but complete SE *API* for accessing key/value based _Configuration_:
   ** +Configuration+ hereby models configuration, the main interface of Tamaya. +Configuration+ provides

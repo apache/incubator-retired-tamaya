@@ -17,32 +17,9 @@
 
 = Apache Tamaya -- Extension: Optional Tamaya Configuration
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.optional
-:title: Apache Tamaya Extension: Optional Tamaya Configuration
-:revnumber: 0.1.1
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Optional]]
 == Tamaya Optional Configuration (Extension Module)
 === Overview

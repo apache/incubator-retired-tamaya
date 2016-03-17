@@ -17,32 +17,9 @@
 
 = Apache Tamaya -- Extension: Mutable Configuration
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.mutableconfig
-:title: Apache Tamaya Extension: Mutable Configuration
-:revnumber: 0.1
-:revremark: Incubator
-:revdate: March 2016
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Core]]
 == Tamaya Mutable Configuration (Extension Module)
 === Overview

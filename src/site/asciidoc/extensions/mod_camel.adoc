@@ -17,29 +17,9 @@
 
 = Apache Tamaya -- Extension: Integration with Apache Camel
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.integration.camel
-:title: Apache Tamaya Extension: Integration with Apache Camel
-:revdate: December 2015
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Optional]]
 == Integration with Apache Camel (Extension Module)
 === Overview

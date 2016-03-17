@@ -20,7 +20,7 @@
 include::temp-properties-files-for-site/attributes.adoc[]
 :linkattrs: true
 
-= Release History of Tamaya
+== Release History of Tamaya
 
 Overview off all released versions of Apache Tamaya.
 

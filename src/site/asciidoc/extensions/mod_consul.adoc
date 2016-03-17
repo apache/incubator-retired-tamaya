@@ -17,29 +17,9 @@
 
 = Apache Tamaya -- Extension: Integration with consul (Hashicorp)
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.integration.consul
-:title: Apache Tamaya Extension: Integration with consul service
-:revdate: February 2016
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[Optional]]
 == Integration with consul (Extension Module)
 === Overview

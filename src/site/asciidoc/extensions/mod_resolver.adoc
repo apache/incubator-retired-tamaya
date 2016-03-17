@@ -19,21 +19,6 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.ext.resolver
-:title: Apache Tamaya Extension: Resolver
-:revnumber: 0.1.1
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:encoding: UTF-8
-:numbered:
-
 
 [[Core]]
 == Tamaya Resolver (Extension Module)

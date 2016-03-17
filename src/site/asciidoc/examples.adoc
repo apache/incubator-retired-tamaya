@@ -1,21 +1,3 @@
-Apache Tamaya -- Examples
-=========================
-:name: Tamaya
-:rootpackage: org.apache.tamaya
-:title: Apache Tamaya Examples
-:revnumber: {tamayaVersion}
-:revremark: Incubator
-:revdate: March 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -32,6 +14,11 @@ Apache Tamaya -- Examples
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
+include::temp-properties-files-for-site/attributes.adoc[]
+
+= Apache Tamaya -- Examples
+
 toc::[]
 
 == Tamaya Examples

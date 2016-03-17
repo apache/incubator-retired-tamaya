@@ -16,10 +16,10 @@ powerful environment model and a flexible SPI.
 
 ## Documentation
 
-* [Use Cases](userguide/usecases.html)
-* [High Level Design](userguide/HighLevelDesign.html)
-* [API](userguide/API.html)
-* [Extensions](extensions/index.html)
+* [Use Cases](usecases.html)
+* [High Level Design](HighLevelDesign.html)
+* [API](API.html)
+* [Extensions](extensions.html)
 
 ---
 
@@ -27,10 +27,10 @@ powerful environment model and a flexible SPI.
 
 Using Apache Tamaya is simple:
 
-1. Add `org.apache.tamaya:tamaya-core:${{project.version}}` to your dependencies.
+1. Add `org.apache.tamaya:tamaya-core:{tamaya-version}` to your dependencies.
 2. Add your config to `META-INF/javaconfiguration.properties`
 3. Access your configuration by `ConfigurationProvider.getConfiguration()` and use it.
-4. Look at the [extension modules](extensions/index.html) to customize your setup!
+4. Look at the [extension modules](extensions.html) to customize your setup!
 5. Enjoy!
 
 
@@ -41,9 +41,7 @@ writing similar code again and again in each of our projects. Sometimes in a sim
 different, but certainly with high coupling to your configuration backends. Given your code is reused or integrated
 some how, or deployed by some customers, struggling starts: not supported backends, different policies, missing
 combination and validation mechanisms and so on. Tamaya solves all this by defining a common API and backend SPI.
-Your code is decoupled from the configuratoin backend. There is no difference if you are running on your dev box
-or in a clustered Docker environment in production, your code stays the same! There is no difference if you are writing
-some small component or a complete product solution, your API to your configuration data stays the same! Once you
-use Tamaya you will ask yourself why this did not exist before...
+Your code is decoupled from the configuratoin backend. There is no difference if your code is deployed on your dev box
+or in a clustered Docker environment in production, it stays the same!
 
 

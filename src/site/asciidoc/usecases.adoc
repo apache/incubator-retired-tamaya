@@ -1,0 +1,273 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+include::temp-properties-files-for-site/attributes.adoc[]
+
+== Apache Tamaya -- Use Cases
+
+toc::[]
+
+
+=== Simple Access
+
+Users want to be able to access configuration in a unified way both in SE and EE. EE may provide additional
+mechanism, such as injection, but the SE mechanisms should work as well, so any code written in SE is fully
+portable to EE as well.
+This can only be achieved by providing a static accessor, e.g.
+
+[source,java]
+------------------------------------------------------------
+Configuration config = Configuration.current();
+------------------------------------------------------------
+
+The call above should work exactly the same in EE. To enable this the static call must be delegated in the
+internals of the singleton, depending on the runtime. In EE the executing component can behave contextually,
+or even be loaded within the CDI environment (at least for post loading, application runtime aspects, but not earlier).
+
+Additionally in EE it should also be possible to inject Configuration, which gives you the same results as the call
+above:
+
+[source,java]
+------------------------------------------------------------
+@Inject
+private Configuration cfg;
+------------------------------------------------------------
+
+
+=== Simple Lookup of Properties
+
+Users just want to create a configuration ad hoc, from given property files. The
+files could be locally in the file system, on the classpath.
+
+Tamaya should provide a simple Java API for accessing key/value based configuration. Hereby users want to access
+properties as simple String values.
+
+Hereby returning Java 8 Optional values must be considered as well, instead of returning +null+.
+
+
+=== Value Placeholders
+
+Users just want to to be able to add placeholders to the values of configuration (not the keys). The mechanisms for
+resolving the placeholders hereby should be not constraint to one single lanmguage like EL. Instead of different
+replacement strategies should be selectable, e.g. by prefixing an expression with the name of the resolver that
+should do the work (eg +"blabla ${env:HOME} using Java version ${sys:java.version}."+.
+This allows resolution mechanism to be isolated easily and also allows to use simpler mechanisms, if no more complex
+ones like EL are required. This is especially useful to deal with low resource environment like ME.
+
+
+=== Type Safe Properties
+
+Users just want to access properties not only as Strings, but let Tamaya do the conversion to the required
+or the configred target type. By defauklt all java.lang wrapper and primitive types should be supported, but also
+other common types like date/time types, math numeric types and more.
+
+It must be possible that users can register their own custom types.
+
+Finally users also want to be able to dynamically provide or override type adaption (conversion), when reading a value,
+for a certain key/value pair.
+
+
+=== Configuration Templates
+
+Users want to be able to let Tamaya implement an interface template based on configuration.
+This use case is pretty similar to the injection use case. Basically the values are not injected,
+but cached within the template proxy returned, e.g. as +DynamicValue+.
+Similarly it could even be possible to define callback methods (default methods)
+or register listeners to DynamicValue instances returned.
+
+Templates hereby can easily be managed, but provide a excellent mechanism to provide type-safe configuration
+to clients in a very transparent way. Details can be controlled by using the same annotations as for
+normal configuration injection.
+
+
+=== Java 8 Functional Support
+
+Users want to be able to benefit from the new programming styles introduced with Java 8. Configuration
+should provide extension points for different aspects, where additional code can be hooked in easily.
+In short: were possible functional interfaces should be modelled.
+
+Examples:
+
+* code that converts a configuration to another kind of configuration: +UnaryOperator<Configuration>+
+* code that creates any kind of result based on a configuration: +Function<Configuration,T>+
+* Adapters for type conversion are defined as +Function<String,T>+
+* Key, value filters ccan be modelled as +BiFunction<String,String,String>+
+* etc.
+
+
+=== Configuration Locations
+
+Users want to be able to
+
+* read configuration from different locations.
+* By default classpath and file resources are
+  supported. But similarly remote access using a JSON ReST call should be possible.
+* Tamaya should define a JSON and XML format for configuration.
+* Configuration locations should be scannable using ant-styled resource patterns, if possible.
+* Scanning and reading logic can be modularized by using a +ConfigReader+ interface.
+
+
+=== Configuration Formats
+
+Users want to be able to use the format they prefer.
+
+* properties, xml-properties and ini-format should be supported by default
+* Other/custom formats should be easily addable by registering or providing the format on configuration evaluation (read).
+* When possible Tamaya should figure out which format to be used and how the InputStream should be correctly
+  interpreted.
+
+
+=== Multiple Configurations
+
+When systems grow they must be modularized to keep control. Whereas that sounds not really fancy, it leads to additional
+aspects to be considered by a configuration system.
+
+* Different code modules, libraries, plugins or products want to have their "own" separated configuration.
+* Similar it should be possible to add fully specific additional configurations.
+
+The default configuration hereby should always be present, whereas additional configurations are optional.
+Users want to be able to check the availability of such an additional configuration.
+
+Of course, additional configuration must be identifiable. The best way to do is to be discussed, nevertheless the
+mechanism must not depend on Java EE and the identifying keys must be serializable easily.
+Basically simple names are sufficient and woukld provide exact this required functionality.
+
+
+=== External Configuration
+
+Users want to be able to replace, override, extend or adapt any parts or all of an existing configuration from
+external sources.
+This also must be the case for multi-context environments, where the context identifiers are
+the only way to link to the correct remote configuration.
+
+
+=== Context Dependent Configuration
+
+In multi tenancy setups or complex systems a hierarchical/graph model of contexts for configurations is required, or different runtime contexts are executed in parallel
+within the same VN. What sounds normal for EE also may be the case for pure SE environments:
+
+* Users want to be able to model different layers of runtime context
+* Users want to identiofy the current layer, so configuration used may be adapted.
+
+
+
+=== Dynamic Provisioning (UC8)
+
+In Cloud Computing, especially the PaaS and SaaS areas a typical use case would be that an application (or server)
+is deployed, configured and started dynamically. Typically things are controlled by some "active controller components",
+which are capable of
+
+* creating new nodes (using IaaS services)
+* deploying and starting the required runtime platform , e.g. as part of a PaaS solution.
+* deploying and starting the application modules.
+
+All these steps require some kind of configuration. As of today required files are often created on the target node
+before the systems are started, using proprietary formats and mechanism. Similarly accessing the configuration in place
+may require examining the file system or using again proprietary management functions. Of course, a configuration
+solution should not try to solve that, but it can provide a significant bunch of functionality useful in such scenarios:
+
+* provide remote capabilities for configuration
+* allow configuration to be updated remotely.
+* allow client code to listen for configuration changes and react as needed.
+
+
+=== Minimal Property Source SPI
+
+Users expect that implementing an additional configuration property source is as easy as possible.
+So there should be an SPI defined that allows any kind of data source to be used for providing configuration data.
+The interface to be implemented is expected to be minimal to reduce the implementation burden. Default
+methods should be used where possible, so only a few methods are expected to be required to implement.
+
+
+=== Scannable Properties
+
+If possible configuration should be scannable, meaning it should be possible to evaluate the keys available.
+The corresponding capabilities should be accessible by a +isScannable()+ method.
+
+
+=== Combine Configurations
+
+Users want to be able to combine different configurations to a new configuration instance.
+Hereby the resulting configuration can be
+
+* a union of both, ignoring duplicates (and optionally log them)
+* a union of both, duplicates are ignored
+* a union of both, conflicts are thrown as ConfigException
+* an intersection of both, containing only keys present and equal in both configurations
+* an arbitrary mapping or filter, modelled by an +CombinationPolicy+, which basically can be modelled
+  as +BiFunction<String, String, String>+, hereby
+  ** a result of +null+ will remove the key
+  ** any other result will use the value returned as final value of the combination.
+
+
+=== MX/ReST Management
+
+Users want to be have comprehensive management support, which should allow
+
+* to change configuration
+* to remove configuration
+* to view configuration and its provider details
+
+
+=== Adaptable Service Context
+
+Tamaya should support an adaptable +ServiceContext+ to resolve any kind of implememntation services, both API services as core
+framework services. The +ServiceContext+ should be dynamically replecable by configuring an alternate instance of
+using the Java *ServiceContet+.
+
+This decouples component usage from its load and management part and als greatly simplifies integration with
+new/alternate runtime environments.
+The service context is exptected to provide
+
+* single singleton instances: these service can be cached.
+* access to multiple instances which implement some commons SPI interface.
+* as useful priorization of components is done by the model itself.
+
+
+=== Configuration Injection
+
+Users want to be able to polulate configured items by injecting configured values. Hereby
+
+* the lifecycle of the instances is not managed by Tamaya
+* all references to items configured are managed as weak references, to prevent memoryleaks.
+* Injection should if possible evaluate the properties by defaults. Even properties without
+  any annotations are possible.
+* Users expect to exclude certain properties from calculation
+* Beside injection of properties it is also possible to call setter methods with one parameter similarly.
+* Basically injection is performed, when the instance is passed to the Tamaya configuration system. It should also
+  be possible to inject/provide final values, especially Strings. Changes on configured values should be
+  reflected in the current value. Setters methods similarly can be called again, with the new values, on changes.
+* Users expect to control dynamic values and recall of setter methods, basically the following strategies should be
+  supported:
+  ** inject only once and ignore further changes.
+  ** reinject/reinitialize on each change
+
+* Dynamic Values can easily be modeled as +ConfiguredValue+ instances, which should have the following functionality:
+  ** access the current value
+  ** access the new value
+  ** access the latest value access time in ms
+  ** access the latest value update time in ms
+  ** evaluate easily if the value has changed since the last access
+  ** accept the change
+  *** as a shortcut it should be possible to accept the change on access of the value implicitly, hereby always accessing
+      the latest valid value.
+  ** ignore the change
+  ** register +Consumer<DynamicValue>+ liasteners to listen on the changes (ans also removing them later again).
+
+All observing functionality can be done completely asynchronously and in parallel.
+
+

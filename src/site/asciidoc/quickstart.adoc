@@ -17,7 +17,7 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-= Apache Tamaya Quickstart
+== Apache Tamaya Quickstart
 
 The fastest way to start with Tamaya is just using the _Core_ implementation,
 implementing the **API** in small, minimalistic way. For that add the following
@@ -51,7 +51,7 @@ These modules doe not depend on core, so alternative
 implementations of the Tamaya API should work similarly.
 
 
-== Multiple configuration files
+=== Multiple configuration files
 
 By default you can provide multiple `javaconfig.properties` files, e.g. as part
 of multiple jars loaded into your system. The system internally creates one
@@ -86,14 +86,14 @@ tamaya.ordinal=123
 
 This assigns an ordinal of 123 to each entry in that configuration resource.
 
-== Using additional features of Tamaya
+=== Using additional features of Tamaya
 
 There many modules that extend the capabilities of
 Tamaya. These modules doe not depend on core, so alternative
 implementations of the Tamaya API should work similarly. Following a
 small extract of most important modules available (or available soon):
 
-=== Dynamic Resolution and Value Placeholders
+==== Dynamic Resolution and Value Placeholders
 
 [source,xml,subs="verbatim,attributes"]
 ----
@@ -117,7 +117,7 @@ String resolved = Resolver.evaluateExpression(myExpression);
 ----
 
 
-=== Ant-styled Path Resolution of Resources
+==== Ant-styled Path Resolution of Resources
 
 [source,xml,subs="verbatim,attributes"]
 ----
@@ -141,7 +141,7 @@ Collection<URL> urls = ResourceResolver.getResources("META-INF/cfg/**/*.properti
 For further details refer to the module documentation.
 
 
-=== Configuration Injection
+==== Configuration Injection
 
 [source,xml,subs="verbatim,attributes"]
 ----
@@ -203,9 +203,3 @@ Currently the following resolvers are available:
 
 |===
 
-
-// @todo
-//Look [here][1] For further documentation on available extension modules.
-
-
-//  [1]: documentation/modules.html

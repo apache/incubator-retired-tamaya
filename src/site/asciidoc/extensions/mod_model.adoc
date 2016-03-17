@@ -17,32 +17,9 @@
 
 = Apache Tamaya -- Extension: Model Documentation and Validation
 
-:name: Tamaya
-:rootpackage: org.apache.tamaya.model
-:title: Apache Tamaya Extension: Model Documentation and Validation
-:revnumber: 0.1
-:revremark: Incubator
-:revdate: August 2015
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
-
-'''
-
-<<<
-
 toc::[]
 
-<<<
-:numbered!:
-<<<
+
 [[ExtModel]]
 == Tamaya Model Documentation and Validation (Extension Module)
 === Overview

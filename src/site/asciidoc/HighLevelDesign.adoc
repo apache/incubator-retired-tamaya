@@ -1,21 +1,3 @@
-Apache Tamaya -- High Level Design
-==================================
-:name: Tamaya
-:rootpackage: org.apache.tamaya
-:title: Apache Tamaya
-:revnumber: 0.1-SNAPSHOT
-:revremark: Incubator
-:revdate: January 2014
-:longversion: {revnumber} ({revremark}) {revdate}
-:authorinitials: ATR
-:author: Anatole Tresch
-:email: <anatole@apache.org>
-:source-highlighter: coderay
-:website: http://tamaya.incubator.apache.org/
-:toc:
-:toc-placement: manual
-:encoding: UTF-8
-:numbered:
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -34,14 +16,11 @@ Apache Tamaya -- High Level Design
 // under the License.
 '''
 
-<<<
+include::temp-properties-files-for-site/attributes.adoc[]
 
-toc::[]
-
-<<<
 
 [[Core Concepts]]
-== The Tamaya Core Parts
+== The Tamaya High Level Design
 Though Tamaya is a very powerful and flexible solution there are basically only a few simple core concepts required
 that build the base of all the other mechanisms:
 
@@ -170,7 +149,8 @@ the effective implementation classes.
 
 == Component Loading
 
-As mentioned the component loading of Tamaya can be adapted. By default the JDK +ServiceLoader+ API is used to determine a +ServiceContext+ implementation that should control
+As mentioned the component loading of Tamaya can be adapted. By default the JDK +ServiceLoader+ API is used to determine
+a +ServiceContext+ implementation that should control
 Tamaya's overall component loading. If not found, a default implementation is registered, which relies on the
 Java +hava.util.ServiceLoader+ mechanism. This behaviour can be changed by implementing your own version
 of the +ServiceContext+ interface, annotating it with a +@Priority+ annotation and registering it using the
@@ -182,5 +162,5 @@ The Tamaya API is compatible with Java 7 and beyond.
 
 == Further Documentation
 
-Being here we recommend to have a look at the more detailed documentation of Tamaya's link:API.html[API] and
-link:SPI.html[SPI], and of its current available link:modules.html[modules].
+Being here we recommend to have a look at the more detailed documentation of Tamaya's link:API.html[API and SPI],
+and of its current available link:extensions.html[modules].
