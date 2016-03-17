@@ -39,9 +39,12 @@ under the License.
         <menu ref="modules" inherit="bottom"/>
 
         <menu name="Documentation">
+            <item name="Use Cases and Requirements" href="usecasesAndReqs.html"/>
             <item name="Quickstart" href="quickstart.html"/>
-            <item name="User Guide" href="userguide.html"/>
+            <item name="API" href="API.html"/>
+            <item name="Core" href="Core.html"/>
             <item name="Extension Guide" href="extensions.html"/>
+            <item name="Design Guide" href="HighLevelDesign.html"/>
             <item name="${project.version} JavaDoc" target="" href="apidocs/index.html"/>
         </menu>
 

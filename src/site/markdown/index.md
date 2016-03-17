@@ -16,9 +16,10 @@ powerful environment model and a flexible SPI.
 
 ## Documentation
 
-* [Use Cases](usecases.html)
+* [Use Cases and Requirements](usecasesAnd Reqs.html)
 * [High Level Design](HighLevelDesign.html)
 * [API](API.html)
+* [Core](Core.html)
 * [Extensions](extensions.html)
 
 ---
