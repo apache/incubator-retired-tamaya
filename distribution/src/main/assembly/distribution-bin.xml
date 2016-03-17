@@ -435,6 +435,13 @@ under the License.
             <directory>${project.build.directory}/generated-documentation/apache-tamaya-docs-${project.version}</directory>
         </fileSet>
         <fileSet>
+            <outputDirectory>/docs</outputDirectory>
+            <directory>${project.basedir}/src/main/assembly</directory>
+            <includes>
+                <include>index.html</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${project.parent.basedir}</directory>
 
             <excludes>

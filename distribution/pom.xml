@@ -42,7 +42,7 @@ under the License.
             <type>zip</type>
         </dependency>
 
-         <!-- Java 7 related artifacts-->
+         <!-- Core artifacts-->
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-api</artifactId>
