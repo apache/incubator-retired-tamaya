@@ -139,7 +139,7 @@ under the License.
         <site>
             <id>apache-tamaya-website</id>
             <name>Apache Tamaya Website</name>
-            <url>scpexe://people.apache.org/www/incubator.apache.org/tamaya</url>
+            <url>scm:svn:https://svn.apache.org/repos/asf/incubator/tamaya/site/trunk</url>
         </site>
     </distributionManagement>
 
