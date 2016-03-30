@@ -77,6 +77,7 @@ public class SystemPropertySource implements PropertySource {
         Properties sysProps = System.getProperties();
         for(String name: sysProps.stringPropertyNames()) {
             props.put(name,sysProps.getProperty(name));
+            props.put("_"+name+".source",getName());
         }
         return props;
     }

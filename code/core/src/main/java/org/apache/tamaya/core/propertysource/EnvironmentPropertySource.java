@@ -22,6 +22,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -83,7 +84,11 @@ public class EnvironmentPropertySource implements PropertySource {
         if(disabled){
             return Collections.emptyMap();
         }
-        return System.getenv(); // already a map and unmodifiable
+        Map<String, String> entries = new HashMap<>(System.getenv());
+        for(Map.Entry<String, String> entry:System.getenv().entrySet()){
+            entries.put("_"+entry.getKey()+".source", getName());
+        }
+        return entries;
     }
 
     @Override

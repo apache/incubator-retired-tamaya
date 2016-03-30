@@ -50,8 +50,8 @@ public class SimplePropertySource extends BasePropertySource {
     public SimplePropertySource(File propertiesLocation) {
         super(0);
         try {
-            this.properties = load(propertiesLocation.toURI().toURL());
             this.name = propertiesLocation.toString();
+            this.properties = load(propertiesLocation.toURI().toURL());
         } catch (IOException e) {
             throw new ConfigException("Failed to load properties from " + propertiesLocation, e);
         }
@@ -118,6 +118,7 @@ public class SimplePropertySource extends BasePropertySource {
             }
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
+                properties.put("_"+key+".source",getName());
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties " + propertiesFile, e);
