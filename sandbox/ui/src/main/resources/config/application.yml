@@ -1,0 +1,9 @@
+server:
+  type: default
+  maxThreads: 1024
+  applicationConnectors:
+      - type: http
+        port: 8090
+  adminConnectors:
+      - type: http
+        port: 8091
