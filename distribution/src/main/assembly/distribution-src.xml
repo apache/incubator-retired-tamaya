@@ -39,6 +39,7 @@ under the License.
                 <exclude>**/jqassistant.datastore/**</exclude> <!-- JQAssistant data directory -->
                 <exclude>**/sandbox/**</exclude> <!-- Sandbox modules are not released -->
                 <exclude>**/*.log</exclude>
+                <exclude>**/*.jar</exclude>
             </excludes>
 
             <includes>
