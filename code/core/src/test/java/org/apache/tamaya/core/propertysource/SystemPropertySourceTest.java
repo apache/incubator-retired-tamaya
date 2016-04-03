@@ -87,10 +87,12 @@ public class SystemPropertySourceTest {
         Properties systemEntries = System.getProperties();
 
         Assert.assertEquals("size of System.getProperties().entrySet() must be the same as SystemPropertySrouce.getProperties().entrySet()",
-                            systemEntries.entrySet().size(), toCheck.size());
+                            systemEntries.size(), toCheck.size()/2);
 
         for (Map.Entry<String, String> propertySourceEntry : toCheck.entrySet()) {
-
+            if(propertySourceEntry.getKey().startsWith("_")){
+                continue; // meta entry
+            }
             Assert.assertEquals("Entry values for key '" + propertySourceEntry.getKey() + "' do not match",
                                 systemEntries.getProperty(propertySourceEntry.getKey()), propertySourceEntry.getValue());
         }

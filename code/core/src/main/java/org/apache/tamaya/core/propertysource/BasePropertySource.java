@@ -87,7 +87,7 @@ public abstract class BasePropertySource implements PropertySource{
         PropertyValueBuilder b = new PropertyValueBuilder(key, val, getName());
         String metaKeyStart = "_" + key + ".";
         for(Map.Entry<String,String> en:properties.entrySet()) {
-            if(en.getKey().startsWith(metaKeyStart)){
+            if(en.getKey().startsWith(metaKeyStart) && en.getValue()!=null){
                 b.addContextData(en.getKey().substring(metaKeyStart.length()), en.getValue());
             }
         }

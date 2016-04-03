@@ -80,7 +80,7 @@ public class PropertyValueBuilder {
      * @return the builder for chaining.
      */
     public PropertyValueBuilder addContextData(String key, Object value) {
-        this.contextData.put("_"+this.key+'.'+key, String.valueOf(Objects.requireNonNull(value)));
+        this.contextData.put("_"+this.key+'.'+key, String.valueOf(Objects.requireNonNull(value, "Meta value is null.")));
         return this;
     }
 

@@ -52,7 +52,13 @@ public class EnvironmentPropertySourceTest {
     @Test
     public void testGetProperties() throws Exception {
         Map<String, String> props = envPropertySource.getProperties();
-        assertEquals(System.getenv(), props);
+        for(Map.Entry<String,String> en: props.entrySet()){
+            if(en.getKey().startsWith("_")){
+                assertEquals(envPropertySource.getName(), en.getValue());
+            }else{
+                assertEquals(System.getenv(en.getKey()), en.getValue());
+            }
+        }
     }
 
     @Test
