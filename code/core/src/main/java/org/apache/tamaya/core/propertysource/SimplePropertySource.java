@@ -28,11 +28,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * Simple implementation of a {@link org.apache.tamaya.spi.PropertySource} for properties-files.
  */
 public class SimplePropertySource extends BasePropertySource {
+
+    private static final Logger LOG = Logger.getLogger(SimplePropertySource.class.getName());
     /**
      * The property source name.
      */
@@ -65,7 +68,7 @@ public class SimplePropertySource extends BasePropertySource {
     public SimplePropertySource(URL propertiesLocation) {
         super(0);
         this.properties = load(propertiesLocation);
-        this.name = propertiesLocation.toExternalForm();
+        this.name = propertiesLocation.toString();
     }
 
     /**
@@ -118,7 +121,11 @@ public class SimplePropertySource extends BasePropertySource {
             }
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
-                properties.put("_"+key+".source",getName());
+                if(getName()==null){
+                    LOG.warning("No Property Source name found for " + this +", ommitting source meta-entries.");
+                }else {
+                    properties.put("_" + key + ".source", getName());
+                }
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties " + propertiesFile, e);

@@ -24,6 +24,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} provides all Properties which are set
@@ -33,6 +34,8 @@ import java.util.Map;
  * or {@code tamaya.defaults.disable}.
  */
 public class EnvironmentPropertySource implements PropertySource {
+
+    private static final Logger LOG = Logger.getLogger(EnvironmentPropertySource.class.getName());
 
     /**
      * default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
@@ -85,8 +88,8 @@ public class EnvironmentPropertySource implements PropertySource {
             return Collections.emptyMap();
         }
         Map<String, String> entries = new HashMap<>(System.getenv());
-        for(Map.Entry<String, String> entry:System.getenv().entrySet()){
-            entries.put("_"+entry.getKey()+".source", getName());
+        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+            entries.put("_" + entry.getKey() + ".source", getName());
         }
         return entries;
     }
