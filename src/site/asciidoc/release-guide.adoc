@@ -58,7 +58,7 @@ team should be able to perform the release procedure.
     git checkout -b vote-tamaya-[release version]
 
     export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
-    mvn release:prepare -DdryRun=true
+    mvn release:prepare -DdryRun=true -DperformRelease=true
 
     //copy prepared workspace (to continue faster if an upload fails in the next step)
 ----------------------------------------
@@ -71,8 +71,8 @@ team should be able to perform the release procedure.
 [listing,text]
 ----------------------------------------
     export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
-    mvn release:prepare
-    mvn release:perform
+    mvn release:prepare -DperformRelease=true
+    mvn release:perform -DperformRelease=true
 ----------------------------------------
 
 * check the created commits including user-name and email
@@ -87,7 +87,7 @@ team should be able to perform the release procedure.
 git push
 ----------------------------------------
 
-* Add the distributiong artifacts to the dev repositories:
+* Add the distribution artifacts to the dev repositories:
 
 [listing,text]
 ----------------------------------------
@@ -99,11 +99,8 @@ git push
     cp NOTICE $RELEASE_HOME
     cp LICENCE $RELEASE_HOME
     cp readme/ReleaseNotes-[version].html $RELEASE_HOME
-    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.zip $RELEASE_HOME
-    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.tar.gz $RELEASE_HOME
-    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.zip $RELEASE_HOME
-    curl https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.tar.gz $RELEASE_HOME
-    // add corresponding asc, md5, sha1 file as well
+    cp distribution/target/apache-tamaya-[version]-distribution-bin.* $RELEASE_HOME
+    cp distribution/target/apache-tamaya-[version]-distribution-src.* $RELEASE_HOME
     svn add [version]
     svn commit --username <apacheId>
 ----------------------------------------
@@ -168,10 +165,13 @@ git push
     [list]
 ----------------------------------------
 
+* After the vote on the PPMC has been finished and is successful, repeaat the voting process on the
+  incubator mailing list.
+
 
 == Perform the release
 
-If the binding majority approved the vote continue:
+If the binding majority approved the vote on both lists continue:
 
 * Login to https://repository.apache.org/ and _release_ the repository
 * Rename the vote branch:
@@ -215,11 +215,14 @@ If the binding majority approved the vote continue:
 
 === Updating the Tamaya Project Site
 
-Currently Tamaya's Site located at https://svn.apache.org/repos/asf/incubator/tamaya/site/trunk must be updated
-manually. This should change in the future (then a simple mvn site site:deploy) should be sufficient. This
-includes:
+Basically the new site should be directly deployable, just execute
 
-* Updating the entry pages with the new release
-* Updating the news page with the new release
-* Updating all Javadocs published on the site
-* Updating the documentation htmls generated from asciidoc
+[listing,text]
+----------------------------------------
+mvn site site:deploy
+----------------------------------------
+
+
+=== Announce the new version
+
+Announce the new version on @TamayaConf and other social media channels. Also drop a short mail on the amiling list.
