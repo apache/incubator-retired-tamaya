@@ -40,6 +40,8 @@ under the License.
                 <exclude>**/sandbox/**</exclude> <!-- Sandbox modules are not released -->
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.jar</exclude>
+                <exclude>**/pom.xml.releaseBackup</exclude>
+                <exclude>release.properties</exclude>
             </excludes>
 
             <includes>
