@@ -165,6 +165,7 @@ under the License.
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
                             <finalName>apache-tamaya-docs-${project.version}</finalName>
                             <descriptor>src/main/assembly/documentation.xml</descriptor>
                         </configuration>
