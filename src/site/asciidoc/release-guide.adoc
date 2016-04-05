@@ -60,6 +60,8 @@ team should be able to perform the release procedure.
     export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
     mvn release:prepare -DdryRun=true -DperformRelease=true
 
+    // optionally pass GPG params for signing with: -Darguments="-Dgpg.keyname=1336D3E6 -Dgpg.passphrase=Tbye8668"
+
     //copy prepared workspace (to continue faster if an upload fails in the next step)
 ----------------------------------------
 
