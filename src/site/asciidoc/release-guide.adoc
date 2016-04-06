@@ -118,9 +118,23 @@ mvn deploy -DperformRelease=true -Dgpg.keyname=1336D3E6 -Dgpg.passphrase=XXXXXX
 
 [listing,text]
 ----------------------------------------
+git add -A
+git commit -m "Release Prepare: Set release version."
 git tag vote01-[release-version]
 git push --tags
 ----------------------------------------
+
+Finally open the next development version:
+
+[listing,text]
+----------------------------------------
+# example: newVersion=0.3-incubating-SNAPSHOT
+mvn version:set versions:commit -DnewVersion=[development-version]
+git add -A
+git commit -m "Release Prepare: Open new development version."
+----------------------------------------
+
+
 
 * Add the distribution artifacts to the dev repositories:
 
