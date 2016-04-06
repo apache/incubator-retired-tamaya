@@ -53,6 +53,11 @@ team should be able to perform the release procedure.
 * Create release notes and commit them to `tamaya/readme/` (format `ReleaseNotes-[version].html`)
 * Create a release branch in git and switch to this branch:
 
+
+==== Using the release plugin
+
+For performing the release you can use the maven release plugin:
+
 [listing,text]
 ----------------------------------------
     git checkout -b vote-tamaya-[release version]
@@ -60,7 +65,7 @@ team should be able to perform the release procedure.
     export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
     mvn release:prepare -DdryRun=true -DperformRelease=true
 
-    // optionally pass GPG params for signing with: -Darguments="-Dgpg.keyname=1336D3E6 -Dgpg.passphrase=Tbye8668"
+    // optionally pass GPG params for signing with: -Darguments="-Dgpg.keyname=1336D3E6 -Dgpg.passphrase=XXXXXX"
 
     //copy prepared workspace (to continue faster if an upload fails in the next step)
 ----------------------------------------
@@ -77,6 +82,33 @@ team should be able to perform the release procedure.
     mvn release:perform -DperformRelease=true
 ----------------------------------------
 
+==== Preparing the release without the Release Plugin
+
+The release plugin is great, but in some cases it breaks even, when release:prepare -DdryRun=true was successful.
+Preparing the release vote without the release plugin is stright forward:
+
+* As described checkout a release branch of the current head
+* Then us maven and git commands to prepare the release:
+
+[listing,text]
+----------------------------------------
+    git checkout -b vote-tamaya-[release version]
+
+    export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=200m"
+    mvn versions:set versions:commit -DnewVersion=[release version] -DperformRelease=true
+
+    // build the release locally and sign it with your certs
+    mvn clean install -DperformRelease=true -Dgpg.keyname=1336D3E6 -Dgpg.passphrase=XXXXXX
+
+----------------------------------------
+
+* Check if everything is in place and correct, when finished you can tag and deploy the release...
+
+[listing,text]
+----------------------------------------
+mvn deploy -DperformRelease=true -Dgpg.keyname=1336D3E6 -Dgpg.passphrase=XXXXXX
+----------------------------------------
+
 * check the created commits including user-name and email
 * login to https://repository.apache.org/ and go to "Staging Repositories"
 * check the contents of the newly created tamaya staging repository
@@ -86,7 +118,8 @@ team should be able to perform the release procedure.
 
 [listing,text]
 ----------------------------------------
-git push
+git tag vote01-[release-version]
+git push --tags
 ----------------------------------------
 
 * Add the distribution artifacts to the dev repositories:
@@ -100,9 +133,11 @@ git push
     cp DISCLAIMER $RELEASE_HOME
     cp NOTICE $RELEASE_HOME
     cp LICENCE $RELEASE_HOME
-    cp readme/ReleaseNotes-[version].html $RELEASE_HOME
-    cp distribution/target/apache-tamaya-[version]-distribution-bin.* $RELEASE_HOME
-    cp distribution/target/apache-tamaya-[version]-distribution-src.* $RELEASE_HOME
+    cp rat.txt $RELEASE_HOME
+
+    // Copy everything from
+    //  $STAGING_REPO/distribution/0.2-incubating/tamaya-distribution-[version]-distribution-* into $RELEASE_HOME
+
     svn add [version]
     svn commit --username <apacheId>
 ----------------------------------------
@@ -120,14 +155,14 @@ git push
     Hi,
 
     I was running the needed tasks to get the [version] release of Apache Tamaya out.
-    The artifacts are deployed to Nexus [1] (and [2]).
+    The artifacts are deployed to Nexus [1] (and [2]) and releases [4].
 
     The tag is available at [3] and will renamed once the vote passed.
 
     Please take a look at the artifacts and vote!
 
     Please note:
-    This vote is a "majority approval" with a minimum of three +1 votes (see [4]).
+    This vote is a "majority approval" with a minimum of three +1 votes (see [5]).
 
     ------------------------------------------------
     [ ] +1 for community members who have reviewed the bits
@@ -142,7 +177,8 @@ git push
     [2] https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-source-release.zip
         https://repository.apache.org/content/repositories/org/apache/tamaya/tamaya-distribution/[version]/tamaya-[version]-bin-release.zip
     [3] https://git1-us-west.apache.org/repos/asf?p=incubator-tamaya.git;a=commit;h=2910da468fce16210e6dd77d8ba23ddbdd434efe
-    [4] http://www.apache.org/foundation/voting.html#ReleaseVotes
+    [4] https://dist.apache.org/repos/dist/dev/incubator/tamaya/[release-version]
+    [5] http://www.apache.org/foundation/voting.html#ReleaseVotes
 ----------------------------------------
 
 * Announce the Vote
@@ -180,13 +216,13 @@ If the binding majority approved the vote on both lists continue:
 
 [listing,text]
 ----------------------------------------
-    git branch -m vote-tamaya-[version] tamaya-[version]
+    git branch -m vote01-tamaya-[release-version] tamaya-[release-version]
 ----------------------------------------
 
 * Add a release tag:
 
 ----------------------------------------
-    git tag -a tamaya-[version]
+    git tag -a tamaya-[release-version]
 ----------------------------------------
 
 * Merge master with the new prepared version:
@@ -194,8 +230,8 @@ If the binding majority approved the vote on both lists continue:
 [listing,text]
 ----------------------------------------
     git checkout master
-    git merge tamaya-[version]
-    git push origin tamaya-[version]
+    git merge tamaya-[release-version]
+    git push origin tamaya-[release-version]
     git push origin master
 ----------------------------------------
 
