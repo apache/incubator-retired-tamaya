@@ -690,6 +690,7 @@ under the License.
                         <exclude>**/*.json</exclude>
                         <exclude>**/*.adoc</exclude>
                         <exclude>**/*.md</exclude>
+                        <exclude>**/*.md.vm</exclude>
                         <!-- json can't get comments -->
                     </excludes>
                 </configuration>

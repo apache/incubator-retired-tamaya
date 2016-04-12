@@ -1,4 +1,5 @@
-## About Apache Tamaya
+About Apache Tamaya
+-------------------
 
 Tamaya provides a flexible and powerful Configuration Solution 
 for Java developers using Java SE as well as for more complex 
@@ -6,7 +7,8 @@ usage scenarios like Cloud or Java EE. It provides a modern
 type-safe property based Configuration API combined with a 
 powerful environment model and a flexible SPI. 
 
-## Features
+Features
+--------
 
 * Unified Configuration API
 * Pluggable Configuration Backends
@@ -14,7 +16,8 @@ powerful environment model and a flexible SPI.
 * Configuration Validation and Documentation
 * Seemless Enterprise Integration
 
-## Documentation
+Documentation
+-------------
 
 * [Use Cases and Requirements](usecasesAnd Reqs.html)
 * [High Level Design](HighLevelDesign.html)
@@ -24,18 +27,20 @@ powerful environment model and a flexible SPI.
 
 ---
 
-## Quickstart
+Quickstart
+----------
 
 Using Apache Tamaya is simple:
 
-1. Add `org.apache.tamaya:tamaya-core:{tamaya-version}` to your dependencies.
+1. Add `org.apache.tamaya:tamaya-core:${project.version}` to your dependencies.
 2. Add your config to `META-INF/javaconfiguration.properties`
 3. Access your configuration by `ConfigurationProvider.getConfiguration()` and use it.
 4. Look at the [extension modules](extensions.html) to customize your setup!
 5. Enjoy!
 
 
-## Rationale
+Rationale
+---------
 
 Configuration is one of the most prominent cross-cutting concerns similar to logging. Most of us already have been
 writing similar code again and again in each of our projects. Sometimes in a similar way but mostly always slightly

@@ -45,7 +45,7 @@ under the License.
             <item name="Core" href="Core.html"/>
             <item name="Extension Guide" href="extensions.html"/>
             <item name="Design Guide" href="HighLevelDesign.html"/>
-            <item name="${project.version} JavaDoc" target="" href="apidocs/index.html"/>
+            <item name="JavaDoc of ${project.version}" target="" href="apidocs/index.html"/>
         </menu>
 
         <menu name="Development">
