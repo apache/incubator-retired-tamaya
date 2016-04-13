@@ -503,7 +503,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.3.7</version>
+                    <version>3.0.1</version>
                     <inherited>true</inherited>
                     <extensions>true</extensions>
                     <configuration>
@@ -676,10 +676,6 @@ under the License.
                 <artifactId>apache-rat-plugin</artifactId>
                 <version>${rat.version}</version>
                 <configuration>
-                    <includes>
-                        <include>src/**/*</include>
-                        <include>pom.xml</include>
-                    </includes>
                     <excludes>
                         <exclude>**/*banner.txt</exclude>
                         <exclude>banner.txt</exclude>
@@ -687,11 +683,15 @@ under the License.
                         <exclude>derby.log</exclude>
                         <exclude>**/bootstrap-*</exclude>
                         <exclude>**/js/jquery-*</exclude>
-                        <exclude>**/*.json</exclude>
-                        <exclude>**/*.adoc</exclude>
-                        <exclude>**/*.md</exclude>
                         <!-- json can't get comments -->
+                        <exclude>**/*.json</exclude>
+                        <exclude>**/*.md</exclude>
+                        <exclude>**/*.md.vm</exclude>
                     </excludes>
+                    <includes>
+                        <include>src/**/*</include>
+                        <include>pom.xml</include>
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>
