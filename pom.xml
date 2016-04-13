@@ -676,10 +676,6 @@ under the License.
                 <artifactId>apache-rat-plugin</artifactId>
                 <version>${rat.version}</version>
                 <configuration>
-                    <includes>
-                        <include>src/**/*</include>
-                        <include>pom.xml</include>
-                    </includes>
                     <excludes>
                         <exclude>**/*banner.txt</exclude>
                         <exclude>banner.txt</exclude>
@@ -687,12 +683,15 @@ under the License.
                         <exclude>derby.log</exclude>
                         <exclude>**/bootstrap-*</exclude>
                         <exclude>**/js/jquery-*</exclude>
+                        <!-- json can't get comments -->
                         <exclude>**/*.json</exclude>
-                        <exclude>**/*.adoc</exclude>
                         <exclude>**/*.md</exclude>
                         <exclude>**/*.md.vm</exclude>
-                        <!-- json can't get comments -->
                     </excludes>
+                    <includes>
+                        <include>src/**/*</include>
+                        <include>pom.xml</include>
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>
