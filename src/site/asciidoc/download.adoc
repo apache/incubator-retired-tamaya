@@ -24,7 +24,7 @@ include::temp-properties-files-for-site/attributes.adoc[]
 
 The latest release is Apache Tamaya {tamaya_version_current}.
 You can download it it from the
-http://www.apache.org/dist/incubator/[Apache Software Foundation Distribution Directory^].
+http://www.apache.org/dist/incubator/tamaya[Apache Software Foundation Distribution Directory^].
 
 // @todo The release notes are available [here][4].
 // http://www.apache.org/dist/incubator/tamaya/0.1-incubating/ReleaseNotes-0.1-incubating.html
