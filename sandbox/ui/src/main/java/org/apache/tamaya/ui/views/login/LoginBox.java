@@ -2,15 +2,18 @@ package org.apache.tamaya.ui.views.login;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
+import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.ui.internal.ResourceBundleMessageProvider;
 import org.apache.tamaya.ui.UIConstants;
 import org.apache.tamaya.ui.User;
 import org.apache.tamaya.ui.event.EventBus;
-import org.apache.tamaya.ui.services.LoginService;
+import org.apache.tamaya.ui.services.MessageProvider;
+import org.apache.tamaya.ui.services.UserService;
 
 
 public class LoginBox extends VerticalLayout {
 
-    private LoginService loginService = new LoginService() {
+    private UserService userService = new UserService() {
         @Override
         public User login(String userId, String credentials) {
             if("admin".equals(userId)){
@@ -42,8 +45,9 @@ public class LoginBox extends VerticalLayout {
 
     private void addForm() {
         FormLayout loginForm = new FormLayout();
-        username = new TextField("Username");
-        password = new PasswordField("Password");
+        MessageProvider mp = ServiceContextManager.getServiceContext().getService(MessageProvider.class);
+        username = new TextField(mp.getMessage("default.label.username"));
+        password = new PasswordField(mp.getMessage("default.label.password"));
         loginForm.addComponents(username, password);
         addComponent(loginForm);
         loginForm.setSpacing(true);
@@ -77,7 +81,7 @@ public class LoginBox extends VerticalLayout {
     }
 
     private void login() {
-        User user = loginService.login(username.getValue(), password.getValue());
+        User user = userService.login(username.getValue(), password.getValue());
         if(user!=null){
             EventBus.post(new LoginEvent(user));
         }else{

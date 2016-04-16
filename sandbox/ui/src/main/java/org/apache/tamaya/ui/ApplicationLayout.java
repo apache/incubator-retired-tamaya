@@ -1,15 +1,32 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.tamaya.ui;
 
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.components.LazyProvider;
 import org.apache.tamaya.ui.components.PageTitleUpdater;
-import org.apache.tamaya.ui.views.ComponentView;
-import org.apache.tamaya.ui.views.ConfigView;
+import org.apache.tamaya.ui.internal.ResourceBundleMessageProvider;
 import org.apache.tamaya.ui.views.ErrorView;
-import org.apache.tamaya.ui.views.HomeView;
+
 
 public class ApplicationLayout extends HorizontalLayout {
 
@@ -50,32 +67,31 @@ public class ApplicationLayout extends HorizontalLayout {
     }
 
     private void registerViews() {
-        addView(HomeView.class);
-        addView(ConfigView.class);
-        addView(ComponentView.class);
+        for(ViewProvider provider: ServiceContextManager.getServiceContext().getServices(ViewProvider.class)) {
+            addView(provider);
+        }
         navigator.setErrorView(ErrorView.class);
     }
 
     /**
      * Registers av given view to the navigator and adds it to the NavBar
      */
-    private void addView(Class<? extends View> viewClass) {
-        ViewConfig viewConfig = viewClass.getAnnotation(ViewConfig.class);
+    private void addView(ViewProvider provider) {
 
-        switch (viewConfig.createMode()) {
+        switch (provider.getLifecycle()) {
             case CREATE:
-                navigator.addView(viewConfig.uri(), viewClass);
+                navigator.addView(provider.getUrlPattern(), provider.createView());
                 break;
             case LAZY:
-                navigator.addProvider(new LazyProvider(viewConfig.uri(), viewClass));
+                navigator.addProvider(new LazyProvider(provider.getUrlPattern(), provider));
                 break;
             case EAGER:
                 try {
-                    navigator.addView(viewConfig.uri(), viewClass.newInstance());
+                    navigator.addView(provider.getUrlPattern(), provider.createView());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
         }
-        navBar.addView(viewConfig.uri(), viewConfig.displayName());
+        navBar.addView(provider.getUrlPattern(), provider.getDisplayName());
     }
 }

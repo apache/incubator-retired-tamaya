@@ -109,7 +109,7 @@ public class MapPropertySource extends BasePropertySource {
      * @param props the properties, not null.
      * @return the corresponding Map instance.
      */
-    private static Map<String, String> getMap(Properties props) {
+    public static Map<String, String> getMap(Properties props) {
         Map<String, String> result = new HashMap<>();
         for (Map.Entry en : props.entrySet()) {
             result.put(en.getKey().toString(), en.getValue().toString());

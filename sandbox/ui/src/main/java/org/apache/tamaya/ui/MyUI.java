@@ -50,9 +50,7 @@ import org.apache.tamaya.ui.views.login.LoginView;
 @Title("Tamaya")
 public class MyUI extends UI {
 
-    private Header header = new Header();
     private Content content = new Content();
-    private Navigator navigator;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {

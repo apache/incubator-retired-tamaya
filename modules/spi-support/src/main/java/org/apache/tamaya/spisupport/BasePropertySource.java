@@ -48,6 +48,11 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     @Override
+    public String getName() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
     public int getOrdinal() {
         PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){

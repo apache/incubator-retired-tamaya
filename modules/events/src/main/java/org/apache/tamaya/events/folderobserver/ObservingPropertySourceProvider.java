@@ -40,12 +40,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigurationContextChange;
 import org.apache.tamaya.events.ConfigurationContextChangeBuilder;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spisupport.BasePropertySource;
 
 /**
  * This implementation runs in a folder taking up all files compatible with the given
@@ -118,6 +118,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     protected Collection<PropertySource> getPropertySources(final Path file) {
         return Arrays.asList(new PropertySource[]{new BasePropertySource() {
             private final Map<String,String> props = readProperties(file);
+
             @Override
             public Map<String, String> getProperties() {
                 return props;
