@@ -538,7 +538,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.5.1</version>
                     <inherited>true</inherited>
                     <dependencies>
                         <dependency><!-- add support for ssh/scp -->
