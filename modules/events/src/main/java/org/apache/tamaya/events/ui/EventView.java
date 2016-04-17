@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.events.ui;
 
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -33,6 +34,7 @@ import org.apache.tamaya.ui.components.VerticalSpacedLayout;
 import org.apache.tamaya.ui.services.MessageProvider;
 
 import javax.annotation.Priority;
+import java.util.Date;
 
 
 public class EventView extends VerticalSpacedLayout implements View {
@@ -65,6 +67,8 @@ public class EventView extends VerticalSpacedLayout implements View {
             .getService(MessageProvider.class).getMessage("view.events.button.enableMonitoring"));
     private Button clearViewButton = new Button(ServiceContextManager.getServiceContext()
             .getService(MessageProvider.class).getMessage("view.events.button.clearView"));
+    private TextField pollingInterval = new TextField(ServiceContextManager.getServiceContext()
+            .getService(MessageProvider.class).getMessage("view.events.field.pollingInterval"));
     private Table eventsTable = new Table(ServiceContextManager.getServiceContext()
             .getService(MessageProvider.class).getMessage("view.events.table.name"));
 
@@ -86,35 +90,62 @@ public class EventView extends VerticalSpacedLayout implements View {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 ConfigEventManager.enableChangeMonitoring(changeMonitorEnabled.getValue());
+                if(changeMonitorEnabled.getValue()) {
+                    Notification.show("Event Monitoring (Polling) active.");
+                }else{
+                    Notification.show("Event Monitoring (Polling) inactive.");
+                }
             }
         });
         clearViewButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 eventsTable.removeAllItems();
+                Notification.show("Events cleared.");
             }
         });
 
-        changeMonitorEnabled.setData(ConfigEventManager.isChangeMonitoring());
-        eventsTable.addContainerProperty("Timestamp", Long.class, null);
-        eventsTable.addContainerProperty("Type", Class.class, null);
-        eventsTable.addContainerProperty("Payload", String.class, null);
-        eventsTable.addContainerProperty("Version",  String.class, null);
+        HorizontalLayout eventSettings = new HorizontalLayout();
+        eventSettings.addComponents(changeMonitorEnabled, new Label(" Polling Interval"), pollingInterval, clearViewButton);
+        changeMonitorEnabled.setValue(ConfigEventManager.isChangeMonitoring());
+        pollingInterval.setValue(String.valueOf(ConfigEventManager.getChangeMonitoringPeriod()));
+        pollingInterval.setRequired(true);
+        pollingInterval.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                try{
+                    long millis = Long.parseLong((String)valueChangeEvent.getProperty().getValue());
+                    ConfigEventManager.setChangeMonitoringPeriod(millis);
+                    Notification.show("Updated Event Monitoring Poll Interval to " + millis + " milliseconds.");
+                }catch(Exception e){
+                    Notification.show("Cannot update Event Monitoring Poll Interval to "
+                            + valueChangeEvent.getProperty().getValue(), Notification.Type.ERROR_MESSAGE);
+                }
+            }
+        });
+        eventsTable.addContainerProperty("Timestamp", Date.class, null);
+        eventsTable.addContainerProperty("Type", String.class, "?");
+        eventsTable.addContainerProperty("Payload", String.class, "<empty>");
+        eventsTable.addContainerProperty("Version",  String.class, "?");
         eventsTable.setPageLength(20);
         eventsTable.setWidth("100%");
         eventsTable.setResponsive(true);
 
-        HorizontalLayout hl = new HorizontalLayout();
-        hl.addComponents(changeMonitorEnabled, clearViewButton);
+
         caption.addStyleName(UIConstants.LABEL_HUGE);
         description.addStyleName(UIConstants.LABEL_LARGE);
-        addComponents(caption, description, hl, eventsTable);
+        addComponents(caption, description, eventSettings, eventsTable);
     }
 
     private void addEvent(ConfigEvent<?> evt){
-        eventsTable.addItem(new Object[]{evt.getTimestamp(), evt.getResourceType().getSimpleName(),
-                String.valueOf(evt.getResource()),evt.getVersion()});
-        this.markAsDirty();
+        Object newItemId = eventsTable.addItem();
+        Item row = eventsTable.getItem(newItemId);
+        row.getItemProperty("Timestamp").setValue(new Date(evt.getTimestamp()));
+        row.getItemProperty("Type").setValue(evt.getResourceType().getSimpleName());
+        String value = String.valueOf(evt.getResource());
+        String valueShort = value.length()<150?value:value.substring(0,147)+"...";
+        row.getItemProperty("Payload").setValue(valueShort);
+        row.getItemProperty("Version").setValue(evt.getVersion());
     }
 
 

@@ -36,7 +36,7 @@ public class DefaultConfigChangeObserver {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigChangeObserver.class.getName());
 
-    private final Timer timer = new Timer("DefaultConfigChangeObserver", true);
+    private Timer timer = new Timer("DefaultConfigChangeObserver", true);
 
     private long checkPeriod = 2000L;
 
@@ -52,9 +52,9 @@ public class DefaultConfigChangeObserver {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if(running) {
-                    checkConfigurationUpdate();
-                }
+            if(running) {
+                checkConfigurationUpdate();
+            }
             }
         }, START_DELAY, checkPeriod);
     }
@@ -98,6 +98,7 @@ public class DefaultConfigChangeObserver {
         LOG.finest("Resetting check period to " + checkPeriod + " ms, reregistering timer.");
         this.checkPeriod = checkPeriod;
         timer.cancel();
+        timer = new Timer("DefaultConfigChangeObserver", true);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {

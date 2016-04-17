@@ -168,7 +168,7 @@ public final class ConfigEventManager {
      *
      * @return the check period in ms.
      */
-    public long getChangeMonitoringPeriod(){
+    public static long getChangeMonitoringPeriod(){
         return SPI.getChangeMonitoringPeriod();
     }
 
@@ -179,7 +179,7 @@ public final class ConfigEventManager {
      * @see #enableChangeMonitoring(boolean)
      * @see #isChangeMonitoring()
      */
-    public void setChangeMonitoringPeriod(long millis){
+    public static void setChangeMonitoringPeriod(long millis){
         SPI.setChangeMonitoringPeriod(millis);
     }
 
