@@ -51,14 +51,10 @@ import org.apache.tamaya.functions.ConfigurationFunctions;
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 public class ConfigurationResource {
-    private final String scope;
     private final AtomicLong readCounter = new AtomicLong();
     private final AtomicLong writeCounter = new AtomicLong();
     private final AtomicLong deleteCounter = new AtomicLong();
 
-    public ConfigurationResource(String scope) {
-        this.scope = scope;
-    }
 
     @GET
     @Path("/version")

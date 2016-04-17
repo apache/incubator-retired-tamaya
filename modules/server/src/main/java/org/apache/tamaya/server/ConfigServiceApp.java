@@ -18,39 +18,57 @@
  */
 package org.apache.tamaya.server;
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+
+import com.sun.jersey.api.core.ResourceConfig;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
+import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+
+import javax.servlet.Servlet;
+import javax.ws.rs.core.Application;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Main Application for the Tamaya Configuration Server.
  */
-public class ConfigServiceApp extends Application<ConfigServiceConfiguration> {
+public class ConfigServiceApp {
 
-    public static void main(String... args) throws Exception {
-        new ConfigServiceApp().run(args);
+    public class ResourceLoader extends Application{
+
+        @Override
+        public Set<Class<?>> getClasses() {
+            final Set<Class<?>> classes = new HashSet<Class<?>>();
+
+            // register root resource
+            classes.add(ConfigurationResource.class);
+            return classes;
+        }
     }
 
-    @Override
-    public String getName() {
-        return "Tamaya Config-Server";
-    }
+    public static void main(String[] args) throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        String contextPath = config.getOrDefault("tamaya.server.contextPath", "/tamaya");
+        String appBase = ".";
+        Tomcat tomcat = new Tomcat();
+        tomcat.setPort(Integer.valueOf(config.getOrDefault("tamaya.server.port", Integer.class, 8085) ));
 
-    @Override
-    public void initialize(Bootstrap<ConfigServiceConfiguration> bootstrap) {
-        // nothing to do yet
-    }
-
-    @Override
-    public void run(ConfigServiceConfiguration configuration,
-                    Environment environment) {
-        final ConfigurationResource resource = new ConfigurationResource(
-                configuration.getScope()
-        );
-    //    final TemplateHealthCheck healthCheck =
-    //            new TemplateHealthCheck(configuration.getTemplate());
-    //    environment.healthChecks().register("template", healthCheck);
-        environment.jersey().register(resource);
+        // Define a web application context.
+        Context context = tomcat.addWebapp(contextPath, new File(
+                appBase).getAbsolutePath());
+//        tomcat.getHost().setAppBase(appBase);
+        // Add servlet that will register Jersey REST resources
+        Wrapper wrapper = tomcat.addServlet(context, "jersey-container-servlet",
+                ServletContainer.class.getName());
+        wrapper.addInitParameter("com.sun.jersey.config.property.packages",
+                ConfigurationResource.class.getPackage().getName());
+        context.addServletMapping("/*", "jersey-container-servlet");
+        tomcat.start();
+        tomcat.getServer().await();
     }
 
 
