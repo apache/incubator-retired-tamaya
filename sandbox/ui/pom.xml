@@ -39,6 +39,9 @@ under the License.
         <mainClass>org.apache.tamaya.ui.VaadinApplication</mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <servlet.api.version>3.0.1</servlet.api.version>
+        <tomcat.version>7.0.57</tomcat.version>
+        <jersey.version>1.19.1</jersey.version>
+        <guava.version>18.0</guava.version>
     </properties>
 
 
@@ -89,35 +92,45 @@ under the License.
             <artifactId>vaadin-client-compiled</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-core</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-assets</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-testing</artifactId>
-        </dependency>
-        <!--
-          Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
-
-          For widgetset compilation, vaadin-client-compiler is automatically added on the
-          compilation classpath by vaadin-maven-plugin so normally there is no need for an
-          explicit dependency.
-        -->
-        <!--
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-client-compiler</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-themes</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-logging-juli</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>javax.ws.rs</groupId>-->
+            <!--<artifactId>jsr311-api</artifactId>-->
+            <!--<version>1.1.1</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.sun.jersey</groupId>-->
+            <!--<artifactId>jersey-server</artifactId>-->
+            <!--<version>${jersey.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.sun.jersey</groupId>-->
+            <!--<artifactId>jersey-servlet</artifactId>-->
+            <!--<version>${jersey.version}</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

@@ -18,24 +18,15 @@
  */
 package org.apache.tamaya.ui;
 
-import javax.servlet.annotation.WebServlet;
-
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
-import org.apache.tamaya.ui.components.LazyProvider;
-import org.apache.tamaya.ui.components.PageTitleUpdater;
 import org.apache.tamaya.ui.event.LogoutEvent;
 import org.apache.tamaya.ui.event.NavigationEvent;
-import org.apache.tamaya.ui.views.ErrorView;
 import org.apache.tamaya.ui.views.login.LoginEvent;
 import org.apache.tamaya.ui.views.login.LoginView;
 
@@ -48,7 +39,7 @@ import org.apache.tamaya.ui.views.login.LoginView;
  */
 @Theme("valo")
 @Title("Tamaya")
-public class MyUI extends UI {
+public class VadiinApp extends UI {
 
     private Content content = new Content();
 
@@ -75,8 +66,8 @@ public class MyUI extends UI {
         getNavigator().navigateTo(view.getViewName());
     }
 
-    public static MyUI getCurrent() {
-        return (MyUI) UI.getCurrent();
+    public static VadiinApp getCurrent() {
+        return (VadiinApp) UI.getCurrent();
     }
 
     @Subscribe
@@ -92,9 +83,4 @@ public class MyUI extends UI {
         org.apache.tamaya.ui.event.EventBus.register(this);
     }
 
-
-    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
-    public static class MyUIServlet extends VaadinServlet {
-    }
 }

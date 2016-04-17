@@ -21,12 +21,8 @@ package org.apache.tamaya.ui.views;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Tree;
+import com.vaadin.ui.*;
+import javafx.scene.control.TabPane;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.UIConstants;
@@ -35,7 +31,9 @@ import org.apache.tamaya.ui.components.VerticalSpacedLayout;
 import org.apache.tamaya.ui.services.MessageProvider;
 
 import javax.annotation.Priority;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 public class ConfigView extends VerticalSpacedLayout implements View {
@@ -75,6 +73,10 @@ public class ConfigView extends VerticalSpacedLayout implements View {
                 "This view shows the overall <b>raw</b> configuration tree. Dependening on your access rights you" +
                         "may see partial or masked data. Similarly configuration can be <i>read-only</i> or <i>mutable</i>.",
                 ContentMode.HTML);
+
+        TabSheet tabPane = new TabSheet();
+        VerticalLayout configLayout = new VerticalLayout();
+
         HorizontalLayout filters = new HorizontalLayout();
 
         Button filterButton = new Button("Filter", new Button.ClickListener() {
@@ -87,8 +89,43 @@ public class ConfigView extends VerticalSpacedLayout implements View {
         filters.addComponents(keyFilter, valueFilter, filterButton);
 
         fillTree();
-
-        addComponents(caption, description, filters, tree);
+        configLayout.addComponents(filters, tree);
+        tabPane.addTab(configLayout, "Configuration");
+        TextArea envProps = new TextArea();
+        StringBuilder b = new StringBuilder();
+        envProps.setHeight("100%");
+        envProps.setWidth("100%");
+        envProps.setSizeFull();
+        envProps.setRows(System.getenv().size());
+        for(Map.Entry<String,String> en:new TreeMap<>(System.getenv()).entrySet()){
+            b.append(en.getKey()).append("=").append(en.getValue()).append('\n');
+        }
+        envProps.setValue(b.toString());
+        envProps.setReadOnly(true);
+        tabPane.addTab(envProps, "Environment Properties");
+        TextArea sysProps = new TextArea();
+        sysProps.setSizeFull();
+        sysProps.setRows(System.getProperties().size());
+        b.setLength(0);
+        for(Map.Entry<Object,Object> en:new TreeMap<>(System.getProperties()).entrySet()){
+            b.append(en.getKey()).append("=").append(en.getValue()).append('\n');
+        }
+        sysProps.setValue(b.toString());
+        sysProps.setReadOnly(true);
+        tabPane.addTab(sysProps, "System Properties");
+        TextArea runtimeProps = new TextArea();
+        runtimeProps.setRows(5);
+        b.setLength(0);
+        b.append("Available Processors : ").append(Runtime.getRuntime().availableProcessors()).append('\n');
+        b.append("Free Memory          : ").append(Runtime.getRuntime().freeMemory()).append('\n');
+        b.append("Max Memory           : ").append(Runtime.getRuntime().maxMemory()).append('\n');
+        b.append("Total Memory         : ").append(Runtime.getRuntime().totalMemory()).append('\n');
+        b.append("Default Locale       : ").append(Locale.getDefault()).append('\n');
+        runtimeProps.setValue(b.toString());
+        runtimeProps.setReadOnly(true);
+        tabPane.addTab(runtimeProps, "Runtime Properties");
+        runtimeProps.setSizeFull();
+        addComponents(caption, description, tabPane);
 
         caption.addStyleName(UIConstants.LABEL_HUGE);
         description.addStyleName(UIConstants.LABEL_LARGE);

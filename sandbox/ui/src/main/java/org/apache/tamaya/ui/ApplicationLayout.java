@@ -54,7 +54,7 @@ public class ApplicationLayout extends HorizontalLayout {
     }
 
     private void setupNavigator() {
-        navigator = new Navigator(MyUI.getCurrent(), content);
+        navigator = new Navigator(VadiinApp.getCurrent(), content);
 
         registerViews();
 
