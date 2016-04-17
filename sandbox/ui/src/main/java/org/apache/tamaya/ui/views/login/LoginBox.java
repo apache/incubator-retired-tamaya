@@ -3,7 +3,6 @@ package org.apache.tamaya.ui.views.login;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import org.apache.tamaya.spi.ServiceContextManager;
-import org.apache.tamaya.ui.internal.ResourceBundleMessageProvider;
 import org.apache.tamaya.ui.UIConstants;
 import org.apache.tamaya.ui.User;
 import org.apache.tamaya.ui.event.EventBus;

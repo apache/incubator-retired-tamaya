@@ -24,7 +24,6 @@ import com.vaadin.ui.Panel;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.components.LazyProvider;
 import org.apache.tamaya.ui.components.PageTitleUpdater;
-import org.apache.tamaya.ui.internal.ResourceBundleMessageProvider;
 import org.apache.tamaya.ui.views.ErrorView;
 
 

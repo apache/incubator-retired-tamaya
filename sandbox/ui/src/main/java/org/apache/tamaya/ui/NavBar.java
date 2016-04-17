@@ -28,7 +28,6 @@ import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.event.EventBus;
 import org.apache.tamaya.ui.event.LogoutEvent;
 import org.apache.tamaya.ui.event.NavigationEvent;
-import org.apache.tamaya.ui.internal.ResourceBundleMessageProvider;
 import org.apache.tamaya.ui.services.MessageProvider;
 
 import java.util.HashMap;

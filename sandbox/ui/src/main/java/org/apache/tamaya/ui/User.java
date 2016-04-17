@@ -19,7 +19,6 @@
 package org.apache.tamaya.ui;
 
 import org.apache.tamaya.spi.ServiceContextManager;
-import org.apache.tamaya.ui.internal.ResourceBundleMessageProvider;
 import org.apache.tamaya.ui.services.MessageProvider;
 
 import java.util.Date;

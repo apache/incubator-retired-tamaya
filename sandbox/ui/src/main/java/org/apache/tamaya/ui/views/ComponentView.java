@@ -27,7 +27,6 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
-import org.apache.tamaya.ui.internal.ResourceBundleMessageProvider;
 import org.apache.tamaya.ui.UIConstants;
 import org.apache.tamaya.ui.ViewProvider;
 import org.apache.tamaya.ui.components.VerticalSpacedLayout;
