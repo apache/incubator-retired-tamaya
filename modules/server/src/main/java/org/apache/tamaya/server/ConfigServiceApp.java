@@ -60,7 +60,6 @@ public class ConfigServiceApp {
         // Define a web application context.
         Context context = tomcat.addWebapp(contextPath, new File(
                 appBase).getAbsolutePath());
-//        tomcat.getHost().setAppBase(appBase);
         // Add servlet that will register Jersey REST resources
         Wrapper wrapper = tomcat.addServlet(context, "jersey-container-servlet",
                 ServletContainer.class.getName());
