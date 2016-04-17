@@ -52,7 +52,7 @@ public class ConfigServiceApp {
 
     public static void main(String[] args) throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        String contextPath = config.getOrDefault("tamaya.server.contextPath", "/tamaya");
+        String contextPath = config.getOrDefault("tamaya.server.contextPath", "/");
         String appBase = ".";
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.valueOf(config.getOrDefault("tamaya.server.port", Integer.class, 8085) ));
