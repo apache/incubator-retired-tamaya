@@ -687,6 +687,7 @@ under the License.
                         <exclude>**/*.json</exclude>
                         <exclude>**/*.md</exclude>
                         <exclude>**/*.md.vm</exclude>
+                        <exclude>src/site/asciidoc/temp-properties-files-for-site/attributes.adoc</exclude>
                     </excludes>
                     <includes>
                         <include>src/**/*</include>
