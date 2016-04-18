@@ -16,12 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.osgi;
+package org.apache.tamaya.integration.osgi.test;
+
+import org.apache.tamaya.inject.api.Config;
 
 /**
- * Simple service that says hello.
+ * Simple service to test injection in OSGI.
  */
-public interface HelloService {
+public class HelloService {
 
-    String sayHello();
+    @Config(value = "example.message", defaultValue = "A Tamaya default.")
+    private String message;
+
+    public String sayHello() {
+        System.err.println("HELLO: " + message);
+        return message;
+    }
 }

@@ -21,7 +21,6 @@ package org.apache.tamaya.events;
 /**
  * Interface to be implemented for listening on changes on {@link org.apache.tamaya.Configuration} instances.
  */
-//@FunctionalInterface
 public interface ConfigEventListener {
     /**
      * Called if an event occurred.
