@@ -45,9 +45,15 @@ public class ConfigurationChangeTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
         assertNotNull(change);
-        assertTrue(change.isEmpty());
+        assertTrue(change.getUpdatedSize()==0);
+        assertTrue(change.getAddedSize()==0);
+        assertTrue(change.getRemovedSize()==0);
+        assertTrue(change.getChanges().size()==0);
         for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
             if (!"[meta]frozenAt".equals(en.getKey())) {
+                if(en.getKey().contains("random.new")){ // dynamic generated value!
+                    continue;
+                }
                 assertEquals("Error for " + en.getKey(), en.getValue(), change.getResource().get(en.getKey()));
             }
         }

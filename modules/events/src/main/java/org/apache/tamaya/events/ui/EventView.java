@@ -23,7 +23,13 @@ import com.vaadin.data.Property;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.ConfigEventManager;
@@ -36,9 +42,14 @@ import org.apache.tamaya.ui.services.MessageProvider;
 import javax.annotation.Priority;
 import java.util.Date;
 
-
+/**
+ * Tamaya View for observing the current event stream.
+ */
 public class EventView extends VerticalSpacedLayout implements View {
 
+    /**
+     * Provider used to register the view.
+     */
     @Priority(20)
     public static final class Provider implements ViewProvider{
 
