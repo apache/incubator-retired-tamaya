@@ -31,9 +31,14 @@ import org.apache.tamaya.ui.services.MessageProvider;
 
 import javax.annotation.Priority;
 
-
+/**
+ * Home view containing a title and a description, used as default entry point of the UI after login.
+ */
 public class HomeView extends VerticalSpacedLayout implements View {
 
+    /**
+     * Provider to bew registered providing this view to the UI module.
+     */
     @Priority(0)
     public static final class Provider implements ViewProvider{
 
@@ -59,6 +64,9 @@ public class HomeView extends VerticalSpacedLayout implements View {
         }
     }
 
+    /**
+     * Constructor.
+     */
     public HomeView() {
         Label caption = new Label("Welcome, " + CurrentUser.get().getUserID());
         Label description = new Label(
@@ -75,6 +83,6 @@ public class HomeView extends VerticalSpacedLayout implements View {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-
+        // nothing to do
     }
 }

@@ -19,14 +19,35 @@
 package org.apache.tamaya.ui.event;
 
 
+import java.util.Objects;
+
+/**
+ * Event sent when the user wants to navigate.
+ */
 public class NavigationEvent {
+    /** The target view. */
     private String viewName;
 
+    /**
+     * Constructor.
+     * @param viewName the target view, not null.
+     */
     public NavigationEvent(String viewName) {
-        this.viewName = viewName;
+        this.viewName = Objects.requireNonNull(viewName);
     }
 
+    /**
+     * Access the target view name.
+     * @return the target view name, never null.
+     */
     public String getViewName() {
         return viewName;
+    }
+
+    @Override
+    public String toString() {
+        return "NavigationEvent{" +
+                "viewName='" + viewName + '\'' +
+                '}';
     }
 }

@@ -21,8 +21,15 @@ package org.apache.tamaya.ui.views;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
-import javafx.scene.control.TabPane;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.Tree;
+import com.vaadin.ui.VerticalLayout;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.UIConstants;
@@ -35,9 +42,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-
+/**
+ * View for evaluating the current convifugration tree.
+ */
 public class ConfigView extends VerticalSpacedLayout implements View {
 
+    /**
+     * Provider to register this view.
+     */
     @Priority(10)
     public static final class Provider implements ViewProvider{
 

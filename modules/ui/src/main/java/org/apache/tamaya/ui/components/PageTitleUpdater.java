@@ -24,7 +24,9 @@ import com.vaadin.server.Page;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.services.MessageProvider;
 
-
+/**
+ * Listener that updates the page title when a new view is shown.
+ */
 public class PageTitleUpdater implements ViewChangeListener {
 
     @Override

@@ -26,7 +26,9 @@ import org.apache.tamaya.ui.components.LazyProvider;
 import org.apache.tamaya.ui.components.PageTitleUpdater;
 import org.apache.tamaya.ui.views.ErrorView;
 
-
+/**
+ * UI main layout.
+ */
 public class ApplicationLayout extends HorizontalLayout {
 
     private NavBar navBar;
@@ -35,9 +37,7 @@ public class ApplicationLayout extends HorizontalLayout {
 
     public ApplicationLayout() {
         addStyleName(UIConstants.MAIN_LAYOUT);
-
         setSizeFull();
-
         initLayouts();
         setupNavigator();
     }
@@ -81,15 +81,17 @@ public class ApplicationLayout extends HorizontalLayout {
             case CREATE:
                 navigator.addView(provider.getUrlPattern(), provider.createView());
                 break;
-            case LAZY:
-                navigator.addProvider(new LazyProvider(provider.getUrlPattern(), provider));
-                break;
             case EAGER:
                 try {
                     navigator.addView(provider.getUrlPattern(), provider.createView());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
+            case LAZY:
+            default:
+                navigator.addProvider(new LazyProvider(provider.getUrlPattern(), provider));
+                break;
         }
         navBar.addView(provider.getUrlPattern(), provider.getDisplayName());
     }

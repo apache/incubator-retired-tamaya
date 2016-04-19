@@ -39,7 +39,6 @@ under the License.
         <module>metamodels</module>
         <module>jodatime</module>
         <module>sysprops</module>
-        <module>ui</module>
         <module>remote</module>
     </modules>
 

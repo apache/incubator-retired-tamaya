@@ -18,5 +18,31 @@
  */
 package org.apache.tamaya.ui.event;
 
+import org.apache.tamaya.ui.User;
+
+import java.util.Objects;
+
+/**
+ * Event sent when the user has been logged out.
+ */
 public class LogoutEvent {
+
+    /** The user logged out. */
+    private User user;
+
+    /**
+     * Creates a new event.
+     * @param user the user logged out, not null.
+     */
+    public LogoutEvent(User user) {
+        this.user = Objects.requireNonNull(user);
+    }
+
+    /**
+     * Get the user logged out.
+     * @return the user logged out, not null.
+     */
+    public User getUser(){
+        return user;
+    }
 }

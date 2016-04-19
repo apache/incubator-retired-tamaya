@@ -23,19 +23,36 @@ import com.vaadin.server.VaadinSession;
 /**
  * Convenience wrapper for storing and retreiving a user from the VaadinSession
  */
-public class CurrentUser {
+public final class CurrentUser {
+    /** The key used. */
+    private static final String KEY = "currentUser";
 
-    private static final String KEY = "currentser";
+    /**
+     * Singleton constructor.
+     */
+    private CurrentUser(){}
 
+    /**
+     * Set the current users.
+     * @param user the current user, not null.
+     */
     public static void set(User user) {
         VaadinSession.getCurrent().setAttribute(KEY, user);
     }
 
+    /**
+     * Get the current user.
+     * @return the current user, or null.
+     */
     public static User get() {
         return (User) VaadinSession.getCurrent().getAttribute(KEY);
     }
 
+    /**
+     * Checks if the current user is present and logged in.
+     * @return
+     */
     public static boolean isLoggedIn() {
-        return get() != null;
+        return get() != null && get().isLoggedin();
     }
 }

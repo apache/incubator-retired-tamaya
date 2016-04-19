@@ -25,6 +25,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.tamaya.ui.UIConstants;
 
+/**
+ * View used for shoiwing unexpected errors.
+ */
 public class ErrorView extends VerticalLayout implements View {
 
     @Override

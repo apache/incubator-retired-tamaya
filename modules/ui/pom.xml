@@ -28,7 +28,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
 
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>tamaya-ui</artifactId>
     <name>Apache Tamaya Modules - UI</name>
@@ -64,6 +64,11 @@ under the License.
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
@@ -74,11 +79,6 @@ under the License.
             <artifactId>tamaya-spisupport</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>javax.servlet-api</artifactId>-->
-            <!--<version>${servlet.api.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-server</artifactId>
@@ -115,22 +115,6 @@ under the License.
             <artifactId>tomcat-embed-logging-juli</artifactId>
             <version>${tomcat.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>javax.ws.rs</groupId>-->
-            <!--<artifactId>jsr311-api</artifactId>-->
-            <!--<version>1.1.1</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.sun.jersey</groupId>-->
-            <!--<artifactId>jersey-server</artifactId>-->
-            <!--<version>${jersey.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.sun.jersey</groupId>-->
-            <!--<artifactId>jersey-servlet</artifactId>-->
-            <!--<version>${jersey.version}</version>-->
-        <!--</dependency>-->
     </dependencies>
 
     <build>

@@ -55,6 +55,7 @@ under the License.
         <module>server</module>
         <module>spi-support</module>
         <module>yaml</module>
+        <module>ui</module>
     </modules>
 
     <build>

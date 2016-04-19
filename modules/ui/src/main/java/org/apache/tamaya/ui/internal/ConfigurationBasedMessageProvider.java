@@ -19,15 +19,17 @@
 package org.apache.tamaya.ui.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spisupport.BasePropertySource;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.apache.tamaya.ui.services.MessageProvider;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

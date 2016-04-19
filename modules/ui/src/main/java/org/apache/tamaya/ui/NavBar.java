@@ -33,6 +33,9 @@ import org.apache.tamaya.ui.services.MessageProvider;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Left side navigation bar.
+ */
 public class NavBar extends CssLayout implements ViewChangeListener {
 
     private Map<String, Button> buttonMap = new HashMap<>();
@@ -45,7 +48,6 @@ public class NavBar extends CssLayout implements ViewChangeListener {
         Label logo = new Label("<strong>"+ messages.getMessage("project.name")+"</strong>", ContentMode.HTML);
         logo.addStyleName(UIConstants.MENU_TITLE);
         addComponent(logo);
-
         addLogoutButton();
     }
 
@@ -54,7 +56,12 @@ public class NavBar extends CssLayout implements ViewChangeListener {
         Button logout = new Button(messages.getMessage("default.label.logout"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                EventBus.post(new LogoutEvent());
+                User user = CurrentUser.get();
+                if(user!=null){
+                    user.logout();
+                    EventBus.post(new LogoutEvent(user));
+                }
+                CurrentUser.set(null);
             }
         });
         addComponent(logout);
@@ -89,6 +96,8 @@ public class NavBar extends CssLayout implements ViewChangeListener {
             button.removeStyleName(UIConstants.SELECTED);
         }
         Button button = buttonMap.get(event.getViewName());
-        if (button != null) button.addStyleName(UIConstants.SELECTED);
+        if (button != null) {
+            button.addStyleName(UIConstants.SELECTED);
+        }
     }
 }

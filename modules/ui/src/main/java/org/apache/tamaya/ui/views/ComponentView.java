@@ -26,7 +26,11 @@ import com.vaadin.ui.Tree;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.UIConstants;
 import org.apache.tamaya.ui.ViewProvider;
 import org.apache.tamaya.ui.components.VerticalSpacedLayout;
@@ -36,10 +40,15 @@ import javax.annotation.Priority;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * View showing the current loaded system components.
+ */
 public class ComponentView extends VerticalSpacedLayout implements View {
 
 
+    /**
+     * Provider to register this view.
+     */
     @Priority(20)
     public static final class Provider implements ViewProvider{
 
@@ -99,12 +108,15 @@ public class ComponentView extends VerticalSpacedLayout implements View {
         configTree.setChildrenAllowed("Configuration.class", false);
 
         configTree.addItem("ConfigurationContext.class");
-        configTree.setItemCaption("ConfigurationContext.class", "ConfigurationContext class = " + config.getContext().getClass().getName());
+        configTree.setItemCaption("ConfigurationContext.class", "ConfigurationContext class = " +
+                config.getContext().getClass().getName());
         configTree.setParent("ConfigurationContext.class", currentParent);
         configTree.setChildrenAllowed("ConfigurationContext.class", false);
 
         configTree.addItem("PropertyValueCombinationPolicy.class");
-        configTree.setItemCaption("PropertyValueCombinationPolicy.class", PropertyValueCombinationPolicy.class.getSimpleName() + " class = " + config.getContext().getPropertyValueCombinationPolicy().getClass().getName());
+        configTree.setItemCaption("PropertyValueCombinationPolicy.class",
+                PropertyValueCombinationPolicy.class.getSimpleName() + " class = " +
+                        config.getContext().getPropertyValueCombinationPolicy().getClass().getName());
         configTree.setParent("PropertyValueCombinationPolicy.class", currentParent);
         configTree.setChildrenAllowed("PropertyValueCombinationPolicy.class", false);
 

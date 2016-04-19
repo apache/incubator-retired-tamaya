@@ -19,7 +19,6 @@
 package org.apache.tamaya.server;
 
 
-import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
@@ -27,7 +26,6 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 
-import javax.servlet.Servlet;
 import javax.ws.rs.core.Application;
 import java.io.File;
 import java.util.HashSet;
@@ -38,6 +36,14 @@ import java.util.Set;
  */
 public class ConfigServiceApp {
 
+    /**
+     * Utility class.
+     */
+    private ConfigServiceApp(){}
+
+    /**
+     * JAX RS Application.
+     */
     public class ResourceLoader extends Application{
 
         @Override

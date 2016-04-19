@@ -28,11 +28,28 @@ import org.apache.tamaya.ConfigurationProvider;
 import java.io.File;
 import java.util.logging.Logger;
 
+/**
+ * Tamaya UI Main class.
+ */
 public class TamayaUI {
 
     private static final Logger LOG = Logger.getLogger(TamayaUI.class.getName());
 
+    /**
+     * Not an instantiable class.
+     */
+    private TamayaUI(){}
 
+    /**
+     * The main entry point, use configuration as follows:
+     * <pre>
+     *     tamaya.server.contextPath: the context path, default=/tamaya
+     *     tamaya.server.port: the port, default=8090
+     *     tamaya.server.productionMode: vadiin production mode setting, default=false.
+     * </pre>
+     * @param args the args
+     * @throws Exception if startup fails.
+     */
     public static void main(String[] args) throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         String contextPath = config.getOrDefault("tamaya.server.contextPath", "/tamaya");

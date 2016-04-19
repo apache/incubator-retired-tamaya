@@ -24,7 +24,7 @@ import com.vaadin.annotations.Title;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.*;
+import com.vaadin.ui.UI;
 import org.apache.tamaya.ui.event.LogoutEvent;
 import org.apache.tamaya.ui.event.NavigationEvent;
 import org.apache.tamaya.ui.views.login.LoginEvent;
@@ -42,6 +42,11 @@ import org.apache.tamaya.ui.views.login.LoginView;
 public class VadiinApp extends UI {
 
     private Content content = new Content();
+
+
+    public VadiinApp(){
+        super.setPollInterval(2000);
+    }
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
