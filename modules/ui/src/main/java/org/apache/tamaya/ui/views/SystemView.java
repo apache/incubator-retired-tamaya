@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * View showing the current loaded system components.
  */
-public class ComponentView extends VerticalSpacedLayout implements View {
+public class SystemView extends VerticalSpacedLayout implements View {
 
 
     /**
@@ -59,30 +59,30 @@ public class ComponentView extends VerticalSpacedLayout implements View {
 
         @Override
         public String getUrlPattern() {
-            return "/components";
+            return "/system";
         }
 
         @Override
         public String getDisplayName() {
             return ServiceContextManager.getServiceContext().getService(MessageProvider.class)
-                    .getMessage("view.components.name");
+                    .getMessage("view.system.name");
         }
 
         @Override
         public View createView(){
-            return new ComponentView();
+            return new SystemView();
         }
     }
 
 
     private Tree configTree = new Tree(ServiceContextManager.getServiceContext().getService(MessageProvider.class)
-            .getMessage("default.label.components"));
+            .getMessage("default.label.system"));
 
 
-    public ComponentView() {
-        Label caption = new Label("Components");
+    public SystemView() {
+        Label caption = new Label("Tamaya Runtime");
         Label description = new Label(
-                "This view shows the components currently active. This information may be useful when checking if an" +
+                "This view shows the system components currently active. This information may be useful when checking if an" +
                         "configuration extension is loaded and for inspection of the configuration and property sources" +
                         "invovlved.",
                 ContentMode.HTML);

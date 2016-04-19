@@ -67,8 +67,8 @@ public class VadiinApp extends UI {
     }
 
     @Subscribe
-    public void navigateTo(NavigationEvent view) {
-        getNavigator().navigateTo(view.getViewName());
+    public void navigateTo(NavigationEvent evt) {
+        getNavigator().navigateTo(evt.getViewName());
     }
 
     public static VadiinApp getCurrent() {

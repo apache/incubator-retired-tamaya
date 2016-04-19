@@ -71,7 +71,7 @@ public class NavBar extends CssLayout implements ViewChangeListener {
         logout.setIcon(FontAwesome.SIGN_OUT);
     }
 
-    public void addView(final String uri, String displayName) {
+    public void addViewButton(final String uri, String displayName) {
         Button viewButton = new Button(displayName, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
@@ -81,7 +81,6 @@ public class NavBar extends CssLayout implements ViewChangeListener {
         viewButton.addStyleName(UIConstants.MENU_ITEM);
         viewButton.addStyleName(UIConstants.BUTTON_BORDERLESS);
         buttonMap.put(uri, viewButton);
-
         addComponent(viewButton, components.size() - 1);
     }
 

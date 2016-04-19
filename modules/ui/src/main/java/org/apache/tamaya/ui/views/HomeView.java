@@ -44,7 +44,7 @@ public class HomeView extends VerticalSpacedLayout implements View {
 
         @Override
         public ViewLifecycle getLifecycle() {
-            return ViewLifecycle.CREATE;
+            return ViewLifecycle.LAZY;
         }
 
         @Override

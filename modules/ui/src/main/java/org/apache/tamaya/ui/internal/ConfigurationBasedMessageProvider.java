@@ -85,7 +85,7 @@ public final class ConfigurationBasedMessageProvider implements MessageProvider{
                 return value;
             }
         }
-        return null;
+        return key;
     }
 
     private Map<String, String> loadEntries(String bundleID) {

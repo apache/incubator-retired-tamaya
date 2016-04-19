@@ -79,8 +79,6 @@ public class ApplicationLayout extends HorizontalLayout {
 
         switch (provider.getLifecycle()) {
             case CREATE:
-                navigator.addView(provider.getUrlPattern(), provider.createView());
-                break;
             case EAGER:
                 try {
                     navigator.addView(provider.getUrlPattern(), provider.createView());
@@ -93,6 +91,6 @@ public class ApplicationLayout extends HorizontalLayout {
                 navigator.addProvider(new LazyProvider(provider.getUrlPattern(), provider));
                 break;
         }
-        navBar.addView(provider.getUrlPattern(), provider.getDisplayName());
+        navBar.addViewButton(provider.getUrlPattern(), provider.getDisplayName());
     }
 }

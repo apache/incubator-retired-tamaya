@@ -37,7 +37,7 @@ public class LazyProvider implements com.vaadin.navigator.ViewProvider {
 
     @Override
     public String getViewName(String s) {
-        return provider.getDisplayName();
+        return provider.getUrlPattern();
     }
 
     @Override

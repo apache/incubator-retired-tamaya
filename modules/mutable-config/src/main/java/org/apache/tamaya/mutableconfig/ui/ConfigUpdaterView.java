@@ -43,7 +43,7 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
     /**
      * Provider to register the view.
      */
-    @Priority(20)
+    @Priority(50)
     public static final class Provider implements ViewProvider{
 
         @Override
@@ -58,7 +58,8 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
 
         @Override
         public String getDisplayName() {
-            return "view.update.name";
+            return ServiceContextManager.getServiceContext().getService(MessageProvider.class)
+                    .getMessage("view.edit.name");
         }
 
         @Override
@@ -67,26 +68,32 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
         }
     }
 
-    private ComboBox changePropagationPolicy = new ComboBox("view.update.select.propagationPolicy",
+    private ComboBox changePropagationPolicy = new ComboBox(ServiceContextManager.getServiceContext()
+            .getService(MessageProvider.class).getMessage("view.edit.select.propagationPolicy"),
             Arrays.asList(new String[]{"ALL", "MOST_SIGNIFICANT_ONLY", "SELECTIVE", "NONE"}));
 
-    private TextField changePropagationPolicyOther = new TextField("view.update.text.propagationPolicyOther",
+    private TextField changePropagationPolicyOther = new TextField(
+            ServiceContextManager.getServiceContext().getService(MessageProvider.class)
+                    .getMessage("view.edit.text.propagationPolicyOther"),
             MutableConfigurationProvider.getApplyAllChangePolicy().getClass().getName());
 
     private TextArea generalInfo = new TextArea(ServiceContextManager.getServiceContext()
-            .getService(MessageProvider.class).getMessage("view.update.textArea.general"));
+            .getService(MessageProvider.class).getMessage("view.edit.textArea.general"));
 
 
 
     public ConfigUpdaterView() {
         Label caption = new Label(ServiceContextManager.getServiceContext()
-                .getService(MessageProvider.class).getMessage("view.update.name"));
+                .getService(MessageProvider.class).getMessage("view.edit.name"));
         Label description = new Label(ServiceContextManager.getServiceContext()
-                .getService(MessageProvider.class).getMessage("view.update.description"),
+                .getService(MessageProvider.class).getMessage("view.edit.description"),
                 ContentMode.HTML);
 
         caption.addStyleName(UIConstants.LABEL_HUGE);
         description.addStyleName(UIConstants.LABEL_LARGE);
+        changePropagationPolicy.setWidth(300, Unit.PIXELS);
+        changePropagationPolicyOther.setWidth(600, Unit.PIXELS);
+        generalInfo.setWidth(100, Unit.PERCENTAGE);
         addComponents(caption, description,changePropagationPolicy,changePropagationPolicyOther,generalInfo);
     }
 
