@@ -56,7 +56,7 @@ public class ConfigServiceApp {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String... args) throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         String contextPath = config.getOrDefault("tamaya.server.contextPath", "/");
         String appBase = ".";
