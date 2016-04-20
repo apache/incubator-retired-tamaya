@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.server;
 
-
-import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.startup.Tomcat;
@@ -44,12 +42,11 @@ public class ConfigServiceApp {
     /**
      * JAX RS Application.
      */
-    public class ResourceLoader extends Application{
+    public static class ResourceLoader extends Application{
 
         @Override
         public Set<Class<?>> getClasses() {
-            final Set<Class<?>> classes = new HashSet<Class<?>>();
-
+            final Set<Class<?>> classes = new HashSet<>();
             // register root resource
             classes.add(ConfigurationResource.class);
             return classes;
@@ -61,17 +58,17 @@ public class ConfigServiceApp {
         String contextPath = config.getOrDefault("tamaya.server.contextPath", "/");
         String appBase = ".";
         Tomcat tomcat = new Tomcat();
-        tomcat.setPort(Integer.valueOf(config.getOrDefault("tamaya.server.port", Integer.class, 8085) ));
+        tomcat.setPort(config.getOrDefault("tamaya.server.port", Integer.class, 8085));
 
         // Define a web application context.
         Context context = tomcat.addWebapp(contextPath, new File(
                 appBase).getAbsolutePath());
         // Add servlet that will register Jersey REST resources
-        Wrapper wrapper = tomcat.addServlet(context, "jersey-container-servlet",
-                ServletContainer.class.getName());
-        wrapper.addInitParameter("com.sun.jersey.config.property.packages",
-                ConfigurationResource.class.getPackage().getName());
-        context.addServletMapping("/*", "jersey-container-servlet");
+        String servletName = "cxf-servlet";
+        Wrapper wrapper = tomcat.addServlet(context, servletName,
+                org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet.class.getName());
+        wrapper.addInitParameter("javax.ws.rs.Application", ResourceLoader.class.getName());
+        context.addServletMapping("/*", servletName);
         tomcat.start();
         tomcat.getServer().await();
     }
