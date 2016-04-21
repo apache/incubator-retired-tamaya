@@ -32,6 +32,11 @@ Overview off all released versions of Apache Tamaya.
 | Release Notes
 | Download
 
+| 0.2-incubating
+| 06.04.2016
+| http://www.apache.org/dist/incubator/tamaya/0.2-incubating/ReleaseNotes-0.2-incubating.html[Release Notes for 0.2 incubating^]
+| http://www.apache.org/dist/incubator/tamaya/0.2-incubating/[Download of 0.1 incubating^]
+
 
 | 0.1-incubating
 | 22.08.2015
