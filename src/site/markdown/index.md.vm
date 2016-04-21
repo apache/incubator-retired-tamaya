@@ -47,7 +47,7 @@ writing similar code again and again in each of our projects. Sometimes in a sim
 different, but certainly with high coupling to your configuration backends. Given your code is reused or integrated
 some how, or deployed by some customers, struggling starts: not supported backends, different policies, missing
 combination and validation mechanisms and so on. Tamaya solves all this by defining a common API and backend SPI.
-Your code is decoupled from the configuratoin backend. There is no difference if your code is deployed on your dev box
+Your code is decoupled from the configuration backend. There is no difference if your code is deployed on your dev box
 or in a clustered Docker environment in production, it stays the same!
 
 
