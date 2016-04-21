@@ -19,7 +19,7 @@
 include::temp-properties-files-for-site/attributes.adoc[]
 
 [[CoreDesign]]
-== Apache Tamaya -- API
+== Apache Tamaya: API
 
 Though Tamaya is a very powerful and flexible solution there are basically only a few simple core concepts required
 that build the base of all the other mechanisms. As a starting point we recommend you read the corresponding

@@ -55,7 +55,7 @@ dependency to your module:
 <dependency>
   <groupId>org.apache.tamaya.ext</groupId>
   <artifactId>tamaya-builder</artifactId>
-  <version>{tamaya_version_current}</version>
+  <version>{tamaya_version_development}</version>
 </dependency>
 -----------------------------------------------
 

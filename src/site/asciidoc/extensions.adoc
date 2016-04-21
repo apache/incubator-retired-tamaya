@@ -17,7 +17,7 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-== Apache Tamaya -- Extension Modules
+== Apache Tamaya: Extension Modules
 
 toc::[]
 

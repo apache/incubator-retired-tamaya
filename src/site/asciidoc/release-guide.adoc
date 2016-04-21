@@ -17,7 +17,7 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-== Apache Tamaya -- Release Guide
+== Apache Tamaya: Release Guide
 
 Performing a release requires several steps. This document describes each step, so everybody in the committer's
 team should be able to perform the release procedure.

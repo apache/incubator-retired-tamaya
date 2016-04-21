@@ -22,7 +22,7 @@ include::temp-properties-files-for-site/attributes.adoc[]
 
 == Downloading Apache Tamaya
 
-The latest release is Apache Tamaya {tamaya_version_current}.
+The latest release is Apache Tamaya {tamaya_version_released}.
 You can download it it from the
 http://www.apache.org/dist/incubator/tamaya[Apache Software Foundation Distribution Directory^].
 
@@ -51,12 +51,12 @@ Downloading of the the current state of the project can be done by
 <dependency>
     <groupId>{tamaya_mvn_group_id}</groupId>
     <artifactId>tamaya-api</artifactId>
-    <version>{tamaya_version_current}</version>
+    <version>{tamaya_version_released}</version>
 </dependency>
 <dependency>
     <groupId>{tamaya_mvn_group_id}</groupId>
     <artifactId>tamaya-core</artifactId>
-    <version>{tamaya_version_current}</version>
+    <version>{tamaya_version_released}</version>
 </dependency>
 ----
 

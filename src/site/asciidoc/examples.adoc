@@ -17,7 +17,7 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-= Apache Tamaya -- Examples
+= Apache Tamaya: Examples
 
 toc::[]
 

@@ -17,7 +17,8 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-== Apache Tamaya Quickstart
+== Apache Tamaya: Quickstart
+
 
 The fastest way to start with Tamaya is just using the _Core_ implementation,
 implementing the **API** in small, minimalistic way. For that add the following
@@ -29,7 +30,7 @@ Maven dependency to your project:
 <dependency>
     <groupId>{tamaya_mvn_group_id}</groupId>
     <artifactId>tamaya-core</artifactId>
-    <version>{tamaya_version_current}</version>
+    <version>{tamaya_version_released}</version>
 </dependency>
 ----
 
@@ -100,7 +101,7 @@ small extract of most important modules available (or available soon):
 <dependency>
   <artifactId>org.apache.tamaya.ext</id>
   <artifactId>tamaya-resolver</artifactId>
-  <version>{tamaya_version_current}</version>
+  <version>{tamaya_version_development}</version>
 </dependency>
 ----
 
@@ -124,7 +125,7 @@ String resolved = Resolver.evaluateExpression(myExpression);
 <dependency>
   <artifactId>org.apache.tamaya.ext</id>
   <artifactId>tamaya-resolution</artifactId>
-  <version>{tamaya_version_current}</version>
+  <version>{tamaya_version_development}</version>
 </dependency>
 ----
 
@@ -148,7 +149,7 @@ For further details refer to the module documentation.
 <dependency>
   <artifactId>org.apache.tamaya.ext</id>
   <artifactId>tamaya-inject</artifactId>
-  <version>{tamaya_version_current}</version>
+  <version>{tamaya_version_development}</version>
 </dependency>
 ----
 

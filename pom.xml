@@ -82,7 +82,7 @@ under the License.
 
         <!-- Dependencies for site generation -->
         <reflow-skin.version>1.1.1</reflow-skin.version>
-
+        <released_version>0.2-incubating</released_version>
     </properties>
 
     <licenses>

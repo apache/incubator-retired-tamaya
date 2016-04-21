@@ -17,7 +17,7 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-== Apache Tamaya -- Development Guide
+== Apache Tamaya: Development Guide
 
 === Suggested Git Workflows
 

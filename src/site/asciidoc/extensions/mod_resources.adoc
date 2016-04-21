@@ -36,7 +36,7 @@ ant-styled resource patterns. To use this module add the following dependency:
 <dependency>
   <grooupId>org.apache.tamaya.ext</groupId>
   <artifactId>tamaya-resources</artifactId>
-  <version>{tamaya_version_current}</version>
+  <version>{tamaya_version_development}</version>
 </dependency>
 -----------------------------------------------
 
