@@ -103,8 +103,7 @@ under the License.
         <url>
             https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
         </url>
-      <tag>vote02-tamaya-0.2-incubating</tag>
-  </scm>
+    </scm>
 
     <issueManagement>
         <system>jira</system>
