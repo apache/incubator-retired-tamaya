@@ -19,19 +19,18 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-== Community
-:toc:
+= Apache Tamaya: Community
+
 :sectnums:
 
 // Document properties
 :twitterhandle: tamayaconf
 
-=== Users
+== Users
 
-// todo Fix the links when finishing the new homepage, Oliver B. Fischer, 2015-09-12
 If you are a new user and you would like to participate in Tamaya
 (would be great!), you can have a look at the current
-[Project Documentation](documentation.html). Apache Tamaya currently does
+project documentation. Apache Tamaya currently does
 not yet have a users mailing list. If you want discuss your use cases
 we encourage you to mailto:dev-subscribe@tamaya.incubator.apache.org[subscribe]
 to our mailto:dev@tamaya.incubator.apache.org[mailing list for developers].
@@ -45,22 +44,20 @@ You are very welcome to follow our twitter account
 http://twitter.com/{twitterhandle}[@{twitterhandle}^] and spread the word
 of Tamaya with tweets, blog entries,...
 
-=== Getting Involved
+== Getting Involved
 
 Everybody is welcome to get involved with our community. You can find general
 information at http://apache.org/foundation/getinvolved.html and
 http://apache.org/foundation/how-it-works.html.
 The following sections provides some details about the different levels of getting involved.
 
-// todo Fix the link when finishing the new homepage, Oliver B. Fischer, 2015-09-12
 If you want to contribute to the
-link:/documentation/[Tamaya documentation], please
-read the
-documentation.html[instructions about the Documentation]
+documentation of Apache Tamaya, please
+read the instructions about the Documentation
 that addresses how to contribute, render and publish it.
 
 
-==== Contributors
+=== Contributors
 
 Before you get a committer you have to contribute to our effort.
 E.g. you can help users, participate in discussions on the dev list,
@@ -72,12 +69,11 @@ and send it to secretary at apache dot org (or fax it) as early as possible.
 If you would like to submit a patch through Jira, you can have a look at the
 link:devguide.html[suggested Git approach].
 
-// todo Fix the link when finishing the new homepage, Oliver B. Fischer, 2015-09-12
 The lists of current contributors and committers can be found
-on the link:contributors.html[contributers page^].
+on the link:team-list.html[team and contributers page^].
 
 
-==== Committers
+=== Committers
 
 Before you read this section, please ensure that you have read
 the contributor section. All of you are welcome to join our development effort.
@@ -92,7 +88,7 @@ Furthermore, you can check our link:community.html#mailing-lists[mail-archives].
 
 Further details are available at http://www.apache.org/dev/[http://www.apache.org/dev/^].
 
-==== Mailing lists
+=== Mailing lists
 
 The table below lists all mailings used by the Tamaya project.
 
@@ -118,20 +114,20 @@ The table below lists all mailings used by the Tamaya project.
 |
 |===
 
-==== JIRA
+=== JIRA
 
 Any kind of issue has to be filed in our
 https://issues.apache.org/jira/browse/TAMAYA[issue tracker^].
 If you have any question, you can ask us
 (e.g. via the mailing list for developers).
 
-==== Spread the word
+=== Spread the word
 
 You are very welcome e.g. to write blog entries, mention our twitter handle
  @{twitterhandle} if you tweet about the project or just follow our twitter
 account http://twitter.com/{twitterhandle}[@{twitterhandle}^]
 
-==== IRC
+=== IRC
 
 Usually discussions happen on the mailing list. Some informal discussions take
 place in our IRC-Channel irc://irc.freenode.net/apache-tamaya.
