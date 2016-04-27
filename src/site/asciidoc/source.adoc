@@ -17,7 +17,11 @@
 
 include::temp-properties-files-for-site/attributes.adoc[]
 
-== Sources of Apache Tamaya
+:sectnums: yes
+
+= Apache Tamaya: Sources
+
+== Source Code Repositories
 
 The current source code can be found at:
 
