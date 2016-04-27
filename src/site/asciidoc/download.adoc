@@ -18,16 +18,18 @@
 //:source-highlighter: coderay
 
 include::temp-properties-files-for-site/attributes.adoc[]
+
+:sectnums: yes
 :linkattrs: true
 
-== Downloading Apache Tamaya
+= Apache Tamaya: Download
 
 The latest release is Apache Tamaya {tamaya_version_released}.
 You can download it it from the
 http://www.apache.org/dist/incubator/tamaya[Apache Software Foundation Distribution Directory^].
 
-// @todo The release notes are available [here][4].
-// http://www.apache.org/dist/incubator/tamaya/0.1-incubating/ReleaseNotes-0.1-incubating.html
+The release notes for each release of Apache Tamaya
+can be found at the link:history.html[release history page].
 
 == Current Source Code
 
