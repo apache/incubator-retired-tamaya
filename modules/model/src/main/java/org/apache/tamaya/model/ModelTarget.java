@@ -21,7 +21,7 @@ package org.apache.tamaya.model;
 /**
  * This enumeration defines the types of supported validations.
  */
-public enum ModelType {
+public enum ModelTarget {
     /**
      * A configuration section.
      */
@@ -31,19 +31,7 @@ public enum ModelType {
      */
     Parameter,
     /**
-     * ConfigModel to ensure a certain configuration filter is installed.
-     */
-    Filter,
-    /**
-     * ConfigModel to ensure a certain combination policy is active.
-     */
-    CombinationPolicy,
-    /**
      * ConfigModel that is a container of other validations.
      */
     Group,
-    /**
-     * ConfigModel to simply check availability for a class on the current classpath.
-     */
-    LoadableClass
 }

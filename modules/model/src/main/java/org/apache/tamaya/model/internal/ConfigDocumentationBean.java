@@ -22,8 +22,8 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.model.ConfigModel;
 import org.apache.tamaya.model.ConfigModelManager;
-import org.apache.tamaya.model.ModelType;
-import org.apache.tamaya.model.ValidationResult;
+import org.apache.tamaya.model.ModelTarget;
+import org.apache.tamaya.model.Validation;
 import org.apache.tamaya.model.spi.ConfigDocumentationMBean;
 
 import javax.json.Json;
@@ -49,9 +49,9 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
 
     private final JsonWriterFactory writerFactory;
 
-    private static final Comparator<ValidationResult> COMPARATOR = new Comparator<ValidationResult>() {
+    private static final Comparator<Validation> COMPARATOR = new Comparator<Validation>() {
         @Override
-        public int compare(ValidationResult v1, ValidationResult v2) {
+        public int compare(Validation v1, Validation v2) {
             int compare = VAL_COMPARATOR.compare(v1.getConfigModel(), v2.getConfigModel());
             if(compare==0){
                 compare = v1.getResult().compareTo(v2.getResult());
@@ -105,10 +105,10 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
 
     @Override
     public String validate(boolean showUndefined) {
-        List<ValidationResult> validations = new ArrayList<>(ConfigModelManager.validate(getConfig(), showUndefined));
+        List<Validation> validations = new ArrayList<>(ConfigModelManager.validate(getConfig(), showUndefined));
         Collections.sort(validations, COMPARATOR);
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        for(ValidationResult val:validations){
+        for(Validation val:validations){
             builder.add(toJsonObject(val));
         }
         return formatJson(builder.build());
@@ -128,8 +128,8 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
     }
 
     @Override
-    public String getConfigurationModel(ModelType type) {
-        return findValidationModels(type, ".*");
+    public String getConfigurationModel(ModelTarget type) {
+        return findValidationModels(".*", type);
     }
 
     @Override
@@ -144,8 +144,8 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
     }
 
     @Override
-    public String findValidationModels(ModelType type, String namePattern) {
-        List<ConfigModel> configModels = new ArrayList<>(ConfigModelManager.findModels(type, namePattern));
+    public String findValidationModels(String namePattern, ModelTarget... type) {
+        List<ConfigModel> configModels = new ArrayList<>(ConfigModelManager.findModels(namePattern, type));
         Collections.sort(configModels, VAL_COMPARATOR);
         JsonArrayBuilder result = Json.createArrayBuilder();
         for(ConfigModel val: configModels){
@@ -172,7 +172,7 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
         return valJson.build();
     }
 
-    private JsonObject toJsonObject(ValidationResult val) {
+    private JsonObject toJsonObject(Validation val) {
         JsonObjectBuilder valJson = Json.createObjectBuilder().add("type", val.getConfigModel().getType().toString())
                 .add("name", val.getConfigModel().getName());
         if(val.getConfigModel().isRequired()){

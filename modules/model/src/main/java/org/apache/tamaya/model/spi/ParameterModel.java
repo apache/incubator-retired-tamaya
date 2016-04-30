@@ -20,8 +20,8 @@ package org.apache.tamaya.model.spi;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.model.ConfigModel;
-import org.apache.tamaya.model.ModelType;
-import org.apache.tamaya.model.ValidationResult;
+import org.apache.tamaya.model.ModelTarget;
+import org.apache.tamaya.model.Validation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 /**
  * Default configuration Model for a configuration parameter.
  */
-public class ParameterModel extends AbstractModel {
+public class ParameterModel extends AbstractConfigModel {
     /** Optional regular expression for validating the value. */
     private final String regEx;
     /** The target type into which the value must be convertible. */
@@ -44,14 +44,14 @@ public class ParameterModel extends AbstractModel {
      * @param builder the builder, not null.
      */
     protected ParameterModel(Builder builder) {
-        super(builder.name, builder.required, builder.description, builder.provider);
+        super(builder.name, builder.required, builder.description);
         this.regEx = builder.regEx;
         this.type = builder.type;
     }
 
     @Override
-    public ModelType getType() {
-        return ModelType.Parameter;
+    public ModelTarget getType() {
+        return ModelTarget.Parameter;
     }
 
     /**
@@ -64,15 +64,15 @@ public class ParameterModel extends AbstractModel {
     }
 
     @Override
-    public Collection<ValidationResult> validate(Configuration config) {
-        List<ValidationResult> result = new ArrayList<>(1);
+    public Collection<Validation> validate(Configuration config) {
+        List<Validation> result = new ArrayList<>(1);
         String configValue = config.get(getName());
         if (configValue == null && isRequired()) {
-            result.add(ValidationResult.ofMissing(this));
+            result.add(Validation.ofMissing(this));
         }
         if (configValue != null && regEx != null) {
             if (!configValue.matches(regEx)) {
-                result.add(ValidationResult.ofError(this, "Config value not matching expression: " + regEx + ", was " +
+                result.add(Validation.ofError(this, "Config value not matching expression: " + regEx + ", was " +
                         configValue));
             }
         }
@@ -140,8 +140,6 @@ public class ParameterModel extends AbstractModel {
         private Class<?> type;
         /** The fully qualified parameter name. */
         private String name;
-        /** The optional provider. */
-        private String provider;
         /** The optional validation expression. */
         private String regEx;
         /** The optional description. */
@@ -212,16 +210,6 @@ public class ParameterModel extends AbstractModel {
          */
         public Builder setName(String name) {
             this.name = Objects.requireNonNull(name);
-            return this;
-        }
-
-        /**
-         * Set the provider.
-         * @param provider the provider.
-         * @return the Builder for chaining
-         */
-        public Builder setProvider(String provider) {
-            this.provider = provider;
             return this;
         }
 

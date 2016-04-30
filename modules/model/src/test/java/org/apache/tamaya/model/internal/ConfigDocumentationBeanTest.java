@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.model.internal;
 
-import org.apache.tamaya.model.ModelType;
+import org.apache.tamaya.model.ModelTarget;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -73,7 +73,7 @@ public class ConfigDocumentationBeanTest {
 
     @Test
     public void testGetConfigurationModel_WithSection() throws Exception {
-        String results = mbean.getConfigurationModel(ModelType.Parameter);
+        String results = mbean.getConfigurationModel(ModelTarget.Parameter);
         assertNotNull(results);
         assertFalse(results.trim().isEmpty());
         assertTrue(results.contains("\"type\":\"Parameter\""));
@@ -92,15 +92,11 @@ public class ConfigDocumentationBeanTest {
 
     @Test
     public void testFindValidationModels() throws Exception {
-        String results = mbean.findValidationModels(ModelType.Section, "a");
+        String results = mbean.findValidationModels("a", ModelTarget.Section);
         assertNotNull(results);
         assertFalse(results.trim().isEmpty());
         assertFalse(results.contains("\"type\":\"Parameter\""));
         assertTrue(results.contains("\"type\":\"Section\""));
-        results = mbean.findValidationModels(ModelType.CombinationPolicy, "a");
-        assertFalse(results.trim().isEmpty());
-        assertFalse(results.contains("\"type\":\"Parameter\""));
-        assertFalse(results.contains("\"type\":\"Section\""));
         System.out.println(results);
     }
 

@@ -20,8 +20,8 @@ package org.apache.tamaya.model.spi;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.model.ConfigModel;
-import org.apache.tamaya.model.ModelType;
-import org.apache.tamaya.model.ValidationResult;
+import org.apache.tamaya.model.ModelTarget;
+import org.apache.tamaya.model.Validation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import java.util.Objects;
 /**
  * Default configuration Model for a configuration section.
  */
-public class AreaConfigModel extends ConfigModelGroup {
+public class SectionModel extends GroupModel {
 
     /**
      * Creates a new builder.
@@ -69,17 +69,17 @@ public class AreaConfigModel extends ConfigModelGroup {
      * Internal constructor.
      * @param builder the builder, not null.
      */
-    protected AreaConfigModel(Builder builder) {
-        super(builder.name, builder.provider, builder.childConfigModels);
+    protected SectionModel(Builder builder) {
+        super(builder.name, builder.childConfigModels);
     }
 
     @Override
-    public ModelType getType(){
-        return ModelType.Section;
+    public ModelTarget getType(){
+        return ModelTarget.Section;
     }
 
     @Override
-    public Collection<ValidationResult> validate(Configuration config) {
+    public Collection<Validation> validate(Configuration config) {
         Map<String,String> map = config.getProperties();
         String lookupKey = getName() + '.';
         boolean present = false;
@@ -89,9 +89,9 @@ public class AreaConfigModel extends ConfigModelGroup {
                 break;
             }
         }
-        List<ValidationResult> result = new ArrayList<>(1);
+        List<Validation> result = new ArrayList<>(1);
         if(isRequired() && !present) {
-            result.add(ValidationResult.ofMissing(this));
+            result.add(Validation.ofMissing(this));
         }
         result.addAll(super.validate(config));
         return result;
@@ -116,8 +116,6 @@ public class AreaConfigModel extends ConfigModelGroup {
     public static class Builder{
         /** The section name. */
         private String name;
-        /** The optional provider. */
-        private String provider;
         /** The optional description. */
         private String description;
         /** The required flag. */
@@ -174,16 +172,6 @@ public class AreaConfigModel extends ConfigModelGroup {
         }
 
         /**
-         * Set the )optional) provider.
-         * @param provider the provider.
-         * @return the Builder for chaining.
-         */
-        public Builder setProvider(String provider){
-            this.provider = provider;
-            return this;
-        }
-
-        /**
          * Set the section name
          * @param name the section name, not null.
          * @return the Builder for chaining.
@@ -198,7 +186,7 @@ public class AreaConfigModel extends ConfigModelGroup {
          * @return the new ConfigModel instance, not null.
          */
         public ConfigModel build(){
-            return new AreaConfigModel(this);
+            return new SectionModel(this);
         }
     }
 }

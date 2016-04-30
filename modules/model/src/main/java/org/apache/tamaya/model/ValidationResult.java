@@ -18,186 +18,42 @@
  */
 package org.apache.tamaya.model;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.model.spi.AbstractModel;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-
 /**
- * Models a partial configuration configModel result.
+ * Enum type describing the different validation results supported.
  */
-public final class ValidationResult {
+public enum ValidationResult {
     /**
-     * the config section.
+     * The validated item is valid
      */
-    private final ConfigModel configModel;
+    VALID,
     /**
-     * The configModel result.
+     * The validated item is deprecated.
      */
-    private final ValidationState result;
+    DEPRECATED,
     /**
-     * The configModel message.
+     * The validated item is correct, but the value is worth a warning.
      */
-    private final String message;
+    WARNING,
+    /**
+     * The given section or parameter is not a defined/validated item. It may be still valid, but typically,
+     * when validation is fully implemented, such a parameter or section should be removed.
+     */
+    UNDEFINED,
+    /**
+     * A required parameter or section is missing.
+     */
+    MISSING,
+    /**
+     * The validated item has an invalid value.
+     */
+    ERROR;
 
     /**
-     * Creates a new ValidationResult.
+     * Method to quickly evaluate if the current state is an error state.
      *
-     * @param configModel the configModel item, not null.
-     * @return a new validation result containing valid parts of the given model.
+     * @return true, if the state is not ERROR or MISSING.
      */
-    public static ValidationResult ofValid(ConfigModel configModel) {
-        return new ValidationResult(configModel, ValidationState.VALID, null);
-    }
-
-    /**
-     * Creates a new ValidationResult.
-     *
-     * @param configModel the configModel item, not null.
-     * @return a new validation result containing missing parts of the given model.
-     */
-    public static ValidationResult ofMissing(ConfigModel configModel) {
-        return new ValidationResult(configModel, ValidationState.MISSING, null);
-    }
-
-    /**
-     * Creates a new ValidationResult.
-     *
-     * @param configModel the configModel item, not null.
-     * @param message Additional message to be shown (optional).
-     * @return a new validation result containing missing parts of the given model with a message.
-     */
-    public static ValidationResult ofMissing(ConfigModel configModel, String message) {
-        return new ValidationResult(configModel, ValidationState.MISSING, message);
-    }
-
-    /**
-     * Creates a new ValidationResult.
-     *
-     * @param configModel the configModel item, not null.
-     * @param error error message to add.
-     * @return a new validation result containing erroneous parts of the given model with the given error message.
-     */
-    public static ValidationResult ofError(ConfigModel configModel, String error) {
-        return new ValidationResult(configModel, ValidationState.ERROR, error);
-    }
-
-    /**
-     * Creates a new ValidationResult.
-     *
-     * @param configModel the configModel item, not null.
-     * @param warning warning message to add.
-     * @return a new validation result containing warning parts of the given model with the given warning message.
-     */
-    public static ValidationResult ofWarning(ConfigModel configModel, String warning) {
-        return new ValidationResult(configModel, ValidationState.WARNING, warning);
-    }
-
-    /**
-     * Creates a new ValidationResult.
-     *
-     * @param configModel the configModel item, not null.
-     * @param alternativeUsage allows setting a message to indicate non-deprecated replacement, maybe null.
-     * @return a new validation result containing deprecated parts of the given model with an optional message.
-     */
-    public static ValidationResult ofDeprecated(ConfigModel configModel, String alternativeUsage) {
-        return new ValidationResult(configModel, ValidationState.DEPRECATED, alternativeUsage != null ? "Use instead: " + alternativeUsage : null);
-    }
-
-    /**
-     * Creates a new ValidationResult.
-     *
-     * @param configModel the configModel item, not null.
-     * @return a new validation result containing deprecated parts of the given model.
-     */
-    public static ValidationResult ofDeprecated(ConfigModel configModel) {
-        return new ValidationResult(configModel, ValidationState.DEPRECATED, null);
-    }
-
-    /**
-     * Creates a new ValidationResult.
-     *
-     * @param key the name/model key
-     * @param type model type 
-     * @param provider model provider name
-     * @return a corresponding configModel item
-     */
-    public static ValidationResult ofUndefined(final String key, final ModelType type, final String provider) {
-        return new ValidationResult(new AbstractModel(key, false, "Undefined key: " + key, provider) {
-
-            @Override
-            public ModelType getType() {
-                return type;
-            }
-
-            @Override
-            public Collection<ValidationResult> validate(Configuration config) {
-                return Collections.emptySet();
-            }
-        }, ValidationState.UNDEFINED, null);
-    }
-
-
-    /**
-     * Constructor.
-     *
-     * @param configModel the configModel item, not null.
-     * @param result     the configModel result, not null.
-     * @param message    the detail message.
-     * @return new validation result.
-     */
-    public static ValidationResult of(ConfigModel configModel, ValidationState result, String message) {
-        return new ValidationResult(configModel, result, message);
-    }
-
-
-    /**
-     * Constructor.
-     *
-     * @param configModel the configModel item, not null.
-     * @param result     the configModel result, not null.
-     * @param message    the detail message.
-     */
-    private ValidationResult(ConfigModel configModel, ValidationState result, String message) {
-        this.message = message;
-        this.configModel = Objects.requireNonNull(configModel);
-        this.result = Objects.requireNonNull(result);
-    }
-
-    /**
-     * Get the configModel section.
-     *
-     * @return the section, never null.
-     */
-    public ConfigModel getConfigModel() {
-        return configModel;
-    }
-
-    /**
-     * Get the configModel result.
-     *
-     * @return the result, never null.
-     */
-    public ValidationState getResult() {
-        return result;
-    }
-
-    /**
-     * Get the detail message.
-     *
-     * @return the detail message, or null.
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public String toString() {
-        if (message != null) {
-            return result + ": " + configModel.getName() + " (" + configModel.getType() + ") -> " + message + '\n';
-        }
-        return result + ": " + configModel.getName() + " (" + configModel.getType() + ")";
+    boolean isError() {
+        return this.ordinal() == MISSING.ordinal() || this.ordinal() == ERROR.ordinal();
     }
 }

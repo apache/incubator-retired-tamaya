@@ -31,7 +31,7 @@ public interface ConfigModel {
      * Get the type of item that is modelled.
      * @return the modelled type, never null.
      */
-    ModelType getType();
+    ModelTarget getType();
 
     /**
      * Get the item's name, it should minimally describe the validation. Examples are:
@@ -53,12 +53,6 @@ public interface ConfigModel {
     boolean isRequired();
 
     /**
-     * Get the provider of this validation.
-     * @return the provider.
-     */
-    String getProvider();
-
-    /**
      * Get an description of the item, using the default locale. The description is basically optional
      * though it is higly recommended to provide a description, so the validation issues is well
      * resolvable.
@@ -71,8 +65,8 @@ public interface ConfigModel {
      * Validates the item and all its children against the given configuration.
      *
      * @param config the configuration to be validated against, not null.
-     * @return the validation results, never null.
+     * @return the validation result, or null, if not applicable.
      */
-    Collection<ValidationResult> validate(Configuration config);
+    Collection<Validation> validate(Configuration config);
 
 }

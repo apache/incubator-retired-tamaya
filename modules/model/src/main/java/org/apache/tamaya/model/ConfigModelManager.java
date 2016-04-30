@@ -22,20 +22,14 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.model.spi.ConfigDocumentationMBean;
 import org.apache.tamaya.model.spi.ModelProviderSpi;
+import org.apache.tamaya.model.spi.UsageTrackerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,10 +41,41 @@ public final class ConfigModelManager {
     /** The logger used. */
     private final static Logger LOG = Logger.getLogger(ConfigModelManager.class.getName());
 
+    private static UsageTrackerSpi usageTracker = ServiceContextManager
+            .getServiceContext().getService(UsageTrackerSpi.class);
+
     /**
      * Singleton constructor.
      */
     private ConfigModelManager() {
+    }
+
+    /**
+     * Access the usage statistics for the recorded uses of configuration.
+     */
+    public static String getUsageInfo(){
+        return Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.").getUsageInfo();
+    }
+
+    /**
+     * Access the usage statistics for the recorded uses of configuration.
+     */
+    public static String getConfigInfoText(){
+        StringBuilder b = new StringBuilder();
+        List<ConfigModel> models = new ArrayList<>(getModels());
+        Collections.sort(models, new Comparator<ConfigModel>() {
+            @Override
+            public int compare(ConfigModel k1, ConfigModel k2) {
+                return k2.getName().compareTo(k2.getName());
+            }
+        });
+        for(ConfigModel model:models){
+            b.append(model.getName()).append('(').append(model.getType())
+                    .append("):\n  ").append(
+            model.getDescription()).append("mandatory=").append(model.isRequired());
+            b.append('\n');
+        }
+        return b.toString();
     }
 
     /**
@@ -66,23 +91,6 @@ public final class ConfigModelManager {
         return result;
     }
 
-    /**
-     * Find the validations by checking the validation's name using the given regular expression.
-     * @param type the target ModelType, not null.
-     * @param namePattern the regular expression to use, not null.
-     * @return the sections defined, never null.
-     */
-    public static Collection<ConfigModel> findModels(ModelType type, String namePattern) {
-        List<ConfigModel> result = new ArrayList<>();
-        for (ModelProviderSpi model : ServiceContextManager.getServiceContext().getServices(ModelProviderSpi.class)) {
-            for(ConfigModel configModel : model.getConfigModels()) {
-                if(configModel.getName().matches(namePattern) && configModel.getType()==type) {
-                    result.add(configModel);
-                }
-            }
-        }
-        return result;
-    }
 
     /**
      * Find the validations by matching the validation's name against the given model type.
@@ -106,14 +114,24 @@ public final class ConfigModelManager {
     /**
      * Find the validations by checking the validation's name using the given regular expression.
      * @param namePattern the regular expression to use, not null.
+     * @param targets the target types only to be returned (optional).
      * @return the sections defined, never null.
      */
-    public static Collection<ConfigModel> findModels(String namePattern) {
+    public static Collection<ConfigModel> findModels(String namePattern, ModelTarget... targets) {
         List<ConfigModel> result = new ArrayList<>();
         for (ModelProviderSpi model : ServiceContextManager.getServiceContext().getServices(ModelProviderSpi.class)) {
             for(ConfigModel configModel : model.getConfigModels()) {
                 if(configModel.getName().matches(namePattern)) {
-                    result.add(configModel);
+                    if(targets.length>0){
+                        for(ModelTarget tgt:targets){
+                            if(configModel.getType().equals(tgt)){
+                                result.add(configModel);
+                                break;
+                            }
+                        }
+                    }else {
+                        result.add(configModel);
+                    }
                 }
             }
         }
@@ -125,7 +143,7 @@ public final class ConfigModelManager {
      *
      * @return the validation results, never null.
      */
-    public static Collection<ValidationResult> validate() {
+    public static Collection<Validation> validate() {
         return validate(false);
     }
 
@@ -134,7 +152,7 @@ public final class ConfigModelManager {
      * @param showUndefined show any unknown parameters.
      * @return the validation results, never null.
      */
-    public static Collection<ValidationResult> validate(boolean showUndefined) {
+    public static Collection<Validation> validate(boolean showUndefined) {
         return validate(ConfigurationProvider.getConfiguration(), showUndefined);
     }
 
@@ -144,7 +162,7 @@ public final class ConfigModelManager {
      * @param config the configuration to be validated against, not null.
      * @return the validation results, never null.
      */
-    public static Collection<ValidationResult> validate(Configuration config) {
+    public static Collection<Validation> validate(Configuration config) {
         return validate(config, false);
     }
 
@@ -155,8 +173,8 @@ public final class ConfigModelManager {
      * @param showUndefined allows filtering for undefined configuration elements.
      * @return the validation results, never null.
      */
-    public static Collection<ValidationResult> validate(Configuration config, boolean showUndefined) {
-        List<ValidationResult> result = new ArrayList<>();
+    public static Collection<Validation> validate(Configuration config, boolean showUndefined) {
+        List<Validation> result = new ArrayList<>();
         for (ConfigModel defConf : getModels()) {
             result.addAll(defConf.validate(config));
         }
@@ -164,7 +182,7 @@ public final class ConfigModelManager {
             Map<String,String> map = new HashMap<>(config.getProperties());
             Set<String> areas = extractTransitiveAreas(map.keySet());
             for (ConfigModel defConf : getModels()) {
-                if(ModelType.Section.equals(defConf.getType())){
+                if(ModelTarget.Section.equals(defConf.getType())){
                     for (Iterator<String> iter = areas.iterator();iter.hasNext();){
                         String area = iter.next();
                         if(area.matches(defConf.getName())){
@@ -172,26 +190,34 @@ public final class ConfigModelManager {
                         }
                     }
                 }
-                if(ModelType.Parameter.equals(defConf.getType())){
+                if(ModelTarget.Parameter.equals(defConf.getType())){
                     map.remove(defConf.getName());
                 }
             }
             outer:for(Map.Entry<String,String> entry:map.entrySet()){
                 for (ConfigModel defConf : getModels()) {
-                    if(ModelType.Section.equals(defConf.getType())){
+                    if(ModelTarget.Section.equals(defConf.getType())){
                         if(defConf.getName().endsWith(".*") && entry.getKey().matches(defConf.getName())){
                             // Ignore parameters that are part of transitive section.
                             continue outer;
                         }
                     }
                 }
-                result.add(ValidationResult.ofUndefined(entry.getKey(), ModelType.Parameter, null));
+                result.add(Validation.ofUndefined(entry.getKey(), ModelTarget.Parameter));
             }
             for(String area:areas){
-                result.add(ValidationResult.ofUndefined(area, ModelType.Section, null));
+                result.add(Validation.ofUndefined(area, ModelTarget.Section));
             }
         }
         return result;
+    }
+
+    /**
+     * Get the list of package, which are not evaluated for tracking configuration access and usage statistics.
+     * @return the set of ignored package names.
+     */
+    public static Set<String> getIgnoredPackages(){
+        return usageTracker.getIgnoredPackages();
     }
 
     private static java.util.Set<java.lang.String> extractTransitiveAreas(Set<String> keys) {
@@ -242,4 +268,11 @@ public final class ConfigModelManager {
         }
     }
 
+    /**
+     * Get the recorded usage references of configuration.
+     * @return the recorded usge references, never null.
+     */
+    public static Collection<Usage> getUsages() {
+        return usageTracker.getUsages();
+    }
 }

@@ -45,51 +45,44 @@ public final class ConfigModelReader {
      * Utility class only.
      */
     private ConfigModelReader(){}
+///*
+//    *//**
+//     * Loads validations as configured in the given properties.
+//     * @param props the properties to be read
+//     * @param selector
+//     * @return a collection of config validations.
+//     *//*
+//    public static Collection<ConfigModel> loadValidations(Map<String,String> props, String selector) {
+//        Map<String,String> map = new HashMap<>();
+//        for(Map.Entry<String, String> en: props.entrySet()){
+//            if(!selector.matches(en.getKey())){
+//                map.put(en.getKey().toString(), props.get(en.getKey().toString()));
+//            }
+//        }
+//        return loadValidations(map);
+//    }*/
 
     /**
      * Loads validations as configured in the given properties.
      * @param props the properties to be read
-     * @param defaultProviderName the default provider name used if no explicit provider name is configured.
      * @return a collection of config validations.
      */
-    public static Collection<ConfigModel> loadValidations(Properties props,
-                                                          String defaultProviderName) {
-        Map<String,String> map = new HashMap<>();
-        for(Map.Entry<Object,Object> en: props.entrySet()){
-            map.put(en.getKey().toString(), props.getProperty(en.getKey().toString()));
-        }
-        return loadValidations(map, defaultProviderName);
-    }
-
-    /**
-     * Loads validations as configured in the given properties.
-     * @param props the properties to be read
-     * @param defaultProviderName the default provider name used if no explicit provider name is configured.
-     * @return a collection of config validations.
-     */
-    public static Collection<ConfigModel> loadValidations(Map<String,String> props,
-                                                          String defaultProviderName) {
+    public static Collection<ConfigModel> loadValidations(Map<String,String> props) {
         String selector = props.get(META_INFO_SELECTOR_PARAM);
         if(selector==null){
             selector = DEFAULT_META_INFO_SELECTOR;
         }
-        return loadValidations(props, selector, defaultProviderName);
+        return loadValidations(props, selector);
     }
 
     /**
      * Loads validations as configured in the given properties.
      * @param props the properties to be read
      * @param selector the selector (default is {model}), that identifies the model entries.
-     * @param defaultProviderName the default provider name used if no explicit provider name is configured.
      * @return a collection of config validations.
      */
-    public static Collection<ConfigModel> loadValidations(Map<String,String> props, String selector,
-                                                          String defaultProviderName) {
+    public static Collection<ConfigModel> loadValidations(Map<String,String> props, String selector) {
         List<ConfigModel> result = new ArrayList<>();
-        String provider = props.get(selector + ".__provider");
-        if (provider == null) {
-            provider = defaultProviderName;
-        }
         Set<String> itemKeys = new HashSet<>();
         for (Object key : props.keySet()) {
             if (key.toString().endsWith(".class")) {
@@ -113,14 +106,14 @@ public final class ConfigModelReader {
             String requiredVal = props.get(baseKey + ".required");
             if ("Parameter".equalsIgnoreCase(clazz)) {
                 result.add(createParameterValidation(baseKey.substring(selector.length() + 1), description, type,
-                            requiredVal, regEx, validations, provider));
+                            requiredVal, regEx, validations));
             } else if ("Section".equalsIgnoreCase(clazz)) {
                 if(transitive){
                     result.add(createSectionValidation(baseKey.substring(selector.length() + 1)+".*", description, requiredVal,
-                            validations, provider));
+                            validations));
                 } else {
                     result.add(createSectionValidation(baseKey.substring(selector.length() + 1), description, requiredVal,
-                            validations, provider));
+                            validations));
                 }
             }
         }
@@ -138,10 +131,10 @@ public final class ConfigModelReader {
      * @return the new validation for this parameter.
      */
     private static ConfigModel createParameterValidation(String paramName, String description, String type, String reqVal,
-                                                         String regEx, String validations, String provider) {
+                                                         String regEx, String validations) {
         boolean required = "true".equalsIgnoreCase(reqVal);
         ParameterModel.Builder builder = ParameterModel.builder(paramName).setRequired(required)
-                .setDescription(description).setExpression(regEx).setType(type).setProvider(provider);
+                .setDescription(description).setExpression(regEx).setType(type);
 //        if (validations != null) {
 //            try {
 //                // TODO defined validator API
@@ -162,10 +155,10 @@ public final class ConfigModelReader {
      * @return the new validation for this section.
      */
     private static ConfigModel createSectionValidation(String sectionName, String description, String reqVal,
-                                                       String validations, String provider) {
+                                                       String validations) {
         boolean required = "true".equalsIgnoreCase(reqVal);
-        AreaConfigModel.Builder builder = AreaConfigModel.builder(sectionName).setRequired(required)
-                .setDescription(description).setProvider(provider);
+        SectionModel.Builder builder = SectionModel.builder(sectionName).setRequired(required)
+                .setDescription(description);
 //        if (validations != null) {
 //            try {
 //                // TODO defined validator API

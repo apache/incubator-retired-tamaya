@@ -22,6 +22,8 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.model.ConfigModel;
 import org.apache.tamaya.model.spi.ConfigModelReader;
 import org.apache.tamaya.model.spi.ModelProviderSpi;
+import org.apache.tamaya.spisupport.BasePropertySource;
+import org.apache.tamaya.spisupport.MapPropertySource;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -132,7 +134,8 @@ public class ConfiguredPropertiesModelProviderSpi implements ModelProviderSpi {
                 try (InputStream is = config.openStream()) {
                     Properties props = new Properties();
                     props.load(is);
-                    configModels.addAll(ConfigModelReader.loadValidations(props, config.toString()));
+                    configModels.addAll(ConfigModelReader.loadValidations(
+                            MapPropertySource.getMap(props), config.toString()));
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE,
                             "Error loading config metadata from " + config, e);

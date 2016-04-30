@@ -18,15 +18,21 @@
  */
 package org.apache.tamaya.model;
 
-import org.apache.tamaya.model.spi.AreaConfigModel;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.model.spi.SectionModel;
 import org.apache.tamaya.model.spi.ParameterModel;
-import org.apache.tamaya.model.spi.ConfigModelGroup;
+import org.apache.tamaya.model.spi.GroupModel;
 import org.apache.tamaya.model.spi.ModelProviderSpi;
+import org.junit.Test;
+import test.model.TestConfigAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Anatole on 09.08.2015.
@@ -36,7 +42,7 @@ public class TestConfigModelProvider implements ModelProviderSpi {
     private List<ConfigModel> configModels = new ArrayList<>(1);
 
     public TestConfigModelProvider(){
-        configModels.add(new TestConfigConfigModel());
+        configModels.add(new TestConfigModel());
         configModels = Collections.unmodifiableList(configModels);
     }
 
@@ -44,14 +50,14 @@ public class TestConfigModelProvider implements ModelProviderSpi {
         return configModels;
     }
 
-    private static final class TestConfigConfigModel extends ConfigModelGroup {
+    private static final class TestConfigModel extends GroupModel {
 
-        public TestConfigConfigModel(){
-            super("TestConfig", "test", new AreaConfigModel.Builder("a.test.existing").setRequired(true).build(),
+        public TestConfigModel(){
+            super("TestConfig", new SectionModel.Builder("a.test.existing").setRequired(true).build(),
                     ParameterModel.of("a.test.existing.aParam", true),
                     ParameterModel.of("a.test.existing.optionalParam"),
                     ParameterModel.of("a.test.existing.aABCParam", false, "[ABC].*"),
-                    new AreaConfigModel.Builder("a.test.notexisting").setRequired(true).build(),
+                    new SectionModel.Builder("a.test.notexisting").setRequired(true).build(),
                     ParameterModel.of("a.test.notexisting.aParam", true),
                     ParameterModel.of("a.test.notexisting.optionalParam"),
                     ParameterModel.of("a.test.existing.aABCParam2", false, "[ABC].*"));
@@ -61,5 +67,23 @@ public class TestConfigModelProvider implements ModelProviderSpi {
             return "TestConfigConfigModel";
         }
 
+    }
+
+    @Test
+    public void testUsage(){
+        TestConfigAccessor.readConfiguration();
+        Configuration config = ConfigurationProvider.getConfiguration();
+        String info = ConfigModelManager.getUsageInfo();
+        assertNotNull(info);
+        System.out.println(info);
+        config = TestConfigAccessor.readConfiguration();
+        config.getProperties();
+        TestConfigAccessor.readProperty(config, "java.locale");
+        TestConfigAccessor.readProperty(config, "java.version");
+        TestConfigAccessor.readProperty(config, "java.version");
+        config.get("java.version");
+        info = ConfigModelManager.getUsageInfo();
+        System.out.println(info);
+        assertNotNull(info);
     }
 }

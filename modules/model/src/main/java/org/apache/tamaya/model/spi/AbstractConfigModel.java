@@ -25,29 +25,22 @@ import java.util.Objects;
 /**
  * Default configuration Model for a configuration area.
  */
-public abstract class AbstractModel implements ConfigModel, Comparable<ConfigModel> {
+public abstract class AbstractConfigModel implements ConfigModel, Comparable<ConfigModel> {
 
     private final String name;
-    private final String provider;
     private final String description;
     private boolean required = false;
 
 
-    protected AbstractModel(String name, boolean required, String description, String provider) {
+    protected AbstractConfigModel(String name, boolean required, String description) {
         this.name = Objects.requireNonNull(name);
         this.description = description;
         this.required = required;
-        this.provider = provider;
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String getProvider() {
-        return provider;
     }
 
     @Override
@@ -77,7 +70,7 @@ public abstract class AbstractModel implements ConfigModel, Comparable<ConfigMod
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AbstractModel that = (AbstractModel) o;
+        AbstractConfigModel that = (AbstractConfigModel) o;
         return getType().equals(that.getType()) && name.equals(that.name);
 
     }
