@@ -55,40 +55,10 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
     private OSGIConfigRootMapper configRootMapper;
 
     /**
-     * Loads the configuration toor mapper using the OSGIConfigRootMapper OSGI service resolving mechanism. If no
-     * such service is available it loads the default mapper.
-     * @return the mapper to be used, bever null.
-     */
-    protected OSGIConfigRootMapper loadConfigRootMapper() {
-        OSGIConfigRootMapper mapper = null;
-        ServiceReference<OSGIConfigRootMapper> ref = context.getServiceReference(OSGIConfigRootMapper.class);
-        if(ref!=null){
-            mapper = context.getService(ref);
-        }
-        if(mapper==null){
-            mapper = new OSGIConfigRootMapper() {
-                @Override
-                public String getTamayaConfigRoot(String pid, String factoryPid) {
-                    if(pid!=null) {
-                        return "[bundle:" + pid +']';
-                    } else{
-                        return "[bundle:" + factoryPid +']';
-                    }
-                }
-                @Override
-                public String toString(){
-                    return "Default OSGIConfigRootMapper(pid -> [bundle:pid], factoryPid -> [bundle:factoryPid]";
-                }
-            };
-        }
-        return mapper;
-    }
-
-    /**
      * Create a new config.
      * @param context the OSGI context
      */
-    public TamayaConfigAdminImpl(BundleContext context) {
+    TamayaConfigAdminImpl(BundleContext context) {
         this.context = context;
         this.configRootMapper = loadConfigRootMapper();
         ServiceReference<ConfigurationAdmin> ref = context.getServiceReference(ConfigurationAdmin.class);
@@ -154,8 +124,6 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
             }
         };
         factoryTracker.open();
-
-
     }
 
     @Override
@@ -193,6 +161,36 @@ public class TamayaConfigAdminImpl implements ConfigurationAdmin {
             }
         }
         return result.isEmpty() ? null : result.toArray(new Configuration[configs.size()]);
+    }
+
+    /**
+     * Loads the configuration toor mapper using the OSGIConfigRootMapper OSGI service resolving mechanism. If no
+     * such service is available it loads the default mapper.
+     * @return the mapper to be used, bever null.
+     */
+    private OSGIConfigRootMapper loadConfigRootMapper() {
+        OSGIConfigRootMapper mapper = null;
+        ServiceReference<OSGIConfigRootMapper> ref = context.getServiceReference(OSGIConfigRootMapper.class);
+        if(ref!=null){
+            mapper = context.getService(ref);
+        }
+        if(mapper==null){
+            mapper = new OSGIConfigRootMapper() {
+                @Override
+                public String getTamayaConfigRoot(String pid, String factoryPid) {
+                    if(pid!=null) {
+                        return "[bundle:" + pid +']';
+                    } else{
+                        return "[bundle:" + factoryPid +']';
+                    }
+                }
+                @Override
+                public String toString(){
+                    return "Default OSGIConfigRootMapper(pid -> [bundle:pid], factoryPid -> [bundle:factoryPid]";
+                }
+            };
+        }
+        return mapper;
     }
 
 }

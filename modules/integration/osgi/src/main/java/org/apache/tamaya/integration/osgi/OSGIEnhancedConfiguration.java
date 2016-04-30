@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.integration.osgi;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spisupport.BasePropertySource;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
@@ -60,7 +58,6 @@ public class OSGIEnhancedConfiguration extends DefaultConfiguration{
      * Configuration wrapped into a Tamaya PropertySource.
      */
     private static final class OSGIConfigurationContext extends DefaultConfigurationContext{
-        private ConfigurationContext tamayaContext = ConfigurationProvider.getConfiguration().getContext();
         private OSGIPropertySource osgiPropertySource;
 
         public OSGIConfigurationContext(org.osgi.service.cm.Configuration osgiConfiguration){

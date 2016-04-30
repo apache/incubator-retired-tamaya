@@ -21,7 +21,6 @@ package org.apache.tamaya.integration.osgi;
 /**
  * Mapping function for mapping Tamaya configuration sections to OSGI pids.
  */
-// @FunctionalInterface
 public interface OSGIConfigRootMapper {
 
     /**

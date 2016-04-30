@@ -46,8 +46,8 @@ public class TamayaConfigurationImpl implements Configuration {
      * @param configRootMapper the mapper that maps the pids to a tamaya root section.
      * @param parent the (optional delegating parent, used as default).
      */
-    public TamayaConfigurationImpl(String confPid, String factoryPid, OSGIConfigRootMapper configRootMapper,
-                                   ConfigurationAdmin parent) {
+    TamayaConfigurationImpl(String confPid, String factoryPid, OSGIConfigRootMapper configRootMapper,
+                            ConfigurationAdmin parent) {
         this.pid = confPid;
         this.factoryPid = factoryPid;
         if(parent!=null){

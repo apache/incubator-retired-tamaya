@@ -38,6 +38,7 @@ under the License.
         <module>camel</module>
         <module>etcd</module>
         <module>consul</module>
+        <module>karaf</module>
     </modules>
 
 </project>

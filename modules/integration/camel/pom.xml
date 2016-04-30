@@ -30,7 +30,7 @@ under the License.
     <packaging>bundle</packaging>
 
     <properties>
-        <camel.version>2.16.0</camel.version>
+        <camel.version>2.17.0</camel.version>
     </properties>
 
     <build>

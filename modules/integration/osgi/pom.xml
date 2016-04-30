@@ -33,7 +33,6 @@
     <description>Tamaya Based OSGI Implementation of ConfigAdmin and Config Injection</description>
 
     <properties>
-        <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <felix.plugin.version>2.5.4</felix.plugin.version>
     </properties>
 
@@ -66,13 +65,13 @@
             <version>1.8.8</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-spisupport</artifactId>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -82,73 +81,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-injection-api</artifactId>
+            <artifactId>tamaya-spisupport</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- transitive deps of 'tamaya-injection-api', here so maven can load them before tests try to resolve them
-             from local repo. -->
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-annotation_1.2_spec</artifactId>
-            <version>1.0-alpha-1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <version>1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
-            <version>1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-el_2.2_spec</artifactId>
-            <version>1.0.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-            <version>1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- end of transitive deps of 'tamaya-injection-api' -->
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-injection</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>5.4.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>java-hamcrest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-bom</artifactId>
-            <version>1.1.10.Final</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-container-felix-embedded</artifactId>
-            <version>2.1.0.CR18</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
