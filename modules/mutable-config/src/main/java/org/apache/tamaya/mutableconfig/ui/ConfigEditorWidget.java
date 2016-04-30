@@ -18,7 +18,11 @@
  */
 package org.apache.tamaya.mutableconfig.ui;
 
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.services.MessageProvider;

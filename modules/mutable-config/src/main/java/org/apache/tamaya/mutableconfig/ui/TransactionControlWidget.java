@@ -19,22 +19,19 @@
 package org.apache.tamaya.mutableconfig.ui;
 
 import com.vaadin.data.Property;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
-import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
-import org.apache.tamaya.ui.UIConstants;
-import org.apache.tamaya.ui.ViewProvider;
 import org.apache.tamaya.ui.components.VerticalSpacedLayout;
 import org.apache.tamaya.ui.services.MessageProvider;
 
-import javax.annotation.Priority;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Objects;
 

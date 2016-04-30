@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.model.ConfigModel;
 import org.apache.tamaya.model.spi.ConfigModelReader;
 import org.apache.tamaya.model.spi.ModelProviderSpi;
-import org.apache.tamaya.spisupport.BasePropertySource;
 import org.apache.tamaya.spisupport.MapPropertySource;
 
 import java.io.InputStream;

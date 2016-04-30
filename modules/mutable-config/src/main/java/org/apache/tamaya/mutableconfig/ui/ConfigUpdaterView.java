@@ -21,7 +21,7 @@ package org.apache.tamaya.mutableconfig.ui;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Label;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
