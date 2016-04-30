@@ -30,6 +30,18 @@ import java.util.Set;
 public interface UsageTrackerSpi {
 
     /**
+     * Enables/disables usage tracking.
+     * @param enable set to true to enable usage tracking.
+     */
+    void enableUsageTracking(boolean enable);
+
+    /**
+     * Allows to check if usage tracking is enabled /should be disbled by default).
+     * @return true, if usage tracking is enabled.
+     */
+    boolean isUsageTrackingEnabled();
+
+    /**
      * Get the list of package, which are not evaluated for tracking configuration access and usage statistics.
      * @return the set of ignored package names.
      */

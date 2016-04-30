@@ -51,6 +51,24 @@ public final class ConfigModelManager {
     }
 
     /**
+     * Enables/disables usage tracking.
+     * @param enabled set to true to enable usage tracking.
+     */
+    public static void enableUsageTracking(boolean enabled){
+        Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.")
+                .enableUsageTracking(enabled);
+    }
+
+    /**
+     * Allows to check if usage tracking is enabled /should be disbled by default).
+     * @return true, if usage tracking is enabled.
+     */
+    public static boolean isUsageTrackingEnabled(){
+        return Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.")
+                .isUsageTrackingEnabled();
+    }
+
+    /**
      * Access the usage statistics for the recorded uses of configuration.
      */
     public static String getUsageInfo(){

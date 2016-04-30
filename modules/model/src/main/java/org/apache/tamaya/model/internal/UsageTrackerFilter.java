@@ -32,12 +32,13 @@ import javax.annotation.Priority;
  */
 @Priority(Integer.MAX_VALUE)
 public class UsageTrackerFilter implements PropertyFilter{
+
     @Override
     public String filterProperty(String value, FilterContext context) {
-        UsageTrackerSpi tracker = ServiceContextManager.getServiceContext().getService(UsageTrackerSpi.class);
-        if(context.isSinglePropertyScoped()) {
+            UsageTrackerSpi tracker = ServiceContextManager.getServiceContext().getService(UsageTrackerSpi.class);
+        if (context.isSinglePropertyScoped()) {
             tracker.trackSingleKeyAccess(context.getKey(), value);
-        }else{
+        } else {
             tracker.trackAllPropertiesAccess();
         }
         return value;

@@ -21,7 +21,15 @@ package org.apache.tamaya.model.internal;
 import org.apache.tamaya.model.Usage;
 import org.apache.tamaya.model.spi.UsageTrackerSpi;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -32,6 +40,9 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
     private Set<String> ignoredPackages = new HashSet<>();
 
     private Map<String, Usage> usages = new ConcurrentHashMap<>();
+
+    /** By default usage tracking is not enabled. */
+    private boolean usageTrackingEnabled = false;
 
     public DefaultUsageTracker(){
         ignoredPackages.add("com.intellij");
@@ -44,6 +55,16 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
         ignoredPackages.add("com.sun");
         ignoredPackages.add("com.oracle");
         ignoredPackages.add("org.apache.tamaya");
+    }
+
+    @Override
+    public void enableUsageTracking(boolean enabled){
+        this.usageTrackingEnabled = enabled;
+    }
+
+    @Override
+    public boolean isUsageTrackingEnabled(){
+        return usageTrackingEnabled;
     }
 
     @Override

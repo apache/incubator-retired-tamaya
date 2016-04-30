@@ -68,11 +68,20 @@ public final class ConfigModelReader {
      * @return a collection of config validations.
      */
     public static Collection<ConfigModel> loadValidations(Map<String,String> props) {
+        return loadValidations(props, getSelector(props));
+    }
+
+    /**
+     * Evaluates the correct selector.
+     * @param props
+     * @return
+     */
+    private static String getSelector(Map<String,String> props){
         String selector = props.get(META_INFO_SELECTOR_PARAM);
         if(selector==null){
             selector = DEFAULT_META_INFO_SELECTOR;
         }
-        return loadValidations(props, selector);
+        return selector;
     }
 
     /**
