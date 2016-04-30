@@ -199,6 +199,16 @@ under the License.
             <email>plexus@apache.org</email>
             <timezone>+1</timezone>
         </developer>
+
+        <developer>
+            <id>pottlinger</id>
+            <name>Phil Ottlinger</name>
+            <roles>
+                <role>PMC</role>
+            </roles>
+            <email>pottlinger@apache.org</email>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <modules>
