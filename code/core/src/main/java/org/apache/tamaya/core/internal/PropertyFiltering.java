@@ -57,7 +57,7 @@ public final class PropertyFiltering{
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             boolean changed = false;
             // Apply filters to values, prevent values filtered to null!
-            FilterContext filterContext = new FilterContext(key, configData, false);
+            FilterContext filterContext = new FilterContext(key, configData, true);
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
                 String newValue = filter.filterProperty(result, filterContext);
                 if (newValue != null && !newValue.equals(result)) {
@@ -96,7 +96,7 @@ public final class PropertyFiltering{
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             AtomicInteger changes = new AtomicInteger();
             for (Map.Entry<String, String> entry : inputMap.entrySet()) {
-                FilterContext filterContext = new FilterContext(entry.getKey(), inputMap, true);
+                FilterContext filterContext = new FilterContext(entry.getKey(), inputMap, false);
                 for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
                     final String k = entry.getKey();
                     final String v = entry.getValue();
