@@ -107,7 +107,7 @@ public final class ConfigurationFilter implements PropertyFilter{
 
     @Override
     public String filterProperty(String valueToBeFiltered, FilterContext context) {
-        if(!context.isSinglePropertyScoped()){
+        if(context.isSinglePropertyScoped()){
             for(PropertyFilter pred: THREADED_SINGLE_FILTERS.get().getFilters()){
                 valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
             }
