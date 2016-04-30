@@ -107,7 +107,7 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
     @Override
     public void trackSingleKeyAccess(String key, String value){
         // Ignore meta-entries
-        if(key.startsWith("_")){
+        if(!isUsageTrackingEnabled() || key.startsWith("_")){
             return;
         }
         Usage usage = this.usages.get(key);
