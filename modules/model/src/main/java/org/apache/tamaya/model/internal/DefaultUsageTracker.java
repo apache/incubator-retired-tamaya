@@ -42,7 +42,20 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
     private Map<String, Usage> usages = new ConcurrentHashMap<>();
 
     /** By default usage tracking is not enabled. */
-    private boolean usageTrackingEnabled = false;
+    private boolean usageTrackingEnabled = initEnabled();
+
+    /**
+     * Method that checks the 'tamaya.usage-report' system property for
+     * enabling tamaya usage reporting initially.
+     * @return
+     */
+    private boolean initEnabled() {
+        String val = System.getProperty("tamaya.usage-report");
+        if(Boolean.parseBoolean(val)){
+            return true;
+        }
+        return false;
+    }
 
     public DefaultUsageTracker(){
         ignoredPackages.add("com.intellij");
@@ -143,6 +156,11 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
             }
         }
         return b.toString();
+    }
+
+    @Override
+    public void clearUsageStats() {
+        this.usages.clear();
     }
 
 }

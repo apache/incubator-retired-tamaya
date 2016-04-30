@@ -76,4 +76,8 @@ public interface UsageTrackerSpi {
      */
     String getUsageInfo();
 
+    /**
+     * Clears all collected usage statistics.
+     */
+    void clearUsageStats();
 }

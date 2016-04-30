@@ -291,6 +291,14 @@ public final class ConfigModelManager {
      * @return the recorded usge references, never null.
      */
     public static Collection<Usage> getUsages() {
-        return usageTracker.getUsages();
+        return Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.").getUsages();
+    }
+
+    /**
+     * Clears all collected usage statistics.
+     */
+    public static void clearUsageStats() {
+        Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.")
+                .clearUsageStats();
     }
 }

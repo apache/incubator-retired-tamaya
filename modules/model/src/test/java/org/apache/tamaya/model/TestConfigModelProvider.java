@@ -32,7 +32,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Anatole on 09.08.2015.
@@ -70,12 +72,13 @@ public class TestConfigModelProvider implements ModelProviderSpi {
     }
 
     @Test
-    public void testUsage(){
+    public void testUsageWhenEnabled(){
+        ConfigModelManager.enableUsageTracking(true);
         TestConfigAccessor.readConfiguration();
         Configuration config = ConfigurationProvider.getConfiguration();
         String info = ConfigModelManager.getUsageInfo();
+        assertFalse(info.contains("java.version"));
         assertNotNull(info);
-        System.out.println(info);
         config = TestConfigAccessor.readConfiguration();
         config.getProperties();
         TestConfigAccessor.readProperty(config, "java.locale");
@@ -84,6 +87,29 @@ public class TestConfigModelProvider implements ModelProviderSpi {
         config.get("java.version");
         info = ConfigModelManager.getUsageInfo();
         System.out.println(info);
+        assertTrue(info.contains("java.version"));
         assertNotNull(info);
+        ConfigModelManager.enableUsageTracking(false);
+    }
+
+    @Test
+    public void testUsageWhenDisabled(){
+        ConfigModelManager.enableUsageTracking(false);
+        ConfigModelManager.clearUsageStats();
+        TestConfigAccessor.readConfiguration();
+        Configuration config = ConfigurationProvider.getConfiguration();
+        String info = ConfigModelManager.getUsageInfo();
+        assertNotNull(info);
+        assertFalse(info.contains("java.version"));
+        config = TestConfigAccessor.readConfiguration();
+        config.getProperties();
+        TestConfigAccessor.readProperty(config, "java.locale");
+        TestConfigAccessor.readProperty(config, "java.version");
+        TestConfigAccessor.readProperty(config, "java.version");
+        config.get("java.version");
+        info = ConfigModelManager.getUsageInfo();
+        assertFalse(info.contains("java.version"));
+        assertNotNull(info);
+        ConfigModelManager.enableUsageTracking(false);
     }
 }
