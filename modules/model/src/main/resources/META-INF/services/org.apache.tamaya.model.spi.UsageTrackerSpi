@@ -16,19 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-view.edit.name=Edit Configuration
-view.edit.description=This is a simple Tamaya configuration editor for changing configuration values.
-view.edit.select.propagationPolicy=Change Propagation Policy
-view.edit.text.propagationPolicyOther=Custom Change Propagation Policy (Class)
-view.edit.textArea.general=General Infos
-view.edit.box.autoCommit=Auto-Commit
-
-view.edit.button.startTransaction=Start TA
-view.edit.button.rollbackTransaction=Rollback
-view.edit.button.commitTransaction=Commit
-view.edit.text.configKey=Configuration Key
-view.edit.text.configValue=Value
-view.edit.button.updateKey=Write/Update
-view.edit.button.removeKey=Delete
-view.edit.button.readKey=Read from Config
-view.edit.button.clearProtocol=Clear Protocol
+org.apache.tamaya.model.internal.DefaultUsageTracker

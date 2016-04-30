@@ -21,11 +21,10 @@ package org.apache.tamaya.mutableconfig.ui;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
+import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.UIConstants;
 import org.apache.tamaya.ui.ViewProvider;
@@ -33,7 +32,6 @@ import org.apache.tamaya.ui.components.VerticalSpacedLayout;
 import org.apache.tamaya.ui.services.MessageProvider;
 
 import javax.annotation.Priority;
-import java.util.Arrays;
 
 /**
  * Tamaya UI view to change configuration.
@@ -68,18 +66,14 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
         }
     }
 
-    private ComboBox changePropagationPolicy = new ComboBox(ServiceContextManager.getServiceContext()
-            .getService(MessageProvider.class).getMessage("view.edit.select.propagationPolicy"),
-            Arrays.asList(new String[]{"ALL", "MOST_SIGNIFICANT_ONLY", "SELECTIVE", "NONE"}));
+    private ProtocolWidget protocolArea = new ProtocolWidget();
 
-    private TextField changePropagationPolicyOther = new TextField(
-            ServiceContextManager.getServiceContext().getService(MessageProvider.class)
-                    .getMessage("view.edit.text.propagationPolicyOther"),
-            MutableConfigurationProvider.getApplyAllChangePolicy().getClass().getName());
+    private MutableConfiguration mutableConfig = MutableConfigurationProvider.getMutableConfiguration();
 
-    private TextArea generalInfo = new TextArea(ServiceContextManager.getServiceContext()
-            .getService(MessageProvider.class).getMessage("view.edit.textArea.general"));
+    private TransactionControlWidget taControlWidget = new TransactionControlWidget(mutableConfig,
+            protocolArea);
 
+    private ConfigEditorWidget editorWidget = new ConfigEditorWidget(mutableConfig, protocolArea);
 
 
     public ConfigUpdaterView() {
@@ -91,12 +85,13 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
 
         caption.addStyleName(UIConstants.LABEL_HUGE);
         description.addStyleName(UIConstants.LABEL_LARGE);
-        changePropagationPolicy.setWidth(300, Unit.PIXELS);
-        changePropagationPolicyOther.setWidth(600, Unit.PIXELS);
-        generalInfo.setWidth(100, Unit.PERCENTAGE);
-        addComponents(caption, description,changePropagationPolicy,changePropagationPolicyOther,generalInfo);
+        protocolArea.print("INFO: Writable Property Sources: ");
+        for(MutablePropertySource ps:mutableConfig.getMutablePropertySources()){
+            protocolArea.print(ps.getName(), ", ");
+        }
+        protocolArea.println();
+        addComponents(caption, description, editorWidget, protocolArea, taControlWidget);
     }
-
 
     private String getCaption(String key, String value) {
         int index = key.lastIndexOf('.');
