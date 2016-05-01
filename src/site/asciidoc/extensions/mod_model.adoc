@@ -57,7 +57,7 @@ Basically configuration is modelled using key, value-pairs. Looking at a keys
 configuration:
 
 . the _configuration section:_ In our case this equals to +a.b.c+, which itself also includes the
- tranitive entries +a.b+ and +a+.
+ transitive entries +a.b+ and +a+.
 . the _configuration parameter:_ Basically parameters are adressed using their fully qualified names,
  which equals to the containing section name and the relative parameter name, separated by the dor separator.
  In the above example +a.b.c.param1+ and +a.b.c.param2+ are the fully qualified parameter names.
@@ -68,15 +68,15 @@ Now with only these 2 concepts a simple configuration meta-model can be defined 
   descriptions, e.g. in a management console or generated configuration documentation site.
 * a set of sections.
 * a set of parameters.
-* Both, sections as well as parameter models
-  ** can be modelled by a met-data entry, by default +_{key}.model+.
-  ** may be required, or optional
+* Both, sections (+.model.target=Section+) as well as parameter models (+.model.target=Parameter+)
+  ** can be modelled by a meta-data entry, by default +_my.config.key.model+.
+  ** may be required, or optional (+.model.required=true|false+)
   ** may have an optional description
 * Parameters additionally have
-  ** a _type_, described by the fully qualified class name, into which any configured (String) value must be
-     convertable into. If no type is configured +java.lang.String+ is assumed as default.
+  ** a _type_ (+.model.type=Classname+), described by the fully qualified class name, into which any configured (String)
+     value must be convertable into. If no type is configured +java.lang.String+ is assumed as default.
   ** an optional regular expression that can be used to validate the +String+ values returned from a
-     configuration.
+     configuration (+.model.expression=regexpression+).
 
 Given these concepts a configuration can be fully described. Entries that are not contained in one of the given
 sections (or its children), or parameters not described or marked as valid (e.g. for dynamic configModels of
@@ -94,9 +94,10 @@ its parent, or child section.
 
 === Defining Meta-Configuration Model
 
-The configuration meta-model is defined by simple configuration entries. The root section for all model configuration
-by default is called +{model}+. Within this section fully qualified configuration keys defines which part of the
-configuration is targeted by certain entries.
+The configuration meta-model is defined by simple configuration meta-data entries. The section for all model
+configuration by default is called +model+, which results in entries such as +_my.config.key.model.target=Section+.
+Within this section fully qualified configuration keys defines
+which part of the configuration is targeted by certain entries.
 
 ==== Defining Sections
 
@@ -106,24 +107,24 @@ variants supported:
 [source,listing]
 -------------------------------------------------------------------------------
 # Metamodel information
-_config-model.provider=ConfigModel Extension
+_model.provider=ConfigModel Extension
 
 # org.mycompany.root (optional section)
-_org.mycompany.root.model-type=Section
-_org.mycompany.root.model-description=Root section defining my company configuration.
+_org.mycompany.root.model.target=Section
+_org.mycompany.root.model.description=Root section defining my company configuration.
 
 # org.mycompany.security (required section)
-_org.mycompany.security.model-type=Section
-_org.mycompany.security.model-required=true
-_org.mycompany.security.model-description=Security related settings.\
+_org.mycompany.security.model.target=Section
+_org.mycompany.security.model.required=true
+_org.mycompany.security.model.description=Security related settings.\
          refer for further details to XXX.
 
 # minmal section
-_minimal.model-class=Section
+_minimal.model.target=Section
 
 # custom validated section
-_validated.model-type=Section
-_validated.model-validator=org.apache.tamaya.model.TestValidator
+_validated.model.target=Section
+_validated.model.validator=org.apache.tamaya.model.TestValidator
 -------------------------------------------------------------------------------
 
 Above +org.mycompany.root+ transitively defines 3 sections:
@@ -151,20 +152,20 @@ Similarly parameters also can be defined:
 [source,listing]
 -------------------------------------------------------------------------------
 # org.mycompany.root.name (required parameter)
-_org.mycompany.root.name.model-type=Parameter
-_org.mycompany.root.name.model-required=true
-_org.mycompany.root.name.model-description=The company's name, also used in the application's main header.
+_org.mycompany.root.name.model.target=Parameter
+_org.mycompany.root.name.model.required=true
+_org.mycompany.root.name.model.description=The company's name, also used in the application's main header.
 
 # org.mycompany.security (required parameters)
-_org.mycompany.security.uid.model-required=true
-_org.mycompany.security.uid.model-description=The user id.
-_org.mycompany.security.realm.model-required=true
-_org.mycompany.security.realm.model-validator=org.apache.tamaya.model.RealmValidator
-_org.mycompany.security.realm.model-description=The security realm required.
-_org.mycompany.security.tokenid.model-description=The token id, if the token service is used (optional).
+_org.mycompany.security.uid.model.required=true
+_org.mycompany.security.uid.model.description=The user id.
+_org.mycompany.security.realm.model.required=true
+_org.mycompany.security.realm.model.validator=org.apache.tamaya.model.RealmValidator
+_org.mycompany.security.realm.model.description=The security realm required.
+_org.mycompany.security.tokenid.model.description=The token id, if the token service is used (optional).
 
 # A minmal parameter
-_minimalClass.model-type=Class
+_minimalClass.model.target=Class
 -------------------------------------------------------------------------------
 
 Similarly as when defining section also parameter entries define transitively its containing sections. E.g.
@@ -211,7 +212,7 @@ statistics for calling +Configuration.getProperties()+ can be obtained calling +
 Usage tracking is disabled by default. It can be enabled by calling +ConfigUsageStats.enableUsageTracking(true);+.
 +ConfigUsageStats.isUsageTrackingEnabled()+ returns the current tracking status.
 
-The +Usage+ class itself provides access to further fainer grained usage data (+AccessDetail+) cotaining:
+The +Usage+ class itself provides access to further fainer grained usage data (+AccessDetail+) containing:
 
 * the access point (+fqn.ClassName#method(line: xxx)+).
 * the number of accesses
@@ -429,8 +430,8 @@ New instances implementing this interface must be registered into the current +S
 
 === The ConfigUsageStatsSpi
 
-The methods for managing and tracking of configuration changes are delegated to the current
-most sinificant implementation of the +org.apache.tamaya.model.spi.ConfigUsageStatsSpi+ SPI.
+The methods for managing and tracking of configuration changes are similarly delegated to an
+implementation of the +org.apache.tamaya.model.spi.ConfigUsageStatsSpi+ SPI.
 By implementing this SPI and registerting it with the +ServiceContext+ the usage tracking
 logic can be adapted or replaced.
 
@@ -453,12 +454,12 @@ The module also provides further utility classes that may be useful for implemen
 
 The model module provides different switches that can be used to activate or deactivate features:
 
-* +org.apache.tamaya.model.integrated.enabled+ allows to deactivate reading inline metaconfiguration delivered with
-  the normal Tamaya Configuration. By default inline entries (+{meta}...+) are evaluated.
-* +org.apache.tamaya.model.default.enabled+ allows to deactivate reading metamodel information from
+* +tamaya.model.integrated.enabled+ allows to deactivate reading inline metaconfiguration delivered with
+  the normal Tamaya Configuration. By default inline entries (+_.abcd.model.*+) are evaluated.
+* +tamaya.model.default.enabled+ allows to deactivate reading metamodel information from
   +classpath:META-INF/configmodel.properties+. By default it is active.
-* +org.apache.tamaya.model.resources+ allows to defie additional resources (loaded through the resources extension),
+* +tamaya.model.resources+ allows to define additional resources (loaded through the resources extension),
   that can be used to read metamodel information in any format using Tamaya's format module.
-* the system property +org.apache.tamaya.model.autoModelEvents+ allows to activate/deactivate the automatic documentation of
-  classes configured and published by Tamaya +ConfiguredType+ event instances (e.g. published by Tamaya's injection
-  modules).
+* the system property +tamaya.model.autoModelEvents+ allows to activate/deactivate the automatic
+  documentation of classes configured and published by Tamaya +ConfiguredType+ event instances (e.g. published by
+  Tamaya's injection modules).
