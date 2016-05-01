@@ -84,6 +84,9 @@ public class SectionModel extends GroupModel {
         String lookupKey = getName() + '.';
         boolean present = false;
         for(String key:map.keySet()){
+            if(key.startsWith("_")){
+                continue;
+            }
             if(key.startsWith(lookupKey)){
                 present = true;
                 break;

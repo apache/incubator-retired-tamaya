@@ -37,7 +37,7 @@ public class ConfigDocumentationBeanTest {
         String results = mbean.validate(false);
         assertNotNull(results);
         assertFalse(results.trim().isEmpty());
-        assertTrue(results.contains("\"type\":\"Parameter\""));
+        assertTrue(results.contains("\"target\":\"Parameter\""));
         assertTrue(results.contains("\"result\":\"MISSING\""));
         assertFalse(results.contains("\"description\":\"Undefined key: "));
         assertFalse(results.contains(" \"result\":\"UNDEFINED\""));
@@ -53,8 +53,8 @@ public class ConfigDocumentationBeanTest {
         assertFalse(results.contains("\"name\":\"sun."));
         assertFalse(results.contains("\"name\":\"file."));
         // test others
-        assertTrue(results.contains("\"type\":\"Parameter\""));
-        assertTrue(results.contains("\"type\":\"Section\""));
+        assertTrue(results.contains("\"target\":\"Parameter\""));
+        assertTrue(results.contains("\"target\":\"Section\""));
         assertTrue(results.contains("\"result\":\"MISSING\""));
         assertTrue(results.contains("\"description\":\"Undefined key: "));
         assertTrue(results.contains(" \"result\":\"UNDEFINED\""));
@@ -65,7 +65,7 @@ public class ConfigDocumentationBeanTest {
         String results = mbean.getConfigurationModel();
         assertNotNull(results);
         assertFalse(results.trim().isEmpty());
-        assertTrue(results.contains("\"type\":\"Parameter\""));
+        assertTrue(results.contains("\"target\":\"Parameter\""));
         assertTrue(results.contains("\"name\":\"MyNumber\""));
         assertTrue(results.contains("\"name\":\"a.b.c\""));
         assertTrue(results.contains("\"required\":true"));
@@ -76,8 +76,8 @@ public class ConfigDocumentationBeanTest {
         String results = mbean.getConfigurationModel(ModelTarget.Parameter);
         assertNotNull(results);
         assertFalse(results.trim().isEmpty());
-        assertTrue(results.contains("\"type\":\"Parameter\""));
-        assertFalse(results.contains("\"type\":\"Section\""));
+        assertTrue(results.contains("\"target\":\"Parameter\""));
+        assertFalse(results.contains("\"target\":\"Section\""));
         assertTrue(results.contains("\"required\":true"));
     }
 
@@ -86,8 +86,8 @@ public class ConfigDocumentationBeanTest {
         String results = mbean.findConfigurationModels("a");
         assertNotNull(results);
         assertFalse(results.trim().isEmpty());
-        assertFalse(results.contains("\"type\":\"Parameter\""));
-        assertTrue(results.contains("\"type\":\"Section\""));
+        assertFalse(results.contains("\"target\":\"Parameter\""));
+        assertTrue(results.contains("\"target\":\"Section\""));
     }
 
     @Test
@@ -95,8 +95,8 @@ public class ConfigDocumentationBeanTest {
         String results = mbean.findValidationModels("a", ModelTarget.Section);
         assertNotNull(results);
         assertFalse(results.trim().isEmpty());
-        assertFalse(results.contains("\"type\":\"Parameter\""));
-        assertTrue(results.contains("\"type\":\"Section\""));
+        assertFalse(results.contains("\"target\":\"Parameter\""));
+        assertTrue(results.contains("\"target\":\"Section\""));
         System.out.println(results);
     }
 

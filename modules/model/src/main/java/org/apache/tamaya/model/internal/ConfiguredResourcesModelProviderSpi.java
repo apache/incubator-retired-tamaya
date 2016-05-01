@@ -141,7 +141,7 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
             for (final URL config : urls) {
                 try (InputStream is = config.openStream()) {
                     final ConfigurationData data = ConfigurationFormats.readConfigurationData(config);
-                    configModels.addAll(ConfigModelReader.loadValidations(data.getCombinedProperties(), config.toString()));
+                    configModels.addAll(ConfigModelReader.loadValidations(data.getCombinedProperties()));
                 } catch (final Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE,
                             "Error loading config model data from " + config, e);

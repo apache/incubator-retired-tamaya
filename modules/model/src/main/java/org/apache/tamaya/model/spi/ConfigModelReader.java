@@ -35,7 +35,7 @@ import org.apache.tamaya.model.ConfigModel;
 public final class ConfigModelReader {
 
     /** The default model entries selector. */
-    private static final String DEFAULT_META_INFO_SELECTOR = "{model}";
+    private static final String DEFAULT_META_INFO_SELECTOR = ".model";
     /** parameter to change the selector to be used for filtering out the target values to be used. */
     private static final String META_INFO_SELECTOR_PARAM = "org.apache.tamaya.model.integrated.selector";
 
@@ -43,22 +43,7 @@ public final class ConfigModelReader {
      * Utility class only.
      */
     private ConfigModelReader(){}
-///*
-//    *//**
-//     * Loads validations as configured in the given properties.
-//     * @param props the properties to be read
-//     * @param selector
-//     * @return a collection of config validations.
-//     *//*
-//    public static Collection<ConfigModel> loadValidations(Map<String,String> props, String selector) {
-//        Map<String,String> map = new HashMap<>();
-//        for(Map.Entry<String, String> en: props.entrySet()){
-//            if(!selector.matches(en.getKey())){
-//                map.put(en.getKey().toString(), props.get(en.getKey().toString()));
-//            }
-//        }
-//        return loadValidations(map);
-//    }*/
+
 
     /**
      * Loads validations as configured in the given properties.
@@ -66,61 +51,40 @@ public final class ConfigModelReader {
      * @return a collection of config validations.
      */
     public static Collection<ConfigModel> loadValidations(Map<String,String> props) {
-        return loadValidations(props, getSelector(props));
-    }
-
-    /**
-     * Evaluates the correct selector.
-     * @param props
-     * @return
-     */
-    private static String getSelector(Map<String,String> props){
-        String selector = props.get(META_INFO_SELECTOR_PARAM);
-        if(selector==null){
-            selector = DEFAULT_META_INFO_SELECTOR;
-        }
-        return selector;
-    }
-
-    /**
-     * Loads validations as configured in the given properties.
-     * @param props the properties to be read
-     * @param selector the selector (default is {model}), that identifies the model entries.
-     * @return a collection of config validations.
-     */
-    public static Collection<ConfigModel> loadValidations(Map<String,String> props, String selector) {
         List<ConfigModel> result = new ArrayList<>();
         Set<String> itemKeys = new HashSet<>();
         for (Object key : props.keySet()) {
-            if (key.toString().endsWith(".class")) {
-                itemKeys.add(key.toString().substring(0, key.toString().length() - ".class".length()));
+            if (key.toString().startsWith("_") &&
+                    key.toString().endsWith(DEFAULT_META_INFO_SELECTOR + ".target")) {
+                itemKeys.add(key.toString().substring(0, key.toString().length() - ".model.target".length()));
             }
         }
         for (String baseKey : itemKeys) {
-            String clazz = props.get(baseKey + ".class");
-            String type = props.get(baseKey + ".type");
+            String target = props.get(baseKey + ".model.target");
+            String type = props.get(baseKey + ".model.type");
             if (type == null) {
                 type = String.class.getName();
             }
-            String value = props.get(baseKey + ".transitive");
+            String value = props.get(baseKey + ".model.transitive");
             boolean transitive = false;
             if(value!=null) {
                 transitive = Boolean.parseBoolean(value);
             }
-            String description = props.get(baseKey + ".description");
-            String regEx = props.get(baseKey + ".expression");
-            String validations = props.get(baseKey + ".validations");
-            String requiredVal = props.get(baseKey + ".required");
-            if ("Parameter".equalsIgnoreCase(clazz)) {
-                result.add(createParameterValidation(baseKey.substring(selector.length() + 1), description, type,
-                            requiredVal, regEx, validations));
-            } else if ("Section".equalsIgnoreCase(clazz)) {
+            String description = props.get(baseKey + ".model.description");
+            String regEx = props.get(baseKey + ".model.expression");
+            String validations = props.get(baseKey + ".model.validations");
+            String requiredVal = props.get(baseKey + ".model.required");
+            String targetKey = baseKey.substring(1);
+            if ("Parameter".equalsIgnoreCase(target)) {
+                result.add(createParameterValidation(targetKey,
+                        description, type, requiredVal, regEx, validations));
+            } else if ("Section".equalsIgnoreCase(target)) {
                 if(transitive){
-                    result.add(createSectionValidation(baseKey.substring(selector.length() + 1)+".*", description, requiredVal,
-                            validations));
+                    result.add(createSectionValidation(targetKey+".*",
+                            description, requiredVal, validations));
                 } else {
-                    result.add(createSectionValidation(baseKey.substring(selector.length() + 1), description, requiredVal,
-                            validations));
+                    result.add(createSectionValidation(targetKey,
+                            description, requiredVal, validations));
                 }
             }
         }
@@ -144,7 +108,7 @@ public final class ConfigModelReader {
                 .setDescription(description).setExpression(regEx).setType(type);
 //        if (validations != null) {
 //            try {
-//                // TODO defined validator API
+//                // TODO define validator API
 ////                builder.addValidations(loadValidations(validations));
 //            } catch (Exception e) {
 //                LOGGER.log(Level.WARNING, "Failed to load validations for " + paramName, e);
@@ -168,7 +132,7 @@ public final class ConfigModelReader {
                 .setDescription(description);
 //        if (validations != null) {
 //            try {
-//                // TODO defined validator API
+//                // TODO define validator API
 ////                builder.addValidations(loadValidations(valiadtions));
 //            } catch (Exception e) {
 //                LOGGER.log(Level.WARNING, "Failed to load validations for " + sectionName, e);

@@ -161,7 +161,7 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
 
 
     private JsonObject toJsonObject(ConfigModel val) {
-        JsonObjectBuilder valJson = Json.createObjectBuilder().add("type", val.getType().toString())
+        JsonObjectBuilder valJson = Json.createObjectBuilder().add("target", val.getType().toString())
                 .add("name", val.getName());
         if(val.getDescription()!=null) {
             valJson.add("description", val.getDescription());
@@ -173,7 +173,7 @@ public class ConfigDocumentationBean implements ConfigDocumentationMBean{
     }
 
     private JsonObject toJsonObject(Validation val) {
-        JsonObjectBuilder valJson = Json.createObjectBuilder().add("type", val.getConfigModel().getType().toString())
+        JsonObjectBuilder valJson = Json.createObjectBuilder().add("target", val.getConfigModel().getType().toString())
                 .add("name", val.getConfigModel().getName());
         if(val.getConfigModel().isRequired()){
             valJson.add("required",true);
