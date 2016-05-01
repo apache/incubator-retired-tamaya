@@ -19,7 +19,7 @@
 package org.apache.tamaya.model.internal;
 
 import org.apache.tamaya.model.Usage;
-import org.apache.tamaya.model.spi.UsageTrackerSpi;
+import org.apache.tamaya.model.spi.ConfigUsageStatsSpi;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by atsticks on 29.04.16.
  */
-public class DefaultUsageTracker implements UsageTrackerSpi{
+public class DefaultConfigUsageStats implements ConfigUsageStatsSpi {
 
     private Set<String> ignoredPackages = new HashSet<>();
 
@@ -57,7 +57,7 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
         return false;
     }
 
-    public DefaultUsageTracker(){
+    public DefaultConfigUsageStats(){
         ignoredPackages.add("com.intellij");
         ignoredPackages.add("java");
         ignoredPackages.add("org.junit");
@@ -85,6 +85,21 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
         return Collections.unmodifiableSet(ignoredPackages);
     }
 
+    @Override
+    public void addIgnoredUsagePackages(String... packageName) {
+
+    }
+
+    @Override
+    public Usage getUsage(String key) {
+        return this.usages.get(key);
+    }
+
+    @Override
+    public Usage getUsageAllProperties() {
+        return this.usages.get("<<all>>");
+    }
+
     /**
      * Get the recorded usage references of configuration.
      * @return the recorded usge references, never null.
@@ -92,11 +107,6 @@ public class DefaultUsageTracker implements UsageTrackerSpi{
     @Override
     public Collection<Usage> getUsages() {
         return usages.values();
-    }
-
-    @Override
-    public void trackConfigurationAccess(){
-        trackSingleKeyAccess("[[Configuration]]", "<not stored>");
     }
 
     @Override

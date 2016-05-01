@@ -35,6 +35,7 @@ import java.util.logging.Logger;
  */
 public final class Usage {
     private static final Logger LOG = Logger.getLogger(Usage.class.getName());
+    private static final String[] EMPTY_TRACE = new String[0];
     /**
      * the config section.
      */
@@ -44,6 +45,10 @@ public final class Usage {
      * Maps with usage references, key is the fully qualified package name.
      */
     private final Map<String,AccessDetail> accessDetails = new ConcurrentHashMap<>();
+    /**
+     * The maximal length of the stacktrace stored.
+     */
+    private static int maxTrace = 10;
 
     /**
      * Creates a usage metric container for a given key.
@@ -51,6 +56,23 @@ public final class Usage {
      */
     public Usage(String key) {
         this.key = Objects.requireNonNull(key);
+    }
+
+    /**
+     * Get the maximal length of the stack traces recorded, default is 10.
+     * @return the maximal length of the stack traces recorded
+     */
+    public static int getMaxTraceLength(){
+        return Usage.maxTrace;
+    }
+
+    /**
+     * Sets the maximal length of the stacktraces stored when tracking configuration
+     * usage. Setting it to a negative value, disabled stacktrace logging.
+     * @param maxTrace the maximal recorded stack length.
+     */
+    public static void setMaxTraceLength(int maxTrace){
+        Usage.maxTrace =maxTrace;
     }
 
     /**
@@ -144,7 +166,7 @@ public final class Usage {
      * @param value the value returned, not null.
      */
     public void trackUsage(String value){
-        trackUsage(value, 10);
+        trackUsage(value, maxTrace);
     }
 
     /**
@@ -154,31 +176,37 @@ public final class Usage {
      * @param maxTraceLength the maximal length of the stored stacktrace.
      */
     public void trackUsage(String value, int maxTraceLength){
-
-        Exception e = new Exception();
-        List<String> trace = new ArrayList<>();
         String accessPoint = null;
-        stack:for(StackTraceElement ste:e.getStackTrace()){
-            for(String ignored: ConfigModelManager.getIgnoredPackages()) {
-                if (ste.getClassName().startsWith(ignored)) {
-                    continue stack;
+        if(maxTraceLength>0) {
+            Exception e = new Exception();
+            List<String> trace = new ArrayList<>();
+            stack:
+            for (StackTraceElement ste : e.getStackTrace()) {
+                for (String ignored : ConfigUsageStats.getIgnoredUsagePackages()) {
+                    if (ste.getClassName().startsWith(ignored)) {
+                        continue stack;
+                    }
+                }
+                String ref = ste.getClassName() + '#' + ste.getMethodName() + "(line:" + ste.getLineNumber() + ')';
+                trace.add(ref);
+                if (accessPoint == null) {
+                    accessPoint = ref;
+                }
+                if (trace.size() >= maxTraceLength) {
+                    break;
                 }
             }
-            String ref = ste.getClassName() + '#' + ste.getMethodName() + "(line:" + ste.getLineNumber() + ')';
-            trace.add(ref);
             if (accessPoint == null) {
-                accessPoint = ref;
+                // all ignored, take first one, with different package
+                accessPoint = "<unknown/filtered/internal>";
             }
-            if(trace.size()>=maxTraceLength){
-                break;
-            }
+            AccessDetail details = getAccessDetails(accessPoint, trace.toArray(new String[trace.size()]));
+            details.trackAccess(value);
+        }else{
+            accessPoint = "<disabled>";
+            AccessDetail details = getAccessDetails(accessPoint, EMPTY_TRACE);
+            details.trackAccess(value);
         }
-        if (accessPoint == null) {
-            // all ignored, take first one, with different package
-            accessPoint = "<unknown/filtered/internal>";
-        }
-        AccessDetail details = getAccessDetails(accessPoint, trace.toArray(new String[trace.size()]));
-        details.trackAccess(value);
     }
 
     private AccessDetail getAccessDetails(String accessPoint, String[] trace) {
@@ -250,10 +278,10 @@ public final class Usage {
         }
 
         public Map<Long, String> getTrackedValues(){
-            if(trackedValues==null){
-                return Collections.emptyMap();
-            }else{
-                synchronized (this) {
+            synchronized (this) {
+                if (trackedValues == null) {
+                    return Collections.emptyMap();
+                } else {
                     return new HashMap<>(trackedValues);
                 }
             }

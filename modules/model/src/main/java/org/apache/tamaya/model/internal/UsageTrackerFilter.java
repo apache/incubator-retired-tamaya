@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.model.internal;
 
-import org.apache.tamaya.model.spi.UsageTrackerSpi;
+import org.apache.tamaya.model.spi.ConfigUsageStatsSpi;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.ServiceContextManager;
@@ -35,7 +35,7 @@ public class UsageTrackerFilter implements PropertyFilter{
 
     @Override
     public String filterProperty(String value, FilterContext context) {
-            UsageTrackerSpi tracker = ServiceContextManager.getServiceContext().getService(UsageTrackerSpi.class);
+            ConfigUsageStatsSpi tracker = ServiceContextManager.getServiceContext().getService(ConfigUsageStatsSpi.class);
         if (context.isSinglePropertyScoped()) {
             tracker.trackSingleKeyAccess(context.getKey(), value);
         } else {

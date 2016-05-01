@@ -27,7 +27,7 @@ import java.util.Set;
  * SPI to implemented by the component responsible for usage tracking of
  * configuration.
  */
-public interface UsageTrackerSpi {
+public interface ConfigUsageStatsSpi {
 
     /**
      * Enables/disables usage tracking.
@@ -48,16 +48,31 @@ public interface UsageTrackerSpi {
     Set<String> getIgnoredPackages();
 
     /**
+     * Adds the given packageNames to the list of packages to be ignored when collecting usage data.
+     * @param packageName the package names to be added, not null.
+     */
+    void addIgnoredUsagePackages(String... packageName);
+
+    /**
+     * Access the usage statistics for a given key. If usage stats collection is not
+     * activated (default), this method returns null.
+     * @param key the fully qualified configuration key, not null.
+     * @return the stats collected, or null.
+     */
+    Usage getUsage(String key);
+
+    /**
+     * Access the usage statistics for accessing {@link org.apache.tamaya.Configuration#getProperties()}.
+     * If usage stats collection is not activated (default), this method returns null.
+     * @return the stats collected, or null.
+     */
+    Usage getUsageAllProperties();
+
+    /**
      * Get the recorded usage references of configuration.
      * @return the recorded usge references, never null.
      */
     Collection<Usage> getUsages();
-
-    /**
-     * Track the access of {@code ConfigurationProvider#getConfiguration()} for
-     * usage statistics.
-     */
-    void trackConfigurationAccess();
 
     /**
      * Track the access of {@code Configuration#getProperties()} for

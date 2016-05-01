@@ -22,7 +22,6 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.model.spi.ConfigDocumentationMBean;
 import org.apache.tamaya.model.spi.ModelProviderSpi;
-import org.apache.tamaya.model.spi.UsageTrackerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.management.InstanceNotFoundException;
@@ -39,40 +38,12 @@ import java.util.logging.Logger;
 public final class ConfigModelManager {
 
     /** The logger used. */
-    private final static Logger LOG = Logger.getLogger(ConfigModelManager.class.getName());
-
-    private static UsageTrackerSpi usageTracker = ServiceContextManager
-            .getServiceContext().getService(UsageTrackerSpi.class);
+    private static final Logger LOG = Logger.getLogger(ConfigModelManager.class.getName());
 
     /**
      * Singleton constructor.
      */
     private ConfigModelManager() {
-    }
-
-    /**
-     * Enables/disables usage tracking.
-     * @param enabled set to true to enable usage tracking.
-     */
-    public static void enableUsageTracking(boolean enabled){
-        Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.")
-                .enableUsageTracking(enabled);
-    }
-
-    /**
-     * Allows to check if usage tracking is enabled /should be disbled by default).
-     * @return true, if usage tracking is enabled.
-     */
-    public static boolean isUsageTrackingEnabled(){
-        return Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.")
-                .isUsageTrackingEnabled();
-    }
-
-    /**
-     * Access the usage statistics for the recorded uses of configuration.
-     */
-    public static String getUsageInfo(){
-        return Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.").getUsageInfo();
     }
 
     /**
@@ -230,14 +201,6 @@ public final class ConfigModelManager {
         return result;
     }
 
-    /**
-     * Get the list of package, which are not evaluated for tracking configuration access and usage statistics.
-     * @return the set of ignored package names.
-     */
-    public static Set<String> getIgnoredPackages(){
-        return usageTracker.getIgnoredPackages();
-    }
-
     private static java.util.Set<java.lang.String> extractTransitiveAreas(Set<String> keys) {
         Set<String> transitiveClosure = new HashSet<>();
         for(String key:keys){
@@ -286,19 +249,4 @@ public final class ConfigModelManager {
         }
     }
 
-    /**
-     * Get the recorded usage references of configuration.
-     * @return the recorded usge references, never null.
-     */
-    public static Collection<Usage> getUsages() {
-        return Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.").getUsages();
-    }
-
-    /**
-     * Clears all collected usage statistics.
-     */
-    public static void clearUsageStats() {
-        Objects.requireNonNull(usageTracker, "No UsageTrackerSpi component available.")
-                .clearUsageStats();
-    }
 }

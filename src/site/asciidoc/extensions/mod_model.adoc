@@ -52,7 +52,7 @@ To benefit from configuration builder support you only must add the correspondin
 
 === Describing the Configuration Meta-Model
 
-Basically configuration is modelled using key, valuje-pairs of Strings. Looking at a keys
+Basically configuration is modelled using key, value-pairs. Looking at a keys
 +a.b.c.param1+ and +a.b.c.param2+ the following concepts can be used to defined/describe
 configuration:
 
@@ -68,16 +68,13 @@ Now with only these 2 concepts a simple configuration meta-model can be defined 
   descriptions, e.g. in a management console or generated configuration documentation site.
 * a set of sections.
 * a set of parameters.
-* Both, sections as well as parameters,
-  ** are prefixed with the meta-model selector, by default +{model}.+.
-  ** are identified by their _fully qualified names_, where '.' is used as
-     a separator character.
+* Both, sections as well as parameter models
+  ** can be modelled by a met-data entry, by default +_{key}.model+.
   ** may be required, or optional
   ** may have an optional description
-  ** may have additional custom configModels configured.
 * Parameters additionally have
   ** a _type_, described by the fully qualified class name, into which any configured (String) value must be
-     convertable into. If no type is configured +java.lang.String+ should be assumed as default.
+     convertable into. If no type is configured +java.lang.String+ is assumed as default.
   ** an optional regular expression that can be used to validate the +String+ values returned from a
      configuration.
 
@@ -87,7 +84,7 @@ a section), are called _undefined_. Undefined parameters should be grouped with 
 well as all parent sections, including transitive) of any parametet read, should similarly marked as undefined, if and
 only if
 
-. the section itself is (directly) undefined
+. the section itself is (directly) _undefined_
 . the section is not a _super section_ of a defined section.
 
 As en example the section definition of +a.b.c+ also implicitly includes the sections +a.b+ and +a+ to be defined
@@ -109,24 +106,24 @@ variants supported:
 [source,listing]
 -------------------------------------------------------------------------------
 # Metamodel information
-{model}.provider=ConfigModel Extension
+_config-model.provider=ConfigModel Extension
 
 # org.mycompany.root (optional section)
-{model}.org.mycompany.root.class=Section
-{model}.org.mycompany.root.description=Root section defining my company configuration.
+_org.mycompany.root.model-type=Section
+_org.mycompany.root.model-description=Root section defining my company configuration.
 
 # org.mycompany.security (required section)
-{model}.org.mycompany.security.class=Section
-{model}.org.mycompany.security.required=true
-{model}.org.mycompany.security.description=Security related settings.\
+_org.mycompany.security.model-type=Section
+_org.mycompany.security.model-required=true
+_org.mycompany.security.model-description=Security related settings.\
          refer for further details to XXX.
 
 # minmal section
-{model}.minimal.class=Section
+_minimal.model-class=Section
 
 # custom validated section
-{model}.validated.class=Section
-{model}.validated.configModels=org.apache.tamaya.model.TestValidator
+_validated.model-type=Section
+_validated.model-validator=org.apache.tamaya.model.TestValidator
 -------------------------------------------------------------------------------
 
 Above +org.mycompany.root+ transitively defines 3 sections:
@@ -154,20 +151,20 @@ Similarly parameters also can be defined:
 [source,listing]
 -------------------------------------------------------------------------------
 # org.mycompany.root.name (required parameter)
-{model}.org.mycompany.root.name.class=Parameter
-{model}.org.mycompany.root.name.required=true
-{model}.org.mycompany.root.name.description=The company's name, also used in the application's main header.
+_org.mycompany.root.name.model-type=Parameter
+_org.mycompany.root.name.model-required=true
+_org.mycompany.root.name.model-description=The company's name, also used in the application's main header.
 
 # org.mycompany.security (required parameters)
-{model}.org.mycompany.security.uid.required=true
-{model}.org.mycompany.security.uid.description=The user id.
-{model}.org.mycompany.security.realm.required=true
-{model}.org.mycompany.security.realm.configModels=org.apache.tamaya.model.RealmValidator
-{model}.org.mycompany.security.real.description=The security realm required.
-{model}.org.mycompany.security.tokenid.description=The token id, if the token service is used (optional).
+_org.mycompany.security.uid.model-required=true
+_org.mycompany.security.uid.model-description=The user id.
+_org.mycompany.security.realm.model-required=true
+_org.mycompany.security.realm.model-validator=org.apache.tamaya.model.RealmValidator
+_org.mycompany.security.realm.model-description=The security realm required.
+_org.mycompany.security.tokenid.model-description=The token id, if the token service is used (optional).
 
 # A minmal parameter
-{model}.minimalClass.class.type=Class
+_minimalClass.model-type=Class
 -------------------------------------------------------------------------------
 
 Similarly as when defining section also parameter entries define transitively its containing sections. E.g.
@@ -201,6 +198,107 @@ By default the configuration model can be defined at the following locations:
   is required that the _formats extension_ is available, since this is used to effectively read the
   data. This extension also allows you to use alternate representation formats such as +ini, xml, yml, json+.
 
+
+=== Tracking Configuration Access
+
+The model module also allows tracking which code accesses configuration properties or configuration parameters.
+It checks the stacktrace to evaluate the calling code location, hereby any unwanted packages can be implicitly
+ommitted from the stacktrace. Also the maximal length of the stacktrace retained can be constraint in length.
+The usages are recorded as +Usage+ instances. Hereby for each parameter accessed a corresponding +Usage+
+instance is created. It can be accessed by calling +Usage ConfigUsageStats.getUsage(String key)+. Usage
+statistics for calling +Configuration.getProperties()+ can be obtained calling +Usage getUsageAllProps();+.
+
+Usage tracking is disabled by default. It can be enabled by calling +ConfigUsageStats.enableUsageTracking(true);+.
++ConfigUsageStats.isUsageTrackingEnabled()+ returns the current tracking status.
+
+The +Usage+ class itself provides access to further fainer grained usage data (+AccessDetail+) cotaining:
+
+* the access point (+fqn.ClassName#method(line: xxx)+).
+* the number of accesses
+* the first an last access
+* the values read
+* the access stacktrace (filtered by ignored packages).
+
+[source,java]
+-----------------------------------------------------------
+public final class Usage {
+    [...]
+    public String getKey();
+    public void clearMetrics();
+    public int getReferenceCount();
+    public int getUsageCount();
+    public Collection<AccessDetail> getAccessDetails(Class type);
+    public Collection<AccessDetail> getAccessDetails(Package pack);
+    public Collection<AccessDetail> getAccessDetails(String lookupExpression);
+    public Collection<AccessDetail> getAccessDetails();
+    public void trackUsage(String value);
+    public void trackUsage(String value, int maxTraceLength);
+
+
+    public static final class AccessDetail {
+        [...]
+        public void clearStats();
+        public long trackAccess(String value);
+        public long getAccessCount();
+        public String getAccessPoint();
+        public long getFirstAccessTS();
+        public long getLastAccessTS();
+        public String[] getStackTrace();
+        public Map<Long, String> getTrackedValues();
+    }
+
+}
+-----------------------------------------------------------
+
+With +ConfigUsageStats.clearUsageStats()+ the collected statistics can be reset at any time. Summarizing the main
+singleton for configuration statistics is defined as follows:
+
+[source,java]
+-----------------------------------------------------------
+public final class ConfigUsageStats{
+    public static Set<String> getIgnoredUsagePackages();
+    public static void addIgnoredUsagePackages(String... packageName);
+    public static void enableUsageTracking(boolean enabled);
+    public static Usage getUsage(String key);
+    public static Collection<Usage> getUsages();
+    public static void clearUsageStats();
+    public static Usage getUsageAllProperties();
+    public static boolean isUsageTrackingEnabled();
+    public static String getUsageInfo();
+}
+-----------------------------------------------------------
+
+==== Customizing the Stacktrage for Usage Reporting
+
+The stacktrace tracked by the system can be customized in several ways:
+
+* +ConfigUsageStats.addIgnoredPackageNames(String...)+ allows to add additional ignored package names.
+* With +Usage.setMaxTraceLength(int)+ the maximal size of the stacktraces logged can be set. Setting a
+  negative value will disable stacktrace logging completelely.
+
+
+=== Accessing Usage Statistics
+
+Bascially usage statistics are available in two forms:
+
+* The +Usage/AccessDetail+ object tree can be accessed programmatically from the +ConfigUsageStats+
+  singleton.
+* With +ConfigUsageStats.getUsageInfo()+ also a textual representation of the usage statistics
+  can be obtained, as illustrated below (a snipped from the current test output):
+
+[source,listing]
+-----------------------------------------------------------
+Apache Tamaya Configuration Usage Metrics
+=========================================
+DATE: Sat Apr 30 21:51:09 CEST 2016
+
+220    <<all>>:
+  - 220   <unknown/filtered/internal>                       , first=Sat Apr 30 21:51:09 CEST 2016, last=Sat Apr 30 21:51:09 CEST 2016
+3      java.version:
+  - 2     test.model.TestConfigAccessor#readProperty(line:43), first=Sat Apr 30 21:51:09 CEST 2016, last=Sat Apr 30 21:51:09 CEST 2016
+  - 1     <unknown/filtered/internal>                       , first=Sat Apr 30 21:51:09 CEST 2016, last=Sat Apr 30 21:51:09 CEST 2016
+
+-----------------------------------------------------------
 
 
 ==== Programmatic API
@@ -243,7 +341,7 @@ single configuration source (e.g. for configuring the machine's IP address and s
 -----------------------------------------------------------
 public interface ConfigModel {
 
-    ModelType getType();
+    ModelTarget getType();
     String getName();
     String getProvider();
     boolean isRequired();
@@ -253,11 +351,11 @@ public interface ConfigModel {
 -----------------------------------------------------------
 
 
-Hereby +ModelType+ defines more details on the kind of model:
+Hereby +ModelTarget+ defines more details on the kind of model:
 
 [source,java]
 -----------------------------------------------------------
-public enum ModelType {
+public enum ModelTarget {
     /**
      * A configuration section.
      */
@@ -267,21 +365,9 @@ public enum ModelType {
      */
     Parameter,
     /**
-     * ConfigModel to ensure a certain configuration filter is installed.
-     */
-    Filter,
-    /**
-     * ConfigModel to ensure a certain combination policy is active.
-     */
-    CombinationPolicy,
-    /**
      * ConfigModel that is a container of other validations.
      */
-    Group,
-    /**
-     * ConfigModel to simply check availability for a class on the current classpath.
-     */
-    LoadableClass
+    Group
 }
 -----------------------------------------------------------
 
@@ -340,6 +426,13 @@ public interface ModelProviderSpi {
 New instances implementing this interface must be registered into the current +ServiceContext+, by default the
 +ServiceLoader+ is used.
 
+
+=== The ConfigUsageStatsSpi
+
+The methods for managing and tracking of configuration changes are delegated to the current
+most sinificant implementation of the +org.apache.tamaya.model.spi.ConfigUsageStatsSpi+ SPI.
+By implementing this SPI and registerting it with the +ServiceContext+ the usage tracking
+logic can be adapted or replaced.
 
 === Other Utility Classes
 
