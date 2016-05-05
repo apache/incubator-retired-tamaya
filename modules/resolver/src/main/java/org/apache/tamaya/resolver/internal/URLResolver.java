@@ -55,12 +55,11 @@ public final class URLResolver implements ExpressionResolver {
                 while ((inputLine = bufferedReader.readLine()) != null) {
                     builder.append(inputLine).append("\n");
                 }
-
                 return builder.toString();
             }
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);
-            return '['+expression+']';
+            return null;
         }
     }
 

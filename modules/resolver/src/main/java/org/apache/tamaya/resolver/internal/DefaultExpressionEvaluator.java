@@ -120,10 +120,11 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      *
      * @param key the key to be filtered
      * @param value value to be analyzed for expressions
+     * @param maskUnresolved
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public String evaluateExpression(String key, String value){
+    public String evaluateExpression(String key, String value, boolean maskUnresolved){
         if(value ==null){
             return null;
         }
@@ -146,7 +147,10 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                             break;
                         }
                         String subExpression = parseSubExpression(tokenizer, value);
-                        current.append(evaluateInternal(subExpression));
+                        String res = evaluateInternal(subExpression, maskUnresolved);
+                        if(res!=null) {
+                            current.append(res);
+                        }
                         break;
                     default:
                         current.append(token);
@@ -215,9 +219,11 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * Evalutes the expression parsed, hereby checking for prefixes and trying otherwise all available resolvers,
      * based on priority.
      * @param unresolvedExpression the parsed, but unresolved expression
+     * @param maskUnresolved if true, not found expression parts will be replaced vy surrounding with [].
+     *                     Setting to false will replace the value with an empty String.
      * @return the resolved expression, or null.
      */
-    private String evaluateInternal(String unresolvedExpression) {
+    private String evaluateInternal(String unresolvedExpression, boolean maskUnresolved) {
         String value = null;
         // 1 check for explicit prefix
         for(ExpressionResolver resolver:resolvers){
@@ -240,7 +246,9 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
         }
         if(value==null){
             LOG.log(Level.WARNING, "Unresolvable expression encountered " + unresolvedExpression);
-            value = "?{" + unresolvedExpression + '}';
+            if(maskUnresolved){
+                value = "?{" + unresolvedExpression + '}';
+            }
         }
         return value;
     }
