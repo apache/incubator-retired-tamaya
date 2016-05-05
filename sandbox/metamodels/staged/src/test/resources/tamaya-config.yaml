@@ -1,0 +1,85 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy current the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+TAMAYA:
+  PROFILES-DEF:
+   - selectable:          DEFAULT,DEV,TEST,PTA,PROD
+   - supports-multi:      false
+   - defaults:            DEFAULT
+   - default-active:      DEV
+   - defined-by:          sys-property:ENV, env-property:ENV
+
+  PROFILES:
+    <COMMON>:
+    - formats:  yaml, properties, xml-properties
+    - suffixes:   yaml, yml, properties, xml
+    - sources:
+      - "named:env-properties"   # provider name, or class name
+      - "named:main-args"
+      - "named:sys-properties"
+      - "resource:classpath:META-INF/config/**/*.SUFFIX"
+    DEFAULT:
+      - prio:       0   # optional
+      - sources:
+        - "resource:classpath:META-INF/defaults/**/*.SUFFIX"
+        - "resource:file:${config.dir}/defaults/**/*.SUFFIX"
+      - filters:
+        - "section:DEFAULTS\.*"
+        - "section:defaults\.*"
+        - "exclude:_\.*"   # removes all meta-entries
+    TEST:
+      - prio:        100   # optional
+      - filters:
+        - "section:TEST\.*"
+        - "section:test\.*"
+    PROD:
+      - prio:        1000   # optional
+      - filters:
+        - "section:PROD\.*"
+        - "section:prod\.*"
+
+  MODEL:
+      a.b.c:        "Section"
+      - owner:      "Test Model"
+      - children:   false
+      - required:   true
+      - validation: "my.abc.ValidatorClass"
+
+      java.version: "Parameter"
+      - owner:      "Expression Test"
+      - expression: ".*v1.7.*"
+      - required:   true
+
+      ch.trivadis:  "Section"       # Declaration only
+
+  USAGE:
+      track:        true
+
+#  FORMAT-DEF:
+#   - formats: yaml, properties, xml-properties
+#   - mappings:
+#      yaml            -> CustomMapping1Classname,
+#      xml-properties  -> Mapping2Classname
+#   - suffixes:
+#      yml, yaml, xml, properties
+
+#  FUNCTIONS:
+#    - default-map:  map(DEFAULTS,.)
+#    - env-map:      map(${ENV},.)
+#    - omit:         omit(!DEFAULTS,!${ENV})
+#    - config-map:   omit,default-map,env-map
