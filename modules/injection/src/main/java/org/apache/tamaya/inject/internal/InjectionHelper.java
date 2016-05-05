@@ -226,7 +226,7 @@ final class InjectionHelper {
         }
         ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
         if (evaluator != null) {
-            return evaluator.evaluateExpression("<injection>", expression);
+            return evaluator.evaluateExpression("<injection>", expression, maskNotFound);
         }
         return expression;
     }
