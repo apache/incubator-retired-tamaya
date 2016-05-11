@@ -232,7 +232,10 @@ public final class ConfigurationFunctions {
                     return new MappedConfiguration(filtered, new KeyMapper(){
                         @Override
                         public String mapKey(String key) {
-                            return key.substring(areaKey.length());
+                            if(key.startsWith(areaKey)) {
+                                return key.substring(areaKey.length());
+                            }
+                            return null;
                         }
                     }, "stripped");
                 }
@@ -249,7 +252,7 @@ public final class ConfigurationFunctions {
      * @return true, if the entry is exact in this section
      */
     public static boolean isKeyInSection(String key, String sectionKey) {
-        return sectionKey.isEmpty() || key.startsWith(sectionKey);
+        return key.startsWith(sectionKey);
     }
 
     /**
