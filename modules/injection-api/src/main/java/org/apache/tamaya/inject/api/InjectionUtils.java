@@ -82,6 +82,7 @@ public final class InjectionUtils {
             }
         } else { // add package name
             keys.add(member.getDeclaringClass().getName() + '.' + mainKey);
+            keys.add(member.getDeclaringClass().getSimpleName() + '.' + mainKey);
         }
         return keys;
     }
