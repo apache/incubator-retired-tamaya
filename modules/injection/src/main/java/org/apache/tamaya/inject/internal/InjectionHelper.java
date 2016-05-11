@@ -134,7 +134,7 @@ final class InjectionHelper {
         }
         String configValue = evaluteConfigValue(keys, retKey, config);
         if (configValue == null) {
-            if(prop.defaultValue().isEmpty()){
+            if(prop==null || prop.defaultValue().isEmpty()){
                 return null;
             }
             return prop.defaultValue();

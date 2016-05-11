@@ -20,6 +20,7 @@ package org.apache.tamaya.inject;
 
 import annottext.AnnotatedConfigBean;
 import annottext.AnnotatedConfigTemplate;
+import annottext.NonAnnotatedConfigBean;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,6 +31,23 @@ import static org.junit.Assert.assertTrue;
  * Created by Anatole on 12.01.2015.
  */
 public class TamayaInjectionTest {
+
+    @Test
+    public void testInjectionNonAnnotatedClass(){
+        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        NonAnnotatedConfigBean testInstance = new NonAnnotatedConfigBean();
+        assertEquals(testInstance.simple_value, "Should be overridden!");
+        assertEquals(testInstance.classFieldKey, "Foo");
+        assertEquals(testInstance.fieldKey, null);
+        assertEquals(testInstance.fullKey, null);
+        assertEquals(testInstance.test2, "This is not set.");
+        ConfigurationInjection.getConfigurationInjector().configure(testInstance);
+        assertEquals(testInstance.simple_value, "aSimpleValue");
+        assertEquals(testInstance.classFieldKey, "Class-Field-Value");
+        assertEquals(testInstance.fieldKey, "Field-Value");
+        assertEquals(testInstance.fullKey, "Fullkey-Value");
+        assertEquals(testInstance.test2, "This is not set.");
+    }
 
     @Test
     public void testInjectionClass(){

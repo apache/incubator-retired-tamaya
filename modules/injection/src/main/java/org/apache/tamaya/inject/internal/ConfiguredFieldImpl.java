@@ -97,6 +97,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
      * This method applies a configuration to the field.
      *
      * @param target      the target instance, not null.
+     * @param config The configuration to be used.
      * @param resolve     set to true, if expression resolution should be applied on the keys passed.
      * @throws ConfigException if the configuration required could not be resolved or converted.
      */
@@ -120,7 +121,9 @@ public class ConfiguredFieldImpl implements ConfiguredField{
                     return annotatedField;
                 }
             });
-            annotatedField.set(target, value);
+            if(value!=null) {
+                annotatedField.set(target, value);
+            }
         } catch (Exception e) {
             throw new ConfigException("Failed to evaluate annotated field: " + this.annotatedField.getDeclaringClass()
                     .getName() + '.' + annotatedField.getName(), e);
