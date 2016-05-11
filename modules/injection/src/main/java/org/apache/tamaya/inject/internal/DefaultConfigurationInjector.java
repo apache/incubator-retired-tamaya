@@ -47,6 +47,8 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationInjector.class.getName());
 
+    private boolean autoConfigureEnabled = true;
+
     /**
      * Extract the configuration annotation config and registers it per class, for later reuse.
      *
@@ -55,13 +57,32 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      */
     public ConfiguredType registerType(Class<?> type) {
         ConfiguredType confType = configuredTypes.get(type);
-        if (confType == null && isConfigured(type)) {
+        if (confType == null) {
+            if(!isConfigAnnotated(type) && !autoConfigureEnabled){
+                return null;
+            }
             confType = new ConfiguredTypeImpl(type);
             configuredTypes.put(type, confType);
             InjectionHelper.sendConfigurationEvent(confType);
         }
         return confType;
-//        return configuredTypes.computeIfAbsent(type, ConfigDefaultSections::new);
+    }
+
+    /**
+     * If set also non annotated instances can be configured or created as templates.
+     * @return true, if autoConfigureEnabled.
+     */
+    public boolean isAutoConfigureEnabled(){
+        return autoConfigureEnabled;
+    }
+
+    /**
+     * Setting to true enables also configuration/templating of non annotated classes or
+     * interfaces.
+     * @param enabled true enables also configuration/templating of
+     */
+    public void setAutoConfigureEnabled(boolean enabled){
+        this.autoConfigureEnabled = enabled;
     }
 
     /**
@@ -69,7 +90,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
      * @param type the target type, not null.
      * @return true, if the type, a method or field has Tamaya config annotation on it.
      */
-    private boolean isConfigured(Class<?> type) {
+    private boolean isConfigAnnotated(Class<?> type) {
         if(type.getClass().isAnnotationPresent(ConfigDefaultSections.class)){
             return true;
         }
@@ -111,7 +132,7 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
         if(configuredType!=null){
             configuredType.configure(instance, config);
         }else{
-            LOG.info("Instance passed is not annotated for configuration: " + instance);
+            LOG.info("Instance passed is not configurable: " + instance);
         }
         return instance;
     }

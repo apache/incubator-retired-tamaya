@@ -30,7 +30,9 @@ public interface ConfigurationInjector {
     /**
      * Configures the current instance and registers necessary listener to forward config change events as
      * defined by the current annotations in place.
-     * 
+     *
+     * Unannotated types are ignored.
+     *
      * @param <T> the type of the instance.
      * @param instance the instance to be configured
      * @return the configured instance (allows chaining of operations).
@@ -40,6 +42,8 @@ public interface ConfigurationInjector {
     /**
      * Configures the current instance and registers necessary listener to forward config change events as
      * defined by the current annotations in place.
+     *
+     * Unannotated types are ignored.
      *
      * @param <T> the type of the instance.
      * @param instance the instance to be configured

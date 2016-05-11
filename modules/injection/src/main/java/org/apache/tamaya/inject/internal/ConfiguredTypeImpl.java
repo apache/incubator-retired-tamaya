@@ -62,18 +62,21 @@ public class ConfiguredTypeImpl implements ConfiguredType{
      *
      * @param type the instance type.
      */
-
     public ConfiguredTypeImpl(Class type) {
         this.type = Objects.requireNonNull(type);
-        ConfigDefaultSections confType = (ConfigDefaultSections)
-                type.getAnnotation(ConfigDefaultSections.class);
-        ConfigAutoInject autoInject = (ConfigAutoInject)type.getAnnotation(ConfigAutoInject.class);
-        if(confType!=null){
-            initFields(type, autoInject!=null);
-            initMethods(type, autoInject!=null);
-        }else{
-            initFields(type, false);
-            initMethods(type, false);
+        if(!isConfigured(type)){
+            LOG.info("Auto-Configuring type: " + type.getName());
+            initFields(type, true);
+            initMethods(type, true);
+        }else {
+            ConfigAutoInject autoInject = (ConfigAutoInject) type.getAnnotation(ConfigAutoInject.class);
+            if (autoInject != null) {
+                initFields(type, autoInject != null);
+                initMethods(type, autoInject != null);
+            } else {
+                initFields(type, false);
+                initMethods(type, false);
+            }
         }
     }
 
