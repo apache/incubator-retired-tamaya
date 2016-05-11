@@ -22,8 +22,12 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.apache.tamaya.resolver.Resolver;
+import org.apache.tamaya.resolver.spi.ExpressionResolver;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Component that manages the current setup profiles for this environment/runtime. The profile manager
@@ -49,6 +53,7 @@ import java.util.*;
  */
 public final class ProfileManager {
 
+    private static final Logger LOG = Logger.getLogger(ProfileManager.class.getName());
     private static final ProfileManager INSTANCE = new ProfileManager();
 
     /** The currently active profiles, in order of precedence, the most significant are the last ones. */
@@ -68,7 +73,7 @@ public final class ProfileManager {
     }
 
     private ProfileManager(){
-        Configuration metaConfig = EnvConfig.getMetaConfiguration();
+        Configuration metaConfig = MetaConfiguration.getConfiguration();
         Configuration profileConfig = metaConfig.with(
                 ConfigurationFunctions.section("TAMAYA.PROFILES-DEF"));
         String[] selectables = profileConfig.getOrDefault("profiles","DEFAULT,DEV,TEST,PROD").split(",");
@@ -97,7 +102,7 @@ public final class ProfileManager {
             if(exp.isEmpty()){
                 continue;
             }
-            currentEnvironment = Resolver.evaluateExpression(exp, false);
+            currentEnvironment = evaluateExpression(exp);
             if(currentEnvironment!=null){
                 currentEnvironment = currentEnvironment.trim();
                 if(!currentEnvironment.isEmpty()){
@@ -120,6 +125,35 @@ public final class ProfileManager {
             }
             this.activeProfiles.add(prof);
         }
+    }
+
+    /**
+     * Evaluates the expressions to evaluate the current profile.
+     * Currently the following expressions are supported
+     * <pre>
+     * sys-property:xxx
+     * env-property:xxx
+     * </pre>
+     * {@code xxx} is the corresponding key.
+     * @param currentProfileExpression the profile expression.
+     * @return the evaluated String, or null.
+     */
+    private String evaluateExpression(String currentProfileExpression){
+        currentProfileExpression = currentProfileExpression.trim();
+        List<ExpressionResolver> resolvers = new ArrayList<>();
+        for(ExpressionResolver res: ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class)){
+            resolvers.add(res);
+        }
+        for(ExpressionResolver res:resolvers){
+            if(currentProfileExpression.startsWith(res.getResolverPrefix())){
+                try{
+                    return res.evaluate(currentProfileExpression.substring(res.getResolverPrefix().length()));
+                }catch(Exception e){
+                    LOG.log(Level.FINEST, "Error evaluating resolver: " + res, e);
+                }
+            }
+        }
+        return null;
     }
 
     /**

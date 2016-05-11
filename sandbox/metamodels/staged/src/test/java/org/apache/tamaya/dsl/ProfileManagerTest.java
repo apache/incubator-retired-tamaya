@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  */
 public class ProfileManagerTest {
 
-    private ProfileManager profileManager = new ProfileManager();
+    private ProfileManager profileManager = ProfileManager.getInstance();
 
     @org.junit.Test
     public void isProfileActive() throws Exception {

@@ -24,51 +24,56 @@ TAMAYA:
    - default-active:      DEV
    - defined-by:          sys-property:ENV, env-property:ENV
 
-  PROFILES:
-    <COMMON>:
+  FORMATS:
     - formats:  yaml, properties, xml-properties
     - suffixes:   yaml, yml, properties, xml
-    - sources:
-      - "named:env-properties"   # provider name, or class name
-      - "named:main-args"
-      - "named:sys-properties"
-      - "resource:classpath:META-INF/config/**/*.SUFFIX"
+
+  PROFILES:
+    <COMMON>:
+      - sources:
+        - "named:env-properties"   # provider name, or class name
+        - "named:main-args"
+        - "named:sys-properties"
+        - "resource:classpath:META-INF/config/**/*.SUFFIX"
     DEFAULT:
       - prio:       0   # optional
       - sources:
         - "resource:classpath:META-INF/defaults/**/*.SUFFIX"
         - "resource:file:${config.dir}/defaults/**/*.SUFFIX"
       - filters:
-        - "section:DEFAULTS\.*"
-        - "section:defaults\.*"
-        - "exclude:_\.*"   # removes all meta-entries
+        - "section:DEFAULTS\\.*"
+        - "section:defaults\\.*"
+        - "exclude:_\\.*"   # removes all meta-entries
     TEST:
       - prio:        100   # optional
       - filters:
-        - "section:TEST\.*"
-        - "section:test\.*"
+        - "section:TEST\\.*"
+        - "section:test\\.*"
     PROD:
       - prio:        1000   # optional
       - filters:
-        - "section:PROD\.*"
-        - "section:prod\.*"
+        - "section:PROD\\.*"
+        - "section:prod\\.*"
 
   MODEL:
-      a.b.c:        "Section"
+    - a.b.c:
+      - type:       "Section"
       - owner:      "Test Model"
       - children:   false
       - required:   true
       - validation: "my.abc.ValidatorClass"
 
-      java.version: "Parameter"
+    - java.version:
+      - type:       "Parameter"
       - owner:      "Expression Test"
       - expression: ".*v1.7.*"
       - required:   true
 
-      ch.trivadis:  "Section"       # Declaration only
+    - ch.trivadis:
+      - type:       "Section"       # Declaration only
 
   USAGE:
-      track:        true
+    track:        true
 
 #  FORMAT-DEF:
 #   - formats: yaml, properties, xml-properties

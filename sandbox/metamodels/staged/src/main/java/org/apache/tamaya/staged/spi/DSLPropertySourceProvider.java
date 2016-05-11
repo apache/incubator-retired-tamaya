@@ -29,25 +29,22 @@ import java.util.Map;
  * honored if possible by implicitly adapting/Overriding the default ordinal for the sources
  * added.
  */
-public interface DSLSourceResolver {
+public interface DSLPropertySourceProvider {
 
     /**
      * Resolve the given expression (without the key part).
      * @param sourceExpression the source expression, not null.
      * @param defaultPropertySources the default property sources that can be used as defined by the functionality by
      *                               a resolver.
-     * @param latestMaxOrdinal the latest ordinal. Newly added property sources should have incresed ordinal values
-     *                         so the overall ordering is preserved as defined by the DSL user.
      * @return the list of loaded Property sources, never null.
      */
     List<PropertySource> resolve(String sourceExpression,
-                                 Map<String, PropertySource> defaultPropertySources,
-                                 int latestMaxOrdinal);
+                                 Map<String, PropertySource> defaultPropertySources);
 
     /**
      * Get the resolver key, which identifiesan expression to be resolved by a resolver instance.
      * As an example {@code "named:"} is the key for an expression {@code "named:sys-properties"}.
-     * The method {@link #resolve(String, Map, int)} will onyl receive the secoind part of the expression.
+     * The method {@link #resolve(String, Map)} will onyl receive the secoind part of the expression.
      * @return identifying key.
      */
     String getKey();

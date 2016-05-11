@@ -240,7 +240,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                         return value;
                     }
                 }catch(Exception e){
-                    LOG.log(Level.WARNING, "Error during expression resolution from " + resolver, e);
+                    LOG.log(Level.FINEST, "Error during expression resolution from " + resolver, e);
                 }
             }
         }
