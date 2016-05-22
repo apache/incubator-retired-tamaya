@@ -21,7 +21,7 @@ package org.apache.tamaya.ui;
 import com.vaadin.server.VaadinSession;
 
 /**
- * Convenience wrapper for storing and retreiving a user from the VaadinSession
+ * Convenience wrapper for storing and retrieving a user from the VaadinSession
  */
 public final class CurrentUser {
     /** The key used. */
@@ -50,7 +50,7 @@ public final class CurrentUser {
 
     /**
      * Checks if the current user is present and logged in.
-     * @return
+     * @return {@code true} if user is present and logged in.
      */
     public static boolean isLoggedIn() {
         return get() != null && get().isLoggedin();

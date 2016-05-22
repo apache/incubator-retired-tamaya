@@ -92,6 +92,7 @@ public final class MutableConfigurationProvider {
     /**
      * This propagation policy writes through all changes to all mutable property sources, where applicable.
      * This is also the default policy.
+     * @return default all policy.
      */
     public static ChangePropagationPolicy getApplyAllChangePolicy(){
         return ALL_POLICY;
