@@ -190,14 +190,6 @@ under the License.
 
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-spisupport</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-yaml</artifactId>
             <classifier>features</classifier>
             <type>xml</type>
@@ -239,14 +231,6 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-osgi</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-spring</artifactId>
             <classifier>features</classifier>
             <type>xml</type>
             <version>${project.version}</version>
