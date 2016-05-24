@@ -210,7 +210,7 @@ Z -1 votes
 [list]
 ----
 
-* After the vote on the PPMC has been finished and is successful, repeaat the voting process on the
+* After the vote on the PPMC has been finished and is successful, repeat the voting process on the
   incubator mailing list.
 
 
