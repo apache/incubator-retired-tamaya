@@ -51,6 +51,7 @@ under the License.
         <menu name="Development">
             <item name="Sources" href="source.html"/>
             <item name="Community" href="community.html"/>
+            <item name="CI Server" href="https://builds.apache.org/view/S-Z/view/Tamaya/" target="_blank"/>
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAMAYA" target="_blank"/>
             <item name="Development Guide" href="devguide.html"/>
             <item name="Release Guide" href="release-guide.html"/>
