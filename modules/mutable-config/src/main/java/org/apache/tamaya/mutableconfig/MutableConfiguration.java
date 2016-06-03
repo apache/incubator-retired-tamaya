@@ -19,6 +19,7 @@
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 
 import java.util.Collection;
@@ -50,7 +51,7 @@ public interface MutableConfiguration extends Configuration {
      * passed, when writing (committing) any changes applied.
      * @return the transaction id, not null.
      */
-    UUID startTransaction();
+    String startTransaction();
 
     /**
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
@@ -72,7 +73,7 @@ public interface MutableConfiguration extends Configuration {
      * Get the current transaction id.
      * @return the current transaction id, or null, if no transaction is active.
      */
-    UUID getTransactionId();
+    String getTransactionId();
 
     /**
      * Get the current autoCommit policy. AutoCommit will commit the transaction after each change applied.
@@ -93,6 +94,14 @@ public interface MutableConfiguration extends Configuration {
      * @return he active {@link ChangePropagationPolicy}, never null.
      */
     ChangePropagationPolicy getChangePropagationPolicy();
+
+    /**
+     * Access the current configuration change context, built up on all the change context of the participating
+     * {@link MutablePropertySource} instances.
+     * @return the colleted changes as one single config change for the current transaction, or null, if no transaction
+     * is active.
+     */
+    ConfigChangeContext getConfigChangeContext();
 
     /**
      * Set the autoCommit policy to be used for this configuration instance.

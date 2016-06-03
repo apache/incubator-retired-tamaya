@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Transactional context used for managing configuration changes within an {@link AbstractMutablePropertySource}.
@@ -34,7 +33,7 @@ public final class ConfigChangeContext {
     /**
      * The transaction id.
      */
-    private UUID transactionId;
+    private String transactionId;
     /**
      * The starting point.
      */
@@ -52,15 +51,24 @@ public final class ConfigChangeContext {
      * Creates a new instance bound to the given transaction.
      * @param transactionID the transaction ID, not null.
      */
-    public ConfigChangeContext(UUID transactionID){
+    public ConfigChangeContext(String transactionID){
         this.transactionId = Objects.requireNonNull(transactionID);
+    }
+
+    /**
+     * Sets the started at value. By default {@link #startedAt} is already set on instance creation to
+     * {@code System.currentTimeMillis()}.
+     * @param startedAt the new UTC POSIX timestamp in millis.
+     */
+    public void setStartedAt(long startedAt) {
+        this.startedAt = startedAt;
     }
 
     /**
      * Get the corresppnding transaction ID of this instance.
      * @return the transaction ID, never null.
      */
-    public UUID getTransactionID(){
+    public String getTransactionID(){
         return transactionId;
     }
 
@@ -95,6 +103,7 @@ public final class ConfigChangeContext {
      */
     public void put(String key, String value) {
         this.addedProperties.put(key, value);
+        this.removedProperties.remove(key);
     }
 
     /**
@@ -103,6 +112,16 @@ public final class ConfigChangeContext {
      */
     public void putAll(Map<String, String> properties) {
         this.addedProperties.putAll(properties);
+        this.removedProperties.removeAll(properties.keySet());
+    }
+
+    /**
+     * Remove all the given keys, ir present.
+     * @param key the key to be removed, not null.
+     */
+    public void remove(String key) {
+        this.removedProperties.add(key);
+        this.addedProperties.remove(key);
     }
 
     /**
@@ -111,6 +130,9 @@ public final class ConfigChangeContext {
      */
     public void removeAll(Collection<String> keys) {
         this.removedProperties.addAll(keys);
+        for(String k:keys) {
+            this.addedProperties.remove(k);
+        }
     }
 
     /**
@@ -148,5 +170,6 @@ public final class ConfigChangeContext {
                 ", removedProperties=" + removedProperties +
                 '}';
     }
+
 
 }

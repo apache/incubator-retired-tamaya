@@ -18,11 +18,7 @@
  */
 package org.apache.tamaya.mutableconfig.ui;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.services.MessageProvider;
@@ -36,6 +32,7 @@ public class ConfigEditorWidget extends FormLayout {
 
     private MutableConfiguration mutableConfig;
     private ProtocolWidget logWriter;
+    private TransactionControlWidget taWidget;
 
     private TextField configKey = new TextField(
             ServiceContextManager.getServiceContext().getService(MessageProvider.class)
@@ -50,9 +47,10 @@ public class ConfigEditorWidget extends FormLayout {
     private Button readButton = new Button(ServiceContextManager.getServiceContext().getService(MessageProvider.class)
             .getMessage("view.edit.button.readKey"));
 
-    public ConfigEditorWidget(MutableConfiguration mutableConfig, ProtocolWidget logWriter) {
+    public ConfigEditorWidget(MutableConfiguration mutableConfig, ProtocolWidget logWriter, TransactionControlWidget taWidget) {
         this.mutableConfig = Objects.requireNonNull(mutableConfig);
         this.logWriter = Objects.requireNonNull(logWriter);
+        this.taWidget = Objects.requireNonNull(taWidget);
         configKey.setWidth(50, Unit.PERCENTAGE);
         configValue.setWidth(50, Unit.PERCENTAGE);
         addComponents(configKey, configValue);
@@ -69,10 +67,17 @@ public class ConfigEditorWidget extends FormLayout {
             public void buttonClick(Button.ClickEvent clickEvent) {
                 if(mutableConfig.isWritable(configKey.getValue())){
                     mutableConfig.put(configKey.getValue(), configValue.getValue());
+                    Notification.show("Added " + configKey.getValue() + " = " + configValue.getValue(),
+                            Notification.Type.TRAY_NOTIFICATION);
                     logWriter.println(" - PUT " + configKey.getValue() + " = " + configValue.getValue());
+                    configKey.setValue("");
+                    configValue.setValue("");
                 }else{
+                    Notification.show("Could not add " + configKey.getValue() + " = " + configValue.getValue(),
+                            Notification.Type.ERROR_MESSAGE);
                     logWriter.println(" - PUT " + configKey.getValue() + " rejected - not writable.");
                 }
+                taWidget.update();
             }
         });
         removeButton.addClickListener(new Button.ClickListener() {
@@ -81,9 +86,16 @@ public class ConfigEditorWidget extends FormLayout {
                 if(mutableConfig.isRemovable(configKey.getValue())){
                     mutableConfig.remove(configKey.getValue());
                     logWriter.println(" - DEL " + configKey.getValue());
+                    Notification.show("Removed " + configKey.getValue(),
+                            Notification.Type.TRAY_NOTIFICATION);
+                    configKey.setValue("");
+                    configValue.setValue("");
                 }else{
+                    Notification.show("Could not remove " + configKey.getValue(),
+                            Notification.Type.ERROR_MESSAGE);
                     logWriter.println(" - DEL " + configKey.getValue() + " rejected - not removable.");
                 }
+                taWidget.update();
             }
         });
         readButton.addClickListener(new Button.ClickListener() {
@@ -92,12 +104,17 @@ public class ConfigEditorWidget extends FormLayout {
                 if(mutableConfig.isExisting(configKey.getValue())){
                     String key = configKey.getValue();
                     configValue.setValue(mutableConfig.get(key));
+                    Notification.show("Successfully read " + configKey.getValue(),
+                            Notification.Type.TRAY_NOTIFICATION);
                     logWriter.println(" - GET " + key + " = " + configValue.getValue());
                     logWriter.println("   - removable: " + mutableConfig.isRemovable(key));
                     logWriter.println("   - writable : " + mutableConfig.isWritable(key));
                 }else{
+                    Notification.show("Could not read " + configKey.getValue(),
+                            Notification.Type.ERROR_MESSAGE);
                     logWriter.println(" - GET " + configKey.getValue() + " rejected - not existing.");
                 }
+                taWidget.update();
             }
         });
     }

@@ -25,6 +25,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
+import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertySource;
@@ -46,7 +47,7 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     private final Configuration config;
     private ChangePropagationPolicy changePropagationPolicy =
             MutableConfigurationProvider.getApplyAllChangePolicy();
-    private UUID transactionId;
+    private String transactionId;
     private boolean autoCommit = false;
 
     public DefaultMutableConfiguration(Configuration config){
@@ -74,8 +75,29 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     }
 
     @Override
-    public UUID getTransactionId() {
+    public String getTransactionId() {
         return transactionId;
+    }
+
+    @Override
+    public ConfigChangeContext getConfigChangeContext(){
+        if(this.transactionId==null){
+            return null;
+        }
+        ConfigChangeContext context = new ConfigChangeContext(this.transactionId);
+        long startedAt = Long.MAX_VALUE;
+        for(MutablePropertySource mps:getMutablePropertySources()){
+            ConfigChangeContext subContext = mps.getConfigChangeContext(this.transactionId);
+            if(subContext!=null){
+                context.putAll(subContext.getAddedProperties());
+                context.removeAll(subContext.getRemovedProperties());
+                if(subContext.getStartedAt()<startedAt){
+                    startedAt = subContext.getStartedAt();
+                }
+            }
+        }
+        context.setStartedAt(startedAt);
+        return context;
     }
 
     @Override
@@ -138,12 +160,7 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public boolean isExisting(String keyExpression) {
-        for(MutablePropertySource target:getMutablePropertySources()) {
-            if(target.get(keyExpression)!=null) {
-                return true;
-            }
-        }
-        return false;
+        return this.config.get(keyExpression)!=null;
     }
 
     @Override
@@ -159,8 +176,8 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public MutableConfiguration put(String key, String value) {
-        UUID taID = startTransaction();
-        changePropagationPolicy.applyChange(getPropertySources(), taID, key, value);
+        String taID = startTransaction();
+        changePropagationPolicy.applyChange(taID, getPropertySources(), key, value);
         if(autoCommit){
             commitTransaction();
         }
@@ -169,8 +186,8 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public MutableConfiguration putAll(Map<String, String> properties) {
-        UUID taID = startTransaction();
-        changePropagationPolicy.applyChanges(getPropertySources(), taID, properties);
+        String taID = startTransaction();
+        changePropagationPolicy.applyChanges(taID, getPropertySources(), properties);
         if(autoCommit){
             commitTransaction();
         }
@@ -179,8 +196,8 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public MutableConfiguration remove(String... keys) {
-        UUID taID = startTransaction();
-        changePropagationPolicy.applyRemove(getPropertySources(), taID, keys);
+        String taID = startTransaction();
+        changePropagationPolicy.applyRemove(taID, getPropertySources(), keys);
         for(String key:keys){
             for(MutablePropertySource target:getMutablePropertySources()) {
                 if (target.isRemovable(key)) {
@@ -195,12 +212,12 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     }
 
     @Override
-    public UUID startTransaction() {
-        UUID taID = transactionId;
+    public String startTransaction() {
+        String taID = transactionId;
         if(taID!=null){
             return taID;
         }
-        taID = UUID.randomUUID();
+        taID = UUID.randomUUID().toString();
         transactionId = taID;
         try {
             for (MutablePropertySource target : getMutablePropertySources()) {
@@ -214,7 +231,7 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public void commitTransaction() {
-        UUID taID = transactionId;
+        String taID = transactionId;
         if(taID==null){
             LOG.warning("No active transaction on this thread, ignoring commit.");
             return;
@@ -231,7 +248,7 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public void rollbackTransaction() {
-        UUID taID = transactionId;
+        String taID = transactionId;
         if(taID==null){
             LOG.warning("No active transaction on this thread, ignoring rollback.");
             return;
@@ -247,7 +264,7 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public MutableConfiguration remove(Collection<String> keys) {
-        UUID taID = startTransaction();
+        String taID = startTransaction();
         for(String key:keys){
             for(MutablePropertySource target:getMutablePropertySources()) {
                 if (target.isRemovable(key)) {

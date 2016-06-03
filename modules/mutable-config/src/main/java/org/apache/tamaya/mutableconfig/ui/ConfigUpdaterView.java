@@ -50,6 +50,11 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
         }
 
         @Override
+        public String getName() {
+            return "view.edit.name";
+        }
+
+        @Override
         public String getUrlPattern() {
             return "/edit";
         }
@@ -61,7 +66,7 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
         }
 
         @Override
-        public View createView(){
+        public View createView(Object... params){
             return new ConfigUpdaterView();
         }
     }
@@ -73,7 +78,7 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
     private TransactionControlWidget taControlWidget = new TransactionControlWidget(mutableConfig,
             protocolArea);
 
-    private ConfigEditorWidget editorWidget = new ConfigEditorWidget(mutableConfig, protocolArea);
+    private ConfigEditorWidget editorWidget = new ConfigEditorWidget(mutableConfig, protocolArea, taControlWidget);
 
 
     public ConfigUpdaterView() {
@@ -90,7 +95,8 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
             protocolArea.print(ps.getName(), ", ");
         }
         protocolArea.println();
-        addComponents(caption, description, editorWidget, protocolArea, taControlWidget);
+        protocolArea.setHeight(100, Unit.PERCENTAGE);
+        addComponents(caption, description, editorWidget, taControlWidget, protocolArea);
     }
 
     private String getCaption(String key, String value) {
