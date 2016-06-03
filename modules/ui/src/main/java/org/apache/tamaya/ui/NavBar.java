@@ -18,12 +18,11 @@
  */
 package org.apache.tamaya.ui;
 
+import com.sun.javafx.menu.SeparatorMenuItemBase;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.*;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.event.EventBus;
 import org.apache.tamaya.ui.event.LogoutEvent;
@@ -36,22 +35,25 @@ import java.util.Map;
 /**
  * Left side navigation bar.
  */
-public class NavBar extends CssLayout implements ViewChangeListener {
+public class NavBar extends VerticalLayout implements ViewChangeListener {
 
     private Map<String, Button> buttonMap = new HashMap<>();
 
-    public NavBar() {
-        setHeight("100%");
+    public NavBar(ApplicationLayout appLayout) {
+        // setHeight("100%");
+        setWidth(200, Unit.PIXELS);
         addStyleName(UIConstants.MENU_ROOT);
         addStyleName(UIConstants.NAVBAR);
+        setDefaultComponentAlignment(Alignment.TOP_LEFT);
         MessageProvider messages = ServiceContextManager.getServiceContext().getService(MessageProvider.class);
         Label logo = new Label("<strong>"+ messages.getMessage("project.name")+"</strong>", ContentMode.HTML);
         logo.addStyleName(UIConstants.MENU_TITLE);
         addComponent(logo);
-        addLogoutButton();
+        addLogoutAndSettingsButton(appLayout);
     }
 
-    private void addLogoutButton() {
+
+    private void addLogoutAndSettingsButton(final ApplicationLayout appLayout) {
         MessageProvider messages = ServiceContextManager.getServiceContext().getService(MessageProvider.class);
         Button logout = new Button(messages.getMessage("default.label.logout"), new Button.ClickListener() {
             @Override
@@ -64,11 +66,20 @@ public class NavBar extends CssLayout implements ViewChangeListener {
                 CurrentUser.set(null);
             }
         });
-        addComponent(logout);
-
         logout.addStyleName(UIConstants.BUTTON_LOGOUT);
         logout.addStyleName(UIConstants.BUTTON_BORDERLESS);
         logout.setIcon(FontAwesome.SIGN_OUT);
+        Button settings = new Button("...", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                UISettingsDialog dlog = new UISettingsDialog(appLayout.getNavigationBar());
+                dlog.show();
+            }
+        });
+        settings.addStyleName(UIConstants.BUTTON_SETTINGS);
+        settings.addStyleName(UIConstants.BUTTON_BORDERLESS);
+        VerticalLayout buttons = new VerticalLayout(logout, settings);
+        addComponent(buttons);
     }
 
     public void addViewButton(final String uri, String displayName) {
@@ -78,10 +89,20 @@ public class NavBar extends CssLayout implements ViewChangeListener {
                 EventBus.post(new NavigationEvent(uri));
             }
         });
-        viewButton.addStyleName(UIConstants.MENU_ITEM);
+        viewButton.addStyleName(UIConstants.BUTTON_LOGOUT);
+        // viewButton.addStyleName(UIConstants.MENU_ITEM);
         viewButton.addStyleName(UIConstants.BUTTON_BORDERLESS);
-        buttonMap.put(uri, viewButton);
         addComponent(viewButton, components.size() - 1);
+        viewButton.setHeight(20, Unit.PIXELS);
+
+        buttonMap.put(uri, viewButton);
+    }
+
+    public void removeViewButton(String uri) {
+        Button button = buttonMap.remove(uri);
+        if(button!=null) {
+            removeComponent(button);
+        }
     }
 
     @Override
@@ -99,4 +120,6 @@ public class NavBar extends CssLayout implements ViewChangeListener {
             button.addStyleName(UIConstants.SELECTED);
         }
     }
+
+
 }

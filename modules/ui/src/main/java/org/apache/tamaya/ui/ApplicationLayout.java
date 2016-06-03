@@ -18,13 +18,14 @@
  */
 package org.apache.tamaya.ui;
 
-import com.vaadin.navigator.Navigator;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
-import org.apache.tamaya.spi.ServiceContextManager;
-import org.apache.tamaya.ui.components.LazyProvider;
+import com.vaadin.ui.UI;
 import org.apache.tamaya.ui.components.PageTitleUpdater;
 import org.apache.tamaya.ui.views.ErrorView;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * UI main layout.
@@ -33,17 +34,21 @@ public class ApplicationLayout extends HorizontalLayout {
 
     private NavBar navBar;
     private Panel content;
-    private Navigator navigator;
+    private NavigationBar navigator;
 
-    public ApplicationLayout() {
+    public ApplicationLayout(UI ui) {
         addStyleName(UIConstants.MAIN_LAYOUT);
         setSizeFull();
         initLayouts();
-        setupNavigator();
+        setupNavigator(ui);
+    }
+
+    public NavigationBar getNavigationBar(){
+        return navigator;
     }
 
     private void initLayouts() {
-        navBar = new NavBar();
+        navBar = new NavBar(this);
         // Use panel as main content container to allow it's content to scroll
         content = new Panel();
         content.setSizeFull();
@@ -53,44 +58,17 @@ public class ApplicationLayout extends HorizontalLayout {
         setExpandRatio(content, 1);
     }
 
-    private void setupNavigator() {
-        navigator = new Navigator(VadiinApp.getCurrent(), content);
 
-        registerViews();
+    private void setupNavigator(UI ui) {
+        navigator = new NavigationBar(ui, content, navBar);
 
         // Add view change listeners so we can do things like select the correct menu item and update the page title
         navigator.addViewChangeListener(navBar);
         navigator.addViewChangeListener(new PageTitleUpdater());
 
-        navigator.navigateTo(navigator.getState());
-    }
-
-    private void registerViews() {
-        for(ViewProvider provider: ServiceContextManager.getServiceContext().getServices(ViewProvider.class)) {
-            addView(provider);
-        }
+        navigator.navigateTo("/home");
         navigator.setErrorView(ErrorView.class);
     }
 
-    /**
-     * Registers av given view to the navigator and adds it to the NavBar
-     */
-    private void addView(ViewProvider provider) {
 
-        switch (provider.getLifecycle()) {
-            case CREATE:
-            case EAGER:
-                try {
-                    navigator.addView(provider.getUrlPattern(), provider.createView());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case LAZY:
-            default:
-                navigator.addProvider(new LazyProvider(provider.getUrlPattern(), provider));
-                break;
-        }
-        navBar.addViewButton(provider.getUrlPattern(), provider.getDisplayName());
-    }
 }

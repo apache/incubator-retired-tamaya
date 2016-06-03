@@ -30,3 +30,7 @@ server:
         port: 8091
       - type: https
         port: 8453
+
+ui:
+  disabled-views:
+    - "view.system.name"

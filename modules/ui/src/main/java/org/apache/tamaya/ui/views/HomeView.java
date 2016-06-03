@@ -48,20 +48,26 @@ public class HomeView extends VerticalSpacedLayout implements View {
         }
 
         @Override
+        public String getName() {
+            return "view.home.name";
+        }
+
+        @Override
         public String getUrlPattern() {
-            return "";
+            return "/home";
         }
 
         @Override
         public String getDisplayName() {
             return ServiceContextManager.getServiceContext().getService(MessageProvider.class)
-                    .getMessage("view.home.name");
+                    .getMessage(getName());
         }
 
         @Override
-        public View createView(){
+        public View createView(Object... params) {
             return new HomeView();
         }
+
     }
 
     /**

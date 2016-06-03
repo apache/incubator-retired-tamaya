@@ -44,6 +44,12 @@ public interface ViewProvider {
     ViewLifecycle getLifecycle();
 
     /**
+     * Get the view's name, used for resolving the view display name.
+     * @return the view's name.
+     */
+    String getName();
+
+    /**
      * Get the url pattern where this view should be accessible.
      * @return the url pattern, not null.
      */
@@ -60,7 +66,8 @@ public interface ViewProvider {
     /**
      * Method that is called to create a new view instance.
      * @see #getLifecycle()
+     * @param params any parameters that may be needed to create the view.
      * @return a new view instance, not null.
      */
-    View createView();
+    View createView(Object... params);
 }
