@@ -45,6 +45,7 @@ import java.util.TreeMap;
 /**
  * View for evaluating the current convifugration tree.
  */
+@Priority(10)
 public class ConfigView extends VerticalSpacedLayout implements View {
 
     /**
@@ -59,6 +60,11 @@ public class ConfigView extends VerticalSpacedLayout implements View {
         }
 
         @Override
+        public String getName() {
+            return "view.config.name";
+        }
+
+        @Override
         public String getUrlPattern() {
             return "/config";
         }
@@ -70,7 +76,7 @@ public class ConfigView extends VerticalSpacedLayout implements View {
         }
 
         @Override
-        public View createView(){
+        public View createView(Object... params){
             return new ConfigView();
         }
     }

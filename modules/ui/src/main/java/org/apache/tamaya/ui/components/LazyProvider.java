@@ -19,31 +19,62 @@
 package org.apache.tamaya.ui.components;
 
 import com.vaadin.navigator.View;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.ViewProvider;
+import org.apache.tamaya.ui.services.MessageProvider;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Lazily initializes a view when it's first accessed, then always returns the
  * same instance on subsequent calls.
  */
-public class LazyProvider implements com.vaadin.navigator.ViewProvider {
-    private ViewProvider provider;
+public class LazyProvider implements ViewProvider {
+    private static final Logger LOG = Logger.getLogger(
+            LazyProvider.class.getName());
+    private Class<? extends View> viewClass;
     private View view;
+    private String urlPattern;
+    private String name;
 
-    public LazyProvider(String viewName, ViewProvider provider) {
-        this.provider = Objects.requireNonNull(provider);
+    public LazyProvider(String name, String urlPattern, Class<? extends View> viewClass) {
+        this.viewClass = Objects.requireNonNull(viewClass);
+        this.urlPattern = Objects.requireNonNull(urlPattern);
+        this.name = Objects.requireNonNull(name);
     }
 
     @Override
-    public String getViewName(String s) {
-        return provider.getUrlPattern();
+    public String getUrlPattern() {
+        return urlPattern;
+    }
+
+
+    @Override
+    public ViewLifecycle getLifecycle() {
+        return ViewLifecycle.LAZY;
     }
 
     @Override
-    public View getView(String viewName) {
-        if (view == null) {
-            view = provider.createView();
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return ServiceContextManager.getServiceContext().getService(MessageProvider.class)
+                .getMessage(name);
+    }
+
+    @Override
+    public View createView(Object... params) {
+        if(view==null){
+            try {
+                view = viewClass.newInstance();
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Failed to create view: "+urlPattern, e);
+            }
         }
         return view;
     }

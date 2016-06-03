@@ -21,9 +21,11 @@ package org.apache.tamaya.ui;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import org.apache.tamaya.ui.event.LogoutEvent;
 import org.apache.tamaya.ui.event.NavigationEvent;
@@ -41,19 +43,16 @@ import org.apache.tamaya.ui.views.login.LoginView;
 @Title("Tamaya")
 public class VadiinApp extends UI {
 
-    private Content content = new Content();
-
-
     public VadiinApp(){
+        super(new Panel());
         super.setPollInterval(2000);
     }
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         setupEventBus();
-
         if (CurrentUser.isLoggedIn()) {
-            setContent(new ApplicationLayout());
+            setContent(new ApplicationLayout(this));
         } else {
             setContent(new LoginView());
         }
@@ -63,12 +62,20 @@ public class VadiinApp extends UI {
     public void userLoggedIn(
             LoginEvent event) {
         CurrentUser.set(event.getUser());
-        setContent(new ApplicationLayout());
+        setContent(new ApplicationLayout(this));
     }
 
     @Subscribe
     public void navigateTo(NavigationEvent evt) {
-        getNavigator().navigateTo(evt.getViewName());
+        if(getNavigator()==null){
+            return;
+        }
+        if(evt.getViewName().isEmpty()){
+            getNavigator().navigateTo("/home");
+
+        }else {
+            getNavigator().navigateTo(evt.getViewName());
+        }
     }
 
     public static VadiinApp getCurrent() {

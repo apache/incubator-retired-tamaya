@@ -43,6 +43,7 @@ import java.util.Map;
 /**
  * View showing the current loaded system components.
  */
+@Priority(10000)
 public class SystemView extends VerticalSpacedLayout implements View {
 
 
@@ -58,6 +59,11 @@ public class SystemView extends VerticalSpacedLayout implements View {
         }
 
         @Override
+        public String getName() {
+            return "view.system.name";
+        }
+
+        @Override
         public String getUrlPattern() {
             return "/system";
         }
@@ -69,7 +75,7 @@ public class SystemView extends VerticalSpacedLayout implements View {
         }
 
         @Override
-        public View createView(){
+        public View createView(Object... params){
             return new SystemView();
         }
     }
