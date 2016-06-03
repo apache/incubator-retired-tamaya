@@ -130,7 +130,9 @@ public class ConfigurationExtension implements Extension {
     }
 
     public void addConverter(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
-        abd.addBean(new ConverterBean(convBean, types));
+        if(!types.isEmpty()) {
+            abd.addBean(new ConverterBean(convBean, types));
+        }
     }
 
     private void tryLoadOpererator(Class<? extends ConfigOperator> operatorClass) {
