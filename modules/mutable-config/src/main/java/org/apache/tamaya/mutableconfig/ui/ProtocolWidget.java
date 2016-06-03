@@ -42,6 +42,7 @@ public class ProtocolWidget extends VerticalLayout{
 
     public ProtocolWidget(){
         textArea.setWidth(100, Unit.PERCENTAGE);
+        textArea.setHeight(100, Unit.PERCENTAGE);
         textArea.setReadOnly(true);
         clearButton.addClickListener(new Button.ClickListener() {
             @Override
@@ -52,6 +53,7 @@ public class ProtocolWidget extends VerticalLayout{
         });
         textArea.setSizeFull();
         addComponents(textArea, clearButton);
+        setHeight(100, Unit.PERCENTAGE);
     }
 
     public PrintWriter getWriter(){

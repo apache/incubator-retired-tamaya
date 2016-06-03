@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.mutableconfig.spi;
 
+import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collection;
@@ -59,7 +60,7 @@ public interface MutablePropertySource extends PropertySource {
      * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
      */
-    MutablePropertySource put(UUID transactionId, String key, String value);
+    MutablePropertySource put(String transactionId, String key, String value);
 
 
     /**
@@ -75,7 +76,7 @@ public interface MutablePropertySource extends PropertySource {
      * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request is read-only.
      */
-    MutablePropertySource putAll(UUID transactionId, Map<String, String> properties);
+    MutablePropertySource putAll(String transactionId, Map<String, String> properties);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -90,7 +91,7 @@ public interface MutablePropertySource extends PropertySource {
      * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
-    MutablePropertySource remove(UUID transactionId, Collection<String> keys);
+    MutablePropertySource remove(String transactionId, Collection<String> keys);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -105,7 +106,7 @@ public interface MutablePropertySource extends PropertySource {
      * @return this instance for optional chaining of operations, nrvrt null.
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
-    MutablePropertySource remove(UUID transactionId, String... keys);
+    MutablePropertySource remove(String transactionId, String... keys);
 
     /**
      * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
@@ -117,17 +118,24 @@ public interface MutablePropertySource extends PropertySource {
      * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.
      * @param transactionId the transaction id, not null.
      */
-    void commitTransaction(UUID transactionId);
+    void commitTransaction(String transactionId);
 
     /**
      * Rollback any changes leaving everything unchanged. This will rollback all changes applied since the last commit.
      * @param transactionId the transaction id, not null.
      */
-    void rollbackTransaction(UUID transactionId);
+    void rollbackTransaction(String transactionId);
 
     /**
      * Start a new transaction context with the given isolation policy.
      * @param transactionId the transaction id, not null.
      */
-    void startTransaction(UUID transactionId);
+    void startTransaction(String transactionId);
+
+    /**
+     * Get the transactional context for the given transaction ID.
+     * @param transactionID the transaction ID, not null.
+     * @return the transactional context, or null, if no such cointext is present.
+     */
+    ConfigChangeContext getConfigChangeContext(String transactionID);
 }

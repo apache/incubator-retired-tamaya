@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,7 +37,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     /**
      * Map with the curren transactions, identified by transactionId.
      */
-    protected final Map<UUID, ConfigChangeContext> transactions = new ConcurrentHashMap<>();
+    protected final Map<String, ConfigChangeContext> transactions = new ConcurrentHashMap<>();
 
     /**
      * Constructor udsing zero' as default ordinal.
@@ -60,7 +59,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
      * @param transactionId the transaction id, not null.
      * @return the removed property keys, never null.
      */
-    protected final Set<String> getRemovedProperties(UUID transactionId) {
+    protected final Set<String> getRemovedProperties(String transactionId) {
         ConfigChangeContext ctx = this.transactions.get(transactionId);
         if(ctx!=null) {
             return ctx.getRemovedProperties();
@@ -73,7 +72,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
      * @param transactionId the transaction id, not null.
      * @return the added property keys, never null.
      */
-    protected final Map<String,String> getAddedProperties(UUID transactionId) {
+    protected final Map<String,String> getAddedProperties(String transactionId) {
         ConfigChangeContext ctx = this.transactions.get(transactionId);
         if(ctx!=null) {
             return ctx.getAddedProperties();
@@ -92,7 +91,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     }
 
     @Override
-    public final MutablePropertySource put(UUID transactionId, String key, String value) {
+    public final MutablePropertySource put(String transactionId, String key, String value) {
         ConfigChangeContext ctx = this.transactions.get(transactionId);
         if(ctx==null) {
             throw new IllegalStateException("No such transaction: " + transactionId);
@@ -102,7 +101,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     }
 
     @Override
-    public final MutablePropertySource putAll(UUID transactionId, Map<String, String> properties) {
+    public final MutablePropertySource putAll(String transactionId, Map<String, String> properties) {
         ConfigChangeContext ctx = this.transactions.get(transactionId);
         if(ctx==null) {
             throw new IllegalStateException("No such transaction: " + transactionId);
@@ -112,7 +111,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     }
 
     @Override
-    public final MutablePropertySource remove(UUID transactionId, String... keys) {
+    public final MutablePropertySource remove(String transactionId, String... keys) {
         ConfigChangeContext ctx = this.transactions.get(transactionId);
         if(ctx==null) {
             throw new IllegalStateException("No such transaction: " + transactionId);
@@ -122,7 +121,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     }
 
     @Override
-    public final MutablePropertySource remove(UUID transactionId, Collection<String> keys) {
+    public final MutablePropertySource remove(String transactionId, Collection<String> keys) {
         ConfigChangeContext ctx = this.transactions.get(transactionId);
         if(ctx==null) {
             throw new IllegalStateException("No such transaction: " + transactionId);
@@ -132,7 +131,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     }
 
     @Override
-    public final void startTransaction(UUID transactionId) {
+    public final void startTransaction(String transactionId) {
         ConfigChangeContext ctx = this.transactions.get(transactionId);
         if(ctx==null) {
             this.transactions.put(transactionId, new ConfigChangeContext(transactionId));
@@ -140,7 +139,7 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     }
 
     @Override
-    public final void commitTransaction(UUID transactionId) {
+    public final void commitTransaction(String transactionId) {
         ConfigChangeContext ctx = this.transactions.remove(transactionId);
         if(ctx==null) {
             throw new IllegalStateException("No such transaction: " + transactionId);
@@ -157,7 +156,13 @@ public abstract class AbstractMutablePropertySource extends BasePropertySource
     protected abstract void commitInternal(ConfigChangeContext context);
 
     @Override
-    public final void rollbackTransaction(UUID transactionId) {
+    public final void rollbackTransaction(String transactionId) {
         this.transactions.remove(transactionId);
     }
+
+    @Override
+    public ConfigChangeContext getConfigChangeContext(String transactionID){
+        return this.transactions.get(transactionID);
+    }
+
 }

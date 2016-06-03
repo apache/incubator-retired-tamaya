@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 
@@ -131,7 +130,7 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy ALL_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChanges(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyChanges(String transactionID, Collection<PropertySource> propertySources,
                                  Map<String, String> changes) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
@@ -146,7 +145,7 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyChange(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyChange(String transactionID, Collection<PropertySource> propertySources,
                                 String key, String value) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
@@ -159,7 +158,7 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyRemove(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyRemove(String transactionID, Collection<PropertySource> propertySources,
                                 String... keys) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
@@ -180,7 +179,7 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy MOST_SIGNIFICANT_ONLY_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChanges(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyChanges(String transactionID, Collection<PropertySource> propertySources,
                                  Map<String, String> changes) {
             changes:for(Map.Entry<String,String> en:changes.entrySet()) {
                 for(PropertySource propertySource: propertySources){
@@ -196,7 +195,7 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyChange(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyChange(String transactionID, Collection<PropertySource> propertySources,
                                 String key, String value) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
@@ -210,7 +209,7 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyRemove(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyRemove(String transactionID, Collection<PropertySource> propertySources,
                                 String... keys) {
             keys:for(String key:keys) {
                 for(PropertySource propertySource: propertySources){
@@ -232,15 +231,15 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy NONE_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChanges(Collection<PropertySource> propertySources, UUID transactionID, Map<String, String> changes) {
+        public void applyChanges(String transactionID, Collection<PropertySource> propertySources, Map<String, String> changes) {
         }
 
         @Override
-        public void applyChange(Collection<PropertySource> propertySources, UUID transactionID, String key, String value) {
+        public void applyChange(String transactionID, Collection<PropertySource> propertySources, String key, String value) {
         }
 
         @Override
-        public void applyRemove(Collection<PropertySource> propertySources, UUID transactionID, String... keys) {
+        public void applyRemove(String transactionID, Collection<PropertySource> propertySources, String... keys) {
         }
     };
 
@@ -256,7 +255,7 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyChanges(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyChanges(String transactionID, Collection<PropertySource> propertySources,
                                  Map<String, String> changes) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
@@ -273,7 +272,7 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyChange(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyChange(String transactionID, Collection<PropertySource> propertySources,
                                 String key, String value) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
@@ -288,7 +287,7 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyRemove(Collection<PropertySource> propertySources, UUID transactionID,
+        public void applyRemove(String transactionID, Collection<PropertySource> propertySources,
                                 String... keys) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){

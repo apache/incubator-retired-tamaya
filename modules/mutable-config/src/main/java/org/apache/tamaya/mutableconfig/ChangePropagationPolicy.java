@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.mutableconfig;
 
+import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collection;
@@ -50,7 +51,7 @@ public interface ChangePropagationPolicy {
      * @param transactionID the transaction ID, not null.
      * @param changes the key/values being added or updated, not null.
      */
-    void applyChanges(Collection<PropertySource> propertySources, UUID transactionID, Map<String,String> changes);
+    void applyChanges(String transactionID, Collection<PropertySource> propertySources, Map<String,String> changes);
 
     /**
      * Method being called when a single key/value pair has been added or updated.
@@ -60,7 +61,7 @@ public interface ChangePropagationPolicy {
      * @param key the key, not null.
      * @param value the value, not null.
      */
-    void applyChange(Collection<PropertySource> propertySources, UUID transactionID, String key, String value);
+    void applyChange(String transactionID, Collection<PropertySource> propertySources, String key, String value);
 
     /**
      * Method being called when a multiple keys has been removed from the configuration.
@@ -69,6 +70,6 @@ public interface ChangePropagationPolicy {
      * @param transactionID the transaction ID, not null.
      * @param keys the keys being removed, not null.
      */
-    void applyRemove(Collection<PropertySource> propertySources, UUID transactionID, String... keys);
+    void applyRemove(String transactionID, Collection<PropertySource> propertySources, String... keys);
 
 }
