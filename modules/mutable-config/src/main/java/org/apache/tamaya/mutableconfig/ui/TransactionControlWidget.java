@@ -19,15 +19,7 @@
 package org.apache.tamaya.mutableconfig.ui;
 
 import com.vaadin.data.Property;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
@@ -43,7 +35,7 @@ import java.util.Objects;
 /**
  * Tamaya UI view to change configuration.
  */
-public class TransactionControlWidget extends HorizontalLayout {
+public class TransactionControlWidget extends TabSheet {
 
     private Field taID = new TextField("Transaction ID");
     private Field taContent = new TextArea("Transaction Context");
@@ -77,16 +69,16 @@ public class TransactionControlWidget extends HorizontalLayout {
         taContent.setHeight(250, Unit.PIXELS);
         taLayout.setWidth(600, Unit.PIXELS);
         taID.setReadOnly(true);
-        taID.setWidth(100, Unit.PERCENTAGE);
         this.mutableConfig = Objects.requireNonNull(mutableConfig);
         this.logWriter = Objects.requireNonNull(logWriter);
-        changePropagationPolicy.setWidth(300, Unit.PIXELS);
-        changePropagationPolicyOther.
-                setWidth(600, Unit.PIXELS);
+        changePropagationPolicy.setWidth(500, Unit.PIXELS);
+        changePropagationPolicyOther.setWidth(500, Unit.PIXELS);
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.addComponents(startTAButton, commitTAButton, rollbackTAButton);
         leftLayout.addComponents(changePropagationPolicy, changePropagationPolicyOther, buttonLayout);
-        addComponents(leftLayout, taLayout);
+        addTab(leftLayout, "Transaction Control");
+        addTab(taLayout, "Transaction Details");
+        setWidth(600, Unit.PIXELS);
         initActions();
         update();
     }
