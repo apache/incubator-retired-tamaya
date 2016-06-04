@@ -41,8 +41,8 @@ public class ProtocolWidget extends VerticalLayout{
     private PrintWriter writer = new PrintWriter(protocol);
 
     public ProtocolWidget(){
-        textArea.setWidth(100, Unit.PERCENTAGE);
-        textArea.setHeight(100, Unit.PERCENTAGE);
+        textArea.setWidth(600, Unit.PIXELS);
+        textArea.setHeight(400, Unit.PERCENTAGE);
         textArea.setReadOnly(true);
         clearButton.addClickListener(new Button.ClickListener() {
             @Override
@@ -53,7 +53,8 @@ public class ProtocolWidget extends VerticalLayout{
         });
         textArea.setSizeFull();
         addComponents(textArea, clearButton);
-        setHeight(100, Unit.PERCENTAGE);
+        setWidth(700, Unit.PIXELS);
+        setHeight(500, Unit.PERCENTAGE);
     }
 
     public PrintWriter getWriter(){

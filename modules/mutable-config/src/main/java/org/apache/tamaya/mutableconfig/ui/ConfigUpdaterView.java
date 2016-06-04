@@ -21,7 +21,9 @@ package org.apache.tamaya.mutableconfig.ui;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.PopupView;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
@@ -71,14 +73,16 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
         }
     }
 
-    private ProtocolWidget protocolArea = new ProtocolWidget();
+    private ProtocolWidget logWidget = new ProtocolWidget();
+    private PopupView logPopup = new PopupView("Show log", logWidget);
 
     private MutableConfiguration mutableConfig = MutableConfigurationProvider.getMutableConfiguration();
 
-    private TransactionControlWidget taControlWidget = new TransactionControlWidget(mutableConfig,
-            protocolArea);
+    private TransactionControlWidget taControl = new TransactionControlWidget(mutableConfig,
+            logWidget);
+    private PopupView taDetails = new PopupView("Transaction Details", taControl);
 
-    private ConfigEditorWidget editorWidget = new ConfigEditorWidget(mutableConfig, protocolArea, taControlWidget);
+    private ConfigEditorWidget editorWidget = new ConfigEditorWidget(mutableConfig, logWidget, taControl);
 
 
     public ConfigUpdaterView() {
@@ -90,13 +94,15 @@ public class ConfigUpdaterView extends VerticalSpacedLayout implements View {
 
         caption.addStyleName(UIConstants.LABEL_HUGE);
         description.addStyleName(UIConstants.LABEL_LARGE);
-        protocolArea.print("INFO: Writable Property Sources: ");
+        logWidget.print("INFO: Writable Property Sources: ");
         for(MutablePropertySource ps:mutableConfig.getMutablePropertySources()){
-            protocolArea.print(ps.getName(), ", ");
+            logWidget.print(ps.getName(), ", ");
         }
-        protocolArea.println();
-        protocolArea.setHeight(100, Unit.PERCENTAGE);
-        addComponents(caption, description, editorWidget, taControlWidget, protocolArea);
+        logWidget.println();
+        logWidget.setHeight(100, Unit.PERCENTAGE);
+        HorizontalLayout hl = new HorizontalLayout(taDetails, logPopup);
+        hl.setSpacing(true);
+        addComponents(caption, description, editorWidget, hl);
     }
 
     private String getCaption(String key, String value) {

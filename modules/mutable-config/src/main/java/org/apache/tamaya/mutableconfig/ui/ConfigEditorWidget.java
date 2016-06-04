@@ -31,6 +31,7 @@ import java.util.Objects;
 public class ConfigEditorWidget extends FormLayout {
 
     private MutableConfiguration mutableConfig;
+
     private ProtocolWidget logWriter;
     private TransactionControlWidget taWidget;
 
