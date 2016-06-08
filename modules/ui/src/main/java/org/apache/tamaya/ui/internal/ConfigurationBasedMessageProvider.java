@@ -157,7 +157,7 @@ public final class ConfigurationBasedMessageProvider implements MessageProvider{
 
     /**
      * Evaluates the base name to be used for creating the resource bundle used.
-     * @return
+     * @return base name
      */
     private String evaluateBaseName() {
         String baseName = System.getProperty(TAMAYA_UI_BASE_NAME);
