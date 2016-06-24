@@ -268,36 +268,42 @@ under the License.
                 <groupId>org.jboss.arquillian.daemon</groupId>
                 <artifactId>arquillian-daemon-container-managed</artifactId>
                 <version>${arquillian.deamon.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.arquillian.daemon</groupId>
                 <artifactId>arquillian-daemon-container-common</artifactId>
                 <version>${arquillian.deamon.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.arquillian.daemon</groupId>
                 <artifactId>arquillian-daemon-main</artifactId>
                 <version>${arquillian.deamon.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.arquillian.daemon</groupId>
                 <artifactId>arquillian-daemon-protocol-arquillian</artifactId>
                 <version>${arquillian.deamon.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.arquillian.daemon</groupId>
                 <artifactId>arquillian-daemon-protocol-wire</artifactId>
                 <version>${arquillian.deamon.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.arquillian.daemon</groupId>
                 <artifactId>arquillian-daemon-server</artifactId>
                 <version>${arquillian.deamon.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>

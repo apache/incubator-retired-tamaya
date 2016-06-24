@@ -214,7 +214,7 @@ public final class Usage {
     private AccessDetail getAccessDetails(String accessPoint, String[] trace) {
         AccessDetail details = accessDetails.get(accessPoint);
         if(details==null){
-            details = new AccessDetail(accessPoint, trace);
+            details = new AccessDetail(key, accessPoint, trace);
             accessDetails.put(accessPoint, details);
         }
         return details;
@@ -224,6 +224,7 @@ public final class Usage {
      * Class modelling the access details tracked per detailed item, e.g. per class in the owning package.
      */
     public static final class AccessDetail {
+        private String key;
         private AtomicLong accessCount = new AtomicLong();
         private long lastAccessTS;
         private long firstAccessTS;
@@ -231,7 +232,8 @@ public final class Usage {
         private String accessPoint;
         private Map<Long, String> trackedValues;
 
-        public AccessDetail(String accessPoint, String[] stackTrace){
+        public AccessDetail(String key, String accessPoint, String[] stackTrace){
+            this.key = Objects.requireNonNull(key);
             this.accessPoint = Objects.requireNonNull(accessPoint);
             this.stackTrace = stackTrace.clone();
         }
@@ -257,6 +259,10 @@ public final class Usage {
                 }
             }
             return count;
+        }
+
+        public String getKey(){
+            return key;
         }
 
         public long getAccessCount() {
@@ -292,7 +298,8 @@ public final class Usage {
         @Override
         public String toString() {
             return "AccessDetails{" +
-                    "accessCount=" + accessCount +
+                    "key=" + key +
+                    ", accessCount=" + accessCount +
                     ", lastAccessTS=" + lastAccessTS +
                     ", firstAccessTS=" + firstAccessTS +
                     ", stackTrace=" + Arrays.toString(stackTrace) +

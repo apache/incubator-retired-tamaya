@@ -53,7 +53,7 @@
 //            baseName = ConfigurationProvider.getConfiguration().get("tamaya.ui.baseName");
 //        }
 //        if(baseName==null || baseName.isEmpty()){
-//            baseName = "ui/lang/tamaya";
+//            baseName = "ui/ui.lang/tamaya";
 //        }
 //        return baseName;
 //    }

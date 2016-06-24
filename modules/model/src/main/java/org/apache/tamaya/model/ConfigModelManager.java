@@ -59,12 +59,46 @@ public final class ConfigModelManager {
                 return k2.getName().compareTo(k2.getName());
             }
         });
+        b.append("TYPE    OWNER      NAME                                              MANDATORY   DESCRIPTION\n");
+        b.append("-----------------------------------------------------------------------------------------------------\n");
         for(ConfigModel model:models){
-            b.append(model.getName()).append('(').append(model.getType())
-                    .append("):\n  ").append(
-            model.getDescription()).append("mandatory=").append(model.isRequired());
-            b.append('\n');
+            switch(model.getType()){
+                case Parameter:
+                    b.append("PARAM   ");
+                    break;
+                case Section:
+                    b.append("SECTION ");
+                    break;
+                case Group:
+                    b.append("GROUP   ");
+                    break;
+            }
+            b.append(formatWithFixedLength(model.getOwner(), 10)).append(' ');
+            b.append(formatWithFixedLength(model.getName(), 50));
+            if(model.isRequired()){
+                b.append(formatWithFixedLength("yes", 12));
+            }else{
+                b.append(formatWithFixedLength("no", 12));
+            }
+            if(model.getDescription()!=null){
+                b.append(model.getDescription().replace("\n", "\\\n").replace("\"", "'")).append("\"");
+            }
+            b.append("\n");
         }
+        return b.toString();
+    }
+
+    private static String formatWithFixedLength(String name, int targetLength) {
+        targetLength = targetLength-1;
+        StringBuilder b = new StringBuilder();
+        if(name.length() > targetLength){
+            name = name.substring(0, targetLength);
+        }
+        b.append(name);
+        for(int i=0;i<(targetLength-name.length());i++){
+            b.append(' ');
+        }
+        b.append(' ');
         return b.toString();
     }
 
@@ -193,10 +227,10 @@ public final class ConfigModelManager {
                         }
                     }
                 }
-                result.add(Validation.ofUndefined(entry.getKey(), ModelTarget.Parameter));
+                result.add(Validation.ofUndefined("<auto>", entry.getKey(), ModelTarget.Parameter));
             }
             for(String area:areas){
-                result.add(Validation.ofUndefined(area, ModelTarget.Section));
+                result.add(Validation.ofUndefined("<auto>", area, ModelTarget.Section));
             }
         }
         return result;

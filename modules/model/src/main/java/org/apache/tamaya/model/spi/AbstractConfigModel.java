@@ -26,16 +26,22 @@ import java.util.Objects;
  * Default configuration Model for a configuration area.
  */
 public abstract class AbstractConfigModel implements ConfigModel, Comparable<ConfigModel> {
-
+    private final String owner;
     private final String name;
     private final String description;
     private boolean required = false;
 
 
-    protected AbstractConfigModel(String name, boolean required, String description) {
+    protected AbstractConfigModel(String owner, String name, boolean required, String description) {
         this.name = Objects.requireNonNull(name);
+        this.owner = Objects.requireNonNull(owner);
         this.description = description;
         this.required = required;
+    }
+
+    @Override
+    public String getOwner() {
+        return owner;
     }
 
     @Override

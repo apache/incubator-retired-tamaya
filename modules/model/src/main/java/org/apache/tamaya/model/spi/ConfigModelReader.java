@@ -76,14 +76,14 @@ public final class ConfigModelReader {
             String requiredVal = props.get(baseKey + ".model.required");
             String targetKey = baseKey.substring(1);
             if ("Parameter".equalsIgnoreCase(target)) {
-                result.add(createParameterValidation(targetKey,
+                result.add(createParameterValidation(owner, targetKey,
                         description, type, requiredVal, regEx, validations));
             } else if ("Section".equalsIgnoreCase(target)) {
                 if(transitive){
-                    result.add(createSectionValidation(targetKey+".*",
+                    result.add(createSectionValidation(owner, targetKey+".*",
                             description, requiredVal, validations));
                 } else {
-                    result.add(createSectionValidation(targetKey,
+                    result.add(createSectionValidation(owner, targetKey,
                             description, requiredVal, validations));
                 }
             }
@@ -101,10 +101,10 @@ public final class ConfigModelReader {
      * @param validations the optional custom validations to be performed.
      * @return the new validation for this parameter.
      */
-    private static ConfigModel createParameterValidation(String paramName, String description, String type, String reqVal,
+    private static ConfigModel createParameterValidation(String owner, String paramName, String description, String type, String reqVal,
                                                          String regEx, String validations) {
         boolean required = "true".equalsIgnoreCase(reqVal);
-        ParameterModel.Builder builder = ParameterModel.builder(paramName).setRequired(required)
+        ParameterModel.Builder builder = ParameterModel.builder(owner, paramName).setRequired(required)
                 .setDescription(description).setExpression(regEx).setType(type);
 //        if (validations != null) {
 //            try {
@@ -125,10 +125,10 @@ public final class ConfigModelReader {
      * @param validations the optional custom validations to be performed.
      * @return the new validation for this section.
      */
-    private static ConfigModel createSectionValidation(String sectionName, String description, String reqVal,
+    private static ConfigModel createSectionValidation(String owner, String sectionName, String description, String reqVal,
                                                        String validations) {
         boolean required = "true".equalsIgnoreCase(reqVal);
-        SectionModel.Builder builder = SectionModel.builder(sectionName).setRequired(required)
+        SectionModel.Builder builder = SectionModel.builder(owner, sectionName).setRequired(required)
                 .setDescription(description);
 //        if (validations != null) {
 //            try {

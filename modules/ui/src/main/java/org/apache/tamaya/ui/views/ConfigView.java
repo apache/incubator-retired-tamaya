@@ -18,18 +18,11 @@
  */
 package org.apache.tamaya.ui.views;
 
+import com.vaadin.data.Property;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Tree;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.UIConstants;
@@ -83,6 +76,7 @@ public class ConfigView extends VerticalSpacedLayout implements View {
 
     private TextField keyFilter = new TextField("Key filter");
     private TextField valueFilter = new TextField("Value filter");
+    private CheckBox showMetaEntries = new CheckBox("Show Metadata", false);
     private Tree tree = new Tree("Current Configuration");
 
     public ConfigView() {
@@ -104,7 +98,8 @@ public class ConfigView extends VerticalSpacedLayout implements View {
             }
         });
         filters.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT);
-        filters.addComponents(keyFilter, valueFilter, filterButton);
+        filters.addComponents(keyFilter, valueFilter, filterButton, showMetaEntries);
+        filters.setSpacing(true);
 
         fillTree();
         configLayout.addComponents(filters, tree);
@@ -144,10 +139,14 @@ public class ConfigView extends VerticalSpacedLayout implements View {
         tabPane.addTab(runtimeProps, "Runtime Properties");
         runtimeProps.setSizeFull();
         addComponents(caption, description, tabPane);
-
         caption.addStyleName(UIConstants.LABEL_HUGE);
         description.addStyleName(UIConstants.LABEL_LARGE);
-
+        showMetaEntries.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                fillTree();
+            }
+        });
     }
 
     private void fillTree() {
@@ -160,12 +159,16 @@ public class ConfigView extends VerticalSpacedLayout implements View {
             valueFilterExp = null;
         }
         tree.removeAllItems();
+        boolean showMetadata = showMetaEntries.getValue();
         for(Map.Entry<String,String> entry: ConfigurationProvider.getConfiguration().getProperties().entrySet()){
             String key = entry.getKey();
             if(keyFilterExp!=null && !key.matches(keyFilterExp)){
                 continue;
             }
             if(valueFilterExp!=null && !entry.getValue().matches(valueFilterExp)){
+                continue;
+            }
+            if(!showMetadata && entry.getKey().startsWith("_")){
                 continue;
             }
             tree.addItem(key);

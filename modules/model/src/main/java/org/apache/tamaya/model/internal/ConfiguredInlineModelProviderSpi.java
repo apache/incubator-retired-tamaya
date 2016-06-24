@@ -53,7 +53,11 @@ public class ConfiguredInlineModelProviderSpi implements ModelProviderSpi {
         if (enabled) {
             LOG.info("Reading model configuration from config...");
             Map<String,String> config = ConfigurationProvider.getConfiguration().getProperties();
-            configModels.addAll(ConfigModelReader.loadValidations(config));
+            String owner = config.get("_model.provider");
+            if(owner==null){
+                owner = config.toString();
+            }
+            configModels.addAll(ConfigModelReader.loadValidations(owner, config));
         }
         configModels = Collections.unmodifiableList(configModels);
     }

@@ -35,15 +35,17 @@ import java.util.Objects;
  */
 public class GroupModel implements ConfigModel {
 
+    private final String owner;
     private final String name;
     private boolean required;
     private List<ConfigModel> childModels = new ArrayList<>();
 
-    public GroupModel(String name, ConfigModel... configModels){
-        this(name, Arrays.asList(configModels));
+    public GroupModel(String owner, String name, ConfigModel... configModels){
+        this(owner, name, Arrays.asList(configModels));
     }
 
-    public GroupModel(String name, Collection<ConfigModel> configModels){
+    public GroupModel(String owner, String name, Collection<ConfigModel> configModels){
+        this.owner = Objects.requireNonNull(owner);
         this.name = Objects.requireNonNull(name);
         this.childModels.addAll(configModels);
         this.childModels = Collections.unmodifiableList(childModels);
@@ -53,6 +55,11 @@ public class GroupModel implements ConfigModel {
                 break;
             }
         }
+    }
+
+    @Override
+    public String getOwner() {
+        return owner;
     }
 
     @Override

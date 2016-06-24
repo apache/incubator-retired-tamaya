@@ -50,7 +50,7 @@
 //     */
 //    public String getMessage(String bundleID, Locale locale){
 //        try{
-//            ResourceBundle bundle = ResourceBundle.getBundle("ui/lang/tamaya", locale);
+//            ResourceBundle bundle = ResourceBundle.getBundle("ui/ui.lang/tamaya", locale);
 //            return bundle.getString(bundleID);
 //        }
 //        catch(Exception e){

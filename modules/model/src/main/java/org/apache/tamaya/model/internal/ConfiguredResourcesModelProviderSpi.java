@@ -21,11 +21,7 @@ package org.apache.tamaya.model.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -141,7 +137,12 @@ public class ConfiguredResourcesModelProviderSpi implements ModelProviderSpi {
             for (final URL config : urls) {
                 try (InputStream is = config.openStream()) {
                     final ConfigurationData data = ConfigurationFormats.readConfigurationData(config);
-                    configModels.addAll(ConfigModelReader.loadValidations(data.getCombinedProperties()));
+                    Map<String,String> props = data.getCombinedProperties();
+                    String owner = props.get("_model.provider");
+                    if(owner==null){
+                        owner = config.toString();
+                    }
+                    configModels.addAll(ConfigModelReader.loadValidations(owner, props));
                 } catch (final Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE,
                             "Error loading config model data from " + config, e);

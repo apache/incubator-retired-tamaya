@@ -59,17 +59,22 @@ public class EventView extends VerticalSpacedLayout implements View {
         }
 
         @Override
+        public String getName() {
+            return "view.events.name";
+        }
+
+        @Override
         public String getUrlPattern() {
             return "/events";
         }
 
         @Override
         public String getDisplayName() {
-            return "view.events.name";
+            return getName();
         }
 
         @Override
-        public View createView(){
+        public View createView(Object... params){
             return new EventView();
         }
     }

@@ -28,6 +28,12 @@ import java.util.Collection;
 public interface ConfigModel {
 
     /**
+     * Access the owner.
+     * @return the owner of this model, never null.
+     */
+    String getOwner();
+
+    /**
      * Get the type of item that is modelled.
      * @return the modelled type, never null.
      */

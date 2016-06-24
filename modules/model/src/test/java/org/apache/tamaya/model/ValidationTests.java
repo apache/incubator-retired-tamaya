@@ -36,6 +36,11 @@ public class ValidationTests {
     }
 
     @Test
+    public void testConfigInfo(){
+        System.err.println(ConfigModelManager.getConfigInfoText());
+    }
+
+    @Test
     public void testAllValidationsInclUndefined(){
         System.err.println("Including UNDEFINED: \n" + ConfigModelManager.validate(true));
     }

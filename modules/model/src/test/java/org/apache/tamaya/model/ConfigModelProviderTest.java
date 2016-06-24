@@ -48,14 +48,15 @@ public class ConfigModelProviderTest implements ModelProviderSpi {
     private static final class TestConfigModel extends GroupModel {
 
         public TestConfigModel(){
-            super("TestConfig", new SectionModel.Builder("a.test.existing").setRequired(true).build(),
-                    ParameterModel.of("a.test.existing.aParam", true),
-                    ParameterModel.of("a.test.existing.optionalParam"),
-                    ParameterModel.of("a.test.existing.aABCParam", false, "[ABC].*"),
-                    new SectionModel.Builder("a.test.notexisting").setRequired(true).build(),
-                    ParameterModel.of("a.test.notexisting.aParam", true),
-                    ParameterModel.of("a.test.notexisting.optionalParam"),
-                    ParameterModel.of("a.test.existing.aABCParam2", false, "[ABC].*"));
+            super("TestConfigModel", "TestConfig", new SectionModel.Builder("TestConfigModel",
+                    "a.test.existing").setRequired(true).build(),
+                    ParameterModel.of("TestConfigModel", "a.test.existing.aParam", true),
+                    ParameterModel.of("TestConfigModel", "a.test.existing.optionalParam"),
+                    ParameterModel.of("TestConfigModel", "a.test.existing.aABCParam", false, "[ABC].*"),
+                    new SectionModel.Builder("TestConfigModel", "a.test.notexisting").setRequired(true).build(),
+                    ParameterModel.of("TestConfigModel", "a.test.notexisting.aParam", true),
+                    ParameterModel.of("TestConfigModel", "a.test.notexisting.optionalParam"),
+                    ParameterModel.of("TestConfigModel", "a.test.existing.aABCParam2", false, "[ABC].*"));
         }
         @Override
         public String getName() {
