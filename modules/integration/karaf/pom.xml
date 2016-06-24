@@ -25,234 +25,71 @@ under the License.
         <version>0.3-incubating-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>Apache Tamaya Integration - Karaf Features</name>
-    <artifactId>tamaya-karaf</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
+    <name>Apache Tamaya Integration - Karaf Features Parent</name>
+    <artifactId>tamaya-integration-karaf-all</artifactId>
+    <groupId>org.apache.tamaya.ext.karaf</groupId>
+    <packaging>pom</packaging>
 
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
+    <properties>
+            <karaf.version>4.0.5</karaf.version>
+    </properties>
 
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-builder</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-classloader-support</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-collections</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-events</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-filter</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-formats</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-functions</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-injection</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-injection-api</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-json</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-management</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-model</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-mutable-config</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-optional</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-resolver</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-resources</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-spisupport</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-camel</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-yaml</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-cdi</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-cdi-se</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-consul</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-etcd</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-osgi</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-spring</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-maven-plugin</artifactId>
+                    <version>${karaf.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <javase>1.7</javase>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
-                    <aggregateFeatures>true</aggregateFeatures>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <modules>
+        <module>tamaya-api-feature</module>
+        <module>tamaya-core-feature</module>
+        <module>tamaya-json-feature</module>
+        <module>tamaya-yaml-feature</module>
+        <module>tamaya-filter-feature</module>
+        <module>tamaya-mutable-config-feature</module>
+        <module>tamaya-injection-feature</module>
+        <module>tamaya-model-feature</module>
+        <module>tamaya-events-feature</module>
+        <module>tamaya-etcd-feature</module>
+        <module>tamaya-consul-feature</module>
+        <module>tamaya-all-feature</module>
+        <module>tamaya-assembly</module>
+    </modules>
+
 </project>

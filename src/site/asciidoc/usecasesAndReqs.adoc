@@ -73,7 +73,7 @@ ones like EL are required. This is especially useful to deal with low resource e
 === Type Safe Properties
 
 Users just want to access properties not only as Strings, but let Tamaya do the conversion to the required
-or the configred target type. By defauklt all java.lang wrapper and primitive types should be supported, but also
+or the configred target type. By defauklt all java.ui.lang wrapper and primitive types should be supported, but also
 other common types like date/time types, math numeric types and more.
 
 It must be possible that users can register their own custom types.

@@ -66,21 +66,21 @@ listing of converters automatically registered with the Core module:
 |_Target Type_             |_Class Name_              |_Supported Formats_
 |java.math.BigDecimal    |BigDecimalConverter     |1.2345, 0xFF
 |java.math.BigInteger    |BigIntegerConverter     |0xFF, 1234
-|java.lang.Boolean       |BooleanConverter        |true, false, T, F, 1 ,0
-|java.lang.Byte          |ByteConverter           |0xFF, MIN_VALUE, MAX_VALUE, 123
-|java.lang.Character     |CharConverter           |0xFF, 'a', 'H', 123
-|java.lang.Class         |ClassConverter          |<fully qualified class name>
+|java.ui.lang.Boolean       |BooleanConverter        |true, false, T, F, 1 ,0
+|java.ui.lang.Byte          |ByteConverter           |0xFF, MIN_VALUE, MAX_VALUE, 123
+|java.ui.lang.Character     |CharConverter           |0xFF, 'a', 'H', 123
+|java.ui.lang.Class         |ClassConverter          |<fully qualified class name>
 |java.util.Currency      |CurrencyConverter       |CHF, 123
-|java.lang.Double        |DoubleConverter         |1, 0xFF, 1.2334, NaN, NEGATIVE_INFITIY, POSITIVE_INFINITY, MIN_VALUE, MAX_VALUE
+|java.ui.lang.Double        |DoubleConverter         |1, 0xFF, 1.2334, NaN, NEGATIVE_INFITIY, POSITIVE_INFINITY, MIN_VALUE, MAX_VALUE
 |_Enums_                 |EnumConverter           |<Enum item name>
-|java.lang.Float         |FloatConverter          |1, 0xFF, 1.2334, NaN, NEGATIVE_INFITIY, POSITIVE_INFINITY, MIN_VALUE, MAX_VALUE
-|java.lang.Integer       |IntegerConverter        |1, 0xD3, MIN_VALUE, MAX_VALUE
+|java.ui.lang.Float         |FloatConverter          |1, 0xFF, 1.2334, NaN, NEGATIVE_INFITIY, POSITIVE_INFINITY, MIN_VALUE, MAX_VALUE
+|java.ui.lang.Integer       |IntegerConverter        |1, 0xD3, MIN_VALUE, MAX_VALUE
 |LocalDate               |LocalDateConverter      |<Date as defined by LocalDate.parse(String)
 |LocalTime               |LocalTimeConverter      |<Time as defined by LocalTime.parse(String)
 |LocalDateTime           |LocalDateTimeConverter  |<LocalDateTime as defined by LocalDateTime.parse(String)>
-|java.lang.Long          |LongConverter           |1, 0xD3, MIN_VALUE, MAX_VALUE
-|java.lang.Number        |NumberConverter         |1, 0xFF, 1.2334, NaN, NEGATIVE_INFITIY, POSITIVE_INFINITY
-|java.lang.Short         |ShortConverter          |1, 0xD3, MIN_VALUE, MAX_VALUE
+|java.ui.lang.Long          |LongConverter           |1, 0xD3, MIN_VALUE, MAX_VALUE
+|java.ui.lang.Number        |NumberConverter         |1, 0xFF, 1.2334, NaN, NEGATIVE_INFITIY, POSITIVE_INFINITY
+|java.ui.lang.Short         |ShortConverter          |1, 0xD3, MIN_VALUE, MAX_VALUE
 |java.net.URI            |URIConverter            |http://localhost:2020/testresource?api=true
 |java.net.URL            |URLConverter            |http://localhost:2020/testresource?api=true
 |ZoneId                  |ZoneIdConverter         |Europe/Zurich
