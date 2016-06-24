@@ -95,7 +95,7 @@ public final class PropertyFiltering{
                     final String k = entry.getKey();
                     final String v = entry.getValue();
 
-                    String newValue = filter.filterProperty(k, new FilterContext(k, inputMap, false));
+                    String newValue = filter.filterProperty(v, new FilterContext(k, inputMap, false));
                     if (newValue != null && !newValue.equals(v)) {
                         changes.incrementAndGet();
                         LOG.finest("Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);

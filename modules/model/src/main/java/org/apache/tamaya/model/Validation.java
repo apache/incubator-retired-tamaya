@@ -123,8 +123,8 @@ public final class Validation {
      * @param type model type 
      * @return a corresponding configModel item
      */
-    public static Validation ofUndefined(final String key, final ModelTarget type) {
-        return new Validation(new AbstractConfigModel(key, false, "Undefined key: " + key) {
+    public static Validation ofUndefined(final String owner, final String key, final ModelTarget type) {
+        return new Validation(new AbstractConfigModel(owner, key, false, "Undefined key: " + key) {
 
             @Override
             public ModelTarget getType() {

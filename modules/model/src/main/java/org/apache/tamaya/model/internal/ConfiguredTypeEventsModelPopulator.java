@@ -58,7 +58,8 @@ public final class ConfiguredTypeEventsModelPopulator implements ConfigEventList
                 for (String key : keys) {
                     ParameterModel val = ConfigModelManager.getModel(key, ParameterModel.class);
                     if (val == null) {
-                        ConfiguredTypeEventsModelProvider.addConfigModel(new ParameterModel.Builder(key)
+                        ConfiguredTypeEventsModelProvider.addConfigModel(
+                                new ParameterModel.Builder(confType.getName(), key)
                                 .setType(field.getType().getName())
                                 .setDescription("Injected field: " +
                                         field.getAnnotatedField().getDeclaringClass().getName() + '.' + field.toString() +
@@ -72,7 +73,8 @@ public final class ConfiguredTypeEventsModelPopulator implements ConfigEventList
                 for (String key : keys) {
                     ParameterModel val = ConfigModelManager.getModel(key, ParameterModel.class);
                     if (val == null) {
-                        ConfiguredTypeEventsModelProvider.addConfigModel(new ParameterModel.Builder(key)
+                        ConfiguredTypeEventsModelProvider.addConfigModel(
+                                new ParameterModel.Builder(confType.getName(), key)
                                 .setType(method.getParameterTypes()[0].getName())
                                 .setDescription("Injected field: " +
                                         method.getAnnotatedMethod().getDeclaringClass().getName() + '.' + method.toString() +

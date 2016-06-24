@@ -40,8 +40,8 @@ public class SectionModel extends GroupModel {
      * @param name the section name.
      * @return a new builder instance.
      */
-    public static Builder builder(String name){
-        return new Builder(name);
+    public static Builder builder(String owner, String name){
+        return new Builder(owner, name);
     }
 
     /**
@@ -50,8 +50,8 @@ public class SectionModel extends GroupModel {
      * @param required flag, if the section is required to be present.
      * @return the ConfigModel instance
      */
-    public static ConfigModel of(String name, boolean required){
-        return new Builder(name).setRequired(required).build();
+    public static ConfigModel of(String owner, String name, boolean required){
+        return new Builder(owner, name).setRequired(required).build();
     }
 
     /**
@@ -61,8 +61,8 @@ public class SectionModel extends GroupModel {
      * @param configModels additional configModels
      * @return a new builder, never null.
      */
-    public static ConfigModel of(String name, boolean required, ConfigModel... configModels){
-        return new Builder(name).setRequired(required).addValidations(configModels).build();
+    public static ConfigModel of(String owner, String name, boolean required, ConfigModel... configModels){
+        return new Builder(owner, name).setRequired(required).addValidations(configModels).build();
     }
 
     /**
@@ -70,7 +70,7 @@ public class SectionModel extends GroupModel {
      * @param builder the builder, not null.
      */
     protected SectionModel(Builder builder) {
-        super(builder.name, builder.childConfigModels);
+        super(builder.owner, builder.name, builder.childConfigModels);
     }
 
     @Override
@@ -117,6 +117,8 @@ public class SectionModel extends GroupModel {
      * Builder for setting up a AreaConfigModel instance.
      */
     public static class Builder{
+        /** The section owner. */
+        private String owner;
         /** The section name. */
         private String name;
         /** The optional description. */
@@ -130,7 +132,8 @@ public class SectionModel extends GroupModel {
          * Creates a new Builder.
          * @param sectionName the section name, not null.
          */
-        public Builder(String sectionName){
+        public Builder(String owner, String sectionName){
+            this.owner = Objects.requireNonNull(owner);
             this.name = Objects.requireNonNull(sectionName);
         }
 

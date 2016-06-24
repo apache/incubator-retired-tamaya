@@ -44,7 +44,7 @@ public class ParameterModel extends AbstractConfigModel {
      * @param builder the builder, not null.
      */
     protected ParameterModel(Builder builder) {
-        super(builder.name, builder.required, builder.description);
+        super(builder.owner, builder.name, builder.required, builder.description);
         this.regEx = builder.regEx;
         this.type = builder.type;
     }
@@ -97,8 +97,8 @@ public class ParameterModel extends AbstractConfigModel {
      * @param name the fully qualified parameter name.
      * @return a new builder, never null.
      */
-    public static Builder builder(String name) {
-        return new Builder(name);
+    public static Builder builder(String owner, String name) {
+        return new Builder(owner, name);
     }
 
     /**
@@ -108,8 +108,8 @@ public class ParameterModel extends AbstractConfigModel {
      * @param expression an optional regular expression to validate a value.
      * @return the new ConfigModel instance.
      */
-    public static ConfigModel of(String name, boolean required, String expression) {
-        return new Builder(name).setRequired(required).setExpression(expression).build();
+    public static ConfigModel of(String owner, String name, boolean required, String expression) {
+        return new Builder(owner, name).setRequired(required).setExpression(expression).build();
     }
 
     /**
@@ -118,8 +118,8 @@ public class ParameterModel extends AbstractConfigModel {
      * @param required the required flag.
      * @return the new ConfigModel instance.
      */
-    public static ConfigModel of(String name, boolean required) {
-        return new Builder(name).setRequired(required).build();
+    public static ConfigModel of(String owner, String name, boolean required) {
+        return new Builder(owner, name).setRequired(required).build();
     }
 
     /**
@@ -127,8 +127,8 @@ public class ParameterModel extends AbstractConfigModel {
      * @param name the fully qualified parameter name.
      * @return the new ConfigModel instance.
      */
-    public static ConfigModel of(String name) {
-        return new Builder(name).setRequired(false).build();
+    public static ConfigModel of(String owner, String name) {
+        return new Builder(owner, name).setRequired(false).build();
     }
 
 
@@ -138,6 +138,8 @@ public class ParameterModel extends AbstractConfigModel {
     public static class Builder {
         /** The parameter's target type. */
         private Class<?> type;
+        /** The owner. */
+        private String owner;
         /** The fully qualified parameter name. */
         private String name;
         /** The optional validation expression. */
@@ -151,7 +153,8 @@ public class ParameterModel extends AbstractConfigModel {
          * Creates a new Builder.
          * @param name the fully qualified parameter name, not null.
          */
-        public Builder(String name) {
+        public Builder(String owner, String name) {
+            this.owner = Objects.requireNonNull(owner);
             this.name = Objects.requireNonNull(name);
         }
 
@@ -165,7 +168,7 @@ public class ParameterModel extends AbstractConfigModel {
                 this.type = Class.forName(type);
             } catch (ClassNotFoundException e) {
                 try {
-                    this.type = Class.forName("java.lang."+type);
+                    this.type = Class.forName("java.ui.lang."+type);
                 } catch (ClassNotFoundException e2) {
                     Logger.getLogger(getClass().getName()).log(Level.INFO, "Failed to load parameter type: " + type, e2);
                 }
@@ -200,6 +203,16 @@ public class ParameterModel extends AbstractConfigModel {
          */
         public Builder setExpression(String expression) {
             this.regEx = expression;
+            return this;
+        }
+
+        /**
+         * Sets the owner name.
+         * @param owner the owner name, not null.
+         * @return the Builder for chaining
+         */
+        public Builder setOwner(String owner) {
+            this.owner = Objects.requireNonNull(owner);
             return this;
         }
 

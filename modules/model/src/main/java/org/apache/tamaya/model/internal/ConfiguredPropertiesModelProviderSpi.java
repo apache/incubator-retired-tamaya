@@ -129,7 +129,11 @@ public class ConfiguredPropertiesModelProviderSpi implements ModelProviderSpi {
                     Properties props = new Properties();
                     props.load(is);
                     Map<String,String> data = MapPropertySource.getMap(props);
-                    configModels.addAll(ConfigModelReader.loadValidations(
+                    String owner = data.get("_model.owner");
+                    if(owner==null){
+                        owner = config.toString();
+                    }
+                    configModels.addAll(ConfigModelReader.loadValidations(owner,
                             data));
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE,

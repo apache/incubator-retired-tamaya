@@ -94,6 +94,12 @@ under the License.
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-ui</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
