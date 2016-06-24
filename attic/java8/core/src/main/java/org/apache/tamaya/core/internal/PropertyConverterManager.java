@@ -226,7 +226,7 @@ public class PropertyConverterManager {
         if (converters != null) {
             converterList.addAll(converters);
         }
-        // handling of java.lang wrapper classes
+        // handling of java.ui.lang wrapper classes
         TypeLiteral<T> boxedType = mapBoxedType(targetType);
         if(boxedType!=null){
             try {

@@ -110,7 +110,7 @@ process is aborted, since a non-resolvable circular filter issue is assumed.
 The output is the final configuration value as type +String+.
 
 === Applying type conversion:
-Finally, if the required target type, does not match +Java.lang.String+, all registered +PropertyConverter+
+Finally, if the required target type, does not match +Java.ui.lang.String+, all registered +PropertyConverter+
 instances targeting the corresponding target type are asked to convert the given (String-based) configuration
 entry to the required (non String) target type.
 

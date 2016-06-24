@@ -74,7 +74,7 @@ Now with only these 2 concepts a simple configuration meta-model can be defined 
   ** may have an optional description
 * Parameters additionally have
   ** a _type_ (+.model.type=Classname+), described by the fully qualified class name, into which any configured (String)
-     value must be convertable into. If no type is configured +java.lang.String+ is assumed as default.
+     value must be convertable into. If no type is configured +java.ui.lang.String+ is assumed as default.
   ** an optional regular expression that can be used to validate the +String+ values returned from a
      configuration (+.model.expression=regexpression+).
 
@@ -180,7 +180,7 @@ but are optional.
 
 Since the parameter is the default type for model entries, a minmal parameter model entry only only needs it's
 parameter type to be defined. In the example above we define a parameter +minimalClass+ of type +Class+.
-Types hereby are fully qualified class names, whereas as 'java.lang' for built-in language types can be
+Types hereby are fully qualified class names, whereas as 'java.ui.lang' for built-in language types can be
 ommitted.
 
 ==== Model Locations
