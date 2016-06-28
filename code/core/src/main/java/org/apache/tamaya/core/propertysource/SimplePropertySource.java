@@ -31,15 +31,18 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * Simple implementation of a {@link org.apache.tamaya.spi.PropertySource} for properties-files.
+ * Simple implementation of a {@link org.apache.tamaya.spi.PropertySource} for
+ * simple property files and XML property files.
  */
 public class SimplePropertySource extends BasePropertySource {
 
     private static final Logger LOG = Logger.getLogger(SimplePropertySource.class.getName());
+
     /**
      * The property source name.
      */
     private String name;
+
     /**
      * The current properties.
      */
@@ -113,24 +116,36 @@ public class SimplePropertySource extends BasePropertySource {
      * @throws IllegalStateException in case of an error while reading properties-file
      */
     private Map<String, String> load(URL propertiesFile) {
+        boolean isXML = isXMLPropertieFiles(propertiesFile);
+
         Map<String, String> properties = new HashMap<>();
         try (InputStream stream = propertiesFile.openStream()) {
             Properties props = new Properties();
             if (stream != null) {
-                props.load(stream);
+                if (isXML) {
+                    props.loadFromXML(stream);
+                } else {
+                    props.load(stream);
+                }
             }
+
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
-                if(getName()==null){
-                    LOG.warning("No Property Source name found for " + this +", ommitting source meta-entries.");
-                }else {
+                if (getName() == null){
+                    LOG.warning("No property source name found for " + this +", ommitting source meta-entries.");
+                } else {
                     properties.put("_" + key + ".source", getName());
                 }
             }
         } catch (IOException e) {
-            throw new ConfigException("Error loading properties " + propertiesFile, e);
+            throw new ConfigException("Error loading properties from " + propertiesFile, e);
         }
+
         return properties;
+    }
+
+    private boolean isXMLPropertieFiles(URL url) {
+        return url.getFile().endsWith(".xml");
     }
 
 }

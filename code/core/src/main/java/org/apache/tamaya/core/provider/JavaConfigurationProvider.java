@@ -31,14 +31,26 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import static java.lang.String.format;
+import static java.lang.Thread.currentThread;
+
 /**
- * Provider which reads all {@code javaconfiguration.properties} files from classpath. By setting
- * {@code tamaya.defaultprops.disable} or {@code tamaya.defaults.disable} as system or environment property this feature
- * can be disabled.
+ * Provider which reads all {@value DEFAULT_SIMPLE_PROPERTIES_FILE_NAME} and
+ * {@value DEFAULT_XML_PROPERTIES_FILE_NAME} files found in the
+ * classpath. By setting
+ * {@code tamaya.defaultprops.disable} or {@code tamaya.defaults.disable}
+ * as system or environment property this feature can be disabled.
  */
 public class JavaConfigurationProvider implements PropertySourceProvider {
-    /** Default location in the classpath, where Tamaya looks for configuration by default. */
-    public static final String DEFAULT_PROPERTIES_FILE_NAME="META-INF/javaconfiguration.properties";
+    /**
+     * Default location in the classpath, where Tamaya looks for simple line based configuration by default.
+     */
+    public static final String DEFAULT_SIMPLE_PROPERTIES_FILE_NAME="META-INF/javaconfiguration.properties";
+
+    /**
+     * Default location in the classpath, where Tamaya looks for XML based configuration by default.
+     */
+    public static final String DEFAULT_XML_PROPERTIES_FILE_NAME = "META-INF/javaconfiguration.xml";
 
     private final boolean disabled = evaluateDisabled();
 
@@ -61,24 +73,49 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
 
     @Override
     public Collection<PropertySource> getPropertySources() {
-        if(disabled){
+        if (isDisabled()) {
             return Collections.emptySet();
         }
-        List<PropertySource> propertySources = new ArrayList<>();
-        try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            if(cl!=null) {
-                Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
-                        .getResources(DEFAULT_PROPERTIES_FILE_NAME);
-                while (urls.hasMoreElements()) {
-                    propertySources.add(new SimplePropertySource(urls.nextElement()));
-                }
-            }
 
-        } catch (IOException e) {
-            throw new ConfigException("Error while loading javaconfiguration.properties", e);
-        }
+        List<PropertySource> propertySources = new ArrayList<>();
+
+        propertySources.addAll(loadPropertySourcesByName(DEFAULT_SIMPLE_PROPERTIES_FILE_NAME));
+        propertySources.addAll(loadPropertySourcesByName(DEFAULT_XML_PROPERTIES_FILE_NAME));
+
         return Collections.unmodifiableList(propertySources);
+    }
+
+    private Collection<? extends PropertySource> loadPropertySourcesByName(String filename) {
+        URL currentUrl = null;
+
+        List<PropertySource> propertySources = new ArrayList<>();
+        Enumeration<URL> propertyLocations = Collections.emptyEnumeration();
+
+        try {
+            ClassLoader cl = currentThread().getContextClassLoader();
+
+            if (cl != null) {
+                propertyLocations = currentThread().getContextClassLoader()
+                                                   .getResources(filename);
+            }
+        } catch (IOException e) {
+            String msg = format("Error while searching for %s", filename);
+
+            throw new ConfigException(msg, e);
+        }
+
+        while (propertyLocations.hasMoreElements()) {
+            currentUrl = propertyLocations.nextElement();
+            SimplePropertySource sps = new SimplePropertySource(currentUrl);
+
+            propertySources.add(sps);
+        }
+
+        return propertySources;
+    }
+
+    protected boolean isDisabled() {
+        return disabled;
     }
 
 

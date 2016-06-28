@@ -18,43 +18,49 @@
  */
 package org.apache.tamaya.core.provider;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.core.provider.JavaConfigurationProvider;
 import org.apache.tamaya.spi.PropertySource;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collection;
 
+import static org.apache.tamaya.ConfigurationProvider.getConfiguration;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class JavaConfigurationProviderTest {
 
-    @Test
-    public void testJavaConfigurationProvider() {
+    private static final String A_UMLAUT = "\u00E4";
+    private static final String O_UMLAUT = "\u00F6";
 
+    @Test
+    public void loadsSimpleAndXMLPropertyFilesProper() {
         Collection<PropertySource> propertySources = new JavaConfigurationProvider().getPropertySources();
 
         assertThat(propertySources, notNullValue());
-        assertThat(propertySources, hasSize(1));
+        assertThat(propertySources, hasSize(2));
 
         PropertySource propertySource = propertySources.iterator().next();
 
-        assertThat(propertySource.getProperties().keySet(), hasSize(5));  // 5 entries + 5 metaentries
+        assertThat(propertySource.getProperties().keySet(), hasSize(5));
 
         for (int i = 1; i < 6; i++) {
             String key = "confkey" + i;
             String value = "javaconf-value" + i;
 
-            Assert.assertEquals(value, propertySource.get(key).get(key));
+            assertThat(value, equalTo(propertySource.get(key).get(key)));
 
             // check if we had our key in configuration.current
-            Assert.assertTrue(ConfigurationProvider.getConfiguration().getProperties().containsKey(key));
-            Assert.assertEquals(value, ConfigurationProvider.getConfiguration().get(key));
+            assertThat(getConfiguration().getProperties().containsKey(key), is(true));
+            assertThat(value, equalTo(getConfiguration().get(key)));
         }
 
-    }
+        assertThat(getConfiguration().getProperties().containsKey("aaeehh"), is(true));
+        assertThat(getConfiguration().getProperties().get("aaeehh"), equalTo(A_UMLAUT));
 
+        assertThat(getConfiguration().getProperties().containsKey(O_UMLAUT), is(true));
+        assertThat(getConfiguration().getProperties().get(O_UMLAUT), equalTo("o"));
+    }
 }

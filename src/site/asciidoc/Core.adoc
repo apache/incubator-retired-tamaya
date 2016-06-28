@@ -138,6 +138,7 @@ applications already easily. Basically configuration is built  up by default as 
 
 . Read environment properties and add them prefixed with +env.+
 . Read all files found at +META-INF/javaconfiguration.properties+
+  and +META-INF/javaconfiguration.xml+
 
 
 === Overview of Registered Default Property Sources and Providers
@@ -150,6 +151,7 @@ registered. They are all in the package +org.apache.tamaya.core.propertysource+ 
 |=======
 |_Type_                                   |_Class Name_                   |_Ordinal Used_
 |META-INF/javaconfiguration.properties    |JavaConfigurationProvider      |0
+|META-INF/javaconfiguration.xml           |JavaConfigurationProvider      |0
 |Environment Properties                   |EnvironmentPropertySource      |300
 |System Properties                        |SystemPropertySource           |400
 |=======
@@ -211,7 +213,8 @@ the inherited +protected void initializeOrdinal(final int defaultOrdinal)+, or d
 === Default PropertySourceProvider in Core
 
 With +org.apache.tamaya.core.provider.JavaConfigurationProvider+ there is also a default +PropertySourceProvider+
-present that loads all .properties files found at +META-INF/javaconfiguration.properties+.
+present that loads all .properties files found at +META-INF/javaconfiguration.properties+
+and +META-INF/javaconfiguration.xml+.
 
 
 [[Extensions]]
