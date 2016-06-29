@@ -19,8 +19,6 @@
 package org.apache.tamaya.resolver.spi;
 
 
-import org.apache.tamaya.resolver.internal.ConfigResolver;
-
 import java.util.Collection;
 
 /**
@@ -60,7 +58,7 @@ public interface ExpressionEvaluator {
     String evaluateExpression(String key, String value, boolean maskNotFound);
 
     /**
-     * Access a collection with the currently registered {@link ConfigResolver} instances.
+     * Access a collection with the currently registered {@link org.apache.tamaya.resolver.internal.ConfigResolver} instances.
      * @return the resolvers currently known, never null.
      */
     Collection<ExpressionResolver> getResolvers();

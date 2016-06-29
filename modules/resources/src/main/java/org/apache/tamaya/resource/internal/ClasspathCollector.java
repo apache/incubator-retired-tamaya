@@ -27,12 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -204,7 +199,10 @@ public class ClasspathCollector {
                         continue;
                     }
                     if (relativePath.matches(subPattern)) {
-                        result.add(createRelativeFrom(rootDirResource, relativePath));
+                        URL url = createRelativeFrom(rootDirResource, relativePath);
+                        if(!result.contains(url)) {
+                            result.add(url);
+                        }
                     }
                 }
             }
