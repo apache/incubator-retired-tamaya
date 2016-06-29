@@ -24,8 +24,6 @@ import com.vaadin.ui.UI;
 import org.apache.tamaya.ui.components.PageTitleUpdater;
 import org.apache.tamaya.ui.views.ErrorView;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * UI main layout.
