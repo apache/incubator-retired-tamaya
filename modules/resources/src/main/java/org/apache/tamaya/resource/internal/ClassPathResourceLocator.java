@@ -62,4 +62,8 @@ public class ClassPathResourceLocator implements ResourceLocator{
         }
     }
 
+    @Override
+    public String toString() {
+        return "ClassPathResourceLocator -> classpath:<expression>, e.g. classpath:META-INF/services/*Resolver";
+    }
 }

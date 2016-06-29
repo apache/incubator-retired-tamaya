@@ -58,4 +58,9 @@ public class URLResourceLocator implements ResourceLocator{
         }
     }
 
+    @Override
+    public String toString() {
+        return "URLResourceLocator -> <url>";
+    }
+
 }

@@ -19,6 +19,10 @@
 package org.apache.tamaya.resolver.spi;
 
 
+import org.apache.tamaya.resolver.internal.ConfigResolver;
+
+import java.util.Collection;
+
 /**
  * Interface that provides an SPI that can be accessed from the current {@link org.apache.tamaya.spi.ServiceContext},
  * which allows to pass expression that contain placeholders and variable expressions. Expressions passed hereby
@@ -54,4 +58,11 @@ public interface ExpressionEvaluator {
      * @return the filtered/evaluated value, including null.
      */
     String evaluateExpression(String key, String value, boolean maskNotFound);
+
+    /**
+     * Access a collection with the currently registered {@link ConfigResolver} instances.
+     * @return the resolvers currently known, never null.
+     */
+    Collection<ExpressionResolver> getResolvers();
+
 }

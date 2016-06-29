@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.resolver;
 
+import org.apache.tamaya.resolver.internal.ConfigResolver;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.ServiceContextManager;
+
+import java.util.Collection;
 
 /**
  * Resolver singleton.
@@ -61,5 +64,14 @@ public final class Resolver {
     public static String evaluateExpression(String value, boolean maskNotFound){
         return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class)
                 .evaluateExpression(null, value, maskNotFound);
+    }
+
+    /**
+     * Access a collection with the currently registered {@link ConfigResolver} instances.
+     * @return the resolvers currently known, never null.
+     */
+    public static Collection<ConfigResolver> getResolvers(){
+        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class)
+                .getResolvers();
     }
 }

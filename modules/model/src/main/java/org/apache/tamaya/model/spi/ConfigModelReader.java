@@ -50,7 +50,7 @@ public final class ConfigModelReader {
      * @param props the properties to be read
      * @return a collection of config validations.
      */
-    public static Collection<ConfigModel> loadValidations(Map<String,String> props) {
+    public static Collection<ConfigModel> loadValidations(String owner, Map<String,String> props) {
         List<ConfigModel> result = new ArrayList<>();
         Set<String> itemKeys = new HashSet<>();
         for (Object key : props.keySet()) {
