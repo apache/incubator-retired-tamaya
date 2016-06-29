@@ -23,13 +23,6 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Tree;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.ui.UIConstants;
 import org.apache.tamaya.ui.ViewProvider;
@@ -37,8 +30,6 @@ import org.apache.tamaya.ui.components.VerticalSpacedLayout;
 import org.apache.tamaya.ui.services.MessageProvider;
 
 import javax.annotation.Priority;
-import java.util.List;
-import java.util.Map;
 
 /**
  * View showing the current loaded system components.

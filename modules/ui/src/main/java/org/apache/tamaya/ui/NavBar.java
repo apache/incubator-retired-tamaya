@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.ui;
 
-import com.sun.javafx.menu.SeparatorMenuItemBase;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
