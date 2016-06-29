@@ -57,4 +57,9 @@ public class PathResourceLocator implements ResourceLocator{
         }
     }
 
+    @Override
+    public String toString() {
+        return "PathResourceLocator -> <fileExpression>,<classpathExpression>, e.g. /**/*.xml";
+    }
+
 }

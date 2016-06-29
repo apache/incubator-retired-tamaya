@@ -61,4 +61,9 @@ public class FileResourceLocator implements ResourceLocator{
         }
     }
 
+    @Override
+    public String toString() {
+        return "FileResourceLocator -> file:<expression>, e.g. file:./config/**/*.xml";
+    }
+
 }

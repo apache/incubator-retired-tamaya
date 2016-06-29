@@ -23,11 +23,7 @@ import org.apache.tamaya.resolver.spi.ExpressionResolver;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -161,6 +157,11 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
             resolvedValue.append(current);
         }
         return resolvedValue.toString();
+    }
+
+    @Override
+    public Collection<ExpressionResolver> getResolvers() {
+        return new ArrayList<>(this.resolvers);
     }
 
     /**

@@ -92,4 +92,10 @@ public interface ResourceResolver {
      */
     Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
 
+    /**
+     * Access the currently registered {@link ResourceLocator} instances.
+     * @return the currently known {@link ResourceLocator} instances, never null.
+     */
+    Collection<ResourceLocator> getResourceLocators();
+
 }

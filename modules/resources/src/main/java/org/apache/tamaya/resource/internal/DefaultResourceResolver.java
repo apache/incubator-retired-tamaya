@@ -41,7 +41,7 @@ public class DefaultResourceResolver extends BaseResourceResolver {
     public List<URL> getResources(ClassLoader classLoader, Collection<String> expressions) {
         List<URL> resources = new ArrayList<>();
         for (String expression : expressions) {
-            for(ResourceLocator locator: ServiceContextManager.getServiceContext().getServices(ResourceLocator.class)){
+            for(ResourceLocator locator: getResourceLocators()){
                 Collection<URL> found = locator.lookup(classLoader, expression);
                 if(!found.isEmpty()) {
                     resources.addAll(found);
@@ -50,6 +50,11 @@ public class DefaultResourceResolver extends BaseResourceResolver {
             }
         }
         return resources;
+    }
+
+    @Override
+    public Collection<ResourceLocator> getResourceLocators() {
+        return ServiceContextManager.getServiceContext().getServices(ResourceLocator.class);
     }
 
 }
