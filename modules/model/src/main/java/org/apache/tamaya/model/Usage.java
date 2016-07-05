@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 /**
- * Metrics container containing access statistics for a given vonfiguration key.
+ * Metrics container containing access statistics for a given configuration key.
  */
 public final class Usage {
     private static final Logger LOG = Logger.getLogger(Usage.class.getName());
@@ -115,6 +115,7 @@ public final class Usage {
 
     /**
      * Access a usage reference for a given class.
+     * @param type class to get usage references for, not null.
      * @return the usage ref, if present, or null.
      */
     public Collection<AccessDetail> getAccessDetails(Class type){
@@ -123,6 +124,7 @@ public final class Usage {
 
     /**
      * Access a usage reference for a given package.
+     * @param pack package to get usage references for, not null.
      * @return the usage ref, if present, or null.
      */
     public Collection<AccessDetail> getAccessDetails(Package pack){
@@ -152,7 +154,7 @@ public final class Usage {
     }
 
     /**
-     * Get the access details (stacktrace etrc) for this reference.
+     * Get the access details (stacktrace etc) for this reference.
      * @return return the access details, not null.
      */
     public Collection<AccessDetail> getAccessDetails(){

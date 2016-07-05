@@ -48,6 +48,7 @@ public final class ConfigModelManager {
 
     /**
      * Access the usage statistics for the recorded uses of configuration.
+     * @return usage statistics
      */
     public static String getConfigInfoText(){
         StringBuilder b = new StringBuilder();

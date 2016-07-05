@@ -120,7 +120,8 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      *
      * @param key the key to be filtered
      * @param value value to be analyzed for expressions
-     * @param maskUnresolved
+     * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
+     *                     Setting to false will replace the value with an empty String.
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
@@ -165,7 +166,8 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
     /**
      * Parses subexpression from tokenizer, hereby counting all open and closed brackets, but ignoring any
      * meta characters.
-     * @param tokenizer the current tokniezer instance
+     * @param tokenizer the current tokenizer instance
+     * @param valueToBeFiltered subexpression to be filtered for
      * @return the parsed sub expression
      */
     private String parseSubExpression(StringTokenizer tokenizer, String valueToBeFiltered) {
@@ -216,10 +218,10 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
     }
 
     /**
-     * Evalutes the expression parsed, hereby checking for prefixes and trying otherwise all available resolvers,
+     * Evaluates the expression parsed, hereby checking for prefixes and trying otherwise all available resolvers,
      * based on priority.
      * @param unresolvedExpression the parsed, but unresolved expression
-     * @param maskUnresolved if true, not found expression parts will be replaced vy surrounding with [].
+     * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
      *                     Setting to false will replace the value with an empty String.
      * @return the resolved expression, or null.
      */

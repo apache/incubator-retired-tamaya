@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * SPI to implemented by the component responsible for usage tracking of
+ * SPI to be implemented by the component responsible for usage tracking of
  * configuration.
  */
 public interface ConfigUsageStatsSpi {
@@ -36,13 +36,13 @@ public interface ConfigUsageStatsSpi {
     void enableUsageTracking(boolean enable);
 
     /**
-     * Allows to check if usage tracking is enabled /should be disbled by default).
+     * Allows to check if usage tracking is enabled (should be disbled by default).
      * @return true, if usage tracking is enabled.
      */
     boolean isUsageTrackingEnabled();
 
     /**
-     * Get the list of package, which are not evaluated for tracking configuration access and usage statistics.
+     * Get the list of packages, which are not evaluated for tracking configuration access and usage statistics.
      * @return the set of ignored package names.
      */
     Set<String> getIgnoredPackages();
@@ -83,11 +83,14 @@ public interface ConfigUsageStatsSpi {
     /**
      * Track the access of {@code Configuration#get(String)} for
      * usage statistics.
+     * @param key key to track for
+     * @param value value to track for
      */
     void trackSingleKeyAccess(String key, String value);
 
     /**
      * Access the usage statistics for the recorded uses of configuration.
+     * @return usage statistics info
      */
     String getUsageInfo();
 

@@ -46,7 +46,7 @@ public final class ConfigUsageStats {
     }
 
     /**
-     * Returnes a set fo package names tha are to be ignored when collecting usage data.
+     * Returns a set of package names that are to be ignored when collecting usage data.
      * @return the ignored package names, not null.
      */
     public static Set<String> getIgnoredUsagePackages(){
@@ -110,7 +110,7 @@ public final class ConfigUsageStats {
     }
 
     /**
-     * Allows to check if usage tracking is enabled /should be disbled by default).
+     * Allows to check if usage tracking is enabled (should be disbled by default).
      * @return true, if usage tracking is enabled.
      */
     public static boolean isUsageTrackingEnabled(){
@@ -120,6 +120,7 @@ public final class ConfigUsageStats {
 
     /**
      * Access the usage statistics for the recorded uses of configuration.
+     * @return usage info or default message.
      */
     public static String getUsageInfo(){
         return Objects.requireNonNull(usageTracker, NO_USAGE_TRACKER_SPI_COMPONENT_MESSAGE).getUsageInfo();
