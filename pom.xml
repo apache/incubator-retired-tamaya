@@ -206,7 +206,7 @@ under the License.
             <roles>
                 <role>Committer</role>
             </roles>
-            <email>pottlinger@apache.org</email>
+            <email>pottlinger at apache.org</email>
             <timezone>+1</timezone>
         </developer>
     </developers>
