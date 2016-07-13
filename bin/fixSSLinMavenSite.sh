@@ -17,5 +17,5 @@
 echo "Will replace http with https in the generated maven site ..."
 read -p "Please abort in case you haven't generated the site or press RETURN to continue."
 cd ../target/site
-sed -i 's/"https:/"https:/g' *.html
+sed -i 's/"http:/"https:/g' *.html
 echo "DONE - please verify before pushing."
