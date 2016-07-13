@@ -19,8 +19,9 @@ if [ -z $1 ];
 	then
 	read -p "Please abort in case you haven't generated the site or press RETURN to continue.";
 else
-        echo "Assuming script is run on CI - starting to replace ...."
+        echo "Assuming script is run on CI - starting to replace ..."
 fi
-cd ./target/site
+cd target/site
+echo "Changed to site directory ..."
 sed -i 's/"http:/"https:/g' *.html
 echo "DONE - please verify before pushing."
