@@ -15,7 +15,12 @@
 # specific language governing permissions and limitations
 # under the License.
 echo "Will replace http with https in the generated maven site ..."
-read -p "Please abort in case you haven't generated the site or press RETURN to continue."
-cd ../target/site
+if [ -z $1 ];
+	then
+	read -p "Please abort in case you haven't generated the site or press RETURN to continue.";
+else
+        echo "Assuming script is run on CI - starting to replace ...."
+fi
+cd ./target/site
 sed -i 's/"http:/"https:/g' *.html
 echo "DONE - please verify before pushing."
