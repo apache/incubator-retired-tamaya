@@ -1,9 +1,10 @@
 About Apache Tamaya
 -------------------
 
-Tamaya provides a flexible and powerful Configuration Solution 
+Apache Tamaya (incubating) provides a flexible and powerful
+configuration solution
 for Java developers using Java SE as well as for more complex 
-usage scenarios like Cloud or Java EE. It provides a modern 
+usage scenarios like cloud or Java EE. It provides a modern
 type-safe property based Configuration API combined with a 
 powerful environment model and a flexible SPI. 
 

@@ -33,3 +33,25 @@ a[name]:before {
     height: 0;
     margin: 0;
 }
+
+/*
+ * These rules are for the Apache Incubator
+ * disclaimer in the footer.
+ */
+.bottom-description blockquote {
+    padding-top: 0;
+}
+
+.bottom-description .disclaimer {
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    display: block;;
+}
+
+.bottom-description .incubator-logo {
+    padding-top: 10px;
+    border: none;
+
+}

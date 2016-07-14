@@ -74,7 +74,7 @@ under the License.
 
             <!-- Brand on the top left menu bar -->
             <brand>
-                <name>Apache Tamaya</name>
+                <name>Apache Tamaya (incubating)</name>
                 <href>index.html</href>
             </brand>
 
@@ -83,6 +83,7 @@ under the License.
                     <sections>
                         <columns>3</columns>
                         <columns>2</columns>
+                        <columns>1</columns>
                         <body/>
                         <!--<sidebar/>-->
                     </sections>
@@ -96,6 +97,24 @@ under the License.
                 <column>Releases</column>
                 <column>Reports</column>
             </bottomNav>
+            <bottomDescription>
+                <![CDATA[
+                    <span class="disclaimer">Disclaimer</span>
+                    Apache Tamaya (incubating) is an effort undergoing
+                    incubation at
+                    The Apache Software Foundation (ASF), sponsored by
+                    the name of Apache Incubator. Incubation is required of
+                    all newly accepted projects until a further review indicates
+                    that the infrastructure, communications, and decision making
+                    process have stabilized in a manner consistent with other
+                    successful ASF projects. While incubation status is not
+                    necessarily a reflection of the completeness or stability of
+                    the code, it does indicate that the project has yet to
+                    be fully endorsed by the ASF.
+                    <a href="http://incubator.apache.org/guides/website.html"
+                      target="_target"><img class="incubator-logo" src="logos/egg-logo2.png"/></a>
+                ]]>
+            </bottomDescription>
 
             <theme>bootswatch-cosmo</theme>
         </reflowSkin>
