@@ -18,14 +18,11 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
 /**
  * Test Configuration class, that is used to testdata the default methods provided by the API.
  */
-public class TestConfigurationProvider implements ConfigurationProviderSpi {
+public class TestConfigurationProvider extends ConfigurationProvider {
 
     private static final Configuration config = new TestConfiguration();
 
@@ -34,23 +31,4 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
         return config;
     }
 
-    @Override
-    public ConfigurationContext getConfigurationContext() {
-        return null;
-    }
-
-    @Override
-    public void setConfigurationContext(ConfigurationContext context) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isConfigurationContextSettable() {
-        return false;
-    }
-
-    @Override
-    public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return null;
-    }
 }

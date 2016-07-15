@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.json;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;

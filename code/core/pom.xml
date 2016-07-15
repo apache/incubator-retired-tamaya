@@ -88,7 +88,7 @@ under the License.
                             org.apache.tamaya.core.provider
                         </Export-Package>
                         <Bundle-Activator>
-                            org.apache.tamaya.core.internal.OSGIActivator
+                            org.apache.tamaya.builder.internal.OSGIActivator
                         </Bundle-Activator>
                     </instructions>
                 </configuration>

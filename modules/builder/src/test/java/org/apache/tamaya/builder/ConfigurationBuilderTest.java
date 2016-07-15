@@ -21,6 +21,7 @@ package org.apache.tamaya.builder;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.builder.spi.*;
 import org.apache.tamaya.builder.util.types.CustomTypeA;
 import org.apache.tamaya.builder.util.types.CustomTypeB;
 import org.apache.tamaya.builder.util.types.CustomTypeC;

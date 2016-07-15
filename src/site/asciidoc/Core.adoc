@@ -90,7 +90,7 @@ listing of converters automatically registered with the Core module:
 === Registering PropertyConverters
 
 Additional +PropertyConverters+ can be implemented easily. It is recommended to register then using the +java.util.ServiceLoader+,
-meaning you add a file under +META-INF/service/org.apache.tamaya.spi.PropertyConverter+ containing the fully qualified
+meaning you add a file under +META-INF/service/PropertyConverter+ containing the fully qualified
 class names of the converters to be registered (one line per each).
 
 Alternatively you can also use a +ConfigurationContextBuilder+ to add additional converters programmatically.
@@ -210,7 +210,7 @@ the inherited +protected void initializeOrdinal(final int defaultOrdinal)+, or d
 [[CorePropertySourceProviders]]
 === Default PropertySourceProvider in Core
 
-With +org.apache.tamaya.core.provider.JavaConfigurationProvider+ there is also a default +PropertySourceProvider+
+With +JavaConfigurationProvider+ there is also a default +PropertySourceProvider+
 present that loads all .properties files found at +META-INF/javaconfiguration.properties+.
 
 

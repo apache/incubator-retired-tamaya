@@ -71,7 +71,7 @@ under the License.
 
     <!-- False positive returnin null for Boolean is required by the implemented interface. -->
     <Match>
-        <Class name="org.apache.tamaya.core.internal.converters.BooleanConverter"/>
+        <Class name="BooleanConverter"/>
     </Match>
 
     <!-- False positive: example class used for config demo. -->

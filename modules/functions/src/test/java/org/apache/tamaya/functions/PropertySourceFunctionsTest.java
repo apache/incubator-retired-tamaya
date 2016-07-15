@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.functions.PropertySourceFunctions;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 

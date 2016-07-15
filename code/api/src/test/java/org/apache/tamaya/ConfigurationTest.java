@@ -27,38 +27,38 @@ import static org.junit.Assert.*;
  */
 public class ConfigurationTest {
 
-    @Test
-    public void testget() throws Exception {
-        assertEquals(Boolean.TRUE, ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class));
-        assertEquals(Boolean.FALSE, ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class));
-        assertEquals((int)Byte.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("byte", Byte.class));
-        assertEquals(Integer.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("int", Integer.class));
-        assertEquals(Long.MAX_VALUE, (long)ConfigurationProvider.getConfiguration().get("long", Long.class));
-        assertEquals(Float.MAX_VALUE, (double)ConfigurationProvider.getConfiguration().get("float", Float.class), 0.0d);
-        assertEquals(Double.MAX_VALUE, ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
-    }
-
-    @Test
-    public void testGetBoolean() throws Exception {
-        assertTrue(ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class));
-        assertFalse(ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class));
-        assertFalse(ConfigurationProvider.getConfiguration().get("foorBar", Boolean.class));
-    }
-
-    @Test
-    public void testGetInteger() throws Exception {
-        assertEquals(Integer.MAX_VALUE,(int) ConfigurationProvider.getConfiguration().get("int", Integer.class));
-    }
-
-    @Test
-    public void testGetLong() throws Exception {
-        assertEquals(Long.MAX_VALUE,(long) ConfigurationProvider.getConfiguration().get("long", Long.class));
-    }
-
-    @Test
-    public void testGetDouble() throws Exception {
-        assertEquals(Double.MAX_VALUE,ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
-    }
+//    @Test
+//    public void testget() throws Exception {
+//        assertEquals(Boolean.TRUE, ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class));
+//        assertEquals(Boolean.FALSE, ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class));
+//        assertEquals((int)Byte.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("byte", Byte.class));
+//        assertEquals(Integer.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("int", Integer.class));
+//        assertEquals(Long.MAX_VALUE, (long)ConfigurationProvider.getConfiguration().get("long", Long.class));
+//        assertEquals(Float.MAX_VALUE, (double)ConfigurationProvider.getConfiguration().get("float", Float.class), 0.0d);
+//        assertEquals(Double.MAX_VALUE, ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
+//    }
+//
+//    @Test
+//    public void testGetBoolean() throws Exception {
+//        assertTrue(ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class));
+//        assertFalse(ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class));
+//        assertFalse(ConfigurationProvider.getConfiguration().get("foorBar", Boolean.class));
+//    }
+//
+//    @Test
+//    public void testGetInteger() throws Exception {
+//        assertEquals(Integer.MAX_VALUE,(int) ConfigurationProvider.getConfiguration().get("int", Integer.class));
+//    }
+//
+//    @Test
+//    public void testGetLong() throws Exception {
+//        assertEquals(Long.MAX_VALUE,(long) ConfigurationProvider.getConfiguration().get("long", Long.class));
+//    }
+//
+//    @Test
+//    public void testGetDouble() throws Exception {
+//        assertEquals(Double.MAX_VALUE,ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
+//    }
 
 
 }

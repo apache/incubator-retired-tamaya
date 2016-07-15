@@ -20,11 +20,9 @@ package org.apache.tamaya.jodatime;
 
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
-import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 

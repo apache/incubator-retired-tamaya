@@ -18,12 +18,10 @@
  */
 package org.apache.tamaya.mutableconfig;
 
-import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Policy that defines how changes are applied to the available

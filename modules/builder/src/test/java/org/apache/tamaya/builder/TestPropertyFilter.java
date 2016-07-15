@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.builder;
 
-import org.apache.tamaya.spi.FilterContext;
-import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.builder.spi.FilterContext;
+import org.apache.tamaya.builder.spi.PropertyFilter;
 
 public class TestPropertyFilter implements PropertyFilter {
     @Override

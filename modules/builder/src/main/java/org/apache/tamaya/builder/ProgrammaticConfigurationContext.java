@@ -19,15 +19,15 @@
 package org.apache.tamaya.builder;
 
 
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.builder.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.builder.spi.ConfigurationContext;
+import org.apache.tamaya.builder.spi.ConfigurationContextBuilder;
+import org.apache.tamaya.builder.spi.PropertyFilter;
+import org.apache.tamaya.builder.spi.PropertySource;
+import org.apache.tamaya.builder.spi.PropertySourceProvider;
+import org.apache.tamaya.builder.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.builder.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.PriorityServiceComparator;
 import org.apache.tamaya.spisupport.PropertyConverterManager;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
 /**
- * Implementation of the {@link org.apache.tamaya.spi.ConfigurationContext}
+ * Implementation of the {@link ConfigurationContext}
  * used by the {@link org.apache.tamaya.builder.ConfigurationBuilder}
  * internally.
  */
@@ -53,17 +53,17 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      */
     private final static Logger LOG = Logger.getLogger(ProgrammaticConfigurationContext.class.getName());
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
+     * Cubcomponent handling {@link PropertyConverter} instances.
      */
     private PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
     /**
-     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+     * The current unmodifiable list of loaded {@link PropertySource} instances.
      */
     private List<PropertySource> immutablePropertySources = new ArrayList<>();
 
     /**
-     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
+     * The current unmodifiable list of loaded {@link PropertyFilter} instances.
      */
     private List<PropertyFilter> immutablePropertyFilters = new ArrayList<>();
 
@@ -81,8 +81,8 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
 
     /**
      * The first time the Configuration system gets invoked we do initialize
-     * all our {@link org.apache.tamaya.spi.PropertySource}s and
-     * {@link org.apache.tamaya.spi.PropertyFilter}s which are known at startup.
+     * all our {@link PropertySource}s and
+     * {@link PropertyFilter}s which are known at startup.
      */
     @SuppressWarnings("unchecked")
     public ProgrammaticConfigurationContext(Builder builder) {
@@ -174,7 +174,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      */
     private int comparePropertySources(PropertySource source1, PropertySource source2) {
 
-        //X TODO this method duplicates org.apache.tamaya.core.internal.DefaultConfigurationContext.PropertySourceComparator.comparePropertySources()
+        //X TODO this method duplicates DefaultConfigurationContext.PropertySourceComparator.comparePropertySources()
         //X maybe we should extract the Comperator in an own class for real code-reuse (copy paste == bad code reuse)
 
         if (source1.getOrdinal() < source2.getOrdinal()) {
@@ -195,7 +195,7 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      */
     private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
 
-        //X TODO this method duplicates org.apache.tamaya.core.internal.DefaultConfigurationContext.PropertySourceComparator.comparePropertyFilters()
+        //X TODO this method duplicates DefaultConfigurationContext.PropertySourceComparator.comparePropertyFilters()
         //X maybe we should extract the Comperator in an own class for real code-reuse (copy paste == bad code reuse)
 
         Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
@@ -254,12 +254,12 @@ class ProgrammaticConfigurationContext implements ConfigurationContext {
      */
     public final static class Builder {
         /**
-         * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+         * The current unmodifiable list of loaded {@link PropertySource} instances.
          */
         private final List<PropertySource> propertySources = new ArrayList<>();
 
         /**
-         * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
+         * The current unmodifiable list of loaded {@link PropertyFilter} instances.
          */
         private final List<PropertyFilter> propertyFilters = new ArrayList<>();
 

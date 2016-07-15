@@ -597,7 +597,7 @@ Then register +MyPropertySource+ using the +ServiceLoader+ by adding the followi
 
 [source,listing]
 --------------------------------------------
-META-INF/services/org.apache.tamaya.spi.PropertySource
+META-INF/services/PropertySource
 --------------------------------------------
 
 ...containing the following line:

@@ -18,8 +18,8 @@
 //
 //
 //import org.apache.tamaya.ConfigException;
-//import org.apache.tamaya.spi.PropertySource;
-//import org.apache.tamaya.spi.PropertySourceProvider;
+//import PropertySource;
+//import PropertySourceProvider;
 //
 //import java.util.ArrayList;
 //import java.util.Arrays;

@@ -18,21 +18,12 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationContext;
-
-import java.util.Collections;
 import java.util.Map;
 
 
 /**
- * <p>A configuration models a aggregated set current properties, identified by
- * a unique key, but adds higher level access functions to
- * a {@link org.apache.tamaya.spi.PropertySource}. Hereby in most
- * cases a configuration is a wrapper around a composite
- * {@link org.apache.tamaya.spi.PropertySource} instance, which may combine
- * multiple child config in well defined tree like structure,
- * where nodes define logically the rules current priority, filtering,
- * combination and overriding.
+ * <p>A configuration models a aggregated set of current properties, identified by
+ * a unique key.
  * </p>
  * <h3>Implementation Requirements</h3>
  * Implementations current this interface must be
@@ -66,94 +57,9 @@ public interface Configuration {
     String getOrDefault(String key, String defaultValue);
 
     /**
-     * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
-     * fromMap the given String keys.
-     *
-     * @param <T> the type of the class modeled by the type parameter
-     * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
-     * @param defaultValue value to be used, if no value is present.
-     * @return the property value, never null..
-     * @throws ConfigException if the keys could not be converted to the required target type.
-     */
-    <T> T getOrDefault(String key, Class<T> type, T defaultValue);
-
-    /**
-     * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
-     * fromMap the given String keys.
-     *
-     * @param <T> the type of the class modeled by the type parameter
-     * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not {@code null}.
-     * @return the property value, never {@code null}.
-     * @throws ConfigException if the keys could not be converted to the required target type.
-     */
-    <T> T get(String key, Class<T> type);
-
-    /**
-     * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
-     * fromMap the given String keys.
-     *
-     * @param <T> the type of the type literal
-     * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
-     * @return the property value, never null.
-     * @throws ConfigException if the keys could not be converted to the required target type.
-     */
-    <T> T get(String key, TypeLiteral<T> type);
-
-    /**
-     * Get the property keys as type T. This will implicitly require a corresponding {@link
-     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable current providing type T
-     * fromMap the given String keys.
-     *
-     * @param <T> the type of the type literal
-     * @param key          the property's absolute, or relative path, e.g.
-     *                     {@code a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
-     * @param defaultValue default value to be used, if no value is present.
-     * @return the property value, never null.
-     * @throws ConfigException if the keys could not be converted to the required target type.
-     */
-    <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue);
-
-    /**
      * Access all currently known configuration properties as a full {@code Map<String,String>}.
-     * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
-     * instances may not be contained in the result, but nevertheless be accessible calling one of the
-     * {@code get(...)} methods.
      * @return all currently known configuration properties.
      */
     Map<String,String> getProperties();
-
-    /**
-     * Extension point for adjusting configuration.
-     *
-     * @param operator A configuration operator, e.g. a filter, or an adjuster
-     *                 combining configurations.
-     * @return the new adjusted configuration returned by the {@code operator}, never {@code null}.
-     */
-    Configuration with(ConfigOperator operator);
-
-    /**
-     * Query a configuration.
-     *
-     * @param <T> the type of the configuration.
-     * @param query the query, never {@code null}.
-     * @return the result returned by the {@code query}.
-     */
-    <T> T query(ConfigQuery<T> query);
-
-    /**
-     * Access a configurationŝ context.
-     * @return the configuration context, never null.
-     */
-    ConfigurationContext getContext();
 
 }

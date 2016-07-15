@@ -18,9 +18,8 @@
  */
 package org.apache.tamaya.builder;
 
-import org.apache.tamaya.core.propertysource.BasePropertySource;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.builder.propertysource.BasePropertySource;
+import org.apache.tamaya.builder.spi.PropertyValue;
 
 import java.util.Collections;
 import java.util.Hashtable;

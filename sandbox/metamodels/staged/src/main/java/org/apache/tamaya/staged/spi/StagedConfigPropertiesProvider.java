@@ -20,7 +20,7 @@
 //import org.apache.tamaya.spisupport.MapPropertySource;
 //import org.apache.tamaya.spisupport.PropertiesResourcePropertySource;
 //import org.apache.tamaya.resource.ConfigResources;
-//import org.apache.tamaya.spi.PropertySource;
+//import PropertySource;
 //
 //import java.net.URL;
 //import java.util.ArrayList;

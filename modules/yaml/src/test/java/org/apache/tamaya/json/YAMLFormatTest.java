@@ -20,12 +20,10 @@ package org.apache.tamaya.json;
 
 
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.FlattenedDefaultPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;

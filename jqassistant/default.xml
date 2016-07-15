@@ -26,7 +26,7 @@ under the License.
             (t:Type)-[:IMPLEMENTS*]->(i:Type)
 
         WHERE
-            i.fqn='org.apache.tamaya.spi.PropertyConverter'
+            i.fqn='PropertyConverter'
             AND NOT t:Anonymous:Inner
             AND NOT t.name =~ '.*Converter'
 
@@ -43,7 +43,7 @@ under the License.
             (t:Type)-[:IMPLEMENTS*]->(i:Type)
 
         WHERE
-            i.fqn='org.apache.tamaya.spi.PropertyFilter'
+            i.fqn='PropertyFilter'
             AND NOT t:Anonymous:Inner
             AND NOT t.name =~ '.*Filter'
 

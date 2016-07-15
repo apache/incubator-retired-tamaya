@@ -19,7 +19,7 @@
 # if we have more than one
 
 # this one is without overriding ordinal so it shall take the default
-org.apache.tamaya.spi.TestServiceContext
+TestServiceContext
 
 # this one has a higher ordinal (100)
 org.apache.tamaya.spi.ServiceContextManagerTest$ServiceContextWithOrdinal

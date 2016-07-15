@@ -20,7 +20,6 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.core.propertysource.BasePropertySource;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

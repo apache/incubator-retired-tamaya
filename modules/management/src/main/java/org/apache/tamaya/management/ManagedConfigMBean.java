@@ -30,7 +30,7 @@ public interface ManagedConfigMBean {
      * Get a general description of the configuration (context) in place, in JSON format:
      * <pre>
      * Configuration: {
-     *   "class": "org.apache.tamaya.core.internal.DefaultConfiguration",
+     *   "class": "DefaultConfiguration",
      *   "timestamp": 1440426409388,
      *   "data": {
      *     "ALLUSERSPROFILE": "C:\ProgramData",

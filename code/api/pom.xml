@@ -63,9 +63,9 @@ under the License.
                             <!--osgi.extender;-->
                             <!--filter:="(osgi.extender=osgi.serviceloader.processor)",-->
                             <!--osgi.serviceloader;-->
-                            <!--filter:="(org.apache.tamaya.spi.ServiceContext)";-->
+                            <!--filter:="(ServiceContext)";-->
                             <!--cardinality:=multiple;-->
-                            <!--filter:="(org.apache.tamaya.spi.ConfigurationProviderSpi)";-->
+                            <!--filter:="(ConfigurationProviderSpi)";-->
                             <!--cardinality:=multiple-->
                         <!--</Require-Capability>-->
                     </instructions>

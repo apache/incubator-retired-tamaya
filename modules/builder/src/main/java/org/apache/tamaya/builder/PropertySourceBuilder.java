@@ -18,14 +18,14 @@
  */
 package org.apache.tamaya.builder;
 
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.builder.spi.PropertySource;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * Simple builder for building a {@link org.apache.tamaya.spi.PropertySource}.
+ * Simple builder for building a {@link PropertySource}.
  */
 public final class PropertySourceBuilder {
     /** The ordinal to be used. */
@@ -100,8 +100,8 @@ public final class PropertySourceBuilder {
     }
 
     /**
-     * Creates a new immutable {@link org.apache.tamaya.spi.PropertySource} instance.
-     * @return a new immutable {@link org.apache.tamaya.spi.PropertySource} instance, never null.
+     * Creates a new immutable {@link PropertySource} instance.
+     * @return a new immutable {@link PropertySource} instance, never null.
      */
     public PropertySource build(){
         return new SimplePropertySource(name, properties);

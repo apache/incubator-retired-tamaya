@@ -25,10 +25,10 @@ import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.UpdatePolicy;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.builder.spi.ConversionContext;
+import org.apache.tamaya.builder.spi.PropertyConverter;
+import org.apache.tamaya.builder.spi.PropertySource;
+import org.apache.tamaya.builder.spi.PropertyValue;
 import org.junit.Test;
 
 import org.apache.tamaya.Configuration;
