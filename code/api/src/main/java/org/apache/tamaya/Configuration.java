@@ -54,7 +54,71 @@ public interface Configuration {
      * @param defaultValue value to be returned, if no value is present.
      * @return the property's keys.
      */
-    String getOrDefault(String key, String defaultValue);
+    default String getOrDefault(String key, final String defaultValue){
+        return getOrDefault(key, () -> defaultValue);
+    }
+
+    /**
+     * Access a property providing a value supplier called, if no configured value is available.
+     *
+     * @param key the property's key, not null.
+     * @param defaultValueSupplier value supplier to be called, if no value is present.
+     * @return the property value.
+     */
+    default String getOrDefault(String key, Supplier<String> defaultValueSupplier){
+        String value = get(key);
+        if(value==null){
+            return defaultValueSupplier.supply();
+        }
+        return value;
+    }
+
+    /**
+     * Access a typed property providing a conversion.
+     *
+     * @param key the property's key, not null.
+     * @param conversion the value conversion, called if a configured value is present for the given key,
+     *                   not null.
+     * @return the property value, or null, if no such value has been found.
+     */
+    default <T> T get(String key, Function<String,T> conversion){
+        String value = get(key);
+        if(value!=null){
+            return conversion.apply(value);
+        }
+        return null;
+    }
+
+    /**
+     * Access a typed property providing a conversion and a default value.
+     *
+     * @param key the property's key, not null.
+     * @param conversion the value conversion, called if a configured value is present for the given key,
+     *                   not null.
+     * @param defaultValue the default value to be returned, if no configured value has been found, including
+     *                     {@code null}.
+     * @return the property value, or null, if no such value has been found.
+     */
+    default <T> T getOrDefault(String key, Function<String,T> conversion, final T defaultValue){
+        return getOrDefault(key, conversion, () -> defaultValue);
+    }
+
+    /**
+     * Access a typed property providing a conversion and a default value supplier.
+     *
+     * @param key the property's key, not null.
+     * @param conversion the value conversion, called if a configured value is present for the given key,
+     *                   not null.
+     * @param defaultValueSupplier the default value supplier to be called, if no configured value has been found..
+     * @return the property value, or null, if no such value has been found.
+     */
+    default <T> T getOrDefault(String key, Function<String,T> conversion, Supplier<T> defaultValueSupplier){
+        String value = get(key);
+        if(value!=null){
+            return conversion.apply(value);
+        }
+        return defaultValueSupplier.supply();
+    }
 
     /**
      * Access all currently known configuration properties as a full {@code Map<String,String>}.
