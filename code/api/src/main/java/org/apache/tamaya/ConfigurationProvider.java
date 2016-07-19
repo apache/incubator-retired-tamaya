@@ -29,12 +29,13 @@ import java.util.logging.Logger;
 /**
  * Static access to the {@link Configuration} for the very application.
  */
-public abstract class ConfigurationProvider {
+public final class ConfigurationProvider {
 
     private static final Logger LOG = Logger.getLogger("ConfigurationProvider");
 
     private static final Configuration INSTANCE = loadConfiguration();
 
+    private ConfigurationProvider(){}
 
     private static Configuration loadConfiguration() {
         for(Configuration config: ServiceLoader.load(Configuration.class)){
@@ -81,10 +82,6 @@ public abstract class ConfigurationProvider {
                 }
             }
         }
-    }
-
-    protected ConfigurationProvider() {
-        // just to prevent initialisation
     }
 
     /**
