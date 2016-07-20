@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.builder.spi.PropertySource;
+import org.apache.tamaya.builder.spi.PropertyValue;
 
 import java.util.Collections;
 import java.util.HashMap;

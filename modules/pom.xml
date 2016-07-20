@@ -33,6 +33,10 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
+        <module>servicecontext</module>
+        <module>adaptersupport</module>
+        <module>types</module>
+        <module>defaultconfig</module>
         <module>builder</module>
         <module>classloader-support</module>
         <module>collections</module>

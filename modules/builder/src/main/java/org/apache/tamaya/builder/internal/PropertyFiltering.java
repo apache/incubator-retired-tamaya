@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.builder.internal;
 
-import org.apache.tamaya.builder.spi.ConfigurationContext;
+import org.apache.tamaya.builder.PropertySourceBasedConfiguration;
 import org.apache.tamaya.builder.spi.FilterContext;
 import org.apache.tamaya.builder.spi.PropertyFilter;
 import org.apache.tamaya.builder.spi.PropertySource;
@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
+ * Implementation of the Configuration API. This class uses the current {@link PropertySourceBasedConfiguration} to evaluate the
  * chain of {@link PropertySource} and {@link PropertyFilter}
  * instance to evaluate the current Configuration.
  */
@@ -51,7 +51,7 @@ public final class PropertyFiltering{
      */
     private PropertyFiltering(){}
 
-    public static String applyFilter(String key, Map<String,String> configData, ConfigurationContext configurationContext) {
+    public static String applyFilter(String key, Map<String,String> configData, PropertySourceBasedConfiguration configurationContext) {
         // Apply filters to values, prevent values filtered to null!
         String result = configData.get(key);
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
@@ -89,7 +89,7 @@ public final class PropertyFiltering{
         return result;
     }
 
-    public static Map<String, String> applyFilters(Map<String, String> inputMap, ConfigurationContext configurationContext) {
+    public static Map<String, String> applyFilters(Map<String, String> inputMap, PropertySourceBasedConfiguration configurationContext) {
         Map<String, String> resultMap = new HashMap<>(inputMap);
         // Apply filters to values, prevent values filtered to null!
         Map<String, String> metaData = filterMetadata(inputMap);

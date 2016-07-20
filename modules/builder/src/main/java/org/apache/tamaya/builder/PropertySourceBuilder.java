@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.builder;
 
+import org.apache.tamaya.builder.propertysource.SimplePropertySource;
 import org.apache.tamaya.builder.spi.PropertySource;
 
 import java.util.HashMap;

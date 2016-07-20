@@ -19,7 +19,7 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.builder.spi.ConversionContext;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import java.math.RoundingMode;

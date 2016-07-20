@@ -17,12 +17,11 @@
  * under the License.
  */
 /**
- * This package provides
- * {@link org.apache.tamaya.builder.ConfigurationBuilder a configuration
- * builder} that allows to build a configuration manually without
- * using exclusively on the Service Provider Interface API of Tamaya.
+ * This package provides an adapter and builder for managing configuration
+ * organized as a well ordered list of {@link org.apache.tamaya.builder.spi.PropertySource}
+ * instances.
  *
- * @see org.apache.tamaya.builder.ConfigurationBuilder
+ * @see org.apache.tamaya.builder.PropertySourceBasedConfigurationBuilder
  * @see org.apache.tamaya.Configuration
  */
 package org.apache.tamaya.builder;

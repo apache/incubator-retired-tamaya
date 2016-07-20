@@ -19,7 +19,7 @@
 package org.apache.tamaya.examples.builder;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.builder.ConfigurationBuilder;
+import org.apache.tamaya.builder.PropertySourceBasedConfigurationBuilder;
 import org.apache.tamaya.resource.ConfigResources;
 
 
@@ -33,7 +33,7 @@ public class UsingABuilderExample {
 
     public static void main(String... args) {
 
-        ConfigurationBuilder builder = new ConfigurationBuilder();
+        PropertySourceBasedConfigurationBuilder builder = new PropertySourceBasedConfigurationBuilder();
         Configuration config = builder.addPropertySources(ConfigResources.getResourceResolver().getResources("META-INF/boot/*.ini"))
                 .addPropertySources(ConfigResources.getResourceResolver().getResources("META-INF/config/*.properties"))
                 .enableProvidedPropertyConverters()

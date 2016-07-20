@@ -20,7 +20,7 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.builder.ConfigurationBuilder;
+import org.apache.tamaya.builder.PropertySourceBasedConfigurationBuilder;
 import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.Config;
@@ -66,7 +66,7 @@ public class DefaultDynamicValueTest {
     };
 
     private Map<String,String> properties = new HashMap<>();
-    private Configuration config = new ConfigurationBuilder().addPropertySources(
+    private Configuration config = new PropertySourceBasedConfigurationBuilder().addPropertySources(
             new PropertySource() {
                 @Override
                 public int getOrdinal() {
