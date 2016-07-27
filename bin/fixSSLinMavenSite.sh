@@ -21,6 +21,8 @@ if [ -z $1 ];
 else
         echo "Assuming script is run on CI - starting to replace ..."
 fi
+echo "Where am I?"
+pwd
 cd target/site
 echo "Changed to site directory ..."
 sed -i 's/"http:/"https:/g' *.html
