@@ -21,7 +21,6 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TypeLiteral;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +54,13 @@ public interface ConfigurationContext {
     List<PropertySource> getPropertySources();
 
 
+//    /**
+//     * Access a {@link PropertySource} using its (unique) name.
+//     * @param name the propoerty source's name, not null.
+//     * @return the propoerty source found, or null.
+//     */
+//    PropertySource getPropertySource(String name);
+
     /**
      * This method can be used for programmatically adding {@link PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
@@ -64,6 +70,7 @@ public interface ConfigurationContext {
      * @param propertyConverter the PropertyConverters to add for this type
      */
     <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter);
+
 
     /**
      * <p>

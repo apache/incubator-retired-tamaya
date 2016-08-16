@@ -151,7 +151,7 @@ public interface Configuration {
     <T> T query(ConfigQuery<T> query);
 
     /**
-     * Access a configurationŝ context.
+     * Access a configuration'ŝ context.
      * @return the configuration context, never null.
      */
     ConfigurationContext getContext();

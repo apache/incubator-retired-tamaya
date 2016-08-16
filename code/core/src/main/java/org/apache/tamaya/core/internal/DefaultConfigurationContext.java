@@ -180,6 +180,93 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DefaultConfigurationContext)) return false;
+
+        DefaultConfigurationContext that = (DefaultConfigurationContext) o;
+
+        if (!propertyConverterManager.equals(that.propertyConverterManager)) return false;
+        if (!immutablePropertySources.equals(that.immutablePropertySources)) return false;
+        if (!immutablePropertyFilters.equals(that.immutablePropertyFilters)) return false;
+        return getPropertyValueCombinationPolicy().equals(that.getPropertyValueCombinationPolicy());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = propertyConverterManager.hashCode();
+        result = 31 * result + immutablePropertySources.hashCode();
+        result = 31 * result + immutablePropertyFilters.hashCode();
+        result = 31 * result + getPropertyValueCombinationPolicy().hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder("ConfigurationContext{\n");
+        b.append("  Property Sources\n");
+        b.append("  ----------------\n");
+        b.append("  CLASS                         NAME                                                                  ORDINAL SCANNABLE SIZE\n");
+        for(PropertySource ps:getPropertySources()){
+            b.append("  ");
+            appendFormatted(b, ps.getClass().getSimpleName(), 30);
+            appendFormatted(b, ps.getName(), 70);
+            appendFormatted(b, String.valueOf(ps.getOrdinal()), 8);
+            appendFormatted(b, String.valueOf(ps.isScannable()), 10);
+            if(ps.isScannable()) {
+                appendFormatted(b, String.valueOf(ps.getProperties().size()), 8);
+            }else{
+                appendFormatted(b, "-", 8);
+            }
+            b.append('\n');
+        }
+        b.append("\n");
+        b.append("  Property Filters\n");
+        b.append("  ----------------\n");
+        b.append("  CLASS                         INFO\n");
+        for(PropertyFilter filter:getPropertyFilters()){
+            b.append("  ");
+            appendFormatted(b, filter.getClass().getSimpleName(), 30);
+            b.append(removeNewLines(filter.toString()));
+            b.append('\n');
+        }
+        b.append("\n\n");
+        b.append("  Property Converters\n");
+        b.append("  -------------------\n");
+        b.append("  CLASS                         TYPE                          INFO\n");
+        for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> converterEntry:getPropertyConverters().entrySet()){
+            for(PropertyConverter converter: converterEntry.getValue()){
+                b.append("  ");
+                appendFormatted(b, converter.getClass().getSimpleName(), 30);
+                appendFormatted(b, converterEntry.getKey().getRawType().getSimpleName(), 30);
+                b.append(removeNewLines(converter.toString()));
+                b.append('\n');
+            }
+        }
+        b.append('}');
+        return b.toString();
+    }
+
+    private void appendFormatted(StringBuilder b, String text, int length) {
+        int padding;
+        if(text.length() <= (length)){
+            b.append(text);
+            padding = length - text.length();
+        }else{
+            b.append(text.substring(0, length-1));
+            padding = 1;
+        }
+        for(int i=0;i<padding;i++){
+            b.append(' ');
+        }
+    }
+
+    private String removeNewLines(String s) {
+        return s.replace('\n', ' ').replace('\r', ' ');
+    }
+
     private static class PropertySourceComparator implements Comparator<PropertySource>, Serializable {
 
         private static final long serialVersionUID = 1L;
@@ -243,6 +330,16 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     public List<PropertySource> getPropertySources() {
         return immutablePropertySources;
     }
+
+//    @Override
+//    public PropertySource getPropertySource(String name) {
+//        for(PropertySource ps:getPropertySources()){
+//            if(name.equals(ps.getName())){
+//                return ps;
+//            }
+//        }
+//        return null;
+//    }
 
     @Override
     public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {

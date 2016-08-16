@@ -411,6 +411,22 @@ public class PropertyConverterManager {
         return null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PropertyConverterManager)) return false;
+
+        PropertyConverterManager that = (PropertyConverterManager) o;
+
+        return converters.equals(that.converters);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return converters.hashCode();
+    }
+
     private static class DefaultPropertyConverter<T> implements PropertyConverter<T> {
 
         private final Method factoryMethod;
