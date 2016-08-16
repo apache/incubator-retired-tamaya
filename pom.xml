@@ -553,17 +553,18 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <!-- 20160816: 3.5.1 generates a broken site, maybe due to old asciidoc version?! -->
+                    <version>3.4</version>
                     <inherited>true</inherited>
                     <dependencies>
-                        <!-- Fixes class not found 
+                        <!-- 3.5.1: Fixes class not found 
                          executing org.apache.maven.plugins:maven-site-plugin:3.5.1:site: org/apache/maven/doxia/sink/impl/XhtmlBaseSink
-                        -->
                         <dependency>
                             <groupId>org.apache.maven.doxia</groupId>
                             <artifactId>doxia-core</artifactId>
                             <version>1.7</version>
                         </dependency>
+                        -->
                         <dependency><!-- add support for ssh/scp -->
                             <groupId>org.apache.maven.wagon</groupId>
                             <artifactId>wagon-ssh</artifactId>
