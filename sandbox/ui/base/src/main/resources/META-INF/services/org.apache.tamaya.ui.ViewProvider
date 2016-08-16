@@ -16,22 +16,9 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-tamaya-config:
-  source-selectors:
-   - DEFAULT:
-       source: tamaya-DEFAULT.yml
-       labels: env=TEST env=PTA env=PROD
-   - TEST:
-       source: tamaya-TEST.yml
-       labels: env=TEST
-   - PTA:
-       source: tamaya-PTA.yml
-       labels: env=PTA
-   - PROD:
-       source: tamaya-PROD.yml
-       labels: env=PROD
+org.apache.tamaya.ui.views.HomeView$Provider
+org.apache.tamaya.ui.views.ConfigView$Provider
+org.apache.tamaya.ui.views.SystemView$Provider
 
-  default-labels:  env=DEV
-
-  expressions:
-   - env:    ${sys-property:ENV}, ${env-property:ENV}, "DEV"
+# Events Module
+org.apache.tamaya.ui.events.EventView$Provider

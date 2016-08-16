@@ -72,6 +72,8 @@ public final class ConfigModelManager {
                 case Group:
                     b.append("GROUP   ");
                     break;
+                default:
+                    break;
             }
             b.append(formatWithFixedLength(model.getOwner(), 10)).append(' ');
             b.append(formatWithFixedLength(model.getName(), 50));

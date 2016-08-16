@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 
 
 /**

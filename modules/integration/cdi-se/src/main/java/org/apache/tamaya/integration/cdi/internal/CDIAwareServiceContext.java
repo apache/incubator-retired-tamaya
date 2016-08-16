@@ -19,8 +19,8 @@
 package org.apache.tamaya.integration.cdi.internal;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.clsupport.CLAwareServiceContext;
 import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import javax.enterprise.inject.Instance;
@@ -49,10 +49,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * provided with the Tamaya core modules.</p>
  */
 public class CDIAwareServiceContext implements ServiceContext {
-    /**
-     * List current services loaded, per classloader.
-     */
-    private final CLAwareServiceContext clAwareServiceContext = new CLAwareServiceContext();
 
     /**
      * Singletons.
@@ -86,7 +82,7 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = clAwareServiceContext.getServices(serviceType);
+        List<T> found = ServiceContextManager.getServiceContext().getServices(serviceType);
         BeanManager beanManager = TamayaCDIIntegration.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){

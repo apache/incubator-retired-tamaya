@@ -16,22 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-tamaya-config:
-  source-selectors:
-   - DEFAULT:
-       source: tamaya-DEFAULT.yml
-       labels: env=TEST env=PTA env=PROD
-   - TEST:
-       source: tamaya-TEST.yml
-       labels: env=TEST
-   - PTA:
-       source: tamaya-PTA.yml
-       labels: env=PTA
-   - PROD:
-       source: tamaya-PROD.yml
-       labels: env=PROD
-
-  default-labels:  env=DEV
-
-  expressions:
-   - env:    ${sys-property:ENV}, ${env-property:ENV}, "DEV"
+mutableconfig.ConfigUpdaterView$Provider

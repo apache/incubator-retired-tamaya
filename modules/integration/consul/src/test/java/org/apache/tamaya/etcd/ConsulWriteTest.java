@@ -48,7 +48,7 @@ public class ConsulWriteTest {
     @org.junit.Test
     public void testSetNormal() throws Exception {
         if (!execute) return;
-        UUID taID = UUID.randomUUID();
+        String taID = UUID.randomUUID().toString();
         propertySource.put(taID, "testSetNormal", taID.toString());
         propertySource.commitTransaction(taID);
     }
@@ -57,7 +57,7 @@ public class ConsulWriteTest {
     @org.junit.Test
     public void testDelete() throws Exception {
         if(!execute)return;
-        UUID taID = UUID.randomUUID();
+        String taID = UUID.randomUUID().toString();
         propertySource.put(taID, "testDelete", taID.toString());
         propertySource.commitTransaction(taID);
         assertEquals(propertySource.get("testDelete").getValue(), taID.toString());

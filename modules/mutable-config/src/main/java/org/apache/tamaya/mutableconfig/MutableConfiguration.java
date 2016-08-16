@@ -25,7 +25,6 @@ import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 /**
