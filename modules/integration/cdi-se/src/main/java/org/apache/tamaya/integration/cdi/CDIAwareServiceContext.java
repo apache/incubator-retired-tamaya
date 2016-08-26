@@ -1,26 +1,25 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  or more contributor license agreements.  See the NOTICE file
+ *  distributed with this work for additional information
+ *  regarding copyright ownership.  The ASF licenses this file
+ *  to you under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
-package org.apache.tamaya.integration.cdi.internal;
+package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import javax.enterprise.inject.Instance;
@@ -55,6 +54,8 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
 
+    private ServiceContext defaultServiceContext = new ServiceLoaderServiceContext();
+
 
     @Override
     public <T> T getService(Class<T> serviceType) {
@@ -82,12 +83,14 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = ServiceContextManager.getServiceContext().getServices(serviceType);
+        List<T> found = defaultServiceContext.getServices(serviceType);
         BeanManager beanManager = TamayaCDIIntegration.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){
             Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
-            cdiInstances = (Instance<T>)beanManager.getReference(instanceBeans.iterator().next(), Instance.class, null);
+            Bean<?> bean = instanceBeans.iterator().next();
+            cdiInstances = (Instance<T>)beanManager.getReference(bean, Instance.class,
+                    beanManager.createCreationalContext(bean));
         }
         if(cdiInstances!=null){
             for(T t:cdiInstances.select(serviceType)){

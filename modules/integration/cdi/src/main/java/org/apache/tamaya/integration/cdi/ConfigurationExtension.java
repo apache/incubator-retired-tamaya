@@ -46,6 +46,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
+
 
 /**
  * CDI Extension module that adds injection mechanism for configuration.
@@ -56,11 +58,20 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConfigurationExtension implements Extension {
 
+    private static final Logger LOG = Logger.getLogger(ConfigurationExtension.class.getName());
+
     static final Map<Class, ConfigOperator> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
     static final Map<Class, PropertyConverter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
 
     private final Set<Type> types = new HashSet<>();
     private Bean<?> convBean;
+
+    /**
+     * Constructor for loading logging its load.
+     */
+    public ConfigurationExtension(){
+        LOG.info("Enabling Tamaya CDI Configuration...");
+    }
 
     /**
      * Method that checks the configuration injection points during deployment for available configuration.
@@ -112,6 +123,7 @@ public class ConfigurationExtension implements Extension {
                 types.add(injectionPoint.getType());
                 if(annotation!=null){
                     configured = true;
+                    LOG.info("Enabling Tamaya CDI Configuration on bean: " + configuredType.getName());
                     configuredType.addConfiguredMember(injectionPoint, keys);
                 }
             }

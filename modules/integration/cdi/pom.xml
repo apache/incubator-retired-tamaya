@@ -117,7 +117,6 @@ under the License.
             <version>${openejb.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jcdi_1.1_spec</artifactId>
@@ -138,66 +137,69 @@ under the License.
         </dependency>
     </dependencies>
     <profiles>
-        <profile>
-            <id>OWB</id>
-            <!-- there is an issue with this profile:
-                 java.lang.NoClassDefFoundError: org/apache/webbeans/event/EventMetadata
-            -->
-            <dependencies>
-                <!-- OWB specific dependencies-->
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-atinject_1.0_spec</artifactId>
-                    <version>${geronimo-atinject-1.0-spec.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-interceptor_1.2_spec</artifactId>
-                    <version>${geronimo-interceptor-1.2-spec.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-annotation_1.2_spec</artifactId>
-                    <version>1.0</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-el_2.2_spec</artifactId>
-                    <version>1.0.2</version>
-                </dependency>
+        <!--<profile>-->
+            <!--<id>OWB</id>-->
+            <!--&lt;!&ndash; there is an issue with this profile:-->
+                 <!--java.lang.NoClassDefFoundError: org/apache/webbeans/event/EventMetadata-->
+            <!--&ndash;&gt;-->
+            <!--<activation>-->
+                <!--<activeByDefault>false</activeByDefault>-->
+            <!--</activation>-->
+            <!--<dependencies>-->
+                <!--&lt;!&ndash; OWB specific dependencies&ndash;&gt;-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.geronimo.specs</groupId>-->
+                    <!--<artifactId>geronimo-atinject_1.0_spec</artifactId>-->
+                    <!--<version>${geronimo-atinject-1.0-spec.version}</version>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.geronimo.specs</groupId>-->
+                    <!--<artifactId>geronimo-interceptor_1.2_spec</artifactId>-->
+                    <!--<version>${geronimo-interceptor-1.2-spec.version}</version>-->
+                    <!--<scope>test</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.geronimo.specs</groupId>-->
+                    <!--<artifactId>geronimo-annotation_1.2_spec</artifactId>-->
+                    <!--<version>1.0</version>-->
+                    <!--<scope>test</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.geronimo.specs</groupId>-->
+                    <!--<artifactId>geronimo-el_2.2_spec</artifactId>-->
+                    <!--<version>1.0.2</version>-->
+                <!--</dependency>-->
 
-                <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
-                    <artifactId>openwebbeans-impl</artifactId>
-                    <version>${owb.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
-                    <artifactId>openwebbeans-spi</artifactId>
-                    <version>${owb.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
-                    <artifactId>openwebbeans-resource</artifactId>
-                    <version>${owb.version}</version>
-                </dependency>
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.openwebbeans</groupId>-->
+                    <!--<artifactId>openwebbeans-impl</artifactId>-->
+                    <!--<version>${owb.version}</version>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.openwebbeans</groupId>-->
+                    <!--<artifactId>openwebbeans-spi</artifactId>-->
+                    <!--<version>${owb.version}</version>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.openwebbeans</groupId>-->
+                    <!--<artifactId>openwebbeans-resource</artifactId>-->
+                    <!--<version>${owb.version}</version>-->
+                <!--</dependency>-->
 
-                <dependency>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                    <version>${bval.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.deltaspike.cdictrl</groupId>
-                    <artifactId>deltaspike-cdictrl-owb</artifactId>
-                    <version>${ds.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.bval</groupId>-->
+                    <!--<artifactId>bval-jsr303</artifactId>-->
+                    <!--<version>${bval.version}</version>-->
+                    <!--<scope>test</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.deltaspike.cdictrl</groupId>-->
+                    <!--<artifactId>deltaspike-cdictrl-owb</artifactId>-->
+                    <!--<version>${ds.version}</version>-->
+                    <!--<scope>test</scope>-->
+                <!--</dependency>-->
+            <!--</dependencies>-->
+        <!--</profile>-->
         <profile>
             <id>Weld</id>
             <activation>

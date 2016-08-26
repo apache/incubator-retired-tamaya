@@ -16,5 +16,5 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.integration.cdi.internal.TamayaCDIIntegration
-org.apache.tamaya.integration.cdi.internal.SEInjectorCDIExtension
+org.apache.tamaya.integration.cdi.TamayaCDIIntegration
+org.apache.tamaya.integration.cdi.SEInjectorCDIExtension
