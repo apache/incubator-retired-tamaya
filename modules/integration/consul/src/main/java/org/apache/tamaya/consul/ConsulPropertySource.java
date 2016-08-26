@@ -18,13 +18,14 @@
  */
 package org.apache.tamaya.consul;
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.common.base.Optional;
 import com.google.common.net.HostAndPort;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.model.kv.Value;
-import org.apache.tamaya.mutableconfig.propertysources.AbstractMutablePropertySource;
-import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
 
@@ -39,7 +40,8 @@ import java.util.logging.Logger;
  * {@code consul.prefix} as system property maps the consul based onfiguration
  * to this prefix namespace. Consul servers are configured as {@code consul.urls} system or environment property.
  */
-public class ConsulPropertySource extends AbstractMutablePropertySource {
+public class ConsulPropertySource extends Deserializers.Base
+implements MutablePropertySource{
     private static final Logger LOG = Logger.getLogger(ConsulPropertySource.class.getName());
 
     private String prefix = System.getProperty("tamaya.consul.prefix", "");
@@ -165,20 +167,20 @@ public class ConsulPropertySource extends AbstractMutablePropertySource {
     }
 
     @Override
-    protected void commitInternal(ConfigChangeContext context) {
+    public void applyChange(ConfigChangeRequest configChange) {
         for(HostAndPort hostAndPort: ConsulBackends.getConsulBackends()){
             try{
                 Consul consul = Consul.builder().withHostAndPort(hostAndPort).build();
                 KeyValueClient kvClient = consul.keyValueClient();
 
-                for(String k: context.getRemovedProperties()){
+                for(String k: configChange.getRemovedProperties()){
                     try{
                         kvClient.deleteKey(k);
                     } catch(Exception e){
                         LOG.info("Failed to remove key from consul: " + k);
                     }
                 }
-                for(Map.Entry<String,String> en:context.getAddedProperties().entrySet()){
+                for(Map.Entry<String,String> en:configChange.getAddedProperties().entrySet()){
                     String key = en.getKey();
                     try{
                         kvClient.putValue(key,en.getValue());

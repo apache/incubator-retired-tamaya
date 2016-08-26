@@ -19,8 +19,11 @@
 package org.apache.tamaya.mutableconfig.propertysources;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
+import org.apache.tamaya.spisupport.BasePropertySource;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -39,12 +42,14 @@ import java.util.logging.Logger;
 /**
  * Simple implementation of a mutable {@link org.apache.tamaya.spi.PropertySource} for .properties files.
  */
-public class MutablePropertiesPropertySource extends AbstractMutablePropertySource {
+public class MutablePropertiesPropertySource extends BasePropertySource
+implements MutablePropertySource{
 
     /**
      * The logger.
      */
     private static final Logger LOG = Logger.getLogger(MutablePropertiesPropertySource.class.getName());
+
     /**
      * Default update interval is 1 minute.
      */
@@ -91,8 +96,6 @@ public class MutablePropertiesPropertySource extends AbstractMutablePropertySour
             LOG.log(Level.SEVERE, "Cannot convert file to URL: " + propertiesLocation, e);
         }
     }
-
-
 
     @Override
     public PropertyValue get(String key) {
@@ -151,9 +154,9 @@ public class MutablePropertiesPropertySource extends AbstractMutablePropertySour
     }
 
     @Override
-    protected void commitInternal(ConfigChangeContext context) {
-        if(context.isEmpty()){
-            LOG.info("Nothing to commit for transaction: " + context.getTransactionID());
+    public void applyChange(ConfigChangeRequest change) {
+        if(change.isEmpty()){
+            LOG.info("Nothing to commit for transaction: " + change.getTransactionID());
             return;
         }
         if(!file.exists()){
@@ -165,7 +168,7 @@ public class MutablePropertiesPropertySource extends AbstractMutablePropertySour
                 throw new ConfigException("Failed to create config file " + file, e);
             }
         }
-        for(Map.Entry<String,String> en:context.getAddedProperties().entrySet()){
+        for(Map.Entry<String,String> en:change.getAddedProperties().entrySet()){
             int index = en.getKey().indexOf('?');
             if(index>0){
                 this.properties.put(en.getKey().substring(0, index), en.getValue());
@@ -173,7 +176,7 @@ public class MutablePropertiesPropertySource extends AbstractMutablePropertySour
                 this.properties.put(en.getKey(), en.getValue());
             }
         }
-        for(String rmKey:context.getRemovedProperties()){
+        for(String rmKey:change.getRemovedProperties()){
             this.properties.remove(rmKey);
         }
         try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){

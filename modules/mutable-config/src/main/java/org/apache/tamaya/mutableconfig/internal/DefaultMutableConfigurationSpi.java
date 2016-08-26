@@ -19,6 +19,7 @@
 package org.apache.tamaya.mutableconfig.internal;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 
@@ -30,7 +31,8 @@ import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 public class DefaultMutableConfigurationSpi implements MutableConfigurationProviderSpi {
 
     @Override
-    public MutableConfiguration createMutableConfiguration(Configuration configuration) {
-        return new DefaultMutableConfiguration(configuration);
+    public MutableConfiguration createMutableConfiguration(Configuration configuration,
+                                                    ChangePropagationPolicy propagationPolicy){
+        return new DefaultMutableConfiguration(configuration, propagationPolicy);
     }
 }

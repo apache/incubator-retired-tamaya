@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.mutableconfig;
 
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Policy that defines how changes are applied to the available
@@ -46,28 +46,8 @@ public interface ChangePropagationPolicy {
      * Method being called when a multiple key/value pairs are added or updated.
      * @param propertySources the property sources, including readable property sources of the current configuration,
      *                        never null.
-     * @param transactionID the transaction ID, not null.
-     * @param changes the key/values being added or updated, not null.
+     * @param configChange the configuration change, not null.
      */
-    void applyChanges(String transactionID, Collection<PropertySource> propertySources, Map<String,String> changes);
-
-    /**
-     * Method being called when a single key/value pair has been added or updated.
-     * @param propertySources the property sources, including readable property sources of the current configuration,
-     *                        never null.
-     * @param transactionID the transaction ID, not null.
-     * @param key the key, not null.
-     * @param value the value, not null.
-     */
-    void applyChange(String transactionID, Collection<PropertySource> propertySources, String key, String value);
-
-    /**
-     * Method being called when a multiple keys has been removed from the configuration.
-     * @param propertySources the property sources, including readable property sources of the current configuration,
-     *                        never null.
-     * @param transactionID the transaction ID, not null.
-     * @param keys the keys being removed, not null.
-     */
-    void applyRemove(String transactionID, Collection<PropertySource> propertySources, String... keys);
+    void applyChange(ConfigChangeRequest configChange, Collection<PropertySource> propertySources);
 
 }

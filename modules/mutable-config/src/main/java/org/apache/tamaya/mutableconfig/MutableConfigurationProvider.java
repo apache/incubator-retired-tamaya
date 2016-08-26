@@ -21,6 +21,7 @@ package org.apache.tamaya.mutableconfig;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertySource;
@@ -29,7 +30,6 @@ import org.apache.tamaya.spi.ServiceContextManager;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -70,22 +70,46 @@ public final class MutableConfigurationProvider {
      *
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration getMutableConfiguration(){
+    public static MutableConfiguration createMutableConfiguration(){
         return mutableConfigurationProviderSpi.createMutableConfiguration(
-                ConfigurationProvider.getConfiguration());
+                ConfigurationProvider.getConfiguration(), getApplyMostSignificantOnlyChangePolicy());
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given default configuration, using all
+     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     * @param changePropgationPolicy policy that defines how a change is written back and which property
+     *                               sources are finally eligible for a write operation.
+     * @return a new MutableConfiguration instance, with the given change policy active.
+     */
+    public static MutableConfiguration createMutableConfiguration(ChangePropagationPolicy changePropgationPolicy){
+        return mutableConfigurationProviderSpi.createMutableConfiguration(
+                ConfigurationProvider.getConfiguration(), changePropgationPolicy);
     }
 
 
     /**
      * Creates a new {@link MutableConfiguration} for the given configuration, using all
-     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
-     *
+     * {@link MutablePropertySource} instances found in its context and {@code MOST_SIGNIFICANT_ONLY_POLICY}
+     * configuration writing policy.
      *
      * @param configuration the configuration to use to write the changes/config.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration getMutableConfiguration(Configuration configuration){
-        return mutableConfigurationProviderSpi.createMutableConfiguration(configuration);
+    public static MutableConfiguration createMutableConfiguration(Configuration configuration){
+        return createMutableConfiguration(configuration, MOST_SIGNIFICANT_ONLY_POLICY);
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given configuration, using all
+     * {@link MutablePropertySource} instances found in its context and {@code ALL_POLICY}
+     * configuration writing policy.
+     *
+     * @param configuration the configuration to use to write the changes/config.
+     * @return a new MutableConfiguration instance
+     */
+    public static MutableConfiguration createMutableConfiguration(Configuration configuration, ChangePropagationPolicy changePropgationPolicy){
+        return mutableConfigurationProviderSpi.createMutableConfiguration(configuration, changePropgationPolicy);
     }
 
     /**
@@ -130,47 +154,20 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy ALL_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChanges(String transactionID, Collection<PropertySource> propertySources,
-                                 Map<String, String> changes) {
+        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
                     MutablePropertySource target = (MutablePropertySource)propertySource;
-                    for(Map.Entry<String,String> en:changes.entrySet()) {
-                        if (target.isWritable(en.getKey())) {
-                            target.put(transactionID, en.getKey(), en.getValue());
-                        }
+                    try{
+                        target.applyChange(change);
+                    }catch(ConfigException e){
+                        LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                        +"("+target.getClass().getName()+").");
                     }
                 }
             }
         }
 
-        @Override
-        public void applyChange(String transactionID, Collection<PropertySource> propertySources,
-                                String key, String value) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    MutablePropertySource target = (MutablePropertySource)propertySource;
-                    if (target.isWritable(key)) {
-                        target.put(transactionID, key, value);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void applyRemove(String transactionID, Collection<PropertySource> propertySources,
-                                String... keys) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    MutablePropertySource target = (MutablePropertySource)propertySource;
-                    for(String key:keys) {
-                        if (target.isRemovable(key)) {
-                            target.remove(transactionID, key);
-                        }
-                    }
-                }
-            }
-        }
     };
 
     /**
@@ -179,50 +176,21 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy MOST_SIGNIFICANT_ONLY_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChanges(String transactionID, Collection<PropertySource> propertySources,
-                                 Map<String, String> changes) {
-            changes:for(Map.Entry<String,String> en:changes.entrySet()) {
-                for(PropertySource propertySource: propertySources){
-                    if(propertySource instanceof MutablePropertySource){
-                        MutablePropertySource target = (MutablePropertySource)propertySource;
-                        if (target.isWritable(en.getKey())) {
-                            target.put(transactionID, en.getKey(), en.getValue());
-                            continue changes;
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void applyChange(String transactionID, Collection<PropertySource> propertySources,
-                                String key, String value) {
+        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
                     MutablePropertySource target = (MutablePropertySource)propertySource;
-                    if (target.isWritable(key)) {
-                        target.put(transactionID, key, value);
-                        return;
+                    try{
+                        target.applyChange(change);
+                    }catch(ConfigException e){
+                        LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                                +"("+target.getClass().getName()+").");
                     }
+                    break;
                 }
             }
         }
 
-        @Override
-        public void applyRemove(String transactionID, Collection<PropertySource> propertySources,
-                                String... keys) {
-            keys:for(String key:keys) {
-                for(PropertySource propertySource: propertySources){
-                    if(propertySource instanceof MutablePropertySource){
-                        MutablePropertySource target = (MutablePropertySource)propertySource;
-                        if (target.isRemovable(key)) {
-                            target.remove(transactionID, key);
-                            continue keys;
-                        }
-                    }
-                }
-            }
-        }
     };
 
     /**
@@ -231,15 +199,8 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy NONE_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChanges(String transactionID, Collection<PropertySource> propertySources, Map<String, String> changes) {
-        }
-
-        @Override
-        public void applyChange(String transactionID, Collection<PropertySource> propertySources, String key, String value) {
-        }
-
-        @Override
-        public void applyRemove(String transactionID, Collection<PropertySource> propertySources, String... keys) {
+        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
+            LOG.warning("Cannot store changes '"+change+"': prohibited by change policy (read-only).");
         }
     };
 
@@ -255,49 +216,18 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyChanges(String transactionID, Collection<PropertySource> propertySources,
-                                 Map<String, String> changes) {
+        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
             for(PropertySource propertySource: propertySources){
                 if(propertySource instanceof MutablePropertySource){
                     if(this.propertySourceNames.contains(propertySource.getName())) {
                         MutablePropertySource target = (MutablePropertySource) propertySource;
-                        for (Map.Entry<String, String> en : changes.entrySet()) {
-                            if (target.isWritable(en.getKey())) {
-                                target.put(transactionID, en.getKey(), en.getValue());
-                            }
+                        try{
+                            target.applyChange(change);
+                        }catch(ConfigException e){
+                            LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                                    +"("+target.getClass().getName()+").");
                         }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void applyChange(String transactionID, Collection<PropertySource> propertySources,
-                                String key, String value) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    if(this.propertySourceNames.contains(propertySource.getName())) {
-                        MutablePropertySource target = (MutablePropertySource) propertySource;
-                        if (target.isWritable(key)) {
-                            target.put(transactionID, key, value);
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void applyRemove(String transactionID, Collection<PropertySource> propertySources,
-                                String... keys) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    if(this.propertySourceNames.contains(propertySource.getName())) {
-                        MutablePropertySource target = (MutablePropertySource) propertySource;
-                        for (String key : keys) {
-                            if (target.isRemovable(key)) {
-                                target.remove(transactionID, key);
-                            }
-                        }
+                        break;
                     }
                 }
             }

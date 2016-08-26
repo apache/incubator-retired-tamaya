@@ -52,7 +52,7 @@ under the License.
     </Match>
 
     <Match>
-        <Class name='org.apache.tamaya.integration.cdi.internal.TamayaCDIIntegration'/>
+        <Class name='org.apache.tamaya.integration.cdi.TamayaCDIIntegration'/>
         <Method name="initBeanManager"/>
     </Match>
 

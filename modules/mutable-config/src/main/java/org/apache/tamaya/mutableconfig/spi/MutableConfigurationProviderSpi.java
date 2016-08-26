@@ -19,6 +19,7 @@
 package org.apache.tamaya.mutableconfig.spi;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 
 
@@ -32,7 +33,10 @@ public interface MutableConfigurationProviderSpi {
     * Creates a new {@link MutableConfiguration} with {@code autoCommit = false} as default.
     *
     * @param configuration the configuration, not null.
+    * @param propagationPolicy policy that defines how changes are published to the property
+    *                          sources.
     * @return a new mutable configuration instance.
     */
-   MutableConfiguration createMutableConfiguration(Configuration configuration);
+   MutableConfiguration createMutableConfiguration(Configuration configuration,
+                                                   ChangePropagationPolicy propagationPolicy);
 }

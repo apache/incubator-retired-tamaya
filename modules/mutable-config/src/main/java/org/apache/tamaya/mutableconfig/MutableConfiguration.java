@@ -19,11 +19,9 @@
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
-import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 
@@ -44,16 +42,7 @@ import java.util.Map;
 public interface MutableConfiguration extends Configuration {
 
     /**
-     * Starts a new transaction, if necessary, and returns the transaction id. New transaction are, similar to Java EE,
-     * bound to the current thread. As a consequences all properties added , updated or removed must be managed by
-     * a corresponding context, isolated by thread. The {@link MutablePropertySource} get the right transaction id
-     * passed, when writing (committing) any changes applied.
-     * @return the transaction id, not null.
-     */
-    String startTransaction();
-
-    /**
-     * Commits the request. After a commit the change is not editable anymore. All changes applied will be written to
+     * Storesd the changes. After a commit the change is not editable anymore. All changes applied will be written to
      * the corresponding configuration backend.
      *
      * NOTE that changes applied must not necessarily be visible in the current {@link Configuration} instance,
@@ -61,117 +50,22 @@ public interface MutableConfiguration extends Configuration {
      * configured.
      * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.
      */
-    void commitTransaction();
-
-    /**
-     * Rollback any changes leaving everything unchanged. This will rollback all changes applied since the last commit.
-     */
-    void rollbackTransaction();
-
-    /**
-     * Get the current transaction id.
-     * @return the current transaction id, or null, if no transaction is active.
-     */
-    String getTransactionId();
-
-    /**
-     * Get the current autoCommit policy. AutoCommit will commit the transaction after each change applied.
-     * @return the current autoCommit policy, by default false.
-     */
-    boolean getAutoCommit();
-
-    /**
-     * Set the {@link ChangePropagationPolicy}.
-     * @see #getChangePropagationPolicy()
-     * @param changePropagationPolicy the policy, not null.
-     */
-    void setChangePropagationPolicy(ChangePropagationPolicy changePropagationPolicy);
-
-    /**
-     * Access the active {@link ChangePropagationPolicy}.This policy controls how configuration changes are written/published
-     * to the known {@link MutablePropertySource} instances of a {@link Configuration}.
-     * @return he active {@link ChangePropagationPolicy}, never null.
-     */
-    ChangePropagationPolicy getChangePropagationPolicy();
+    void store();
 
     /**
      * Access the current configuration change context, built up on all the change context of the participating
-     * {@link MutablePropertySource} instances.
+     * {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource} instances.
      * @return the colleted changes as one single config change for the current transaction, or null, if no transaction
      * is active.
      */
-    ConfigChangeContext getConfigChangeContext();
+    ConfigChangeRequest getConfigChangeRequest();
 
     /**
-     * Set the autoCommit policy to be used for this configuration instance.
-     * @param autoCommit the new autoCommit policy.
-     * @throws IllegalStateException when there are uncommitted changes.
+     * Access the active {@link ChangePropagationPolicy}.This policy controls how configuration changes are written/published
+     * to the known {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource} instances of a {@link Configuration}.
+     * @return he active {@link ChangePropagationPolicy}, never null.
      */
-    void setAutoCommit(boolean autoCommit);
-
-
-    /**
-     * Identifies the configuration backend that are targeted by this instance and which are
-     * also responsible for writing back the changes applied.
-     *
-     * @return the property sources identified, in order of their occurrence/priority (most significant first).
-     */
-    List<MutablePropertySource> getMutablePropertySources();
-
-    /**
-     * Checks if a configuration key is writable (or it can be added).
-     *
-     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
-     *                      be a regular expression, such "as a.b.c.*".
-     * @return the boolean
-     */
-    boolean isWritable(String keyExpression);
-
-    /**
-     * Identifies the configuration backends that supports writing the given key(s).
-     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
-     *                      be a regular expression, such "as a.b.c.*".
-     * @return the property sources identified, in order of their occurrence/priority (most significant first).
-     */
-    List<MutablePropertySource> getPropertySourcesThatCanWrite(String keyExpression);
-
-    /**
-     * Checks if a configuration key is removable. This also implies that it is writable, but there might be writable
-     * keys that cannot be removedProperties.
-     *
-     * @param keyExpression the keyExpression the key to be checked for write access (including creation), not null.
-     *                      Here this could also
-     *                      be a regular expression, such "as a.b.c.*".
-     * @return the boolean
-     */
-    boolean isRemovable(String keyExpression);
-
-    /**
-     * Identifies the configuration backend that know the given key(s) and support removing it/them.
-     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
-     *                      be a regular expression, such "as a.b.c.*".
-     * @return the property sources identified, in order of their occurrence/priority (most significant first).
-     */
-    List<MutablePropertySource> getPropertySourcesThatCanRemove(String keyExpression);
-
-    /**
-     * Checks if any keys of the given type already exist in the write backend. <b>NOTE:</b> there may be backends that
-     * are not able to support lookups with regular expressions. In most such cases you should pass the keys to
-     * lookup explicitly.
-     *
-     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could
-     *                      also be a regular expression, such "as a.b.c.*".
-     * @return true, if there is any key found matching the expression.
-     */
-    boolean isExisting(String keyExpression);
-
-    /**
-     * Identifies the configuration backend that know the given key(s).
-     * @param keyExpression the key to be checked for write access (including creation), not null. Here this could also
-     *                      be a regular expression, such "as a.b.c.*".
-     * @return the property sources identified, in order of their occurrence/priority (most significant first).
-     */
-    List<MutablePropertySource> getPropertySourcesThatKnow(String keyExpression);
+    ChangePropagationPolicy getChangePropagationPolicy();
 
     /**
      * Sets a property.

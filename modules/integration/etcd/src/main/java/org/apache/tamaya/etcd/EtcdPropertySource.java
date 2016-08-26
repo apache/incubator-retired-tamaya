@@ -18,10 +18,11 @@
  */
 package org.apache.tamaya.etcd;
 
-import org.apache.tamaya.mutableconfig.propertysources.AbstractMutablePropertySource;
-import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
+import org.apache.tamaya.spisupport.BasePropertySource;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +36,8 @@ import java.util.logging.Logger;
  * to this prefix namespace. Etcd servers are configured as {@code etcd.server.urls} system or environment property.
  * ETcd can be disabled by setting {@code tamaya.etcdprops.disable} either as env or system property.
  */
-public class EtcdPropertySource extends AbstractMutablePropertySource{
+public class EtcdPropertySource extends BasePropertySource
+        implements MutablePropertySource{
     private static final Logger LOG = Logger.getLogger(EtcdPropertySource.class.getName());
 
     private String prefix = System.getProperty("tamaya.etcd.prefix", "");
@@ -167,16 +169,16 @@ public class EtcdPropertySource extends AbstractMutablePropertySource{
     }
 
     @Override
-    protected void commitInternal(ConfigChangeContext context) {
+    public void applyChange(ConfigChangeRequest configChange) {
         for(EtcdAccessor accessor: EtcdBackends.getEtcdBackends()){
             try{
-                for(String k: context.getRemovedProperties()){
+                for(String k: configChange.getRemovedProperties()){
                     Map<String,String> res = accessor.delete(k);
                     if(res.get("_ERROR")!=null){
                         LOG.info("Failed to remove key from etcd: " + k);
                     }
                 }
-                for(Map.Entry<String,String> en:context.getAddedProperties().entrySet()){
+                for(Map.Entry<String,String> en:configChange.getAddedProperties().entrySet()){
                     String key = en.getKey();
                     Integer ttl = null;
                     int index = en.getKey().indexOf('?');
@@ -203,4 +205,5 @@ public class EtcdPropertySource extends AbstractMutablePropertySource{
             }
         }
     }
+
 }

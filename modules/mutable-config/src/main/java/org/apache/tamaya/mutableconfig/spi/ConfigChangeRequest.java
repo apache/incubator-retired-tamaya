@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.mutableconfig.propertysources;
+package org.apache.tamaya.mutableconfig.spi;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,9 +27,10 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Transactional context used for managing configuration changes within an {@link AbstractMutablePropertySource}.
+ * Change context used for managing configuration changes within an
+ * {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource}.
  */
-public final class ConfigChangeContext {
+public final class ConfigChangeRequest {
     /**
      * The transaction id.
      */
@@ -51,7 +52,7 @@ public final class ConfigChangeContext {
      * Creates a new instance bound to the given transaction.
      * @param transactionID the transaction ID, not null.
      */
-    public ConfigChangeContext(String transactionID){
+    public ConfigChangeRequest(String transactionID){
         this.transactionId = Objects.requireNonNull(transactionID);
     }
 
@@ -148,10 +149,10 @@ public final class ConfigChangeContext {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ConfigChangeContext)) {
+        if (!(o instanceof ConfigChangeRequest)) {
             return false;
         }
-        ConfigChangeContext that = (ConfigChangeContext) o;
+        ConfigChangeRequest that = (ConfigChangeRequest) o;
         return transactionId.equals(that.transactionId);
 
     }
@@ -163,10 +164,10 @@ public final class ConfigChangeContext {
 
     @Override
     public String toString() {
-        return "TransactionContext{" +
-                "addedProperties=" + addedProperties +
-                ", transactionId=" + transactionId +
+        return "ConfigChangeRequest{" +
+                "transactionId=" + transactionId +
                 ", startedAt=" + startedAt +
+                ", addedProperties=" + addedProperties +
                 ", removedProperties=" + removedProperties +
                 '}';
     }

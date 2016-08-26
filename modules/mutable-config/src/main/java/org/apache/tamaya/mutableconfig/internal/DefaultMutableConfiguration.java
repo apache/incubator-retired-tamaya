@@ -24,13 +24,13 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
-import org.apache.tamaya.mutableconfig.MutableConfigurationProvider;
-import org.apache.tamaya.mutableconfig.propertysources.ConfigChangeContext;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,19 +44,12 @@ import java.util.logging.Logger;
  */
 public class DefaultMutableConfiguration implements MutableConfiguration {
     private static final Logger LOG = Logger.getLogger(DefaultMutableConfiguration.class.getName());
+    private ConfigChangeRequest changeRequest = new ConfigChangeRequest(UUID.randomUUID().toString());
     private final Configuration config;
-    private ChangePropagationPolicy changePropagationPolicy =
-            MutableConfigurationProvider.getApplyAllChangePolicy();
-    private String transactionId;
-    private boolean autoCommit = false;
+    private ChangePropagationPolicy changePropagationPolicy;
 
-    public DefaultMutableConfiguration(Configuration config){
+    public DefaultMutableConfiguration(Configuration config, ChangePropagationPolicy changePropagationPolicy){
         this.config = Objects.requireNonNull(config);
-        this.autoCommit = false;
-    }
-
-    @Override
-    public void setChangePropagationPolicy(ChangePropagationPolicy changePropagationPolicy){
         this.changePropagationPolicy = Objects.requireNonNull(changePropagationPolicy);
     }
 
@@ -66,47 +59,11 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     }
 
     @Override
-    public void setAutoCommit(boolean autoCommit) {
-        if(transactionId!=null){
-            throw new IllegalStateException("Cannot change autoCommit within a transaction, perform a " +
-                    "commit or rollback first.");
-        }
-        this.autoCommit = autoCommit;
+    public ConfigChangeRequest getConfigChangeRequest(){
+        return changeRequest;
     }
 
-    @Override
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    @Override
-    public ConfigChangeContext getConfigChangeContext(){
-        if(this.transactionId==null){
-            return null;
-        }
-        ConfigChangeContext context = new ConfigChangeContext(this.transactionId);
-        long startedAt = Long.MAX_VALUE;
-        for(MutablePropertySource mps:getMutablePropertySources()){
-            ConfigChangeContext subContext = mps.getConfigChangeContext(this.transactionId);
-            if(subContext!=null){
-                context.putAll(subContext.getAddedProperties());
-                context.removeAll(subContext.getRemovedProperties());
-                if(subContext.getStartedAt()<startedAt){
-                    startedAt = subContext.getStartedAt();
-                }
-            }
-        }
-        context.setStartedAt(startedAt);
-        return context;
-    }
-
-    @Override
-    public boolean getAutoCommit() {
-        return autoCommit;
-    }
-
-    @Override
-    public List<MutablePropertySource> getMutablePropertySources() {
+    protected List<MutablePropertySource> getMutablePropertySources() {
         List<MutablePropertySource> result = new ArrayList<>();
         for(PropertySource propertySource:this.config.getContext().getPropertySources()) {
             if(propertySource instanceof  MutablePropertySource){
@@ -116,164 +73,35 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
         return result;
     }
 
-    @Override
-    public boolean isWritable(String keyExpression) {
-        for(MutablePropertySource target:getMutablePropertySources()) {
-            if( target.isWritable(keyExpression)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public List<MutablePropertySource> getPropertySourcesThatCanWrite(String keyExpression) {
-        List<MutablePropertySource> result = new ArrayList<>();
-        for(MutablePropertySource propertySource:getMutablePropertySources()) {
-            if(propertySource.isWritable(keyExpression)){
-                result.add(propertySource);
-            }
-        }
-        return result;
-    }
-
-    @Override
-        public boolean isRemovable(String keyExpression) {
-            for(MutablePropertySource target:getMutablePropertySources()) {
-                if( target.isRemovable(keyExpression)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-    @Override
-    public List<MutablePropertySource> getPropertySourcesThatCanRemove(String keyExpression) {
-        List<MutablePropertySource> result = new ArrayList<>();
-        for(MutablePropertySource propertySource:getMutablePropertySources()) {
-            if(propertySource.isRemovable(keyExpression)){
-                result.add(propertySource);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public boolean isExisting(String keyExpression) {
-        return this.config.get(keyExpression)!=null;
-    }
-
-    @Override
-    public List<MutablePropertySource> getPropertySourcesThatKnow(String keyExpression) {
-        List<MutablePropertySource> result = new ArrayList<>();
-        for(MutablePropertySource propertySource:getMutablePropertySources()) {
-            if(propertySource.get(keyExpression)!=null){
-                result.add(propertySource);
-            }
-        }
-        return result;
-    }
 
     @Override
     public MutableConfiguration put(String key, String value) {
-        String taID = startTransaction();
-        changePropagationPolicy.applyChange(taID, getPropertySources(), key, value);
-        if(autoCommit){
-            commitTransaction();
-        }
+        changeRequest.put(key, value);
         return this;
     }
 
     @Override
     public MutableConfiguration putAll(Map<String, String> properties) {
-        String taID = startTransaction();
-        changePropagationPolicy.applyChanges(taID, getPropertySources(), properties);
-        if(autoCommit){
-            commitTransaction();
-        }
+        changeRequest.putAll(properties);
         return this;
     }
 
     @Override
     public MutableConfiguration remove(String... keys) {
-        String taID = startTransaction();
-        changePropagationPolicy.applyRemove(taID, getPropertySources(), keys);
-        for(String key:keys){
-            for(MutablePropertySource target:getMutablePropertySources()) {
-                if (target.isRemovable(key)) {
-                    target.remove(taID, key);
-                }
-            }
-        }
-        if(autoCommit){
-            commitTransaction();
-        }
+        changeRequest.removeAll(Arrays.asList(keys));
         return this;
     }
 
-    @Override
-    public String startTransaction() {
-        String taID = transactionId;
-        if(taID!=null){
-            return taID;
-        }
-        taID = UUID.randomUUID().toString();
-        transactionId = taID;
-        try {
-            for (MutablePropertySource target : getMutablePropertySources()) {
-                target.startTransaction(taID);
-            }
-        }catch(Exception e){
-            rollbackTransaction();
-        }
-        return taID;
-    }
 
     @Override
-    public void commitTransaction() {
-        String taID = transactionId;
-        if(taID==null){
-            LOG.warning("No active transaction on this thread, ignoring commit.");
-            return;
-        }
-        try {
-            for (MutablePropertySource target : getMutablePropertySources()) {
-                target.commitTransaction(taID);
-            }
-            this.transactionId = null;
-        }catch(Exception e){
-            rollbackTransaction();
-        }
-    }
-
-    @Override
-    public void rollbackTransaction() {
-        String taID = transactionId;
-        if(taID==null){
-            LOG.warning("No active transaction on this thread, ignoring rollback.");
-            return;
-        }
-        try {
-            for (MutablePropertySource target : getMutablePropertySources()) {
-                target.rollbackTransaction(taID);
-            }
-        }finally{
-            this.transactionId = null;
-        }
+    public void store() {
+        this.changePropagationPolicy.applyChange(changeRequest, config.getContext().getPropertySources());
     }
 
     @Override
     public MutableConfiguration remove(Collection<String> keys) {
-        String taID = startTransaction();
-        for(String key:keys){
-            for(MutablePropertySource target:getMutablePropertySources()) {
-                if (target.isRemovable(key)) {
-                    target.remove(taID, key);
-                }
-            }
-        }
-        if(autoCommit){
-            commitTransaction();
+        for(MutablePropertySource target:getMutablePropertySources()) {
+            changeRequest.removeAll(keys);
         }
         return this;
     }
@@ -336,7 +164,6 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     public String toString() {
         return "DefaultMutableConfiguration{" +
                 "config=" + config +
-                ", autoCommit=" + autoCommit +
                 '}';
     }
 

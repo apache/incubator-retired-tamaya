@@ -19,8 +19,11 @@
 package org.apache.tamaya.mutableconfig.propertysources;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
+import org.apache.tamaya.spisupport.BasePropertySource;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -39,7 +42,8 @@ import java.util.logging.Logger;
 /**
  * Simple implementation of a mutable {@link org.apache.tamaya.spi.PropertySource} for .xml properties files.
  */
-public class MutableXmlPropertiesPropertySource extends AbstractMutablePropertySource {
+public class MutableXmlPropertiesPropertySource extends BasePropertySource
+implements MutablePropertySource{
 
     /**
      * The logger.
@@ -152,9 +156,9 @@ public class MutableXmlPropertiesPropertySource extends AbstractMutablePropertyS
     }
 
     @Override
-    protected void commitInternal(ConfigChangeContext context) {
-        if(context.isEmpty()){
-            LOG.info("Nothing to commit for transaction: " + context.getTransactionID());
+    public void applyChange(ConfigChangeRequest configChange) {
+        if(configChange.isEmpty()){
+            LOG.info("Nothing to commit for transaction: " + configChange.getTransactionID());
             return;
         }
         if(!file.exists()){
@@ -166,7 +170,7 @@ public class MutableXmlPropertiesPropertySource extends AbstractMutablePropertyS
                 throw new ConfigException("Failed to create config file " + file, e);
             }
         }
-        for(Map.Entry<String,String> en:context.getAddedProperties().entrySet()){
+        for(Map.Entry<String,String> en:configChange.getAddedProperties().entrySet()){
             int index = en.getKey().indexOf('?');
             if(index>0){
                 this.properties.put(en.getKey().substring(0, index), en.getValue());
@@ -174,7 +178,7 @@ public class MutableXmlPropertiesPropertySource extends AbstractMutablePropertyS
                 this.properties.put(en.getKey(), en.getValue());
             }
         }
-        for(String rmKey:context.getRemovedProperties()){
+        for(String rmKey:configChange.getRemovedProperties()){
             this.properties.remove(rmKey);
         }
         try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
