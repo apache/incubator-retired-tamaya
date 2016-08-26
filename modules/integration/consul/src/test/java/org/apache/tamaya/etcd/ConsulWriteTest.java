@@ -20,6 +20,7 @@ package org.apache.tamaya.etcd;
 
 import com.google.common.net.HostAndPort;
 import org.apache.tamaya.consul.ConsulPropertySource;
+import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 import org.junit.BeforeClass;
 
 import java.net.MalformedURLException;
@@ -49,8 +50,9 @@ public class ConsulWriteTest {
     public void testSetNormal() throws Exception {
         if (!execute) return;
         String taID = UUID.randomUUID().toString();
-        propertySource.put(taID, "testSetNormal", taID.toString());
-        propertySource.commitTransaction(taID);
+        ConfigChangeRequest request = new ConfigChangeRequest("testSetNormal");
+        request.put(taID, "testSetNormal");
+        propertySource.applyChange(request);
     }
 
 
@@ -58,12 +60,14 @@ public class ConsulWriteTest {
     public void testDelete() throws Exception {
         if(!execute)return;
         String taID = UUID.randomUUID().toString();
-        propertySource.put(taID, "testDelete", taID.toString());
-        propertySource.commitTransaction(taID);
+        ConfigChangeRequest request = new ConfigChangeRequest("testDelete");
+        request.put(taID, "testDelete");
+        propertySource.applyChange(request);
         assertEquals(propertySource.get("testDelete").getValue(), taID.toString());
         assertNotNull(propertySource.get("_testDelete.createdIndex"));
-        propertySource.remove(taID, "testDelete");
-        propertySource.commitTransaction(taID);
+        request = new ConfigChangeRequest("testDelete2");
+        request.remove("testDelete");
+        propertySource.applyChange(request);
         assertNull(propertySource.get("testDelete"));
     }
 
