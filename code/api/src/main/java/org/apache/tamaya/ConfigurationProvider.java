@@ -41,6 +41,11 @@ public final class ConfigurationProvider {
         if(spi==null){
             throw new IllegalStateException("ConfigurationProviderSpi not available.");
         }
+        showBanner();
+        return spi;
+    }
+
+    private static void showBanner() {
         BufferedReader reader = null;
         try{
             URL url = ConfigurationProvider.class.getResource("/tamaya-banner.txt");
@@ -67,7 +72,6 @@ public final class ConfigurationProvider {
                 }
             }
         }
-        return spi;
     }
 
     private ConfigurationProvider() {

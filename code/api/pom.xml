@@ -23,7 +23,6 @@ under the License.
         <groupId>org.apache.tamaya</groupId>
         <artifactId>tamaya-code</artifactId>
         <version>0.3-incubating-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>tamaya-api</artifactId>

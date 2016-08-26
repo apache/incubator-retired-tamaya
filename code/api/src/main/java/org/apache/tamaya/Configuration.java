@@ -20,7 +20,6 @@ package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationContext;
 
-import java.util.Collections;
 import java.util.Map;
 
 
