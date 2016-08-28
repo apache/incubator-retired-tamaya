@@ -47,6 +47,7 @@ public final class ConfigModelReader {
 
     /**
      * Loads validations as configured in the given properties.
+     * @param owner owner, not null.
      * @param props the properties to be read
      * @return a collection of config validations.
      */

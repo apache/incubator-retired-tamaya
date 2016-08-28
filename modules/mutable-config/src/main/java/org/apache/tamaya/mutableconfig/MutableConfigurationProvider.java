@@ -106,10 +106,11 @@ public final class MutableConfigurationProvider {
      * configuration writing policy.
      *
      * @param configuration the configuration to use to write the changes/config.
+     * @param changePropagationPolicy the configuration writing policy.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(Configuration configuration, ChangePropagationPolicy changePropgationPolicy){
-        return mutableConfigurationProviderSpi.createMutableConfiguration(configuration, changePropgationPolicy);
+    public static MutableConfiguration createMutableConfiguration(Configuration configuration, ChangePropagationPolicy changePropagationPolicy){
+        return mutableConfigurationProviderSpi.createMutableConfiguration(configuration, changePropagationPolicy);
     }
 
     /**

@@ -37,6 +37,7 @@ public class SectionModel extends GroupModel {
 
     /**
      * Creates a new builder.
+     * @param owner owner, not null.
      * @param name the section name.
      * @return a new builder instance.
      */
@@ -46,6 +47,7 @@ public class SectionModel extends GroupModel {
 
     /**
      * Creates a section validation for the given section.
+     * @param owner owner, not null.
      * @param name the fully qualified section name
      * @param required flag, if the section is required to be present.
      * @return the ConfigModel instance
@@ -56,6 +58,7 @@ public class SectionModel extends GroupModel {
 
     /**
      * Creates a section validation for the given section.
+     * @param owner owner, not null.
      * @param name the fully qualified section name
      * @param required flag, if the section is required to be present.
      * @param configModels additional configModels
@@ -130,6 +133,7 @@ public class SectionModel extends GroupModel {
 
         /**
          * Creates a new Builder.
+         * @param owner owner, not null.
          * @param sectionName the section name, not null.
          */
         public Builder(String owner, String sectionName){

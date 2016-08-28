@@ -94,6 +94,7 @@ public class ParameterModel extends AbstractConfigModel {
 
     /**
      * Creates a new Builder instance.
+     * @param owner the owner name, not null.
      * @param name the fully qualified parameter name.
      * @return a new builder, never null.
      */
@@ -103,6 +104,7 @@ public class ParameterModel extends AbstractConfigModel {
 
     /**
      * Creates a new ConfigModel
+     * @param owner the owner name, not null.
      * @param name the fully qualified parameter name.
      * @param required the required flag.
      * @param expression an optional regular expression to validate a value.
@@ -114,6 +116,7 @@ public class ParameterModel extends AbstractConfigModel {
 
     /**
      * Creates a new ConfigModel
+     * @param owner the owner name, not null.
      * @param name the fully qualified parameter name.
      * @param required the required flag.
      * @return the new ConfigModel instance.
@@ -124,6 +127,7 @@ public class ParameterModel extends AbstractConfigModel {
 
     /**
      * Creates a new ConfigModel. The parameter will be defined as optional.
+     * @param owner the owner name, not null.
      * @param name the fully qualified parameter name.
      * @return the new ConfigModel instance.
      */
@@ -151,6 +155,7 @@ public class ParameterModel extends AbstractConfigModel {
 
         /**
          * Creates a new Builder.
+         * @param owner owner, not null.
          * @param name the fully qualified parameter name, not null.
          */
         public Builder(String owner, String name) {

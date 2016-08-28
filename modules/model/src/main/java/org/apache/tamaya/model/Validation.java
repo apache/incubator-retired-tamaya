@@ -119,6 +119,7 @@ public final class Validation {
     /**
      * Creates a new ValidationResult.
      *
+     * @param owner owner
      * @param key the name/model key
      * @param type model type 
      * @return a corresponding configModel item
