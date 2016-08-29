@@ -47,7 +47,7 @@ public class DefaultConfigUsageStats implements ConfigUsageStatsSpi {
     /**
      * Method that checks the 'tamaya.usage-report' system property for
      * enabling tamaya usage reporting initially.
-     * @return
+     * @return {@code true} iff property is set to {@code true}
      */
     private boolean initEnabled() {
         String val = System.getProperty("tamaya.usage-report");
@@ -137,7 +137,7 @@ public class DefaultConfigUsageStats implements ConfigUsageStatsSpi {
         StringBuilder b = new StringBuilder();
         b.append("Apache Tamaya Configuration Usage Metrics\n");
         b.append("=========================================\n");
-        b.append("DATE: " + new Date()).append("\n\n");
+        b.append("DATE: ").append(new Date()).append("\n\n");
         List<Usage> usages = new ArrayList<>(getUsages());
         Collections.sort(usages, new Comparator<Usage>() {
             @Override
