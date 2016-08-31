@@ -87,7 +87,7 @@ public final class PropertySourceChangeBuilder {
 
     /**
      * Compares the two property config/configurations and creates a collection current all changes
-     * that must be appied to render {@code map1} into {@code map2}.
+     * that must be applied to render {@code map1} into {@code map2}.
      *
      * @param map1 the source map, not null.
      * @param map2 the target map, not null.
