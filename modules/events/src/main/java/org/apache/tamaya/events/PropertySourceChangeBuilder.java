@@ -99,7 +99,7 @@ public final class PropertySourceChangeBuilder {
             PropertyValue val = map2.get(en.getKey());
             if (val == null) {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
-            } else if (!val.equals(en.getValue())) {
+            } else if (!val.getValue().equals(en.getValue())) {
                 changes.add(new PropertyChangeEvent(map1, en.getKey(), val.getValue(), en.getValue()));
             }
         }
