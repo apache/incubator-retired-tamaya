@@ -38,6 +38,9 @@ public class ClassConverter implements PropertyConverter<Class<?>>{
 
     @Override
     public Class<?> convert(String value, ConversionContext context) {
+        if(value==null){
+            return null;
+        }
         context.addSupportedFormats(getClass(),"<fullyQualifiedClassName>");
         String trimmed = Objects.requireNonNull(value).trim();
         try{

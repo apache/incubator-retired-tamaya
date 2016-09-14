@@ -35,6 +35,9 @@ public class URLConverter implements PropertyConverter<URL> {
 
     @Override
     public URL convert(String value, ConversionContext context) {
+        if(value==null || value.isEmpty()){
+            return null;
+        }
         context.addSupportedFormats(getClass(),"<URL>");
         String trimmed = Objects.requireNonNull(value).trim();
         try {

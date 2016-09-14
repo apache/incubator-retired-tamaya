@@ -35,6 +35,9 @@ public class URIConverter implements PropertyConverter<URI> {
 
     @Override
     public URI convert(String value, ConversionContext context) {
+        if(value==null || value.isEmpty()){
+            return null;
+        }
         context.addSupportedFormats(getClass(), "<uri> -> new URI(uri)");
         String trimmed = Objects.requireNonNull(value).trim();
         try {
