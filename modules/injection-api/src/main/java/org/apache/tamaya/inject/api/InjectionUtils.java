@@ -104,14 +104,17 @@ public final class InjectionUtils {
         if (keys.isEmpty()) {
             keys.add(member.getName());
         }
-        ListIterator<String> iterator = keys.listIterator();
-        while (iterator.hasNext()) {
-            String next = iterator.next();
-            if (next.startsWith("[") && next.endsWith("]")) {
-                // absolute key, strip away brackets, take key as is
-                iterator.set(next.substring(1, next.length() - 1));
-            } else {
-                if (areasAnnot != null && areasAnnot.value().length>0) {
+        if (areasAnnot == null || areasAnnot.value().length==0) {
+            keys.add(member.getDeclaringClass().getName() + '.' + member.getName());
+            keys.add(member.getDeclaringClass().getSimpleName() + '.' + member.getName());
+        }else{
+            ListIterator<String> iterator = keys.listIterator();
+            while (iterator.hasNext()) {
+                String next = iterator.next();
+                if (next.startsWith("[") && next.endsWith("]")) {
+                    // absolute key, strip away brackets, take key as is
+                    iterator.set(next.substring(1, next.length() - 1));
+                } else {
                     // Remove original entry, since it will be replaced with prefixed entries
                     iterator.remove();
                     // Add prefixed entries, including absolute (root) entry for "" area keys.
