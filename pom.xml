@@ -733,6 +733,7 @@ under the License.
                     <keywords>true</keywords>
                     <linksource>false</linksource>
                     <failOnError>true</failOnError>
+                    <quiet>true</quiet>
                     <source>${maven.compile.sourceLevel}</source>
                     <verbose>false</verbose>
                 </configuration>
