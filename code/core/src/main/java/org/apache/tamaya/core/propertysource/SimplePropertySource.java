@@ -41,12 +41,17 @@ public class SimplePropertySource extends BasePropertySource {
     /**
      * The property source name.
      */
-    private String name;
+    private final String name;
 
     /**
      * The current properties.
      */
     private Map<String, String> properties;
+
+    private SimplePropertySource(String name) {
+        super(0);
+        this.name = Objects.requireNonNull(name);
+    }
 
     /**
      * Creates a new Properties based PropertySource based on the given URL.
@@ -54,9 +59,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(File propertiesLocation) {
-        super(0);
+        this(propertiesLocation.toString());
         try {
-            this.name = propertiesLocation.toString();
             this.properties = load(propertiesLocation.toURI().toURL());
         } catch (IOException e) {
             throw new ConfigException("Failed to load properties from " + propertiesLocation, e);
@@ -69,9 +73,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(URL propertiesLocation) {
-        super(0);
+        this(propertiesLocation.toString());
         this.properties = load(propertiesLocation);
-        this.name = propertiesLocation.toString();
     }
 
     /**
@@ -81,9 +84,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param properties the properties, not null.
      */
     public SimplePropertySource(String name, Map<String, String> properties) {
-        super(0);
+        this(name);
         this.properties = new HashMap<>(properties);
-        this.name = Objects.requireNonNull(name);
     }
 
     /**
@@ -93,9 +95,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(String name, URL propertiesLocation) {
-        super(0);
+        this(name);
         this.properties = load(propertiesLocation);
-        this.name = Objects.requireNonNull(name);
     }
 
     @Override
