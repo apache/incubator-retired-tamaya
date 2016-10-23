@@ -112,11 +112,16 @@ public class PropertyConverterManager {
         try {
             writeLock.lock();
             List converters = List.class.cast(this.converters.get(targetType));
+            if(converters!=null && converters.contains(converter)){
+                return;
+            }
             List<PropertyConverter<?>> newConverters = new ArrayList<>();
             if (converters != null) {
                 newConverters.addAll(converters);
             }
-            newConverters.add(converter);
+            if(!newConverters.contains(converter)) {
+                newConverters.add(converter);
+            }
             Collections.sort(newConverters, PRIORITY_COMPARATOR);
             this.converters.put(targetType, Collections.unmodifiableList(newConverters));
             // evaluate transitive closure for all inherited supertypes and implemented interfaces
@@ -222,12 +227,6 @@ public class PropertyConverterManager {
         try {
             readLock.lock();
             addConvertersToList(List.class.cast(this.converters.get(targetType)), converterList);
-        } finally {
-            readLock.unlock();
-        }
-        // transitive converter
-        try {
-            readLock.lock();
             addConvertersToList(List.class.cast(this.transitiveConverters.get(targetType)), converterList);
         } finally {
             readLock.unlock();
@@ -242,7 +241,7 @@ public class PropertyConverterManager {
                 readLock.unlock();
             }
         }
-        if (converterList.isEmpty()) {
+        if (converterList.isEmpty() && !TypeLiteral.of(String.class).equals(targetType)) {
             // adding any converters created on the fly, e.g. for enum types.
             PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
             if (defaultConverter != null) {

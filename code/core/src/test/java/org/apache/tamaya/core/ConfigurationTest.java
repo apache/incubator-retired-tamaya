@@ -45,6 +45,12 @@ public class ConfigurationTest {
 
     @Test
     public void testContent(){
+        assertNotNull(current().get("name"));
+        assertNotNull(current().get("name2")); // from default
+        assertNotNull(current().get("name3")); // overridden default, mapped by filter to name property
+        assertNotNull(current().get("name4")); // final only
+
+
         assertEquals("Robin", current().get("name"));
         assertEquals("Sabine", current().get("name2")); // from default
         assertEquals("Mapped to name: Robin", current().get("name3"));  // oderridden default, mapped by filter to name property

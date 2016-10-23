@@ -25,19 +25,12 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
@@ -73,70 +66,35 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      * Lock for internal synchronization.
      */
     private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
-
-    /** Comparator used for ordering property sources. */
-    private final PropertySourceComparator propertySourceComparator = new PropertySourceComparator();
-
-    /** Comparator used for ordering property filters. */
-    private final PropertyFilterComparator propertyFilterComparator = new PropertyFilterComparator();
-
-
     /**
-     * The first time the Configuration system gets invoked we do initialize
-     * all our {@link org.apache.tamaya.spi.PropertySource}s and
-     * {@link org.apache.tamaya.spi.PropertyFilter}s which are known at startup.
+     * Lock for internal synchronization.
      */
-    public DefaultConfigurationContext() {
-        List<PropertySource> propertySources = new ArrayList<>();
+    private final ReentrantReadWriteLock propertyFilterLock = new ReentrantReadWriteLock();
 
-        // first we load all PropertySources which got registered via java.util.ServiceLoader
-        propertySources.addAll(ServiceContextManager.getServiceContext().getServices(PropertySource.class));
-
-        // after that we add all PropertySources which get dynamically registered via their PropertySourceProviders
-        propertySources.addAll(evaluatePropertySourcesFromProviders());
-
-        // now sort them according to their ordinal values
-        Collections.sort(propertySources, new PropertySourceComparator());
-
-        immutablePropertySources = Collections.unmodifiableList(propertySources);
-        LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
-                immutablePropertySources);
-
-        // as next step we pick up the PropertyFilters pretty much the same way
-        List<PropertyFilter> propertyFilters = new ArrayList<>();
-        propertyFilters.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
-        Collections.sort(propertyFilters, new PropertyFilterComparator());
-        immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
-        LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
-                immutablePropertyFilters);
-
-        immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
-        LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
-                immutablePropertyFilters);
-        propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
-        if(propertyValueCombinationPolicy==null) {
-            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
-        }
-        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
-    }
 
     DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
         List<PropertySource> propertySources = new ArrayList<>();
         // first we load all PropertySources which got registered via java.util.ServiceLoader
-        propertySources.addAll(builder.propertySources.values());
+        propertySources.addAll(builder.propertySources);
         // now sort them according to their ordinal values
-        Collections.sort(propertySources, propertySourceComparator);
         immutablePropertySources = Collections.unmodifiableList(propertySources);
         LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
                 immutablePropertySources);
 
         // as next step we pick up the PropertyFilters pretty much the same way
-        List<PropertyFilter> propertyFilters = new ArrayList<>();
-        propertyFilters.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
-        Collections.sort(propertyFilters, propertyFilterComparator);
+        List<PropertyFilter> propertyFilters = new ArrayList<>(builder.getPropertyFilters());
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
         LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
                 immutablePropertyFilters);
+
+        // Finally add the converters
+        for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:builder.getPropertyConverter().entrySet()) {
+            for (PropertyConverter converter : en.getValue()) {
+                this.propertyConverterManager.register(en.getKey(), converter);
+            }
+        }
+        LOG.info("Registered " + propertyConverterManager.getPropertyConverters().size() + " property converters: " +
+                propertyConverterManager.getPropertyConverters());
 
         propertyValueCombinationPolicy = builder.combinationPolicy;
         if(propertyValueCombinationPolicy==null){
@@ -148,23 +106,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
-    /**
-     * Pick up all {@link org.apache.tamaya.spi.PropertySourceProvider}s and return all the
-     * {@link org.apache.tamaya.spi.PropertySource}s they like to register.
-     */
-    private Collection<? extends PropertySource> evaluatePropertySourcesFromProviders() {
-        List<PropertySource> propertySources = new ArrayList<>();
-        Collection<PropertySourceProvider> propertySourceProviders = ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class);
-        for (PropertySourceProvider propertySourceProvider : propertySourceProviders) {
-            Collection<PropertySource> sources = propertySourceProvider.getPropertySources();
-            LOG.finer("PropertySourceProvider " + propertySourceProvider.getClass().getName() +
-                    " provided the following property sources: " + sources);
-                propertySources.addAll(sources);
-        }
 
-        return propertySources;
-    }
-
+    @Deprecated
     @Override
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
         Lock writeLock = propertySourceLock.writeLock();
@@ -178,6 +121,28 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         } finally {
             writeLock.unlock();
         }
+    }
+
+
+    @Deprecated
+    @Override
+    public void addPropertyFilter(PropertyFilter... propertyFiltersToAdd) {
+        Lock writeLock = propertyFilterLock.writeLock();
+        try {
+            writeLock.lock();
+            List<PropertyFilter> newPropertyFilters = new ArrayList<>(this.immutablePropertyFilters);
+            newPropertyFilters.addAll(Arrays.asList(propertyFiltersToAdd));
+            Collections.sort(newPropertyFilters, new PropertyFilterComparator());
+
+            this.immutablePropertyFilters = Collections.unmodifiableList(newPropertyFilters);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    @Override
+    public boolean containsPropertySource(String name) {
+        return getPropertySource(name)!=null;
     }
 
     @Override
@@ -331,15 +296,15 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         return immutablePropertySources;
     }
 
-//    @Override
-//    public PropertySource getPropertySource(String name) {
-//        for(PropertySource ps:getPropertySources()){
-//            if(name.equals(ps.getName())){
-//                return ps;
-//            }
-//        }
-//        return null;
-//    }
+    @Override
+    public PropertySource getPropertySource(String name) {
+        for(PropertySource ps:getPropertySources()){
+            if(name.equals(ps.getName())){
+                return ps;
+            }
+        }
+        return null;
+    }
 
     @Override
     public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {

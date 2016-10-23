@@ -36,6 +36,43 @@ public interface ConfigurationProviderSpi {
     Configuration getConfiguration();
 
     /**
+     * Create a {@link Configuration} instance using the given context. The configuration
+     * created hereby must respect the artifacts provided by its context (property sources,
+     * filters, converters, policies etc), including their ordering and significance.
+     * @param context the context to be used, not null.
+     * @return the corresponding configuration instance.
+     */
+    Configuration createConfiguration(ConfigurationContext context);
+
+    /**
+     * Creates a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder} instance.
+     *
+     * @return a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder}, never null.
+     */
+    ConfigurationContextBuilder getConfigurationContextBuilder();
+
+    /**
+     * This method allows to replace the current {@link org.apache.tamaya.Configuration} with a new
+     * instance. This can be used to update the configuration with a new one, e.g. because some of the
+     * data has changed and must be updated. It is the responsibility of the ConfigurationProvider to trigger
+     * corresponding update events for the current {@link org.apache.tamaya.Configuration}.
+     *
+     * @param config the new Configuration to be applied.
+     * @throws java.lang.UnsupportedOperationException if the current provider is read-only.
+     */
+    void setConfiguration(Configuration config);
+
+    /**
+     * Method that allows to determine if a new {@link org.apache.tamaya.Configuration} can be applied
+     * programmatically.
+     *
+     * @return true, if {@link #setConfiguration(org.apache.tamaya.Configuration)} is supported
+     * by the current implementation.
+     * @see #setConfiguration(org.apache.tamaya.Configuration)
+     */
+    boolean isConfigurationSettable();
+
+    /**
      * Get access to the current {@link ConfigurationContext}.
      *
      * @return the current {@link ConfigurationContext}, never null.
@@ -53,7 +90,9 @@ public interface ConfigurationProviderSpi {
      *
      * @param context the new ConfigurationContext to be applied.
      * @throws java.lang.UnsupportedOperationException if the current provider is read-only.
+     * @deprecated use {@link #setConfiguration(Configuration)}
      */
+    @Deprecated
     void setConfigurationContext(ConfigurationContext context);
 
     /**
@@ -63,14 +102,10 @@ public interface ConfigurationProviderSpi {
      * @return true, if {@link #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)} is supported
      * by the current implementation.
      * @see #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)
+     * @deprecated use {@link #isConfigurationSettable()}
      */
+    @Deprecated
     boolean isConfigurationContextSettable();
 
-    /**
-     * Creates a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder} instance.
-     *
-     * @return a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder}, never null.
-     */
-    ConfigurationContextBuilder getConfigurationContextBuilder();
 
 }

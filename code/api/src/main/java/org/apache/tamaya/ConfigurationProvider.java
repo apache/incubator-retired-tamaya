@@ -88,6 +88,16 @@ public final class ConfigurationProvider {
     }
 
     /**
+     * Creates a new configuration instance based on the given context.
+     *
+     * @param context the configuration context, not null.
+     * @return a new Configuration instance, never null.
+     */
+    public static Configuration createConfiguration(ConfigurationContext context) {
+        return PROVIDER_SPI.createConfiguration(context);
+    }
+
+    /**
      * Get access to the current ConfigurationContext.
      *
      * @return the current ConfigurationContext, never null.

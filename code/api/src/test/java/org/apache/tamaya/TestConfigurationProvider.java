@@ -38,6 +38,11 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
+    public Configuration createConfiguration(ConfigurationContext context) {
+        return null;
+    }
+
+    @Override
     public ConfigurationContext getConfigurationContext() {
         return null;
     }
@@ -55,5 +60,14 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     @Override
     public ConfigurationContextBuilder getConfigurationContextBuilder() {
         return null;
+    }
+
+    @Override
+    public void setConfiguration(Configuration config) {
+    }
+
+    @Override
+    public boolean isConfigurationSettable() {
+        return false;
     }
 }

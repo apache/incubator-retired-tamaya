@@ -35,9 +35,30 @@ public interface ConfigurationContext {
      * This method can be used for programmatically adding {@link PropertySource}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
-     * @param propertySourcesToAdd the PropertySources to add
+     * @param propertySources the PropertySources to add
+     * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
+     * @see #toBuilder()
      */
-    void addPropertySources(PropertySource... propertySourcesToAdd);
+    @Deprecated
+    void addPropertySources(PropertySource... propertySources);
+
+    /**
+     * This method can be used for programmatically adding {@link PropertyFilter}s.
+     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
+     *
+     * @param propertyFilters the PropertyFilters to add
+     * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
+     * @see #toBuilder()
+     */
+    @Deprecated
+    void addPropertyFilter(PropertyFilter... propertyFilters);
+
+    /**
+     * Allows to check if a given property source is registered, using its name.
+     * @param name the property source name.
+     * @return true, if a property source with the given name is present.
+     */
+    boolean containsPropertySource(String name);
 
     /**
      * This method returns the current list of registered PropertySources ordered via their ordinal.
@@ -53,23 +74,25 @@ public interface ConfigurationContext {
      */
     List<PropertySource> getPropertySources();
 
-
-//    /**
-//     * Access a {@link PropertySource} using its (unique) name.
-//     * @param name the propoerty source's name, not null.
-//     * @return the propoerty source found, or null.
-//     */
-//    PropertySource getPropertySource(String name);
+    /**
+     * Access a {@link PropertySource} using its (unique) name.
+     * @param name the propoerty source's name, not null.
+     * @return the propoerty source found, or null.
+     */
+    PropertySource getPropertySource(String name);
 
     /**
      * This method can be used for programmatically adding {@link PropertyConverter}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param <T> the type of the type literal
-     * @param typeToConvert the type which the converter is for
+     * @param type the type which the converter is for
      * @param propertyConverter the PropertyConverters to add for this type
+     * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
+     * @see #toBuilder()
      */
-    <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter);
+    @Deprecated
+    <T> void addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter);
 
 
     /**

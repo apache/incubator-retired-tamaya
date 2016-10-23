@@ -24,6 +24,8 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.util.Objects;
+
 /**
  * Implementation of the Configuration API. This class uses the current {@link org.apache.tamaya.spi.ConfigurationContext} to evaluate the
  * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
@@ -31,7 +33,11 @@ import org.apache.tamaya.spi.ServiceContextManager;
  */
 public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
 
-    private ConfigurationContext context = new DefaultConfigurationContext();
+    ConfigurationContext context = new DefaultConfigurationContextBuilder()
+            .loadDefaultPropertyConverters()
+            .loadDefaultPropertyFilters()
+            .loadDefaultPropertySources().build();
+
     private Configuration config = new DefaultConfiguration(context);
 
     @Override
@@ -40,23 +46,42 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
-    public ConfigurationContext getConfigurationContext() {
-        return context;
+    public Configuration createConfiguration(ConfigurationContext context) {
+        return new DefaultConfiguration(context);
     }
 
     @Override
     public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return ServiceContextManager.getServiceContext().getService(ConfigurationContextBuilder.class);
+        return new DefaultConfigurationContextBuilder();
     }
 
     @Override
+    public void setConfiguration(Configuration config) {
+        Objects.requireNonNull(config.getContext());
+        this.config = Objects.requireNonNull(config);
+        this.context = config.getContext();
+    }
+
+    @Override
+    public boolean isConfigurationSettable() {
+        return true;
+    }
+
+    @Deprecated
+    @Override
+    public ConfigurationContext getConfigurationContext() {
+        return context;
+    }
+
+    @Deprecated
+    @Override
     public void setConfigurationContext(ConfigurationContext context){
-        // TODO think on a SPI or move event part into API...
         this.config = new DefaultConfiguration(context);
         this.context = context;
     }
 
 
+    @Deprecated
     @Override
     public boolean isConfigurationContextSettable() {
         return true;
