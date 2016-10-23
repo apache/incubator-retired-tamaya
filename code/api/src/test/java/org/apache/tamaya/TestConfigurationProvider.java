@@ -27,7 +27,7 @@ import javax.annotation.Priority;
 /**
  * Test Configuration class, that is used to testdata the default methods provided by the API.
  */
-@Priority(0)
+@Priority(2)
 public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
     private static final Configuration config = new TestConfiguration();

@@ -34,7 +34,7 @@ import java.util.*;
  * After all changes are applied to a builder a new {@link ConfigurationContext} instance can
  * be created and can be applied by calling
  * {@link org.apache.tamaya.ConfigurationProvider#setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)}.
- * 
+ *
  */
 public interface ConfigurationContextBuilder {
 
@@ -241,7 +241,7 @@ public interface ConfigurationContextBuilder {
      * @return this builder, for chaining, never null.
      */
     <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
-                                                         PropertyConverter<T>... propertyConverters);
+                                                             PropertyConverter<T>... propertyConverters);
 
     /**
      * Removes the given PropertyConverter instances for the given type,
