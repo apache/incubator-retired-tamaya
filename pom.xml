@@ -29,7 +29,7 @@ under the License.
     <version>0.3-incubating-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Apache Tamaya</name>
+    <name>Apache Tamaya Base</name>
     <description>Apache Tamaya - Java Configuration</description>
     <url>https://tamaya.incubator.apache.org</url>
     <inceptionYear>2014</inceptionYear>

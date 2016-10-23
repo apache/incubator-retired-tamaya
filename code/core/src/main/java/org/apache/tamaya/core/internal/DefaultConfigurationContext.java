@@ -123,28 +123,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         }
     }
 
-
-    @Deprecated
-    @Override
-    public void addPropertyFilter(PropertyFilter... propertyFiltersToAdd) {
-        Lock writeLock = propertyFilterLock.writeLock();
-        try {
-            writeLock.lock();
-            List<PropertyFilter> newPropertyFilters = new ArrayList<>(this.immutablePropertyFilters);
-            newPropertyFilters.addAll(Arrays.asList(propertyFiltersToAdd));
-            Collections.sort(newPropertyFilters, new PropertyFilterComparator());
-
-            this.immutablePropertyFilters = Collections.unmodifiableList(newPropertyFilters);
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    @Override
-    public boolean containsPropertySource(String name) {
-        return getPropertySource(name)!=null;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

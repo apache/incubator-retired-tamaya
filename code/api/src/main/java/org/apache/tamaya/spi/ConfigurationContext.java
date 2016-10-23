@@ -43,24 +43,6 @@ public interface ConfigurationContext {
     void addPropertySources(PropertySource... propertySources);
 
     /**
-     * This method can be used for programmatically adding {@link PropertyFilter}s.
-     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
-     *
-     * @param propertyFilters the PropertyFilters to add
-     * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
-     * @see #toBuilder()
-     */
-    @Deprecated
-    void addPropertyFilter(PropertyFilter... propertyFilters);
-
-    /**
-     * Allows to check if a given property source is registered, using its name.
-     * @param name the property source name.
-     * @return true, if a property source with the given name is present.
-     */
-    boolean containsPropertySource(String name);
-
-    /**
      * This method returns the current list of registered PropertySources ordered via their ordinal.
      * PropertySources with a lower ordinal come last. The PropertySource with the
      * highest ordinal comes first.
