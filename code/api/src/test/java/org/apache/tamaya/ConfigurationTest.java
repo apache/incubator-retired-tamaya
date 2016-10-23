@@ -60,5 +60,4 @@ public class ConfigurationTest {
         assertEquals(Double.MAX_VALUE,ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
     }
 
-
 }

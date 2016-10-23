@@ -56,12 +56,5 @@ public class ConfigurationTest {
         System.out.println("name3: " + current().get("name3"));
         System.out.println("name4: " + current().get("name4"));
         System.out.println("name5: " + current().get("name5"));
-
-        System.out.println("ALL :");
-        Set<Map.Entry<String, String>> entries = current().getProperties().entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-            System.out.println("   " + entry.getKey()+" = " + entry.getValue());
-        }
     }
-
 }
