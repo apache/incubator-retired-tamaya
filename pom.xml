@@ -56,12 +56,9 @@ under the License.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <json.spec.version>1.0-alpha-1</json.spec.version>
-        <johnzon.version>0.9-incubating</johnzon.version>
         <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
-        <arquillian.version>1.1.7.Final</arquillian.version>
-        <arquillian.deamon.version>1.0.0.Alpha1</arquillian.deamon.version>
 
         <!-- Keep the JRuby version in sync with the one used by Asciidoctor -->
         <asciidoctor.version>1.5.2</asciidoctor.version>
@@ -144,7 +141,7 @@ under the License.
 
     <ciManagement>
         <system>Jenkins</system>
-        <url>https://builds.apache.org/job/tamaya</url>
+        <url>https://builds.apache.org/view/Tamaya/</url>
     </ciManagement>
 
     <developers>
@@ -214,9 +211,7 @@ under the License.
     <modules>
         <module>buildconfigurations</module>
         <module>code</module>
-        <module>modules</module>
         <module>docs</module>
-        <module>examples</module>
         <module>distribution</module>
     </modules>
 
@@ -256,57 +251,6 @@ under the License.
             </dependency>
 
             <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${arquillian.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.jboss.arquillian.daemon</groupId>
-                <artifactId>arquillian-daemon-container-managed</artifactId>
-                <version>${arquillian.deamon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.daemon</groupId>
-                <artifactId>arquillian-daemon-container-common</artifactId>
-                <version>${arquillian.deamon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.daemon</groupId>
-                <artifactId>arquillian-daemon-main</artifactId>
-                <version>${arquillian.deamon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.daemon</groupId>
-                <artifactId>arquillian-daemon-protocol-arquillian</artifactId>
-                <version>${arquillian.deamon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.daemon</groupId>
-                <artifactId>arquillian-daemon-protocol-wire</artifactId>
-                <version>${arquillian.deamon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.daemon</groupId>
-                <artifactId>arquillian-daemon-server</artifactId>
-                <version>${arquillian.deamon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
@@ -317,7 +261,6 @@ under the License.
                         <artifactId>hamcrest-core</artifactId>
                     </exclusion>
                 </exclusions>
-
             </dependency>
 
             <dependency>
@@ -332,13 +275,6 @@ under the License.
                 <artifactId>geronimo-json_1.0_spec</artifactId>
                 <version>${json.spec.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>org.apache.johnzon</groupId>
-                <artifactId>johnzon-core</artifactId>
-                <version>${johnzon.version}</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -734,6 +670,7 @@ under the License.
                     <keywords>true</keywords>
                     <linksource>false</linksource>
                     <failOnError>true</failOnError>
+                    <quiet>true</quiet>
                     <source>${maven.compile.sourceLevel}</source>
                     <verbose>false</verbose>
                 </configuration>
@@ -790,18 +727,6 @@ under the License.
                 <maven.javadoc.skip>false</maven.javadoc.skip>
                 <rat.skip>false</rat.skip>
             </properties>
-        </profile>
-
-        <profile>
-            <id>sandbox</id>
-            <activation>
-                <property>
-                    <name>sandbox</name>
-                </property>
-            </activation>
-            <modules>
-                <module>sandbox</module>
-            </modules>
         </profile>
 
         <profile>
