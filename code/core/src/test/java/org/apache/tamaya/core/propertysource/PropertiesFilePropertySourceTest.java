@@ -49,7 +49,7 @@ public class PropertiesFilePropertySourceTest {
 
     @Test
     public void testGetProperties() throws Exception {
-        Assert.assertEquals(10, testfilePropertySource.getProperties().size()); // double the size for .source values.
+        Assert.assertEquals(5, testfilePropertySource.getProperties().size()); // double the size for .source values.
         Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key1"));
         Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key2"));
         Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key3"));

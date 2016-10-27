@@ -44,7 +44,7 @@ public class JavaConfigurationProviderTest {
 
         PropertySource propertySource = propertySources.iterator().next();
 
-        assertThat(propertySource.getProperties().keySet(), hasSize(10));  // double the size for .source values.
+        assertThat(propertySource.getProperties().keySet(), hasSize(5));  // double the size for .source values.
 
         for (int i = 1; i < 6; i++) {
             String key = "confkey" + i;
