@@ -172,7 +172,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    public PropertySource getPropertySource(String name) {
+    private PropertySource getPropertySource(String name) {
         for(PropertySource ps:propertySources){
             if(ps.getName().equals(name)){
                 return ps;
@@ -357,7 +357,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
 
-    protected Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
+    private Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
         Map<TypeLiteral, Collection<PropertyConverter>> result = new HashMap<>();
         for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(
                 PropertyConverter.class)) {

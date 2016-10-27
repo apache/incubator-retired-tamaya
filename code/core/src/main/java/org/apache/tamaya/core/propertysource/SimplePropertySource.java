@@ -70,7 +70,7 @@ public class SimplePropertySource extends BasePropertySource {
      */
     public SimplePropertySource(URL propertiesLocation) {
         super(0);
-        this.properties = load(propertiesLocation);
+        this.properties = load(Objects.requireNonNull(propertiesLocation));
         this.name = propertiesLocation.toString();
     }
 
