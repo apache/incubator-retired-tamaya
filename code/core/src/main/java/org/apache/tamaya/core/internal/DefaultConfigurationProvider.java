@@ -24,6 +24,7 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import javax.annotation.Priority;
 import java.util.Objects;
 
 /**

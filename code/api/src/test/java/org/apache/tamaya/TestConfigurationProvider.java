@@ -23,11 +23,12 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
 import javax.annotation.Priority;
+import java.util.Objects;
 
 /**
  * Test Configuration class, that is used to testdata the default methods provided by the API.
  */
-@Priority(2)
+@Priority(-1)
 public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
     private static final Configuration config = new TestConfiguration();
@@ -39,12 +40,12 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
     @Override
     public Configuration createConfiguration(ConfigurationContext context) {
-        return null;
+        return config;
     }
 
     @Override
     public ConfigurationContext getConfigurationContext() {
-        return null;
+        return config.getContext();
     }
 
     @Override

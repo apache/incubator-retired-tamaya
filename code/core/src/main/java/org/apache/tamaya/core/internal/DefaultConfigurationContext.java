@@ -78,14 +78,33 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         propertySources.addAll(builder.propertySources);
         // now sort them according to their ordinal values
         immutablePropertySources = Collections.unmodifiableList(propertySources);
-        LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
-                immutablePropertySources);
+        StringBuilder b= new StringBuilder();
+        b.append("Registered " + immutablePropertySources.size() + " property sources: \n");
+        b.append("   NAME [TYPE]\n");
+        b.append("   ---------------------------------------------------\n");
+        for(PropertySource ps: immutablePropertySources){
+            b.append("   ").append(ps.getName()).append("  [").append(ps.getClass().getSimpleName()).append("],\n");
+        }
+        if(b.length()>0) {
+            b.setLength(b.length() - 2);
+        }
+        LOG.info(b.toString());
+        b.setLength(0);
 
         // as next step we pick up the PropertyFilters pretty much the same way
         List<PropertyFilter> propertyFilters = new ArrayList<>(builder.getPropertyFilters());
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
-        LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
-                immutablePropertyFilters);
+        b.append("Registered " + immutablePropertyFilters.size() + " property filters: \n");
+        b.append("   TYPE\n");
+        b.append("   ----------------------------------------------------------\n");
+        for(PropertyFilter pf: immutablePropertyFilters){
+            b.append("   ").append(pf.getClass().getName()).append(",\n");
+        }
+        if(b.length()>0) {
+            b.setLength(b.length() - 2);
+        }
+        LOG.info(b.toString());
+        b.setLength(0);
 
         // Finally add the converters
         for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:builder.getPropertyConverter().entrySet()) {
@@ -93,8 +112,20 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                 this.propertyConverterManager.register(en.getKey(), converter);
             }
         }
-        LOG.info("Registered " + propertyConverterManager.getPropertyConverters().size() + " property converters: " +
-                propertyConverterManager.getPropertyConverters());
+        b.append("Registered " + propertyConverterManager.getPropertyConverters().size() + " property converters:\n");
+        b.append("   TYPE\n");
+        b.append("   ----------------------------------------------------------\n");
+        for(Map.Entry<TypeLiteral<?>,List<PropertyConverter<?>>> list: propertyConverterManager.getPropertyConverters().entrySet()){
+            b.append("   ").append(list.getKey().getRawType().getName()).append(" -> \n");
+            for(PropertyConverter<?> conv:list.getValue()) {
+                b.append("     ").append(conv.toString()).append(",\n");
+            }
+        }
+        if(b.length()>0) {
+            b.setLength(b.length() - 2);
+        }
+        LOG.info(b.toString());
+        b.setLength(0);
 
         propertyValueCombinationPolicy = builder.combinationPolicy;
         if(propertyValueCombinationPolicy==null){
