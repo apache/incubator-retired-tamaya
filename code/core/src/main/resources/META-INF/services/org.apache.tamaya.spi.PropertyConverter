@@ -31,3 +31,5 @@ org.apache.tamaya.core.internal.converters.CurrencyConverter
 org.apache.tamaya.core.internal.converters.NumberConverter
 org.apache.tamaya.core.internal.converters.URIConverter
 org.apache.tamaya.core.internal.converters.URLConverter
+org.apache.tamaya.core.internal.converters.FileConverter
+org.apache.tamaya.core.internal.converters.PathConverter
