@@ -40,11 +40,36 @@ public class CLIPropertySource extends BasePropertySource{
         initMainArgs(args);
     }
 
-
     /**
      * Creates a new instance.
      */
-    public CLIPropertySource(){}
+    public CLIPropertySource(){
+        this(null);
+    }
+
+    /**
+     * Creates a new instance, allows optionally to pass the main arguments.
+     * @param args the args, or null.
+     */
+    public CLIPropertySource(String... args){
+        if(args!=null){
+            initMainArgs(args);
+        }
+    }
+
+    /**
+     * Creates a new instance, allows optionally to pass the main arguments.
+     * @param args the args, or null.
+     * @param ordinal the ordinal to be applied.
+     */
+    public CLIPropertySource(int ordinal, String... args){
+        if(args!=null){
+            initMainArgs(args);
+        }
+        setOrdinal(ordinal);
+    }
+
+
 
     /**
      * Configure the main arguments, hereby parsing and mapping the main arguments into

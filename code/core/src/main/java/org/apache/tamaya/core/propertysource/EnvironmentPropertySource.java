@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.propertysource;
 
-import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Collections;
@@ -33,7 +32,7 @@ import java.util.logging.Logger;
  * {@code set myprop=myval} on Windows. You can disable this feature by setting {@code tamaya.envprops.disable}
  * or {@code tamaya.defaults.disable}.
  */
-public class EnvironmentPropertySource implements PropertySource {
+public class EnvironmentPropertySource extends BasePropertySource {
 
     private static final Logger LOG = Logger.getLogger(EnvironmentPropertySource.class.getName());
 
@@ -42,10 +41,45 @@ public class EnvironmentPropertySource implements PropertySource {
      */
     public static final int DEFAULT_ORDINAL = 300;
 
-    private final boolean disabled = evaluateDisabled();
+    /**
+     * Prefix that allows environment properties to virtually be mapped on specified sub section.
+     */
+    private String prefix;
 
-    private boolean evaluateDisabled() {
-        String value = System.getProperty("tamaya.envprops.disable");
+    /**
+     * If true, this property source does not return any properties. This is useful since this
+     * property source is applied by default, but can be switched off by setting the
+     * {@code tamaya.envprops.disable} system/environment property to {@code true}.
+     */
+    private boolean disabled = false;
+
+
+    /**
+     * Creates a new instance. Also initializes the {@code prefix} and {@code disabled} properties
+     * from the system-/ environment properties:
+     * <pre>
+     *     tamaya.envprops.prefix
+     *     tamaya.envprops.disable
+     * </pre>
+     */
+    public EnvironmentPropertySource(){
+        initFromSystemProperties();
+    }
+
+    /**
+     * Initializes the {@code prefix} and {@code disabled} properties from the system-/
+     * environment properties:
+     * <pre>
+     *     tamaya.envprops.prefix
+     *     tamaya.envprops.disable
+     * </pre>
+     */
+    private void initFromSystemProperties() {
+        String value = System.getProperty("tamaya.envprops.prefix");
+        if(value==null){
+            prefix = System.getenv("tamaya.envprops.prefix");
+        }
+        value = System.getProperty("tamaya.envprops.disable");
         if(value==null){
             value = System.getenv("tamaya.envprops.disable");
         }
@@ -55,14 +89,39 @@ public class EnvironmentPropertySource implements PropertySource {
         if(value==null){
             value = System.getenv("tamaya.defaults.disable");
         }
-        if(value==null){
-            return false;
+        if(value!=null && !value.isEmpty()) {
+            this.disabled = Boolean.parseBoolean(value);
         }
-        return value.isEmpty() || Boolean.parseBoolean(value);
+    }
+
+    /**
+     * Creates a new instance using a fixed ordinal value.
+     * @param ordinal the ordinal number.
+     */
+    public EnvironmentPropertySource(int ordinal){
+        this(null, ordinal);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param prefix the prefix to be used, or null.
+     * @param ordinal the ordinal to be used.
+     */
+    public EnvironmentPropertySource(String prefix, int ordinal){
+        this.prefix = prefix;
+        setOrdinal(ordinal);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param prefix the prefix to be used, or null.
+     */
+    public EnvironmentPropertySource(String prefix){
+        this.prefix = prefix;
     }
 
     @Override
-    public int getOrdinal() {
+    public int getDefaultOrdinal() {
         return DEFAULT_ORDINAL;
     }
 
@@ -79,7 +138,11 @@ public class EnvironmentPropertySource implements PropertySource {
         if(disabled){
             return null;
         }
-        return PropertyValue.of(key, System.getenv(key), getName());
+        String prefix = this.prefix;
+        if(prefix==null) {
+            return PropertyValue.of(key, System.getenv(key), getName());
+        }
+        return PropertyValue.of(key, System.getenv(key.substring(prefix.length())), getName());
     }
 
     @Override
@@ -87,11 +150,21 @@ public class EnvironmentPropertySource implements PropertySource {
         if(disabled){
             return Collections.emptyMap();
         }
-        Map<String, String> entries = new HashMap<>(System.getenv());
-        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-            entries.put("_" + entry.getKey() + ".source", getName());
+        String prefix = this.prefix;
+        if(prefix==null) {
+            Map<String, String> entries = new HashMap<>(System.getenv());
+            for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+                entries.put("_" + entry.getKey() + ".source", getName());
+            }
+            return entries;
+        }else{
+            Map<String, String> entries = new HashMap<>();
+            for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+                entries.put(prefix + entry.getKey(), entry.getValue());
+                entries.put("_" + prefix + entry.getKey() + ".source", getName());
+            }
+            return entries;
         }
-        return entries;
     }
 
     @Override

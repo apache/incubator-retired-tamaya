@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.propertysource;
 
-import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Collections;
@@ -30,7 +29,7 @@ import java.util.Properties;
  * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties. You can disable this feature by
  * setting {@code tamaya.envprops.disable} or {@code tamaya.defaults.disable}.
  */
-public class SystemPropertySource implements PropertySource {
+public class SystemPropertySource extends BasePropertySource {
 
     /**
      * default ordinal for {@link org.apache.tamaya.core.propertysource.SystemPropertySource}
@@ -43,12 +42,49 @@ public class SystemPropertySource implements PropertySource {
      * previous System.getProperties().hashCode()
      * so we can check if we need to reload
      */
-    private int previousHash;
+    private volatile int previousHash;
 
-    private final boolean disabled = evaluateDisabled();
+    /**
+     * Prefix that allows system properties to virtually be mapped on specified sub section.
+     */
+    private String prefix;
 
-    private boolean evaluateDisabled() {
-        String value = System.getProperty("tamaya.sysprops.disable");
+    /**
+     * If true, this property source does not return any properties. This is useful since this
+     * property source is applied by default, but can be switched off by setting the
+     * {@code tamaya.envprops.disable} system/environment property to {@code true}.
+     */
+    private boolean disabled = false;
+
+    /**
+     * Creates a new instance. Also initializes the {@code prefix} and {@code disabled} properties
+     * from the system-/ environment properties:
+     * <pre>
+     *     tamaya.envprops.prefix
+     *     tamaya.envprops.disable
+     * </pre>
+     */
+    public SystemPropertySource(){
+        initFromSystemProperties();
+        if(!disabled){
+            cachedProperties = Collections.unmodifiableMap(loadProperties());
+        }
+    }
+
+    /**
+     * Initializes the {@code prefix} and {@code disabled} properties from the system-/
+     * environment properties:
+     * <pre>
+     *     tamaya.envprops.prefix
+     *     tamaya.envprops.disable
+     * </pre>
+     */
+    private void initFromSystemProperties() {
+        String value = System.getProperty("tamaya.sysprops.prefix");
+        if(value==null){
+            prefix = System.getenv("tamaya.sysprops.prefix");
+        }
+        value = System.getProperty("tamaya.sysprops.disable");
         if(value==null){
             value = System.getenv("tamaya.sysprops.disable");
         }
@@ -58,32 +94,58 @@ public class SystemPropertySource implements PropertySource {
         if(value==null){
             value = System.getenv("tamaya.defaults.disable");
         }
-        if(value==null){
-            return false;
+        if(value!=null && !value.isEmpty()) {
+            this.disabled = Boolean.parseBoolean(value);
         }
-        return value.isEmpty() || Boolean.parseBoolean(value);
     }
 
-
-
-    public SystemPropertySource() {
-        cachedProperties = loadProperties();
-        previousHash = System.getProperties().hashCode();
+    /**
+     * Creates a new instance using a fixed ordinal value.
+     * @param ordinal the ordinal number.
+     */
+    public SystemPropertySource(int ordinal){
+        this(null, ordinal);
     }
 
-    private Map<String, String> loadProperties() {
-        Map<String,String> props = new HashMap<>();
-        Properties sysProps = System.getProperties();
-        for(String name: sysProps.stringPropertyNames()) {
-            props.put(name,sysProps.getProperty(name));
-            props.put("_"+name+".source",getName());
-        }
-        return props;
+    /**
+     * Creates a new instance.
+     * @param prefix the prefix to be used, or null.
+     * @param ordinal the ordinal to be used.
+     */
+    public SystemPropertySource(String prefix, int ordinal){
+        this.prefix = prefix;
+        setOrdinal(ordinal);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param prefix the prefix to be used, or null.
+     */
+    public SystemPropertySource(String prefix){
+        this.prefix = prefix;
     }
 
     @Override
-    public int getOrdinal() {
+    public int getDefaultOrdinal() {
         return DEFAULT_ORDINAL;
+    }
+
+
+    private Map<String, String> loadProperties() {
+        Properties sysProps = System.getProperties();
+        previousHash = System.getProperties().hashCode();
+        final String prefix = this.prefix;
+        Map<String, String> entries = new HashMap<>();
+        for (Map.Entry<Object,Object> entry : sysProps.entrySet()) {
+            if(prefix==null) {
+                entries.put("_" + entry.getKey() + ".source", getName());
+                entries.put((String) entry.getKey(), (String) entry.getValue());
+            }else {
+                entries.put(prefix + entry.getKey(), (String)entry.getValue());
+                entries.put("_" + prefix + entry.getKey() + ".source", getName());
+            }
+        }
+        return entries;
     }
 
     @Override
@@ -99,7 +161,11 @@ public class SystemPropertySource implements PropertySource {
         if(disabled){
             return null;
         }
-        return PropertyValue.of(key, System.getProperty(key), getName());
+        String prefix = this.prefix;
+        if(prefix==null) {
+            return PropertyValue.of(key, System.getProperty(key), getName());
+        }
+        return PropertyValue.of(key, System.getProperty(key.substring(prefix.length())), getName());
     }
 
     @Override
@@ -113,7 +179,6 @@ public class SystemPropertySource implements PropertySource {
         if (previousHash != System.getProperties().hashCode()) {
             Map<String, String> properties = loadProperties();
             this.cachedProperties = Collections.unmodifiableMap(properties);
-            previousHash = System.getProperties().hashCode();
         }
         return this.cachedProperties;
     }

@@ -34,6 +34,9 @@ public abstract class BasePropertySource implements PropertySource{
     /** default ordinal that will be used, if no ordinal is provided with the config. */
     private final int defaultOrdinal;
 
+    /** Used if the ordinal has been set explicitly. */
+    private volatile Integer ordinal;
+
     /**
      * Constructor.
      * @param defaultOrdinal default ordinal that will be used, if no ordinal is provided with the config.
@@ -54,10 +57,24 @@ public abstract class BasePropertySource implements PropertySource{
         return getClass().getSimpleName();
     }
 
+    /**
+     * Allows to set the ordinal of this property source explcitly. This will override any evaluated
+     * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
+     * @param ordinal the explicit ordinal, or null.
+     */
+    public void setOrdinal(Integer ordinal){
+        this.ordinal = ordinal;
+    }
+
     @Override
     public int getOrdinal() {
+        Integer ordinal = this.ordinal;
+        if(ordinal!=null){
+            Logger.getLogger(getClass().getName()).finest(
+                    "Using explicit ordinal '"+ordinal+"' for property source: " + getName());
+            return ordinal;
+        }
         PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
-
         if(configuredOrdinal!=null){
             try {
                 return Integer.parseInt(configuredOrdinal.getValue());
