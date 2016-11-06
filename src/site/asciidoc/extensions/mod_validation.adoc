@@ -1,0 +1,111 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+= Apache Tamaya -- Extension: Configuration Validation
+
+toc::[]
+
+
+[[Remote]]
+== Tamaya Validation: Validating Configuration (Extension Module)
+=== Overview
+
+The Tamaya Validation extension adds support to validate a configuration against a set of rules
+defined in a Tamaya Metaconfiguration XML file.
+
+=== Compatibility
+
+The module is based on Java 7, so it will not run on Java 7 and beyond.
+
+
+=== Installation
+
+To benefit from Tamaya Metamodel feature you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-validation</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+The component will extend Tamaya's +tamaya-metamodel+ module and adds an additional meta provider ruleset
+so validation rules can also be added to the default meta configuration XML file as separate sections.
+
+
+=== Usage
+
+This module expects meta-configuration to be located at the following locations. Hereby multiple files
+are supported:
+
+[source, text]
+-----------------------------------------------
+-Dtamaya-validation=<an URL>    // any resolvable URL
+./tamaya-validation-*.xml         // file
+META-INF/tamaya-validation-*.xml  // classpath (multiple entries-possible)
+-----------------------------------------------
+
+=== The Validation XML Format
+
+The configuration validation is defined by simple configuration meta-data entries.
+
+[source, xml]
+-----------------------------------------------
+<configuration-validation>
+   ...
+   <provider>The Validation Provider</provider> <!-- optional -->
+   <section name="org.mycompany">
+       <section name="security" required="true">
+         <description>The description of ma area.</description>
+       </section>
+   </section>
+   <section name="minimal"/>
+   <section name="validated.sections" at-least="1">
+     <section name="customValidated" validator="myFQValidatorClassName"/>
+     <section name="withParams" >
+       <param name="int" type="int"/>
+       <param name="aText" expression="[a|b|c]" required="true"/>
+       <param name="aValidatedText" validator="myValidatorClass">
+         <description>This kind of params are more complex...</description>
+       </param>
+     </section>
+   </section>
+   <validator class="a,b,c,MyGlobalValidator"/>
+</configuration-validation>
+-----------------------------------------------
+
+==== The Example Explained
+
+* The *provider* entry is used for generating validation message, when a validation fails.
+* Section itself can be recursively defined, where each level can have it's own validations.
+* Sections added, but without validation rules are _defined_ section. Configuration outside of
+  defined sections can be flagged out using WARNING messages.
+* Sections can be _reuired_ and additionally also _validated_.
+* There is also the possibility to register global validators, which are called by the validation
+  logic once a configuration has been completely loaded.
+
+Similar to sections also parameters can be validated:
+
+* they can be marked as _required_
+* they can have a certain type, meaning they must be convertible to the given type
+* they can have an additional custom validator.
+* they can have an optional description for error analysis and error output.
+
+Similar to section parameters that are not defined, but encountered may be flagged out with
+a WARNING message.

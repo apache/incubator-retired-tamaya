@@ -34,72 +34,46 @@ Mature extensions have a stable API and SPI, similar to the API and Implementati
 |+org.apache.tamaya.ext:tamaya-json+          |Provides format support for JSON based configuration.  |link:extensions/mod_json.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-optional+      |Lets a Tamaya configuration to be used as an optional project extension only.  |link:extensions/mod_optional.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-resolver+      |Provides placeholder and dynamic resolution functionality for configuration values.  |link:extensions/mod_resolver.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-events+        |Provides support for publishing configuration changes  |link:extensions/mod_events.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-filter+        |Provides a programmatic filter for config entries.     | link:extensions/mod_filter.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-injection-api+ |Provides Tamaya's injection annotations API.           |link:extensions/mod_injection.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-injection+     |Provides configuration injection services and congiruation template support.  |link:extensions/mod_injection.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-injection-cdi+ | Java EE/standalone compliant CDI integration using CDI for injection. | link:extensions/mod_cdi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-injection-cdi-se+ | Java EE/standalone compliant CDI integration using Tamaya SE injection mechanism. | link:extensions/mod_cdi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-mutable-config+|Provides API/SPI for writing configuration             |link:extensions/mod_mutable_config.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-spi-support+   |Tamaya support module for SPI implementation.          |link:extensions/mod_spi-support.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-resources+     |Provides ant-style resource path resolution  |link:extensions/mod_resources.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-yaml+          |Support for using yaml as a configuration format.      |link:extensions/mod_yaml.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-collections+   |Collections support.                                   |link:extensions/mod_collections.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-spring+      | Integration for Spring / Spring Boot.        | link:extensions/mod_spring.html[Documentation]
 |=======
 
 
-=== Extensions
+=== Extensions Sandbox
 
-Extensions in _draft state_ are tested well and normally should have rather stable APIs. Nevertheless API changes may
-still occurr, but we try to prevent such changes if possible.
+Extensions in _draft state_ rather experimental or not yet very mature. API changes may occurr at any time
+and the may also have severe issues. So use at your own risk or join and help us getting them stable and
+well tested!
 
 NOTE All extensions currently run on Java 7 as well as on Java 8.
 
 [width="100%",frame="1",options="header",grid="all"]
 |=======
-|_Artifact_                                   |_Description_                                          |_Links_
-|+org.apache.tamaya.ext:tamaya-builder+       |Provides a fluent-style builder for configurations     | link:extensions/mod_builder.html[Documentation]
+|_Artifact_                                 |_Description_                                          |_Links_
+|+org.apache.tamaya.ext:tamaya-commons+     |Combines Tamaya's Format Abstraction with Apache Commons.  | -
+|+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.                         | link:extensions/mod_jodatime.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-classloader-support+  |Manages Tamaya configuration and services considering classloading hierarchies.  |link:extensions/mod_classloader_support.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-events+        |Provides support for publishing configuration changes  |link:extensions/mod_events.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-filter+        |Provides a programmatic filter for config entries.     | link:extensions/mod_filter.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-injection+     |Provides configuration injection services and congiruation template support.  |link:extensions/mod_injection.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-management+    |Provides JMX support for inspecting configuration.     |link:extensions/mod_management.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-model+         |Provides support documenting ang validating configuration during runtime.  |link:extensions/mod_model.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-mutable-config+|Provides API/SPI for writing configuration             |link:extensions/mod_mutable_config.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-remote+        |Provides remote configuration support.                 |link:extensions/mod_remote.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-resources+     |Provides ant-style resource path resolution  |link:extensions/mod_resources.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-server+        |Lets a Tamaya configuration instance provide scoped configuration as a REST service.     |link:extensions/mod_server.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-yaml+          |Support for using yaml as a configuration format.      |link:extensions/mod_yaml.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-collections+   |Collections support.                                   |link:extensions/mod_collections.html[Documentation]
-|=======
-
-=== Integrations
-
-These extensions integrate/bridge Tamayas functionality with other frameworks turning their configuration capabilities
-from a sledgehammer to a scalpell:
-
-[width="100%",frame="1",options="header",grid="all"]
-|=======
-|_Artifact_                                 |_Description_                                 |_Links_
-|+org.apache.tamaya.ext:tamaya-cdi+         | Java EE/standalone compliant CDI integration | link:extensions/mod_cdi.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-management+  |Provides JMX support for inspecting configuration.     |link:extensions/mod_management.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-metamodel+   |Provides support defining configuration using XML based meta-configuration.  |link:extensions/mod_metamodel.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-validation+  |Provides support for XML based meta-configuration allowing to validate configuration read.  |link:extensions/mod_validation.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-usagetracker+  |Provides support tracking of configuration usage and the consumer locations consuming configuration.  |link:extensions/mod_usagetracker.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-camel+       | Integration for Apache Camel.                | link:extensions/mod_camel.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-spring+      | Integration for Spring / Spring Boot.        | link:extensions/mod_spring.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-osgi+        | Integration for OSGI containers.             | link:extensions/mod_osgi.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-consul+      | Integration with consul clusters.            | link:extensions/mod_consul.html[Documentation]
 |+org.apache.tamaya.ext:tamaya-etcd+        | Integration with etcd clusters.              | link:extensions/mod_etcd.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-configured-sysprops+        | Allows Tamaya to integrate with +System.getProperties()+.   | link:extensions/mod_sysprops.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-remote+      |Provides remote configuration support.                 |link:extensions/mod_remote.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-server+      |Lets a Tamaya configuration instance provide scoped configuration as a REST service.     |link:extensions/mod_server.html[Documentation]
+|+org.apache.tamaya.ext:tamaya-ui+          |Provides a web UI for a VM running Tamaya.    |link:extensions/mod_ui.html[Documentation]
 |=======
 
-
-=== Extensions in Experimental Stage
-
-Extensions in _experimental mode_ may still be under discussions. API changes may still happen, so use them
-very carefully and especially give us feedback, so we can improve them before progressing to _draft_ state.
-
-[width="100%",frame="1",options="header",grid="all"]
-|=======
-|_Artifact_                                 |_Description_                                          |_Links_
-|+org.apache.tamaya.ext:tamaya-jodatime+    |Provides support for JodaTime.                         | link:extensions/mod_jodatime.html[Documentation]
-|+org.apache.tamaya.ext:tamaya-staged+      |Simple configuration extension to add staged config.   | link:extensions/mod_metamodel-staged.html[Documentation]
-|=======
-
-
-=== Integrations in Experimental Stage
-
-Integrations in _experimental mode_ may still be under discussions, or may even not compile ! API changes may still happen, so use them
-very carefully and especially give us feedback, so we can improve them before progressing to _draft_ state.
-
-[width="100%",frame="1",options="header",grid="all"]
-|=======
-|_Artifact_                                     |_Description_                                                     |_Links_
-|+org.apache.tamaya.ext:tamaya-commons+         |Integration with Apache Commons Configuration.                    | -
-|=======

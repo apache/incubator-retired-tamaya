@@ -22,7 +22,7 @@ include::temp-properties-files-for-site/attributes.adoc[]
 == Apache Tamaya: API
 
 Though Tamaya is a very powerful and flexible solution there are basically only a few simple core concepts required
-that build the base of all the other mechanisms. As a starting point we recommend you read the corresponding
+that are the base of all the other mechanisms. As a starting point we recommend you read the corresponding
 llink:HighLevelDesign.html[High Level Design Documentation]
 
 [[API]]
@@ -50,10 +50,14 @@ The API provides the artifacts as described in the link:HighLevelDesign.html[Hig
   ** +ConfigurationProviderSpi+ defines the SPI that is used as a backing bean for the +ConfigurationProvider+
      singleton.
   ** +PropertyFilter+, which allows filtering of property values prior getting returned to the caller.
-  ** +ConfigurationContext+, which provides the container that contains the property sources and filters that form a
-     configuration.
   ** +PropertyValueCombinationPolicy+ optionally can be registered to change the way how different key/value
      pairs are combined to build up the final +Configuration+ passed over to the filters registered.
+  ** +ConfigurationContext+, which provides a container for all the artifacts needed to build up a +Configuration+.
+     For example a context contains the property sources, property filters, converters and combination policy used.
+     Also the ordering of the property sources is defined by the context. A context instance given a
+     +Configuration+ can be created by calling +ConfigurationProvider.createConfiguration(context);+.
+  ** Similarly a +ConfigurationContext+ can be created using a +ConfigurationContextBuilder+. This builder can be
+     obtained calling +ConfigurationProvider.getConfigurationContextBuilder();+.
   ** +ServiceContext+, which provides access to the components loaded, depending on the current runtime stack.
   ** +ServiceContextManager+ provides static access to the +ServiceContext+ loaded.
 
@@ -201,7 +205,7 @@ Hereby the singleton is backed up by an instance of +ConfigurationProviderSpi+.
 
 
 [[PropertyConverter]]
-==== Property Converters
+==== Property Type Conversion
 
 As illustrated in the previous section, +Configuration+ also to access non String types. Nevertheless internally
 all properties are strictly modelled as pure Strings only, so non String types must be derived by converting the
@@ -327,7 +331,7 @@ property sources with additional combination/aggregation rules in place.
 
 
 [[PropertySourceProvider]]
-==== Interface PropertySourceProvider
+=== Interface PropertySourceProvider
 
 Instances of this type can be used to register multiple instances of +PropertySource+.
 
@@ -348,7 +352,7 @@ current active +ServiceContext+.
 
 
 [[PropertyFilter]]
-==== Interface PropertyFilter
+=== Interface PropertyFilter
 
 Also +PropertyFilters+ can be added to a +Configuration+. They are evaluated before a +Configuration+ instance is
 passed to the user. Filters can hereby used for multiple purposes, such as
@@ -419,7 +423,7 @@ public interface PropertyValueCombinationPolicy{
 [[ConfigurationContext]]
 ==== The Configuration Context
 
-A +Configuration+ is basically based on a so called +ConfigurationContext+, which is
+A +Configuration+ is created from a +ConfigurationContext+, which is
 accessible from +Configuration.getContext()+:
 
 [source,java]
@@ -428,7 +432,8 @@ accessible from +Configuration.getContext()+:
 ConfigurationContext context = ConfigurationProvider.getConfiguration().getContext();
 --------------------------------------------
 
-The +ConfigurationContext+ provides access to the internal building blocks that determine the final +Configuration+:
+The +ConfigurationContext+ provides access to the internal artifacts that determine the final +Configuration+ and
+also defines the ordering of the property sources, filters and converters contained:
 
 * +PropertySources+ registered (including the PropertySources provided from +PropertySourceProvider+ instances).
 * +PropertyFilters+ registered, which filter values before they are returned to the client
@@ -440,8 +445,8 @@ The +ConfigurationContext+ provides access to the internal building blocks that 
 [[Mutability]]
 ==== Changing the current Configuration Context
 
-By default the +ConfigurationContext+ is not mutable once it is created. In many cases mutability is also not needed
-or even not wanted. Nevertheless there are use cases where the current +ConfigurationContext+ (and
+A +ConfigurationContext+ is not mutable once it is created. In many cases mutability is also not needed. Nevertheless
+there are use cases where the current +ConfigurationContext+ (and
 consequently +Configuration+) must be adapted:
 
 * New configuration files where detected in a folder observed by Tamaya.
@@ -451,7 +456,7 @@ consequently +Configuration+) must be adapted:
 * Within unit testing alternate configuration setup should be setup to meet the configuration requirements of the
   tests executed.
 
-In such cases the +ConfigurationContext+ must be mutable, meaning it must be possible:
+In such cases the +ConfigurationContext+ must be changed, meaning it must be possible:
 
 * to add or remove +PropertySource+ instances
 * to add or remove +PropertyFilter+ instances
@@ -461,9 +466,9 @@ In such cases the +ConfigurationContext+ must be mutable, meaning it must be pos
 This can be achieved by obtaining an instance of +ConfigurationContextBuilder+. Instances of this builder can be
 accessed either
 
-* from the current +ConfigurationContext+, hereby returning a builder instance preinitialized with the values from the
-  current +ConfigurationContext+
-* from the current +ConfigurationProvider+ singleton.
+* calling +ConfigurationContext.toBuilder()+, hereby returning a builder instance preinitialized with the values from the
+  current +ConfigurationContext+.
+* calling +ConfigurationProvider.getConfigurationContextBuilder()+.
 
 [source,java]
 .Accessing a +ConfigurationContextBuilder+
@@ -477,10 +482,41 @@ With such a builder a new +ConfigurationContext+ can be created and then applied
 [source,java]
 .Creating and applying a new +ConfigurationContext+
 --------------------------------------------
-ConfigurationContextBuilder preinitializedContextBuilder = ConfigurationProvider.getConfiguration().getContext()
-                                                           .toBuilder();
-ConfigurationContext context = preinitializedContextBuilder.addPropertySources(new MyPropertySource())
-                                                           .addPropertyFilter(new MyFilter()).build();
+ConfigurationContext context = ConfigurationProvider.getConfiguration().getContext()
+                                    .toBuilder();
+                                    .addPropertySources(new MyPropertySource())
+                                    .addPropertyFilter(new MyFilter())
+                                    .build();
+--------------------------------------------
+
+Hereby the builder provides several methods for adding, removing of property sources and also operations
+for programmatically change the property sourcepriorities, e.g.
+
+[source,java]
+.Chain manipulation using +ConfigurationContextBuilder+
+--------------------------------------------
+PropertySource propertySource = builder.getPropertySource("sourceId");
+
+// changing the priority of a property source. The ordinal value hereby is not considered.
+// Instead the position of the property source within the chain is changed.
+builder.decreasePriority(propertySource);
+
+// Alternately a comparator expression can be passed to establish the defined ordering...
+builder.sortPropertyFilters(MyFilterComparator::compare);
+--------------------------------------------
+
+Finally if the new context is ready a new configuration can be created, or the context is applied to the
+current configuration.
+
+[source,java]
+.Creating and applying a new +ConfigurationContext+
+--------------------------------------------
+ConfigurationContext context = builder.build();
+
+// Creates a new matching Configuration instance
+Configuration newConfig = ConfigurationProvider.createConfiguration(context);
+
+// Apply the new context to replace the current configuration:
 ConfigurationProvider.setConfigurationContext(context);
 --------------------------------------------
 
@@ -498,6 +534,59 @@ One of the most important SPI in Tamaya if the +ConfigurationProviderSpi+ interf
 * to manage the current +ConfigurationContext+ in the scope and granularity required.
 * to provide access to the right +Configuration/ConfigurationContext+ based on the current runtime context.
 * Performing changes as set with the current +ConfigurationContextBuilder+.
+
+= Interface ConfigurationContextBuilder
+
+include::temp-properties-files-for-site/attributes.adoc[]
+
+[[BuilderCore]]
+== Interface ConfigurationContextBuilder
+=== Overview
+
+The Tamaya builder module provides a generic (one time) builder for creating +Configuration+ instances,
+e.g. as follows:
+
+[source,java]
+---------------------------------------------------------------
+ConfigurationBuilder builder = new ConfigurationBuilder();
+// do something
+Configuration config = builder.build();
+---------------------------------------------------------------
+
+Basically the builder allows to create configuration instances completely independent of the current configuration
+setup. This gives you full control on the +Configuration+ setup.
+
+
+=== Supported Functionality
+
+The builder allows you to add +PropertySource+ instances:
+
+[source,java]
+----------------------------------------------------------------
+ConfigurationContextBuilder builder = ConfigurationProvider.getConfigurationContextBuilder();
+builder.addPropertySources(sourceOne, sourceTwo, sourceThree
+Configuration config = ConfigurationProvider.createConfiguration(builder.build());
+----------------------------------------------------------------
+
+Hereby the ordering of the propertysources is not changed, regardless of the ordinals provided
+by the property sources. This allows alternate ordering policies easily being implemented because
+creating a configuration based on a configuration context is already implemented and provided by the core
+API.
+
+Similarly you can add filters:
+
+[source,java]
+----------------------------------------------------------------
+builder.addPropertyFilters(new MyConfigFilter());
+----------------------------------------------------------------
+
+...or +PropertySourceProvider+ instances:
+
+[source,java]
+----------------------------------------------------------------
+builder.addPropertySourceProvider(new MyPropertySourceProvider());
+----------------------------------------------------------------
+
 
 
 [[ServiceContext]]

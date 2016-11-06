@@ -35,7 +35,8 @@ hereby providing type conversion for all important types.
 * A simple default configuration setup using the current classpath and an optional staging variable.
 * It collects all +PropertySource+ and +PropertySourceProvider+ instances registered with the +ServiceLoader+ and
   registers them in the global +ConfigurationContext+
-* It provides a +ConfigurationContextBuilder+ and allows changing the current +ConfigurationContext+.
+* It provides a +ConfigurationContextBuilder+ implementation (class +DefaultConfigurationContextBuilder+) and allows
+  changing the current +ConfigurationContext+.
 
 The overall size of the library is very small. All required components are implemented and registered, so basically the
 Core module is a complete configuration solution. Nevertheless it is also very minimalistic, but fortunately is flexible
@@ -114,6 +115,9 @@ By default, and if no annotation is added +0+ is used as priority. Hereby higher
   ones with higher priority are before components with lower priority.
 * if priorities match Tamaya Core additionally sorts them using the simple class name. This ensures that ordering is
   still defined and predictable in almost all scenarios.
+
+NOTE: Sorting the property sources based on their ordinal value is only the default ordering principle applied. By implementing
+      your own implementation of +ConfigurationProviderSpi+ you can apply a different logic:
 
 
 [[RegisteringPropertySources]]

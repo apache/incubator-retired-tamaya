@@ -1,0 +1,169 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+= Apache Tamaya -- Extension: Usage Tracking
+
+toc::[]
+
+
+[[Core]]
+== Tamaya Usage Tracking (Extension Module)
+=== Overview
+
+Tamaya Usage Tracking allows to record and count the configuration access and consumer locations in your local
+VM.
+
+=== Compatibility
+
+The module is based on Java 7, so it can be used with Java 7 and beyond.
+
+=== Installation
+
+To benefit from configuration mutability support you only must add the corresponding dependency to your module:
+
+[source, xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.tamaya.ext</groupId>
+  <artifactId>tamaya-usagetracker</artifactId>
+  <version>{tamayaVersion}</version>
+</dependency>
+-----------------------------------------------
+
+
+=== Tracking Configuration Access
+
+The model module also allows tracking which code accesses configuration properties or configuration parameters.
+It checks the stacktrace to evaluate the calling code location, hereby any unwanted packages can be implicitly
+ommitted from the stacktrace. Also the maximal length of the stacktrace retained can be constraint in length.
+The usages are recorded as +Usage+ instances. Hereby for each parameter accessed a corresponding +Usage+
+instance is created. It can be accessed by calling +Usage ConfigUsageStats.getUsage(String key)+. Usage
+statistics for calling +Configuration.getProperties()+ can be obtained calling +Usage getUsageAllProps();+.
+
+Usage tracking is disabled by default. It can be enabled by calling +ConfigUsageStats.enableUsageTracking(true);+.
++ConfigUsageStats.isUsageTrackingEnabled()+ returns the current tracking status.
+
+The +Usage+ class itself provides access to further fainer grained usage data (+AccessDetail+) containing:
+
+* the access point (+fqn.ClassName#method(line: xxx)+).
+* the number of accesses
+* the first an last access
+* the values read
+* the access stacktrace (filtered by ignored packages).
+
+[source,java]
+-----------------------------------------------------------
+public final class Usage {
+    [...]
+    public String getKey();
+    public void clearMetrics();
+    public int getReferenceCount();
+    public int getUsageCount();
+    public Collection<AccessDetail> getAccessDetails(Class type);
+    public Collection<AccessDetail> getAccessDetails(Package pack);
+    public Collection<AccessDetail> getAccessDetails(String lookupExpression);
+    public Collection<AccessDetail> getAccessDetails();
+    public void trackUsage(String value);
+    public void trackUsage(String value, int maxTraceLength);
+
+
+    public static final class AccessDetail {
+        [...]
+        public void clearStats();
+        public long trackAccess(String value);
+        public long getAccessCount();
+        public String getAccessPoint();
+        public long getFirstAccessTS();
+        public long getLastAccessTS();
+        public String[] getStackTrace();
+        public Map<Long, String> getTrackedValues();
+    }
+
+}
+-----------------------------------------------------------
+
+With +ConfigUsageStats.clearUsageStats()+ the collected statistics can be reset at any time. Summarizing the main
+singleton for configuration statistics is defined as follows:
+
+[source,java]
+-----------------------------------------------------------
+public final class ConfigUsageStats{
+    public static Set<String> getIgnoredUsagePackages();
+    public static void addIgnoredUsagePackages(String... packageName);
+    public static void enableUsageTracking(boolean enabled);
+    public static Usage getUsage(String key);
+    public static Collection<Usage> getUsages();
+    public static void clearUsageStats();
+    public static Usage getUsageAllProperties();
+    public static boolean isUsageTrackingEnabled();
+    public static String getUsageInfo();
+}
+-----------------------------------------------------------
+
+==== Customizing the Stacktrage for Usage Reporting
+
+The stacktrace tracked by the system can be customized in several ways:
+
+* +ConfigUsageStats.addIgnoredPackageNames(String...)+ allows to add additional ignored package names.
+* With +Usage.setMaxTraceLength(int)+ the maximal size of the stacktraces logged can be set. Setting a
+  negative value will disable stacktrace logging completelely.
+
+
+=== Accessing Usage Statistics
+
+Bascially usage statistics are available in two forms:
+
+* The +Usage/AccessDetail+ object tree can be accessed programmatically from the +ConfigUsageStats+
+  singleton.
+* With +ConfigUsageStats.getUsageInfo()+ also a textual representation of the usage statistics
+  can be obtained, as illustrated below (a snipped from the current test output):
+
+[source,listing]
+-----------------------------------------------------------
+Apache Tamaya Configuration Usage Metrics
+=========================================
+DATE: Sat Apr 30 21:51:09 CEST 2016
+
+220    <<all>>:
+  - 220   <unknown/filtered/internal>                       , first=Sat Apr 30 21:51:09 CEST 2016, last=Sat Apr 30 21:51:09 CEST 2016
+3      java.version:
+  - 2     test.model.TestConfigAccessor#readProperty(line:43), first=Sat Apr 30 21:51:09 CEST 2016, last=Sat Apr 30 21:51:09 CEST 2016
+  - 1     <unknown/filtered/internal>                       , first=Sat Apr 30 21:51:09 CEST 2016, last=Sat Apr 30 21:51:09 CEST 2016
+
+-----------------------------------------------------------
+
+
+=== Auto-Documentation of Classes with Configuration Injection
+
+A special feature of this module is that it observes +ConfigEvent+ published through Tamaya'as event channel
+(+tamaya-events+ module). If no metaconfiguration model is found the model manager by default automatically creates
+models for all injected instances on the fly. In the case of CDI integration this happens typically during deployment
+time, since CDI initializes during deployment time. Other runtime platforms, such as OSGI, may have rather different
+behaviour. Nevertheless this means that after your system has been started you should have access to a complete
+set of +ConfigModel+ instances that automatically document all the classes in your system that consume configuration
+(through injection).
+
+
+== UsageTracker Module SPI
+
+=== The ConfigUsageStatsSpi
+
+The methods for managing and tracking of configuration changes are similarly delegated to an
+implementation of the +org.apache.tamaya.model.spi.ConfigUsageStatsSpi+ SPI.
+By implementing this SPI and registerting it with the +ServiceContext+ the usage tracking
+logic can be adapted or replaced.
+
