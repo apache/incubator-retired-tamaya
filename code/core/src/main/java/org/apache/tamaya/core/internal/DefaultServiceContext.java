@@ -23,12 +23,7 @@ import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,9 +78,12 @@ public final class DefaultServiceContext implements ServiceContext {
                 services.add(t);
             }
             services = Collections.unmodifiableList(services);
-        } catch (Exception e) {
+        } catch (ServiceConfigurationError e) {
             Logger.getLogger(DefaultServiceContext.class.getName()).log(Level.WARNING,
                     "Error loading services current type " + serviceType, e);
+            if(services==null){
+                services = Collections.emptyList();
+            }
         }
         final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
         return previousServices != null ? previousServices : services;

@@ -27,7 +27,7 @@ toc::[]
 Tamaya Events is an extension module. Refer to the link:modules.html[extensions documentation] for further details
 about modules.
 
-Tamaya Events provides an abstraction for events like change events, when configuration has bee changed.
+Tamaya Events provides an abstraction for events like change events, when configuration has been changed.
 
 === Compatibility
 
@@ -70,10 +70,9 @@ public interface ConfigEventListener {
 }
 --------------------------------------------
 
-This mechanism can now be used to propagate configuration changes to all interested stakeholders. Hereby the payloed
+This mechanism can now be used to propagate configuration changes to all interested stakeholders. Hereby the payload
 can be basically arbitrary as long as it implements the +ConfigEvent+ interface. The next sections
-give more details on the the provided event implementations and abstractions that are used to implement such
-features.
+give more details on the the provided event types and their usage.
 
 
 === Modelling Configuration Changes
@@ -85,18 +84,8 @@ be
 * removed configuration entries
 * changes on entries
 
-This is also reflected in the +ChangeType+ enum
 
-[source,java]
--------------------------------------------------------
-public enum ChangeType {
-    NEW,
-    DELETED,
-    UPDATED,
-}
--------------------------------------------------------
-
-This enum type is used within the +ConfigurationChange+ class, which implements the event sent for a changed
+The most important event modelled is the +ConfigurationChange+ class, which implements the event sent for a changed
 +Configuration+:
 
 [source,java]
@@ -111,8 +100,6 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     public Class<Configuration> getResourceType();
     @Override
     public String getVersion();
-    @Override
-    public long getTimestamp();
     @Override
     public long getTimestamp();
 
@@ -133,7 +120,7 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
 
 -------------------------------------------------------
 
-New instances of this class hereby are created using a fluent builder:
+New instances of this class hereby can be created using a fluent builder:
 
 [source,java]
 -------------------------------------------------------
@@ -143,8 +130,8 @@ ConfigurationChange change = ConfigurationChangeBuilder.of(config)
   .removeKeys("myRemovedKey").build();
 -------------------------------------------------------
 
-Also it is possible to directly compare 2 instances of configurations to create a matching +ConfigurationChange+
-instance:
+Also it is possible to directly compare 2 instances of configurations to create +ConfigurationChange+ that
+reflect the differences between the two configurations:
 
 [source,java]
 Comparing 2 configurations
@@ -157,8 +144,8 @@ ConfigurationChange change = ConfigurationChangeBuilder.of(config)
 
 So a +ConfigurationChange+ allows you to evaluate the changes on a configuration. This allows you to listen to changes
 and react in your client code as useful, once you encounter changes that are relevant to you, e.g. by reconfiguring
-your component. Of course, your code has to register itself to listen for appropriate changes by implementing
-a +ConfigEventListener+:
+your component. For listening to configuration changes you must implement the
++ConfigEventListener+ functional interface:
 
 [source,java]
 .Implementing a ConfigChangeListener
@@ -187,51 +174,20 @@ You can *register* your implementation in 2 ways:
 
 === Modelling PropertySource Changes
 
-Beside that a whole configuration changes, also +PropertySource+ instance can change, e.g. by a configuration file
+Beside that a whole configuration changes, also +PropertySource+ instances can change, e.g. by a configuration file
 edited on the fly. This is similarly to a +ConfigurationChange+ reflected by the classes +PropertySourceChange,
 PropertySourceChangeBuilder+.
 
-
-=== Modelling Configuration Context Changes
-
-The +ConfigurationContext+ models the container that manages all subcomponents that are used to define and
-evalaute a +Configuration+. In the case where configuration is dynamically loaded, e.g. by observing changes on a
-file folder, the +ConfigurationContext+ may change, so a corresponding +ConfigurationContextChange+ event is
-defined:
-
-[source,java]
--------------------------------------------------------
-public final class ConfigurationContextChange implements ConfigEvent<ConfigurationContext>, Serializable{
-
-    public static ConfigurationContextChange emptyChangeSet();
-
-    @Override
-    public ConfigurationContext getResource();
-    @Override
-    public Class<ConfigurationContext> getResourceType();
-    @Override
-    public String getVersion();
-    @Override
-    public long getTimestamp();
-
-    // specific methods
-    public Collection<PropertySourceChange> getPropertySourceChanges();
-    public Collection<PropertySourceChange> getPropertySourceUpdates();
-    public Collection<PropertySource> getRemovedPropertySources();
-    public Collection<PropertySource> getAddedPropertySources();
-    public Collection<PropertySource> getUpdatedPropertySources();
-    public boolean isAffected(PropertySource propertySource);
-    public boolean isEmpty();
-}
--------------------------------------------------------
-
-Similar to the +ConfigurationChange+ class you also must use a +ConfigurationContextChangeBuilder+ to create instances
-of +ConfigurationContextChange+.
 
 === The ConfigEventManager Singleton
 
 Main entry point of the events module is the +ConfigEventManager+ singleton class, which provides static accessor
 methods to the extension's functionality:
+
+* Adding/removing of +ConfigChangeListener+ instances, either globally or per event type.
+* Firing configuration events synchronously or asyncronously (mostly called by framework code).
+* Configuring the monitor that periodically checks for changes on the global +Configuration+ provided
+  by +ConfigurationProvider.getConfiguration()+.
 
 [source,java]
 -------------------------------------------------------
@@ -259,40 +215,35 @@ public final class ConfigEventManager {
 }
 -------------------------------------------------------
 
-Looking at the methods listed above you see that there is more functionality worth to be mentioned:
-
-* +ConfigCHangeListeners+ can be registered either _globally_ or for a certain _event type_ only.
-* +ConfigEvents+ can be published within the same thread, or asynchronously.
-
 
 ==== Monitoring of configuration changes
 
 The +ConfigEventManager+ also supports active monitoring of the current configuration to trigger corresponding change
-events to listeners registered. This feature is activated by default, but can be deactivated optionally. Nevertheless
-this feature is quite handy, since regularly polling your local +Configuration+ for any kind of changes is much
-more simpler than implementing change management on the +PropertySource+ level. With this feature you can easily
-implement also remote property source, which can deliver different configuration based on any changes done remotedly
-on another node in your system. If such a change happened Tamaya identifies it and triggers corresponding
-+ConfigurationChange" events automatically. Similarly changes in a configuration tree, can actively identified and
-broadcasted to the targeting nodes automatically.
+events to listeners registered. This feature is deactivated by default, but can be enabled by calling
++ConfigEventManager.enableChangeMonitoring(true);+. This feature avoids regularly polling your local +Configuration+ for
+any kind of changes. If a change has been encountered Tamaya identifies it and triggers corresponding
++ConfigurationChange+ events automatically.
 
 
 === Freezing Configurations and PropertySources
 
 +Configuration+ instances as well as +PropertySources+ are explicitly not required to be serializable. To enable easy
-serialization of these types as well as to fix a current state (e.g. for later comparison with a newly loaded instance)
-Tamaya allows to *freeze* instances of these types. Freezing hereby means
+serialization of these types a +Configuration+'s *current state can be frozen* (e.g. for later comparison with a newly
+loaded version). Freezing hereby means
 
 * all key/values are read-out by calling the +getProperties()+ method.
-* a meta data entry is added of the form +[meta]frozenAt=223273777652325677+, whichdefines the UTC timestamp in
+* a meta data entry is added of the form +_frozenAt=223273777652325677+, whichdefines the UTC timestamp in
   milliseconds when this instance was frozen.
+* if not already defined an +_id+ property will be added to the +Configuration+ containing the
+  identifier of the configuration.
 
-In code this is done easily as follows:
+In code freezing is a no-brainer:
 
 [source,java]
 .Freezing the current Configuration
 --------------------------------------------------
-Configuration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
+Configuration config = ConfigurationProvider.getConfiguration();
+Configuration frozenConfig = FrozenConfiguration.of(config);
 --------------------------------------------------
 
 ... and similarly for a +PropertySource+:
@@ -300,51 +251,17 @@ Configuration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getCon
 [source,java]
 .Freezing the current Configuration
 --------------------------------------------------
-PropertySource frozenSource = FrozenPropertySource.of(ConfigurationProvider.getConfiguration());
+PropertySource propertySource = ...;
+PropertySource frozenSource = FrozenPropertySource.of(propertySource);
 --------------------------------------------------
 
-
-=== Modelling of an observing PropertySourceProvider.
-
-In Tamaya configuration data is provided by instances of +PropertySource+, which in case of a configuration directory
-may be provided by an implementation of +PropertySourceProvider+, which produces one +PropertySource+ (at least) per
-file detected. The events module provides a base provider implementation that
-
-* observes all changes in a +Path+
-* tries to reevaluate corresponding resources based on the +ConfigurationFormats+ supported.
-* it creates an instance of +ConfigurationContextChange+ reflecting the changed +ConfigurationContext+ and triggers
-  this event by calling +ConfigEventManager.fireEvent(contextChange);+.
-
-Additionally this module registers an instance of +ConfigEventListener<ConfigurationContextChange+>+, which listenes to
-these events. If such an event is triggered the listener tries to apply the changes by
-
-. accessing the current +Configuration+ and its +ConfigurationContext+
-. checking if the event is affecting the current +ConfigurationContext+.
-. in the case the current context is affected, based on the current +ConfigurationContext+ a new context is created,
-  whereas
-  .. all +PropertySources+ provided by this provider implementation type are removed.
-  .. the new +PropertySources+ loaded are added.
-. Finally the listener tries to apply the new +ConfigurationContext+ by calling the corresponding API methods of the
-  +ConfigurationProvider+:
-
-[source,java]
---------------------------------------------------
-try {
-    ConfigurationProvider.setConfigurationContext(newContext);
-} catch (Exception e) {
-    LOG.log(Level.INFO, "Failed to update the current ConfigurationContext due to config model changes", e);
-}
---------------------------------------------------
-
-So if the current +ConfigurationProvider+ supports reloading of the current +ConfigurationContext+ this will apply the
-changes to the current +Configuration+. Otherwise the change is logged, but no further actions are taken.
 
 
 === SPIs
 
 This component also defines an additional SPI, which allows to adapt the implementation of the main +ConfigEventManager+
 singleton. This enables, for example, using external eventing systems, such as CDI, instead of the default provided
-simple SE based implementation. As normal, implementation mus be registered using the current +ServiceContext+
+simple SE based implementation. As normal, implementation must be registered using the current +ServiceContext+
 active, by default using the Java +ServiceLoader+ mechanism.
 
 [source,java]
@@ -369,3 +286,7 @@ public interface ConfigEventManagerSpi {
 }
 --------------------------------------------------
 
+
+Summarizing with the events module you can easily observe configuration changes, record the
+state of any configuration and compare configuration states to create and publish related
+change events.
