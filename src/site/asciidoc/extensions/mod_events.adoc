@@ -290,3 +290,5 @@ public interface ConfigEventManagerSpi {
 Summarizing with the events module you can easily observe configuration changes, record the
 state of any configuration and compare configuration states to create and publish related
 change events.
+
+
