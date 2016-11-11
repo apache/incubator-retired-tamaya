@@ -46,6 +46,7 @@ To benefit from configuration builder support you only must add the correspondin
 </dependency>
 -----------------------------------------------
 
+This extension also transitively requires the +tamaya.formats+ module.
 
 === Reading configuration in YAML
 

@@ -51,8 +51,6 @@ To benefit from dynamic value resolution you only must add the corresponding dep
 </dependency>
 -----------------------------------------------
 
-The module automatically registers an according +PropertyFilter+ that is automatically called, whenever a value
-is accessed.
 
 === The Idea
 
@@ -61,7 +59,7 @@ data structure (in our cases: property sources).
 
 ==== ConfigurationData
 
-Configuration formats can be very different. Some are simpley key/value pairs, whereas other also consist of multiple sections (e.g. ini-files) or
+Configuration formats can be very different. Some are simple key/value pairs, whereas other also consist of multiple sections (e.g. ini-files) or
 hierarchical data (e.g. yaml, xml). This is solved in Tamaya by mapping the configuration read into a normalized intermediary format called
 +ConfigurationData+:
 
@@ -75,13 +73,10 @@ public final class ConfigurationData {
 
     public Set<String> getSectionNames();
     public Map<String,String> getSection(String name);
-    public Map<String,Map<String,String>> getSections();
 
     public boolean hasDefaultProperties();
     public Map<String,String> getDefaultProperties();
-
     public Map<String,String> getCombinedProperties();
-    public boolean hasCombinedProperties();
 
     public boolean isEmpty();
 }
@@ -97,29 +92,13 @@ In detail the data read from a file is organized into _sections_ as follows:
   named sections, depending on the configuration format.
 * The method +getSectionNames()+ returns a set of all section names.
 * With +getSection(String name)+ a named section can be accessed.
-* With +getDefaultSection()+ the default section can be accessed.
+* With +getDefaultSection()+ the 'default' section can be accessed. This is a convenience method.
 * With +getCombinedProperties()+ a flattened entry map can be accessed built up (by default) out of
   ** all entries from the default section, without any changes.
-  ** all entries from named sections, where the key for each entry is prefix with the section name and a dot separator.
+  ** all entries from named sections, where the key for each entry is prefix with the section name and a '::' separator.
 * The configuration format used determines the mapping of configuration data read into this structure. The format
   implementation can as well provide alternate implementations of how the data read should be mapped into the
   combined properties map.
-
-Now for the conversion of +ConfigurationData+ into a +PropertySource+ different default approaches are used:
-
-. The +ConfigurationFormat+ that read the data can provide the (combined) properties accessible from
-  +getProperties()+ explcitly, which can be used to initialize a single +PropertySource+ containing the data read.
-. If the format did not set the final properties, but only a default section is present this default section
-  can be directly returned as combined properties.
-. In all other cases a properties can be uniquely mapped into one single properties Map, by prefixing all keys of each
-  section present with the (unique) section name and a '.' separator.
-
-Nevertheless, depending on the context, where a configuration source was read (classloader, time, source etc.) the
-resulting +PropertySource+ can have different semnatics, especially for the +PropertySources+ ordinal. Also section
-names may be mapped into different ordinals instead of using them as key prefixes (e.g. imagine configuration formats
-with a 'default', 'main', and 'overrides' sections). For such more complex or custom cases no useful default mapping
-can be defined. In such cases this functionality must be implemented in a _mapData_ method, which converts
-the normalized +ConfigData+ read to the appropriate collection of +PropertySource+ instances:
 
 
 ==== ConfigurationFormat
@@ -138,10 +117,20 @@ public interface ConfigurationFormat {
 -------------------------------------------------------
 
 
-Normally you need to map the resulting +ConfigurationData+ to one or multiple +PropertySources+. In case, where the
-properties provided match exactly the extected properties a +FlattenedDefaultPropertySource+ is provided out-of-the-box.
-If the exact mapping must be overridden, you can simply override the property source's initialize method to adapt the
-mapping:
+=== How to tranform ConfigurationData into a PropertySource
+
+For for the conversion of +ConfigurationData+ into a +PropertySource+ different approaches can be useful:
+
+. The +ConfigurationFormat+ that reads the data can provides all properties read either as sectioned properties
+  or/and as default properties. The most simple cases is, where all properties have been added as 'default'
+  properties. In this case the default properties can be used as the property sources properties without any change.
+. If the format did also add section based properties, the combined properties returned can be used, hereby
+  replacing the '::' separator with a '.' separator.
+. In all other cases a custom mapping is useful, which can be acomplished by using the +MappedConfigurationDataPropertySource+
+  and overriding the +Map<String,String> populateData(ConfigurationData data)+ method.
+
+In most cases the usage of a +FlattenedDefaultPropertySource+, is a good choice to start. This class
+provides a convenient default mapping and also allows to customized the mapping easily:
 
 [source,java]
 -------------------------------------------------------
@@ -153,23 +142,13 @@ FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(data){
 };
 -------------------------------------------------------
 
+Nevertheless, depending on the context, where a configuration source was read (classloader, time, source etc.) the
+resulting properties can have different semnatics, especially different priorities. Also section
+names may be mapped into different ordinals instead of using them as key prefixes (e.g. imagine configuration formats
+with a 'default', 'main', and 'overrides' sections). For such more complex or custom cases no simple mapping
+can be defined. Consequently the functionality mapping the normalized +ConfigurationData+ read to the
+appropriate collection of +PropertySource+ instances must be implemented.
 
-=== How to tranform ConfigurationData into a PropertySource
-
-The Tamaya main building block for configuration properties is the +PropertySource+ interface. You have several
-options to implement this tranformation:
-
-. You can simply map the properties returned by +getCombinedProperties()+ and use them as properties returned by a
-  wrapping property source. Since this use case is common for all kind of non hierarchic configuration formats it
-  is directly supported by the +FlattenedDefaultPropertySource+ class.
-. When the +ConfigurationFormat+ is more complex, multiple 'sections' are common. What a section exactly is depends on
-  the concrete format only. The +ConfigurationFormat+ should provide detailed information how the data read is
-  mapped to default properties and sections and how it is assembled into the +combinedProperties+ map. Also here
-  the +FlattenedDefaultPropertySource+ class can help you with its default mapping. Nevertheless in some cases it is
-  necessary to write an explicit mapping, e.g. when
-  . different sections must be mapped to multiple +PropertySources+, with optionally fixed ordinals.
-  . sections must be cross-checked and combined into new properties, or into several +PropertySources+.
-  . other complex mapping requirements apply.
 
 === Examples
 
@@ -198,9 +177,9 @@ This file content coud be mapped to the following structure:
 -------------------------------------------------------
 a=valA
 a.b=valB
-section1.valA=sectionValA
-section1.a.b.c=SectionValC
-section2.a=val2Section2
+section1::valA=sectionValA
+section1::a.b.c=SectionValC
+section2::a=val2Section2
 -------------------------------------------------------
 
 Nevertheless from the +ConfigurationData+ instance a more complex algorithm can access all the different parts:
