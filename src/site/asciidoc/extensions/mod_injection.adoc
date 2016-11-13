@@ -190,15 +190,15 @@ name=<unnamed>
 --------------------------------------------
 
 
-==== Accessing ConfiguredItemSupplier instances
+==== Accessing Supplier instances
 
 In many cases you want to create a supplier that simply creates instances that are correctly configured as defined
 by the current context. This can be done using +Suppliers+:
 
 [source, java]
 --------------------------------------------
-ConfiguredItemSupplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(
-  new ConfiguredItemSupplier<Tenant>(){
+Supplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(
+  new Supplier<Tenant>(){
      public Tenant get(){
        return new Tenant();
      }
@@ -209,11 +209,11 @@ With Java 8 it's even more simpler:
 
 [source, java]
 --------------------------------------------
-ConfiguredItemSupplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(
+Supplier<Tenant> configuredTenantSupplier = ConfigurationInjector.getInstance().getConfiguredSupplier(
   Tenant::new);
 --------------------------------------------
 
-Hereby this annotation can be used in multiple ways and combined with other annotations such as +@DefaultValue+,
+Hereby this annotation can be used in multiple ways and combined with other annotations such as
 +@WithLoadPolicy+, +@WithConfigOperator+, +@WithPropertyConverter+.
 
 ==== Minimal Example
@@ -245,7 +245,7 @@ In the next example we explicitly define the property value:
 --------------------------------------------
 pubic class ConfiguredItem{
 
-  @Config({"aValue", "a.b.value","a.b.deprecated.value"}, defaultValue="${env:java.version}")
+  @Config(value={"aValue", "a.b.value","a.b.deprecated.value"}, defaultValue="${env:java.version}")
   private String aValue;
 }
 --------------------------------------------
@@ -259,7 +259,7 @@ commit new values exactly, when convenient for you.
 --------------------------------------------
 pubic class ConfiguredItem{
 
-  @Config({"aValue", "a.b.value","a.b.deprecated.value"}, defaultValue="${env:java.version}")
+  @Config(value={"aValue", "a.b.value","a.b.deprecated.value"}, defaultValue="${env:java.version}")
   private DynamicValue aValue;
 }
 --------------------------------------------
@@ -292,8 +292,9 @@ public interface DynamicValue<T> {
 
     boolean isPresent();
     T orElse(T other);
-    T orElseGet(ConfiguredItemSupplier<? extends T> other);
-    <X extends Throwable> T orElseThrow(ConfiguredItemSupplier<? extends X> exceptionSupplier) throws X;
+    // Enabled with Java 8
+    // T orElseGet(ConfiguredItemSupplier<? extends T> other);
+    // <X extends Throwable> T orElseThrow(ConfiguredItemSupplier<? extends X> exceptionSupplier) throws X;
 
 }
 --------------------------------------------
