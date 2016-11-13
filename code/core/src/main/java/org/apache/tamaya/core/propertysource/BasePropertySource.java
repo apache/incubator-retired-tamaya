@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,18 +33,40 @@ import java.util.logging.Logger;
  */
 public abstract class BasePropertySource implements PropertySource{
     /** default ordinal that will be used, if no ordinal is provided with the config. */
-    private final int defaultOrdinal;
-
+    private int defaultOrdinal;
     /** Used if the ordinal has been set explicitly. */
     private volatile Integer ordinal;
+    /** The name of the property source. */
+    private String name;
+
+    /**
+     * Constructor.
+     * @param name the (unique) property source name, not null.
+     */
+    protected BasePropertySource(String name){
+        this.name = Objects.requireNonNull(name);
+        this.defaultOrdinal = 0;
+    }
 
     /**
      * Constructor.
      * @param defaultOrdinal default ordinal that will be used, if no ordinal is provided with the config.
      */
     protected BasePropertySource(int defaultOrdinal){
+        this.name = getClass().getSimpleName();
         this.defaultOrdinal = defaultOrdinal;
     }
+
+    /**
+     * Constructor.
+     * @param name the (unique) property source name, not null.
+     * @param defaultOrdinal default ordinal that will be used, if no ordinal is provided with the config.
+     */
+    protected BasePropertySource(String name, int defaultOrdinal){
+        this.name = Objects.requireNonNull(name);
+        this.defaultOrdinal = defaultOrdinal;
+    }
+
 
     /**
      * Constructor, using a default ordinal of 0.
@@ -54,7 +77,15 @@ public abstract class BasePropertySource implements PropertySource{
 
     @Override
     public String getName() {
-        return getClass().getSimpleName();
+        return name;
+    }
+
+    /**
+     * Sets the property source's (unique) name.
+     * @param name the name, not null.
+     */
+    public void setName(String name){
+        this.name = Objects.requireNonNull(name);
     }
 
     /**
@@ -64,6 +95,15 @@ public abstract class BasePropertySource implements PropertySource{
      */
     public void setOrdinal(Integer ordinal){
         this.ordinal = ordinal;
+    }
+
+    /**
+     * Allows to set the ordinal of this property source explcitly. This will override any evaluated
+     * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
+     * @param defaultOrdinal the default ordinal, or null.
+     */
+    public void setDefaultOrdinal(Integer defaultOrdinal){
+        this.defaultOrdinal = defaultOrdinal;
     }
 
     @Override
@@ -80,7 +120,7 @@ public abstract class BasePropertySource implements PropertySource{
                 return Integer.parseInt(configuredOrdinal.getValue());
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                        "Configured Ordinal is not an int number: " + configuredOrdinal.getValue(), e);
+                        "Configured Ordinal is not an int number: " + configuredOrdinal, e);
             }
         }
         return getDefaultOrdinal();

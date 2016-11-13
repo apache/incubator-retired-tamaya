@@ -20,7 +20,10 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TypeLiteral;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A builder for creating new or adapting instances of {@link ConfigurationContext}.
@@ -74,6 +77,14 @@ public interface ConfigurationContextBuilder {
      * exists.
      */
     ConfigurationContextBuilder addPropertySources(Collection<PropertySource> propertySources);
+
+    /**
+     * Add all registered (default) property sources to the context built. The sources are ordered
+     * based on their ordinal values and added to the chain of property sources with
+     * higher priority.
+     * @return this builder, for chaining, never null.
+     */
+    ConfigurationContextBuilder addDefaultPropertySources();
 
     /**
      * Removes the given property sources, if existing. The existing order of property
@@ -189,6 +200,13 @@ public interface ConfigurationContextBuilder {
     ConfigurationContextBuilder addPropertyFilters(Collection<PropertyFilter> filters);
 
     /**
+     * Add all registered (default) property filters to the context built.
+     * @return this builder, for chaining, never null.
+     */
+    ConfigurationContextBuilder addDefaultPropertyFilters();
+
+
+    /**
      * Removes the given PropertyFilter instances, if existing. The order of the remaining
      * filters is preserved.
      *
@@ -231,6 +249,12 @@ public interface ConfigurationContextBuilder {
      */
     <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
                                                           Collection<PropertyConverter<T>> propertyConverters);
+
+    /**
+     * Add all registered (default) property converters to the context built.
+     * @return this builder, for chaining, never null.
+     */
+    ConfigurationContextBuilder addDefaultPropertyConverters();
 
     /**
      * Removes the given PropertyConverter instances for the given type,

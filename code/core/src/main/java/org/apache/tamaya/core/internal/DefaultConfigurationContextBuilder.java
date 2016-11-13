@@ -129,7 +129,17 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    protected DefaultConfigurationContextBuilder loadDefaultPropertyFilters() {
+    @Override
+    public ConfigurationContextBuilder addDefaultPropertySources() {
+        checkBuilderState();
+        List<PropertySource> propertySources = new ArrayList<>();
+        propertySources.addAll(ServiceContextManager.getServiceContext().getServices(PropertySource.class));
+        Collections.sort(propertySources, DEFAULT_PROPERTYSOURCE_COMPARATOR);
+        return addPropertySources(propertySources);
+    }
+
+    @Override
+    public ConfigurationContextBuilder addDefaultPropertyFilters() {
         checkBuilderState();
         for(PropertyFilter pf:ServiceContextManager.getServiceContext().getServices(PropertyFilter.class)){
             addPropertyFilters(pf);
@@ -137,20 +147,9 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    protected DefaultConfigurationContextBuilder loadDefaultPropertySources() {
-        checkBuilderState();
-        for(PropertySource ps:ServiceContextManager.getServiceContext().getServices(PropertySource.class)){
-            addPropertySources(ps);
-        }
-        for(PropertySourceProvider pv:ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class)){
-            for(PropertySource ps:pv.getPropertySources()){
-                addPropertySources(ps);
-            }
-        }
-        return this;
-    }
 
-    protected DefaultConfigurationContextBuilder loadDefaultPropertyConverters() {
+    @Override
+    public DefaultConfigurationContextBuilder addDefaultPropertyConverters() {
         checkBuilderState();
         for(Map.Entry<TypeLiteral, Collection<PropertyConverter>> en:getDefaultPropertyConverters().entrySet()){
             for(PropertyConverter pc: en.getValue()) {
@@ -350,9 +349,9 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     protected ConfigurationContextBuilder loadDefaults() {
         checkBuilderState();
         this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
-        loadDefaultPropertySources();
-        loadDefaultPropertyFilters();
-        loadDefaultPropertyConverters();
+        addDefaultPropertySources();
+        addDefaultPropertyFilters();
+        addDefaultPropertyConverters();
         return this;
     }
 

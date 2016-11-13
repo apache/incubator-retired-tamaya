@@ -35,9 +35,9 @@ import java.util.Objects;
 public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
 
     ConfigurationContext context = new DefaultConfigurationContextBuilder()
-            .loadDefaultPropertyConverters()
-            .loadDefaultPropertyFilters()
-            .loadDefaultPropertySources().build();
+            .addDefaultPropertyConverters()
+            .addDefaultPropertyFilters()
+            .addDefaultPropertySources().build();
 
     private Configuration config = new DefaultConfiguration(context);
 

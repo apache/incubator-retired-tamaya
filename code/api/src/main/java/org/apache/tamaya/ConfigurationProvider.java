@@ -118,9 +118,26 @@ public final class ConfigurationProvider {
      * @param context the new ConfigurationContext to be applied.
      * @throws java.lang.UnsupportedOperationException if the current provider is read-only and does not support
      *                                                 applying a new ConfigurationContext.
+     * @deprecated Use #setConfiguration(Configuration) instead of.
      */
+    @Deprecated
     public static void setConfigurationContext(ConfigurationContext context) {
         PROVIDER_SPI.setConfigurationContext(context);
+    }
+
+    /**
+     * This method allows to replace the current default {@link org.apache.tamaya.Configuration} with a new
+     * instance. It is the responsibility of the ConfigurationProvider to trigger
+     * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
+     * listeners can do whatever is appropriate to react to any given configuration change.
+     *
+     * @param config the new Configuration to be applied, not null..
+     * @throws java.lang.UnsupportedOperationException if the current provider is read-only and
+     *                                                 does not support
+     *                                                 applying a new Configuration.
+     */
+    public static void setConfiguration(Configuration config) {
+        PROVIDER_SPI.setConfiguration(config);
     }
 
     /**
