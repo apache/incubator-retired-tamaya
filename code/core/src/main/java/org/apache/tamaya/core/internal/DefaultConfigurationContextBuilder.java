@@ -134,6 +134,10 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         checkBuilderState();
         List<PropertySource> propertySources = new ArrayList<>();
         propertySources.addAll(ServiceContextManager.getServiceContext().getServices(PropertySource.class));
+        for(PropertySourceProvider provider:
+                ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class)){
+                propertySources.addAll(provider.getPropertySources());
+        }
         Collections.sort(propertySources, DEFAULT_PROPERTYSOURCE_COMPARATOR);
         return addPropertySources(propertySources);
     }
