@@ -66,7 +66,12 @@ public class FilterContextTest {
         }
         FilterContext ctx = new FilterContext("testToString",
                 config, true);
-        assertEquals("FilterContext{key='testToString', configEntries={key-0=value-0, key-1=value-1}}", ctx.toString());
+        String toString = ctx.toString();
+        assertNotNull(toString);
+        assertTrue(toString.contains("FilterContext{key='testToString', configEntries={"));
+        assertTrue(toString.contains("key-0=value-0"));
+        assertTrue(toString.contains("key-1=value-1"));
+        assertTrue(toString.endsWith("}"));
     }
 
 }
