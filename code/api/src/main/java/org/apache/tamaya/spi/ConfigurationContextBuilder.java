@@ -56,7 +56,7 @@ public interface ConfigurationContextBuilder {
      * This method can be used for adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
      * lowest priority  regardless of its current ordinal value. To sort the property
-     * sources based on their ordinals call {@kink #sortPropertySources}.
+     * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the PropertySources to add
      * @return this builder, for chaining, never null.
@@ -69,7 +69,7 @@ public interface ConfigurationContextBuilder {
      * This method can be used for programmatically adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
      * lowest priority regardless of its current ordinal value. To sort the property
-     * sources based on their ordinals call {@kink #sortPropertySources}.
+     * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the PropertySources to add
      * @return this builder, for chaining, never null.
@@ -181,7 +181,7 @@ public interface ConfigurationContextBuilder {
      * Adds the given PropertyFilter instances, hereby the instances are added
      * to the end of the list with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
-     * filters call {@kink #sortPropertyFilter}.
+     * filters call {@link #sortPropertyFilter}.
      *
      * @param filters the filters to add
      * @return this builder, for chaining, never null.
@@ -192,7 +192,7 @@ public interface ConfigurationContextBuilder {
      * Adds the given PropertyFilter instances, hereby the instances are added
      * to the end of the list with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
-     * filters call {@kink #sortPropertyFilter}.
+     * filters call {@link #sortPropertyFilter}.
      *
      * @param filters the filters to add
      * @return this builder, for chaining, never null.
@@ -232,6 +232,7 @@ public interface ConfigurationContextBuilder {
      *
      * @param typeToConvert     the type for which the converter is for
      * @param propertyConverters the PropertyConverters to add for this type
+     * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
     <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
@@ -245,6 +246,7 @@ public interface ConfigurationContextBuilder {
      *
      * @param typeToConvert     the type for which the converter is for
      * @param propertyConverters the PropertyConverters to add for this type
+     * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
     <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
@@ -262,6 +264,7 @@ public interface ConfigurationContextBuilder {
      *
      * @param typeToConvert the type which the converter is for
      * @param propertyConverters    the converter to remove
+     * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
     <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
@@ -273,6 +276,7 @@ public interface ConfigurationContextBuilder {
      *
      * @param typeToConvert the type which the converter is for
      * @param propertyConverters    the converter to remove
+     * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
     <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
