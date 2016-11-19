@@ -23,7 +23,7 @@ package org.apache.tamaya.banner;
  */
 public class ConsoleBannerPrinter extends AbstractBannerPrinter {
     @Override
-    void outputSingleLine(CharSequence line) {
+    void outputSingleLine(String line) {
         System.out.println(line);
     }
 }

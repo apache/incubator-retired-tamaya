@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class LoggingBannerPrinter extends AbstractBannerPrinter {
     private static final Logger log = Logger.getLogger(LoggingBannerPrinter.class.getName());
     @Override
-    void outputSingleLine(CharSequence line) {
-        log.log(Level.INFO, line.toString());
+    void outputSingleLine(String line) {
+        log.log(Level.INFO, line);
     }
 }

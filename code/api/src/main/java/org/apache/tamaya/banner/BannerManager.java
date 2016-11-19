@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.banner;
 
+import java.util.Locale;
+import java.util.Objects;
 
 public class BannerManager {
     enum BannerTarget {
@@ -27,6 +29,8 @@ public class BannerManager {
     private BannerTarget bannerTarget;
 
     public BannerManager(String value) {
+        value = Objects.requireNonNull(value).toUpperCase(Locale.getDefault());
+
         try {
             bannerTarget = BannerTarget.valueOf(value);
         } catch (NullPointerException | IllegalArgumentException e) {
@@ -51,5 +55,4 @@ public class BannerManager {
 
         bp.outputBanner();
     }
-
 }

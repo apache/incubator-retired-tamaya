@@ -55,5 +55,5 @@ abstract class AbstractBannerPrinter implements BannerPrinter {
         }
     }
 
-    abstract void outputSingleLine(CharSequence line);
+    abstract void outputSingleLine(String line);
 }
