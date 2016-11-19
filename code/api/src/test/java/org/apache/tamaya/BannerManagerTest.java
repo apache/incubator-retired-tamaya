@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.banner;
+package org.apache.tamaya;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

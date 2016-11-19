@@ -16,18 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.banner;
+package org.apache.tamaya;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- * Logs the banner via JUL at level {@link java.util.logging.Level#INFO}.
- */
-public class LoggingBannerPrinter extends AbstractBannerPrinter {
-    private static final Logger log = Logger.getLogger(LoggingBannerPrinter.class.getName());
-    @Override
-    void outputSingleLine(String line) {
-        log.log(Level.INFO, line);
-    }
-}

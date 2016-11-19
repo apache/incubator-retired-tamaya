@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.banner.BannerManager;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
