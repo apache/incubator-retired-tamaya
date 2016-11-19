@@ -23,10 +23,12 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Static access to the {@link Configuration} for the very application.
@@ -46,31 +48,20 @@ public final class ConfigurationProvider {
     }
 
     private static void showBanner() {
-        BufferedReader reader = null;
         try{
             URL url = ConfigurationProvider.class.getResource("/tamaya-banner.txt");
-            if(url!=null){
-                reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
-                StringBuilder b = new StringBuilder();
-                String line = reader.readLine();
-                while(line != null){
-                    b.append(line).append('\n');
-                    line = reader.readLine();
+
+            if (url!=null) {
+                Path path = Paths.get(url.toURI());
+                List<String> content = Files.readAllLines(path, StandardCharsets.UTF_8);
+
+                for (String line : content) {
+                    System.out.println(line);
                 }
-                System.out.println(b.toString());
             }
         }
-        catch(Exception e){
+        catch (Exception e){
             System.out.println("************ TAMAYA CONFIG ************");
-        }
-        finally{
-            if(reader!=null){
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
