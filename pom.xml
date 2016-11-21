@@ -458,36 +458,6 @@ under the License.
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <inherited>true</inherited>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <instructions>
-                            <Bundle-DocURL>http://tamaya.incubator.apache.org</Bundle-DocURL>
-                            <Bundle-SymbolicName>
-                                ${project.groupId}.${project.artifactId}
-                            </Bundle-SymbolicName>
-                            <Bundle-Vendor>The Apache Software Foundation</Bundle-Vendor>
-                        </instructions>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>cleanVersions</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>cleanVersions</goal>
-                            </goals>
-                            <configuration>
-                                <versions>
-                                    <karaf.osgi.version>${osgi.version}</karaf.osgi.version>
-                                </versions>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-publish-plugin</artifactId>
                     <version>1.1</version>
@@ -713,6 +683,28 @@ under the License.
                     <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
+            <plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>bnd-process</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<archive>
+						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
         </plugins>
     </build>
 

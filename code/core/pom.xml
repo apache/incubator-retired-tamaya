@@ -67,36 +67,4 @@ under the License.
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Import-Package>
-                            org.apache.tamaya,
-                            org.apache.tamaya.spi,
-                            javax.annotation,
-                            *
-                        </Import-Package>
-                        <Private-Package>
-                            org.apache.tamaya.core.internal,
-                            org.apache.tamaya.core.internal.converters
-                        </Private-Package>
-                        <Export-Package>
-                            org.apache.tamaya.core,
-                            org.apache.tamaya.core.propertysource,
-                            org.apache.tamaya.core.provider
-                        </Export-Package>
-                        <Bundle-Activator>
-                            org.apache.tamaya.core.internal.OSGIActivator
-                        </Bundle-Activator>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

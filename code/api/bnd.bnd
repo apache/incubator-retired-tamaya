@@ -1,0 +1,3 @@
+Export-Package: \
+	org.apache.tamaya,\
+	org.apache.tamaya.spi
