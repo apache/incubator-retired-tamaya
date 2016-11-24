@@ -1,0 +1,5 @@
+Export-Package: \
+	org.apache.tamaya.core,\
+	org.apache.tamaya.core.propertysource,\
+	org.apache.tamaya.core.provider
+Bundle-Activator: org.apache.tamaya.core.internal.OSGIActivator
