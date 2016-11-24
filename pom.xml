@@ -212,6 +212,7 @@ under the License.
         <module>buildconfigurations</module>
         <module>code</module>
         <module>docs</module>
+        <module>examples</module>
         <module>distribution</module>
     </modules>
 
