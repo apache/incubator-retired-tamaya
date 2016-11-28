@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<FindBugsFilter>
+    <Match>
+        <!-- Also catches simple anonamous classes... -->
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />
+    </Match>
+
+    <Match>
+        <!-- Note: @todo Write a bug report
+          The current version of FindBugs (version 3.0.0) is not able to detect
+          the usage of this method via a method reference.
+          Oliver B. Fischer, 17.01.2015
+        -->
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+    </Match>
+
+    <Match>
+        <!-- Note: @todo Write a bug report
+          The current version of FindBugs (version 3.0.0) is not able to detect
+          correctly caught exceptions.
+          Oliver B. Fischer, 09.02.2015
+        -->
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
+    </Match>
+
+    <Match>
+        <!-- Note: We will not fail because of an unread field. -->
+        <Bug pattern="URF_UNREAD_FIELD" />
+    </Match>
+
+    <Match>
+        <!-- Note: We will not fail because of an unused field -->
+        <Bug pattern="UUF_UNUSED_FIELD" />
+    </Match>
+
+    <Match>
+        <Class name='org.apache.tamaya.integration.cdi.TamayaCDIIntegration'/>
+        <Method name="initBeanManager"/>
+    </Match>
+
+    <Match>
+        <!-- Note:
+             Intended. See the inline comment on this issue in the source file
+             in revision ae66299e25b41167008021ffe95cad236f6e2bd3
+             Oliver B. Fischer, 17.01.2015
+          -->
+        <Class name='org.apache.tamaya.resource.internal.ClasspathCollector'/>
+        <Method name="doFindPathMatchingJarResources"
+                returns="java.util.Collection"/>
+        <Bug pattern="OS_OPEN_STREAM"/>
+
+    </Match>
+
+    <!-- False positive returnin null for Boolean is required by the implemented interface. -->
+    <Match>
+        <Class name="org.apache.tamaya.core.internal.converters.BooleanConverter"/>
+    </Match>
+
+    <!-- False positive: example class used for config demo. -->
+    <Match>
+        <Class name="org.apache.tamaya.examples.injection.Example"/>
+    </Match>
+
+    <!--
+     * findBugs does not detect usage via method references
+     * should be removed after see TODO ProgrammaticConfigurationContext:131
+    -->
+
+    <!-- Issues to review -->
+
+    <Match>
+        <Package name="org.apache.tamaya.core.internal"/>
+    </Match>
+
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.resolver.internal.ResourceResolver" />-->
+    <!--</Match>-->
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.resolver.internal.FileResolver" />-->
+    <!--</Match>-->
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator" />-->
+    <!--</Match>-->
+    <!--<Match>-->
+        <!--<Class name="org.apache.tamaya.inject.internal.ConfiguredSetterMethod" />-->
+    <!--</Match>-->
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.ConfigChangeCallbackMethod" />
+    </Match>
+
+    <Match>
+        <Class name="org.apache.tamaya.events.internal.DefaultConfigChangeObserver" />
+        <Method name="checkConfigurationUpdate" />
+    </Match>
+
+    <Match>
+        <Class name="org.apache.tamaya.inject.internal.DefaultDynamicValue"/>
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.integration.cdi.DefaultDynamicValue"/>
+    </Match>
+    <Match>
+        <!-- Imported from APache Felix. -->
+        <Class name="org.apache.tamaya.integration.osgi.felix.FilePersistenceManager"/>
+    </Match>
+    <Match>
+        <!-- Imported from APache Felix. -->
+        <Class name="org.apache.tamaya.integration.osgi.felix.ConfigurationHandler"/>
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.integration.osgi.injection.Activator"/>
+    </Match>
+    <Match>
+        <Class name="org.apache.tamaya.resource.internal.FileCollector"/>
+        <Method name="traverseAndSelectFromChildren"/>
+    </Match>
+
+</FindBugsFilter>
