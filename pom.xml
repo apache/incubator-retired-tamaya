@@ -73,7 +73,6 @@ under the License.
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.20</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
-        <mockito.version>1.10.19</mockito.version>
         <rat.version>0.12</rat.version>
         <toolchains.plugin>1.1</toolchains.plugin>
 
@@ -221,8 +220,14 @@ under the License.
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
+                <version>1.10.19</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -260,14 +265,6 @@ under the License.
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -336,7 +333,7 @@ under the License.
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>6.2</version>
+                            <version>7.3</version>
                             <exclusions><!-- MCHECKSTYLE-156 -->
                                 <exclusion>
                                     <groupId>com.sun</groupId>
@@ -405,7 +402,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6.0</version>
                     <configuration>
                         <debug>true</debug>
                         <optimize>${maven.compile.optimize}</optimize>
@@ -699,7 +696,7 @@ under the License.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.5</version>
+				<version>3.0.2</version>
 				<configuration>
 					<archive>
 						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
