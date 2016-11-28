@@ -37,7 +37,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
     private static final Logger LOG = Logger.getLogger(EnvironmentPropertySource.class.getName());
 
     /**
-     * default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
+     * Default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
      */
     public static final int DEFAULT_ORDINAL = 300;
 
