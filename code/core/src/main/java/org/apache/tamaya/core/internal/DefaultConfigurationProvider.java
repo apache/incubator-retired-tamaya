@@ -22,9 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
-import org.apache.tamaya.spi.ServiceContextManager;
 
-import javax.annotation.Priority;
 import java.util.Objects;
 
 /**
@@ -40,6 +38,13 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
             .addDefaultPropertySources().build();
 
     private Configuration config = new DefaultConfiguration(context);
+
+    {
+        String bannerConfig = config.getOrDefault("tamaya.banner", "OFF");
+
+        BannerManager bm = new BannerManager(bannerConfig);
+        bm.outputBanner();
+    }
 
     @Override
     public Configuration getConfiguration() {

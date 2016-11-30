@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya;
+package org.apache.tamaya.core.internal;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +37,7 @@ public class BannerManagerTest {
     @Mock
     private Logger logger;
 
+    @Ignore
     @Test
     public void valueConsoleSendsBannerToSystemOut() {
         PrintStream standard = System.out;

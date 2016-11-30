@@ -30,13 +30,6 @@ public final class ConfigurationProvider {
 
     private static final ConfigurationProviderSpi PROVIDER_SPI = loadSpi();
 
-    static {
-        String bannerConfig = PROVIDER_SPI.getConfiguration().getOrDefault("tamaya.banner", "OFF");
-
-        BannerManager bm = new BannerManager(bannerConfig);
-        bm.outputBanner();
-    }
-
     private static ConfigurationProviderSpi loadSpi() {
         ConfigurationProviderSpi spi = ServiceContextManager.getServiceContext()
                 .getService(ConfigurationProviderSpi.class);
