@@ -67,4 +67,21 @@ under the License.
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <!--
+                     ! Add -Djava.security.debug=all for debugging if needed
+                     !-->
+                    <argLine>-Djava.security.policy=${project.basedir}/src/test/resources/java-security.policy</argLine>
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

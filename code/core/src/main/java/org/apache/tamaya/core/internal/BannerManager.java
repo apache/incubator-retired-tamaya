@@ -20,18 +20,49 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
 
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.apache.tamaya.core.internal.BannerManager.BANNER_RESOURCE_PATH;
+
+/**
+ * Controls the output of the banner of Tamaya.
+ *
+ * <p>This class controls if and how the banner of Tamaya is presented the user.
+ * The banner is provided by the Tamaya Core under the resource path
+ * {@value BANNER_RESOURCE_PATH}.</p>
+ *
+ * <p>The behavior of the banner manager can be controlled by
+ * specifying the configuration key {@code tamaya.banner} with one of
+ * the three folowing values:
+ *
+ * <dl>
+ *     <dt>OFF</dt>
+ *     <dd>Banner will not be shown</dd>
+ *     <dt>CONSOLE</dt>
+ *     <dd>The banner will be printed on STDOUT</dd>
+ *     <dt>LOGGER</dt>
+ *     <dd>The banner will be logged</dd>
+ * </dl>
+ *
+ * In case of any other value the banner will not be shown.
+ * </p>
+ *
+ *
+ *
+ * @see BannerTarget
+ */
 class BannerManager {
+    /**
+     * The resouce path to the file containing the banner of Tamaya.
+     */
+    protected final static String BANNER_RESOURCE_PATH = "/tamaya-banner.txt";
+
     enum BannerTarget {
         OFF, CONSOLE, LOGGER
     }
@@ -72,19 +103,15 @@ abstract class AbstractBannerPrinter implements BannerPrinter {
 
     @Override
     public void outputBanner() {
-        try {
-            URL url = ConfigurationProvider.class.getResource("/tamaya-banner.txt");
+        try (InputStream in = ConfigurationProvider.class.getResourceAsStream(BANNER_RESOURCE_PATH)) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line;
 
-            if (url != null) {
-                Path path = Paths.get(url.toURI());
-                List<String> content = Files.readAllLines(path, StandardCharsets.UTF_8);
-
-                for (String line : content) {
-                    outputSingleLine(line);
-                }
+            while ((line = reader.readLine()) != null) {
+                outputSingleLine(line);
             }
         } catch (Exception e) {
-            log.log(Level.FINE, "Failed to output the banner of tamaya.", e);
+            log.log(Level.WARNING, "Failed to output the banner of tamaya.", e);
         }
     }
 

@@ -18,31 +18,37 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.PrintStream;
-import java.util.logging.Logger;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.Permission;
 
-@RunWith(MockitoJUnitRunner.class)
 public class BannerManagerTest {
 
-    @Mock
-    private PrintStream printStream;
-
-    @Mock
-    private Logger logger;
-
-    @Ignore
     @Test
     public void valueConsoleSendsBannerToSystemOut() {
+
+        SecurityManager sm = new SecurityManager();
+        AccessControlContext con = AccessController.getContext();
+
+        Permission p = new RuntimePermission("setIO");
+
+        /*
+         * Here we check the precondition for this unit test
+         * and the correct setup of the test enviroment
+         * The JVM must have been started with
+         * -Djava.security.policy=<path_to_core_module</src/test/resources/java-security.policy
+         */
+        sm.checkPermission(p, con);
+
         PrintStream standard = System.out;
+        PrintStream printStream = Mockito.mock(PrintStream.class);
 
         System.setOut(printStream);
+        standard.println("Changed stream for STDOUT successfully");
 
         try {
             BannerManager bm = new BannerManager("console");
@@ -59,6 +65,7 @@ public class BannerManagerTest {
     public void invalidValueAvoidsLoggingToConsonle() {
 
         PrintStream standard = System.out;
+        PrintStream printStream = Mockito.mock(PrintStream.class);
 
         System.setOut(printStream);
 
