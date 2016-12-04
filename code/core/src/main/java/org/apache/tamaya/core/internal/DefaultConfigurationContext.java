@@ -36,11 +36,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
 /**
- * Default Implementation of a simple ConfigurationContext.
+ * Default implementation of a simple ConfigurationContext.
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
+
     /** The logger used. */
     private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
+
     /**
      * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
      */
@@ -66,6 +68,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      * Lock for internal synchronization.
      */
     private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
+
     /**
      * Lock for internal synchronization.
      */

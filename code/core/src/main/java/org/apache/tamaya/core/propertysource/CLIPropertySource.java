@@ -35,8 +35,8 @@ public class CLIPropertySource extends BasePropertySource{
     /** The map of parsed main arguments. */
     private static Map<String,String> mainArgs;
 
-    /** Initializes the initial state. */
-    static{
+    /* Initializes the initial state. */
+    static {
         initMainArgs(args);
     }
 

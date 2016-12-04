@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * Abstract {@link org.apache.tamaya.spi.PropertySource} that allows to set a default ordinal that will be used, if no
  * ordinal is provided with the config.
  */
-public abstract class BasePropertySource implements PropertySource{
+public abstract class BasePropertySource implements PropertySource {
     /** default ordinal that will be used, if no ordinal is provided with the config. */
     private int defaultOrdinal;
     /** Used if the ordinal has been set explicitly. */
