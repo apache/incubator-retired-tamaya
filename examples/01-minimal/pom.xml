@@ -32,7 +32,7 @@ under the License.
     <artifactId>01-minimal</artifactId>
     <version>0.3-incubating-SNAPSHOT</version>
 
-    <name>Apache Tamaya Minimal Examples</name>
+    <name>Apache Tamaya Minimal Example</name>
 
     <dependencies>
         <dependency>
