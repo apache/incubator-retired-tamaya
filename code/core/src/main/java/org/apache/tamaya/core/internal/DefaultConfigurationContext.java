@@ -81,33 +81,10 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         propertySources.addAll(builder.propertySources);
         // now sort them according to their ordinal values
         immutablePropertySources = Collections.unmodifiableList(propertySources);
-        StringBuilder b= new StringBuilder();
-        b.append("Registered " + immutablePropertySources.size() + " property sources: \n");
-        b.append("   NAME [TYPE]\n");
-        b.append("   ---------------------------------------------------\n");
-        for(PropertySource ps: immutablePropertySources){
-            b.append("   ").append(ps.getName()).append("  [").append(ps.getClass().getSimpleName()).append("],\n");
-        }
-        if(b.length()>0) {
-            b.setLength(b.length() - 2);
-        }
-        LOG.info(b.toString());
-        b.setLength(0);
 
         // as next step we pick up the PropertyFilters pretty much the same way
         List<PropertyFilter> propertyFilters = new ArrayList<>(builder.getPropertyFilters());
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
-        b.append("Registered " + immutablePropertyFilters.size() + " property filters: \n");
-        b.append("   TYPE\n");
-        b.append("   ----------------------------------------------------------\n");
-        for(PropertyFilter pf: immutablePropertyFilters){
-            b.append("   ").append(pf.getClass().getName()).append(",\n");
-        }
-        if(b.length()>0) {
-            b.setLength(b.length() - 2);
-        }
-        LOG.info(b.toString());
-        b.setLength(0);
 
         // Finally add the converters
         for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:builder.getPropertyConverter().entrySet()) {
@@ -115,21 +92,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                 this.propertyConverterManager.register(en.getKey(), converter);
             }
         }
-        b.append("Registered " + propertyConverterManager.getPropertyConverters().size() + " property converters:\n");
-        b.append("   TYPE\n");
-        b.append("   ----------------------------------------------------------\n");
-        for(Map.Entry<TypeLiteral<?>,List<PropertyConverter<?>>> list: propertyConverterManager.getPropertyConverters().entrySet()){
-            b.append("   ").append(list.getKey().getRawType().getName()).append(" -> \n");
-            for(PropertyConverter<?> conv:list.getValue()) {
-                b.append("     ").append(conv.toString()).append(",\n");
-            }
-        }
-        if(b.length()>0) {
-            b.setLength(b.length() - 2);
-        }
-        LOG.info(b.toString());
-        b.setLength(0);
-
         propertyValueCombinationPolicy = builder.combinationPolicy;
         if(propertyValueCombinationPolicy==null){
             propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
@@ -137,7 +99,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         if(propertyValueCombinationPolicy==null){
             propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
         }
-        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
 
@@ -185,34 +146,54 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         StringBuilder b = new StringBuilder("ConfigurationContext{\n");
         b.append("  Property Sources\n");
         b.append("  ----------------\n");
-        b.append("  CLASS                         NAME                                                                  ORDINAL SCANNABLE SIZE\n");
-        for(PropertySource ps:getPropertySources()){
-            b.append("  ");
-            appendFormatted(b, ps.getClass().getSimpleName(), 30);
-            appendFormatted(b, ps.getName(), 70);
-            appendFormatted(b, String.valueOf(ps.getOrdinal()), 8);
-            appendFormatted(b, String.valueOf(ps.isScannable()), 10);
-            if(ps.isScannable()) {
-                appendFormatted(b, String.valueOf(ps.getProperties().size()), 8);
-            }else{
-                appendFormatted(b, "-", 8);
+        if(immutablePropertySources.isEmpty()){
+            b.append("  No property sources loaded.\n\n");
+        }else {
+            b.append("  CLASS                         NAME                                                                  ORDINAL SCANNABLE SIZE    STATE     ERROR\n\n");
+            for (PropertySource ps : immutablePropertySources) {
+                b.append("  ");
+                appendFormatted(b, ps.getClass().getSimpleName(), 30);
+                appendFormatted(b, ps.getName(), 70);
+                appendFormatted(b, String.valueOf(ps.getOrdinal()), 8);
+                appendFormatted(b, String.valueOf(ps.isScannable()), 10);
+                if (ps.isScannable()) {
+                    appendFormatted(b, String.valueOf(ps.getProperties().size()), 8);
+                } else {
+                    appendFormatted(b, "-", 8);
+                }
+                PropertyValue state = ps.get("_state");
+                if(state==null){
+                    appendFormatted(b, "OK", 10);
+                }else {
+                    appendFormatted(b, state.getValue(), 10);
+                    if("ERROR".equals(state.getValue())){
+                        PropertyValue val = ps.get("_exception");
+                        if(val!=null) {
+                            appendFormatted(b, val.getValue(), 30);
+                        }
+                    }
+                }
+                b.append('\n');
             }
-            b.append('\n');
+            b.append("\n");
         }
-        b.append("\n");
         b.append("  Property Filters\n");
         b.append("  ----------------\n");
-        b.append("  CLASS                         INFO\n");
-        for(PropertyFilter filter:getPropertyFilters()){
-            b.append("  ");
-            appendFormatted(b, filter.getClass().getSimpleName(), 30);
-            b.append(removeNewLines(filter.toString()));
-            b.append('\n');
+        if(immutablePropertyFilters.isEmpty()){
+            b.append("  No property filters loaded.\n\n");
+        }else {
+            b.append("  CLASS                         INFO\n\n");
+            for (PropertyFilter filter : getPropertyFilters()) {
+                b.append("  ");
+                appendFormatted(b, filter.getClass().getSimpleName(), 30);
+                b.append(removeNewLines(filter.toString()));
+                b.append('\n');
+            }
+            b.append("\n\n");
         }
-        b.append("\n\n");
         b.append("  Property Converters\n");
         b.append("  -------------------\n");
-        b.append("  CLASS                         TYPE                          INFO\n");
+        b.append("  CLASS                         TYPE                          INFO\n\n");
         for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> converterEntry:getPropertyConverters().entrySet()){
             for(PropertyConverter converter: converterEntry.getValue()){
                 b.append("  ");
@@ -222,6 +203,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                 b.append('\n');
             }
         }
+        b.append("\n\n");
+        b.append("  PropertyValueCombinationPolicy: " + getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
         b.append('}');
         return b.toString();
     }

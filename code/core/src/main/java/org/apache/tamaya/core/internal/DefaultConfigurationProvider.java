@@ -35,7 +35,8 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
     ConfigurationContext context = new DefaultConfigurationContextBuilder()
             .addDefaultPropertyConverters()
             .addDefaultPropertyFilters()
-            .addDefaultPropertySources().build();
+            .addDefaultPropertySources()
+            .build();
 
     private Configuration config = new DefaultConfiguration(context);
 

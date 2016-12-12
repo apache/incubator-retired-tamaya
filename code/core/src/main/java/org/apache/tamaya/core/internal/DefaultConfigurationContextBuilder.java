@@ -29,6 +29,7 @@ import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -364,7 +365,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         Map<TypeLiteral, Collection<PropertyConverter>> result = new HashMap<>();
         for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(
                 PropertyConverter.class)) {
-            TypeLiteral target = TypeLiteral.of(TypeLiteral.of(conv.getClass()).getType());
+            Type type = TypeLiteral.getGenericInterfaceTypeParameters(conv.getClass(), PropertyConverter.class)[0];
+            TypeLiteral target = TypeLiteral.of(type);
             Collection<PropertyConverter> convList = result.get(target);
             if (convList == null) {
                 convList = new ArrayList<>();

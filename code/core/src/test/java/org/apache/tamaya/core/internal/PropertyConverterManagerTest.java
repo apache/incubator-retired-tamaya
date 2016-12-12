@@ -79,7 +79,7 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testDirectSuperclassConverterMapping(){
-        PropertyConverterManager manager = new PropertyConverterManager();
+        PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters, hasSize(1));
         converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
@@ -97,15 +97,18 @@ public class PropertyConverterManagerTest {
     public void testMultipleConverterLoad(){
         PropertyConverterManager manager = new PropertyConverterManager();
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters, hasSize(0));
         manager = new PropertyConverterManager();
+        converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
+        assertThat(converters, hasSize(0));
+        manager.initConverters();
         converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters, hasSize(1));
     }
 
     @Test
     public void testTransitiveSuperclassConverterMapping(){
-        PropertyConverterManager manager = new PropertyConverterManager();
+        PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<A>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(A.class)));
         assertThat(converters, hasSize(1));
 
@@ -119,7 +122,7 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testDirectInterfaceMapping(){
-        PropertyConverterManager manager = new PropertyConverterManager();
+        PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<Readable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Readable.class)));
         assertThat(converters, hasSize(1));
 
@@ -133,7 +136,7 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testTransitiveInterfaceMapping1(){
-        PropertyConverterManager manager = new PropertyConverterManager();
+        PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<Runnable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Runnable.class)));
         assertThat(converters, hasSize(1));
 
@@ -147,7 +150,7 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testTransitiveInterfaceMapping2(){
-        PropertyConverterManager manager = new PropertyConverterManager();
+        PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<AutoCloseable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(AutoCloseable.class)));
         assertThat(converters, hasSize(1));
 

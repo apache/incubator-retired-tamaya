@@ -140,11 +140,11 @@ public class DefaultConfigurationContextBuilderTest {
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
         assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(ctx.getPropertyConverters().size(), 19);
+        assertEquals(ctx.getPropertyConverters().size(), 1);
         b = new DefaultConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
-        assertEquals(ctx.getPropertyConverters().size(), 19);
+        assertEquals(ctx.getPropertyConverters().size(), 1);
     }
 
     @Test

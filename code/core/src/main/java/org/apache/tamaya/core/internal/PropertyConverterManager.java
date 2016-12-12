@@ -80,7 +80,7 @@ public class PropertyConverterManager {
      * Constructor.
      */
     public PropertyConverterManager() {
-        this(true);
+        this(false);
     }
 
     public PropertyConverterManager(boolean init) {

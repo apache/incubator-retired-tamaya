@@ -222,4 +222,11 @@ public class DefaultConfiguration implements Configuration {
     public ConfigurationContext getConfigurationContext() {
         return configurationContext;
     }
+
+    @Override
+    public String toString() {
+        return "Configuration{\n " +
+                configurationContext +
+                '}';
+    }
 }

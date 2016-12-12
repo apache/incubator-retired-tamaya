@@ -250,11 +250,11 @@ public class ConfigurationContextBuilderTest {
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
         assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(ctx.getPropertyConverters().size(), 19);
+        assertEquals(ctx.getPropertyConverters().size(), 1);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
-        assertEquals(ctx.getPropertyConverters().size(), 19);
+        assertEquals(ctx.getPropertyConverters().size(), 1);
     }
 
     @Test
@@ -271,12 +271,12 @@ public class ConfigurationContextBuilderTest {
                         Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         ConfigurationContext ctx = b.build();
         assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(ctx.getPropertyConverters().size(), 19);
+        assertEquals(ctx.getPropertyConverters().size(), 1);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class),
                         Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
-        assertEquals(ctx.getPropertyConverters().size(), 19);
+        assertEquals(ctx.getPropertyConverters().size(), 1);
     }
 
     @Test
