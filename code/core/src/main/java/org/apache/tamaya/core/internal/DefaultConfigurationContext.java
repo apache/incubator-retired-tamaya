@@ -20,13 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.*;
 
 import javax.annotation.Priority;
 import java.io.Serializable;
@@ -204,7 +198,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             }
         }
         b.append("\n\n");
-        b.append("  PropertyValueCombinationPolicy: " + getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
+        b.append("  PropertyValueCombinationPolicy: ").append(getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
         b.append('}');
         return b.toString();
     }
