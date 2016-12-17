@@ -23,24 +23,29 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
+        <groupId>org.apache.tamaya.examples</groupId>
+        <artifactId>examples</artifactId>
         <version>0.3-incubating-SNAPSHOT</version>
     </parent>
 
+    <artifactId>02-custom-property-source</artifactId>
+    <name>Apache Tamaya Custom Propertysource Example</name>
 
-    <groupId>org.apache.tamaya.examples</groupId>
-    <artifactId>examples</artifactId>
-    <version>0.3-incubating-SNAPSHOT</version>
-
-    <name>Apache Tamaya Core Examples</name>
-
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>01-minimal</module>
-        <module>02-custom-property-source</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     
 </project>
