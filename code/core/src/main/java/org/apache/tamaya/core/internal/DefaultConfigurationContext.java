@@ -205,7 +205,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             }
         }
         b.append("\n\n");
-        b.append("  PropertyValueCombinationPolicy: " + getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
+        b.append("  PropertyValueCombinationPolicy: ").append(getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
         b.append('}');
         return b.toString();
     }
