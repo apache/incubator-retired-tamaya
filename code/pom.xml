@@ -37,13 +37,4 @@ under the License.
         <module>core</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-    
 </project>
