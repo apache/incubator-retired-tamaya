@@ -75,15 +75,13 @@ public class DefaultServiceContextTest {
         }
 
         {
-            Collection<MultiImplsInterface> services = context.getServices(MultiImplsInterface.class);
+            List<MultiImplsInterface> services = context.getServices(MultiImplsInterface.class);
             Assert.assertNotNull(services);
             Assert.assertEquals(3, services.size());
 
-            for (MultiImplsInterface service : services) {
-                Assert.assertTrue(service instanceof MultiImpl1 ||
-                                          service instanceof MultiImpl2 ||
-                                          service instanceof MultiImpl3);
-            }
+            Assert.assertTrue(services.get(0) instanceof MultiImpl2);
+            Assert.assertTrue(services.get(1) instanceof MultiImpl1);
+            Assert.assertTrue(services.get(2) instanceof MultiImpl3);
         }
     }
 

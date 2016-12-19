@@ -77,6 +77,7 @@ public final class DefaultServiceContext implements ServiceContext {
             for (T t : ServiceLoader.load(serviceType)) {
                 services.add(t);
             }
+            Collections.sort(services, PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
         } catch (ServiceConfigurationError e) {
             Logger.getLogger(DefaultServiceContext.class.getName()).log(Level.WARNING,
