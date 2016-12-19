@@ -532,7 +532,6 @@ under the License.
                             <exclude>**/*.md.vm</exclude>
                             <!-- Java Security Policy files can't have comments -->
                             <exclude>**/*.policy</exclude>
-                            <exclude>src/site/asciidoc/temp-properties-files-for-site/attributes.adoc</exclude>
                             <exclude>readme/**</exclude>
                         </excludes>
                         <includes>
