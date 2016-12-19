@@ -211,7 +211,6 @@ under the License.
     <modules>
         <module>buildconfigurations</module>
         <module>code</module>
-        <module>docs</module>
         <module>examples</module>
         <module>distribution</module>
     </modules>
@@ -763,20 +762,6 @@ under the License.
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-        <!-- Generate all documents -->
-        <profile>
-            <id>generateDocuments</id>
-            <activation>
-                <property>
-                    <name>generateDocuments</name>
-                </property>
-            </activation>
-
-            <modules>
-                <module>docs</module>
-            </modules>
         </profile>
 
         <!-- Do a fast build by skipping all code analysis tools -->
