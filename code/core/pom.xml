@@ -27,7 +27,7 @@ under the License.
 
     <artifactId>tamaya-core</artifactId>
     <name>Apache Tamaya Core Implementation</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
@@ -79,7 +79,6 @@ under the License.
                      !-->
                     <argLine>-Djava.security.policy=${project.basedir}/src/test/resources/java-security.policy</argLine>
                 </configuration>
-
             </plugin>
         </plugins>
     </build>
