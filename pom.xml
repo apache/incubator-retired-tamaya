@@ -436,6 +436,7 @@ under the License.
                     <artifactId>maven-jar-plugin</artifactId>
                     <configuration>
                         <archive>
+                            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                             <addMavenDescriptor>false</addMavenDescriptor>
                             <manifestEntries>
                                 <Specification-Title>Apache ${project.name}</Specification-Title>

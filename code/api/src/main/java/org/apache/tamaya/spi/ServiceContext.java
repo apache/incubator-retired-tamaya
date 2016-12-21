@@ -18,6 +18,9 @@
  */
 package org.apache.tamaya.spi;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -45,6 +48,19 @@ public interface ServiceContext {
     <T> T getService(Class<T> serviceType);
 
     /**
+     * Factory method to create a type, hereby a new instance is created on each access.
+     * If multiple implementations for the very serviceType exist then
+     * the one with the highest {@link javax.annotation.Priority} will be used as the base
+     * for creating subsequent instances.
+     *
+     * @param <T> the type of the service type.
+     * @param serviceType the service type.
+     * @return The new instance to be used, or {@code null}
+     * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
+     */
+    <T> T create(Class<T> serviceType);
+
+    /**
      * Access a list current services, given its type. The bootstrap mechanism should
      * order the instance for precedence, hereby the most significant should be
      * first in order.
@@ -56,4 +72,23 @@ public interface ServiceContext {
      */
      <T> List<T> getServices(Class<T> serviceType);
 
+    /**
+     * Loads resources from the current runtime context. This method allows to use runtime
+     * specific code to load resources, e.g. within OSGI environments.
+     * @param resource the resource, not null.
+     * @param cl the desired classloader context, if null, the current thread context classloader is used.
+     * @return the resources found
+     * @throws IOException
+     */
+    Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException;
+
+    /**
+     * Loads a resource from the current runtime context. This method allows to use runtime
+     * specific code to load a resource, e.g. within OSGI environments.
+     * @param resource the resource, not null.
+     * @param cl the desired classloader context, if null, the current thread context classloader is used.
+     * @return the resource found, or null.
+     * @throws IOException
+     */
+    URL getResource(String resource, ClassLoader cl);
 }

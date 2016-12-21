@@ -20,7 +20,10 @@ package org.apache.tamaya.spi;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -59,8 +62,23 @@ public class ServiceContextManagerTest {
         }
 
         @Override
+        public <T> T create(Class<T> serviceType) {
+            return null;
+        }
+
+        @Override
         public <T> List<T> getServices(Class<T> serviceType) {
             return Collections.emptyList();
+        }
+
+        @Override
+        public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
+            return null;
+        }
+
+        @Override
+        public URL getResource(String resource, ClassLoader cl) {
+            return null;
         }
     }
 

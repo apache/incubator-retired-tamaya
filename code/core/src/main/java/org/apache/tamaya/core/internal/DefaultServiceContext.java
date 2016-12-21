@@ -22,6 +22,8 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
+import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +35,7 @@ import java.util.logging.Logger;
  * {@link java.util.ServiceLoader} to load the services required.
  */
 public final class DefaultServiceContext implements ServiceContext {
+    private static final Logger LOG = Logger.getLogger(DefaultServiceContext.class.getName());
     /**
      * List current services loaded, per class.
      */
@@ -41,22 +44,37 @@ public final class DefaultServiceContext implements ServiceContext {
      * Singletons.
      */
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
+    private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
 
     @Override
     public <T> T getService(Class<T> serviceType) {
         Object cached = singletons.get(serviceType);
         if (cached == null) {
-            Collection<T> services = getServices(serviceType);
-            if (services.isEmpty()) {
-                cached = null;
-            } else {
-                cached = getServiceWithHighestPriority(services, serviceType);
-            }
+            cached = create(serviceType);
             if(cached!=null) {
                 singletons.put(serviceType, cached);
             }
         }
         return serviceType.cast(cached);
+    }
+
+    @Override
+    public <T> T create(Class<T> serviceType) {
+        Class<? extends T> implType = factoryTypes.get(serviceType);
+        if(implType==null) {
+            Collection<T> services = getServices(serviceType);
+            if (services.isEmpty()) {
+                return null;
+            } else {
+                return getServiceWithHighestPriority(services, serviceType);
+            }
+        }
+        try {
+            return implType.newInstance();
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Failed to create instabce of " + implType.getName(), e);
+            return  null;
+        }
     }
 
     /**
@@ -80,7 +98,7 @@ public final class DefaultServiceContext implements ServiceContext {
             Collections.sort(services, PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
         } catch (ServiceConfigurationError e) {
-            Logger.getLogger(DefaultServiceContext.class.getName()).log(Level.WARNING,
+            LOG.log(Level.WARNING,
                     "Error loading services current type " + serviceType, e);
             if(services==null){
                 services = Collections.emptyList();
@@ -114,15 +132,16 @@ public final class DefaultServiceContext implements ServiceContext {
      * @throws ConfigException if there are multiple service implementations with the maximum priority
      */
     private <T> T getServiceWithHighestPriority(Collection<T> services, Class<T> serviceType) {
-
+        T highestService = null;
         // we do not need the priority stuff if the list contains only one element
         if (services.size() == 1) {
-            return services.iterator().next();
+            highestService = services.iterator().next();
+            this.factoryTypes.put(serviceType, highestService.getClass());
+            return highestService;
         }
 
         Integer highestPriority = null;
         int highestPriorityServiceCount = 0;
-        T highestService = null;
 
         for (T service : services) {
             int prio = getPriority(service);
@@ -142,13 +161,35 @@ public final class DefaultServiceContext implements ServiceContext {
                                                            highestPriority,
                                                            services));
         }
-
+        this.factoryTypes.put(serviceType, highestService.getClass());
         return highestService;
     }
 
     @Override
     public int ordinal() {
         return 1;
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
+        if(cl==null){
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        if(cl==null){
+            cl = getClass().getClassLoader();
+        }
+        return cl.getResources(resource);
+    }
+
+    @Override
+    public URL getResource(String resource, ClassLoader cl) {
+        if(cl==null){
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        if(cl==null){
+            cl = getClass().getClassLoader();
+        }
+        return cl.getResource(resource);
     }
 
 

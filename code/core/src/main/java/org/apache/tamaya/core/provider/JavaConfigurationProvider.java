@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -86,18 +87,11 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
     }
 
     private Collection<? extends PropertySource> loadPropertySourcesByName(String filename) {
-        URL currentUrl = null;
-
         List<PropertySource> propertySources = new ArrayList<>();
-        Enumeration<URL> propertyLocations = Collections.emptyEnumeration();
-
+        Enumeration<URL> propertyLocations;
         try {
-            ClassLoader cl = currentThread().getContextClassLoader();
-
-            if (cl != null) {
-                propertyLocations = currentThread().getContextClassLoader()
-                                                   .getResources(filename);
-            }
+            propertyLocations = ServiceContextManager.getServiceContext()
+                    .getResources(filename, currentThread().getContextClassLoader());
         } catch (IOException e) {
             String msg = format("Error while searching for %s", filename);
 
@@ -105,7 +99,7 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
         }
 
         while (propertyLocations.hasMoreElements()) {
-            currentUrl = propertyLocations.nextElement();
+            URL currentUrl = propertyLocations.nextElement();
             SimplePropertySource sps = new SimplePropertySource(currentUrl);
 
             propertySources.add(sps);

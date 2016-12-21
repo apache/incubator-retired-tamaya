@@ -28,6 +28,9 @@ public class PriorityServiceComparator implements Comparator<Object> {
 
     private static final PriorityServiceComparator INSTANCE = new PriorityServiceComparator();
 
+    /** Singleton constructor. */
+    private PriorityServiceComparator(){}
+
     /**
      * Get the shared instance of the comparator.
      * @return the shared instance, never null.

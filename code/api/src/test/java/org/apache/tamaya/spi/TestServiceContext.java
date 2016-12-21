@@ -18,12 +18,9 @@
  */
 package org.apache.tamaya.spi;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,19 +44,24 @@ public final class TestServiceContext implements ServiceContext {
     public <T> T getService(Class<T> serviceType) {
         T cached = serviceType.cast(singletons.get(serviceType));
         if(cached==null) {
-            Collection<T> services = getServices(serviceType);
-            if (services.isEmpty()) {
-                cached = (T) Object.class; // as marker for 'nothing here'
-            }
-            else{
-                cached = services.iterator().next();
-            }
+            cached = create(serviceType);
             singletons.put((Class)serviceType, cached);
         }
         if (cached == Object.class) {
             cached = null;
         }
         return cached;
+    }
+
+    @Override
+    public <T> T create(Class<T> serviceType) {
+        Collection<T> services = getServices(serviceType);
+        if (services.isEmpty()) {
+            return (T) Object.class; // as marker for 'nothing here'
+        }
+        else{
+            return services.iterator().next();
+        }
     }
 
     /**
@@ -85,6 +87,16 @@ public final class TestServiceContext implements ServiceContext {
                                       "Error loading services current type " + serviceType, e);
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
+        return cl.getResources(resource);
+    }
+
+    @Override
+    public URL getResource(String resource, ClassLoader cl) {
+        return cl.getResource(resource);
     }
 
 }

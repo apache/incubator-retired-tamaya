@@ -24,10 +24,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -49,6 +48,11 @@ public class ServiceContextTest {
         }
 
         @Override
+        public <T> T create(Class<T> serviceType) {
+            return getService(serviceType);
+        }
+
+        @Override
         public <T> List<T> getServices(Class<T> serviceType) {
             if(String.class.equals(serviceType)){
                 List<String> list = new ArrayList<>();
@@ -56,6 +60,16 @@ public class ServiceContextTest {
                 return List.class.cast(list);
             }
             return Collections.emptyList();
+        }
+
+        @Override
+        public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
+            return cl.getResources(resource);
+        }
+
+        @Override
+        public URL getResource(String resource, ClassLoader cl) {
+            return cl.getResource(resource);
         }
     };
 

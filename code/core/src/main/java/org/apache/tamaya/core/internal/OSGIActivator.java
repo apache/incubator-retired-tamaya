@@ -38,9 +38,10 @@ public class OSGIActivator implements BundleActivator {
     @Override
     public void start(BundleContext context) {
         // Register marker service
-        ServiceContextManager.set(new OSGIServiceContext(context));
+        serviceLoader = new OSGIServiceLoader(context);
+        ServiceContextManager.set(new OSGIServiceContext(serviceLoader));
         LOG.info("Registered OSGI enabled ServiceContext...");
-        serviceLoader = new OSGIServiceLoader();
+
         context.addBundleListener(serviceLoader);
     }
 
