@@ -33,6 +33,9 @@ public class PropertyFilterComparator implements Comparator<PropertyFilter>, Ser
 
     private static final PropertyFilterComparator INSTANCE = new PropertyFilterComparator();
 
+    /** Singleton constructor. */
+    private PropertyFilterComparator(){}
+
     /**
      * Get the shared instance of the comparator.
      * @return the shared instance, never null.

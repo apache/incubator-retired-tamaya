@@ -32,6 +32,9 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
 
     private static final PropertySourceComparator INSTANCE = new PropertySourceComparator();
 
+    /** Singleton constructor. */
+    private PropertySourceComparator(){}
+
     /**
      * Get the shared instance of the comparator.
      * @return the shared instance, never null.

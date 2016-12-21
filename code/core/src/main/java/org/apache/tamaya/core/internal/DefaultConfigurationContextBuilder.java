@@ -48,9 +48,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContextBuilder.class.getName());
 
-    public static final Comparator<PropertySource> DEFAULT_PROPERTYSOURCE_COMPARATOR = new PropertySourceComparator();
-    public static final Comparator<?> DEFAULT_PROPERTYFILTER_COMPARATOR = new PriorityServiceComparator();
-
     List<PropertyFilter> propertyFilters = new ArrayList<>();
     List<PropertySource> propertySources = new ArrayList<>();
     PropertyValueCombinationPolicy combinationPolicy =
@@ -139,7 +136,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
                 ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class)){
                 propertySources.addAll(provider.getPropertySources());
         }
-        Collections.sort(propertySources, DEFAULT_PROPERTYSOURCE_COMPARATOR);
+        Collections.sort(propertySources, PropertySourceComparator.getInstance());
         return addPropertySources(propertySources);
     }
 
