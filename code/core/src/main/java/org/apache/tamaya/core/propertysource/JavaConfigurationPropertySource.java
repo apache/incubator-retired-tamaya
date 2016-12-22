@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.provider;
+package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.core.internal.PropertySourceComparator;
 import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
@@ -26,11 +27,7 @@ import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
@@ -42,7 +39,7 @@ import static java.lang.Thread.currentThread;
  * {@code tamaya.defaultprops.disable} or {@code tamaya.defaults.disable}
  * as system or environment property this feature can be disabled.
  */
-public class JavaConfigurationProvider implements PropertySourceProvider {
+public class JavaConfigurationPropertySource extends BasePropertySource {
     /**
      * Default location in the classpath, where Tamaya looks for simple line based configuration by default.
      */
@@ -53,9 +50,15 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
      */
     public static final String DEFAULT_XML_PROPERTIES_FILE_NAME = "META-INF/javaconfiguration.xml";
 
-    private final boolean disabled = evaluateDisabled();
+    private static final int DEFAULT_ORDINAL = 900;
 
-    private boolean evaluateDisabled() {
+    private boolean enabled = evaluateEnabled();
+
+    public JavaConfigurationPropertySource(){
+        super("resource:META-INF/javaconfiguration.*", DEFAULT_ORDINAL);
+    }
+
+    private boolean evaluateEnabled() {
         String value = System.getProperty("tamaya.defaultprops.disable");
         if(value==null){
             value = System.getenv("tamaya.defaultprops.disable");
@@ -67,23 +70,17 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
             value = System.getenv("tamaya.defaults.disable");
         }
         if(value==null){
-            return false;
+            return true;
         }
-        return value.isEmpty() || Boolean.parseBoolean(value);
+        return value.isEmpty() || !Boolean.parseBoolean(value);
     }
 
-    @Override
-    public Collection<PropertySource> getPropertySources() {
-        if (isDisabled()) {
-            return Collections.emptySet();
-        }
-
+    private List<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
-
         propertySources.addAll(loadPropertySourcesByName(DEFAULT_SIMPLE_PROPERTIES_FILE_NAME));
         propertySources.addAll(loadPropertySourcesByName(DEFAULT_XML_PROPERTIES_FILE_NAME));
-
-        return Collections.unmodifiableList(propertySources);
+        Collections.sort(propertySources, PropertySourceComparator.getInstance());
+        return propertySources;
     }
 
     private Collection<? extends PropertySource> loadPropertySourcesByName(String filename) {
@@ -108,9 +105,31 @@ public class JavaConfigurationProvider implements PropertySourceProvider {
         return propertySources;
     }
 
-    protected boolean isDisabled() {
-        return disabled;
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled){
+        this.enabled = enabled;
     }
 
 
+    @Override
+    public Map<String, String> getProperties() {
+        if (!isEnabled()) {
+            return Collections.emptyMap();
+        }
+        Map<String,String> result = new HashMap<>();
+        for(PropertySource ps:getPropertySources()){
+            result.putAll(ps.getProperties());
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "JavaConfigurationPropertySource{" +
+                "enabled=" + enabled +
+                '}';
+    }
 }

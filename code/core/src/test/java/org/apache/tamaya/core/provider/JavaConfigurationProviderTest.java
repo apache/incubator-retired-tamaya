@@ -18,17 +18,15 @@
  */
 package org.apache.tamaya.core.provider;
 
+import org.apache.tamaya.core.propertysource.JavaConfigurationPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
-
-import java.util.Collection;
 
 import static org.apache.tamaya.ConfigurationProvider.getConfiguration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class JavaConfigurationProviderTest {
 
@@ -37,14 +35,8 @@ public class JavaConfigurationProviderTest {
 
     @Test
     public void loadsSimpleAndXMLPropertyFilesProper() {
-        Collection<PropertySource> propertySources = new JavaConfigurationProvider().getPropertySources();
-
-        assertThat(propertySources, notNullValue());
-        assertThat(propertySources, hasSize(2));
-
-        PropertySource propertySource = propertySources.iterator().next();
-
-        assertThat(propertySource.getProperties().keySet(), hasSize(5));  // double the size for .source values.
+        PropertySource propertySource = new JavaConfigurationPropertySource();
+        assertThat(propertySource.getProperties().keySet(), hasSize(7));  // double the size for .source values.
 
         for (int i = 1; i < 6; i++) {
             String key = "confkey" + i;

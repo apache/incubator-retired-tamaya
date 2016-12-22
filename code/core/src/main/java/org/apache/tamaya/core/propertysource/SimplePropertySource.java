@@ -132,7 +132,7 @@ public class SimplePropertySource extends BasePropertySource {
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
                 if (getName() == null){
-                    LOG.warning("No property source name found for " + this +", ommitting source meta-entries.");
+                    LOG.finest("No property source name found for " + this +", ommitting source meta-entries.");
                 } else {
                     properties.put("_" + key + ".source", getName());
                 }

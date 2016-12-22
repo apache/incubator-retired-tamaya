@@ -17,4 +17,3 @@
 # under the License.
 #
 org.apache.tamaya.core.testdata.TestPropertySourceProvider
-org.apache.tamaya.core.provider.JavaConfigurationProvider

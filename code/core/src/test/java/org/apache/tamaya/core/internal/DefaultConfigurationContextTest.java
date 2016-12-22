@@ -53,7 +53,7 @@ public class DefaultConfigurationContextTest {
         assertEquals(ctx.getPropertySources().size(), 0);
         ctx = new DefaultConfigurationContextBuilder().addDefaultPropertySources().build();
         assertNotNull(ctx.getPropertySources());
-        assertEquals(8, ctx.getPropertySources().size());
+        assertEquals(7, ctx.getPropertySources().size());
     }
 
     @Test

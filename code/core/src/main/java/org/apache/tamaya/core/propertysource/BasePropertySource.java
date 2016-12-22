@@ -155,4 +155,17 @@ public abstract class BasePropertySource implements PropertySource {
     public boolean isScannable(){
         return true;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BasePropertySource)) return false;
+        BasePropertySource that = (BasePropertySource) o;
+        return Objects.equals(getName(), that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
+    }
 }
