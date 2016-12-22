@@ -78,4 +78,14 @@ public class FloatConverter implements PropertyConverter<Float> {
                 return null;
         }
     }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }

@@ -38,6 +38,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class OSGIServiceLoader implements BundleListener {
     // Provide logging
     private static final Logger log = Logger.getLogger(OSGIServiceLoader.class.getName());
+    private static final String OSGIRESOURCE_MARKER = "META-INF/OSGIResource";
 
     private BundleContext context;
 
@@ -61,10 +62,10 @@ public class OSGIServiceLoader implements BundleListener {
 
     @Override
     public void bundleChanged(BundleEvent bundleEvent) {
-        // Parse and create metadta on STARTING
-        if (bundleEvent.getType() == BundleEvent.STARTED) {
+        // Parse and create metadata on STARTING
+        if (bundleEvent.getType() == BundleEvent.STARTING) {
             Bundle bundle = bundleEvent.getBundle();
-            if (bundle.getEntry("META-INF/OSGIResource") != null) {
+            if (bundle.getEntry(OSGIRESOURCE_MARKER) != null) {
                 synchronized (resourceBundles){
                     resourceBundles.add(bundle);
                 }
@@ -79,9 +80,9 @@ public class OSGIServiceLoader implements BundleListener {
                     processEntryPath(bundle, entryPath);
                 }
             }
-        }else if (bundleEvent.getType() == BundleEvent.STOPPED) {
+        } else if (bundleEvent.getType() == BundleEvent.STOPPING) {
             Bundle bundle = bundleEvent.getBundle();
-            if (bundle.getEntry("META-INF/OSGIResources") != null) {
+            if (bundle.getEntry(OSGIRESOURCE_MARKER) != null) {
                 synchronized (resourceBundles){
                     resourceBundles.remove(bundle);
                 }

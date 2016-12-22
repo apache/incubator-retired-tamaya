@@ -27,12 +27,14 @@ import org.osgi.framework.ServiceReference;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * ServiceContext implementation based on OSGI Service mechanisms.
  */
 public class OSGIServiceContext implements ServiceContext{
 
+    private static final Logger LOG = Logger.getLogger(OSGIServiceContext.class.getName());
     private static final OSGIServiceComparator REF_COMPARATOR = new OSGIServiceComparator();
 
     private final OSGIServiceLoader osgiServiceLoader;
@@ -53,6 +55,7 @@ public class OSGIServiceContext implements ServiceContext{
 
     @Override
     public <T> T getService(Class<T> serviceType) {
+        LOG.finest("TAMAYA  Loading service: " + serviceType.getName());
         ServiceReference<T> ref = this.osgiServiceLoader.getBundleContext().getServiceReference(serviceType);
         if(ref!=null){
             return this.osgiServiceLoader.getBundleContext().getService(ref);
@@ -70,6 +73,7 @@ public class OSGIServiceContext implements ServiceContext{
 
     @Override
     public <T> T create(Class<T> serviceType) {
+        LOG.finest("TAMAYA  Creating service: " + serviceType.getName());
         ServiceReference<T> ref = this.osgiServiceLoader.getBundleContext().getServiceReference(serviceType);
         if(ref!=null){
             try {
@@ -83,6 +87,7 @@ public class OSGIServiceContext implements ServiceContext{
 
     @Override
     public <T> List<T> getServices(Class<T> serviceType) {
+        LOG.finest("TAMAYA  Loading services: " + serviceType.getName());
         List<ServiceReference<T>> refs = new ArrayList<>();
         try {
             refs.addAll(this.osgiServiceLoader.getBundleContext().getServiceReferences(serviceType, null));
@@ -103,18 +108,27 @@ public class OSGIServiceContext implements ServiceContext{
 
     @Override
     public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException{
+        LOG.finest("TAMAYA  Loading resources: " + resource);
         List<URL> result = new ArrayList<>();
         URL url = osgiServiceLoader.getBundleContext().getBundle()
                 .getEntry(resource);
         if(url != null) {
+            LOG.finest("TAMAYA  Resource: " + resource + " found in unregistered bundle " +
+                    osgiServiceLoader.getBundleContext().getBundle().getSymbolicName());
             result.add(url);
         }
         for(Bundle bundle: osgiServiceLoader.getResourceBundles()) {
             url = bundle.getEntry(resource);
-            if (url != null) {
-                if(!result.contains(url)) {
-                    result.add(url);
-                }
+            if (url != null && !result.contains(url)) {
+                LOG.finest("TAMAYA  Resource: " + resource + " found in registered bundle " + bundle.getSymbolicName());
+                result.add(url);
+            }
+        }
+        for(Bundle bundle: osgiServiceLoader.getBundleContext().getBundles()) {
+            url = bundle.getEntry(resource);
+            if (url != null && !result.contains(url)) {
+                LOG.finest("TAMAYA  Resource: " + resource + " found in unregistered bundle " + bundle.getSymbolicName());
+                result.add(url);
             }
         }
         return Collections.enumeration(result);
@@ -122,14 +136,25 @@ public class OSGIServiceContext implements ServiceContext{
 
     @Override
     public URL getResource(String resource, ClassLoader cl){
+        LOG.finest("TAMAYA  Loading resource: " + resource);
         URL url = osgiServiceLoader.getBundleContext().getBundle()
                 .getEntry(resource);
         if(url!=null){
+            LOG.finest("TAMAYA  Resource: " + resource + " found in bundle " +
+                    osgiServiceLoader.getBundleContext().getBundle().getSymbolicName());
             return url;
         }
         for(Bundle bundle: osgiServiceLoader.getResourceBundles()) {
             url = bundle.getEntry(resource);
             if(url != null){
+                LOG.finest("TAMAYA  Resource: " + resource + " found in registered bundle " + bundle.getSymbolicName());
+                return url;
+            }
+        }
+        for(Bundle bundle: osgiServiceLoader.getBundleContext().getBundles()) {
+            url = bundle.getEntry(resource);
+            if(url != null){
+                LOG.finest("TAMAYA  Resource: " + resource + " found in unregistered bundle " + bundle.getSymbolicName());
                 return url;
             }
         }

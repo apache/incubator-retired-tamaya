@@ -69,4 +69,14 @@ public class ShortConverter implements PropertyConverter<Short>{
         }
     }
 
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
+
 }

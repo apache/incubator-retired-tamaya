@@ -48,4 +48,14 @@ public class FileConverter implements PropertyConverter<File> {
         }
         return null;
     }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }

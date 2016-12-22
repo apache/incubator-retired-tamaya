@@ -51,4 +51,14 @@ public class PathConverter implements PropertyConverter<Path> {
         }
         return null;
     }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }

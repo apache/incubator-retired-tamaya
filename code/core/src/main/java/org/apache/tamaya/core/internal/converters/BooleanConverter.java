@@ -54,4 +54,14 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
         }
         return null;
     }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }

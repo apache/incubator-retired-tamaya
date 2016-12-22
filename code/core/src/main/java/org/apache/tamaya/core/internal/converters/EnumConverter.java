@@ -65,4 +65,17 @@ public class EnumConverter<T> implements PropertyConverter<T> {
         }
         return null;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EnumConverter)) return false;
+        EnumConverter<?> that = (EnumConverter<?>) o;
+        return Objects.equals(enumType, that.enumType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enumType);
+    }
 }

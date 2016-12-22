@@ -20,6 +20,11 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.core.internal.converters.*;
+import org.apache.tamaya.core.propertysource.CLIPropertySource;
+import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
+import org.apache.tamaya.core.propertysource.SystemPropertySource;
+import org.apache.tamaya.core.propertysource.JavaConfigurationPropertySource;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -29,16 +34,14 @@ import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.io.File;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -131,6 +134,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     public ConfigurationContextBuilder addDefaultPropertySources() {
         checkBuilderState();
         List<PropertySource> propertySources = new ArrayList<>();
+        addCorePropertyResources(propertySources);
         propertySources.addAll(ServiceContextManager.getServiceContext().getServices(PropertySource.class));
         for(PropertySourceProvider provider:
                 ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class)){
@@ -138,6 +142,13 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         }
         Collections.sort(propertySources, PropertySourceComparator.getInstance());
         return addPropertySources(propertySources);
+    }
+
+    private void addCorePropertyResources(List<PropertySource> propertySources) {
+        propertySources.add(new EnvironmentPropertySource());
+        propertySources.add(new JavaConfigurationPropertySource());
+        propertySources.add(new CLIPropertySource());
+        propertySources.add(new SystemPropertySource());
     }
 
     @Override
@@ -153,12 +164,33 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     @Override
     public DefaultConfigurationContextBuilder addDefaultPropertyConverters() {
         checkBuilderState();
+        addCorePropertyConverters();
         for(Map.Entry<TypeLiteral, Collection<PropertyConverter>> en:getDefaultPropertyConverters().entrySet()){
             for(PropertyConverter pc: en.getValue()) {
                 addPropertyConverters(en.getKey(), pc);
             }
         }
         return this;
+    }
+
+    private void addCorePropertyConverters() {
+        addPropertyConverters(TypeLiteral.<BigDecimal>of(BigDecimal.class), new BigDecimalConverter());
+        addPropertyConverters(TypeLiteral.<BigInteger>of(BigInteger.class), new BigIntegerConverter());
+        addPropertyConverters(TypeLiteral.<Boolean>of(Boolean.class), new BooleanConverter());
+        addPropertyConverters(TypeLiteral.<Byte>of(Byte.class), new ByteConverter());
+        addPropertyConverters(TypeLiteral.<Character>of(Character.class), new CharConverter());
+        addPropertyConverters(TypeLiteral.<Class<?>>of(Class.class), new ClassConverter());
+        addPropertyConverters(TypeLiteral.<Currency>of(Currency.class), new CurrencyConverter());
+        addPropertyConverters(TypeLiteral.<Double>of(Double.class), new DoubleConverter());
+        addPropertyConverters(TypeLiteral.<File>of(File.class), new FileConverter());
+        addPropertyConverters(TypeLiteral.<Float>of(Float.class), new FloatConverter());
+        addPropertyConverters(TypeLiteral.<Integer>of(Integer.class), new IntegerConverter());
+        addPropertyConverters(TypeLiteral.<Long>of(Long.class), new LongConverter());
+        addPropertyConverters(TypeLiteral.<Number>of(Number.class), new NumberConverter());
+        addPropertyConverters(TypeLiteral.<Path>of(Path.class), new PathConverter());
+        addPropertyConverters(TypeLiteral.<Short>of(Short.class), new ShortConverter());
+        addPropertyConverters(TypeLiteral.<URI>of(URI.class), new URIConverter());
+        addPropertyConverters(TypeLiteral.<URL>of(URL.class), new URLConverter());
     }
 
     @Override
@@ -317,7 +349,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
             if (!converters.contains(propertyConverter)) {
                 converters.add(propertyConverter);
             } else {
-                LOG.warning("Converter ignored, already registered: " + propertyConverter);
+                LOG.finer("Converter ignored, already registered: " + propertyConverter);
             }
         }
         return this;
@@ -337,7 +369,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
             if (!converters.contains(propertyConverter)) {
                 converters.add(propertyConverter);
             } else {
-                LOG.warning("Converter ignored, already registered: " + propertyConverter);
+                LOG.finer("Converter ignored, already registered: " + propertyConverter);
             }
         }
         return this;

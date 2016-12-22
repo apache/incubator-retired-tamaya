@@ -68,4 +68,14 @@ public class ByteConverter implements PropertyConverter<Byte>{
                 }
         }
     }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }

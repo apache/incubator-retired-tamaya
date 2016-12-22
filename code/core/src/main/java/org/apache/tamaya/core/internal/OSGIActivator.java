@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal;
 
 
 
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -39,10 +40,21 @@ public class OSGIActivator implements BundleActivator {
     public void start(BundleContext context) {
         // Register marker service
         serviceLoader = new OSGIServiceLoader(context);
+        context.addBundleListener(serviceLoader);
         ServiceContextManager.set(new OSGIServiceContext(serviceLoader));
         LOG.info("Registered OSGI enabled ServiceContext...");
-
-        context.addBundleListener(serviceLoader);
+        ConfigurationProvider.setConfiguration(
+                new DefaultConfiguration(
+                       new DefaultConfigurationContextBuilder()
+                        .addDefaultPropertyConverters()
+                        .addDefaultPropertyFilters()
+                        .addDefaultPropertySources()
+                        .sortPropertyFilter(PropertyFilterComparator.getInstance())
+                        .sortPropertySources(PropertySourceComparator.getInstance())
+                        .build()
+                )
+        );
+        LOG.info("Loaded default configuration from OSGI.");
     }
 
     @Override

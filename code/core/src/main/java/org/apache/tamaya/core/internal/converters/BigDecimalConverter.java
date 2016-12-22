@@ -60,4 +60,14 @@ public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
             return null;
         }
     }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }

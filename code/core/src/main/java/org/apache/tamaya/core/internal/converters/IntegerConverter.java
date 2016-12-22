@@ -71,4 +71,14 @@ public class IntegerConverter implements PropertyConverter<Integer>{
         }
 
     }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }
