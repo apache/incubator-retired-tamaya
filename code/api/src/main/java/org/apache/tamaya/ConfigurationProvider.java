@@ -23,11 +23,14 @@ import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.util.logging.Logger;
+
 /**
  * Static access to the {@link Configuration} for the very application.
  */
 public final class ConfigurationProvider {
 
+    private static final Logger LOG = Logger.getLogger(ConfigurationProvider.class.getName());
     private static final ConfigurationProviderSpi PROVIDER_SPI = loadSpi();
 
     private static ConfigurationProviderSpi loadSpi() {
@@ -36,7 +39,7 @@ public final class ConfigurationProvider {
         if(spi==null){
             throw new IllegalStateException("ConfigurationProviderSpi not available.");
         }
-
+        LOG.info("TAMAYA Loaded ConfigurationProviderSpi: " + spi.getClass().getName());
         return spi;
     }
 
@@ -103,6 +106,7 @@ public final class ConfigurationProvider {
      *                                                 applying a new Configuration.
      */
     public static void setConfiguration(Configuration config) {
+        LOG.info("TAMAYA Applying new Configuration: " + config);
         PROVIDER_SPI.setConfiguration(config);
     }
 
