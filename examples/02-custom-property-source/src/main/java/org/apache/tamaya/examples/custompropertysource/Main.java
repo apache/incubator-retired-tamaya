@@ -36,7 +36,7 @@ import static java.lang.String.format;
  * <p>
  *  {@link SimplePropertySource} is a custom implementation of a
  *  {@link org.apache.tamaya.spi.PropertySource}. It reads its properties from a
- *  {@value SimplePropertySource#CONFIG_PROPERTIES_LOCATION}. As it is an implementation
+ *  flexibly configurable location. As it is an implementation
  *  of {@code PropertySource} and it is listed as service implementation
  *  in {@code META-INF/services/org.apache.tamaya.spi.PropertySource} Tamaya is able
  *  to find and to use it through the Service Provider Interface service of Java.
