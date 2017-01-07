@@ -1,6 +1,6 @@
 # Apache Tamaya (incubating)
 
-Tamaya is a very powerful yet flexible configuration solution. It's core is built based on a few simple concepts.
+Tamaya is a very powerful yet flexible configuration solution. Its core is built based on a few simple concepts.
 There are at least two main usage scenarios for Tamaya, which are synergetic:
 
 - In an enterprise context you can easily implement a configuration architecture for your whole company and deploy the
@@ -15,15 +15,16 @@ There are at least two main usage scenarios for Tamaya, which are synergetic:
   configuration files, but since Tamaya is so easily extendable, customers can deploy an additional jar, which then
   allows them to add their own configuration mechanisms such as databases, datagrids or REST services.
 
-More information on Tamaya can be found on the [homepage of Apache Tamaya](http://tamaya.incubator.apache.org/).
+More information on Tamaya can be found on the [homepage of Apache Tamaya](https://tamaya.incubator.apache.org/).
 
 ## Building Apache Tamaya
 
-The Apache Tamaya project is built with Maven 3 and Java 7, so you need JDK 1.7 and reasonable version of maven
-be installed on your computer.
+The Apache Tamaya project is built with [Maven 3](https://maven.apache.org/) and [Java 7](https://java.sun.com/), so you need JDK >=1.7 and a reasonable version of maven
+installed on your computer.
 
 
 Then you can build Tamaya by the following command:
-
-    $> export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
-    $> mvn clean install
+```
+$ export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
+$ mvn 
+```
