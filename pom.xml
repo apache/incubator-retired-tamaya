@@ -266,15 +266,6 @@
         </dependency>
     </dependencies>
 
-    <!-- Additional repositories -->
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <name>JCenter</name>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
-    </repositories>
-
     <build>
         <defaultGoal>clean install</defaultGoal>
         <pluginManagement>
