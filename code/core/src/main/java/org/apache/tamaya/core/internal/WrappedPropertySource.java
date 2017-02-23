@@ -57,12 +57,11 @@ class WrappedPropertySource implements PropertySource{
         return new WrappedPropertySource(ps, ordinal);
     }
 
-    @Override
     public int getOrdinal() {
         if(this.ordinal!=null){
             return this.ordinal;
         }
-        return delegate.getOrdinal();
+        return PropertySourceComparator.getOrdinal(delegate);
     }
 
     public void setOrdinal(Integer ordinal) {
@@ -122,7 +121,6 @@ class WrappedPropertySource implements PropertySource{
                 ", scannable=" + isScannable() +
                 ", loadedAt=" + loaded +
                 ", delegate-class=" + delegate.getClass().getName() +
-                ", delegate-ordinal=" + delegate.getOrdinal() +
                 '}';
     }
 

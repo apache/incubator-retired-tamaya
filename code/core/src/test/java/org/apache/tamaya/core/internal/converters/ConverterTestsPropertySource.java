@@ -28,10 +28,6 @@ import java.util.Map;
  * Test Property Source used by converter tests.
  */
 public class ConverterTestsPropertySource implements PropertySource{
-    @Override
-    public int getOrdinal() {
-        return 0;
-    }
 
     @Override
     public String getName(){

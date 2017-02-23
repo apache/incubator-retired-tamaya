@@ -106,7 +106,6 @@ public abstract class BasePropertySource implements PropertySource {
         this.defaultOrdinal = defaultOrdinal;
     }
 
-    @Override
     public int getOrdinal() {
         Integer ordinal = this.ordinal;
         if(ordinal!=null){

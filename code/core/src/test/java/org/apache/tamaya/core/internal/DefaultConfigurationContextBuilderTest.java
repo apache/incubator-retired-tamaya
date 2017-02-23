@@ -23,6 +23,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
+import javax.annotation.Priority;
 import java.util.Collections;
 import java.util.Map;
 
@@ -191,6 +192,7 @@ public class DefaultConfigurationContextBuilderTest {
     }
 
 
+    @Priority(200)
     private static class TestPropertySource implements PropertySource{
 
         private String id;
@@ -201,11 +203,6 @@ public class DefaultConfigurationContextBuilderTest {
 
         public TestPropertySource(String id){
             this.id = id;
-        }
-
-        @Override
-        public int getOrdinal() {
-            return 200;
         }
 
         @Override

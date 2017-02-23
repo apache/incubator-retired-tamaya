@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.core.internal.PropertySourceComparator;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
@@ -51,7 +52,7 @@ public class BasePropertySourceTest {
             }
         };
 
-        Assert.assertEquals(56, defaultPropertySource.getOrdinal());
+        Assert.assertEquals(56, PropertySourceComparator.getOrdinal(defaultPropertySource));
         Assert.assertEquals(1000, new OverriddenOrdinalPropertySource().getOrdinal());
 
         // propertySource with invalid ordinal

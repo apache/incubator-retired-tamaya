@@ -111,7 +111,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             writeLock.lock();
             List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
             newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
-            Collections.sort(newPropertySources, new PropertySourceComparator());
+            Collections.sort(newPropertySources, PropertySourceComparator.getInstance());
 
             this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
         } finally {
@@ -150,12 +150,11 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         if(immutablePropertySources.isEmpty()){
             b.append("  No property sources loaded.\n\n");
         }else {
-            b.append("  CLASS                         NAME                                                                  ORDINAL SCANNABLE SIZE    STATE     ERROR\n\n");
+            b.append("  CLASS                         NAME                                                              SCANNABLE SIZE    STATE     ERROR\n\n");
             for (PropertySource ps : immutablePropertySources) {
                 b.append("  ");
                 appendFormatted(b, ps.getClass().getSimpleName(), 30);
                 appendFormatted(b, ps.getName(), 70);
-                appendFormatted(b, String.valueOf(ps.getOrdinal()), 8);
                 appendFormatted(b, String.valueOf(ps.isScannable()), 10);
                 if (ps.isScannable()) {
                     appendFormatted(b, String.valueOf(ps.getProperties().size()), 8);
@@ -228,64 +227,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         return s.replace('\n', ' ').replace('\r', ' ');
     }
 
-    private static class PropertySourceComparator implements Comparator<PropertySource>, Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Order property source reversely, the most important come first.
-         *
-         * @param source1 the first PropertySource
-         * @param source2 the second PropertySource
-         * @return the comparison result.
-         */
-        private int comparePropertySources(PropertySource source1, PropertySource source2) {
-            if (source1.getOrdinal() < source2.getOrdinal()) {
-                return -1;
-            } else if (source1.getOrdinal() > source2.getOrdinal()) {
-                return 1;
-            } else {
-                return source1.getClass().getName().compareTo(source2.getClass().getName());
-            }
-        }
-
-        @Override
-        public int compare(PropertySource source1, PropertySource source2) {
-            return comparePropertySources(source1, source2);
-        }
-    }
-
-    private static class PropertyFilterComparator implements Comparator<PropertyFilter>, Serializable{
-
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Compare 2 filters for ordering the filter chain.
-         *
-         * @param filter1 the first filter
-         * @param filter2 the second filter
-         * @return the comparison result
-         */
-        private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
-            Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
-            Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
-            int ord1 = prio1 != null ? prio1.value() : 0;
-            int ord2 = prio2 != null ? prio2.value() : 0;
-
-            if (ord1 < ord2) {
-                return -1;
-            } else if (ord1 > ord2) {
-                return 1;
-            } else {
-                return filter1.getClass().getName().compareTo(filter2.getClass().getName());
-            }
-        }
-
-        @Override
-        public int compare(PropertyFilter filter1, PropertyFilter filter2) {
-            return comparePropertyFilters(filter1, filter2);
-        }
-    }
 
     @Override
     public List<PropertySource> getPropertySources() {

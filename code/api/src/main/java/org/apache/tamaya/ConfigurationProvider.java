@@ -31,9 +31,8 @@ import java.util.logging.Logger;
 public final class ConfigurationProvider {
 
     private static final Logger LOG = Logger.getLogger(ConfigurationProvider.class.getName());
-    private static final ConfigurationProviderSpi PROVIDER_SPI = loadSpi();
 
-    private static ConfigurationProviderSpi loadSpi() {
+    private static ConfigurationProviderSpi spi() {
         ConfigurationProviderSpi spi = ServiceContextManager.getServiceContext()
                 .getService(ConfigurationProviderSpi.class);
         if(spi==null){
@@ -53,7 +52,7 @@ public final class ConfigurationProvider {
      * @return the corresponding Configuration instance, never null.
      */
     public static Configuration getConfiguration() {
-        return PROVIDER_SPI.getConfiguration();
+        return spi().getConfiguration();
     }
 
     /**
@@ -63,7 +62,7 @@ public final class ConfigurationProvider {
      * @return a new Configuration instance, never null.
      */
     public static Configuration createConfiguration(ConfigurationContext context) {
-        return PROVIDER_SPI.createConfiguration(context);
+        return spi().createConfiguration(context);
     }
 
     /**
@@ -74,7 +73,7 @@ public final class ConfigurationProvider {
      */
     @Deprecated
     public static ConfigurationContext getConfigurationContext() {
-        return PROVIDER_SPI.getConfigurationContext();
+        return spi().getConfigurationContext();
     }
 
     /**
@@ -91,7 +90,7 @@ public final class ConfigurationProvider {
      */
     @Deprecated
     public static void setConfigurationContext(ConfigurationContext context) {
-        PROVIDER_SPI.setConfigurationContext(context);
+        spi().setConfigurationContext(context);
     }
 
     /**
@@ -107,7 +106,7 @@ public final class ConfigurationProvider {
      */
     public static void setConfiguration(Configuration config) {
         LOG.info("TAMAYA Applying new Configuration: " + config);
-        PROVIDER_SPI.setConfiguration(config);
+        spi().setConfiguration(config);
     }
 
     /**
@@ -121,7 +120,7 @@ public final class ConfigurationProvider {
      * @see org.apache.tamaya.spi.ConfigurationContext
      */
     public static ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return PROVIDER_SPI.getConfigurationContextBuilder();
+        return spi().getConfigurationContextBuilder();
     }
 
 }

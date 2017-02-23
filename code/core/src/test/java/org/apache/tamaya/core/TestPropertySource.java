@@ -43,7 +43,6 @@ public class TestPropertySource implements PropertySource {
         this.ordinal = ordinal;
     }
 
-    @Override
     public int getOrdinal() {
         return ordinal;
     }

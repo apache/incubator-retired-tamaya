@@ -19,9 +19,15 @@
 package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
+import javax.annotation.Priority;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Comparator for ordering of PropertySources based on their ordinal method and class name.
@@ -29,6 +35,8 @@ import java.util.Comparator;
 public class PropertySourceComparator implements Comparator<PropertySource>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger LOG = Logger.getLogger(PropertySourceComparator.class.getName());
 
     private static final PropertySourceComparator INSTANCE = new PropertySourceComparator();
 
@@ -51,13 +59,42 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
      * @return the comparison result.
      */
     private int comparePropertySources(PropertySource source1, PropertySource source2) {
-        if (source1.getOrdinal() < source2.getOrdinal()) {
+        if (getOrdinal(source1) < getOrdinal(source2)) {
             return -1;
-        } else if (source1.getOrdinal() > source2.getOrdinal()) {
+        } else if (getOrdinal(source1) > getOrdinal(source2)) {
             return 1;
         } else {
             return source1.getClass().getName().compareTo(source2.getClass().getName());
         }
+    }
+
+    public static int getOrdinal(PropertySource propertySource) {
+        PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
+        if(ordinalValue!=null){
+            try{
+                return Integer.parseInt(ordinalValue.getValue().trim());
+            }catch(Exception e){
+                LOG.finest("Failed to parse ordinal from " + PropertySource.TAMAYA_ORDINAL +
+                        " in " + propertySource.getName()+": "+ordinalValue.getValue());
+            }
+        }
+        try {
+            Method method = propertySource.getClass().getMethod("getOrdinal");
+            if(int.class.equals(method.getReturnType())){
+                try {
+                    return (int)method.invoke(propertySource);
+                } catch (Exception e) {
+                    LOG.log(Level.FINEST, "Error calling int getOrdinal() on " + propertySource.getName(), e);
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            LOG.finest("No int getOrdinal() method found in " + propertySource.getName());
+        }
+        Priority prio = propertySource.getClass().getAnnotation(Priority.class);
+        if(prio!=null){
+            return prio.value();
+        }
+        return 0;
     }
 
     @Override
