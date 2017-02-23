@@ -54,7 +54,7 @@ public interface PropertySource {
      * A resusable instance of an empty PropertySource.
      */
     PropertySource EMPTY = new PropertySource() {
-        @Override
+
         public int getOrdinal() {
             return Integer.MIN_VALUE;
         }
@@ -84,37 +84,6 @@ public interface PropertySource {
             return "PropertySource.EMPTY";
         }
     };
-
-
-    /**
-     * Lookup order:
-     * TODO rethink whole default PropertySources and ordering:
-     * TODO introduce default values or constants for ordinals
-     * <ol>
-     *     <li>System properties (ordinal 400)</li>
-     *     <li>Environment properties (ordinal 300)</li>
-     *     <li>JNDI values (ordinal 200)</li>
-     *     <li>Properties file values (/META-INF/applicationConfiguration.properties) (ordinal 100)</li>
-     * </ol>
-     *
-     * <p><b>Important Hints for custom implementations</b>:</p>
-     * <p>
-     * If a custom implementation should be invoked <b>before</b> the default implementations, use a value &gt; 400
-     * </p>
-     * <p>
-     * If a custom implementation should be invoked <b>after</b> the default implementations, use a value &lt; 100
-     * </p>
-     *
-     * <p>Reordering of the default order of the config-sources:</p>
-     * <p>Example: If the properties file/s should be used <b>before</b> the other implementations,
-     * you have to configure an ordinal &gt; 400. That means, you have to add e.g. deltaspike_ordinal=401 to
-     * /META-INF/apache-deltaspike.properties . Hint: In case of property files every file is handled as independent
-     * config-source, but all of them have ordinal 400 by default (and can be reordered in a fine-grained manner.</p>
-     *
-     * @return the 'importance' aka ordinal of the configured values. The higher, the more important.
-     * //X TODO think about making this a default method which returns default priority
-     */
-    int getOrdinal();
 
 
     /**
