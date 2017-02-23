@@ -16,11 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.core;
 
 
 
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.core.internal.*;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

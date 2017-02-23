@@ -1,7 +1,12 @@
 Export-Package: \
 	org.apache.tamaya.core,\
-	org.apache.tamaya.core.propertysource,\
-	org.apache.tamaya.core.provider,\
-    org.apache.tamaya.core.internal,\
-    org.apache.tamaya.core.internal.converters
-Bundle-Activator: org.apache.tamaya.core.internal.OSGIActivator
+	org.apache.tamaya.core.internal,\
+	org.apache.tamaya.core.propertysource
+Import-Package: \
+	org.apache.tamaya,\
+	org.apache.tamaya.spi,\
+	org.osgi.framework,\
+	javax.annotation
+Bundle-Activator: org.apache.tamaya.core.OSGIActivator
+Bundle-SymbolicName: org.apache.tamaya.core
+Bundle-Version: 0.3-INCUBATING-SNAPSHOT

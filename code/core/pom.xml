@@ -29,10 +29,6 @@ under the License.
     <name>Apache Tamaya Core Implementation</name>
     <packaging>jar</packaging>
 
-    <properties>
-        <osgi.compendium.version>5.0.0</osgi.compendium.version>
-     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
