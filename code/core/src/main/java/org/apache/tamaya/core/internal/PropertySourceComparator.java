@@ -23,8 +23,10 @@ import org.apache.tamaya.spi.PropertyValue;
 
 import javax.annotation.Priority;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +70,20 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
         }
     }
 
+    /**
+     * Evaluates an ordinal value from a {@link PropertySource}, Herey the ordinal of type {@code int}
+     * is evaluated as follows:
+     * <ol>
+     *     <li>It evaluates the {@code String} value for {@link PropertySource#TAMAYA_ORDINAL} and tries
+     *     to convert it to an {@code int} value, using {@link Integer#parseInt(String)}.</li>
+     *     <li>It tries to find and evaluate a method {@code int getOrdinal()}</li>.
+     *     <li>It tries to find and evaluate a static field {@code int ORDINAL}.</li>
+     *     <li>It tries to find an d evaluate a class level {@link Priority} annotation.</li>
+     *     <li>It uses the default priority ({@code 0}.</li>
+     * </ol>
+     * @param propertySource the property source, not null.
+     * @return the ordinal value to compare the property source.
+     */
     public static int getOrdinal(PropertySource propertySource) {
         PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
         if(ordinalValue!=null){
@@ -84,11 +100,23 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
                 try {
                     return (int)method.invoke(propertySource);
                 } catch (Exception e) {
-                    LOG.log(Level.FINEST, "Error calling int getOrdinal() on " + propertySource.getName(), e);
+                    LOG.log(Level.FINEST, "Error calling 'int getOrdinal()' on " + propertySource.getName(), e);
                 }
             }
         } catch (NoSuchMethodException e) {
-            LOG.finest("No int getOrdinal() method found in " + propertySource.getName());
+            LOG.finest("No 'int getOrdinal()' method found in " + propertySource.getName());
+        }
+        try {
+            Field field = propertySource.getClass().getField("ORDINAL");
+            if(int.class.equals(field.getType()) && Modifier.isStatic(field.getModifiers())){
+                try {
+                    return (int)field.get(propertySource);
+                } catch (Exception e) {
+                    LOG.log(Level.FINEST, "Error evaluating 'int ORDINAL' on " + propertySource.getName(), e);
+                }
+            }
+        } catch (NoSuchFieldException e) {
+            LOG.finest("No 'int ORDINAL' field found in " + propertySource.getName());
         }
         Priority prio = propertySource.getClass().getAnnotation(Priority.class);
         if(prio!=null){
