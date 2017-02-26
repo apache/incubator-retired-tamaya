@@ -97,6 +97,9 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
         try {
             Method method = propertySource.getClass().getMethod("getOrdinal");
             if(int.class.equals(method.getReturnType())){
+                if(!method.isAccessible()){
+                    method.setAccessible(true);
+                }
                 try {
                     return (int)method.invoke(propertySource);
                 } catch (Exception e) {
@@ -109,6 +112,9 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
         try {
             Field field = propertySource.getClass().getField("ORDINAL");
             if(int.class.equals(field.getType()) && Modifier.isStatic(field.getModifiers())){
+                if(!field.isAccessible()){
+                    field.setAccessible(true);
+                }
                 try {
                     return (int)field.get(propertySource);
                 } catch (Exception e) {
