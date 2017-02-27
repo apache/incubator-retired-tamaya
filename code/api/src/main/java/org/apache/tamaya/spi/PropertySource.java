@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * <p>This interface models a provider that serves configuration properties. The contained
- * properties may be read fromMap single or several sources (composite).
+ * properties may be read from a Map of single or several sources (composite).
  * PropertySources are the building blocks of the final configuration. </p>
  * <h3>Implementation Requirements</h3>
  * <p>Implementations of this interface must be</p>
@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * <p>A PropertySourceProvider will get picked up via the
  * {@link java.util.ServiceLoader} mechanism and can be registered via
- * META-INF/services/org.apache.tamaya.spi.PropertySource
+ * {@code META-INF/services/org.apache.tamaya.spi.PropertySource}
  * </p>
  * <p>
  * If you like to register multiple PropertySources at the same time
@@ -106,7 +106,7 @@ public interface PropertySource {
      * Access the current properties as Map. The resulting Map may not return all items accessible, e.g.
      * when the underlying storage does not support iteration of its entries.
      *
-     * @return the a corresponding map, never null.
+     * @return the corresponding map, never null.
      */
     Map<String,String> getProperties();
 
@@ -115,12 +115,12 @@ public interface PropertySource {
      *
      * <p>
      * PropertySources which are not scannable might not be able to find all the
-     * configured values to provide via {@link #getProperties()}. This can e.g. happen
+     * configured values to provide via {@link #getProperties()}. This might happen
      * if the underlying storage doesn't support listing.
      * </p>
      *
      * @return {@code true} if this PropertySource can be scanned for its list of properties,
-     *         {@code false} if it should not be scanned.
+     *         {@code false} if it cannot/should not be scanned.
      */
     boolean isScannable();
 

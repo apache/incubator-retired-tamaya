@@ -119,7 +119,7 @@ public abstract class BasePropertySource implements PropertySource {
                 return Integer.parseInt(configuredOrdinal.getValue());
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                        "Configured Ordinal is not an int number: " + configuredOrdinal, e);
+                        "Configured ordinal is not an int number: " + configuredOrdinal, e);
             }
         }
         return getDefaultOrdinal();

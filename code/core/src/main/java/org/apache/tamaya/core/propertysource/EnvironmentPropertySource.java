@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * This {@link org.apache.tamaya.spi.PropertySource} provides all Properties which are set
+ * This {@link org.apache.tamaya.spi.PropertySource} provides all properties which are set
  * via
  * {@code export myprop=myval} on UNIX Systems or
  * {@code set myprop=myval} on Windows. You can disable this feature by setting {@code tamaya.envprops.disable}
