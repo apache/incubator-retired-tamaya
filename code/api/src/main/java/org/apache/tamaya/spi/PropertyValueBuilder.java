@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class PropertyValueBuilder {
     /** The property value. */
     String value;
     /** additional metadata entries (optional). */
-    Map<String,String> contextData = new HashMap<>();
+    Map<String,String> metaEntries = new HashMap<>();
 
     /**
      * Create a new builder instance, for a given set of parameters.
@@ -43,12 +44,25 @@ public class PropertyValueBuilder {
     public PropertyValueBuilder(String key, String value, String source) {
         this.key = Objects.requireNonNull(key);
         this.value = Objects.requireNonNull(value);
-        this.contextData.put("_" + key + ".source", Objects.requireNonNull(source));
+        this.metaEntries.put("source", Objects.requireNonNull(source));
+    }
+
+    /**
+     * Creates a new builder from data from a {@link PropertyValue}.
+     * @param key to access a property value.
+     * @param value the value, not null. If a value is null {@link PropertySource#get(String)} should return
+     * {@code null}.
+     * @param metaEntries the context data, not null.
+     */
+    PropertyValueBuilder(String key, String value, Map<String,String> metaEntries) {
+        this.key = Objects.requireNonNull(key);
+        this.value = Objects.requireNonNull(value);
+        this.metaEntries.putAll(metaEntries);
     }
 
     /**
      * Replaces/sets the context data.
-     * @param contextData the context data to be applied, not null. Note that all keys should only identify the context
+     * @param metaEntries the context data to be applied, not null. Note that all keys should only identify the context
      *                    data item. the builder does create a corresponding metadata entry, e.g.
      *                    <pre>
      *                    provider=myProviderName
@@ -65,11 +79,9 @@ public class PropertyValueBuilder {
      *                    </pre>
      * @return the builder for chaining.
      */
-    public PropertyValueBuilder setContextData(Map<String, String> contextData) {
-        this.contextData.clear();
-        for(Map.Entry<String,String> en:contextData.entrySet()) {
-            this.contextData.put("_"+this.key+'.'+en.getKey(), en.getValue());
-        }
+    public PropertyValueBuilder setMetaEntries(Map<String, String> metaEntries) {
+        this.metaEntries.clear();
+        this.metaEntries.putAll(metaEntries);
         return this;
     }
 
@@ -80,7 +92,44 @@ public class PropertyValueBuilder {
      * @return the builder for chaining.
      */
     public PropertyValueBuilder addContextData(String key, Object value) {
-        this.contextData.put("_"+this.key+'.'+key, String.valueOf(Objects.requireNonNull(value, "Meta value is null.")));
+        this.metaEntries.put(key, String.valueOf(Objects.requireNonNull(value, "Meta value is null.")));
+        return this;
+    }
+
+    /**
+     * Get the value's context data.
+     * @return the context data.
+     */
+    public Map<String,String> getMetaEntries(){
+        return Collections.unmodifiableMap(this.metaEntries);
+    }
+
+    /**
+     * Changes the entry's key, mapping also corresponding context entries.
+     * @param key the new key, not null.
+     * @return the builder for chaining.
+     */
+    public PropertyValueBuilder mapKey(String key) {
+        Map<String,String> newContext = new HashMap<>();
+        for(Map.Entry<String,String> en:this.metaEntries.entrySet()){
+            if(en.getKey().startsWith("_"+this.key)){
+                newContext.put("_"+key+'.'+ en.getKey().substring(this.key.length()+1), en.getValue());
+            }else{
+                newContext.put(en.getKey(), en.getValue());
+            }
+        }
+        this.metaEntries = newContext;
+        this.key = key;
+        return this;
+    }
+
+    /**
+     * Sets a new value.
+     * @param value the new value.
+     * @return the builder for chaining.
+     */
+    public PropertyValueBuilder setValue(String value) {
+        this.value = value;
         return this;
     }
 
@@ -97,7 +146,8 @@ public class PropertyValueBuilder {
         return "PropertyValueBuilder{" +
                 "key='" + key + '\'' +
                 "value='" + value + '\'' +
-                ", contextData=" + contextData +
+                ", metaEntries=" + metaEntries +
                 '}';
     }
+
 }

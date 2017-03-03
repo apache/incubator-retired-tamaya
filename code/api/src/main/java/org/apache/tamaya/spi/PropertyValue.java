@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,18 +30,21 @@ import java.util.Objects;
  * it is possible to create a PropertyValue with a null value. Nevertheless in all cases the provider source (typically
  * the name of the PropertySource) must be set.
  */
-public final class PropertyValue {
+public final class PropertyValue implements Serializable{
+    private static final long serialVersionUID = 1L;
     /** The requested key. */
     private String key;
+    /** The value. */
+    private String value;
     /** Additional metadata provided by the provider. */
-    private Map<String,String> configEntries = new HashMap<>();
+    private Map<String,String> metaEntries = new HashMap<>();
 
     PropertyValue(PropertyValueBuilder builder){
         this.key = builder.key;
-        if(builder.contextData!=null) {
-            this.configEntries.putAll(builder.contextData);
+        this.value = Objects.requireNonNull(builder.value);
+        if(builder.metaEntries !=null) {
+            this.metaEntries.putAll(builder.metaEntries);
         }
-        this.configEntries.put(key, Objects.requireNonNull(builder.value));
     }
 
     /**
@@ -51,8 +55,8 @@ public final class PropertyValue {
      */
     private PropertyValue(String key, String value, String source){
         this.key = Objects.requireNonNull(key, "key is required.");
-        this.configEntries.put(key, value);
-        this.configEntries.put("_"+key+".source", Objects.requireNonNull(source, "source is required."));
+        this.value = Objects.requireNonNull(value);
+        this.metaEntries.put("_"+key+".source", Objects.requireNonNull(source, "source is required."));
     }
 
     /**
@@ -69,7 +73,7 @@ public final class PropertyValue {
      * {@link PropertySource#get(String)}.
      */
     public String getValue() {
-        return configEntries.get(key);
+        return this.value;
     }
 
     /**
@@ -77,8 +81,8 @@ public final class PropertyValue {
      * is also used for subsequent processing, like value filtering.
      * @return the property value entry map.
      */
-    public Map<String, String> getConfigEntries() {
-        return Collections.unmodifiableMap(configEntries);
+    public Map<String, String> getMetaEntries() {
+        return Collections.unmodifiableMap(metaEntries);
     }
 
     /**
@@ -111,7 +115,39 @@ public final class PropertyValue {
      * @param key the key, not null.
      * @return the value found, or null.
      */
-    public String get(String key) {
-        return this.configEntries.get(key);
+    public String getMetaEntry(String key) {
+        return this.metaEntries.get(key);
+    }
+
+    /**
+     * Creates a new builder instance based on this item.
+     * @return a new builder, never null.
+     */
+    public PropertyValueBuilder toBuilder() {
+        return new PropertyValueBuilder(this.getKey(), this.getValue(), this.metaEntries);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PropertyValue)) return false;
+        PropertyValue that = (PropertyValue) o;
+        return Objects.equals(getKey(), that.getKey()) &&
+                Objects.equals(getValue(), that.getValue()) &&
+                Objects.equals(getMetaEntries(), that.getMetaEntries());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getKey(), getValue(), getMetaEntries());
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyValue{" +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                ", metaEntries=" + metaEntries +
+                '}';
     }
 }
