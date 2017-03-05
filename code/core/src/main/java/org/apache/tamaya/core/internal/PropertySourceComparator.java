@@ -88,10 +88,10 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
 //        PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
 //        if(ordinalValue!=null){
 //            try{
-//                return Integer.parseInt(ordinalValue.getValue().trim());
+//                return Integer.parseInt(ordinalValue.getProperty().trim());
 //            }catch(Exception e){
 //                LOG.finest("Failed to parse ordinal from " + PropertySource.TAMAYA_ORDINAL +
-//                        " in " + propertySource.getName()+": "+ordinalValue.getValue());
+//                        " in " + propertySource.getName()+": "+ordinalValue.getProperty());
 //            }
 //        }
 //        try {

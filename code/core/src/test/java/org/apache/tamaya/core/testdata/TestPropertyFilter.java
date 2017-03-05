@@ -31,7 +31,7 @@ import javax.annotation.Priority;
 public class TestPropertyFilter implements PropertyFilter{
     @Override
     public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
-        if("name4".equals(context.getKey())){
+        if("name4".equals(context.getProperty().getKey())){
             return valueToBeFiltered.toBuilder()
                     .setValue(valueToBeFiltered.getValue() + "(filtered)")
                     .build();

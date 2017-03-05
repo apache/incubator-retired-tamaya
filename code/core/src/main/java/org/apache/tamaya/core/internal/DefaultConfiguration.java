@@ -82,7 +82,7 @@ public class DefaultConfiguration implements Configuration {
         if(value==null || value.getValue()==null){
             return null;
         }
-        value = PropertyFiltering.applyFilter(key, value, configurationContext);
+        value = PropertyFiltering.applyFilter(value, configurationContext);
         if(value!=null){
             return value.getValue();
         }

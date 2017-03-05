@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.Configuration;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +32,9 @@ import java.util.Objects;
  */
 public class FilterContext {
     /** The key. */
-    private final String key;
+    private final PropertyValue value;
+    /** tHE CURRENT CONTEXT. */
+    private final ConfigurationContext context;
     @Experimental
     private Map<String, PropertyValue> configEntries = new HashMap();
     @Experimental
@@ -38,35 +42,50 @@ public class FilterContext {
 
 
     /**
-     * Creates a new FilterContext.
-     * @param key the key under evaluation, not null.
+     * Creates a new FilterContext, for filtering of a multi value access
+     * using {@link Configuration#getProperties()}.
+     * @param value the value under evaluation, not null.
      * @param configEntries the raw configuration data available in the current evaluation context, not null.
+     * @param context the current context, not null.
      */
-    public FilterContext(String key, Map<String,PropertyValue> configEntries) {
+    public FilterContext(PropertyValue value, Map<String,PropertyValue> configEntries, ConfigurationContext context) {
         this.singlePropertyScoped = false;
-        this.key = Objects.requireNonNull(key);
+        this.value = Objects.requireNonNull(value);
+        this.context = Objects.requireNonNull(context);
         this.configEntries.putAll(configEntries);
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
 
-    public FilterContext(String key, PropertyValue value) {
+    /**
+     * Creates a new FilterContext, for filtering of a single value access
+     * using {@link Configuration#getProperties()}.
+     * @param value the value under evaluation, not null.
+     * @param context the current context, not null.
+     */
+    public FilterContext(PropertyValue value, ConfigurationContext context) {
         this.singlePropertyScoped = true;
-        this.key = Objects.requireNonNull(key);
-        if(value!=null) {
-            this.configEntries.put(value.getKey(), value);
-        }
+        this.context = Objects.requireNonNull(context);
+        this.value = Objects.requireNonNull(value);
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
 
     /**
-     * Get the key accessed. This information is very useful to evaluate additional metadata needed to determine/
+     * Get the current context.
+     * @return the current context, not null.
+     */
+    public ConfigurationContext getContext(){
+        return context;
+    }
+
+    /**
+     * Get the property value under evaluation. This information is very useful to evaluate additional metadata needed to determine/
      * control further aspects of the conversion.
      *
      * @return the key. This may be null in case where a default value has to be converted and no unique underlying
      * key/value configuration is present.
      */
-    public String getKey() {
-        return key;
+    public PropertyValue getProperty() {
+        return value;
     }
 
     /**
@@ -106,7 +125,7 @@ public class FilterContext {
 
     @Override
     public String toString() {
-        return "FilterContext{key='" + key + "', configEntries=" + configEntries.keySet() + '}';
+        return "FilterContext{value='" + value + "', configEntries=" + configEntries.keySet() + '}';
     }
 
 }

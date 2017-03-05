@@ -24,10 +24,8 @@ import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,29 +50,64 @@ public final class PropertyFiltering{
      */
     private PropertyFiltering(){}
 
-    public static PropertyValue applyFilter(String key, PropertyValue value, ConfigurationContext configurationContext) {
+    /**
+     * Filters a single value.
+     * @param value the raw value, not null.
+     * @param context the context
+     * @return the filtered value, inclusing null.
+     */
+    public static PropertyValue applyFilter(PropertyValue value, ConfigurationContext context) {
+        FilterContext filterContext = new FilterContext(value, context);
+        return filterValue(filterContext);
+    }
+
+    /**
+     * Filters all properties.
+     * @param rawProperties the unfiltered properties, not null.
+     * @param context the context
+     * @return the filtered value, inclusing null.
+     */
+    public static Map<String, PropertyValue> applyFilters(Map<String, PropertyValue> rawProperties, ConfigurationContext context) {
+        Map<String, PropertyValue> result = new HashMap<>();
         // Apply filters to values, prevent values filtered to null!
-        for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
-            boolean changed = false;
-            // Apply filters to values, prevent values filtered to null!
-            FilterContext filterContext = new FilterContext(key, value);
-            for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                PropertyValue newValue = filter.filterProperty(value, filterContext);
-                if (newValue != null && !newValue.equals(value)) {
-                    changed = true;
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.finest("Filter - " + value + " -> " + newValue + " by " + filter);
-                    }
-                } else if (value != null && !value.equals(newValue)) {
-                    changed = true;
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.finest("Filter - " + value + " -> " + newValue + " by " + filter);
-                    }
-                }
-                value = newValue;
+        for (Map.Entry<String, PropertyValue> entry : rawProperties.entrySet()) {
+            FilterContext filterContext = new FilterContext(entry.getValue(), rawProperties, context);
+            PropertyValue filtered = filterValue(filterContext);
+            if(filtered!=null){
+                result.put(filtered.getKey(), filtered);
             }
-            if (!changed) {
+        }
+        return result;
+    }
+
+    /**
+     * Basic filter logic.
+     * @param context the filter context, not null.
+     * @return the filtered value.
+     */
+    private static PropertyValue filterValue(FilterContext context) {
+        PropertyValue inputValue = context.getProperty();
+        PropertyValue filteredValue = inputValue;
+
+        for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
+            int changes = 0;
+            for (PropertyFilter filter : context.getContext().getPropertyFilters()) {
+                filteredValue = filter.filterProperty(inputValue, context);
+                if (filteredValue != null && !filteredValue.equals(inputValue)) {
+                    changes++;
+                    LOG.finest("Filter - " + inputValue + " -> " + filteredValue + " by " + filter);
+                }
+                if(filteredValue==null){
+                    LOG.finest("Filter removed entry - " + inputValue + ": " + filter);
+                    break;
+                }else{
+                    inputValue = filteredValue;
+                }
+            }
+            if (changes == 0) {
                 LOG.finest("Finishing filter loop, no changes detected.");
+                break;
+            } else if (filteredValue == null) {
                 break;
             } else {
                 if (i == (MAX_FILTER_LOOPS - 1)) {
@@ -82,65 +115,11 @@ public final class PropertyFiltering{
                         LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
                     }
                 } else {
-                    LOG.finest("Repeating filter loop, changes detected.");
+                    LOG.finest("Repeating filter loop, changes detected: " + changes);
                 }
             }
         }
-        return value;
-    }
-
-    public static Map<String, PropertyValue> applyFilters(Map<String, PropertyValue> inputMap, ConfigurationContext configurationContext) {
-        Map<String, PropertyValue> resultMap = new HashMap<>(inputMap);
-        // Apply filters to values, prevent values filtered to null!
-        for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
-            AtomicInteger changes = new AtomicInteger();
-            for (Map.Entry<String, PropertyValue> entry : inputMap.entrySet()) {
-                FilterContext filterContext = new FilterContext(entry.getKey(), inputMap);
-                for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                    final String k = entry.getKey();
-                    final PropertyValue v = entry.getValue();
-                    PropertyValue newValue = filter.filterProperty(v, filterContext);
-                    if (newValue != null && !newValue.equals(v)) {
-                        changes.incrementAndGet();
-                        LOG.finest("Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);
-                    } else if (v != null && !v.equals(newValue)) {
-                        changes.incrementAndGet();
-                        LOG.finest("Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);
-                    }
-                    // Remove null values
-                    if (null != newValue) {
-                        resultMap.put(k, newValue);
-                    }
-                    else{
-                        resultMap.remove(k);
-                    }
-                }
-            }
-            if (changes.get() == 0) {
-                LOG.finest("Finishing filter loop, no changes detected.");
-                break;
-            } else {
-                if (i == (MAX_FILTER_LOOPS - 1)) {
-                    if (LOG.isLoggable(Level.WARNING)) {
-                        LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
-                    }
-                } else {
-                    LOG.finest("Repeating filter loop, changes detected: " + changes.get());
-                }
-                changes.set(0);
-            }
-        }
-        return resultMap;
-    }
-
-    private static Map<String, String> filterMetadata(Map<String, String> inputMap) {
-        Map<String,String> result = new HashMap<>();
-        for(Map.Entry<String,String> en:inputMap.entrySet()){
-            if(en.getKey().startsWith("_")){
-                result.put(en.getKey(), en.getValue());
-            }
-        }
-        return Collections.unmodifiableMap(result);
+        return filteredValue;
     }
 
 }

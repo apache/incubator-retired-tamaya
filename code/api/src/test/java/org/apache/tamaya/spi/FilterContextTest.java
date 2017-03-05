@@ -18,9 +18,11 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.TypeLiteral;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -31,17 +33,18 @@ import static org.junit.Assert.*;
 public class FilterContextTest {
     @Test
     public void getKey() throws Exception {
-        FilterContext ctx = new FilterContext("getKey",
-                new HashMap<String,PropertyValue>());
-        assertEquals("getKey", ctx.getKey());
+        PropertyValue val = PropertyValue.of("getKey", "v", "");
+        FilterContext ctx = new FilterContext(val,
+                new HashMap<String,PropertyValue>(), new TestConfigContext());
+        assertEquals(val, ctx.getProperty());
     }
 
     @Test
     public void isSinglePropertyScoped() throws Exception {
-        FilterContext ctx = new FilterContext("isSinglePropertyScoped",
-                new HashMap<String,PropertyValue>());
+        PropertyValue val = PropertyValue.of("isSinglePropertyScoped", "v", "");
+        FilterContext ctx = new FilterContext(val, new HashMap<String,PropertyValue>(), new TestConfigContext());
         assertEquals(false, ctx.isSinglePropertyScoped());
-        ctx = new FilterContext("isSinglePropertyScoped", PropertyValue.of("isSinglePropertyScoped", "val", "test"));
+        ctx = new FilterContext(val, new TestConfigContext());
         assertEquals(true, ctx.isSinglePropertyScoped());
     }
 
@@ -51,7 +54,8 @@ public class FilterContextTest {
         for(int i=0;i<10;i++) {
             config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
         }
-        FilterContext ctx = new FilterContext("getMetaEntries", config);
+        PropertyValue val = PropertyValue.of("getConfigEntries", "v", "");
+        FilterContext ctx = new FilterContext(val, config, new TestConfigContext());
         assertEquals(config, ctx.getConfigEntries());
         assertTrue(config != ctx.getConfigEntries());
     }
@@ -62,13 +66,62 @@ public class FilterContextTest {
         for(int i=0;i<2;i++) {
             config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
         }
-        FilterContext ctx = new FilterContext("testToString", config);
+        PropertyValue val = PropertyValue.of("testToString", "val", "mySource");
+        FilterContext ctx = new FilterContext(val, config, new TestConfigContext());
         String toString = ctx.toString();
         assertNotNull(toString);
-        assertTrue(toString.contains("FilterContext{key='testToString', configEntries=["));
+        assertTrue(toString.contains("FilterContext{value='PropertyValue{key='testToString', value='val', source='val'}', configEntries=["));
         assertTrue(toString.contains("key-0"));
         assertTrue(toString.contains("key-1"));
         assertTrue(toString.endsWith("}"));
+    }
+
+    private static class TestConfigContext implements ConfigurationContext{
+
+        @Override
+        public void addPropertySources(PropertySource... propertySources) {
+
+        }
+
+        @Override
+        public List<PropertySource> getPropertySources() {
+            return null;
+        }
+
+        @Override
+        public PropertySource getPropertySource(String name) {
+            return null;
+        }
+
+        @Override
+        public <T> void addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter) {
+
+        }
+
+        @Override
+        public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
+            return null;
+        }
+
+        @Override
+        public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type) {
+            return null;
+        }
+
+        @Override
+        public List<PropertyFilter> getPropertyFilters() {
+            return null;
+        }
+
+        @Override
+        public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
+            return null;
+        }
+
+        @Override
+        public ConfigurationContextBuilder toBuilder() {
+            return null;
+        }
     }
 
 }
