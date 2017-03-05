@@ -9,4 +9,3 @@ Import-Package: \
 	javax.annotation
 Bundle-Activator: org.apache.tamaya.core.OSGIActivator
 Bundle-SymbolicName: org.apache.tamaya.core
-Bundle-Version: 0.3-INCUBATING-SNAPSHOT
