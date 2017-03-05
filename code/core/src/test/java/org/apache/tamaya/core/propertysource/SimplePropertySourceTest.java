@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import java.net.URL;
@@ -40,8 +41,8 @@ public class SimplePropertySourceTest {
 
         assertThat(source, notNullValue());
         assertThat(source.getProperties(), aMapWithSize(2)); // double the size for .source values.
-        assertThat(source.getProperties(), hasEntry("a", "b"));
-        assertThat(source.getProperties(), hasEntry("b", "1"));
+        assertThat(source.getProperties(), hasEntry("a", PropertyValue.of("a", "b", resource.toString())));
+        assertThat(source.getProperties(), hasEntry("b", PropertyValue.of("b", "1", resource.toString())));
 
     }
 

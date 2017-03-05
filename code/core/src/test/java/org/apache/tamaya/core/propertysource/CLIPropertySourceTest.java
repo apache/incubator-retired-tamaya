@@ -34,25 +34,25 @@ public class CLIPropertySourceTest {
         assertTrue(ps.getProperties().isEmpty());
         CLIPropertySource.initMainArgs("-a", "b");
         assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("a"), "b");
+        assertEquals(ps.getProperties().get("a").getValue(), "b");
         CLIPropertySource.initMainArgs("--c");
         assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("c"), "c");
+        assertEquals(ps.getProperties().get("c").getValue(), "c");
         CLIPropertySource.initMainArgs("sss");
         assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("sss"), "sss");
+        assertEquals(ps.getProperties().get("sss").getValue(), "sss");
         CLIPropertySource.initMainArgs("-a", "b", "--c", "sss", "--val=vvv");
         assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("a"), "b");
-        assertEquals(ps.getProperties().get("c"), "c");
-        assertEquals(ps.getProperties().get("sss"), "sss");
+        assertEquals(ps.getProperties().get("a").getValue(), "b");
+        assertEquals(ps.getProperties().get("c").getValue(), "c");
+        assertEquals(ps.getProperties().get("sss").getValue(), "sss");
     // getProperties() throws Exception {
         System.setProperty("main.args", "-a b\t--c sss  ");
         ps = new CLIPropertySource();
         assertFalse(ps.getProperties().isEmpty());
         System.clearProperty("main.args");
-        assertEquals(ps.getProperties().get("a"), "b");
-        assertEquals(ps.getProperties().get("c"), "c");
-        assertEquals(ps.getProperties().get("sss"), "sss");
+        assertEquals(ps.getProperties().get("a").getValue(), "b");
+        assertEquals(ps.getProperties().get("c").getValue(), "c");
+        assertEquals(ps.getProperties().get("sss").getValue(), "sss");
     }
 }

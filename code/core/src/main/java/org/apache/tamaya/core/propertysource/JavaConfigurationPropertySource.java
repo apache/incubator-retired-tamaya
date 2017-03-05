@@ -20,9 +20,8 @@ package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.internal.PropertySourceComparator;
-import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.io.IOException;
@@ -115,11 +114,11 @@ public class JavaConfigurationPropertySource extends BasePropertySource {
 
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         if (!isEnabled()) {
             return Collections.emptyMap();
         }
-        Map<String,String> result = new HashMap<>();
+        Map<String,PropertyValue> result = new HashMap<>();
         for(PropertySource ps:getPropertySources()){
             result.putAll(ps.getProperties());
         }

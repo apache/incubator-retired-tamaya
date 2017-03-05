@@ -19,6 +19,7 @@
 package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,14 +40,9 @@ public class SimplePropertySource extends BasePropertySource {
     private static final Logger LOG = Logger.getLogger(SimplePropertySource.class.getName());
 
     /**
-     * The property source name.
-     */
-    private String name;
-
-    /**
      * The current properties.
      */
-    private Map<String, String> properties;
+    private Map<String, PropertyValue> properties = new HashMap<>();
 
     /**
      * Creates a new Properties based PropertySource based on the given URL.
@@ -56,7 +52,7 @@ public class SimplePropertySource extends BasePropertySource {
     public SimplePropertySource(File propertiesLocation) {
         super(0);
         try {
-            this.name = propertiesLocation.toString();
+            setName(propertiesLocation.toString());
             this.properties = load(propertiesLocation.toURI().toURL());
         } catch (IOException e) {
             throw new ConfigException("Failed to load properties from " + propertiesLocation, e);
@@ -71,7 +67,7 @@ public class SimplePropertySource extends BasePropertySource {
     public SimplePropertySource(URL propertiesLocation) {
         super(0);
         this.properties = load(Objects.requireNonNull(propertiesLocation));
-        this.name = propertiesLocation.toString();
+        setName(propertiesLocation.toString());
     }
 
     /**
@@ -82,8 +78,10 @@ public class SimplePropertySource extends BasePropertySource {
      */
     public SimplePropertySource(String name, Map<String, String> properties) {
         super(0);
-        this.properties = new HashMap<>(properties);
-        this.name = Objects.requireNonNull(name);
+        setName(Objects.requireNonNull(name));
+        for(Map.Entry<String,String> en:properties.entrySet()){
+            this.properties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), name));
+        }
     }
 
     /**
@@ -95,16 +93,11 @@ public class SimplePropertySource extends BasePropertySource {
     public SimplePropertySource(String name, URL propertiesLocation) {
         super(0);
         this.properties = load(propertiesLocation);
-        this.name = Objects.requireNonNull(name);
+        setName(name);
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return this.properties;
     }
 
@@ -115,10 +108,11 @@ public class SimplePropertySource extends BasePropertySource {
      * @return loaded {@link java.util.Properties}
      * @throws IllegalStateException in case of an error while reading properties-file
      */
-    private Map<String, String> load(URL propertiesFile) {
+    private Map<String, PropertyValue> load(URL propertiesFile) {
+        setName(propertiesFile.toString());
         boolean isXML = isXMLPropertieFiles(propertiesFile);
 
-        Map<String, String> properties = new HashMap<>();
+        Map<String, PropertyValue> properties = new HashMap<>();
         try (InputStream stream = propertiesFile.openStream()) {
             Properties props = new Properties();
             if (stream != null) {
@@ -130,12 +124,7 @@ public class SimplePropertySource extends BasePropertySource {
             }
 
             for (String key : props.stringPropertyNames()) {
-                properties.put(key, props.getProperty(key));
-                if (getName() == null){
-                    LOG.finest("No property source name found for " + this +", ommitting source meta-entries.");
-                } else {
-                    properties.put("_" + key + ".source", getName());
-                }
+                properties.put(key, PropertyValue.of(key, props.getProperty(key), getName()));
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties from " + propertiesFile, e);

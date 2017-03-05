@@ -32,7 +32,7 @@ public class FilterContext {
     /** The key. */
     private final String key;
     @Experimental
-    private Map<String, String> configEntries = new HashMap();
+    private Map<String, PropertyValue> configEntries = new HashMap();
     @Experimental
     private boolean singlePropertyScoped;
 
@@ -40,13 +40,21 @@ public class FilterContext {
     /**
      * Creates a new FilterContext.
      * @param key the key under evaluation, not null.
-     * @param singlePropertyScope true, if the filtering is done only for one single property accessed explcitily.
      * @param configEntries the raw configuration data available in the current evaluation context, not null.
      */
-    public FilterContext(String key, Map<String,String> configEntries, boolean singlePropertyScope) {
-        this.singlePropertyScoped = singlePropertyScope;
+    public FilterContext(String key, Map<String,PropertyValue> configEntries) {
+        this.singlePropertyScoped = false;
         this.key = Objects.requireNonNull(key);
         this.configEntries.putAll(configEntries);
+        this.configEntries = Collections.unmodifiableMap(this.configEntries);
+    }
+
+    public FilterContext(String key, PropertyValue value) {
+        this.singlePropertyScoped = true;
+        this.key = Objects.requireNonNull(key);
+        if(value!=null) {
+            this.configEntries.put(value.getKey(), value);
+        }
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
 
@@ -92,13 +100,13 @@ public class FilterContext {
      * @return the configuration instance, or null.
      */
     @Experimental
-    public Map<String, String> getConfigEntries() {
+    public Map<String, PropertyValue> getConfigEntries() {
         return configEntries;
     }
 
     @Override
     public String toString() {
-        return "FilterContext{key='" + key + "', configEntries=" + configEntries + '}';
+        return "FilterContext{key='" + key + "', configEntries=" + configEntries.keySet() + '}';
     }
 
 }

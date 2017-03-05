@@ -145,7 +145,7 @@ public class DefaultConfigurationContextTest {
         PropertyFilter testFilter = new PropertyFilter() {
 
             @Override
-            public String filterProperty(String value, FilterContext context) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
                 return value;
             }
         };

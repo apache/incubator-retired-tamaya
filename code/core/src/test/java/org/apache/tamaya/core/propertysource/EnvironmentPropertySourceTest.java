@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import java.util.Map;
@@ -45,16 +46,16 @@ public class EnvironmentPropertySourceTest {
     @Test
     public void testGet() throws Exception {
         for (Map.Entry<String, String> envEntry : System.getenv().entrySet()) {
-            assertEquals(envPropertySource.get(envEntry.getKey()).get(envEntry.getKey()), envEntry.getValue());
+            assertEquals(envPropertySource.get(envEntry.getKey()).getValue(), envEntry.getValue());
         }
     }
 
     @Test
     public void testGetProperties() throws Exception {
-        Map<String, String> props = envPropertySource.getProperties();
-        for(Map.Entry<String,String> en: props.entrySet()){
+        Map<String, PropertyValue> props = envPropertySource.getProperties();
+        for(Map.Entry<String,PropertyValue> en: props.entrySet()){
             if(!en.getKey().startsWith("_")){
-                assertEquals(System.getenv(en.getKey()), en.getValue());
+                assertEquals(System.getenv(en.getKey()), en.getValue().getValue());
             }
         }
     }

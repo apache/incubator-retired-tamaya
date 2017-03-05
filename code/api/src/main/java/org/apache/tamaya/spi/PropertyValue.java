@@ -36,12 +36,15 @@ public final class PropertyValue implements Serializable{
     private String key;
     /** The value. */
     private String value;
+    /** The source of the value. */
+    private String source;
     /** Additional metadata provided by the provider. */
     private Map<String,String> metaEntries = new HashMap<>();
 
     PropertyValue(PropertyValueBuilder builder){
-        this.key = builder.key;
-        this.value = Objects.requireNonNull(builder.value);
+        this.key = Objects.requireNonNull(builder.key);
+        this.value = builder.value;
+        this.source = Objects.requireNonNull(builder.source);
         if(builder.metaEntries !=null) {
             this.metaEntries.putAll(builder.metaEntries);
         }
@@ -56,7 +59,7 @@ public final class PropertyValue implements Serializable{
     private PropertyValue(String key, String value, String source){
         this.key = Objects.requireNonNull(key, "key is required.");
         this.value = Objects.requireNonNull(value);
-        this.metaEntries.put("_"+key+".source", Objects.requireNonNull(source, "source is required."));
+        this.source = Objects.requireNonNull(source);
     }
 
     /**
@@ -66,6 +69,16 @@ public final class PropertyValue implements Serializable{
     public String getKey() {
         return key;
     }
+
+    /**
+     * The source.
+     * @return the source, which provided the value, not null.
+     * @see PropertySource#getName().
+     */
+    public String getSource() {
+        return this.source;
+    }
+
 
     /**
      * The value.
@@ -88,13 +101,23 @@ public final class PropertyValue implements Serializable{
     /**
      * Creates a new builder instance.
      * @param key the key, not null.
-     * @param value the value.
+     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
+     * @return a new builder instance.
+     */
+    public static PropertyValueBuilder builder(String key, String source){
+        return new PropertyValueBuilder(key, source);
+    }
+
+    /**
+     * Creates a new builder instance.
+     * @param key the key, not null.
      * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
      * @return a new builder instance.
      */
     public static PropertyValueBuilder builder(String key, String value, String source){
         return new PropertyValueBuilder(key, value, source);
     }
+
 
     /**
      * Creates a new PropertyValue without any metadata..
@@ -116,7 +139,7 @@ public final class PropertyValue implements Serializable{
      * @return the value found, or null.
      */
     public String getMetaEntry(String key) {
-        return this.metaEntries.get(key);
+        return this.metaEntries.get(Objects.requireNonNull(key));
     }
 
     /**
@@ -124,7 +147,9 @@ public final class PropertyValue implements Serializable{
      * @return a new builder, never null.
      */
     public PropertyValueBuilder toBuilder() {
-        return new PropertyValueBuilder(this.getKey(), this.getValue(), this.metaEntries);
+        return new PropertyValueBuilder(this.getKey(), this.getSource())
+                .setValue(this.getValue())
+        .setMetaEntries(this.metaEntries);
     }
 
     @Override
@@ -134,12 +159,14 @@ public final class PropertyValue implements Serializable{
         PropertyValue that = (PropertyValue) o;
         return Objects.equals(getKey(), that.getKey()) &&
                 Objects.equals(getValue(), that.getValue()) &&
+                Objects.equals(getSource(), that.getSource()) &&
                 Objects.equals(getMetaEntries(), that.getMetaEntries());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getKey(), getValue(), getMetaEntries());
+        return Objects.hash(getKey(), getValue(), getSource(),
+                getMetaEntries());
     }
 
     @Override
@@ -147,7 +174,41 @@ public final class PropertyValue implements Serializable{
         return "PropertyValue{" +
                 "key='" + key + '\'' +
                 ", value='" + value + '\'' +
-                ", metaEntries=" + metaEntries +
+                ", source='" + value + '\'' +
+                (metaEntries.isEmpty()?"":", metaEntries=" + metaEntries) +
                 '}';
+    }
+
+    /**
+     * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
+     * @param config the String based map, not null.
+     * @param source the source name, not null.
+     * @return the corresponding value based map.
+     */
+    public static Map<String,PropertyValue> map(Map<String, String> config, String source) {
+        Map<String,PropertyValue> result = new HashMap<>(config.size());
+        for(Map.Entry<String,String> en:config.entrySet()){
+            result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), source));
+        }
+        return result;
+    }
+
+    /**
+     * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
+     * @param config the String based map, not null.
+     * @param source the source name, not null.
+     * @param metaData additional metadata, not null.
+     * @return the corresponding value based map.
+     */
+    public static Map<String,PropertyValue> map(Map<String, String> config, String source,
+                                                Map<String,String> metaData) {
+        Map<String,PropertyValue> result = new HashMap<>(config.size());
+        for(Map.Entry<String,String> en:config.entrySet()){
+            result.put(en.getKey(),
+                    new PropertyValueBuilder(en.getKey(), source)
+                            .setValue(en.getValue())
+            .addMetaEntries(metaData).build());
+        }
+        return result;
     }
 }

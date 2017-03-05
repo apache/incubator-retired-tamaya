@@ -32,45 +32,42 @@ public class FilterContextTest {
     @Test
     public void getKey() throws Exception {
         FilterContext ctx = new FilterContext("getKey",
-                new HashMap<String,String>(), true);
+                new HashMap<String,PropertyValue>());
         assertEquals("getKey", ctx.getKey());
     }
 
     @Test
     public void isSinglePropertyScoped() throws Exception {
         FilterContext ctx = new FilterContext("isSinglePropertyScoped",
-                new HashMap<String,String>(), true);
-        assertEquals(true, ctx.isSinglePropertyScoped());
-        ctx = new FilterContext("isSinglePropertyScoped",
-                new HashMap<String,String>(), false);
+                new HashMap<String,PropertyValue>());
         assertEquals(false, ctx.isSinglePropertyScoped());
+        ctx = new FilterContext("isSinglePropertyScoped", PropertyValue.of("isSinglePropertyScoped", "val", "test"));
+        assertEquals(true, ctx.isSinglePropertyScoped());
     }
 
     @Test
     public void getConfigEntries() throws Exception {
-        Map<String,String> config = new HashMap<>();
+        Map<String,PropertyValue> config = new HashMap<>();
         for(int i=0;i<10;i++) {
-            config.put("key-"+i, "value-"+i);
+            config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
         }
-        FilterContext ctx = new FilterContext("getConfigEntries",
-                config, true);
+        FilterContext ctx = new FilterContext("getMetaEntries", config);
         assertEquals(config, ctx.getConfigEntries());
         assertTrue(config != ctx.getConfigEntries());
     }
 
     @Test
     public void testToString() throws Exception {
-        Map<String,String> config = new HashMap<>();
+        Map<String,PropertyValue> config = new HashMap<>();
         for(int i=0;i<2;i++) {
-            config.put("key-"+i, "value-"+i);
+            config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
         }
-        FilterContext ctx = new FilterContext("testToString",
-                config, true);
+        FilterContext ctx = new FilterContext("testToString", config);
         String toString = ctx.toString();
         assertNotNull(toString);
-        assertTrue(toString.contains("FilterContext{key='testToString', configEntries={"));
-        assertTrue(toString.contains("key-0=value-0"));
-        assertTrue(toString.contains("key-1=value-1"));
+        assertTrue(toString.contains("FilterContext{key='testToString', configEntries=["));
+        assertTrue(toString.contains("key-0"));
+        assertTrue(toString.contains("key-1"));
         assertTrue(toString.endsWith("}"));
     }
 

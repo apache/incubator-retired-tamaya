@@ -20,10 +20,7 @@ package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.spi.PropertyValue;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
+import java.util.*;
 
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} provides all properties which are set
@@ -33,8 +30,6 @@ import java.util.logging.Logger;
  * or {@code tamaya.defaults.disable}.
  */
 public class EnvironmentPropertySource extends BasePropertySource {
-
-    private static final Logger LOG = Logger.getLogger(EnvironmentPropertySource.class.getName());
 
     /**
      * Default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
@@ -146,25 +141,21 @@ public class EnvironmentPropertySource extends BasePropertySource {
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         if(disabled){
             return Collections.emptyMap();
         }
         String prefix = this.prefix;
-        if(prefix==null) {
-            Map<String, String> entries = new HashMap<>(System.getenv());
-            for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-                entries.put("_" + entry.getKey() + ".source", getName());
+        Map<String,String> envProps = System.getenv();
+        Map<String, PropertyValue> values = new HashMap<>();
+        for (Map.Entry<String,String> entry : envProps.entrySet()) {
+            if(prefix==null) {
+                values.put(entry.getKey(), PropertyValue.of(entry.getKey(), entry.getValue(), getName()));
+            }else {
+                values.put(prefix + entry.getKey(), PropertyValue.of(prefix + entry.getKey(), entry.getValue(), getName()));
             }
-            return entries;
-        }else{
-            Map<String, String> entries = new HashMap<>();
-            for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-                entries.put(prefix + entry.getKey(), entry.getValue());
-                entries.put("_" + prefix + entry.getKey() + ".source", getName());
-            }
-            return entries;
         }
+        return values;
     }
 
     @Override

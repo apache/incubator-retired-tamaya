@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spi;
 
-import java.util.Map;
 
 /**
  * Policy that determines how the final value of a configuration entry is evaluated. An instances of this
@@ -36,9 +35,9 @@ public interface PropertyValueCombinationPolicy {
     PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = new PropertyValueCombinationPolicy(){
 
         @Override
-        public Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource) {
+        public PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource) {
             PropertyValue value = propertySource.get(key);
-            return value!=null?value.getConfigEntries():currentValue;
+            return value!=null?value:currentValue;
         }
 
     };
@@ -61,6 +60,6 @@ public interface PropertyValueCombinationPolicy {
      *                       {@code currentValue} should be returned in almost all cases.
      * @return the value to be used for future evaluation, including metadata entries.
      */
-    Map<String,String> collect(Map<String,String> currentValue, String key, PropertySource propertySource);
+    PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource);
 
 }

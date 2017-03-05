@@ -84,7 +84,7 @@ class WrappedPropertySource implements PropertySource{
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return delegate.getProperties();
     }
 

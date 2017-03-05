@@ -85,50 +85,50 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
      * @return the ordinal value to compare the property source.
      */
     public static int getOrdinal(PropertySource propertySource) {
-        PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
-        if(ordinalValue!=null){
-            try{
-                return Integer.parseInt(ordinalValue.getValue().trim());
-            }catch(Exception e){
-                LOG.finest("Failed to parse ordinal from " + PropertySource.TAMAYA_ORDINAL +
-                        " in " + propertySource.getName()+": "+ordinalValue.getValue());
-            }
-        }
-        try {
-            Method method = propertySource.getClass().getMethod("getOrdinal");
-            if(int.class.equals(method.getReturnType())){
-                if(!method.isAccessible()){
-                    method.setAccessible(true);
-                }
-                try {
-                    return (int)method.invoke(propertySource);
-                } catch (Exception e) {
-                    LOG.log(Level.FINEST, "Error calling 'int getOrdinal()' on " + propertySource.getName(), e);
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            LOG.finest("No 'int getOrdinal()' method found in " + propertySource.getName());
-        }
-        try {
-            Field field = propertySource.getClass().getField("ORDINAL");
-            if(int.class.equals(field.getType()) && Modifier.isStatic(field.getModifiers())){
-                if(!field.isAccessible()){
-                    field.setAccessible(true);
-                }
-                try {
-                    return (int)field.get(propertySource);
-                } catch (Exception e) {
-                    LOG.log(Level.FINEST, "Error evaluating 'int ORDINAL' on " + propertySource.getName(), e);
-                }
-            }
-        } catch (NoSuchFieldException e) {
-            LOG.finest("No 'int ORDINAL' field found in " + propertySource.getName());
-        }
-        Priority prio = propertySource.getClass().getAnnotation(Priority.class);
-        if(prio!=null){
-            return prio.value();
-        }
-        return 0;
+//        PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
+//        if(ordinalValue!=null){
+//            try{
+//                return Integer.parseInt(ordinalValue.getValue().trim());
+//            }catch(Exception e){
+//                LOG.finest("Failed to parse ordinal from " + PropertySource.TAMAYA_ORDINAL +
+//                        " in " + propertySource.getName()+": "+ordinalValue.getValue());
+//            }
+//        }
+//        try {
+//            Method method = propertySource.getClass().getMethod("getOrdinal");
+//            if(int.class.equals(method.getReturnType())){
+//                if(!method.isAccessible()){
+//                    method.setAccessible(true);
+//                }
+//                try {
+//                    return (int)method.invoke(propertySource);
+//                } catch (Exception e) {
+//                    LOG.log(Level.FINEST, "Error calling 'int getOrdinal()' on " + propertySource.getName(), e);
+//                }
+//            }
+//        } catch (NoSuchMethodException e) {
+//            LOG.finest("No 'int getOrdinal()' method found in " + propertySource.getName());
+//        }
+//        try {
+//            Field field = propertySource.getClass().getField("ORDINAL");
+//            if(int.class.equals(field.getType()) && Modifier.isStatic(field.getModifiers())){
+//                if(!field.isAccessible()){
+//                    field.setAccessible(true);
+//                }
+//                try {
+//                    return (int)field.get(propertySource);
+//                } catch (Exception e) {
+//                    LOG.log(Level.FINEST, "Error evaluating 'int ORDINAL' on " + propertySource.getName(), e);
+//                }
+//            }
+//        } catch (NoSuchFieldException e) {
+//            LOG.finest("No 'int ORDINAL' field found in " + propertySource.getName());
+//        }
+//        Priority prio = propertySource.getClass().getAnnotation(Priority.class);
+//        if(prio!=null){
+//            return prio.value();
+//        }
+        return propertySource.getOrdinal();
     }
 
     @Override

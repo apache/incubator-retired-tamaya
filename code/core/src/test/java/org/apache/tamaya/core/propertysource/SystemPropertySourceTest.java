@@ -37,9 +37,9 @@ public class SystemPropertySourceTest {
         // test the default ordinal
         Assert.assertEquals(SystemPropertySource.DEFAULT_ORDINAL, testPropertySource.getOrdinal());
 
-        // set the ordinal to 1000
-        System.setProperty(PropertySource.TAMAYA_ORDINAL, "1000");
-        Assert.assertEquals(1000, new SystemPropertySource().getOrdinal());
+        // set the ordinal to 1001
+        System.setProperty(PropertySource.TAMAYA_ORDINAL, "1001");
+        Assert.assertEquals(1001, new SystemPropertySource().getOrdinal());
         // currently its not possible to change ordinal at runtime
 
         // reset it to not destroy other tests!!
@@ -72,30 +72,20 @@ public class SystemPropertySourceTest {
 
         // cleanup
         System.clearProperty("test");
-
-        // no modifaction
-        try {
-            testPropertySource.getProperties().put("add.new.keys", "must throw exception");
-            Assert.fail(UnsupportedOperationException.class.getName() + " expected");
-        }
-        catch (UnsupportedOperationException e) {
-            // expected -> all is fine
-        }
     }
 
-    private void checkWithSystemProperties(Map<String, String> toCheck) {
+    private void checkWithSystemProperties(Map<String,PropertyValue> toCheck) {
         Properties systemEntries = System.getProperties();
-
-        Assert.assertEquals("size of System.getProperties().entrySet() must be the same as SystemPropertySrouce.getProperties().entrySet()",
-                            systemEntries.size(), toCheck.size()/2);
-
-        for (Map.Entry<String, String> propertySourceEntry : toCheck.entrySet()) {
+        int num = 0;
+        for (PropertyValue propertySourceEntry : toCheck.values()) {
             if(propertySourceEntry.getKey().startsWith("_")){
                 continue; // meta entry
             }
+            num ++;
             Assert.assertEquals("Entry values for key '" + propertySourceEntry.getKey() + "' do not match",
                                 systemEntries.getProperty(propertySourceEntry.getKey()), propertySourceEntry.getValue());
         }
-
+        Assert.assertEquals("size of System.getProperties().entrySet() must be the same as SystemPropertySrouce.getProperties().entrySet()",
+                systemEntries.size(), num);
     }
 }

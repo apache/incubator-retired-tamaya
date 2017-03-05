@@ -21,6 +21,7 @@ package org.apache.tamaya.core;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.PropertyValueBuilder;
 
 import java.util.Collections;
 import java.util.Date;
@@ -55,13 +56,13 @@ public class TestPropertySource implements PropertySource {
     @Override
     public PropertyValue get(String key) {
         return PropertyValue.builder(key, key + "Value", getName())
-                .addContextData("ordinal", String.valueOf(getOrdinal()))
-                .addContextData("createdAt", String.valueOf(new Date()))
+                .addMetaEntry("ordinal", String.valueOf(getOrdinal()))
+                .addMetaEntry("createdAt", String.valueOf(new Date()))
                 .build();
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return Collections.emptyMap();
     }
 

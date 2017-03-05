@@ -30,6 +30,11 @@ import java.util.Map;
 public class ConverterTestsPropertySource implements PropertySource{
 
     @Override
+    public int getOrdinal() {
+        return 0;
+    }
+
+    @Override
     public String getName(){
         return "ConverterTestsPropertySource";
     }
@@ -238,7 +243,7 @@ public class ConverterTestsPropertySource implements PropertySource{
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return Collections.emptyMap();
     }
 

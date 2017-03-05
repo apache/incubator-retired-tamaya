@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.spi.PropertyValue;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class CLIPropertySource extends BasePropertySource{
     private static String[] args = new String[0];
 
     /** The map of parsed main arguments. */
-    private static Map<String,String> mainArgs;
+    private static Map<String,PropertyValue> mainArgs;
 
     /* Initializes the initial state. */
     static {
@@ -83,7 +85,7 @@ public class CLIPropertySource extends BasePropertySource{
         if(argsProp!=null){
             CLIPropertySource.args = argsProp.split("\\s");
         }
-        Map<String,String> result = null;
+        Map<String,PropertyValue> result;
         if(CLIPropertySource.args==null){
             result = Collections.emptyMap();
         }else{
@@ -99,19 +101,19 @@ public class CLIPropertySource extends BasePropertySource{
                     int index = arg.indexOf("=");
                     if(index>0){
                         key = arg.substring(0,index).trim();
-                        result.put(prefix+key, arg.substring(index+1).trim());
+                        result.put(prefix+key, PropertyValue.of(key, arg.substring(index+1).trim(), "main-args"));
                         key = null;
                     }else{
-                        result.put(prefix+arg, arg);
+                        result.put(prefix+arg, PropertyValue.of(prefix+arg, arg, "main-args"));
                     }
                 }else if(arg.startsWith("-")){
                     key = arg.substring(1);
                 }else{
                     if(key!=null){
-                        result.put(prefix+key, arg);
+                        result.put(prefix+key, PropertyValue.of(prefix+key, arg, "main-args"));
                         key = null;
                     }else{
-                        result.put(prefix+arg, arg);
+                        result.put(prefix+arg, PropertyValue.of(prefix+arg, arg, "main-args"));
                     }
                 }
             }
@@ -120,7 +122,7 @@ public class CLIPropertySource extends BasePropertySource{
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return Collections.unmodifiableMap(mainArgs);
     }
 }

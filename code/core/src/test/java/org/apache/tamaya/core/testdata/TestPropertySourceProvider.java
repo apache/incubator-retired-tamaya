@@ -21,6 +21,7 @@ package org.apache.tamaya.core.testdata;
 import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,14 +49,14 @@ public class TestPropertySourceProvider implements PropertySourceProvider {
 
     private static class MyPropertySource extends BasePropertySource {
 
-        private Map<String, String> properties = new HashMap<>();
+        private Map<String, PropertyValue> properties = new HashMap<>();
 
         public MyPropertySource() {
             super(200);
-            properties.put("name", "Robin");
-            properties.put("name3", "Lukas");
-            properties.put("name4", "Sereina");
-            properties.put("name5", "Benjamin");
+            properties.put("name", PropertyValue.of("name", "Robin", "test"));
+            properties.put("name3", PropertyValue.of("name3", "Lukas", "test"));
+            properties.put("name4", PropertyValue.of("name4", "Sereina", "test"));
+            properties.put("name5", PropertyValue.of("name5", "Benjamin", "test"));
             properties = Collections.unmodifiableMap(properties);
         }
 
@@ -65,7 +66,7 @@ public class TestPropertySourceProvider implements PropertySourceProvider {
         }
 
         @Override
-        public Map<String, String> getProperties() {
+        public Map<String, PropertyValue> getProperties() {
             return properties;
         }
 

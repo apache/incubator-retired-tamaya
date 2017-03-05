@@ -20,7 +20,6 @@ package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueBuilder;
 
 import java.util.Map;
 import java.util.Objects;
@@ -135,19 +134,12 @@ public abstract class BasePropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        Map<String,String> properties = getProperties();
-        String val = properties.get(key);
+        Map<String,PropertyValue> properties = getProperties();
+        PropertyValue val = properties.get(key);
         if(val==null){
             return null;
         }
-        PropertyValueBuilder b = new PropertyValueBuilder(key, val, getName());
-        String metaKeyStart = "_" + key + ".";
-        for(Map.Entry<String,String> en:properties.entrySet()) {
-            if(en.getKey().startsWith(metaKeyStart) && en.getValue()!=null){
-                b.addContextData(en.getKey().substring(metaKeyStart.length()), en.getValue());
-            }
-        }
-        return b.build();
+        return val;
     }
 
     @Override

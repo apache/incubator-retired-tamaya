@@ -31,8 +31,29 @@ public class PropertyValueBuilder {
     String key;
     /** The property value. */
     String value;
+    /** The property vaoue source. */
+    String source;
     /** additional metadata entries (optional). */
     Map<String,String> metaEntries = new HashMap<>();
+
+    /**
+     * Create a new builder instance, for a given set of parameters.
+     * Before calling build at least a {@link #value} and its {@link #source}
+     * must be set.
+     */
+    PropertyValueBuilder(String key){
+        this.key = Objects.requireNonNull(key);
+    }
+
+    /**
+     * Create a new builder instance, for a given set of parameters.
+     * @param key to access a property value.
+     * @param source property source.
+     */
+    PropertyValueBuilder(String key, String source) {
+        this.key = Objects.requireNonNull(key);
+        this.source = Objects.requireNonNull(source);
+    }
 
     /**
      * Create a new builder instance, for a given set of parameters.
@@ -41,42 +62,15 @@ public class PropertyValueBuilder {
      * {@code null}.
      * @param source property source.
      */
-    public PropertyValueBuilder(String key, String value, String source) {
+    PropertyValueBuilder(String key, String value, String source) {
         this.key = Objects.requireNonNull(key);
-        this.value = Objects.requireNonNull(value);
-        this.metaEntries.put("source", Objects.requireNonNull(source));
-    }
-
-    /**
-     * Creates a new builder from data from a {@link PropertyValue}.
-     * @param key to access a property value.
-     * @param value the value, not null. If a value is null {@link PropertySource#get(String)} should return
-     * {@code null}.
-     * @param metaEntries the context data, not null.
-     */
-    PropertyValueBuilder(String key, String value, Map<String,String> metaEntries) {
-        this.key = Objects.requireNonNull(key);
-        this.value = Objects.requireNonNull(value);
-        this.metaEntries.putAll(metaEntries);
+        this.value = value;
+        this.source = Objects.requireNonNull(source);
     }
 
     /**
      * Replaces/sets the context data.
-     * @param metaEntries the context data to be applied, not null. Note that all keys should only identify the context
-     *                    data item. the builder does create a corresponding metadata entry, e.g.
-     *                    <pre>
-     *                    provider=myProviderName
-     *                    ttl=250
-     *                    creationIndex=1
-     *                    modificationIndex=23
-     *                    </pre>
-     *                    will be mapped, given a key {@code test.env.name} to
-     *                    <pre>
-     *                    _test.env.name.provider=myProviderName
-     *                    _test.env.name.ttl=250
-     *                    _test.env.name.creationIndex=1
-     *                    _test.env.name.modificationIndex=23
-     *                    </pre>
+     * @param metaEntries the context data to be applied, not null.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setMetaEntries(Map<String, String> metaEntries) {
@@ -91,14 +85,34 @@ public class PropertyValueBuilder {
      * @param value the context value, not null (will be converted to String).
      * @return the builder for chaining.
      */
-    public PropertyValueBuilder addContextData(String key, Object value) {
+    public PropertyValueBuilder addMetaEntry(String key, Object value) {
         this.metaEntries.put(key, String.valueOf(Objects.requireNonNull(value, "Meta value is null.")));
         return this;
     }
 
     /**
+     * Adds the context data given.
+     * @param metaEntries the context data to be applied, not null.
+     * @return the builder for chaining.
+     */
+    public PropertyValueBuilder addMetaEntries(Map<String, String> metaEntries) {
+        this.metaEntries.putAll(metaEntries);
+        return this;
+    }
+
+    /**
+     * Removes a meta entry.
+     * @param key the entry's key, not null.
+     * @return the builder for chaining.
+     */
+    public PropertyValueBuilder removeMetaEntry(String key) {
+        this.metaEntries.remove(key);
+        return this;
+    }
+
+    /**
      * Get the value's context data.
-     * @return the context data.
+     * @return the context data, not null.
      */
     public Map<String,String> getMetaEntries(){
         return Collections.unmodifiableMap(this.metaEntries);
@@ -124,12 +138,32 @@ public class PropertyValueBuilder {
     }
 
     /**
+     * Sets a new key.
+     * @param key the new key, not null.
+     * @return the builder for chaining.
+     */
+    public PropertyValueBuilder setKey(String key) {
+        this.key = Objects.requireNonNull(key);
+        return this;
+    }
+
+    /**
      * Sets a new value.
-     * @param value the new value.
+     * @param value the new value, not null.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setValue(String value) {
         this.value = value;
+        return this;
+    }
+
+    /**
+     * Sets a new source.
+     * @param source the new source, not null.
+     * @return the builder for chaining.
+     */
+    public PropertyValueBuilder setSource(String source) {
+        this.source = Objects.requireNonNull(source);
         return this;
     }
 

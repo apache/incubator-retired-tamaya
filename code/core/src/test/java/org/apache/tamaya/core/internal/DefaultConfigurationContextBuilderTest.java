@@ -77,13 +77,13 @@ public class DefaultConfigurationContextBuilderTest {
     public void addPropertyFilters_Array() throws Exception {
         PropertyFilter filter1 = new PropertyFilter(){
             @Override
-            public String filterProperty(String value, FilterContext context) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
                 return value;
             }
         };
         PropertyFilter filter2 = new PropertyFilter(){
             @Override
-            public String filterProperty(String value, FilterContext context) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
                 return value;
             }
         };
@@ -103,13 +103,13 @@ public class DefaultConfigurationContextBuilderTest {
     public void removePropertyFilters_Array() throws Exception {
         PropertyFilter filter1 = new PropertyFilter(){
             @Override
-            public String filterProperty(String value, FilterContext context) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
                 return value;
             }
         };
         PropertyFilter filter2 = new PropertyFilter(){
             @Override
-            public String filterProperty(String value, FilterContext context) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
                 return value;
             }
         };
@@ -175,9 +175,10 @@ public class DefaultConfigurationContextBuilderTest {
         PropertyValueCombinationPolicy combPol = new PropertyValueCombinationPolicy(){
 
             @Override
-            public Map<String, String> collect(Map<String, String> currentValue, String key, PropertySource propertySource) {
+            public PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource) {
                 return currentValue;
             }
+
         };
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .setPropertyValueCombinationPolicy(combPol);
@@ -192,7 +193,6 @@ public class DefaultConfigurationContextBuilderTest {
     }
 
 
-    @Priority(200)
     private static class TestPropertySource implements PropertySource{
 
         private String id;
@@ -206,6 +206,11 @@ public class DefaultConfigurationContextBuilderTest {
         }
 
         @Override
+        public int getOrdinal() {
+            return 200;
+        }
+
+        @Override
         public String getName() {
             return id!=null?id:"TestPropertySource";
         }
@@ -216,7 +221,7 @@ public class DefaultConfigurationContextBuilderTest {
         }
 
         @Override
-        public Map<String, String> getProperties() {
+        public Map<String, PropertyValue> getProperties() {
             return Collections.emptyMap();
         }
 
