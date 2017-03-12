@@ -102,8 +102,8 @@ public class PropertyConverterManager {
     /**
      * Registers a ew converter instance.
      *
-     * @param targetType the target type, not null.
-     * @param converter  the converter, not null.
+     * @param targetType the target type, not {@code null}.
+     * @param converter  the converter, not {@code null}.
      * @param <T>        the type.
      */
     public <T> void register(TypeLiteral<T> targetType, PropertyConverter<T> converter) {
@@ -166,7 +166,7 @@ public class PropertyConverterManager {
     /**
      * Allows to evaluate if a given target type is supported.
      *
-     * @param targetType the target type, not null.
+     * @param targetType the target type, not {@code null}.
      * @return true, if a converter for the given type is registered, or a default one can be created.
      */
     public boolean isTargetTypeSupported(TypeLiteral<?> targetType) {
@@ -214,7 +214,7 @@ public class PropertyConverterManager {
      * Transitive conversion is supported for all directly implemented interfaces (including inherited ones) and
      * the inheritance hierarchy (exception Object). Superinterfaces of implemented interfaces are ignored.
      *
-     * @param targetType the target type, not null.
+     * @param targetType the target type, not {@code null}.
      * @param <T>        the type class
      * @return the ordered list of converters (may be empty for not convertible types).
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)

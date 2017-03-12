@@ -78,6 +78,8 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public String get(String key) {
+        Objects.requireNonNull(key, "Key must not be null.");
+
         PropertyValue value = configEvaluator.evaluteRawValue(key, configurationContext);
         if(value==null || value.getValue()==null){
             return null;
@@ -92,6 +94,9 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
+        Objects.requireNonNull(key, "Key must not be null.");
+        Objects.requireNonNull(defaultValue, "Default value must not be null");
+
         String val = get(key);
         if(val==null){
             return defaultValue;
@@ -101,6 +106,10 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+        Objects.requireNonNull(key, "Key must not be null.");
+        Objects.requireNonNull(type, "Target type must not be null");
+        Objects.requireNonNull(defaultValue, "Default value must not be null");
+
         T val = get(key, type);
         if(val==null){
             return defaultValue;
@@ -137,13 +146,16 @@ public class DefaultConfiguration implements Configuration {
      * {@link ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
-     *             a/b/c/d.myProperty}.
-     * @param type The target type required, not null.
+     *             a/b/c/d.myProperty}, never {@code null}.
+     * @param type The target type required, not {@code null}.
      * @param <T>  the value type
-     * @return the converted value, never null.
+     * @return the converted value, never {@code null}.
      */
     @Override
     public <T> T get(String key, Class<T> type) {
+        Objects.requireNonNull(key, "Key must not be null.");
+        Objects.requireNonNull(type, "Target type must not be null");
+
         return get(key, (TypeLiteral<T>)TypeLiteral.of(type));
     }
 
@@ -154,12 +166,15 @@ public class DefaultConfiguration implements Configuration {
      *
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
-     * @param type The target type required, not null.
+     * @param type The target type required, not {@code null}.
      * @param <T>  the value type
-     * @return the converted value, never null.
+     * @return the converted value, never {@code null}.
      */
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
+        Objects.requireNonNull(key, "Key must not be null.");
+        Objects.requireNonNull(type, "Target type must not be null");
+
         return convertValue(key, get(key), type);
     }
 
@@ -191,6 +206,10 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(defaultValue);
+
         T val = get(key, type);
         if(val==null){
             return defaultValue;
@@ -200,11 +219,13 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public Configuration with(ConfigOperator operator) {
+        if (1==1) throw new RuntimeException("No tests written.");
         return operator.operate(this);
     }
 
     @Override
     public <T> T query(ConfigQuery<T> query) {
+        if (1==1) throw new RuntimeException("No tests written.");
         return query.query(this);
     }
 

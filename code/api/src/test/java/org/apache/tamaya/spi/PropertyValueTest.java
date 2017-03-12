@@ -20,19 +20,54 @@ package org.apache.tamaya.spi;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by atsticks on 02.02.16.
- */
 public class PropertyValueTest {
+
+    @Test(expected = NullPointerException.class)
+    public void mapThreeParameterVariantRequiresNonNullValueForConfigParameter() {
+        PropertyValue.map(null, "a", Collections.EMPTY_MAP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapThreeParameterVariantRequiresNonNullValueForSource() {
+        PropertyValue.map(Collections.EMPTY_MAP, null, Collections.EMPTY_MAP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapThreeParameterVariantRequiresNonNullValueForMetaData() {
+        PropertyValue.map(Collections.EMPTY_MAP, "s", null);
+    }
+
+
+
+    @Test(expected = NullPointerException.class)
+    public void ofDoesNotAcceptNullAsKey() throws Exception {
+        PropertyValue.of(null, "b", "source");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void ofDoesNotAcceptNullAsSource() throws Exception {
+        PropertyValue.of("a", "b", null);
+    }
 
     @Test
     public void testOf(){
         assertNotNull(PropertyValue.of("k", "v", "testGetKey"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void getMetaEntryRequiresNonNullValueForKey() {
+        PropertyValue.of("a", "b", "s").getMetaEntry(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSetMetaEntriesRequiresNonNullParameter() {
+        new PropertyValueBuilder("a").setMetaEntries(null);
     }
 
     @Test
@@ -121,7 +156,8 @@ public class PropertyValueTest {
         Map<String,PropertyValue> result = PropertyValue.map(map, "source1");
         assertNotNull(result);
         assertEquals(map.size(), result.size());
-        for(Map.Entry<String,String>en:map.entrySet()){
+
+        for (Map.Entry<String,String>en:map.entrySet()) {
             PropertyValue val = result.get(en.getKey());
             assertNotNull(val);
             assertEquals(val.getKey(), en.getKey());
@@ -156,6 +192,7 @@ public class PropertyValueTest {
     public void testInstantiateNoKey1() throws Exception {
         PropertyValue pv = PropertyValue.builder(null, "testGetKey").setValue("v").build();
     }
+
     @Test(expected = NullPointerException.class)
     public void testInstantiateNoKey2() throws Exception {
         PropertyValue pv = PropertyValue.of(null, "v", "testGetKey");
@@ -165,20 +202,52 @@ public class PropertyValueTest {
     public void testInstantiateNoValue1() throws Exception {
         PropertyValue pv = PropertyValue.builder("k", "testGetKey").build();
     }
+
     @Test
     public void testInstantiateNoValue2() throws Exception {
         PropertyValue pv = PropertyValue.of("k", null, "testGetKey");
     }
+
     @Test(expected = NullPointerException.class)
     public void testInstantiateNoSource1() throws Exception {
         PropertyValue pv = PropertyValue.builder("k", null).setValue("v").build();
     }
+
     @Test(expected = NullPointerException.class)
     public void testInstantiateNoSource2() throws Exception {
         PropertyValue pv = PropertyValue.of("k", "v", null);
     }
+
     @Test(expected = NullPointerException.class)
     public void testGetMetaEntry_Null() throws Exception {
         PropertyValue.of("k", "v", "src").getMetaEntry(null);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void builderMethodThreeParameterVariantRequiresNonNullValueAsKey() {
+        PropertyValue.builder(null, "b", "s");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void builderMethodThreeParameterVariantRequiresNonNullValueAsSource() {
+        PropertyValue.builder("A", "b", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void builderMethodThreeParameterVariantRequiresNonNullValueAsValue() {
+        PropertyValue.builder("A", null, "s");
+    }
+
+
+    @Test(expected = NullPointerException.class)
+    public void builderMethodTwoParameterVariantRequiresNonNullValueAsSource() {
+        PropertyValue.builder(null, "a");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void builderMethodTwoParameterVariantRequiresNonNullValueAsValue() {
+        PropertyValue.builder("A", null);
+    }
+
+
 }

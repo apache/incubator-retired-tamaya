@@ -52,9 +52,9 @@ public final class PropertyFiltering{
 
     /**
      * Filters a single value.
-     * @param value the raw value, not null.
+     * @param value the raw value, not {@code null}.
      * @param context the context
-     * @return the filtered value, inclusing null.
+     * @return the filtered value, including {@code null}.
      */
     public static PropertyValue applyFilter(PropertyValue value, ConfigurationContext context) {
         FilterContext filterContext = new FilterContext(value, context);
@@ -63,7 +63,7 @@ public final class PropertyFiltering{
 
     /**
      * Filters all properties.
-     * @param rawProperties the unfiltered properties, not null.
+     * @param rawProperties the unfiltered properties, not {@code null}.
      * @param context the context
      * @return the filtered value, inclusing null.
      */
@@ -82,7 +82,7 @@ public final class PropertyFiltering{
 
     /**
      * Basic filter logic.
-     * @param context the filter context, not null.
+     * @param context the filter context, not {@code null}.
      * @return the filtered value.
      */
     private static PropertyValue filterValue(FilterContext context) {

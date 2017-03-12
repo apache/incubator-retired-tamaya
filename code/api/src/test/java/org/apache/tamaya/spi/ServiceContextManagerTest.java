@@ -42,11 +42,16 @@ public class ServiceContextManagerTest {
             assertTrue(ServiceContextManager.getServiceContext() == mine);
             ServiceContextManager.set(mine);
             assertTrue(ServiceContextManager.getServiceContext() == mine);
-        }finally{
+        } finally {
             ServiceContextManager.set(prev);
             assertTrue(ServiceContextManager.getServiceContext() == prev);
         }
 
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void setRequiresNonNullParameter() {
+        ServiceContextManager.set(null);
     }
 
     private static final class MyServiceContext implements ServiceContext{

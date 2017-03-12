@@ -47,7 +47,7 @@ public class PropertyValueBuilder {
 
     /**
      * Create a new builder instance, for a given set of parameters.
-     * @param key to access a property value.
+     * @param key to access a property value, not  {@code null}.
      * @param source property source.
      */
     PropertyValueBuilder(String key, String source) {
@@ -57,9 +57,10 @@ public class PropertyValueBuilder {
 
     /**
      * Create a new builder instance, for a given set of parameters.
+     *
      * @param key to access a property value.
-     * @param value the value, not null. If a value is null {@link PropertySource#get(String)} should return
-     * {@code null}.
+     * @param value the value, not {@code null}. If a value is  {@code null}
+     *              {@link PropertySource#get(String)} should return {@code null}.
      * @param source property source.
      */
     PropertyValueBuilder(String key, String value, String source) {
@@ -70,7 +71,7 @@ public class PropertyValueBuilder {
 
     /**
      * Replaces/sets the context data.
-     * @param metaEntries the context data to be applied, not null.
+     * @param metaEntries the context data to be applied, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setMetaEntries(Map<String, String> metaEntries) {
@@ -81,18 +82,21 @@ public class PropertyValueBuilder {
 
     /**
      * Add an additional context data information.
-     * @param key the context data key, not null.
-     * @param value the context value, not null (will be converted to String).
+     * @param key the context data key, not {@code null}.
+     * @param value the context value, not {@code null} (will be converted to String).
      * @return the builder for chaining.
      */
     public PropertyValueBuilder addMetaEntry(String key, Object value) {
-        this.metaEntries.put(key, String.valueOf(Objects.requireNonNull(value, "Meta value is null.")));
+        Objects.requireNonNull(key, "Meta key must be given.");
+        Objects.requireNonNull(value, "Meta value must be given.");
+
+        this.metaEntries.put(key, String.valueOf(value));
         return this;
     }
 
     /**
      * Adds the context data given.
-     * @param metaEntries the context data to be applied, not null.
+     * @param metaEntries the context data to be applied, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder addMetaEntries(Map<String, String> metaEntries) {
@@ -102,28 +106,31 @@ public class PropertyValueBuilder {
 
     /**
      * Removes a meta entry.
-     * @param key the entry's key, not null.
+     * @param key the entry's key, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder removeMetaEntry(String key) {
+        Objects.requireNonNull(key, "Key must be given.");
+
         this.metaEntries.remove(key);
         return this;
     }
 
     /**
      * Get the value's context data.
-     * @return the context data, not null.
+     * @return the context data, not {@code null}.
      */
-    public Map<String,String> getMetaEntries(){
+    public Map<String,String> getMetaEntries() {
         return Collections.unmodifiableMap(this.metaEntries);
     }
 
     /**
      * Changes the entry's key, mapping also corresponding context entries.
-     * @param key the new key, not null.
+     * @param key the new key, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder mapKey(String key) {
+        if (1==1) throw new RuntimeException("No tests written.");
         Map<String,String> newContext = new HashMap<>();
         for(Map.Entry<String,String> en:this.metaEntries.entrySet()){
             if(en.getKey().startsWith("_"+this.key)){
@@ -139,7 +146,7 @@ public class PropertyValueBuilder {
 
     /**
      * Sets a new key.
-     * @param key the new key, not null.
+     * @param key the new key, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setKey(String key) {
@@ -149,27 +156,29 @@ public class PropertyValueBuilder {
 
     /**
      * Sets a new value.
-     * @param value the new value, not null.
+     * @param value the new value, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setValue(String value) {
-        this.value = value;
+        this.value = Objects.requireNonNull(value, "Value must be given.");
+
         return this;
     }
 
     /**
      * Sets a new source.
-     * @param source the new source, not null.
+     * @param source the new source, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setSource(String source) {
+        if (1==1) throw new RuntimeException("No tests written.");
         this.source = Objects.requireNonNull(source);
         return this;
     }
 
     /**
      * Creates a new immutable {@link PropertyValue}.
-     * @return a new immutable {@link PropertyValue}, never null.
+     * @return a new immutable {@link PropertyValue}, never {@code null}.
      */
     public PropertyValue build(){
         return new PropertyValue(this);

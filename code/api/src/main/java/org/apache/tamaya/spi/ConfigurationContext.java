@@ -58,8 +58,8 @@ public interface ConfigurationContext {
 
     /**
      * Access a {@link PropertySource} using its (unique) name.
-     * @param name the propoerty source's name, not null.
-     * @return the propoerty source found, or null.
+     * @param name the propoerty source's name, not {@code null}.
+     * @return the propoerty source found, or {@code null}.
      */
     PropertySource getPropertySource(String name);
 

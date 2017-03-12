@@ -27,7 +27,7 @@ public class ConfigException extends RuntimeException{
 
     /**
      * Creates a new configuration exception.
-     * @param message the exception message, not null.
+     * @param message the exception message, not {@code null}.
      */
     public ConfigException(String message){
         super(message);
@@ -35,7 +35,7 @@ public class ConfigException extends RuntimeException{
 
     /**
      * Creates a new configuration exception.
-     * @param message the exception message, not null.
+     * @param message the exception message, not {@code null}.
      * @param t the throwable.
      */
     public ConfigException(String message, Throwable t){

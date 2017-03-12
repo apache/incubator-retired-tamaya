@@ -134,14 +134,14 @@ public interface PropertySource {
     /**
      * Get the name of the property source. The name should be unique for the type of source, whereas the id is used
      * to ensure unique identity, either locally or remotely.
-     * @return the configuration's name, never null.
+     * @return the configuration's name, never {@code null}.
      */
     String getName();
 
     /**
      * Access a property.
      *
-     * @param key the property's key, not null.
+     * @param key the property's key, not {@code null}.
      * @return the property value map, where {@code map.get(key) == value}, including also any metadata. In case a
      * value is null, simply return {@code null}.
      */
@@ -150,7 +150,7 @@ public interface PropertySource {
     /**
      * Access the current properties as Set. The resulting Map may not return all items accessible, e.g.
      * when the underlying storage does not support iteration of its entries.
-     *
+     {@code null}
      * @return the corresponding map, never null.
      */
     Map<String, PropertyValue> getProperties();

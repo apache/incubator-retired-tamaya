@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.testdata.TestPropertyDefaultSource;
 import org.apache.tamaya.spi.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -43,7 +44,6 @@ public class DefaultConfigurationContextTest {
     @Test
     public void testToString() throws Exception {
         String toString = ConfigurationProvider.getConfiguration().getContext().toString();
-        System.out.println(toString);
     }
 
     @Test

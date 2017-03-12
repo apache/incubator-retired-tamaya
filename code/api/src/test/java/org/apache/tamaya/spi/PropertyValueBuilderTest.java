@@ -26,10 +26,77 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by atsticks on 02.02.16.
- */
 public class PropertyValueBuilderTest {
+
+    /*
+     * Tests for PropertyValueBuilder(String)
+     */
+
+    @Test(expected = NullPointerException.class)
+    public void constructorWithSingleParameterRequiresNonNullValue() {
+        new PropertyValue(null);
+    }
+
+    /*
+     * Tests for PropertyValueBuilder(String, String)
+     */
+
+    @Test(expected = NullPointerException.class)
+    public void constructorWithTwoParametersRequiresNonNullValueForKey() {
+        new PropertyValueBuilder(null, "s");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void constructorWithTwoParametersRequiresNonNullValueForSource() {
+        new PropertyValueBuilder("a", null);
+    }
+
+    /*
+     * Tests for PropertyValueBuilder(String, String, String)
+     */
+
+    @Test(expected = NullPointerException.class)
+    public void constructorWithThreeParametersRequiresNonNullValueForSource() {
+        new PropertyValueBuilder("a", "b", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void constructorWithThreeParametersRequiresNonNullValueForKey() {
+        new PropertyValueBuilder(null, "b", "s");
+    }
+
+    /*
+     * Tests for addMetaEntry(String, Object)
+     */
+
+    @Test(expected = NullPointerException.class)
+    public void addMetaEntryRequiresNonNullParameterForKey() {
+        new PropertyValueBuilder("a", "b", "c").addMetaEntry(null, "a");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void addMetaEntryRequiresNonNullParameterForValue() {
+        new PropertyValueBuilder("a", "b", "c").addMetaEntry("a", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void setKeyRequiresNonNullParameterForKey() {
+        new PropertyValueBuilder("a", "b", "s").setKey(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void setKeyRequiresNonNullParameterForValue() {
+        new PropertyValueBuilder("a", "b", "s").setValue(null);
+    }
+
+    /*
+     * Tests für addMetaEntries(Map)
+     */
+
+    @Test(expected = NullPointerException.class)
+    public void addMetaEntriesRequiresNonNullParameter() {
+        new PropertyValueBuilder("a", "b", "s").addMetaEntries(null);
+    }
 
     @Test
     public void testCreate1(){
@@ -111,6 +178,11 @@ public class PropertyValueBuilderTest {
     public void testGetValue2() throws Exception {
         PropertyValue pv = PropertyValue.builder("k", "testGetValue").setValue("v").build();
         assertEquals("v", pv.getValue());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void removeMetaEntryRequiresNonNullParameter() {
+        new PropertyValueBuilder("y").removeMetaEntry(null);
     }
 
     @Test

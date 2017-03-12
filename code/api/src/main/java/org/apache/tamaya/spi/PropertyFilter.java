@@ -40,7 +40,7 @@ public interface PropertyFilter {
      *     <li>thread-safe</li>
      * </ul>
      * @param value the value to be filtered, which also can be {@code null} if removed by another filter.
-     * @param context the filter context, not null.
+     * @param context the filter context, not {@code null}.
      * @return the filtered value, or {@code null} if the value should be removed alltogether.
      * @see PropertyValue
      * @see PropertyValueBuilder

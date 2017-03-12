@@ -44,11 +44,17 @@ public class FilterContext {
     /**
      * Creates a new FilterContext, for filtering of a multi value access
      * using {@link Configuration#getProperties()}.
-     * @param value the value under evaluation, not null.
-     * @param configEntries the raw configuration data available in the current evaluation context, not null.
-     * @param context the current context, not null.
+     *
+     * @param value the value under evaluation, not {@code null}.
+     * @param configEntries the raw configuration data available in the
+     *                      current evaluation context, not {@code null}.
+     * @param context the current context, not {@code null}.
      */
     public FilterContext(PropertyValue value, Map<String,PropertyValue> configEntries, ConfigurationContext context) {
+        Objects.requireNonNull(value, "Value must not be null.");
+        Objects.requireNonNull(configEntries, "Initial configuration entries must be not null.");
+        Objects.requireNonNull(context, "Context must be not null.");
+
         this.singlePropertyScoped = false;
         this.value = Objects.requireNonNull(value);
         this.context = Objects.requireNonNull(context);
@@ -59,10 +65,13 @@ public class FilterContext {
     /**
      * Creates a new FilterContext, for filtering of a single value access
      * using {@link Configuration#getProperties()}.
-     * @param value the value under evaluation, not null.
-     * @param context the current context, not null.
+     * @param value the value under evaluation, not {@code null}.
+     * @param context the current context, not {@code null}.
      */
     public FilterContext(PropertyValue value, ConfigurationContext context) {
+        Objects.requireNonNull(value, "Value must not be null.");
+        Objects.requireNonNull(context, "Context must be not null.");
+
         this.singlePropertyScoped = true;
         this.context = Objects.requireNonNull(context);
         this.value = Objects.requireNonNull(value);
@@ -71,7 +80,7 @@ public class FilterContext {
 
     /**
      * Get the current context.
-     * @return the current context, not null.
+     * @return the current context, not {@code null}.
      */
     public ConfigurationContext getContext(){
         return context;

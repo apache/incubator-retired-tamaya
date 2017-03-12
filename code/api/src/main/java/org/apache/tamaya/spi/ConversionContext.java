@@ -44,7 +44,7 @@ public class ConversionContext {
 
     /**
      * Private constructor used from builder.
-     * @param builder the builder, not null.
+     * @param builder the builder, not {@code null}.
      */
     protected ConversionContext(Builder builder){
         this.key = builder.key;
@@ -75,7 +75,7 @@ public class ConversionContext {
 
     /**
      * Get the annotated element, if conversion is performed using injection mechanisms.
-     * @return the annotated element, or null.
+     * @return the annotated element, or {@code null}.
      */
     public AnnotatedElement getAnnotatedElement(){
         return annotatedElement;
@@ -83,7 +83,7 @@ public class ConversionContext {
 
     /**
      * Get the configuration, which is targeted.
-     * @return the configuration instance, or null.
+     * @return the configuration instance, or {@code null}.
      */
     public Configuration getConfiguration(){
         return configuration;
@@ -107,7 +107,7 @@ public class ConversionContext {
     /**
      * Get the supported/tried formats in precedence order. The contents of this method depends on the
      * {@link PropertyConverter} instances involved in a conversion.
-     * @return the supported/tried formats, never null.
+     * @return the supported/tried formats, never {@code null}.
      */
     public List<String> getSupportedFormats(){
         synchronized (supportedFormats){
@@ -166,9 +166,9 @@ public class ConversionContext {
 
         /**
          * Creates a new Builder instance.
-         * @param configuration the configuration, not null.
-         * @param configurationContext configuration context, not null.
-         * @param key the requested key, may be null.
+         * @param configuration the configuration, not {@code null}.
+         * @param configurationContext configuration context, not {@code null}.
+         * @param key the requested key, may be {@code null}.
          * @param targetType the target type
          */
         public Builder(Configuration configuration, ConfigurationContext configurationContext, String key, TypeLiteral<?> targetType){
@@ -180,7 +180,7 @@ public class ConversionContext {
 
         /**
          * Sets the key.
-         * @param key the key, not null.
+         * @param key the key, not {@code null}.
          * @return the builder instance, for chaining
          */
         public Builder setKey(String key){
@@ -190,7 +190,7 @@ public class ConversionContext {
 
         /**
          * Sets the configuration.
-         * @param configuration the configuration, not null
+         * @param configuration the configuration, not {@code null}
          * @return the builder instance, for chaining
          */
         public Builder setConfiguration(Configuration configuration){
@@ -200,7 +200,7 @@ public class ConversionContext {
 
         /**
          * Sets the configuration.
-         * @param configurationContext the configuration, not null
+         * @param configurationContext the configuration, not {@code null}
          * @return the builder instance, for chaining
          */
         public Builder setConfigurationContext(ConfigurationContext configurationContext){
@@ -210,7 +210,7 @@ public class ConversionContext {
 
         /**
          * Sets the annotated element, when configuration is injected.
-         * @param annotatedElement the annotated element, not null
+         * @param annotatedElement the annotated element, not {@code null}
          * @return the builder instance, for chaining
          */
         public Builder setAnnotatedElement(AnnotatedElement annotatedElement){
@@ -221,7 +221,7 @@ public class ConversionContext {
         /**
          * Add the formats provided by a {@link PropertyConverter}. This method should be called by each converter
          * performing/trying conversion, so the user can be given feedback on the supported formats on failure.
-         * @param converterType the converter type, not null.
+         * @param converterType the converter type, not {@code null}.
          * @param formatDescriptors the formats supported in a human readable form, e.g. as regular expressions.
          * @return the builder instance, for chaining
          */

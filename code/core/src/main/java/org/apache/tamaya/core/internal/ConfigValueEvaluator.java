@@ -33,15 +33,15 @@ public interface ConfigValueEvaluator {
 
     /**
      * Evaluates single value using a {@link ConfigurationContext}.
-     * @param key the config key, not null.
-     * @param context the context, not null.
+     * @param key the config key, not {@code null}.
+     * @param context the context, not {@code null}.
      * @return the value, or null.
      */
     PropertyValue evaluteRawValue(String key, ConfigurationContext context);
 
     /**
      * Evaluates all property values from a {@link ConfigurationContext}.
-     * @param context the context, not null.
+     * @param context the context, not {@code null}.
      * @return the value, or null.
      */
     Map<String, PropertyValue> evaluateRawValues(ConfigurationContext context);

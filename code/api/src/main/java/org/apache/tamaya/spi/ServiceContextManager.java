@@ -77,12 +77,12 @@ public final class ServiceContextManager {
     /**
      * Replace the current {@link ServiceContext} in use.
      *
-     * @param serviceContextProvider the new {@link ServiceContext}, not null.
+     * @param serviceContextProvider the new {@link ServiceContext}, not {@code null}.
      * @return the currently used context after setting it.
      */
     public static ServiceContext set(ServiceContext serviceContextProvider) {
-        ServiceContext currentContext = ServiceContextManager.serviceContextProviderDelegate;
         Objects.requireNonNull(serviceContextProvider);
+        ServiceContext currentContext = ServiceContextManager.serviceContextProviderDelegate;
 
         synchronized (ServiceContextManager.class) {
             if (ServiceContextManager.serviceContextProviderDelegate == null) {

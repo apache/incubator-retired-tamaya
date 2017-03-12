@@ -39,7 +39,7 @@ public interface ConfigurationProviderSpi {
      * Create a {@link Configuration} instance using the given context. The configuration
      * created hereby must respect the artifacts provided by its context (property sources,
      * filters, converters, policies etc), including their ordering and significance.
-     * @param context the context to be used, not null.
+     * @param context the context to be used, not {@code null}.
      * @return the corresponding configuration instance.
      */
     Configuration createConfiguration(ConfigurationContext context);

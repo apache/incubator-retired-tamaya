@@ -50,7 +50,7 @@ public interface Configuration {
     /**
      * Access a property.
      *
-     * @param key the property's key, not null.
+     * @param key the property's key, not {@code null}.
      * @return the property's keys.
      */
     String get(String key);
@@ -58,8 +58,8 @@ public interface Configuration {
     /**
      * Access a property.
      *
-     * @param key the property's key, not null.
-     * @param defaultValue value to be returned, if no value is present.
+     * @param key the property's key, not {@code null}.
+     * @param defaultValue value to be returned, if no value is present, not {@code null}
      * @return the property's keys.
      */
     String getOrDefault(String key, String defaultValue);
@@ -71,10 +71,10 @@ public interface Configuration {
      *
      * @param <T> the type of the class modeled by the type parameter
      * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
-     * @param defaultValue value to be used, if no value is present.
-     * @return the property value, never null..
+     *                     a/b/c/d.myProperty}, not  {@code null}.
+     * @param type         The target type required, not  {@code null}.
+     * @param defaultValue value to be used, if no value is present, not {@code null}
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T getOrDefault(String key, Class<T> type, T defaultValue);
@@ -100,9 +100,9 @@ public interface Configuration {
      *
      * @param <T> the type of the type literal
      * @param key          the property's absolute, or relative path, e.g. @code
-     *                     a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
-     * @return the property value, never null.
+     *                     a/b/c/d.myProperty}, not {@code null}.
+     * @param type         The target type required, not {@code null}.
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T get(String key, TypeLiteral<T> type);
@@ -114,8 +114,8 @@ public interface Configuration {
      *
      * @param <T> the type of the type literal
      * @param key          the property's absolute, or relative path, e.g.
-     *                     {@code a/b/c/d.myProperty}.
-     * @param type         The target type required, not null.
+     *                     {@code a/b/c/d.myProperty}, not {@code null}.
+     * @param type         The target type required, not {@code null}.
      * @param defaultValue default value to be used, if no value is present.
      * @return the property value, never null.
      * @throws ConfigException if the keys could not be converted to the required target type.
@@ -135,7 +135,7 @@ public interface Configuration {
      * Extension point for adjusting configuration.
      *
      * @param operator A configuration operator, e.g. a filter, or an adjuster
-     *                 combining configurations.
+     *                 combining configurations, never  {@code null}.
      * @return the new adjusted configuration returned by the {@code operator}, never {@code null}.
      */
     Configuration with(ConfigOperator operator);
@@ -144,7 +144,7 @@ public interface Configuration {
      * Query a configuration.
      *
      * @param <T> the type of the configuration.
-     * @param query the query, never {@code null}.
+     * @param query the query, not {@code null}.
      * @return the result returned by the {@code query}.
      */
     <T> T query(ConfigQuery<T> query);

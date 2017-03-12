@@ -47,7 +47,7 @@ public interface ConfigurationContextBuilder {
      * policy of the given {@link ConfigurationContext} and initialize the current builder
      * with them.
      *
-     * @param context the {@link ConfigurationContext} instance to be used, not null.
+     * @param context the {@link ConfigurationContext} instance to be used, not {@code null}.
      * @return this builder, for chaining, never null.
      */
     ConfigurationContextBuilder setContext(ConfigurationContext context);
@@ -90,7 +90,7 @@ public interface ConfigurationContextBuilder {
      * Removes the given property sources, if existing. The existing order of property
      * sources is preserved.
      *
-     * @param propertySources the property sources to remove, not null.
+     * @param propertySources the property sources to remove, not {@code null}.
      * @return the builder for chaining.
      */
     ConfigurationContextBuilder removePropertySources(PropertySource... propertySources);
@@ -99,7 +99,7 @@ public interface ConfigurationContextBuilder {
      * Removes the given property sources, if existing. The existing order of property
      * sources is preserved.
      *
-     * @param propertySources the property sources to remove, not null.
+     * @param propertySources the property sources to remove, not {@code null}.
      * @return the builder for chaining.
      */
     ConfigurationContextBuilder removePropertySources(Collection<PropertySource> propertySources);
@@ -108,7 +108,7 @@ public interface ConfigurationContextBuilder {
      * Access the current chain of property sources. Items at the end of the list have
      * precedence/more significance.
      *
-     * @return the property source chain, never null.
+     * @return the property source chain, never {@code null}.
      */
     List<PropertySource> getPropertySources();
 
@@ -116,7 +116,7 @@ public interface ConfigurationContextBuilder {
      * Access the current chain of property filters. Items at the end of the list have
      * precedence/more significance.
      *
-     * @return the property source chain, never null.
+     * @return the property source chain, never {@code null}.
      */
     List<PropertyFilter> getPropertyFilters();
 
@@ -296,7 +296,7 @@ public interface ConfigurationContextBuilder {
      *
      * NOTE: property sources at the beginning have minimal significance.
      *
-     * @param comparator the comparator to be used, not null.
+     * @param comparator the comparator to be used, not {@code null}.
      * @return this instance for chaining.
      */
     ConfigurationContextBuilder sortPropertySources(Comparator<PropertySource> comparator);
@@ -306,7 +306,7 @@ public interface ConfigurationContextBuilder {
      *
      * NOTE: property filters at the beginning have minimal significance.
      *
-     * @param comparator the comparator to be used, not null.
+     * @param comparator the comparator to be used, not {@code null}.
      * @return this instance for chaining.
      */
     ConfigurationContextBuilder sortPropertyFilter(Comparator<PropertyFilter> comparator);
@@ -315,7 +315,7 @@ public interface ConfigurationContextBuilder {
      * Sets the {@link PropertyValueCombinationPolicy} used to evaluate the final
      * property values.
      *
-     * @param policy the {@link PropertyValueCombinationPolicy} used, not null
+     * @param policy the {@link PropertyValueCombinationPolicy} used, not {@code null}.
      * @return this builder, for chaining, never null.
      */
     ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy);

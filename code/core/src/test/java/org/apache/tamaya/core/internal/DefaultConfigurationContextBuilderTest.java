@@ -21,6 +21,7 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Priority;

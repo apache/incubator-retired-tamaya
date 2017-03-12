@@ -52,9 +52,10 @@ public final class PropertyValue implements Serializable{
 
     /**
      * Creates a new instance
-     * @param key the key, not null.
-     * @param value the value, not null.
-     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
+     * @param key the key, not {@code null}.
+     * @param value the value, not {@code null}.
+     * @param source the source, typically the name of the {@link PropertySource} providing
+     *               the value, not {@code null}.
      */
     private PropertyValue(String key, String value, String source){
         this.key = Objects.requireNonNull(key, "key is required.");
@@ -64,7 +65,7 @@ public final class PropertyValue implements Serializable{
 
     /**
      * The requested key.
-     * @return the, key never null.
+     * @return the, key never {@code null}.
      */
     public String getKey() {
         return key;
@@ -72,7 +73,7 @@ public final class PropertyValue implements Serializable{
 
     /**
      * The source.
-     * @return the source, which provided the value, not null.
+     * @return the source, which provided the value, not {@code null}.
      * @see PropertySource#getName().
      */
     public String getSource() {
@@ -100,34 +101,45 @@ public final class PropertyValue implements Serializable{
 
     /**
      * Creates a new builder instance.
-     * @param key the key, not null.
-     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
+     * @param key the key, not {@code null}.
+     * @param source the source, typically the name of the {@link PropertySource}
+     *               providing the value, not {@code null}.
      * @return a new builder instance.
      */
     public static PropertyValueBuilder builder(String key, String source){
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(source, "Source must be given");
+
         return new PropertyValueBuilder(key, source);
     }
 
     /**
      * Creates a new builder instance.
-     * @param key the key, not null.
-     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
+     * @param key the key, not {@code null}.
+     * @param source the source, typically the name of the {@link PropertySource}
+     *               providing the value, not {@code null}.
      * @return a new builder instance.
      */
-    public static PropertyValueBuilder builder(String key, String value, String source){
+    public static PropertyValueBuilder builder(String key, String value, String source) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(value, "Value must be given");
+        Objects.requireNonNull(source, "Source must be given.");
+
         return new PropertyValueBuilder(key, value, source);
     }
 
 
     /**
      * Creates a new PropertyValue without any metadata..
-     * @param key the key, not null.
+     * @param key the key, not {@code null}.
      * @param value the value.
-     * @param source the source, typically the name of the {@link PropertySource} providing the value, not null.
-     * @return a new property value instance, or null, if the value passed is null..
+     * @param source the source, typically the name of the {@link PropertySource}
+     *               providing the value, not  {@code null}.
+     * @return a new property value instance, or {@code null},
+     *         if the value passed is {@code null}..
      */
-    public static PropertyValue of(String key, String value, String source){
-        if(value==null){
+    public static PropertyValue of(String key, String value, String source) {
+        if (value==null) {
             return null;
         }
         return new PropertyValue(key, value, source);
@@ -135,8 +147,8 @@ public final class PropertyValue implements Serializable{
 
     /**
      * Access the given key from this value. Valid keys are the key or any meta-context key.
-     * @param key the key, not null.
-     * @return the value found, or null.
+     * @param key the key, not {@code null}.
+     * @return the value found, or {@code null}.
      */
     public String getMetaEntry(String key) {
         return this.metaEntries.get(Objects.requireNonNull(key));
@@ -181,8 +193,8 @@ public final class PropertyValue implements Serializable{
 
     /**
      * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
-     * @param config the String based map, not null.
-     * @param source the source name, not null.
+     * @param config the String based map, not {@code null}.
+     * @param source the source name, not {@code null}.
      * @return the corresponding value based map.
      */
     public static Map<String,PropertyValue> map(Map<String, String> config, String source) {
@@ -195,19 +207,24 @@ public final class PropertyValue implements Serializable{
 
     /**
      * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
-     * @param config the String based map, not null.
-     * @param source the source name, not null.
-     * @param metaData additional metadata, not null.
+     *
+     * @param config the String based map, not {@code null}.
+     * @param source the source name, not {@code null}.
+     * @param metaData additional metadata, not {@code null}.
      * @return the corresponding value based map.
      */
     public static Map<String,PropertyValue> map(Map<String, String> config, String source,
                                                 Map<String,String> metaData) {
+        Objects.requireNonNull(config, "Config must be given.");
+        Objects.requireNonNull(source, "Source must be given.");
+        Objects.requireNonNull(metaData, "Meta data must be given.");
+
         Map<String,PropertyValue> result = new HashMap<>(config.size());
+
         for(Map.Entry<String,String> en:config.entrySet()){
-            result.put(en.getKey(),
-                    new PropertyValueBuilder(en.getKey(), source)
-                            .setValue(en.getValue())
-            .addMetaEntries(metaData).build());
+            PropertyValue value = new PropertyValueBuilder(en.getKey(), source).setValue(en.getValue())
+                                                                               .addMetaEntries(metaData).build();
+            result.put(en.getKey(), value);
         }
         return result;
     }

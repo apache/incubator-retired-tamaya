@@ -75,7 +75,7 @@ public interface ServiceContext {
     /**
      * Loads resources from the current runtime context. This method allows to use runtime
      * specific code to load resources, e.g. within OSGI environments.
-     * @param resource the resource, not null.
+     * @param resource the resource, not {@code null}.
      * @param cl the desired classloader context, if null, the current thread context classloader is used.
      * @return the resources found
      * @throws IOException
@@ -85,9 +85,9 @@ public interface ServiceContext {
     /**
      * Loads a resource from the current runtime context. This method allows to use runtime
      * specific code to load a resource, e.g. within OSGI environments.
-     * @param resource the resource, not null.
+     * @param resource the resource, not {@code null}.
      * @param cl the desired classloader context, if null, the current thread context classloader is used.
-     * @return the resource found, or null.
+     * @return the resource found, or {@code null}.
      * @throws IOException
      */
     URL getResource(String resource, ClassLoader cl);

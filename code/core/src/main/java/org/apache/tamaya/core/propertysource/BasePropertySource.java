@@ -40,7 +40,7 @@ public abstract class BasePropertySource implements PropertySource {
 
     /**
      * Constructor.
-     * @param name the (unique) property source name, not null.
+     * @param name the (unique) property source name, not {@code null}.
      */
     protected BasePropertySource(String name){
         this.name = Objects.requireNonNull(name);
@@ -58,7 +58,7 @@ public abstract class BasePropertySource implements PropertySource {
 
     /**
      * Constructor.
-     * @param name the (unique) property source name, not null.
+     * @param name the (unique) property source name, not {@code null}.
      * @param defaultOrdinal default ordinal that will be used, if no ordinal is provided with the config.
      */
     protected BasePropertySource(String name, int defaultOrdinal){
@@ -81,7 +81,7 @@ public abstract class BasePropertySource implements PropertySource {
 
     /**
      * Sets the property source's (unique) name.
-     * @param name the name, not null.
+     * @param name the name, not {@code null}.
      */
     public void setName(String name){
         this.name = Objects.requireNonNull(name);
@@ -90,7 +90,7 @@ public abstract class BasePropertySource implements PropertySource {
     /**
      * Allows to set the ordinal of this property source explcitly. This will override any evaluated
      * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
-     * @param ordinal the explicit ordinal, or null.
+     * @param ordinal the explicit ordinal, or {@code null}.
      */
     public void setOrdinal(Integer ordinal){
         this.ordinal = ordinal;
@@ -99,7 +99,7 @@ public abstract class BasePropertySource implements PropertySource {
     /**
      * Allows to set the ordinal of this property source explcitly. This will override any evaluated
      * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
-     * @param defaultOrdinal the default ordinal, or null.
+     * @param defaultOrdinal the default ordinal, or {@code null}.
      */
     public void setDefaultOrdinal(Integer defaultOrdinal){
         this.defaultOrdinal = defaultOrdinal;

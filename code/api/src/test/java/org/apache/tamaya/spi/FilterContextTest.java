@@ -21,6 +21,7 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.TypeLiteral;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,32 @@ import static org.junit.Assert.*;
  * Tests for {@link FilterContext}.
  */
 public class FilterContextTest {
+
+    @Test(expected = NullPointerException.class)
+    public void constructorRequiresNonNullPropertyValueTwoParameterVariant() {
+        new FilterContext(null, new TestConfigContext());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void constructorRequiresNonNullConfigurationContextTwoParameterVariant() {
+        new FilterContext(PropertyValue.of("a", "b", "s"), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void constructorRequiresNonNullPropertyValueThreeParameterVariant() {
+        new FilterContext(null, Collections.EMPTY_MAP, new TestConfigContext());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void constructorRequiresNonNullConfigurationContextThreeParameterVariant() {
+        new FilterContext(PropertyValue.of("a", "b", "s"), Collections.EMPTY_MAP, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void constructorRequiresNonNullMapForConfigEntriesThreeParameterVariant() {
+        new FilterContext(PropertyValue.of("a", "b", "s"), null, new TestConfigContext());
+    }
+
     @Test
     public void getKey() throws Exception {
         PropertyValue val = PropertyValue.of("getKey", "v", "");

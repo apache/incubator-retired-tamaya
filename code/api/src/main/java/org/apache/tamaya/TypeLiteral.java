@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 
 /**
@@ -49,6 +50,8 @@ public class TypeLiteral<T> implements Serializable {
      * @param definedType the defined type.
      */
     public TypeLiteral(Type definedType) {
+        Objects.requireNonNull(definedType, "Type must be given");
+
         this.definedType = definedType;
     }
 
@@ -62,22 +65,27 @@ public class TypeLiteral<T> implements Serializable {
     /**
      * Creates a new TypeLiteral based on a given type.
      *
-     * @param type the type , not null.
+     * @param type the type , not {@code null}.
      * @param <R>  the literal generic type.
-     * @return the corresponding TypeLiteral, never null.
+     * @return the corresponding TypeLiteral, never {@code null}.
      */
     public static <R> TypeLiteral<R> of(Type type) {
+        Objects.requireNonNull(type, "Type must be given.");
+
         return new TypeLiteral<>(type);
     }
 
     /**
      * Checks the current implemented generic interfaces and evaluates the given single type parameter.
      *
-     * @param clazz         the class to check, not null.
-     * @param interfaceType the interface type to be checked, not null.
+     * @param clazz         the class to check, not  {@code null}.
+     * @param interfaceType the interface type to be checked, not {@code null}.
      * @return the generic type parameter, or null, if it cannot be evaluated.
      */
     public static Type[] getGenericInterfaceTypeParameters(Class<?> clazz, Class<?> interfaceType) {
+        Objects.requireNonNull(clazz, "Class parameter must be given.");
+        Objects.requireNonNull(interfaceType, "Interface parameter must be given.");
+
         for (Type type : clazz.getGenericInterfaces()) {
             if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -92,10 +100,12 @@ public class TypeLiteral<T> implements Serializable {
     /**
      * Method that checks the class's type for a generic interface implementation type.
      *
-     * @param type         the type, not null.
+     * @param type         the type, not {@code null}.
      * @return the generic type parameter of the given single type generic interfaceType, or null.
      */
     public static Type[] getTypeParameters(Type type) {
+        Objects.requireNonNull(type, "Type must be given.");
+
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             return parameterizedType.getActualTypeArguments();

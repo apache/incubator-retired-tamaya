@@ -29,7 +29,7 @@ public interface ConfigQuery<T> {
      * Creates a result based on the given Configuration. Queries basically acts similar to
      * operators, whereas they returns any kind of result.
      *
-     * @param config the input configuration, not null.
+     * @param config the input configuration, not {@code null}.
      * @return the query result.
      */
     T query(Configuration config);

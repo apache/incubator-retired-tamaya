@@ -20,15 +20,24 @@ package org.apache.tamaya;
 
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import static org.apache.tamaya.TypeLiteral.getGenericInterfaceTypeParameters;
+import static org.apache.tamaya.TypeLiteral.getTypeParameters;
 import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the {@link TypeLiteral} class.
  */
 public class TypeLiteralTest {
+
+    @Test(expected = NullPointerException.class)
+    public void constructorRequiresNonNullParameter() {
+       new TypeLiteral<List<String>>(null){};
+    }
 
     @Test
     public void test_constrcutor(){
@@ -45,6 +54,11 @@ public class TypeLiteralTest {
         assertEquals(MyListClass.class, listTypeLiteral.getType());
     }
 
+    @Test(expected = NullPointerException.class)
+    public void ofDoesNotAcceptNullAsParamter() {
+        TypeLiteral.of(null);
+    }
+
     @Test
     public void test_getTypeParameter(){
         TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>(){};
@@ -55,7 +69,22 @@ public class TypeLiteralTest {
     @Test
     public void test_getGenericInterfaceTypeParameter(){
         class MyListClass extends ArrayList<String> implements List<String>{}
-        assertEquals(String.class, TypeLiteral.getGenericInterfaceTypeParameters(MyListClass.class, List.class)[0]);
+        assertEquals(String.class, getGenericInterfaceTypeParameters(MyListClass.class, List.class)[0]);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void getGenericInterfaceTypeParametersRequiredNonNullValueForClassParameter() {
+        getGenericInterfaceTypeParameters(null, Iterator.class);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void getGenericInterfaceTypeParametersRequiredNonNullValueForInterfaceParameter() {
+        getGenericInterfaceTypeParameters(String.class, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void getTypeParametersRequiresNonNullParameter() {
+        getTypeParameters(null);
     }
 
 }

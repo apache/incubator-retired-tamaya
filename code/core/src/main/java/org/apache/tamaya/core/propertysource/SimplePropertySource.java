@@ -47,7 +47,7 @@ public class SimplePropertySource extends BasePropertySource {
     /**
      * Creates a new Properties based PropertySource based on the given URL.
      *
-     * @param propertiesLocation the URL encoded location, not null.
+     * @param propertiesLocation the URL encoded location, not {@code null}.
      */
     public SimplePropertySource(File propertiesLocation) {
         super(0);
@@ -62,7 +62,7 @@ public class SimplePropertySource extends BasePropertySource {
     /**
      * Creates a new Properties based PropertySource based on the given URL.
      *
-     * @param propertiesLocation the URL encoded location, not null.
+     * @param propertiesLocation the URL encoded location, not {@code null}.
      */
     public SimplePropertySource(URL propertiesLocation) {
         super(0);
@@ -73,8 +73,8 @@ public class SimplePropertySource extends BasePropertySource {
     /**
      * Creates a new Properties based PropertySource based on the given properties map.
      *
-     * @param name       the name, not null.
-     * @param properties the properties, not null.
+     * @param name       the name, not {@code null}.
+     * @param properties the properties, not {@code null}.
      */
     public SimplePropertySource(String name, Map<String, String> properties) {
         super(0);
@@ -88,7 +88,7 @@ public class SimplePropertySource extends BasePropertySource {
      * Creates a new Properties based PropertySource based on the given URL.
      *
      * @param name               The property source name
-     * @param propertiesLocation the URL encoded location, not null.
+     * @param propertiesLocation the URL encoded location, not {@code null}.
      */
     public SimplePropertySource(String name, URL propertiesLocation) {
         super(0);

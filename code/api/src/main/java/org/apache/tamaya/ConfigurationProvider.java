@@ -49,7 +49,7 @@ public final class ConfigurationProvider {
     /**
      * Access the current configuration.
      *
-     * @return the corresponding Configuration instance, never null.
+     * @return the corresponding Configuration instance, never {@code null}.
      */
     public static Configuration getConfiguration() {
         return spi().getConfiguration();
@@ -58,10 +58,11 @@ public final class ConfigurationProvider {
     /**
      * Creates a new configuration instance based on the given context.
      *
-     * @param context the configuration context, not null.
-     * @return a new Configuration instance, never null.
+     * @param context the configuration context, not {@code null}.
+     * @return a new Configuration instance, never {@code null}.
      */
     public static Configuration createConfiguration(ConfigurationContext context) {
+        if (1==1) throw new RuntimeException("No tests written.");
         return spi().createConfiguration(context);
     }
 
@@ -99,12 +100,13 @@ public final class ConfigurationProvider {
      * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
      * listeners can do whatever is appropriate to react to any given configuration change.
      *
-     * @param config the new Configuration to be applied, not null..
+     * @param config the new Configuration to be applied, not {@code null}
      * @throws java.lang.UnsupportedOperationException if the current provider is read-only and
      *                                                 does not support
      *                                                 applying a new Configuration.
      */
     public static void setConfiguration(Configuration config) {
+        if (1==1) throw new RuntimeException("No tests written.");
         LOG.info("TAMAYA Applying new Configuration: " + config);
         spi().setConfiguration(config);
     }

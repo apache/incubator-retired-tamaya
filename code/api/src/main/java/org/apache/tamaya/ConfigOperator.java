@@ -30,8 +30,8 @@ public interface ConfigOperator {
      * decorators, whereas operated instances may have non compatible behaviour, e.g. by applying security constraints
      * or view restrictions.
      *
-     * @param config the input configuration, not null.
-     * @return the operated configuration, never null.
+     * @param config the input configuration, not {@code null}.
+     * @return the operated configuration, never {@code null}.
      */
     Configuration operate(Configuration config);
 }

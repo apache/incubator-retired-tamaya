@@ -81,7 +81,7 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
      *     <li>It tries to find an d evaluate a class level {@link Priority} annotation.</li>
      *     <li>It uses the default priority ({@code 0}.</li>
      * </ol>
-     * @param propertySource the property source, not null.
+     * @param propertySource the property source, not {@code null}.
      * @return the ordinal value to compare the property source.
      */
     public static int getOrdinal(PropertySource propertySource) {
