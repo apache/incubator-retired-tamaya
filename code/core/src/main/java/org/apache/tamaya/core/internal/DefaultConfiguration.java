@@ -219,13 +219,13 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public Configuration with(ConfigOperator operator) {
-        if (1==1) throw new RuntimeException("No tests written.");
+        // todo obf if (1==1) throw new RuntimeException("No tests written.");
         return operator.operate(this);
     }
 
     @Override
     public <T> T query(ConfigQuery<T> query) {
-        if (1==1) throw new RuntimeException("No tests written.");
+        // todo obf if (1==1) throw new RuntimeException("No tests written.");
         return query.query(this);
     }
 

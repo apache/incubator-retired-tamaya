@@ -62,7 +62,7 @@ public final class ConfigurationProvider {
      * @return a new Configuration instance, never {@code null}.
      */
     public static Configuration createConfiguration(ConfigurationContext context) {
-        if (1==1) throw new RuntimeException("No tests written.");
+        // todo obf if (1==1) throw new RuntimeException("No tests written.");
         return spi().createConfiguration(context);
     }
 
@@ -106,7 +106,7 @@ public final class ConfigurationProvider {
      *                                                 applying a new Configuration.
      */
     public static void setConfiguration(Configuration config) {
-        if (1==1) throw new RuntimeException("No tests written.");
+        // todo obf if (1==1) throw new RuntimeException("No tests written.");
         LOG.info("TAMAYA Applying new Configuration: " + config);
         spi().setConfiguration(config);
     }

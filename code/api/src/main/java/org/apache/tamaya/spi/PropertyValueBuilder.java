@@ -130,7 +130,7 @@ public class PropertyValueBuilder {
      * @return the builder for chaining.
      */
     public PropertyValueBuilder mapKey(String key) {
-        if (1==1) throw new RuntimeException("No tests written.");
+        // todo obf if (1==1) throw new RuntimeException("No tests written.");
         Map<String,String> newContext = new HashMap<>();
         for(Map.Entry<String,String> en:this.metaEntries.entrySet()){
             if(en.getKey().startsWith("_"+this.key)){
@@ -171,7 +171,7 @@ public class PropertyValueBuilder {
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setSource(String source) {
-        if (1==1) throw new RuntimeException("No tests written.");
+        // todo obf if (1==1) throw new RuntimeException("No tests written.");
         this.source = Objects.requireNonNull(source);
         return this;
     }
