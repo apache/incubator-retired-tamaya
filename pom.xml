@@ -59,6 +59,7 @@
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.2</asciidoctorj.version>
         <checkstyle.version>2.15</checkstyle.version>
+        <pitest-plugin.version>1.1.11</pitest-plugin.version>
         <enforcer.version>1.4.1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
@@ -265,6 +266,10 @@
             <artifactId>geronimo-annotation_1.2_spec</artifactId>
             <version>1.0-alpha-1</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -275,6 +280,17 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.7.7.201606060606</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest-plugin.version}</version>
+                    <configuration>
+                        <coverageThreshold>80</coverageThreshold>
+                        <targetClasses>
+                            <param>org.apache.tamaya.*</param>
+                        </targetClasses>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>de.saumya.mojo</groupId>
