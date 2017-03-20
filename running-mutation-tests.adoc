@@ -12,7 +12,7 @@ be executed manually by executing the following command.
 
 [source]
 ----
-> mvn org.pitest:pitest-maven:mutationCoverage
+> mvn install org.pitest:pitest-maven:mutationCoverage
 ----
 
 
