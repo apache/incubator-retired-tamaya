@@ -58,9 +58,9 @@ public final class PropertyValue implements Serializable{
      *               the value, not {@code null}.
      */
     private PropertyValue(String key, String value, String source){
-        this.key = Objects.requireNonNull(key, "key is required.");
-        this.value = Objects.requireNonNull(value);
-        this.source = Objects.requireNonNull(source);
+        this.key = Objects.requireNonNull(key, "Key is required.");
+        this.value = Objects.requireNonNull(value, "Value is required.");
+        this.source = Objects.requireNonNull(source, "Source is required.");
     }
 
     /**
