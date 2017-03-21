@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -35,6 +36,14 @@ public class DefaultConfigurationProviderTest {
     @Test
     public void getConfiguration() throws Exception {
         assertNotNull(new DefaultConfigurationProvider().getConfiguration());
+    }
+
+    @Test
+    public void createConfiguration() throws Exception {
+        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        assertNotNull(new DefaultConfigurationProvider().createConfiguration(ctx));
+        assertEquals(ctx,
+                new DefaultConfigurationProvider().createConfiguration(ctx).getContext());
     }
 
     @Test
