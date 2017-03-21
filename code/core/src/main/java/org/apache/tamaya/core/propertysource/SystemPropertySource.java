@@ -138,9 +138,9 @@ public class SystemPropertySource extends BasePropertySource {
         Map<String,PropertyValue> values = new HashMap<>();
         for (Map.Entry<Object,Object> entry : sysProps.entrySet()) {
             if(prefix==null) {
-                values.put((String) entry.getKey(), PropertyValue.of((String) entry.getKey(), (String)entry.getValue(), getName()));
+                values.put(entry.getKey().toString(), PropertyValue.of(entry.getKey().toString(), entry.getValue().toString(), getName()));
             }else {
-                values.put(prefix + entry.getKey(), PropertyValue.of(prefix + entry.getKey(), (String)entry.getValue(), getName()));
+                values.put(prefix + entry.getKey(), PropertyValue.of(prefix + entry.getKey(), entry.getValue().toString(), getName()));
             }
         }
         return values;

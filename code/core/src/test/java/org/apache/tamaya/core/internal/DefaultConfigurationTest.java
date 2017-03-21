@@ -18,6 +18,9 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.ConfigQuery;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
@@ -25,6 +28,8 @@ import org.mockito.internal.matchers.Null;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class DefaultConfigurationTest {
 
@@ -129,6 +134,42 @@ public class DefaultConfigurationTest {
         c.getOrDefault("a", null);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void with_Null() {
+        DefaultConfiguration c = new DefaultConfiguration(new DummyConfigurationContext());
+
+        c.with(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void query_Null() {
+        DefaultConfiguration c = new DefaultConfiguration(new DummyConfigurationContext());
+
+        c.query(null);
+    }
+
+
+    @Test
+    public void with() {
+        DefaultConfiguration c = new DefaultConfiguration(new DummyConfigurationContext());
+        assertEquals(c.with(new ConfigOperator() {
+            @Override
+            public Configuration operate(Configuration config) {
+                return config;
+            }
+        }), c);
+    }
+
+    @Test
+    public void query() {
+        DefaultConfiguration c = new DefaultConfiguration(new DummyConfigurationContext());
+        assertEquals(c.query(new ConfigQuery<String>() {
+            @Override
+            public String query(Configuration config) {
+                return "testQ";
+            }
+        }), "testQ");
+    }
 
 
 
