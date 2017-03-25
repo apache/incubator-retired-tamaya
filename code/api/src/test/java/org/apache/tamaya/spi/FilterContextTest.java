@@ -96,8 +96,10 @@ public class FilterContextTest {
         PropertyValue val = PropertyValue.of("testToString", "val", "mySource");
         FilterContext ctx = new FilterContext(val, config, new TestConfigContext());
         String toString = ctx.toString();
+
         assertNotNull(toString);
-        assertTrue(toString.contains("FilterContext{value='PropertyValue{key='testToString', value='val', source='val'}', configEntries=["));
+        assertTrue(toString.contains("FilterContext{value='PropertyValue{key='testToString', value='val', " +
+                                     "source='mySource'}', configEntries=["));
         assertTrue(toString.contains("key-0"));
         assertTrue(toString.contains("key-1"));
         assertTrue(toString.endsWith("}"));

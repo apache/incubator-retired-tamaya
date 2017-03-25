@@ -186,7 +186,7 @@ public final class PropertyValue implements Serializable{
         return "PropertyValue{" +
                 "key='" + key + '\'' +
                 ", value='" + value + '\'' +
-                ", source='" + value + '\'' +
+                ", source='" + source + '\'' +
                 (metaEntries.isEmpty()?"":", metaEntries=" + metaEntries) +
                 '}';
     }
