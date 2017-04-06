@@ -189,6 +189,16 @@
             <email>wkeil AT apache.org</email>
             <timezone>+1</timezone>
         </developer>
+
+        <developer>
+            <id>struberg</id>
+            <name>Mark Struberg</name>
+            <email>struberg at apache.org</email>
+            <roles>
+                <role>PPMC Emeritus</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <modules>
