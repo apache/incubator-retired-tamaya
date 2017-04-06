@@ -145,7 +145,7 @@
             <id>anatole</id>
             <email>anatole -at- apache.org</email>
             <roles>
-                <role>PMC</role>
+                <role>PPMC</role>
             </roles>
             <timezone>+1</timezone>
         </developer>
@@ -155,7 +155,7 @@
             <name>John D. Ament</name>
             <email>johndament at apache.org</email>
             <roles>
-                <role>PMC</role>
+                <role>PPMC</role>
             </roles>
             <timezone>-5</timezone>
         </developer>
@@ -164,7 +164,7 @@
             <id>plexus</id>
             <name>Oliver B. Fischer</name>
             <roles>
-                <role>PMC</role>
+                <role>PPMC</role>
             </roles>
             <email>plexus@apache.org</email>
             <timezone>+1</timezone>
@@ -174,7 +174,7 @@
             <id>pottlinger</id>
             <name>Phil Ottlinger</name>
             <roles>
-                <role>PMC</role>
+                <role>PPMC</role>
             </roles>
             <email>pottlinger at apache.org</email>
             <timezone>+1</timezone>
@@ -184,7 +184,7 @@
             <id>wkeil</id>
             <name>Werner Keil</name>
             <roles>
-                <role>PMC</role>
+                <role>PPMC</role>
             </roles>
             <email>wkeil AT apache.org</email>
             <timezone>+1</timezone>
