@@ -30,6 +30,16 @@ under the License.
     <name>Apache Tamaya Distribution</name>
     <inceptionYear>2015</inceptionYear>
 
+    <properties>
+        <!--
+         ! Do not generate a jar archive for sources as
+         ! we don't have an sources here. And we don't want
+         ! to upload an useless jar archive.
+         ! Oliver B. Fischer, 2017-05-09
+         !-->
+        <maven.source.skip>true</maven.source.skip>
+    </properties>
+
     <dependencies>
 
         <!-- The documentation of Tamaya -->
@@ -111,6 +121,29 @@ under the License.
                             <includeClassifiers>documentation</includeClassifiers>
                             <stripVersion>true</stripVersion>
                             <stripClassifier>true</stripClassifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <!--
+                         ! We also disable the generation of the default jar
+                         ! as it will be empty. We do not have any distributable
+                         ! sources in this module.
+                         ! Oliver B. Fischer, 2017-05-01
+                         !-->
+                        <phase>none</phase>
+                        <configuration>
+                            <skipIfEmpty>true</skipIfEmpty>
+                            <archive>
+                                <addMavenDescriptor>false</addMavenDescriptor>
+                            </archive>
                         </configuration>
                     </execution>
                 </executions>
