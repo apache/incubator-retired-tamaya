@@ -55,6 +55,7 @@
         <!-- Dependency and plugin relate version properties go here -->
 
         <!-- Keep the JRuby version in sync with the one used by Asciidoctor -->
+        <assembly.version>3.0.0</assembly.version>
         <asciidoctor.version>1.5.2</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.2</asciidoctorj.version>
@@ -286,6 +287,11 @@
         <defaultGoal>clean install</defaultGoal>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${assembly.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>

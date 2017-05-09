@@ -160,8 +160,11 @@ under the License.
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>apache-tamaya-${project.version}</finalName>
-                            <descriptor>src/main/assembly/distribution-bin.xml</descriptor>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>apache-${project.artifactId}-${project.version}-src</finalName>
+                            <descriptors>
+                                <descriptor>src/main/assembly/distribution-src.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                     <execution>
@@ -171,8 +174,11 @@ under the License.
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>apache-tamaya-${project.version}</finalName>
-                            <descriptor>src/main/assembly/distribution-src.xml</descriptor>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>apache-${project.artifactId}-${project.version}-bin</finalName>
+                            <descriptors>
+                                <descriptor>src/main/assembly/distribution-bin.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
