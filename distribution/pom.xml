@@ -167,20 +167,6 @@ under the License.
                             </descriptors>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>attach-distribution-bin</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>apache-${project.artifactId}-${project.version}-bin</finalName>
-                            <descriptors>
-                                <descriptor>src/main/assembly/distribution-bin.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>
