@@ -38,6 +38,12 @@
         <maven.compile.deprecation>true</maven.compile.deprecation>
         <tamaya.version>0.3-incubating-SNAPSHOT</tamaya.version>
         <junit.version>4.12</junit.version>
+
+        <!--
+         ! We don't want to deploy this example to Maven Central.
+         ! Oliver B. Fischer, 2017-05-21
+         !-->
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>

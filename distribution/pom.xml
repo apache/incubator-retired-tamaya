@@ -38,6 +38,12 @@ under the License.
          ! Oliver B. Fischer, 2017-05-09
          !-->
         <maven.source.skip>true</maven.source.skip>
+
+        <!--
+         ! Also the distribution should not appear in Maven Central.
+         ! Oliver B. Fischer, 2017-05-21
+         !-->
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>

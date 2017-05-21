@@ -33,6 +33,13 @@ under the License.
 
     <properties>
         <skipTests>true</skipTests>
+
+        <!--
+         ! We don't want to deploy our various build releated artefacts
+         ! to Maven Central.
+         ! Oliver B. Fischer, 2017-05-21
+         !-->
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <scm>

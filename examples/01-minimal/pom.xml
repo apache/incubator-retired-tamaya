@@ -34,6 +34,14 @@ under the License.
 
     <name>Apache Tamaya Minimal Example</name>
 
+    <properties>
+        <!--
+         ! We don't want to deploy this example to Maven Central.
+         ! Oliver B. Fischer, 2017-05-21
+         !-->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
