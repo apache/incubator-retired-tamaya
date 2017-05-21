@@ -42,16 +42,6 @@ under the License.
 
     <dependencies>
 
-        <!-- The documentation of Tamaya -->
-
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-docs</artifactId>
-            <version>${project.version}</version>
-            <classifier>documentation</classifier>
-            <type>zip</type>
-        </dependency>
-
          <!-- Core artifacts-->
         <dependency>
             <groupId>org.apache.tamaya</groupId>
