@@ -37,6 +37,14 @@ under the License.
 
     <packaging>pom</packaging>
 
+    <properties>
+        <!--
+         ! We don't want to deploy this example to Maven Central.
+         ! Oliver B. Fischer, 2017-05-21
+         !-->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <modules>
         <module>01-minimal</module>
         <module>02-custom-property-source</module>
