@@ -19,7 +19,7 @@
     </parent>
     <groupId>org.apache.tamaya</groupId>
     <artifactId>tamaya-all</artifactId>
-    <version>0.3-incubating-SNAPSHOT</version>
+    <version>0.3-incubating</version>
     <packaging>pom</packaging>
 
     <name>Apache Tamaya Base</name>

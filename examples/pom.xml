@@ -25,13 +25,13 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya</groupId>
         <artifactId>tamaya-all</artifactId>
-        <version>0.3-incubating-SNAPSHOT</version>
+        <version>0.3-incubating</version>
     </parent>
 
 
     <groupId>org.apache.tamaya.examples</groupId>
     <artifactId>examples</artifactId>
-    <version>0.3-incubating-SNAPSHOT</version>
+    <version>0.3-incubating</version>
 
     <name>Apache Tamaya Core Examples</name>
 
