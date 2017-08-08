@@ -23,6 +23,7 @@ package org.apache.tamaya;
  * to modell additional functionality and applying it to a given {@link org.apache.tamaya.Configuration} instance by calling
  * the {@link org.apache.tamaya.Configuration#with(org.apache.tamaya.ConfigOperator)} method.
  */
+@FunctionalInterface
 public interface ConfigOperator {
 
     /**

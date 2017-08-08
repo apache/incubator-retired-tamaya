@@ -78,7 +78,7 @@ public interface ServiceContext {
      * @param resource the resource, not {@code null}.
      * @param cl the desired classloader context, if null, the current thread context classloader is used.
      * @return the resources found
-     * @throws IOException
+     * @throws IOException if load fails.
      */
     Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException;
 
@@ -88,7 +88,6 @@ public interface ServiceContext {
      * @param resource the resource, not {@code null}.
      * @param cl the desired classloader context, if null, the current thread context classloader is used.
      * @return the resource found, or {@code null}.
-     * @throws IOException
      */
     URL getResource(String resource, ClassLoader cl);
 }

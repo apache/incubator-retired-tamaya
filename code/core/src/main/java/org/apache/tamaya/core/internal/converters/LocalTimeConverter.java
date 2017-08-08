@@ -16,22 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya;
+package org.apache.tamaya.core.internal.converters;
+
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.PropertyConverter;
+
+import java.time.LocalTime;
+import java.util.logging.Logger;
 
 /**
- * Models a function that maps a given {@link Configuration} to something else. This can be used
- * to model additional functionality and applying it to a given {@link Configuration} instance by
- * calling the {@link Configuration#query(ConfigQuery)} method.
+ * Converter, converting from String to Boolean.
  */
-@FunctionalInterface
-public interface ConfigQuery<T> {
+public class LocalTimeConverter implements PropertyConverter<LocalTime> {
 
-    /**
-     * Creates a result based on the given Configuration. Queries basically acts similar to
-     * operators, whereas they returns any kind of result.
-     *
-     * @param config the input configuration, not {@code null}.
-     * @return the query result.
-     */
-    T query(Configuration config);
+    private final Logger LOG = Logger.getLogger(getClass().getName());
+
+    @Override
+    public LocalTime convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), LocalTime.now().toString());
+        return LocalTime.parse(value);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        return getClass().equals(o.getClass());
+    }
+
+    @Override
+    public int hashCode(){
+        return getClass().hashCode();
+    }
 }
