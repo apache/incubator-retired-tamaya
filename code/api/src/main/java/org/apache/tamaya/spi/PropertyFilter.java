@@ -25,6 +25,7 @@ package org.apache.tamaya.spi;
  * hereby is defined by the corresponding {@code @Priority} annotation.</p>
  * <p>Filters </p>
  */
+@FunctionalInterface
 public interface PropertyFilter {
 
     /**

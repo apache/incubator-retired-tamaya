@@ -76,7 +76,7 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
      * <ol>
      *     <li>It evaluates the {@code String} value for {@link PropertySource#TAMAYA_ORDINAL} and tries
      *     to convert it to an {@code int} value, using {@link Integer#parseInt(String)}.</li>
-     *     <li>It tries to find and evaluate a method {@code int getOrdinal()}</li>.
+     *     <li>It tries to find and evaluate a method {@code int getOrdinal()}.</li>
      *     <li>It tries to find and evaluate a static field {@code int ORDINAL}.</li>
      *     <li>It tries to find an d evaluate a class level {@link Priority} annotation.</li>
      *     <li>It uses the default priority ({@code 0}.</li>

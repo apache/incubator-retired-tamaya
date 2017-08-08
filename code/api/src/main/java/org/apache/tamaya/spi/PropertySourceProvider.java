@@ -34,6 +34,7 @@ import java.util.Collections;
  * {@link java.util.ServiceLoader} mechanism and must get registered via
  * META-INF/services/org.apache.tamaya.spi.PropertySourceProvider</p>
  */
+@FunctionalInterface
 public interface PropertySourceProvider {
 
     /**

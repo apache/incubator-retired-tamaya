@@ -74,7 +74,7 @@ public final class PropertyValue implements Serializable{
     /**
      * The source.
      * @return the source, which provided the value, not {@code null}.
-     * @see PropertySource#getName().
+     * @see PropertySource#getName() .
      */
     public String getSource() {
         return this.source;
@@ -116,6 +116,7 @@ public final class PropertyValue implements Serializable{
     /**
      * Creates a new builder instance.
      * @param key the key, not {@code null}.
+     * @param value the property value, not {@code null}.
      * @param source the source, typically the name of the {@link PropertySource}
      *               providing the value, not {@code null}.
      * @return a new builder instance.

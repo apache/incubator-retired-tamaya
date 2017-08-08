@@ -19,6 +19,8 @@
 package org.apache.tamaya.spi;
 
 
+import jdk.nashorn.internal.objects.annotations.Function;
+
 /**
  * Interface for an property that converts a configured String into something else.
  * This is used for implementing type conversion from a property (String) to a certain target
@@ -26,6 +28,7 @@ package org.apache.tamaya.spi;
  * 
  * @param <T> the type of the type literal
  */
+@FunctionalInterface
 public interface PropertyConverter<T>{
 
     /**
