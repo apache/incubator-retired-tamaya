@@ -31,9 +31,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <jdkVersion>1.8</jdkVersion>
-        <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
-        <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
+        <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
+        <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
         <tamaya.version>0.3-incubating-SNAPSHOT</tamaya.version>
