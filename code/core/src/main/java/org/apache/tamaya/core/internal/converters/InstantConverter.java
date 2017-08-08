@@ -21,40 +21,20 @@ package org.apache.tamaya.core.internal.converters;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.Locale;
-import java.util.Objects;
+import java.time.Instant;
 import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Boolean.
  */
-public class BooleanConverter implements PropertyConverter<Boolean> {
+public class InstantConverter implements PropertyConverter<Instant> {
 
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Boolean convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "yes (ignore case)", "y (ignore case)", "true (ignore case)", "t (ignore case)", "1", "no (ignore case)", "n (ignore case)", "false (ignore case)", "f (ignore case)", "0");
-        String ignoreCaseValue = Objects.requireNonNull(value)
-                                        .trim()
-                                        .toLowerCase(Locale.ENGLISH);
-        switch(ignoreCaseValue) {
-            case "1":
-            case "yes":
-            case "y":
-            case "true":
-            case "t":
-                return Boolean.TRUE;
-            case "no":
-            case "n":
-            case "false":
-            case "f":
-            case "0":
-                return Boolean.FALSE;
-            default:
-                LOG.finest("Unknown boolean value encountered: " + value);
-        }
-        return null;
+    public Instant convert(String value, ConversionContext context) {
+        context.addSupportedFormats(getClass(), Instant.now().toString());
+        return Instant.parse(value);
     }
 
     @Override
