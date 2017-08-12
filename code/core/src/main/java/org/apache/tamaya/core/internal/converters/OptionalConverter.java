@@ -23,6 +23,7 @@ import org.apache.tamaya.core.internal.PropertyConverterManager;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.lang.reflect.Type;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,8 +40,12 @@ public class OptionalConverter implements PropertyConverter<Optional> {
     public Optional<?> convert(String value, ConversionContext context) {
         TypeLiteral<Optional> target = (TypeLiteral<Optional>)context.getTargetType();
         Object result = null;
+        Type targetType = TypeLiteral.getTypeParameters(target.getType())[0];
+        if(String.class.equals(targetType)){
+            result = value;
+        }
         for(PropertyConverter pv:context.getConfigurationContext().getPropertyConverters(
-                TypeLiteral.of(target.getType()))){
+                TypeLiteral.of(targetType))){
             result = pv.convert(value, context);
             if(result!=null){
                 return Optional.of(result);
