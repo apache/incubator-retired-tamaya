@@ -42,7 +42,7 @@ public class DefaultConfigValueEvaluator implements ConfigValueEvaluator{
                     collect(unfilteredValue, key, propertySource);
         }
         if(unfilteredValue==null || unfilteredValue.getValue()==null){
-            return unfilteredValue;
+            return null;
         }
         return unfilteredValue;
     }

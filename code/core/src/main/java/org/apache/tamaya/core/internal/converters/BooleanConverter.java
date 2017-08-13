@@ -44,12 +44,14 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
             case "y":
             case "true":
             case "t":
+            case "on":
                 return Boolean.TRUE;
             case "no":
             case "n":
             case "false":
             case "f":
             case "0":
+            case "off":
                 return Boolean.FALSE;
             default:
                 LOG.finest("Unknown boolean value encountered: " + value);
