@@ -25,12 +25,12 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.examples</groupId>
         <artifactId>examples</artifactId>
-        <version>0.3-incubating</version>
+        <version>0.4-incubating-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.tamaya.examples</groupId>
     <artifactId>01-minimal</artifactId>
-    <version>0.3-incubating</version>
+    <version>0.4-incubating-SNAPSHOT</version>
 
     <name>Apache Tamaya Minimal Example</name>
 
