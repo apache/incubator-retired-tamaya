@@ -81,7 +81,7 @@ public class DefaultConfiguration implements Configuration {
         Objects.requireNonNull(key, "Key must not be null.");
 
         PropertyValue value = configEvaluator.evaluteRawValue(key, configurationContext);
-        if(value==null || value.getValue()==null){
+        if(value==null){
             return null;
         }
         value = PropertyFiltering.applyFilter(value, configurationContext);
