@@ -40,10 +40,10 @@ public class OSGIActivator implements BundleActivator {
     @Override
     public void start(BundleContext context) {
         // Register marker service
-        serviceLoader = new OSGIServiceLoader(context);
+        this.serviceLoader = new OSGIServiceLoader(context);
         context.addBundleListener(serviceLoader);
         ServiceContextManager.set(new OSGIServiceContext(serviceLoader));
-        LOG.info("Registered OSGI enabled ServiceContext...");
+        LOG.info("Registered Tamaya OSGI ServiceContext...");
         ConfigurationProvider.setConfiguration(
                 new DefaultConfiguration(
                        new DefaultConfigurationContextBuilder()

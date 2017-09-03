@@ -21,6 +21,7 @@ package org.apache.tamaya.core.internal.converters;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to tge given enum type.
  */
+@Component(service = PropertyConverter.class)
 public class EnumConverter<T> implements PropertyConverter<T> {
     private final Logger LOG = Logger.getLogger(EnumConverter.class.getName());
     private Class<T> enumType;

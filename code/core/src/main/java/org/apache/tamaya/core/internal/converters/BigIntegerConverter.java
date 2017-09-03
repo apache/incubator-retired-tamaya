@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.math.BigInteger;
 import java.util.Objects;
@@ -37,6 +38,7 @@ import java.util.logging.Logger;
  *     <li>-23257352735276352753</li>
  * </ul>
  */
+@Component(service = PropertyConverter.class)
 public class BigIntegerConverter implements PropertyConverter<BigInteger>{
 
     /** The logger. */

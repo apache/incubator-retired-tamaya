@@ -1,4 +1,24 @@
+-buildpath: \
+	osgi.annotation; version=6.0.0,\
+	osgi.core; version=6.0,\
+	osgi.cmpn; version=6.0
+
+-testpath: \
+	${junit}
+
+javac.source: 1.8
+javac.target: 1.8
+
+Bundle-Version: ${version}.${tstamp}
+Bundle-SymbolicName: org.apache.tamaya
+Bundle-Name: Apache Tamaya - API
+Bundle-Description: Apacha Tamaya Configuration Java API
+Bundle-Category: API
+Bundle-Copyright: (C) Apache Foundation
+Bundle-License: Apache Licence version 2
+Bundle-Vendor: Apache Software Foundation
+Bundle-ContactAddress: dev-tamaya@incubator.apache.org
+Bundle-DocURL: http://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya,\
 	org.apache.tamaya.spi
-Bundle-SymbolicName: org.apache.tamaya

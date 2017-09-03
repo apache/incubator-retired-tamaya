@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -36,6 +37,7 @@ import java.util.logging.Logger;
  *     1234566789.23642327352735273752 -&gt; new BigDecimal(input)
  * </pre>
  */
+@Component(service = PropertyConverter.class)
 public class NumberConverter implements PropertyConverter<Number>{
     /** the logger. */
     private static final Logger LOGGER = Logger.getLogger(NumberConverter.class.getName());

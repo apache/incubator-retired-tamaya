@@ -18,7 +18,9 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ import java.util.Objects;
  * PropertySource that allows to add the programs main arguments as configuration entries. Unix syntax using '--' and
  * '-' params is supported.
  */
+@Component(service = PropertySource.class)
 public class CLIPropertySource extends BasePropertySource{
 
     /** The original main arguments. */

@@ -18,7 +18,9 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ import java.util.Properties;
  * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties. You can disable this feature by
  * setting {@code tamaya.envprops.disable} or {@code tamaya.defaults.disable}.
  */
+@Component(service = PropertySource.class)
 public class SystemPropertySource extends BasePropertySource {
 
     /**

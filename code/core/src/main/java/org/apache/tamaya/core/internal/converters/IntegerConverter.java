@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -42,6 +43,7 @@ import java.util.logging.Logger;
  *     <li>MAX (ignoring case)</li>
  * </ul>
  */
+@Component(service = PropertyConverter.class)
 public class IntegerConverter implements PropertyConverter<Integer>{
 
     /**

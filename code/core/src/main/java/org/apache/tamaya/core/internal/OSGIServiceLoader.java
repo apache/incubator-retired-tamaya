@@ -38,7 +38,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class OSGIServiceLoader implements BundleListener {
     // Provide logging
     private static final Logger log = Logger.getLogger(OSGIServiceLoader.class.getName());
-    private static final String OSGIRESOURCE_MARKER = "META-INF/OSGIResource";
+    private static final String META_INF_SERVICES = "META-INF/services/";
 
     private BundleContext context;
 
@@ -65,13 +65,12 @@ public class OSGIServiceLoader implements BundleListener {
         // Parse and create metadata on STARTING
         if (bundleEvent.getType() == BundleEvent.STARTING) {
             Bundle bundle = bundleEvent.getBundle();
-            if (bundle.getEntry(OSGIRESOURCE_MARKER) != null) {
-                synchronized (resourceBundles){
-                    resourceBundles.add(bundle);
-                }
-            }
-            if (bundle.getEntry("META-INF/services/") == null) {
+            if (bundle.getEntry(META_INF_SERVICES) == null) {
                 return;
+            }
+            synchronized (resourceBundles){
+                resourceBundles.add(bundle);
+                log.info("Registered ServiceLoader bundle: " + bundle.getSymbolicName());
             }
             Enumeration<String> entryPaths = bundle.getEntryPaths("META-INF/services/");
             while (entryPaths.hasMoreElements()) {
@@ -82,13 +81,12 @@ public class OSGIServiceLoader implements BundleListener {
             }
         } else if (bundleEvent.getType() == BundleEvent.STOPPING) {
             Bundle bundle = bundleEvent.getBundle();
-            if (bundle.getEntry(OSGIRESOURCE_MARKER) != null) {
-                synchronized (resourceBundles){
-                    resourceBundles.remove(bundle);
-                }
-            }
-            if (bundle.getEntry("META-INF/services/") == null) {
+            if (bundle.getEntry(META_INF_SERVICES) == null) {
                 return;
+            }
+            synchronized (resourceBundles) {
+                resourceBundles.remove(bundle);
+                log.finest("Unregistered ServiceLoader bundle: " + bundle.getSymbolicName());
             }
             Enumeration<String> entryPaths = bundle.getEntryPaths("META-INF/services/");
             while (entryPaths.hasMoreElements()) {
@@ -102,9 +100,13 @@ public class OSGIServiceLoader implements BundleListener {
 
     private void processEntryPath(Bundle bundle, String entryPath) {
         try {
-            String serviceName = entryPath.substring("META-INF/services/".length());
+            String serviceName = entryPath.substring(META_INF_SERVICES.length());
+            if(!serviceName.startsWith("org.apache.tamaya")){
+                // Ignore non Tamaya entries...
+                return;
+            }
             Class<?> serviceClass = bundle.loadClass(serviceName);
-
+            log.info("Loaded Tamaya service class: " + serviceClass.getName() +"("+serviceName+")");
             URL child = bundle.getEntry(entryPath);
             InputStream inStream = child.openStream();
 
@@ -140,6 +142,7 @@ public class OSGIServiceLoader implements BundleListener {
                         // Register the service factory on behalf of the intercepted bundle
                         JDKUtilServiceFactory factory = new JDKUtilServiceFactory(implClass);
                         BundleContext bundleContext = bundle.getBundleContext();
+                        log.info("Registering Tamaya service class: " + serviceClass.getName() +"("+serviceName+")");
                         bundleContext.registerService(serviceName, factory, props);
                     }
                     catch(Exception e){
@@ -162,6 +165,10 @@ public class OSGIServiceLoader implements BundleListener {
     private void removeEntryPath(Bundle bundle, String entryPath) {
         try {
             String serviceName = entryPath.substring("META-INF/services/".length());
+            if(!serviceName.startsWith("org.apache.tamaya")){
+                // Ignore non Tamaya entries...
+                return;
+            }
             Class<?> serviceClass = bundle.loadClass(serviceName);
 
             URL child = bundle.getEntry(entryPath);
