@@ -79,7 +79,9 @@ public interface ConfigurationProviderSpi {
      * @deprecated Will be removed in favour of {@link Configuration#getContext()}.
      */
     @Deprecated
-    ConfigurationContext getConfigurationContext();
+    default ConfigurationContext getConfigurationContext(){
+        return getConfiguration().getContext();
+    }
 
     /**
      * This method allows to replace the current {@link org.apache.tamaya.spi.ConfigurationContext} with a new
@@ -93,7 +95,9 @@ public interface ConfigurationProviderSpi {
      * @deprecated use {@link #setConfiguration(Configuration)}
      */
     @Deprecated
-    void setConfigurationContext(ConfigurationContext context);
+    default void setConfigurationContext(ConfigurationContext context){
+        setConfiguration(createConfiguration(context));
+    }
 
     /**
      * Method that allows to determine if a new {@link org.apache.tamaya.spi.ConfigurationContext} can be applied
@@ -105,7 +109,9 @@ public interface ConfigurationProviderSpi {
      * @deprecated use {@link #isConfigurationSettable()}
      */
     @Deprecated
-    boolean isConfigurationContextSettable();
+    default boolean isConfigurationContextSettable(){
+        return isConfigurationSettable();
+    }
 
 
 }
