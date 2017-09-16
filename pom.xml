@@ -302,14 +302,15 @@
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-plugin.version}</version>
                     <configuration>
-                        <coverageThreshold>80</coverageThreshold>
+                        <coverageThreshold>50</coverageThreshold>
                         <timestampedReports>false</timestampedReports>
                         <targetClasses>
                             <param>org.apache.tamaya.*</param>
                         </targetClasses>
-			<excludedMethods>
-			  <param>toString</param>
+			                  <excludedMethods>
+			                      <param>toString</param>
                         </excludedMethods>
+                        <verbose>true</verbose>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -748,10 +749,6 @@
                                 <goals>
                                     <goal>mutationCoverage</goal>
                                 </goals>
-                                <configuration>
-                                    <coverageThreshold>49</coverageThreshold>
-                                    <mutationThreshold>49</mutationThreshold>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
