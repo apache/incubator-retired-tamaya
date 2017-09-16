@@ -735,7 +735,27 @@
     </build>
 
     <profiles>
-        <!-- The release profile. It ensures that all checks will be done 
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <executions>
+                            <execution>
+                                <id>mutationcoverage</id>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- The release profile. It ensures that all checks will be done
             and everything will be build what need to be build. -->
         <profile>
             <id>release</id>
