@@ -48,6 +48,13 @@ public class OSGIServiceLoader implements BundleListener {
 
     public OSGIServiceLoader(BundleContext context){
         this.context = Objects.requireNonNull(context);
+        // Check for matching bundles already installed...
+        for(Bundle bundle:context.getBundles()){
+            switch(bundle.getState()){
+                case Bundle.ACTIVE:
+                    checkAndLoadBundle(bundle);
+            }
+        }
     }
 
     public BundleContext getBundleContext(){
@@ -62,38 +69,46 @@ public class OSGIServiceLoader implements BundleListener {
 
     @Override
     public void bundleChanged(BundleEvent bundleEvent) {
-        // Parse and create metadata on STARTING
-        if (bundleEvent.getType() == BundleEvent.STARTING) {
+        // Parse and create metadata when installed
+        if (bundleEvent.getType() == BundleEvent.STARTED) {
             Bundle bundle = bundleEvent.getBundle();
-            if (bundle.getEntry(META_INF_SERVICES) == null) {
-                return;
-            }
-            synchronized (resourceBundles){
-                resourceBundles.add(bundle);
-                log.info("Registered ServiceLoader bundle: " + bundle.getSymbolicName());
-            }
-            Enumeration<String> entryPaths = bundle.getEntryPaths("META-INF/services/");
-            while (entryPaths.hasMoreElements()) {
-                String entryPath = entryPaths.nextElement();
-                if(!entryPath.endsWith("/")) {
-                    processEntryPath(bundle, entryPath);
-                }
-            }
-        } else if (bundleEvent.getType() == BundleEvent.STOPPING) {
+            checkAndLoadBundle(bundle);
+        } else if (bundleEvent.getType() == BundleEvent.STOPPED) {
             Bundle bundle = bundleEvent.getBundle();
-            if (bundle.getEntry(META_INF_SERVICES) == null) {
-                return;
+            checkAndUnloadBundle(bundle);
+        }
+    }
+
+    private void checkAndUnloadBundle(Bundle bundle) {
+        if (bundle.getEntry(META_INF_SERVICES) == null) {
+            return;
+        }
+        synchronized (resourceBundles) {
+            resourceBundles.remove(bundle);
+            log.fine("Unregistered ServiceLoader bundle: " + bundle.getSymbolicName());
+        }
+        Enumeration<String> entryPaths = bundle.getEntryPaths("META-INF/services/");
+        while (entryPaths.hasMoreElements()) {
+            String entryPath = entryPaths.nextElement();
+            if(!entryPath.endsWith("/")) {
+                removeEntryPath(bundle, entryPath);
             }
-            synchronized (resourceBundles) {
-                resourceBundles.remove(bundle);
-                log.finest("Unregistered ServiceLoader bundle: " + bundle.getSymbolicName());
-            }
-            Enumeration<String> entryPaths = bundle.getEntryPaths("META-INF/services/");
-            while (entryPaths.hasMoreElements()) {
-                String entryPath = entryPaths.nextElement();
-                if(!entryPath.endsWith("/")) {
-                    removeEntryPath(bundle, entryPath);
-                }
+        }
+    }
+
+    private void checkAndLoadBundle(Bundle bundle) {
+        if (bundle.getEntry(META_INF_SERVICES) == null) {
+            return;
+        }
+        synchronized (resourceBundles){
+            resourceBundles.add(bundle);
+            log.info("Registered ServiceLoader bundle: " + bundle.getSymbolicName());
+        }
+        Enumeration<String> entryPaths = bundle.getEntryPaths("META-INF/services/");
+        while (entryPaths.hasMoreElements()) {
+            String entryPath = entryPaths.nextElement();
+            if(!entryPath.endsWith("/")) {
+                processEntryPath(bundle, entryPath);
             }
         }
     }
@@ -106,10 +121,9 @@ public class OSGIServiceLoader implements BundleListener {
                 return;
             }
             Class<?> serviceClass = bundle.loadClass(serviceName);
-            log.info("Loaded Tamaya service class: " + serviceClass.getName() +"("+serviceName+")");
             URL child = bundle.getEntry(entryPath);
             InputStream inStream = child.openStream();
-
+            log.info("Loading Services " + serviceClass.getName() +" from bundle...: " + bundle.getSymbolicName());
             BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
             String implClassName = br.readLine();
             while (implClassName != null){
@@ -124,12 +138,14 @@ public class OSGIServiceLoader implements BundleListener {
                 if (implClassName.length() > 0) {
                     try {
                         // Load the service class
+                        log.fine("Loading Class " + implClassName +" from bundle...: " + bundle.getSymbolicName());
                         Class<?> implClass = bundle.loadClass(implClassName);
                         if (!serviceClass.isAssignableFrom(implClass)) {
                             log.warning("Configured service: " + implClassName + " is not assignble to " +
                                     serviceClass.getName());
                             continue;
                         }
+                        log.info("Loaded Service Factory ("+serviceName+"): " + implClassName);
                         // Provide service properties
                         Hashtable<String, String> props = new Hashtable<>();
                         props.put(Constants.VERSION_ATTRIBUTE, bundle.getVersion().toString());
@@ -142,12 +158,16 @@ public class OSGIServiceLoader implements BundleListener {
                         // Register the service factory on behalf of the intercepted bundle
                         JDKUtilServiceFactory factory = new JDKUtilServiceFactory(implClass);
                         BundleContext bundleContext = bundle.getBundleContext();
-                        log.info("Registering Tamaya service class: " + serviceClass.getName() +"("+serviceName+")");
                         bundleContext.registerService(serviceName, factory, props);
+                        log.info("Registered Tamaya service class: " + implClassName +"("+serviceName+")");
                     }
                     catch(Exception e){
                         log.log(Level.SEVERE,
-                                "Failed to load service class using ServiceLoader logic: " + implClassName, e);
+                                "Failed to load service: " + implClassName, e);
+                    }
+                    catch(NoClassDefFoundError err){
+                        log.log(Level.SEVERE,
+                                "Failed to load service: " + implClassName, err);
                     }
                 }
                 implClassName = br.readLine();
@@ -186,6 +206,7 @@ public class OSGIServiceLoader implements BundleListener {
                 }
                 implClassName = implClassName.trim();
                 if (implClassName.length() > 0) {
+                    log.fine("Unloading Service ("+serviceName+"): " + implClassName);
                     try {
                         // Load the service class
                         Class<?> implClass = bundle.loadClass(implClassName);
@@ -201,7 +222,11 @@ public class OSGIServiceLoader implements BundleListener {
                     }
                     catch(Exception e){
                         log.log(Level.SEVERE,
-                                "Failed to unload service class using ServiceLoader logic: " + implClassName, e);
+                                "Failed to unload service: " + implClassName, e);
+                    }
+                    catch(NoClassDefFoundError err){
+                        log.log(Level.SEVERE,
+                                "Failed to unload service: " + implClassName, err);
                     }
                 }
                 implClassName = br.readLine();
@@ -230,11 +255,12 @@ public class OSGIServiceLoader implements BundleListener {
         @Override
         public Object getService(Bundle bundle, ServiceRegistration registration) {
             try {
+                log.fine("Creating Service...:" + serviceClass.getName());
                 return serviceClass.newInstance();
             }
             catch (Exception ex) {
                 ex.printStackTrace();
-                throw new IllegalStateException("Cannot create service: " + serviceClass.getName(), ex);
+                throw new IllegalStateException("Failed to create service: " + serviceClass.getName(), ex);
             }
         }
 
