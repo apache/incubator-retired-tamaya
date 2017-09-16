@@ -748,6 +748,10 @@
                                 <goals>
                                     <goal>mutationCoverage</goal>
                                 </goals>
+                                <configuration>
+                                    <coverageThreshold>49</coverageThreshold>
+                                    <mutationThreshold>49</mutationThreshold>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
