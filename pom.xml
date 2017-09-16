@@ -307,6 +307,9 @@
                         <targetClasses>
                             <param>org.apache.tamaya.*</param>
                         </targetClasses>
+                        <excludedClasses>
+                            <param>org.apache.tamaya.core.internal.BannerManagerTest</param>
+                        </excludedClasses>
 			                  <excludedMethods>
 			                      <param>toString</param>
                         </excludedMethods>

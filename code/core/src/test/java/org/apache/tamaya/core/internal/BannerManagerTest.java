@@ -27,6 +27,13 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.Permission;
 
+/*
+ * Note:
+ * The tests of this class will fail PIT, our coverage tool.
+ * Therefore we excluded this class in the parent POM
+ * from the test execution.
+ * Oliver B. Fischer, 2017-09-16
+ */
 public class BannerManagerTest {
 
     @Test
