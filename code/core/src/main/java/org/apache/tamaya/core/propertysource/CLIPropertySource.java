@@ -29,7 +29,7 @@ import java.util.Objects;
  * PropertySource that allows to add the programs main arguments as configuration entries. Unix syntax using '--' and
  * '-' params is supported.
  */
-public class CLIPropertySource extends BasePropertySource{
+public class CLIPropertySource extends BasePropertySource {
 
     /** The original main arguments. */
     private static String[] args = new String[0];

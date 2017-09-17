@@ -26,7 +26,40 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class BasePropertySourceTest {
+
+    @Test
+    public void isAlwaysScanable() {
+        BasePropertySource bs = new BasePropertySource() {
+            @Override
+            public Map<String, PropertyValue> getProperties() {
+                return Collections.emptyMap();
+            }
+        };
+
+        assertThat(bs.isScannable()).isTrue();
+    }
+
+    @Test
+    public void givenOrdinalOverwritesGivenDefaulOrdinal() {
+        BasePropertySource bs = new BasePropertySource() {
+            @Override
+            public Map<String, PropertyValue> getProperties() {
+                return Collections.emptyMap();
+            }
+        };
+
+        bs.setDefaultOrdinal(10);
+
+        assertThat(bs.getDefaultOrdinal()).isEqualTo(10);
+        assertThat(bs.getOrdinal()).isEqualTo(10);
+
+        bs.setOrdinal(20);
+
+        assertThat(bs.getOrdinal()).isEqualTo(20);
+    }
 
     @Test
     public void testGetOrdinal() {

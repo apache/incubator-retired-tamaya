@@ -20,11 +20,18 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests the default converter for bytes.
@@ -43,6 +50,7 @@ public class BigDecimalConverterTest {
         assertTrue(valueRead != null);
         assertEquals(valueRead, new BigDecimal(101));
     }
+
 
 
     /**
@@ -99,5 +107,26 @@ public class BigDecimalConverterTest {
         assertTrue(valueRead != null);
         assertEquals(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372" +
                 "63723628763821638923628193612983618293628763"), valueRead);
+    }
+
+    @Test
+    public void converterHandlesNullValueCorrectly() throws Exception {
+        ConversionContext context = mock(ConversionContext.class);
+
+        BigDecimalConverter converter = new BigDecimalConverter();
+        BigDecimal value = converter.convert("", context);
+
+        assertThat(value).isNull();
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = mock(ConversionContext.class);
+
+        BigDecimalConverter converter = new BigDecimalConverter();
+        BigDecimal value = converter.convert("", context);
+
+        assertThat(value).isNull();
+        verify(context).addSupportedFormats(BigDecimalConverter.class, "<bigDecimal> -> new BigDecimal(String)");
     }
 }
