@@ -42,8 +42,6 @@ public class OSGIServiceLoader implements BundleListener {
 
     private BundleContext context;
 
-    private Map<Class, ServiceTracker<Object,Object>> services = new ConcurrentHashMap<>();
-
     private Set<Bundle> resourceBundles = Collections.synchronizedSet(new HashSet<Bundle>());
 
     public OSGIServiceLoader(BundleContext context){
