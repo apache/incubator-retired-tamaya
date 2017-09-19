@@ -12,8 +12,17 @@ be executed manually by executing the following command.
 
 [source]
 ----
-> mvn install org.pitest:pitest-maven:mutationCoverage
+> mvn -P coverage install
 ----
+
+The measurement of the coverage is faster if there is an existing
+database created by PIT. To used them execute the following command.
+
+[source]
+----
+> mvn -P coverage -DwithHistory install
+----
+
 
 
 
