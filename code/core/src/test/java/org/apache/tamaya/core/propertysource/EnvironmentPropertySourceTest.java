@@ -19,19 +19,29 @@
 package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.spi.PropertyValue;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.Boolean.TRUE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}.
  */
 public class EnvironmentPropertySourceTest {
+    private EnvironmentPropertySource envPropertySource;
 
-    private final EnvironmentPropertySource envPropertySource = new EnvironmentPropertySource();
+    @Before
+    public void setOUT() {
+        envPropertySource = new EnvironmentPropertySource();
+    }
 
     @Test
     public void testGetOrdinal() throws Exception {
@@ -64,4 +74,109 @@ public class EnvironmentPropertySourceTest {
     public void testIsScannable() throws Exception {
         assertTrue(envPropertySource.isScannable());
     }
+
+    @Test
+    public void ifPrefixHasBeenConfiguredLookedUpEnvVarNameIsPrefixAndKeyName() {
+        EnvironmentPropertySource.SystemPropertiesProvider provider =
+            mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
+
+        when(provider.getEnvPropsPrefix()).thenReturn("zzz");
+        when(provider.getenv("zzz.VARIABLE")).thenReturn("value");
+
+        envPropertySource.setPropertiesProvider(provider);
+
+        assertThat(envPropertySource.get("VARIABLE").getValue()).isEqualTo("value");
+    }
+
+    @Test
+    public void ifPrefixHasNotBeenConfiguredLookedUpEnvVarNameIsKeyName() {
+        EnvironmentPropertySource.SystemPropertiesProvider provider =
+            mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
+
+        when(provider.getEnvPropsPrefix()).thenReturn(null);
+        when(provider.getenv("VARIABLE")).thenReturn("value");
+
+        envPropertySource.setPropertiesProvider(provider);
+
+        assertThat(envPropertySource.get("VARIABLE").getValue()).isEqualTo("value");
+    }
+
+    @Test
+    public void ifPrefixHasBeenSetAllEnvVarsWithPrefixWillBeReturnedByGetProperties() {
+        EnvironmentPropertySource.SystemPropertiesProvider provider =
+            mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
+
+        when(provider.getEnvPropsPrefix()).thenReturn("zzz");
+        when(provider.getenv()).thenReturn(new HashMap<String, String>() {{
+            put("zzz.A", "aaa");
+            put("zzz.B", "bbb");
+            put("C", "ccc");
+            put("D", "ddd");
+        }});
+
+        envPropertySource.setPropertiesProvider(provider);
+
+        assertThat(envPropertySource.getProperties()).hasSize(2);
+
+        Map<String, PropertyValue> properties = envPropertySource.getProperties();
+
+        assertThat(properties.keySet()).containsOnly("A", "B");
+        assertThat(properties.get("A").getValue()).isEqualTo("aaa");
+        assertThat(properties.get("B").getValue()).isEqualTo("bbb");
+    }
+
+    @Test
+    public void canBeDisableBySystemPropertyTamayaDefaultsDisable() {
+        EnvironmentPropertySource.SystemPropertiesProvider provider =
+            mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
+
+        when(provider.getDefaultsDisable()).thenReturn(TRUE.toString());
+        when(provider.getenv("VARIABLE")).thenReturn("value");
+
+        envPropertySource.setPropertiesProvider(provider);
+
+        assertThat(envPropertySource.get("VARIABLE")).isNull();
+    }
+
+    @Test
+    public void canBeDisableBySystemPropertyTamayaEnvpropsDisable() {
+        EnvironmentPropertySource.SystemPropertiesProvider provider =
+            mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
+
+        when(provider.getEnvPropsDisable()).thenReturn(TRUE.toString());
+        when(provider.getenv("VARIABLE")).thenReturn("value");
+
+        envPropertySource.setPropertiesProvider(provider);
+
+        assertThat(envPropertySource.get("VARIABLE")).isNull();
+    }
+
+    @Test
+    public void isDisabledIfEvenIsDefaultsDisableIsFalse() throws Exception {
+        EnvironmentPropertySource.SystemPropertiesProvider provider =
+            mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
+
+        when(provider.getDefaultsDisable()).thenReturn("false");
+        when(provider.getEnvPropsDisable()).thenReturn("true");
+
+        envPropertySource.setPropertiesProvider(provider);
+
+        assertThat(envPropertySource.isDisabled()).isTrue();
+    }
+
+    @Test
+    public void isDisabledIfEvenIsEnvPropsDisableIsFalse() throws Exception {
+        EnvironmentPropertySource.SystemPropertiesProvider provider =
+            mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
+
+        when(provider.getDefaultsDisable()).thenReturn("true");
+        when(provider.getEnvPropsDisable()).thenReturn("false");
+
+        envPropertySource.setPropertiesProvider(provider);
+
+        assertThat(envPropertySource.isDisabled()).isTrue();
+    }
+
+
+
 }

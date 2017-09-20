@@ -30,6 +30,9 @@ import java.util.*;
  * or {@code tamaya.defaults.disable}.
  */
 public class EnvironmentPropertySource extends BasePropertySource {
+    private static final String TAMAYA_ENVPROPS_PREFIX = "tamaya.envprops.prefix";
+    private static final String TAMAYA_ENVPROPS_DISABLE = "tamaya.envprops.disable";
+    private static final String TAMAYA_DEFAULT_DISABLE = "tamaya.defaults.disable";
 
     /**
      * Default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
@@ -48,6 +51,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
      */
     private boolean disabled = false;
 
+    private SystemPropertiesProvider propertiesProvider = new SystemPropertiesProvider();
 
     /**
      * Creates a new instance. Also initializes the {@code prefix} and {@code disabled} properties
@@ -70,22 +74,22 @@ public class EnvironmentPropertySource extends BasePropertySource {
      * </pre>
      */
     private void initFromSystemProperties() {
-        String value = System.getProperty("tamaya.envprops.prefix");
-        if(value==null){
-            prefix = System.getenv("tamaya.envprops.prefix");
+        String temp = getPropertiesProvider().getEnvPropsPrefix();
+
+        if (temp != null) {
+            prefix = temp;
         }
-        value = System.getProperty("tamaya.envprops.disable");
-        if(value==null){
-            value = System.getenv("tamaya.envprops.disable");
+
+        temp = getPropertiesProvider().getEnvPropsDisable();
+
+        if (temp != null) {
+            this.disabled = Boolean.parseBoolean(temp);
         }
-        if(value==null){
-            value = System.getProperty("tamaya.defaults.disable");
-        }
-        if(value==null){
-            value = System.getenv("tamaya.defaults.disable");
-        }
-        if(value!=null && !value.isEmpty()) {
-            this.disabled = Boolean.parseBoolean(value);
+
+        temp = getPropertiesProvider().getDefaultsDisable();
+
+        if (temp != null) {
+            disabled |= Boolean.parseBoolean(temp);
         }
     }
 
@@ -122,7 +126,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
 
     @Override
     public String getName() {
-        if(disabled){
+        if (isDisabled()) {
             return "environment-properties(disabled)";
         }
         return "environment-properties";
@@ -130,37 +134,100 @@ public class EnvironmentPropertySource extends BasePropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        if(disabled){
+        if (isDisabled()) {
             return null;
         }
-        String prefix = this.prefix;
-        if(prefix==null) {
-            return PropertyValue.of(key, System.getenv(key), getName());
-        }
-        return PropertyValue.of(key, System.getenv(key.substring(prefix.length())), getName());
+
+        String effectiveKey = hasPrefix() ? getPrefix() + "." + key
+                                          : key;
+
+        String value = getPropertiesProvider().getenv(effectiveKey);
+
+        return PropertyValue.of(key, value, getName());
+    }
+
+    private boolean hasPrefix() {
+        return null != prefix;
     }
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        if(disabled){
+        if (isDisabled()) {
             return Collections.emptyMap();
         }
-        String prefix = this.prefix;
-        Map<String,String> envProps = System.getenv();
+
+        String effectivePrefix = getPrefix() + ".";
+        int effectivePrefixLength = hasPrefix() ? getPrefix().length() + 1
+                                                : 0;
+        Map<String, String> envProps = getPropertiesProvider().getenv();
+
         Map<String, PropertyValue> values = new HashMap<>();
-        for (Map.Entry<String,String> entry : envProps.entrySet()) {
-            if(prefix==null) {
+
+        for (Map.Entry<String, String> entry : envProps.entrySet()) {
+            if (hasPrefix()) {
+                if (entry.getKey().startsWith(effectivePrefix)) {
+
+                    String choppedKey = entry.getKey().substring(effectivePrefixLength);
+                    String value = entry.getValue();
+                    values.put(choppedKey, PropertyValue.of(choppedKey, value, getName()));
+                }
+            } else {
                 values.put(entry.getKey(), PropertyValue.of(entry.getKey(), entry.getValue(), getName()));
-            }else {
-                values.put(prefix + entry.getKey(), PropertyValue.of(prefix + entry.getKey(), entry.getValue(), getName()));
             }
         }
+
         return values;
     }
 
     @Override
     public boolean isScannable() {
         return true;
+    }
+
+    void setPropertiesProvider(SystemPropertiesProvider spp) {
+        propertiesProvider = spp;
+        initFromSystemProperties();
+    }
+
+    SystemPropertiesProvider getPropertiesProvider() {
+        return propertiesProvider;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    /**
+     * <p>Provides access to the system properties used to configure
+     * {@linkplain EnvironmentPropertySource}.</p>
+     *
+     * <p>This implementation delegates all property lookups
+     * to {@linkplain System#getProperty(String)}.</p>
+     */
+    static class SystemPropertiesProvider {
+        String getEnvPropsPrefix() {
+            return System.getenv(TAMAYA_ENVPROPS_PREFIX);
+        }
+
+        String getEnvPropsDisable() {
+            return System.getenv(TAMAYA_ENVPROPS_DISABLE);
+        }
+
+        String getDefaultsDisable() {
+            return System.getenv(TAMAYA_DEFAULT_DISABLE);
+        }
+
+        String getenv(String name) {
+            return System.getenv(name);
+        }
+
+        Map<String, String> getenv() {
+            return System.getenv();
+        }
     }
 
 }
