@@ -20,7 +20,6 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
-import org.osgi.service.component.annotations.Component;
 
 import javax.annotation.Priority;
 import java.io.IOException;
@@ -95,6 +94,11 @@ public final class DefaultServiceContext implements ServiceContext {
         try {
             for (T t : ServiceLoader.load(serviceType)) {
                 services.add(t);
+            }
+            if(services.isEmpty()) {
+                for (T t : ServiceLoader.load(serviceType, serviceType.getClassLoader())) {
+                    services.add(t);
+                }
             }
             Collections.sort(services, PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
