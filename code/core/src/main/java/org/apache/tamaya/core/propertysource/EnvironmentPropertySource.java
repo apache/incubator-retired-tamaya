@@ -18,16 +18,74 @@
  */
 package org.apache.tamaya.core.propertysource;
 
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.*;
 
 /**
- * This {@link org.apache.tamaya.spi.PropertySource} provides all properties which are set
- * via
- * {@code export myprop=myval} on UNIX Systems or
- * {@code set myprop=myval} on Windows. You can disable this feature by setting {@code tamaya.envprops.disable}
- * or {@code tamaya.defaults.disable}.
+ * <p>{@link PropertySource} to access environment variables via Tamaya
+ * which are set via {@code export VARIABLE=value} on UNIX systems or
+ * {@code set VARIABLE=value} on Windows systems.</p>
+ *
+ * <p>Using the {@linkplain EnvironmentPropertySource} without any
+ * additional configuration gives access to all existing environment
+ * variables available to the Java process Tamaya is running in.</p>
+ *
+ * <h1>Simple usage example</h1>
+ *
+ * <pre>
+ * $ export OPS_MODE=production
+ * $ export COLOR=false
+ * $ java -jar application.jar
+ * </pre>
+ *
+ * <p>To access {@code OPS_MODE} and {@code COLOR} with the following code
+ * fragment could be used:</p>
+ *
+ * <pre>
+ * PropertySource ps = new EnvironmentPropertySource();
+ * PropertyValue opsMode = ps.get("OPS_MODE");
+ * PropertyValue color = ps.get("COLOR");
+ * </pre>
+ *
+ * <h1>Application specific environmet variables with prefix</h1>
+ *
+ * <p>Given the case where to instances of the same application are running on
+ * a single machine but need different values for the environment variable
+ * {@code CUSTOMER}. The {@linkplain EnvironmentPropertySource} allows you
+ * to prefix the environment variable with an application specific prefix
+ * and to access it by the non-prefixed variable name.</p>
+ *
+ * <pre>
+ * $ export CUSTOMER=none
+ * $ export a81.CUSTOMER=moon
+ * $ export b78.CUSTOMER=luna
+ * </pre>
+ *
+ * <p>Given an environment with these tree variables the application running
+ * for the customer called Moon could be started with the following command:</p>
+ *
+ * <pre>
+ * $ java -Dtamaya.envprops.prefix=a81 -jar application.jar
+ * </pre>
+ *
+ * <p>The application specific value can now be accessed from the code of the
+ * application like this:</p>
+ *
+ * <pre>
+ * PropertySource ps = new EnvironmentPropertySource();
+ * PropertyValue pv = ps.get("CUSTOMER");
+ * System.out.println(pv.getValue());
+ * </pre>
+ *
+ * <p>The output of application would be {@code moon}.</p>
+ *
+ * <h1>Disabling the access to environment variables</h1>
+ *
+ * <p>The access to environment variables could be simply
+ * disabled by the setting the systemproperty {@code tamaya.envprops.disable}
+ * or {@code tamaya.defaults.disable} to {@code true}.</p>
  */
 public class EnvironmentPropertySource extends BasePropertySource {
     private static final String TAMAYA_ENVPROPS_PREFIX = "tamaya.envprops.prefix";
