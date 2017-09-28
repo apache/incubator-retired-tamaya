@@ -24,6 +24,7 @@ import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import java.util.logging.Logger;
  * chain of {@link PropertySource} and {@link PropertyFilter}
  * instance to evaluate the current Configuration.
  */
+@Component(service = Configuration.class)
 public class DefaultConfiguration implements Configuration {
     /**
      * The logger.

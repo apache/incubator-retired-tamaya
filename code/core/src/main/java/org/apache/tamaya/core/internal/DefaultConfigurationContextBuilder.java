@@ -33,6 +33,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.osgi.service.component.annotations.Component;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -47,6 +48,7 @@ import java.util.logging.Logger;
 /**
  * Default implementation of {@link org.apache.tamaya.spi.ConfigurationContextBuilder}.
  */
+@Component(service = ConfigurationContextBuilder.class)
 public class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContextBuilder.class.getName());

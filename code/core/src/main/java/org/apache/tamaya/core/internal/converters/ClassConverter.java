@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
  *     <li>The system Classloader</li>
  * </ul>
  */
+@Component(service = PropertyConverter.class)
 public class ClassConverter implements PropertyConverter<Class<?>>{
 
     private final Logger LOG = Logger.getLogger(getClass().getName());

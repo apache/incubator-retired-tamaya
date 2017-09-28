@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.net.URI;
 import java.util.Objects;
@@ -29,6 +30,7 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to URI, using new URI(value).
  */
+@Component(service = PropertyConverter.class)
 public class URIConverter implements PropertyConverter<URI> {
 
     private final Logger LOG = Logger.getLogger(getClass().getName());

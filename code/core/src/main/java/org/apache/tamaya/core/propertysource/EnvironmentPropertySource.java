@@ -20,6 +20,7 @@ package org.apache.tamaya.core.propertysource;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.*;
 
@@ -87,6 +88,7 @@ import java.util.*;
  * disabled by the setting the systemproperty {@code tamaya.envprops.disable}
  * or {@code tamaya.defaults.disable} to {@code true}.</p>
  */
+@Component(service = PropertySource.class)
 public class EnvironmentPropertySource extends BasePropertySource {
     private static final String TAMAYA_ENVPROPS_PREFIX = "tamaya.envprops.prefix";
     private static final String TAMAYA_ENVPROPS_DISABLE = "tamaya.envprops.disable";

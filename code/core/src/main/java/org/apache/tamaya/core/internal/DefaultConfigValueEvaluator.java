@@ -22,6 +22,7 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Map;
  * chain of {@link PropertySource} and {@link PropertyFilter}
  * instance to evaluate the current Configuration.
  */
+@Component(service = ConfigValueEvaluator.class)
 public class DefaultConfigValueEvaluator implements ConfigValueEvaluator{
 
     @Override

@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Boolean.
  */
+@Component(service = PropertyConverter.class)
 public class DurationConverter implements PropertyConverter<Duration> {
 
     private final Logger LOG = Logger.getLogger(getClass().getName());

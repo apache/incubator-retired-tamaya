@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -37,7 +38,9 @@ import java.util.logging.Logger;
  *     <li>0XFFFFAC (integral numbers only)</li>
  * </ul>
  */
-public class BigDecimalConverter implements PropertyConverter<BigDecimal> {
+@Component(service = PropertyConverter.class)
+public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
+
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(BigDecimalConverter.class.getName());
     /** Converter to be used if the format is not directly supported by BigDecimal, e.g. for integral hex values. */

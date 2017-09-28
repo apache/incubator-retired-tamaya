@@ -22,6 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.Objects;
 
@@ -30,6 +31,7 @@ import java.util.Objects;
  * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
  * instance to evaluate the current Configuration.
  */
+@Component(service = ConfigurationProviderSpi.class)
 public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
 
     ConfigurationContext context = new DefaultConfigurationContextBuilder()

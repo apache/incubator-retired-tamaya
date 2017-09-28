@@ -23,6 +23,7 @@ import org.apache.tamaya.core.internal.PropertySourceComparator;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -38,6 +39,7 @@ import static java.lang.Thread.currentThread;
  * {@code tamaya.defaultprops.disable} or {@code tamaya.defaults.disable}
  * as system or environment property this feature can be disabled.
  */
+@Component(service = PropertySource.class)
 public class JavaConfigurationPropertySource extends BasePropertySource {
     /**
      * Default location in the classpath, where Tamaya looks for simple line based configuration by default.

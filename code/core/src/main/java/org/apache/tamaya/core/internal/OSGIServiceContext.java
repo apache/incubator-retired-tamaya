@@ -89,21 +89,28 @@ public class OSGIServiceContext implements ServiceContext{
     public <T> List<T> getServices(Class<T> serviceType) {
         LOG.finest("TAMAYA  Loading services: " + serviceType.getName());
         List<ServiceReference<T>> refs = new ArrayList<>();
+        List<T> services = new ArrayList<>(refs.size());
         try {
             refs.addAll(this.osgiServiceLoader.getBundleContext().getServiceReferences(serviceType, null));
             Collections.sort(refs, REF_COMPARATOR);
-            List<T> services = new ArrayList<>(refs.size());
             for(ServiceReference<T> ref:refs){
                 T service = osgiServiceLoader.getBundleContext().getService(ref);
                 if(service!=null) {
                     services.add(service);
                 }
             }
-            return services;
         } catch (InvalidSyntaxException e) {
             e.printStackTrace();
-            return Collections.emptyList();
         }
+        try{
+            for(T service:ServiceLoader.load(serviceType)){
+                services.add(service);
+            }
+            return services;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return services;
     }
 
     @Override

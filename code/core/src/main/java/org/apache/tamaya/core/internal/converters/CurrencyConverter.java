@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.Currency;
 import java.util.Locale;
@@ -37,6 +38,7 @@ import java.util.logging.Logger;
  *     <li>de_DE, de_DE_123 (Locale)</li>
  * </ul>
  */
+@Component(service = PropertyConverter.class)
 public class CurrencyConverter implements PropertyConverter<Currency> {
 
     private static final Logger LOG = Logger.getLogger(CurrencyConverter.class.getName());
