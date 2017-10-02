@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
 
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -37,7 +38,12 @@ public class OffsetTimeConverter implements PropertyConverter<OffsetTime> {
     @Override
     public OffsetTime convert(String value, ConversionContext context) {
         context.addSupportedFormats(getClass(), OffsetTime.now().toString());
-        return OffsetTime.parse(value);
+        try{
+            return OffsetTime.parse(value);
+        }catch(Exception e){
+            LOG.log(Level.FINEST, e, () -> "Cannot parse OffsetTime: " + value);
+            return null;
+        }
     }
 
     @Override

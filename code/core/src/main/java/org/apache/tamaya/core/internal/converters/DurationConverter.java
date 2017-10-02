@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -38,7 +39,12 @@ public class DurationConverter implements PropertyConverter<Duration> {
     public Duration convert(String value, ConversionContext context) {
         context.addSupportedFormats(getClass(),
                 Duration.of(1234, ChronoUnit.SECONDS).toString());
-        return Duration.parse(value);
+        try {
+            return Duration.parse(value);
+        }catch(Exception e){
+            LOG.log(Level.FINEST, e, () -> "Cannot parse Duration: " + value);
+            return null;
+        }
     }
 
     @Override

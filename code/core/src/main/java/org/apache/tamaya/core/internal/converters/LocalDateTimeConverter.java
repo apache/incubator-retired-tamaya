@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.PropertyConverter;
 import org.osgi.service.component.annotations.Component;
 
 import java.time.LocalDateTime;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -36,7 +37,12 @@ public class LocalDateTimeConverter implements PropertyConverter<LocalDateTime> 
     @Override
     public LocalDateTime convert(String value, ConversionContext context) {
         context.addSupportedFormats(getClass(), LocalDateTime.now().toString());
-        return LocalDateTime.parse(value);
+        try{
+            return LocalDateTime.parse(value);
+        }catch(Exception e){
+            LOG.log(Level.FINEST, e, () -> "Cannot parse LocalDateTime: " + value);
+            return null;
+        }
     }
 
     @Override

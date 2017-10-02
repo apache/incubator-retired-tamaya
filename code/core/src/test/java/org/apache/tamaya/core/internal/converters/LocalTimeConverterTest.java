@@ -19,39 +19,39 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.osgi.service.component.annotations.Component;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalTime;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
 
 /**
- * Converter, converting from String to Boolean.
+ * Created by atsti on 02.10.2017.
  */
-@Component(service = PropertyConverter.class)
-public class LocalTimeConverter implements PropertyConverter<LocalTime> {
+@RunWith(MockitoJUnitRunner.class)
+public class LocalTimeConverterTest {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    @Mock
+    ConversionContext context;
 
-    @Override
-    public LocalTime convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), LocalTime.now().toString());
-        try{
-            return LocalTime.parse(value);
-        }catch(Exception e){
-            LOG.log(Level.FINEST, e, () -> "Cannot parse LocalTime: " + value);
-            return null;
-        }
+    @Test
+    public void convert() throws Exception {
+        LocalTimeConverter conv = new LocalTimeConverter();
+        LocalTime value = conv.convert("10:15:30", context);
+        assertEquals(value, LocalTime.parse("10:15:30"));
+        value = conv.convert("foo", context);
+        assertNull(value);
     }
 
-    @Override
-    public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+    @Test
+    public void equalsAndHashcode() throws Exception {
+        LocalTimeConverter conv1 = new LocalTimeConverter();
+        LocalTimeConverter conv2 = new LocalTimeConverter();
+        assertEquals(conv1, conv2);
+        assertEquals(conv1.hashCode(), conv2.hashCode());
     }
 
-    @Override
-    public int hashCode(){
-        return getClass().hashCode();
-    }
 }

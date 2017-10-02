@@ -19,39 +19,40 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.osgi.service.component.annotations.Component;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.Instant;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.time.format.DateTimeFormatter;
+
+import static org.junit.Assert.*;
 
 /**
- * Converter, converting from String to Boolean.
+ * Created by atsti on 02.10.2017.
  */
-@Component(service = PropertyConverter.class)
-public class InstantConverter implements PropertyConverter<Instant> {
+@RunWith(MockitoJUnitRunner.class)
+public class InstantConverterTest {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    @Mock
+    ConversionContext context;
 
-    @Override
-    public Instant convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), Instant.now().toString());
-        try{
-            return Instant.parse(value);
-        }catch(Exception e){
-            LOG.log(Level.FINEST, e, () -> "Cannot parse Instant: " + value);
-            return null;
-        }
+    @Test
+    public void convert() throws Exception {
+        InstantConverter conv = new InstantConverter();
+        Instant value = conv.convert("2007-12-03T10:15:30.00Z", context);
+        assertEquals(value, Instant.parse("2007-12-03T10:15:30.00Z"));
+        value = conv.convert("foo", context);
+        assertNull(value);
     }
 
-    @Override
-    public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+    @Test
+    public void equalsAndHashcode() throws Exception {
+        InstantConverter conv1 = new InstantConverter();
+        InstantConverter conv2 = new InstantConverter();
+        assertEquals(conv1, conv2);
+        assertEquals(conv1.hashCode(), conv2.hashCode());
     }
 
-    @Override
-    public int hashCode(){
-        return getClass().hashCode();
-    }
 }
