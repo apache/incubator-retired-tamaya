@@ -20,18 +20,15 @@ under the License.
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0
                               http://maven.apache.org/xsd/assembly-2.0.0.xsd">
-
     <id>distribution-src</id>
     <formats>
         <format>dir</format>
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
-
     <fileSets>
         <fileSet>
             <directory>${project.parent.basedir}</directory>
-
             <excludes>
                 <exclude>**/target/**</exclude>
                 <exclude>**/*.iml</exclude> <!-- IntelliJ IDEA module file -->
@@ -43,11 +40,9 @@ under the License.
                 <exclude>**/pom.xml.releaseBackup</exclude>
                 <exclude>release.properties</exclude>
             </excludes>
-
             <includes>
             </includes>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory>${project.basedir}</outputDirectory>
         </fileSet>
     </fileSets>
-
 </assembly>
