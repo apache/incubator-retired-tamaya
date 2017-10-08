@@ -193,6 +193,11 @@ public class DefaultConfigurationContextBuilderTest {
         assertNotNull(b.build());
     }
 
+    @Test
+    public void bla() throws Exception {
+        ConfigurationContextBuilder builder = ConfigurationProvider.getConfigurationContextBuilder();
+        builder.addDefaultPropertyConverters();
+    }
 
     private static class TestPropertySource implements PropertySource{
 

@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNull;
  */
 public class EnumConverterTest {
 
-    private final EnumConverter testConverter = new EnumConverter(RoundingMode.class);
+    private final EnumConverter<RoundingMode> testConverter = new EnumConverter<>(RoundingMode.class);
 
     private final ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
 
