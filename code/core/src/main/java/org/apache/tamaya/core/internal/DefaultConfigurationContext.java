@@ -98,7 +98,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
         }
         if(propertyValueCombinationPolicy==null){
-            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
         }
     }
 

@@ -55,8 +55,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     List<PropertyFilter> propertyFilters = new ArrayList<>();
     List<PropertySource> propertySources = new ArrayList<>();
-    PropertyValueCombinationPolicy combinationPolicy =
-            PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+    PropertyValueCombinationPolicy combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
     Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters = new HashMap<>();
 
     /**
@@ -385,7 +384,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     protected ConfigurationContextBuilder loadDefaults() {
         checkBuilderState();
-        this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
         addDefaultPropertySources();
         addDefaultPropertyFilters();
         addDefaultPropertyConverters();

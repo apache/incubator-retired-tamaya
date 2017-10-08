@@ -29,7 +29,7 @@ public class PropertyValueCombinationPolicyTest {
 
     @Test
     public void defaulPolicyOverridesCurrentValueByTheOneOfTheGivenProperySource() throws Exception {
-        PropertyValueCombinationPolicy policy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        PropertyValueCombinationPolicy policy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
 
         PropertyValue current = PropertyValue.of("a", "AAA", "Test");
         PropertyValue result = policy.collect(current, "a", new DummyPropertySource());
@@ -40,7 +40,7 @@ public class PropertyValueCombinationPolicyTest {
 
     @Test
     public void defaulPolicyOverridesKeepsTheCurrentValueIfGivenProperySourceDoesNotHaveIt() throws Exception {
-        PropertyValueCombinationPolicy policy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        PropertyValueCombinationPolicy policy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
 
         PropertyValue current = PropertyValue.of("a", "AAA", "Test");
         PropertyValue result = policy.collect(current, "a", PropertySource.EMPTY);

@@ -22,7 +22,7 @@ package org.apache.tamaya.spi;
 /**
  * Policy that determines how the final value of a configuration entry is evaluated. An instances of this
  * interface can be registered to get control how multiple PropertySources are combined. This is useful in cases
- * where the default overriding policy as implemented in {@link #DEFAULT_OVERRIDING_COLLECTOR} is not matching
+ * where the default overriding policy as implemented in {@link #DEFAULT_OVERRIDING_POLICY} is not matching
  * the need of the current application, e.g. then entries containing multiple values should be combined to new
  * values instead of overridden.
  */
@@ -32,17 +32,23 @@ public interface PropertyValueCombinationPolicy {
      * Default overriding collector, where each existing entry ({@code current} is overridden by a subsequent non-null
      * entry evaluated by {@code propertySource.get(key)}.
      */
-    PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = new PropertyValueCombinationPolicy(){
+    PropertyValueCombinationPolicy DEFAULT_OVERRIDING_POLICY = new PropertyValueCombinationPolicy(){
 
         @Override
         public PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource) {
             PropertyValue value = propertySource.get(key);
             return value!=null?value:currentValue;
         }
-
     };
 
     /**
+     * @deprecated Use {@linkplain #DEFAULT_OVERRIDING_POLICY} instead. Will be removed in 1.0.
+     */
+    @Deprecated
+    PropertyValueCombinationPolicy DEFAULT_OVERRIDING_COLLECTOR = DEFAULT_OVERRIDING_POLICY;
+
+
+        /**
      * Method that is called for each value evaluated by a PropertySource for the given key. This method is called
      * either when a single key is accessed, e.g. by calling {@code org.apache.tamaya.Configuration.getXXX}, but also
      * when the full configuration property map is accessed by calling

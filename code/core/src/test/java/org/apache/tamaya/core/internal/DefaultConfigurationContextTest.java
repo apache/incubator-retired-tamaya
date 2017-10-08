@@ -160,7 +160,7 @@ public class DefaultConfigurationContextTest {
         ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
         assertNotNull(ctx.getPropertyValueCombinationPolicy());
         assertEquals(ctx.getPropertyValueCombinationPolicy(),
-                PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR);
+                PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY);
     }
 
     @Test
