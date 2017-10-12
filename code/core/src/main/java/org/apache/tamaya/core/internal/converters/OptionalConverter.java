@@ -46,9 +46,15 @@ public class OptionalConverter implements PropertyConverter<Optional> {
 
     @Override
     public Optional convert(String value, ConversionContext context) {
+        if(value==null){
+            return Optional.ofNullable(null);
+        }
         try{
             Type targetType = context.getTargetType().getType();
             ParameterizedType pt = (ParameterizedType) targetType;
+            if(String.class.equals(pt.getActualTypeArguments()[0])){
+                return Optional.of(value);
+            }
             ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(pt.getActualTypeArguments()[0]));
             return Optional.ofNullable(context.getConfiguration().query(converter));
         }catch(Exception e){
