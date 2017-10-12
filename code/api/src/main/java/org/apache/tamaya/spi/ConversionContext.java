@@ -141,7 +141,7 @@ public class ConversionContext {
         /** The accessed key, or null. */
         private String key;
         /** The target type. */
-        private final TypeLiteral<?> targetType;
+        private TypeLiteral<?> targetType;
         /** The injection target (only set with injection used). */
         private AnnotatedElement annotatedElement;
         /** The ordered list of formats tried. */
@@ -219,6 +219,17 @@ public class ConversionContext {
         }
 
         /**
+         * Sets the target type explicitly. This is required in some rare cases, e.g. injection of {@code Provider}
+         * instances, where the provider's result type must be produced.
+         * @param targetType the
+         * @return the builder for chaining.
+         */
+        public Builder setTargetType(TypeLiteral targetType) {
+            this.targetType = Objects.requireNonNull(targetType);
+            return this;
+        }
+
+        /**
          * Add the formats provided by a {@link PropertyConverter}. This method should be called by each converter
          * performing/trying conversion, so the user can be given feedback on the supported formats on failure.
          * @param converterType the converter type, not {@code null}.
@@ -251,5 +262,6 @@ public class ConversionContext {
                     ", supportedFormats=" + supportedFormats +
                     '}';
         }
+
     }
 }

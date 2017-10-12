@@ -18,16 +18,22 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.ConfigQuery;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.PropertyConverterManager;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.osgi.service.component.annotations.Component;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Locale;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -36,24 +42,18 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class OptionalConverter implements PropertyConverter<Optional> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(OptionalConverter.class.getName());
 
     @Override
-    public Optional<?> convert(String value, ConversionContext context) {
-        TypeLiteral<Optional> target = (TypeLiteral<Optional>)context.getTargetType();
-        Object result = null;
-        Type targetType = TypeLiteral.getTypeParameters(target.getType())[0];
-        if(String.class.equals(targetType)){
-            result = value;
+    public Optional convert(String value, ConversionContext context) {
+        try{
+            Type targetType = context.getTargetType().getType();
+            ParameterizedType pt = (ParameterizedType) targetType;
+            ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(pt.getActualTypeArguments()[0]));
+            return Optional.ofNullable(context.getConfiguration().query(converter));
+        }catch(Exception e){
+            throw new ConfigException("Error evaluating config value.", e);
         }
-        for(PropertyConverter pv:context.getConfigurationContext().getPropertyConverters(
-                TypeLiteral.of(targetType))){
-            result = pv.convert(value, context);
-            if(result!=null){
-                return Optional.of(result);
-            }
-        }
-        return Optional.ofNullable(result);
     }
 
     @Override
@@ -64,5 +64,38 @@ public class OptionalConverter implements PropertyConverter<Optional> {
     @Override
     public int hashCode(){
         return getClass().hashCode();
+    }
+
+
+    private static final class ConvertQuery<T> implements ConfigQuery<T>{
+
+        private String rawValue;
+        private TypeLiteral<T> type;
+
+        public ConvertQuery(String rawValue, TypeLiteral<T> type) {
+            this.rawValue = Objects.requireNonNull(rawValue);
+            this.type = Objects.requireNonNull(type);
+        }
+
+        @Override
+        public T query(Configuration config) {
+            List<PropertyConverter<T>> converters = config.getContext().getPropertyConverters(type);
+            ConversionContext context = new ConversionContext.Builder(type).setConfigurationContext(config.getContext())
+                    .setConfiguration(config).setKey(ConvertQuery.class.getName()).build();
+            for(PropertyConverter<?> conv: converters) {
+                try{
+                    if(conv instanceof OptionalConverter){
+                        continue;
+                    }
+                    T result = (T)conv.convert(rawValue, context);
+                    if(result!=null){
+                        return result;
+                    }
+                }catch(Exception e){
+                    LOG.log(Level.FINEST,  e, () -> "Converter "+ conv +" failed to convert to " + type);
+                }
+            }
+            return null;
+        }
     }
 }
