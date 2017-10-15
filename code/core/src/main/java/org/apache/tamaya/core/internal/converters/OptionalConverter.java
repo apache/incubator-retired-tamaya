@@ -47,7 +47,7 @@ public class OptionalConverter implements PropertyConverter<Optional> {
     @Override
     public Optional convert(String value, ConversionContext context) {
         if(value==null){
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
         try{
             Type targetType = context.getTargetType().getType();
