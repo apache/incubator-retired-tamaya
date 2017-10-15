@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -31,6 +32,11 @@ public class OptionalConverterTest {
         final Optional result = new OptionalConverter().convert(null, null);
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isFalse();
+    }
+
+    @Test(expected = ConfigException.class)
+    public void emulateExceptionWhenGivenContextIsNull() {
+        final Optional result = new OptionalConverter().convert("JustATestValueThatIsIgnored", null);
     }
 
 }
