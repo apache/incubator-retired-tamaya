@@ -18,23 +18,23 @@
  */
 package org.apache.tamaya;
 
-import org.junit.Test;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import static org.apache.tamaya.TypeLiteral.getGenericInterfaceTypeParameters;
 import static org.apache.tamaya.TypeLiteral.getTypeParameters;
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.junit.Test;
+
 /**
  * Tests for the {@link TypeLiteral} class.
  */
+@SuppressWarnings("serial")
 public class TypeLiteralTest {
 
-    @Test(expected = NullPointerException.class)
+	@Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullParameter() {
        new TypeLiteral<List<String>>(null){};
     }

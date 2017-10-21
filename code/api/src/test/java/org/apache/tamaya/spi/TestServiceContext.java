@@ -40,7 +40,8 @@ public final class TestServiceContext implements ServiceContext {
         return 1;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public <T> T getService(Class<T> serviceType) {
         T cached = serviceType.cast(singletons.get(serviceType));
         if(cached==null) {
@@ -53,7 +54,8 @@ public final class TestServiceContext implements ServiceContext {
         return cached;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T create(Class<T> serviceType) {
         Collection<T> services = getServices(serviceType);
         if (services.isEmpty()) {
@@ -80,7 +82,8 @@ public final class TestServiceContext implements ServiceContext {
                 services.add(t);
             }
             services = Collections.unmodifiableList(services);
-            final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>)services));
+            @SuppressWarnings("unchecked")
+			final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>)services));
             return previousServices != null ? previousServices : services;
         } catch (Exception e) {
             Logger.getLogger(TestServiceContext.class.getName()).log(Level.WARNING,

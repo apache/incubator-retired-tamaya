@@ -52,7 +52,8 @@ public class ServiceContextTest {
             return getService(serviceType);
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public <T> List<T> getServices(Class<T> serviceType) {
             if(String.class.equals(serviceType)){
                 List<String> list = new ArrayList<>();

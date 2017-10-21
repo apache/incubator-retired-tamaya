@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("unchecked")
 public class PropertyValueTest {
 
     @Test(expected = NullPointerException.class)
@@ -42,8 +43,6 @@ public class PropertyValueTest {
     public void mapThreeParameterVariantRequiresNonNullValueForMetaData() {
         PropertyValue.map(Collections.EMPTY_MAP, "s", null);
     }
-
-
 
     @Test(expected = NullPointerException.class)
     public void ofDoesNotAcceptNullAsKey() throws Exception {
@@ -109,7 +108,6 @@ public class PropertyValueTest {
         assertEquals(val,
                 val.toBuilder().build());
     }
-
 
     @Test
     public void testGetKey() throws Exception {
@@ -190,32 +188,32 @@ public class PropertyValueTest {
 
     @Test(expected = NullPointerException.class)
     public void testInstantiateNoKey1() throws Exception {
-        PropertyValue pv = PropertyValue.builder(null, "testGetKey").setValue("v").build();
+        PropertyValue.builder(null, "testGetKey").setValue("v").build();
     }
 
     @Test(expected = NullPointerException.class)
     public void testInstantiateNoKey2() throws Exception {
-        PropertyValue pv = PropertyValue.of(null, "v", "testGetKey");
+        PropertyValue.of(null, "v", "testGetKey");
     }
 
     @Test
     public void testInstantiateNoValue1() throws Exception {
-        PropertyValue pv = PropertyValue.builder("k", "testGetKey").build();
+        PropertyValue.builder("k", "testGetKey").build();
     }
 
     @Test
     public void testInstantiateNoValue2() throws Exception {
-        PropertyValue pv = PropertyValue.of("k", null, "testGetKey");
+        PropertyValue.of("k", null, "testGetKey");
     }
 
     @Test(expected = NullPointerException.class)
     public void testInstantiateNoSource1() throws Exception {
-        PropertyValue pv = PropertyValue.builder("k", null).setValue("v").build();
+        PropertyValue.builder("k", null).setValue("v").build();
     }
 
     @Test(expected = NullPointerException.class)
     public void testInstantiateNoSource2() throws Exception {
-        PropertyValue pv = PropertyValue.of("k", "v", null);
+        PropertyValue.of("k", "v", null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -248,6 +246,5 @@ public class PropertyValueTest {
     public void builderMethodTwoParameterVariantRequiresNonNullValueAsValue() {
         PropertyValue.builder("A", null);
     }
-
 
 }

@@ -18,13 +18,14 @@
  */
 package org.apache.tamaya.spi;
 
-import org.junit.Test;
-import org.mockito.internal.matchers.Null;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class PropertyValueBuilderTest {
 

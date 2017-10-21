@@ -18,12 +18,11 @@
  */
 package org.apache.tamaya;
 
+import javax.annotation.Priority;
+
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
-
-import javax.annotation.Priority;
-import java.util.Objects;
 
 /**
  * Test Configuration class, that is used to testdata the default methods provided by the API.

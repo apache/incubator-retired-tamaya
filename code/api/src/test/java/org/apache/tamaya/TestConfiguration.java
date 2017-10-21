@@ -66,7 +66,8 @@ public class TestConfiguration implements Configuration{
         return val;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T get(String key, Class<T> type) {
         if(type.equals(Long.class)){
             return (T)(Object)Long.MAX_VALUE;

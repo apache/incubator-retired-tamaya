@@ -43,11 +43,13 @@ public class FilterContextTest {
         new FilterContext(PropertyValue.of("a", "b", "s"), null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @SuppressWarnings("unchecked")
+	@Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullPropertyValueThreeParameterVariant() {
         new FilterContext(null, Collections.EMPTY_MAP, new TestConfigContext());
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullConfigurationContextThreeParameterVariant() {
         new FilterContext(PropertyValue.of("a", "b", "s"), Collections.EMPTY_MAP, null);
