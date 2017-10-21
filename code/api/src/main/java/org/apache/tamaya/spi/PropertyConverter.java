@@ -18,13 +18,10 @@
  */
 package org.apache.tamaya.spi;
 
-
-import jdk.nashorn.internal.objects.annotations.Function;
-
 /**
  * Interface for an property that converts a configured String into something else.
  * This is used for implementing type conversion from a property (String) to a certain target
- * type. Hereby the target type can be multivalued (e.g. collections) or complex if needed.
+ * type. Hereby the target type can be multi-value (e.g. collections) or complex if needed.
  * 
  * @param <T> the type of the type literal
  */

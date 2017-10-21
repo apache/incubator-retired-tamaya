@@ -122,7 +122,8 @@ public class TypeLiteral<T> implements Serializable {
      *
      * @return the actual type represented by this object
      */
-    public final Class<T> getRawType() {
+    @SuppressWarnings("unchecked")
+	public final Class<T> getRawType() {
         Class<T> rawType;
 
         if (this.definedType instanceof Class) {

@@ -36,7 +36,7 @@ public class FilterContext {
     /** tHE CURRENT CONTEXT. */
     private final ConfigurationContext context;
     @Experimental
-    private Map<String, PropertyValue> configEntries = new HashMap();
+    private Map<String, PropertyValue> configEntries = new HashMap<>();
     @Experimental
     private boolean singlePropertyScoped;
 

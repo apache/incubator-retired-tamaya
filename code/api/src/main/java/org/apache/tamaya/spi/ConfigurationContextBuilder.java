@@ -236,7 +236,7 @@ public interface ConfigurationContextBuilder {
      * @return this builder, for chaining, never null.
      */
     <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
-                                                          PropertyConverter<T>... propertyConverters);
+                                                          @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
 
     /**
      * This method can be used for adding {@link PropertyConverter}s.
@@ -268,7 +268,7 @@ public interface ConfigurationContextBuilder {
      * @return this builder, for chaining, never null.
      */
     <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
-                                                             PropertyConverter<T>... propertyConverters);
+                                                             @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
 
     /**
      * Removes the given PropertyConverter instances for the given type,

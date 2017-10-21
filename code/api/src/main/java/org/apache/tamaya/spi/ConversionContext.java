@@ -96,7 +96,7 @@ public class ConversionContext {
      * @param converterType the converter, which implements the formats provided.
      * @param formatDescriptors the format descriptions in a human readable form, e.g. as regular expressions.
      */
-    public void addSupportedFormats(Class<? extends PropertyConverter> converterType, String... formatDescriptors){
+    public void addSupportedFormats(@SuppressWarnings("rawtypes") Class<? extends PropertyConverter> converterType, String... formatDescriptors){
         synchronized (supportedFormats){
             for(String format: formatDescriptors) {
                 supportedFormats.add(format + " (" + converterType.getSimpleName() + ")");
@@ -224,7 +224,7 @@ public class ConversionContext {
          * @param targetType the
          * @return the builder for chaining.
          */
-        public Builder setTargetType(TypeLiteral targetType) {
+        public Builder setTargetType(@SuppressWarnings("rawtypes") TypeLiteral targetType) {
             this.targetType = Objects.requireNonNull(targetType);
             return this;
         }
@@ -236,7 +236,7 @@ public class ConversionContext {
          * @param formatDescriptors the formats supported in a human readable form, e.g. as regular expressions.
          * @return the builder instance, for chaining
          */
-        public Builder addSupportedFormats(Class<? extends PropertyConverter> converterType, String... formatDescriptors){
+        public Builder addSupportedFormats(@SuppressWarnings("rawtypes") Class<? extends PropertyConverter> converterType, String... formatDescriptors){
             for(String format: formatDescriptors) {
                 supportedFormats.add(format + " (" + converterType.getSimpleName() + ")");
             }
