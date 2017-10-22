@@ -44,7 +44,7 @@
         <maven.javadoc.skip>false</maven.javadoc.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <json.spec.version>1.0-alpha-1</json.spec.version>
+        <json.spec.version>1.0</json.spec.version>
         <junit.version>4.12</junit.version>
 
         <!-- Dependency and plugin relate version properties go here -->
@@ -259,7 +259,7 @@
             <!-- JSON Specs -->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-json_1.0_spec</artifactId>
+                <artifactId>geronimo-json_1.1_spec</artifactId>
                 <version>${json.spec.version}</version>
             </dependency>
             <!-- asciidoctor -->
