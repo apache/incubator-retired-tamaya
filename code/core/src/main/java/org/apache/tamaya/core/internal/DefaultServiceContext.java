@@ -44,7 +44,8 @@ public final class DefaultServiceContext implements ServiceContext {
      * Singletons.
      */
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
-    private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
+    @SuppressWarnings("rawtypes")
+	private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
 
     @Override
     public <T> T getService(Class<T> serviceType) {
@@ -60,7 +61,8 @@ public final class DefaultServiceContext implements ServiceContext {
 
     @Override
     public <T> T create(Class<T> serviceType) {
-        Class<? extends T> implType = factoryTypes.get(serviceType);
+        @SuppressWarnings("unchecked")
+		Class<? extends T> implType = factoryTypes.get(serviceType);
         if(implType==null) {
             Collection<T> services = getServices(serviceType);
             if (services.isEmpty()) {
@@ -72,7 +74,7 @@ public final class DefaultServiceContext implements ServiceContext {
         try {
             return implType.newInstance();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Failed to create instabce of " + implType.getName(), e);
+            LOG.log(Level.SEVERE, "Failed to create instance of " + implType.getName(), e);
             return  null;
         }
     }
@@ -86,7 +88,8 @@ public final class DefaultServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = (List<T>) servicesLoaded.get(serviceType);
+        @SuppressWarnings("unchecked")
+		List<T> found = (List<T>) servicesLoaded.get(serviceType);
         if (found != null) {
             return found;
         }
@@ -109,13 +112,14 @@ public final class DefaultServiceContext implements ServiceContext {
                 services = Collections.emptyList();
             }
         }
-        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
+        @SuppressWarnings("unchecked")
+		final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
         return previousServices != null ? previousServices : services;
     }
 
     /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's value s evaluated. If no such
-     * annotation is present, a default priority is returned (1);
+     * Checks the given instance for a @Priority annotation. If present the annotation's value is evaluated. If no such
+     * annotation is present, a default priority of {@code 1} is returned.
      * @param o the instance, not {@code null}.
      * @return a priority, by default 1.
      */
@@ -196,6 +200,5 @@ public final class DefaultServiceContext implements ServiceContext {
         }
         return cl.getResource(resource);
     }
-
 
 }

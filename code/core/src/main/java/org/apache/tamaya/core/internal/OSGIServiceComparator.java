@@ -24,8 +24,9 @@ import javax.annotation.Priority;
 import java.util.Comparator;
 
 /**
- * Comparator implementation for odering services loaded based on their increasing priority values.
+ * Comparator implementation for ordering services loaded based on their increasing priority values.
  */
+@SuppressWarnings("rawtypes")
 class OSGIServiceComparator implements Comparator<ServiceReference> {
 
     @Override
@@ -41,8 +42,8 @@ class OSGIServiceComparator implements Comparator<ServiceReference> {
     }
 
     /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's value s evaluated. If no such
-     * annotation is present, a default priority is returned (1);
+     * Checks the given instance for a @Priority annotation. If present the annotation's value is evaluated. If no such
+     * annotation is present, a default priority {@code 1} is returned.
      *
      * @param o the instance, not {@code null}.
      * @return a priority, by default 1.
@@ -52,15 +53,15 @@ class OSGIServiceComparator implements Comparator<ServiceReference> {
     }
 
     /**
-     * Checks the given type optionally annotated with a @Priority. If present the annotation's value s evaluated.
-     * If no such annotation is present, a default priority is returned (1);
+     * Checks the given type optionally annotated with a @Priority. If present the annotation's value is evaluated.
+     * If no such annotation is present, a default priority {@code 1} is returned.
      *
      * @param type the type, not {@code null}.
      * @return a priority, by default 1.
      */
-    public static int getPriority(Class type) {
+    public static int getPriority(Class<? extends Object> type) {
         int prio = 1;
-        Priority priority = (Priority)type.getAnnotation(Priority.class);
+        Priority priority = type.getAnnotation(Priority.class);
         if (priority != null) {
             prio = priority.value();
         }

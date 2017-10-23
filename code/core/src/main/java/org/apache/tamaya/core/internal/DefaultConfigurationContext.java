@@ -29,8 +29,6 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
 
-import javax.annotation.Priority;
-import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -45,7 +43,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
 
     /**
-     * Cubcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
+     * Subcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
      */
     private final PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
@@ -70,13 +68,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      */
     private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
-    /**
-     * Lock for internal synchronization.
-     */
-    private final ReentrantReadWriteLock propertyFilterLock = new ReentrantReadWriteLock();
-
-
-    DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
+    @SuppressWarnings("unchecked")
+	DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
         List<PropertySource> propertySources = new ArrayList<>();
         // first we load all PropertySources which got registered via java.util.ServiceLoader
         propertySources.addAll(builder.propertySources);
@@ -89,7 +82,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
         // Finally add the converters
         for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:builder.getPropertyConverter().entrySet()) {
-            for (PropertyConverter converter : en.getValue()) {
+            for (@SuppressWarnings("rawtypes") PropertyConverter converter : en.getValue()) {
                 this.propertyConverterManager.register(en.getKey(), converter);
             }
         }
@@ -195,7 +188,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         b.append("  -------------------\n");
         b.append("  CLASS                         TYPE                          INFO\n\n");
         for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> converterEntry:getPropertyConverters().entrySet()){
-            for(PropertyConverter converter: converterEntry.getValue()){
+            for(PropertyConverter<?> converter: converterEntry.getValue()){
                 b.append("  ");
                 appendFormatted(b, converter.getClass().getSimpleName(), 30);
                 appendFormatted(b, converterEntry.getKey().getRawType().getSimpleName(), 30);

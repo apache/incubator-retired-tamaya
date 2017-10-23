@@ -105,7 +105,6 @@ class WrappedPropertySource implements PropertySource{
         WrappedPropertySource that = (WrappedPropertySource) o;
 
         return getDelegate().getName().equals(that.getDelegate().getName());
-
     }
 
     @Override
@@ -123,6 +122,4 @@ class WrappedPropertySource implements PropertySource{
                 ", delegate-class=" + delegate.getClass().getName() +
                 '}';
     }
-
-
 }

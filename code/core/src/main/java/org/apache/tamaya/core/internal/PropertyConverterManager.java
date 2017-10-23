@@ -92,26 +92,28 @@ public class PropertyConverterManager {
     /**
      * Registers the default converters provided out of the box.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void initConverters() {
-        for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)) {
+        for ( PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)) {
             Type type = TypeLiteral.getGenericInterfaceTypeParameters(conv.getClass(), PropertyConverter.class)[0];
             register(TypeLiteral.of(type), conv);
         }
     }
 
     /**
-     * Registers a ew converter instance.
+     * Registers a new converter instance.
      *
      * @param targetType the target type, not {@code null}.
      * @param converter  the converter, not {@code null}.
      * @param <T>        the type.
      */
+    @SuppressWarnings("unchecked")
     public <T> void register(TypeLiteral<T> targetType, PropertyConverter<T> converter) {
         Objects.requireNonNull(converter);
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-            List converters = List.class.cast(this.converters.get(targetType));
+			List<PropertyConverter<?>> converters = List.class.cast(this.converters.get(targetType));
             if(converters!=null && converters.contains(converter)){
                 return;
             }
@@ -194,12 +196,12 @@ public class PropertyConverterManager {
     /**
      * Get the list of all current registered converters for the given target type.
      * If not converters are registered, they component tries to create and register a dynamic
-     * converter based on String costructor or static factory methods available.
+     * converter based on String constructor or static factory methods available.
      * The converters provided are of the following type and returned in the following order:
      * <ul>
      * <li>Converters mapped explicitly to the required target type are returned first, ordered
      * by decreasing priority. This means, if explicit converters are registered these are used
-     * primarly for converting a value.</li>
+     * primarily for converting a value.</li>
      * <li>The target type of each explicitly registered converter also can be transitively mapped to
      * 1) all directly implemented interfaces, 2) all its superclasses (except Object), 3) all the interfaces
      * implemented by its superclasses. These groups of transitive converters is returned similarly in the
@@ -219,10 +221,10 @@ public class PropertyConverterManager {
      * @return the ordered list of converters (may be empty for not convertible types).
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
-    public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
+    @SuppressWarnings("unchecked")
+	public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
         Lock readLock = lock.readLock();
         List<PropertyConverter<T>> converterList = new ArrayList<>();
-        List<PropertyConverter<T>> converters;
         // direct mapped converters
         try {
             readLock.lock();
@@ -285,7 +287,8 @@ public class PropertyConverterManager {
      * @param <T>        the type
      * @return the boxed type, or null.
      */
-    private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
+    @SuppressWarnings("unchecked")
+	private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
         Type parameterType = targetType.getType();
         if (parameterType == int.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Integer.class));
@@ -359,7 +362,7 @@ public class PropertyConverterManager {
             try {
                 constr = targetType.getRawType().getDeclaredConstructor(String.class);
             } catch (NoSuchMethodException e) {
-                LOG.log(Level.FINEST, "No matching constrctor for " + targetType, e);
+                LOG.log(Level.FINEST, "No matching constructor for " + targetType, e);
                 return null;
             }
             converter = new PropertyConverter<T>() {
@@ -418,7 +421,6 @@ public class PropertyConverterManager {
         PropertyConverterManager that = (PropertyConverterManager) o;
 
         return converters.equals(that.converters);
-
     }
 
     @Override
@@ -442,8 +444,7 @@ public class PropertyConverterManager {
 
             if (!Modifier.isStatic(factoryMethod.getModifiers())) {
                 throw new ConfigException(factoryMethod.toGenericString() +
-                        " is not a static method. Only static " +
-                        "methods can be used as factory methods.");
+                        " is not a static method. Only static methods can be used as factory methods.");
             }
             try {
                 AccessController.doPrivileged(new PrivilegedAction<Object>() {

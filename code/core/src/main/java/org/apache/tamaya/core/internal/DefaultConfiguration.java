@@ -153,7 +153,8 @@ public class DefaultConfiguration implements Configuration {
      * @param <T>  the value type
      * @return the converted value, never {@code null}.
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T get(String key, Class<T> type) {
         Objects.requireNonNull(key, "Key must not be null.");
         Objects.requireNonNull(type, "Target type must not be null");
@@ -180,7 +181,8 @@ public class DefaultConfiguration implements Configuration {
         return convertValue(key, get(key), type);
     }
 
-    protected <T> T convertValue(String key, String value, TypeLiteral<T> type) {
+    @SuppressWarnings("unchecked")
+	protected <T> T convertValue(String key, String value, TypeLiteral<T> type) {
         if (value != null) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
             ConversionContext context = new ConversionContext.Builder(this, this.configurationContext, key, type)

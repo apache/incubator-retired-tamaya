@@ -64,8 +64,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
      */
     private boolean built;
 
-
-
     /**
      * Creates a new builder instance.
      */
@@ -102,7 +100,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         this.combinationPolicy = configurationContext.getPropertyValueCombinationPolicy();
         return this;
     }
-
 
     @Override
     public ConfigurationContextBuilder setContext(ConfigurationContext context) {
@@ -162,8 +159,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
     public DefaultConfigurationContextBuilder addDefaultPropertyConverters() {
         checkBuilderState();
         addCorePropertyConverters();
@@ -175,7 +172,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    private void addCorePropertyConverters() {
+    @SuppressWarnings("unchecked")
+	private void addCorePropertyConverters() {
         addPropertyConverters(TypeLiteral.<BigDecimal>of(BigDecimal.class), new BigDecimalConverter());
         addPropertyConverters(TypeLiteral.<BigInteger>of(BigInteger.class), new BigIntegerConverter());
         addPropertyConverters(TypeLiteral.<Boolean>of(Boolean.class), new BooleanConverter());
@@ -205,15 +203,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         checkBuilderState();
         this.propertySources.removeAll(propertySources);
         return this;
-    }
-
-    private PropertySource getPropertySource(String name) {
-        for(PropertySource ps:propertySources){
-            if(ps.getName().equals(name)){
-                return ps;
-            }
-        }
-        throw new IllegalArgumentException("No such PropertySource: "+name);
     }
 
     @Override
@@ -308,7 +297,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     @Override
     public <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
-                                                                    PropertyConverter<T>... converters) {
+                                                                    @SuppressWarnings("unchecked") PropertyConverter<T>... converters) {
         return removePropertyConverters(typeToConvert, Arrays.asList(converters));
     }
 
@@ -328,7 +317,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-
     @Override
     public ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy combinationPolicy){
         checkBuilderState();
@@ -336,9 +324,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-
     @Override
-    public <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> type, PropertyConverter<T>... propertyConverters){
+    public <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> type, @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters){
         checkBuilderState();
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverters);
@@ -377,11 +364,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    private WrappedPropertySource getWrappedPropertySource(PropertySource delegate) {
-        PropertySource ps = getPropertySource(delegate.getName());
-        return WrappedPropertySource.of(ps);
-    }
-
     protected ConfigurationContextBuilder loadDefaults() {
         checkBuilderState();
         this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
@@ -391,8 +373,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-
-    private Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
+    @SuppressWarnings("rawtypes")
+	private Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
         Map<TypeLiteral, Collection<PropertyConverter>> result = new HashMap<>();
         for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(
                 PropertyConverter.class)) {
@@ -407,7 +389,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         }
         return result;
     }
-
 
     /**
      * Builds a new configuration based on the configuration of this builder instance.

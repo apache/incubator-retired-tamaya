@@ -21,9 +21,7 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyValue;
 
-import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * Component SPI which encapsulates the evaluation of a single or full <b>raw</b>value

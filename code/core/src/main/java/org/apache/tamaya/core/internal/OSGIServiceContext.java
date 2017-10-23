@@ -61,7 +61,8 @@ public class OSGIServiceContext implements ServiceContext{
             return this.osgiServiceLoader.getBundleContext().getService(ref);
         }
         if(ConfigurationProviderSpi.class==serviceType){
-            T service = (T)new DefaultConfigurationProvider();
+            @SuppressWarnings("unchecked")
+			T service = (T)new DefaultConfigurationProvider();
             this.osgiServiceLoader.getBundleContext().registerService(
                     serviceType.getName(),
                     service,
@@ -71,7 +72,8 @@ public class OSGIServiceContext implements ServiceContext{
         return null;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T create(Class<T> serviceType) {
         LOG.finest("TAMAYA  Creating service: " + serviceType.getName());
         ServiceReference<T> ref = this.osgiServiceLoader.getBundleContext().getServiceReference(serviceType);
