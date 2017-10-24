@@ -76,12 +76,18 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
         return true;
     }
 
+    /**
+     * @deprecated use {@link Configuration#getContext()} instead.
+     */
     @Deprecated
     @Override
     public ConfigurationContext getConfigurationContext() {
         return context;
     }
 
+    /**
+     * @deprecated the context should be given upon creation of the {@link Configuration}
+     */
     @Deprecated
     @Override
     public void setConfigurationContext(ConfigurationContext context){

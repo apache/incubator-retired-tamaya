@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal;
 
-
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
@@ -32,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
+@SuppressWarnings("unchecked")
 public class PropertyConverterManagerTest {
 
     private final ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder(
@@ -45,11 +44,12 @@ public class PropertyConverterManagerTest {
                    is(true));
     }
 
-    @Test
+    @SuppressWarnings({ "rawtypes" })
+	@Test
     public void factoryMethodOfIsUsedAsConverter() {
         PropertyConverterManager manager = new PropertyConverterManager();
 
-        List<PropertyConverter<MyType>> converters = manager.getPropertyConverters(
+		List<PropertyConverter<MyType>> converters = manager.getPropertyConverters(
                 (TypeLiteral)TypeLiteral.of(MyType.class));
 
         assertThat(converters, hasSize(1));
@@ -63,7 +63,7 @@ public class PropertyConverterManagerTest {
         assertThat(((MyType)result).getValue(), equalTo("IN"));
     }
 
-    @Test
+	@Test
     public void testDirectConverterMapping(){
         PropertyConverterManager manager = new PropertyConverterManager();
         List<PropertyConverter<C>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(C.class)));
@@ -77,7 +77,7 @@ public class PropertyConverterManagerTest {
         assertThat((result).getInValue(), equalTo("testDirectConverterMapping"));
     }
 
-    @Test
+	@Test
     public void testDirectSuperclassConverterMapping(){
         PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
@@ -93,7 +93,7 @@ public class PropertyConverterManagerTest {
         assertThat(((C)result).getInValue(), equalTo("testDirectSuperclassConverterMapping"));
     }
 
-    @Test
+	@Test
     public void testMultipleConverterLoad(){
         PropertyConverterManager manager = new PropertyConverterManager();
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
@@ -106,7 +106,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters, hasSize(1));
     }
 
-    @Test
+	@Test
     public void testTransitiveSuperclassConverterMapping(){
         PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<A>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(A.class)));
@@ -120,7 +120,7 @@ public class PropertyConverterManagerTest {
         assertThat(((C)result).getInValue(), equalTo("testTransitiveSuperclassConverterMapping"));
     }
 
-    @Test
+	@Test
     public void testDirectInterfaceMapping(){
         PropertyConverterManager manager = new PropertyConverterManager(true);
         List<PropertyConverter<Readable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Readable.class)));

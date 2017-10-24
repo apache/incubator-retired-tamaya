@@ -26,11 +26,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Map;
-import java.util.Set;
-
 /**
- * This tests checks if the combination of 2 prioritized PropertySource return valid results on the final Configuration.
+ * This tests checks if the combination of 2 prioritized PropertySource return valid results of the final configuration.
  */
 public class ConfigurationTest {
 
@@ -53,14 +50,8 @@ public class ConfigurationTest {
 
         assertEquals("Robin", current().get("name"));
         assertEquals("Sabine", current().get("name2")); // from default
-        assertEquals("Mapped to name: Robin", current().get("name3"));  // oderridden default, mapped by filter to name property
+        assertEquals("Mapped to name: Robin", current().get("name3"));  // overridden default, mapped by filter to name property
         assertEquals("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)", current().get("name4")); // final only
         assertNull(current().get("name5")); // final only, but removed from filter
-
-        System.out.println("name : " + current().get("name"));
-        System.out.println("name2: " + current().get("name2"));
-        System.out.println("name3: " + current().get("name3"));
-        System.out.println("name4: " + current().get("name4"));
-        System.out.println("name5: " + current().get("name5"));
     }
 }

@@ -48,7 +48,7 @@ public class DefaultConfigurationProviderTest {
 
     @Test
     public void getConfigurationContext() throws Exception {
-        assertNotNull(new DefaultConfigurationProvider().getConfigurationContext());
+        assertNotNull(new DefaultConfigurationProvider().getConfiguration().getContext());
     }
 
     @Test
@@ -56,13 +56,15 @@ public class DefaultConfigurationProviderTest {
         assertNotNull(new DefaultConfigurationProvider().getConfigurationContextBuilder());
     }
 
-    @Test
+    @SuppressWarnings("deprecation")
+	@Test
     public void setConfigurationContext() throws Exception {
         new DefaultConfigurationProvider()
-                .setConfigurationContext(new DefaultConfigurationProvider().getConfigurationContext());
+                .setConfigurationContext(new DefaultConfigurationProvider().getConfiguration().getContext());
     }
 
-    @Test
+    @SuppressWarnings("deprecation")
+	@Test
     public void isConfigurationContextSettable() throws Exception {
         assertTrue(new DefaultConfigurationProvider().isConfigurationContextSettable());
     }

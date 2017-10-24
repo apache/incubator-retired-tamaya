@@ -40,7 +40,7 @@ import java.util.Map;
  *  <li>Immutable</li>
  * </ul>
  *
- * <p>It is not recommended that implementations also are serializable, since the any configuration can be <i>freezed</i>
+ * <p>It is not recommended that implementations also are serializable, since the any configuration can be <i>frozen</i>
  * by reading out its complete configuration map into a serializable and remotable structure. This helps significantly
  * simplifying the development current this interface, e.g. for being backed up by systems and stores that are not part current
  * this library at all.</p>

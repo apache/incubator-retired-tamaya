@@ -62,14 +62,14 @@ public class PropertyFilterComparatorTest {
     @Priority(1)
     private static class PropertyFilterA  implements PropertyFilter {
         public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-            throw new RuntimeException("Not implement or look at me!");
+            throw new RuntimeException("Not implemented or look at me!");
         }
     }
 
     @Priority(2)
     private static class PropertyFilterB  implements PropertyFilter {
         public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-            throw new RuntimeException("Not implement or look at me!");
+            throw new RuntimeException("Not implemented or look at me!");
         }
     }
 }

@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -46,7 +45,7 @@ public class BannerManagerTest {
 
         /*
          * Here we check the precondition for this unit test
-         * and the correct setup of the test enviroment
+         * and the correct setup of the test environment
          * The JVM must have been started with
          * -Djava.security.policy=<path_to_core_module</src/test/resources/java-security.policy
          */
