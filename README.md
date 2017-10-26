@@ -19,12 +19,12 @@ More information on Tamaya can be found on the [homepage of Apache Tamaya](https
 
 ## Building Apache Tamaya
 
-The Apache Tamaya project is built with [Maven 3](https://maven.apache.org/) and [Java 7](https://java.sun.com/), so you need JDK >=1.7 and a reasonable version of maven
+The Apache Tamaya project is built with [Maven 3](https://maven.apache.org/) and [Java 8](https://java.sun.com/), so you need JDK >=1.8 and a reasonable version of maven
 installed on your computer.
 
 
-Then you can build Tamaya by the following command:
+Then you can build Tamaya via:
 ```
 $ export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
-$ mvn 
+$ mvn
 ```
