@@ -24,15 +24,20 @@ import org.junit.Test;
 
 import java.util.Currency;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
 /**
- * Tests the default converter for bytes.
+ * Tests the default converter for currencies.
  */
 public class CurrencyConverterTest {
 
-    /**
-     * Test conversion. The value are provided by
+    private static final String BGL = "BGL";
+	private static final String CHF = "CHF";
+	private static final String EUR = "EUR";
+
+	/**
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -40,25 +45,25 @@ public class CurrencyConverterTest {
     public void testConvert_Currency_Code_CHF() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code1", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead, Currency.getInstance("CHF"));
+        assertThat(valueRead).isNotNull();
+        assertEquals(valueRead, Currency.getInstance(CHF));
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
     @Test
-    public void testConvert_Currency_Code_cHf() throws Exception {
+    public void testConvert_Currency_Code_CHF1() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code2", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead, Currency.getInstance("CHF"));
+        assertThat(valueRead).isNotNull();
+        assertEquals(valueRead, Currency.getInstance(CHF));
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -66,12 +71,12 @@ public class CurrencyConverterTest {
     public void testConvert_Currency_Code_CHF_Whitespace_Before() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code3", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead, Currency.getInstance("CHF"));
+        assertThat(valueRead).isNotNull();
+        assertEquals(Currency.getInstance(CHF), valueRead);
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -79,12 +84,12 @@ public class CurrencyConverterTest {
     public void testConvert_Currency_Code_CHF_Whitespace_After() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code4", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead, Currency.getInstance("CHF"));
+        assertThat(valueRead).isNotNull();
+        assertEquals(Currency.getInstance(CHF), valueRead);
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -92,12 +97,12 @@ public class CurrencyConverterTest {
     public void testConvert_Currency_Code_CHF_Whitespace_Around() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code5", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead, Currency.getInstance("CHF"));
+        assertThat(valueRead).isNotNull();
+        assertEquals(Currency.getInstance(CHF), valueRead);
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -105,21 +110,21 @@ public class CurrencyConverterTest {
     public void testConvert_Currency_Code_Numeric() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code-numeric1", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getNumericCode(), Currency.getInstance("BGL").getNumericCode());
+        assertThat(valueRead).isNotNull();
+        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
         valueRead = config.get("tests.converter.currency.code-numeric2", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getNumericCode(), Currency.getInstance("BGL").getNumericCode());
+        assertThat(valueRead).isNotNull();
+        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
         valueRead = config.get("tests.converter.currency.code-numeric3", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getNumericCode(), Currency.getInstance("BGL").getNumericCode());
+        assertThat(valueRead).isNotNull();
+        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
         valueRead = config.get("tests.converter.currency.code-numeric4", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getNumericCode(), Currency.getInstance("BGL").getNumericCode());
+        assertThat(valueRead).isNotNull();
+        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -127,21 +132,21 @@ public class CurrencyConverterTest {
     public void testConvert_Currency_Code_Locale() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code-locale1", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getCurrencyCode(), "EUR");
+        assertThat(valueRead).isNotNull();
+        assertEquals(EUR, valueRead.getCurrencyCode());
         valueRead = config.get("tests.converter.currency.code-locale2", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getCurrencyCode(), "EUR");
+        assertThat(valueRead).isNotNull();
+        assertEquals(EUR, valueRead.getCurrencyCode());
         valueRead = config.get("tests.converter.currency.code-locale3", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getCurrencyCode(), "EUR");
+        assertThat(valueRead).isNotNull();
+        assertEquals(EUR, valueRead.getCurrencyCode());
         valueRead = config.get("tests.converter.currency.code-locale4", Currency.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.getCurrencyCode(), "EUR");
+        assertThat(valueRead).isNotNull();
+        assertEquals(EUR, valueRead.getCurrencyCode());
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -149,6 +154,6 @@ public class CurrencyConverterTest {
     public void testConvert_NotPresent() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Byte valueRead = config.get("tests.converter.byte.foo", Byte.class);
-        assertFalse(valueRead!=null);
+        assertThat(valueRead).isNull();
     }
 }

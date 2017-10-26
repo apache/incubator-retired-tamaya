@@ -38,9 +38,8 @@ public class BooleanConverterTest {
      * @throws Exception
      */
     @Test
-    public void testConvert_Byte() throws Exception {
+    public void testConvert_BooleanTrue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        // trues
         Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
@@ -71,7 +70,18 @@ public class BooleanConverterTest {
         valueRead = config.get("tests.converter.boolean.t2", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        // falses
+    }
+
+    /**
+     * Test conversion. The value are provided by
+     * {@link ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_BooleanFalse() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
+        assertNotNull(valueRead);
         valueRead = config.get("tests.converter.boolean.n1", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);

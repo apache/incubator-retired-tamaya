@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;

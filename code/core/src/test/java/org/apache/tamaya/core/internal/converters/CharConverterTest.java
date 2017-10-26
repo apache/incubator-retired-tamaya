@@ -23,7 +23,7 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
+import static org.assertj.core.api.Assertions.*;
 /**
  * Tests conversion of the {@link CharConverter}.
  */
@@ -33,7 +33,7 @@ public class CharConverterTest {
     public void testConvert_Character() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f", Character.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 
@@ -41,7 +41,7 @@ public class CharConverterTest {
     public void testConvert_Character_Numeric() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-numeric", Character.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), (char)101);
     }
 
@@ -49,31 +49,31 @@ public class CharConverterTest {
     public void testConvert_Character_Quoted() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.d", Character.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'd');
     }
 
     @Test
-    public void testConvert_Character_WithWhitspace_Before() throws Exception {
+    public void testConvert_Character_WithWhitespace_Before() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-before", Character.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 
     @Test
-    public void testConvert_Character_WithWhitspace_After() throws Exception {
+    public void testConvert_Character_WithWhitespace_After() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-after", Character.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 
     @Test
-    public void testConvert_Character_WithWhitspace_Around() throws Exception {
+    public void testConvert_Character_WithWhitespace_Around() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-around", Character.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 

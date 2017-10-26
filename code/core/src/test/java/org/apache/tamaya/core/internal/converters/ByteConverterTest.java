@@ -23,7 +23,7 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
+import static org.assertj.core.api.Assertions.*;
 /**
  * Tests the default converter for bytes.
  */
@@ -62,7 +62,7 @@ public class ByteConverterTest {
     public void testConvert_Byte_MinValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Byte valueRead = config.get("tests.converter.byte.min", Byte.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(Byte.MIN_VALUE, valueRead.byteValue());
     }
 
@@ -75,7 +75,7 @@ public class ByteConverterTest {
     public void testConvert_Byte_MaxValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Byte valueRead = config.get("tests.converter.byte.max", Byte.class);
-        assertTrue(valueRead!=null);
+        assertThat(valueRead).isNotNull();
         assertEquals(Byte.MAX_VALUE, valueRead.byteValue());
     }
 }
