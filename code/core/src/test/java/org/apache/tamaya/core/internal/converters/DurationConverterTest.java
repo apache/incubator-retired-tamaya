@@ -25,10 +25,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.Duration;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
 
 import static org.junit.Assert.*;
 
@@ -59,15 +55,15 @@ public class DurationConverterTest {
     public void convert() throws Exception {
         DurationConverter conv = new DurationConverter();
         Duration duration = conv.convert("PT20.345S", context);
-        assertEquals(duration, Duration.parse("PT20.345S"));
+        assertEquals(Duration.parse("PT20.345S"), duration);
         duration = conv.convert("PT15M", context);
-        assertEquals(duration, Duration.parse("PT15M"));
+        assertEquals(Duration.parse("PT15M"), duration);
         duration = conv.convert("PT10H", context);
-        assertEquals(duration, Duration.parse("PT10H"));
+        assertEquals(Duration.parse("PT10H"), duration);
         duration = conv.convert("P2D", context);
-        assertEquals(duration, Duration.parse("P2D"));
+        assertEquals(Duration.parse("P2D"), duration);
         duration = conv.convert("P2DT3H4M", context);
-        assertEquals(duration, Duration.parse("P2DT3H4M"));
+        assertEquals(Duration.parse("P2DT3H4M"), duration);
         duration = conv.convert("foo", context);
         assertNull(duration);
     }

@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
@@ -39,18 +38,18 @@ public class EnumConverterTest {
 
     @Test
     public void testConvert() {
-        assertEquals(testConverter.convert(RoundingMode.CEILING.toString(),
-                DUMMY_CONTEXT), RoundingMode.CEILING);
+        assertEquals(RoundingMode.CEILING, testConverter.convert(RoundingMode.CEILING.toString(),
+                DUMMY_CONTEXT));
     }
 
     @Test
     public void testConvert_LowerCase() {
-        assertEquals(testConverter.convert("ceiling", DUMMY_CONTEXT), RoundingMode.CEILING);
+        assertEquals(RoundingMode.CEILING, testConverter.convert("ceiling", DUMMY_CONTEXT));
     }
 
     @Test
     public void testConvert_MixedCase()  {
-        assertEquals(testConverter.convert("CeiLinG", DUMMY_CONTEXT), RoundingMode.CEILING);
+        assertEquals(RoundingMode.CEILING, testConverter.convert("CeiLinG", DUMMY_CONTEXT));
     }
 
     @Test
