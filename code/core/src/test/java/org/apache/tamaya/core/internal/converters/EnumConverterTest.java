@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import java.math.RoundingMode;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -32,28 +33,20 @@ import static org.junit.Assert.assertNull;
  */
 public class EnumConverterTest {
 
-    private final EnumConverter<RoundingMode> testConverter = new EnumConverter<>(RoundingMode.class);
+	private final EnumConverter<RoundingMode> testConverter = new EnumConverter<>(RoundingMode.class);
 
-    private final ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
+	private final ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class))
+			.build();
 
-    @Test
-    public void testConvert() {
-        assertEquals(RoundingMode.CEILING, testConverter.convert(RoundingMode.CEILING.toString(),
-                DUMMY_CONTEXT));
-    }
+	@Test
+	public void testConversionWithMixedCasing() {
+		for (String input : Arrays.asList(RoundingMode.CEILING.toString(), "ceiling", "CeiLinG")) {
+			assertEquals(RoundingMode.CEILING, testConverter.convert(input, DUMMY_CONTEXT));
+		}
+	}
 
-    @Test
-    public void testConvert_LowerCase() {
-        assertEquals(RoundingMode.CEILING, testConverter.convert("ceiling", DUMMY_CONTEXT));
-    }
-
-    @Test
-    public void testConvert_MixedCase()  {
-        assertEquals(RoundingMode.CEILING, testConverter.convert("CeiLinG", DUMMY_CONTEXT));
-    }
-
-    @Test
-    public void testConvert_OtherValue() {
-        assertNull(testConverter.convert("fooBars", DUMMY_CONTEXT));
-    }
+	@Test
+	public void testConvert_OtherValue() {
+		assertNull(testConverter.convert("fooBars", DUMMY_CONTEXT));
+	}
 }

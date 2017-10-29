@@ -25,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.*;
 

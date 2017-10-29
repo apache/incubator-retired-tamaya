@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Tests conversion of the {@link ClassConverter}.
+ * Tests conversion of the {@link URL}-converter.
  */
 public class URLConverterTest {
 

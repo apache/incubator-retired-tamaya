@@ -22,14 +22,13 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Tests conversion of the {@link ClassConverter}.
+ * Tests conversion of the {@link URI}-converter.
  */
 public class URIConverterTest {
 

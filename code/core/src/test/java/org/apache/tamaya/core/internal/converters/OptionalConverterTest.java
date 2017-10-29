@@ -29,14 +29,14 @@ public class OptionalConverterTest {
 
     @Test
     public void nullConversionYieldsEmptyOptional() {
-        final Optional result = new OptionalConverter().convert(null, null);
+        final Optional<?> result = new OptionalConverter().convert(null, null);
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isFalse();
     }
 
     @Test(expected = ConfigException.class)
     public void emulateExceptionWhenGivenContextIsNull() {
-        final Optional result = new OptionalConverter().convert("JustATestValueThatIsIgnored", null);
+        new OptionalConverter().convert("JustATestValueThatIsIgnored", null);
     }
 
 }

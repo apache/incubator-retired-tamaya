@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 public class ShortConverterTest {
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -43,7 +43,7 @@ public class ShortConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -56,7 +56,7 @@ public class ShortConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -84,7 +84,7 @@ public class ShortConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -97,7 +97,7 @@ public class ShortConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */

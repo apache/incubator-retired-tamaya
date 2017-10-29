@@ -24,8 +24,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -43,7 +41,6 @@ public class PathConverterTest {
     @Test
     public void convert() throws Exception {
         PathConverter conv = new PathConverter();
-        String testRoot = FileSystems.getDefault().getRootDirectories().iterator().next().toString();
         Path value = conv.convert("testRoot", context);
         assertEquals(value, Paths.get("testRoot"));
         value = conv.convert("foo", context);
