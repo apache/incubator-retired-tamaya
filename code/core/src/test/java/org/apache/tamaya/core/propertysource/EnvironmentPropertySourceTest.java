@@ -107,12 +107,13 @@ public class EnvironmentPropertySourceTest {
             mock(EnvironmentPropertySource.SystemPropertiesProvider.class);
 
         when(provider.getEnvPropsPrefix()).thenReturn("zzz");
-        when(provider.getenv()).thenReturn(new HashMap<String, String>() {{
-            put("zzz.A", "aaa");
-            put("zzz.B", "bbb");
-            put("C", "ccc");
-            put("D", "ddd");
-        }});
+        HashMap<String, String> configuredValues = new HashMap<String, String>();
+        configuredValues.put("zzz.A", "aaa");
+        configuredValues.put("zzz.B", "bbb");
+        configuredValues.put("C", "ccc");
+        configuredValues.put("D", "ddd");
+
+        when(provider.getenv()).thenReturn(configuredValues);
 
         envPropertySource.setPropertiesProvider(provider);
 
@@ -176,7 +177,4 @@ public class EnvironmentPropertySourceTest {
 
         assertThat(envPropertySource.isDisabled()).isTrue();
     }
-
-
-
 }
