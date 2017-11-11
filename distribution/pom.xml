@@ -156,6 +156,7 @@ under the License.
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <tarLongFileMode>posix</tarLongFileMode>
                             <appendAssemblyId>false</appendAssemblyId>
                             <finalName>apache-${project.artifactId}-${project.version}-src</finalName>
                             <descriptors>
