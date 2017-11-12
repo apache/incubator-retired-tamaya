@@ -50,7 +50,7 @@
         <!-- Dependency and plugin relate version properties go here -->
 
         <!-- Keep the JRuby version in sync with the one used by Asciidoctor -->
-        <assembly.version>3.0.0</assembly.version>
+        <assembly.version>3.1.0</assembly.version>
         <asciidoctor.version>1.5.2</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.2</asciidoctorj.version>
