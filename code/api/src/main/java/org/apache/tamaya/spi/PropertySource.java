@@ -167,6 +167,8 @@ public interface PropertySource {
      * @return {@code true} if this PropertySource can be scanned for its list of properties,
      *         {@code false} if it cannot/should not be scanned.
      */
-    boolean isScannable();
+    default boolean isScannable(){
+        return true;
+    }
 
 }

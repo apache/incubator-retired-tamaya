@@ -80,7 +80,7 @@ public class TypeLiteral<T> implements Serializable {
      *
      * @param clazz         the class to check, not  {@code null}.
      * @param interfaceType the interface type to be checked, not {@code null}.
-     * @return the generic type parameter, or null, if it cannot be evaluated.
+     * @return the generic type parameters, or an empty array, if it cannot be evaluated.
      */
     public static Type[] getGenericInterfaceTypeParameters(Class<?> clazz, Class<?> interfaceType) {
         Objects.requireNonNull(clazz, "Class parameter must be given.");
@@ -101,7 +101,7 @@ public class TypeLiteral<T> implements Serializable {
      * Method that checks the class's type for a generic interface implementation type.
      *
      * @param type         the type, not {@code null}.
-     * @return the generic type parameter of the given single type generic interfaceType, or null.
+     * @return the generic type parameter of the given single type generic interfaceType, or an empty array.
      */
     public static Type[] getTypeParameters(Type type) {
         Objects.requireNonNull(type, "Type must be given.");
@@ -126,14 +126,13 @@ public class TypeLiteral<T> implements Serializable {
 	public final Class<T> getRawType() {
         Class<T> rawType;
 
-        if (this.definedType instanceof Class) {
-            rawType = (Class<T>) this.definedType;
-        } else if (this.definedType instanceof ParameterizedType) {
+        if (this.definedType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) this.definedType;
             rawType = (Class<T>) pt.getRawType();
-
         } else if (this.definedType instanceof GenericArrayType) {
             rawType = (Class<T>) Object[].class;
+        } else if (this.definedType instanceof Class) {
+            rawType = (Class<T>) this.definedType;
         } else {
             throw new RuntimeException("Illegal type for the Type Literal Class");
         }
