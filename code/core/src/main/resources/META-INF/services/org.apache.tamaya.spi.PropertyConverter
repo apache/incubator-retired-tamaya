@@ -41,3 +41,4 @@ org.apache.tamaya.core.internal.converters.OffsetDateTimeConverter
 org.apache.tamaya.core.internal.converters.OffsetTimeConverter
 org.apache.tamaya.core.internal.converters.InstantConverter
 org.apache.tamaya.core.internal.converters.OptionalConverter
+org.apache.tamaya.core.internal.converters.SupplierConverter

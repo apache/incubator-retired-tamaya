@@ -16,7 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.core.propertysource.EnvironmentPropertySource
-org.apache.tamaya.core.propertysource.SystemPropertySource
-org.apache.tamaya.core.propertysource.CLIPropertySource
-org.apache.tamaya.core.propertysource.JavaConfigurationPropertySource
+org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource
+org.apache.tamaya.spisupport.propertysource.SystemPropertySource
+org.apache.tamaya.spisupport.propertysource.CLIPropertySource
+org.apache.tamaya.spisupport.propertysource.JavaConfigurationPropertySource

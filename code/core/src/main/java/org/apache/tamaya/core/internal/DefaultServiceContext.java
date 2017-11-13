@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spisupport.PriorityServiceComparator;
 
 import javax.annotation.Priority;
 import java.io.IOException;

@@ -22,7 +22,6 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.osgi.service.component.annotations.Component;
 
-import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;

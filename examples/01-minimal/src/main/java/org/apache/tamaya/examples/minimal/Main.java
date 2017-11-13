@@ -40,8 +40,8 @@ import static java.lang.String.format;
  *  or {@code /META-INF/javaconfiguration.xml}.
  * </p>
  *
- * @see org.apache.tamaya.core.propertysource.EnvironmentPropertySource
- * @see org.apache.tamaya.core.propertysource.SystemPropertySource
+ * @see org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource
+ * @see org.apache.tamaya.spisupport.propertysource.SystemPropertySource
  */
 public class Main {
     /*

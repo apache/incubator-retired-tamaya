@@ -22,11 +22,8 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.osgi.service.component.annotations.Component;
 
-import java.io.File;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;

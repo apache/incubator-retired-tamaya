@@ -23,6 +23,10 @@ package org.apache.tamaya.core;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.core.internal.*;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spisupport.DefaultConfiguration;
+import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.spisupport.PropertyFilterComparator;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

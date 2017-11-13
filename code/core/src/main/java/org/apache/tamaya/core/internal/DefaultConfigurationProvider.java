@@ -22,6 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Objects;

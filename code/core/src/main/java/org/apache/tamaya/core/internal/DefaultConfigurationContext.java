@@ -1,24 +1,23 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  or more contributor license agreements.  See the NOTICE file
+ *  distributed with this work for additional information
+ *  regarding copyright ownership.  The ASF licenses this file
+ *  to you under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
@@ -28,8 +27,15 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spisupport.PropertyConverterManager;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
@@ -86,13 +92,17 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                 this.propertyConverterManager.register(en.getKey(), converter);
             }
         }
+        LOG.info("Registered " + propertyConverterManager.getPropertyConverters().size() + " property converters: " +
+                propertyConverterManager.getPropertyConverters());
+
         propertyValueCombinationPolicy = builder.combinationPolicy;
         if(propertyValueCombinationPolicy==null){
             propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
         }
         if(propertyValueCombinationPolicy==null){
-            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
+            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
         }
+        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
     }
 
 
@@ -114,14 +124,24 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DefaultConfigurationContext)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DefaultConfigurationContext)){
+            return false;
+        }
 
         DefaultConfigurationContext that = (DefaultConfigurationContext) o;
 
-        if (!propertyConverterManager.equals(that.propertyConverterManager)) return false;
-        if (!immutablePropertySources.equals(that.immutablePropertySources)) return false;
-        if (!immutablePropertyFilters.equals(that.immutablePropertyFilters)) return false;
+        if (!propertyConverterManager.equals(that.propertyConverterManager)) {
+            return false;
+        }
+        if (!immutablePropertySources.equals(that.immutablePropertySources)) {
+            return false;
+        }
+        if (!immutablePropertyFilters.equals(that.immutablePropertyFilters)) {
+            return false;
+        }
         return getPropertyValueCombinationPolicy().equals(that.getPropertyValueCombinationPolicy());
 
     }
@@ -143,11 +163,12 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         if(immutablePropertySources.isEmpty()){
             b.append("  No property sources loaded.\n\n");
         }else {
-            b.append("  CLASS                         NAME                                                              SCANNABLE SIZE    STATE     ERROR\n\n");
+            b.append("  CLASS                         NAME                                                                  ORDINAL SCANNABLE SIZE    STATE     ERROR\n\n");
             for (PropertySource ps : immutablePropertySources) {
                 b.append("  ");
                 appendFormatted(b, ps.getClass().getSimpleName(), 30);
                 appendFormatted(b, ps.getName(), 70);
+                appendFormatted(b, String.valueOf(PropertySourceComparator.getOrdinal(ps)), 8);
                 appendFormatted(b, String.valueOf(ps.isScannable()), 10);
                 if (ps.isScannable()) {
                     appendFormatted(b, String.valueOf(ps.getProperties().size()), 8);
@@ -188,7 +209,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         b.append("  -------------------\n");
         b.append("  CLASS                         TYPE                          INFO\n\n");
         for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> converterEntry:getPropertyConverters().entrySet()){
-            for(PropertyConverter<?> converter: converterEntry.getValue()){
+            for(PropertyConverter converter: converterEntry.getValue()){
                 b.append("  ");
                 appendFormatted(b, converter.getClass().getSimpleName(), 30);
                 appendFormatted(b, converterEntry.getKey().getRawType().getSimpleName(), 30);
@@ -197,7 +218,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             }
         }
         b.append("\n\n");
-        b.append("  PropertyValueCombinationPolicy: ").append(getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
+        b.append("  PropertyValueCombinationPolicy: " + getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
         b.append('}');
         return b.toString();
     }
@@ -264,7 +285,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     @Override
     public ConfigurationContextBuilder toBuilder() {
-        return ConfigurationProvider.getConfigurationContextBuilder().setContext(this);
+        return new DefaultConfigurationContextBuilder(this);
     }
 
 }

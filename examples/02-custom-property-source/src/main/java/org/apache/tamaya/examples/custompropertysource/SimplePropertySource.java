@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.examples.custompropertysource;
 
-import org.apache.tamaya.core.propertysource.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.IOException;

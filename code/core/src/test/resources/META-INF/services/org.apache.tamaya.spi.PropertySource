@@ -17,6 +17,6 @@
 # under the License.
 #
 org.apache.tamaya.core.testdata.TestPropertyDefaultSource
-org.apache.tamaya.core.propertysource.SystemPropertySource
-org.apache.tamaya.core.propertysource.EnvironmentPropertySource
+org.apache.tamaya.spisupport.propertysource.SystemPropertySource
+org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource
 org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource

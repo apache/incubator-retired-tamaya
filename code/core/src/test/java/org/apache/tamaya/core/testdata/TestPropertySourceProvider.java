@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.core.propertysource.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValue;

@@ -1,30 +1,24 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  or more contributor license agreements.  See the NOTICE file
+ *  distributed with this work for additional information
+ *  regarding copyright ownership.  The ASF licenses this file
+ *  to you under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.core.internal.converters.*;
-import org.apache.tamaya.core.propertysource.CLIPropertySource;
-import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
-import org.apache.tamaya.core.propertysource.SystemPropertySource;
-import org.apache.tamaya.core.propertysource.JavaConfigurationPropertySource;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -33,10 +27,14 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
-import org.osgi.service.component.annotations.Component;
+import org.apache.tamaya.core.internal.converters.*;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.spisupport.propertysource.CLIPropertySource;
+import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
+import org.apache.tamaya.spisupport.propertysource.JavaConfigurationPropertySource;
+import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -46,9 +44,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Default implementation of {@link org.apache.tamaya.spi.ConfigurationContextBuilder}.
+ * Default implementation of {@link ConfigurationContextBuilder}.
  */
-@Component(service = ConfigurationContextBuilder.class)
 public class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContextBuilder.class.getName());
@@ -64,6 +61,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
      */
     private boolean built;
 
+
+
     /**
      * Creates a new builder instance.
      */
@@ -71,7 +70,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     /**
-     * Creates a new builder instance.
+     * Creates a new builder instance initializing it with the given context.
      * @param context the context to be used, not null.
      */
     public DefaultConfigurationContextBuilder(ConfigurationContext context) {
@@ -100,6 +99,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         this.combinationPolicy = configurationContext.getPropertyValueCombinationPolicy();
         return this;
     }
+
 
     @Override
     public ConfigurationContextBuilder setContext(ConfigurationContext context) {
@@ -134,7 +134,11 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         checkBuilderState();
         List<PropertySource> propertySources = new ArrayList<>();
         addCorePropertyResources(propertySources);
-        propertySources.addAll(ServiceContextManager.getServiceContext().getServices(PropertySource.class));
+        for(PropertySource ps: ServiceContextManager.getServiceContext().getServices(PropertySource.class)) {
+            if(!propertySources.contains(ps)){
+                propertySources.add(ps);
+            }
+        }
         for(PropertySourceProvider provider:
                 ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class)){
                 propertySources.addAll(provider.getPropertySources());
@@ -144,10 +148,16 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     private void addCorePropertyResources(List<PropertySource> propertySources) {
-        propertySources.add(new EnvironmentPropertySource());
-        propertySources.add(new JavaConfigurationPropertySource());
-        propertySources.add(new CLIPropertySource());
-        propertySources.add(new SystemPropertySource());
+        for(PropertySource ps: new PropertySource[]{
+                new EnvironmentPropertySource(),
+                new JavaConfigurationPropertySource(),
+                new CLIPropertySource(),
+                new SystemPropertySource()
+        }){
+            if(!propertySources.contains(ps)){
+                propertySources.add(ps);
+            }
+        }
     }
 
     @Override
@@ -159,8 +169,6 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
     public DefaultConfigurationContextBuilder addDefaultPropertyConverters() {
         checkBuilderState();
         addCorePropertyConverters();
@@ -173,7 +181,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     @SuppressWarnings("unchecked")
-	private void addCorePropertyConverters() {
+	protected void addCorePropertyConverters() {
         addPropertyConverters(TypeLiteral.<BigDecimal>of(BigDecimal.class), new BigDecimalConverter());
         addPropertyConverters(TypeLiteral.<BigInteger>of(BigInteger.class), new BigIntegerConverter());
         addPropertyConverters(TypeLiteral.<Boolean>of(Boolean.class), new BooleanConverter());
@@ -203,6 +211,15 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         checkBuilderState();
         this.propertySources.removeAll(propertySources);
         return this;
+    }
+
+    private PropertySource getPropertySource(String name) {
+        for(PropertySource ps:propertySources){
+            if(ps.getName().equals(name)){
+                return ps;
+            }
+        }
+        throw new IllegalArgumentException("No such PropertySource: "+name);
     }
 
     @Override
@@ -317,6 +334,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
+
     @Override
     public ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy combinationPolicy){
         checkBuilderState();
@@ -324,8 +342,9 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
+
     @Override
-    public <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> type, @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters){
+    public <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> type, PropertyConverter<T>... propertyConverters){
         checkBuilderState();
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverters);
@@ -338,7 +357,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
             if (!converters.contains(propertyConverter)) {
                 converters.add(propertyConverter);
             } else {
-                LOG.finer("Converter ignored, already registered: " + propertyConverter);
+                LOG.warning("Converter ignored, already registered: " + propertyConverter);
             }
         }
         return this;
@@ -358,7 +377,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
             if (!converters.contains(propertyConverter)) {
                 converters.add(propertyConverter);
             } else {
-                LOG.finer("Converter ignored, already registered: " + propertyConverter);
+                LOG.warning("Converter ignored, already registered: " + propertyConverter);
             }
         }
         return this;
@@ -366,20 +385,19 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     protected ConfigurationContextBuilder loadDefaults() {
         checkBuilderState();
-        this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
+        this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
         addDefaultPropertySources();
         addDefaultPropertyFilters();
         addDefaultPropertyConverters();
         return this;
     }
 
-    @SuppressWarnings("rawtypes")
-	private Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
+
+    private Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
         Map<TypeLiteral, Collection<PropertyConverter>> result = new HashMap<>();
         for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(
                 PropertyConverter.class)) {
-            Type type = TypeLiteral.getGenericInterfaceTypeParameters(conv.getClass(), PropertyConverter.class)[0];
-            TypeLiteral target = TypeLiteral.of(type);
+            TypeLiteral target = TypeLiteral.of(TypeLiteral.of(conv.getClass()).getType());
             Collection<PropertyConverter> convList = result.get(target);
             if (convList == null) {
                 convList = new ArrayList<>();
@@ -390,10 +408,11 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return result;
     }
 
+
     /**
      * Builds a new configuration based on the configuration of this builder instance.
      *
-     * @return a new {@link Configuration configuration instance},
+     * @return a new {@link org.apache.tamaya.Configuration configuration instance},
      *         never {@code null}.
      */
     @Override

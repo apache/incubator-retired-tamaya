@@ -20,8 +20,8 @@ package org.apache.tamaya.core;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
 import org.apache.tamaya.spi.*;
+import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
 import org.junit.Test;
 
 import java.util.Arrays;

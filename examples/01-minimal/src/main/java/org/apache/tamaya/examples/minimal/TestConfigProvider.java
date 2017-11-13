@@ -19,7 +19,7 @@
 package org.apache.tamaya.examples.minimal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.internal.DefaultConfigurationProvider;
+import org.apache.tamaya.spisupport.DefaultConfigurationProvider;
 
 /**
  * Configuration provider that allows to set and reset a configuration
