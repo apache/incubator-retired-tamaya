@@ -21,12 +21,12 @@ Bundle-ContactAddress: dev-tamaya@incubator.apache.org
 Bundle-DocURL: http://tamaya.apache.org
 Bundle-Activator: org.apache.tamaya.core.OSGIActivator
 Export-Package: \
-	org.apache.tamaya.core,\
-	org.apache.tamaya.core.propertysource,\
-	org.apache.tamaya.core.provider
+	org.apache.tamaya.core
 Import-Package: \
 	org.apache.tamaya,\
 	org.apache.tamaya.spi,\
+	org.apache.tamaya.spisupport,\
+	org.apache.tamaya.spisupport.propertysource,\
 	org.osgi.framework,\
 	javax.annotation
 Private-Package: \
