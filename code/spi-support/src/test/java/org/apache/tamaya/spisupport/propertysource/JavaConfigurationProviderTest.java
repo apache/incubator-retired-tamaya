@@ -16,17 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.provider;
+package org.apache.tamaya.spisupport.propertysource;
 
-import org.apache.tamaya.core.propertysource.JavaConfigurationPropertySource;
 import org.apache.tamaya.spi.PropertySource;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static org.apache.tamaya.ConfigurationProvider.getConfiguration;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 
 public class JavaConfigurationProviderTest {
 
@@ -36,23 +33,14 @@ public class JavaConfigurationProviderTest {
     @Test
     public void loadsSimpleAndXMLPropertyFilesProper() {
         PropertySource propertySource = new JavaConfigurationPropertySource();
-        assertThat(propertySource.getProperties().keySet(), hasSize(7));  // double the size for .source values.
+        MatcherAssert.assertThat(propertySource.getProperties().keySet(), Matchers.hasSize(7));  // double the size for .source values.
 
         for (int i = 1; i < 6; i++) {
             String key = "confkey" + i;
             String value = "javaconf-value" + i;
 
-            assertThat(value, equalTo(propertySource.get(key).getValue()));
-
-            // check if we had our key in configuration.current
-            assertThat(getConfiguration().getProperties().containsKey(key), is(true));
-            assertThat(value, equalTo(getConfiguration().get(key)));
+            MatcherAssert.assertThat(value, Matchers.equalTo(propertySource.get(key).getValue()));
         }
 
-        assertThat(getConfiguration().getProperties().containsKey("aaeehh"), is(true));
-        assertThat(getConfiguration().getProperties().get("aaeehh"), equalTo(A_UMLAUT));
-
-        assertThat(getConfiguration().getProperties().containsKey(O_UMLAUT), is(true));
-        assertThat(getConfiguration().getProperties().get(O_UMLAUT), equalTo("o"));
     }
 }
