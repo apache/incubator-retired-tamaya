@@ -138,7 +138,9 @@ public interface Configuration {
      *                 combining configurations, never  {@code null}.
      * @return the new adjusted configuration returned by the {@code operator}, never {@code null}.
      */
-    Configuration with(ConfigOperator operator);
+    default Configuration with(ConfigOperator operator){
+        return operator.operate(this);
+    }
 
     /**
      * Query a configuration.
@@ -147,7 +149,9 @@ public interface Configuration {
      * @param query the query, not {@code null}.
      * @return the result returned by the {@code query}.
      */
-    <T> T query(ConfigQuery<T> query);
+    default <T> T query(ConfigQuery<T> query){
+        return query.query(this);
+    }
 
     /**
      * Access a configuration's context.
