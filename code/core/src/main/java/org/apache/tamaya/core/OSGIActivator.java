@@ -24,7 +24,7 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.core.internal.*;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
-import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.core.internal.CoreConfigurationContextBuilder;
 import org.apache.tamaya.spisupport.PropertyFilterComparator;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 import org.osgi.framework.BundleActivator;
@@ -50,7 +50,7 @@ public class OSGIActivator implements BundleActivator {
         LOG.info("Registered Tamaya OSGI ServiceContext...");
         ConfigurationProvider.setConfiguration(
                 new DefaultConfiguration(
-                       new DefaultConfigurationContextBuilder()
+                       new CoreConfigurationContextBuilder()
                         .addDefaultPropertyConverters()
                         .addDefaultPropertyFilters()
                         .addDefaultPropertySources()

@@ -16,19 +16,10 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-import org.apache.tamaya.spi.ServiceContextManager;
-import org.apache.tamaya.core.internal.converters.*;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.spi.*;
 import org.apache.tamaya.spisupport.propertysource.CLIPropertySource;
 import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
 import org.apache.tamaya.spisupport.propertysource.JavaConfigurationPropertySource;
@@ -52,10 +43,10 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContextBuilder.class.getName());
 
-    List<PropertyFilter> propertyFilters = new ArrayList<>();
-    List<PropertySource> propertySources = new ArrayList<>();
-    PropertyValueCombinationPolicy combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
-    Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters = new HashMap<>();
+    protected List<PropertyFilter> propertyFilters = new ArrayList<>();
+    protected List<PropertySource> propertySources = new ArrayList<>();
+    protected PropertyValueCombinationPolicy combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
+    protected Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters = new HashMap<>();
 
     /**
      * Flag if the config has already been built.
@@ -85,9 +76,9 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     /**
-     * Allows to set configuration context during unit tests.
+     * Allows to reset configuration context during unit tests.
      */
-    ConfigurationContextBuilder setConfigurationContext(ConfigurationContext configurationContext) {
+    public final ConfigurationContextBuilder resetWithConfigurationContext(ConfigurationContext configurationContext) {
         checkBuilderState();
         //noinspection deprecation
         this.propertyFilters.clear();
@@ -116,7 +107,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     @Override
-    public ConfigurationContextBuilder addPropertySources(PropertySource... sources){
+    public final ConfigurationContextBuilder addPropertySources(PropertySource... sources){
         return addPropertySources(Arrays.asList(sources));
     }
 
@@ -149,7 +140,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return addPropertySources(propertySources);
     }
 
-    private void addCorePropertyResources(List<PropertySource> propertySources) {
+    protected void addCorePropertyResources(List<PropertySource> propertySources) {
         for(PropertySource ps: new PropertySource[]{
                 new EnvironmentPropertySource(),
                 new JavaConfigurationPropertySource(),
@@ -171,6 +162,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
+    @Override
     public DefaultConfigurationContextBuilder addDefaultPropertyConverters() {
         checkBuilderState();
         addCorePropertyConverters();
@@ -184,27 +176,11 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     @SuppressWarnings("unchecked")
 	protected void addCorePropertyConverters() {
-        addPropertyConverters(TypeLiteral.<BigDecimal>of(BigDecimal.class), new BigDecimalConverter());
-        addPropertyConverters(TypeLiteral.<BigInteger>of(BigInteger.class), new BigIntegerConverter());
-        addPropertyConverters(TypeLiteral.<Boolean>of(Boolean.class), new BooleanConverter());
-        addPropertyConverters(TypeLiteral.<Byte>of(Byte.class), new ByteConverter());
-        addPropertyConverters(TypeLiteral.<Character>of(Character.class), new CharConverter());
-        addPropertyConverters(TypeLiteral.<Class<?>>of(Class.class), new ClassConverter());
-        addPropertyConverters(TypeLiteral.<Currency>of(Currency.class), new CurrencyConverter());
-        addPropertyConverters(TypeLiteral.<Double>of(Double.class), new DoubleConverter());
-        addPropertyConverters(TypeLiteral.<File>of(File.class), new FileConverter());
-        addPropertyConverters(TypeLiteral.<Float>of(Float.class), new FloatConverter());
-        addPropertyConverters(TypeLiteral.<Integer>of(Integer.class), new IntegerConverter());
-        addPropertyConverters(TypeLiteral.<Long>of(Long.class), new LongConverter());
-        addPropertyConverters(TypeLiteral.<Number>of(Number.class), new NumberConverter());
-        addPropertyConverters(TypeLiteral.<Path>of(Path.class), new PathConverter());
-        addPropertyConverters(TypeLiteral.<Short>of(Short.class), new ShortConverter());
-        addPropertyConverters(TypeLiteral.<URI>of(URI.class), new URIConverter());
-        addPropertyConverters(TypeLiteral.<URL>of(URL.class), new URLConverter());
+        // should be overridden by subclasses.
     }
 
     @Override
-    public ConfigurationContextBuilder removePropertySources(PropertySource... propertySources) {
+    public final ConfigurationContextBuilder removePropertySources(PropertySource... propertySources) {
         return removePropertySources(Arrays.asList(propertySources));
     }
 
@@ -215,7 +191,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    private PropertySource getPropertySource(String name) {
+    protected PropertySource getPropertySource(String name) {
         for(PropertySource ps:propertySources){
             if(ps.getName().equals(name)){
                 return ps;
@@ -226,7 +202,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     @Override
     public List<PropertySource> getPropertySources() {
-        return this.propertySources;
+        return Collections.unmodifiableList(this.propertySources);
     }
 
     @Override
@@ -286,12 +262,12 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     @Override
-    public ConfigurationContextBuilder addPropertyFilters(PropertyFilter... filters){
+    public final ConfigurationContextBuilder addPropertyFilters(PropertyFilter... filters){
         return addPropertyFilters(Arrays.asList(filters));
     }
 
     @Override
-    public ConfigurationContextBuilder addPropertyFilters(Collection<PropertyFilter> filters){
+    public final ConfigurationContextBuilder addPropertyFilters(Collection<PropertyFilter> filters){
         checkBuilderState();
         for(PropertyFilter f:filters) {
             if (!this.propertyFilters.contains(f)) {
@@ -302,12 +278,12 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     @Override
-    public ConfigurationContextBuilder removePropertyFilters(PropertyFilter... filters) {
+    public final ConfigurationContextBuilder removePropertyFilters(PropertyFilter... filters) {
         return removePropertyFilters(Arrays.asList(filters));
     }
 
     @Override
-    public ConfigurationContextBuilder removePropertyFilters(Collection<PropertyFilter> filters) {
+    public final ConfigurationContextBuilder removePropertyFilters(Collection<PropertyFilter> filters) {
         checkBuilderState();
         this.propertyFilters.removeAll(filters);
         return this;
@@ -315,13 +291,13 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
 
     @Override
-    public <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
+    public final <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
                                                                     @SuppressWarnings("unchecked") PropertyConverter<T>... converters) {
         return removePropertyConverters(typeToConvert, Arrays.asList(converters));
     }
 
     @Override
-    public <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
+    public final <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
                                                                     Collection<PropertyConverter<T>> converters) {
         Collection<PropertyConverter<?>> subConverters = this.propertyConverters.get(typeToConvert);
         if(subConverters!=null) {
@@ -331,14 +307,14 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     @Override
-    public ConfigurationContextBuilder removePropertyConverters(TypeLiteral<?> typeToConvert) {
+    public final ConfigurationContextBuilder removePropertyConverters(TypeLiteral<?> typeToConvert) {
         this.propertyConverters.remove(typeToConvert);
         return this;
     }
 
 
     @Override
-    public ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy combinationPolicy){
+    public final ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy combinationPolicy){
         checkBuilderState();
         this.combinationPolicy = Objects.requireNonNull(combinationPolicy);
         return this;
@@ -395,7 +371,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
 
-    private Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
+    protected Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
         Map<TypeLiteral, Collection<PropertyConverter>> result = new HashMap<>();
         for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(
                 PropertyConverter.class)) {

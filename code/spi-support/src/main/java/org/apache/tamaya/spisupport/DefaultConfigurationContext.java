@@ -16,26 +16,12 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-import org.apache.tamaya.spi.ServiceContextManager;
-import org.apache.tamaya.spisupport.PropertyConverterManager;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.spi.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
@@ -49,17 +35,17 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
 
     /**
-     * Subcomponent handling {@link org.apache.tamaya.spi.PropertyConverter} instances.
+     * Subcomponent handling {@link PropertyConverter} instances.
      */
     private final PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
 
     /**
-     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertySource} instances.
+     * The current unmodifiable list of loaded {@link PropertySource} instances.
      */
     private List<PropertySource> immutablePropertySources;
 
     /**
-     * The current unmodifiable list of loaded {@link org.apache.tamaya.spi.PropertyFilter} instances.
+     * The current unmodifiable list of loaded {@link PropertyFilter} instances.
      */
     private List<PropertyFilter> immutablePropertyFilters;
 
@@ -75,7 +61,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
     @SuppressWarnings("unchecked")
-	DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
+	protected DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
         List<PropertySource> propertySources = new ArrayList<>();
         // first we load all PropertySources which got registered via java.util.ServiceLoader
         propertySources.addAll(builder.propertySources);

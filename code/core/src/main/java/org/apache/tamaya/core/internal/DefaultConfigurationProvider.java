@@ -35,7 +35,7 @@ import java.util.Objects;
 @Component(service = ConfigurationProviderSpi.class)
 public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
 
-    ConfigurationContext context = new DefaultConfigurationContextBuilder()
+    ConfigurationContext context = new CoreConfigurationContextBuilder()
             .addDefaultPropertyConverters()
             .addDefaultPropertyFilters()
             .addDefaultPropertySources()
@@ -62,7 +62,7 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
 
     @Override
     public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return new DefaultConfigurationContextBuilder();
+        return new CoreConfigurationContextBuilder();
     }
 
     @Override

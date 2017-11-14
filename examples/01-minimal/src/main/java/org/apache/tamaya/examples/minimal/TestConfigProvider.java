@@ -19,13 +19,16 @@
 package org.apache.tamaya.examples.minimal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spisupport.DefaultConfigurationProvider;
+import org.apache.tamaya.core.internal.CoreConfigurationContextBuilder;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
 /**
  * Configuration provider that allows to set and reset a configuration
  * different per thread.
  */
-public class TestConfigProvider extends DefaultConfigurationProvider{
+public class TestConfigProvider implements ConfigurationProviderSpi{
 
     private ThreadLocal<Configuration> threadedConfig = new ThreadLocal<>();
 
@@ -35,7 +38,23 @@ public class TestConfigProvider extends DefaultConfigurationProvider{
         if(config!=null){
             return config;
         }
-        return super.getConfiguration();
+        config = createConfiguration(new CoreConfigurationContextBuilder()
+                .addDefaultPropertyFilters()
+                .addDefaultPropertySources()
+                .addDefaultPropertyConverters()
+                .build());
+        threadedConfig.set(config);
+        return config;
+    }
+
+    @Override
+    public Configuration createConfiguration(ConfigurationContext context) {
+        return null;
+    }
+
+    @Override
+    public ConfigurationContextBuilder getConfigurationContextBuilder() {
+        return null;
     }
 
     @Override
@@ -45,5 +64,10 @@ public class TestConfigProvider extends DefaultConfigurationProvider{
         }else {
             threadedConfig.set(config);
         }
+    }
+
+    @Override
+    public boolean isConfigurationSettable() {
+        return false;
     }
 }

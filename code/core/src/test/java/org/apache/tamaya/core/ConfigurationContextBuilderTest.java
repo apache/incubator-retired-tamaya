@@ -21,7 +21,7 @@ package org.apache.tamaya.core;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
-import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.core.internal.CoreConfigurationContextBuilder;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import java.util.Comparator;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link DefaultConfigurationContextBuilder} by atsticks on 06.09.16.
+ * Tests for {@link CoreConfigurationContextBuilder} by atsticks on 06.09.16.
  */
 public class ConfigurationContextBuilderTest {
 
@@ -47,7 +47,7 @@ public class ConfigurationContextBuilderTest {
     @Test
     public void addPropertySources_Array() throws Exception {
         PropertySource testPS2 = new TestPropertySource("addPropertySources_Array", 1);
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         ConfigurationContext ctx = b.build();
         assertEquals(2, ctx.getPropertySources().size());
@@ -68,7 +68,7 @@ public class ConfigurationContextBuilderTest {
     @Test
     public void addPropertySources_Collection() throws Exception {
         PropertySource testPS2 = new TestPropertySource("addPropertySources_Collection", 1);
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .addPropertySources(Arrays.asList(new PropertySource[]{testPropertySource, testPS2}));
         ConfigurationContext ctx = b.build();
         assertEquals(2, ctx.getPropertySources().size());

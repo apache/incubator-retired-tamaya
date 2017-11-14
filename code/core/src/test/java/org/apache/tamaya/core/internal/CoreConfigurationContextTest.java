@@ -27,13 +27,13 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Simple tests for {@link DefaultConfigurationContext} by atsticks on 16.08.16.
+ * Simple tests for {@link CoreConfigurationContext} by atsticks on 16.08.16.
  */
-public class DefaultConfigurationContextTest {
+public class CoreConfigurationContextTest {
 
     @Test
     public void addPropertySources() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         TestPropertyDefaultSource def = new TestPropertyDefaultSource();
         assertFalse(ctx.getPropertySources().contains(def));
         ctx.addPropertySources(def);
@@ -47,10 +47,10 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void getPropertySources() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         assertNotNull(ctx.getPropertySources());
         assertEquals(ctx.getPropertySources().size(), 0);
-        ctx = new DefaultConfigurationContextBuilder().addDefaultPropertySources().build();
+        ctx = new CoreConfigurationContextBuilder().addDefaultPropertySources().build();
         assertNotNull(ctx.getPropertySources());
         assertEquals(7, ctx.getPropertySources().size());
     }
@@ -58,25 +58,25 @@ public class DefaultConfigurationContextTest {
     @Test
     public void getPropertySource() throws Exception {
         TestPropertyDefaultSource ps = new TestPropertyDefaultSource();
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder()
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder()
                 .addPropertySources(ps).build();
         assertNotNull(ctx.getPropertySources());
         assertEquals(ctx.getPropertySources().size(), 1);
-        assertNotNull(((DefaultConfigurationContext)ctx).getPropertySource(ps.getName()));
-        assertEquals(ps.getName(), ((DefaultConfigurationContext)ctx).getPropertySource(ps.getName()).getName());
-        assertNull(((DefaultConfigurationContext)ctx).getPropertySource("huhu"));
+        assertNotNull(((CoreConfigurationContext)ctx).getPropertySource(ps.getName()));
+        assertEquals(ps.getName(), ((CoreConfigurationContext)ctx).getPropertySource(ps.getName()).getName());
+        assertNull(((CoreConfigurationContext)ctx).getPropertySource("huhu"));
 
     }
 
     @Test
     public void testHashCode() throws Exception {
         TestPropertyDefaultSource ps = new TestPropertyDefaultSource();
-        ConfigurationContext ctx1 = new DefaultConfigurationContextBuilder()
+        ConfigurationContext ctx1 = new CoreConfigurationContextBuilder()
                 .addPropertySources(ps).build();
-        ConfigurationContext ctx2 = new DefaultConfigurationContextBuilder()
+        ConfigurationContext ctx2 = new CoreConfigurationContextBuilder()
                 .addPropertySources(ps).build();
         assertEquals(ctx1.hashCode(), ctx2.hashCode());
-        ctx2 = new DefaultConfigurationContextBuilder()
+        ctx2 = new CoreConfigurationContextBuilder()
                 .build();
         assertNotEquals(ctx1.hashCode(), ctx2.hashCode());
 
@@ -84,7 +84,7 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void addPropertyConverter() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
             public Object convert(String value, ConversionContext context) {
@@ -98,7 +98,7 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void getPropertyConverters() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
             public Object convert(String value, ConversionContext context) {
@@ -122,7 +122,7 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void getPropertyConverters1() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
             public Object convert(String value, ConversionContext context) {
@@ -140,7 +140,7 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void getPropertyFilters() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         PropertyFilter testFilter = new PropertyFilter() {
 
             @Override
@@ -156,7 +156,7 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void getPropertyValueCombinationPolicy() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         assertNotNull(ctx.getPropertyValueCombinationPolicy());
         assertEquals(ctx.getPropertyValueCombinationPolicy(),
                 PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY);
@@ -164,12 +164,12 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void toBuilder() throws Exception {
-        assertNotNull(new DefaultConfigurationContextBuilder().build().toBuilder());
+        assertNotNull(new CoreConfigurationContextBuilder().build().toBuilder());
     }
 
     @Test
     public void testRoundTrip() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         assertEquals(ctx.toBuilder().build(), ctx);
     }
 

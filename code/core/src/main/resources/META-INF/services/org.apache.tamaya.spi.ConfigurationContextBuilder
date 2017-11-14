@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder
+org.apache.tamaya.core.internal.CoreConfigurationContextBuilder

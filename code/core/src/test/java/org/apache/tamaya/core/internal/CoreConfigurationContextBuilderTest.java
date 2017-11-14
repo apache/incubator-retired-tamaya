@@ -29,16 +29,16 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link DefaultConfigurationContextBuilder} by atsticks on 06.09.16.
+ * Tests for {@link CoreConfigurationContextBuilder} by atsticks on 06.09.16.
  */
-public class DefaultConfigurationContextBuilderTest {
+public class CoreConfigurationContextBuilderTest {
 
     private TestPropertySource testPropertySource = new TestPropertySource(){};
 
     @Test
     public void setContext() throws Exception {
         ConfigurationContext context = ConfigurationProvider.getConfiguration().getContext();
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .setContext(context);
         assertEquals(context, b.build());
     }
@@ -46,7 +46,7 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     public void addPropertySources_Array() throws Exception {
         PropertySource testPS2 = new TestPropertySource("addPropertySources_Array_2");
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         ConfigurationContext ctx = b.build();
         assertEquals(2, ctx.getPropertySources().size());
@@ -57,13 +57,13 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     public void removePropertySources_Array() throws Exception {
         PropertySource testPS2 = new TestPropertySource("addPropertySources_Array_2");
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         ConfigurationContext ctx = b.build();
         assertEquals(2, ctx.getPropertySources().size());
         assertTrue(ctx.getPropertySources().contains(testPropertySource));
         assertTrue(ctx.getPropertySources().contains(testPS2));
-        b = new DefaultConfigurationContextBuilder()
+        b = new CoreConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         b.removePropertySources(testPropertySource);
         ctx = b.build();
@@ -76,13 +76,13 @@ public class DefaultConfigurationContextBuilderTest {
     public void addPropertyFilters_Array() throws Exception {
         PropertyFilter filter1 = (value, context) -> value;
         PropertyFilter filter2 = (value, context) -> value;
-        DefaultConfigurationContextBuilder b = new DefaultConfigurationContextBuilder();
+        CoreConfigurationContextBuilder b = new CoreConfigurationContextBuilder();
         b.addPropertyFilters(filter1, filter2);
         ConfigurationContext ctx = b.build();
         assertTrue(ctx.getPropertyFilters().contains(filter1));
         assertTrue(ctx.getPropertyFilters().contains(filter2));
         assertEquals(2, ctx.getPropertyFilters().size());
-        b = new DefaultConfigurationContextBuilder();
+        b = new CoreConfigurationContextBuilder();
         b.addPropertyFilters(filter1, filter2);
         b.addPropertyFilters(filter1, filter2);
         assertEquals(2, ctx.getPropertyFilters().size());
@@ -92,13 +92,13 @@ public class DefaultConfigurationContextBuilderTest {
     public void removePropertyFilters_Array() throws Exception {
         PropertyFilter filter1 = (value, context) -> value;
         PropertyFilter filter2 = (value, context) -> value;
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .addPropertyFilters(filter1, filter2);
         ConfigurationContext ctx = b.build();
         assertTrue(ctx.getPropertyFilters().contains(filter1));
         assertTrue(ctx.getPropertyFilters().contains(filter2));
         assertEquals(2, ctx.getPropertyFilters().size());
-        b = new DefaultConfigurationContextBuilder()
+        b = new CoreConfigurationContextBuilder()
                 .addPropertyFilters(filter1, filter2);
         b.removePropertyFilters(filter1);
         ctx = b.build();
@@ -111,12 +111,12 @@ public class DefaultConfigurationContextBuilderTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverter() throws Exception {
 		PropertyConverter converter = (value, context) -> value.toLowerCase();
-		ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+		ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
         assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
         assertEquals(1, ctx.getPropertyConverters().size());
-        b = new DefaultConfigurationContextBuilder()
+        b = new CoreConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
         assertEquals(1, ctx.getPropertyConverters().size());
@@ -126,12 +126,12 @@ public class DefaultConfigurationContextBuilderTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void removePropertyConverters_Array() throws Exception {
         PropertyConverter converter = (value, context) -> value.toLowerCase();
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
         assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
         assertEquals(1, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
-        b = new DefaultConfigurationContextBuilder()
+        b = new CoreConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.removePropertyConverters(TypeLiteral.of(String.class), converter);
         ctx = b.build();
@@ -142,7 +142,7 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     public void setPropertyValueCombinationPolicy() throws Exception {
         PropertyValueCombinationPolicy combPol = (currentValue, key, propertySource) -> currentValue;
-        ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
+        ConfigurationContextBuilder b = new CoreConfigurationContextBuilder()
                 .setPropertyValueCombinationPolicy(combPol);
         ConfigurationContext ctx = b.build();
         assertEquals(ctx.getPropertyValueCombinationPolicy(), combPol);
@@ -150,7 +150,7 @@ public class DefaultConfigurationContextBuilderTest {
 
     @Test
     public void build() throws Exception {
-        assertNotNull(new DefaultConfigurationContextBuilder().build());
+        assertNotNull(new CoreConfigurationContextBuilder().build());
     }
 
     @Test

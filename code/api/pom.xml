@@ -26,7 +26,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-api</artifactId>
-    <name>Apache Tamaya API</name>
+    <name>Apache Tamaya Core API</name>
     <packaging>jar</packaging>
 
     <description>

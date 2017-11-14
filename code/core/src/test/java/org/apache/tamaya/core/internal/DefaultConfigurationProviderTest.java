@@ -40,7 +40,7 @@ public class DefaultConfigurationProviderTest {
 
     @Test
     public void createConfiguration() throws Exception {
-        ConfigurationContext ctx = new DefaultConfigurationContextBuilder().build();
+        ConfigurationContext ctx = new CoreConfigurationContextBuilder().build();
         assertNotNull(new DefaultConfigurationProvider().createConfiguration(ctx));
         assertEquals(ctx,
                 new DefaultConfigurationProvider().createConfiguration(ctx).getContext());
