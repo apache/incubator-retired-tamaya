@@ -35,6 +35,8 @@ import org.apache.tamaya.spisupport.propertysource.JavaConfigurationPropertySour
 import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
 
 import java.io.File;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -397,13 +399,20 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         Map<TypeLiteral, Collection<PropertyConverter>> result = new HashMap<>();
         for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(
                 PropertyConverter.class)) {
-            TypeLiteral target = TypeLiteral.of(TypeLiteral.of(conv.getClass()).getType());
-            Collection<PropertyConverter> convList = result.get(target);
-            if (convList == null) {
-                convList = new ArrayList<>();
-                result.put(target, convList);
+            for(Type type:conv.getClass().getGenericInterfaces()){
+                if(type instanceof ParameterizedType){
+                    ParameterizedType pt = (ParameterizedType)type;
+                    if(PropertyConverter.class.equals(((ParameterizedType) type).getRawType())){
+                        TypeLiteral target = TypeLiteral.of(pt.getActualTypeArguments()[0]);
+                        Collection<PropertyConverter> convList = result.get(target);
+                        if (convList == null) {
+                            convList = new ArrayList<>();
+                            result.put(target, convList);
+                        }
+                        convList.add(conv);
+                    }
+                }
             }
-            convList.add(conv);
         }
         return result;
     }
