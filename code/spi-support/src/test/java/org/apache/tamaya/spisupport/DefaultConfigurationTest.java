@@ -22,10 +22,12 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class DefaultConfigurationTest {
 
@@ -70,11 +72,11 @@ public class DefaultConfigurationTest {
         c.getOrDefault(null, String.class, "ok");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void getOrDefaultDoesNotAcceptNullAsDefaultValueForThreeParameterVariant() {
+    @Test
+    public void getOrDefaultDoesAcceptNullAsDefaultValueForThreeParameterVariant() {
         DefaultConfiguration c = new DefaultConfiguration(new DummyConfigurationContext());
 
-        c.getOrDefault("a", String.class, null);
+        assertNull(c.getOrDefault("a", String.class, null));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -95,11 +97,11 @@ public class DefaultConfigurationTest {
         c.getOrDefault(null, TypeLiteral.of(String.class), "ok");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void getOrDefaultDoesNotAcceptNullAsDefaultValueForThreeParameterVariantSecondIsTypeLiteral() {
+    @Test
+    public void getOrDefaultDoesAcceptNullAsDefaultValueForThreeParameterVariantSecondIsTypeLiteral() {
         DefaultConfiguration c = new DefaultConfiguration(new DummyConfigurationContext());
 
-        c.getOrDefault("a", TypeLiteral.of(String.class), null);
+        assertNull(c.getOrDefault("a", TypeLiteral.of(String.class), null));
     }
 
     @Test(expected = NullPointerException.class)
@@ -160,7 +162,7 @@ public class DefaultConfigurationTest {
 
         @Override
         public List<PropertySource> getPropertySources() {
-            throw new RuntimeException("Method should be never called in this test");
+            return Collections.emptyList();
         }
 
         @Override
@@ -175,17 +177,17 @@ public class DefaultConfigurationTest {
 
         @Override
         public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
-            throw new RuntimeException("Method should be never called in this test");
+            return Collections.emptyMap();
         }
 
         @Override
         public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type) {
-            throw new RuntimeException("Method should be never called in this test");
+            return Collections.emptyList();
         }
 
         @Override
         public List<PropertyFilter> getPropertyFilters() {
-            throw new RuntimeException("Method should be never called in this test");
+            return Collections.emptyList();
         }
 
         @Override
