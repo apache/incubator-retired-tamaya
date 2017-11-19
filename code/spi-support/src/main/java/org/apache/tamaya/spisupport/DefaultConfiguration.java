@@ -137,7 +137,6 @@ public class DefaultConfiguration implements Configuration {
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
         Objects.requireNonNull(key, "Key must not be null.");
         Objects.requireNonNull(type, "Target type must not be null");
-        Objects.requireNonNull(defaultValue, "Default value must not be null");
 
         T val = get(key, type);
         if(val==null){
@@ -235,7 +234,6 @@ public class DefaultConfiguration implements Configuration {
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(type);
-        Objects.requireNonNull(defaultValue);
 
         T val = get(key, type);
         if(val==null){

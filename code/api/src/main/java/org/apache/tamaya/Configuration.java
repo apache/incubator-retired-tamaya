@@ -51,7 +51,7 @@ public interface Configuration {
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @return the property's keys.
+     * @return the property's value.
      */
     String get(String key);
 
