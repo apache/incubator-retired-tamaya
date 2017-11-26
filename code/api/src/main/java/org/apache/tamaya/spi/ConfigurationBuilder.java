@@ -27,17 +27,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A builder for creating new or adapting instances of {@link ConfigurationContext}.
+ * A builder for creating new instance of {@link Configuration}.
  * Builders can be obtained in exactly two ways:
  * <ol>
- *     <li>By accessing a preinitialized builder from an existing {@link ConfigurationContext},
- *     by calling {@link org.apache.tamaya.spi.ConfigurationContext#toBuilder()}.</li>
+ *     <li>By accessing a preinitialized builder from an existing {@link Configuration},
+ *     by calling {@link org.apache.tamaya.spi.Configuration#toBuilder()}.</li>
  *     <li>By accessing an empty builder instance from
- *     {@link org.apache.tamaya.ConfigurationProvider#getConfigurationContextBuilder()}.</li>
+ *     {@link org.apache.tamaya.ConfigurationProvider#getConfigurationBuilder()}.</li>
  * </ol>
- * After all changes are applied to a builder a new {@link ConfigurationContext} instance can
+ * After all changes are applied to a builder a new {@link Configuration} instance can
  * be created and can be applied by calling
- * {@link org.apache.tamaya.ConfigurationProvider#setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)}.
+ * {@link #build()}}.
  *
  */
 public interface ConfigurationBuilder {
@@ -46,7 +46,8 @@ public interface ConfigurationBuilder {
      * Init this builder instance with the given {@link Configuration} instance. This
      * method will use any existing property sources, filters, converters and the combination
      * policy of the given {@link Configuration} and initialize the current builder
-     * with them.
+     * with them. All previous property sources, filters, converters and the combination
+     * policy of this instance will be replaced.
      *
      * @param config the {@link Configuration} instance to be used, not {@code null}.
      * @return this builder, for chaining, never null.
@@ -57,7 +58,8 @@ public interface ConfigurationBuilder {
      * Init this builder instance with the given {@link ConfigurationContext} instance. This
      * method will use any existing property sources, filters, converters and the combination
      * policy of the given {@link ConfigurationContext} and initialize the current builder
-     * with them.
+     * with them. All previous property sources, filters, converters and the combination
+     * policy of this instance will be replaced.
      *
      * @param context the {@link ConfigurationContext} instance to be used, not {@code null}.
      * @return this builder, for chaining, never null.
@@ -128,7 +130,7 @@ public interface ConfigurationBuilder {
      * Access the current chain of property filters. Items at the end of the list have
      * precedence/more significance.
      *
-     * @return the property source chain, never {@code null}.
+     * @return the property filter chain, never {@code null}.
      */
     List<PropertyFilter> getPropertyFilters();
 
@@ -212,7 +214,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder addPropertyFilters(Collection<PropertyFilter> filters);
 
     /**
-     * Add all registered (default) property filters to the context built.
+     * Add all auto-discoverable property filters to the context built.
      * @return this builder, for chaining, never null.
      */
     ConfigurationBuilder addDefaultPropertyFilters();
@@ -256,7 +258,7 @@ public interface ConfigurationBuilder {
      * For converters already registered for the current target type the
      * method has no effect.
      *
-     * @param typeToConvert     the type for which the converter is for
+     * @param typeToConvert the type for which the converter is for
      * @param propertyConverters the PropertyConverters to add for this type
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
@@ -265,7 +267,7 @@ public interface ConfigurationBuilder {
                                                    Collection<PropertyConverter<T>> propertyConverters);
 
     /**
-     * Add all registered (default) property converters to the context built.
+     * Add all auto-discoverable property converters to the context built.
      * @return this builder, for chaining, never null.
      */
     ConfigurationBuilder addDefaultPropertyConverters();
@@ -333,13 +335,12 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy);
 
     /**
-     * Builds a new {@link ConfigurationContext} based on the data in this builder. The ordering of property
+     * Builds a new {@link Configuration} based on the data in this builder. The ordering of property
      * sources and property filters is not changed, regardless of their ordinals. For ensure a certain
-     * ordering/significance call {@link #sortPropertyFilter(Comparator)} and/or {@link #sortPropertySources(Comparator)}
+     * ordering/significance use {@link #sortPropertyFilter(Comparator)} and/or {@link #sortPropertySources(Comparator)}
      * before building the context.
      *
-     * @return the final context to be used to create a configuration.
-     * @see org.apache.tamaya.ConfigurationProvider#createConfiguration(ConfigurationContext)
+     * @return the final configuration, never null.
      */
     Configuration build();
 

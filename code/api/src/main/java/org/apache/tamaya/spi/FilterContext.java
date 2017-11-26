@@ -33,7 +33,7 @@ import java.util.Objects;
 public class FilterContext {
     /** The key. */
     private final PropertyValue value;
-    /** tHE CURRENT CONTEXT. */
+    /** The current context. */
     private final ConfigurationContext context;
     @Experimental
     private Map<String, PropertyValue> configEntries = new HashMap<>();

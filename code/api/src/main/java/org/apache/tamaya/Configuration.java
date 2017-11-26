@@ -176,5 +176,4 @@ public interface Configuration {
         return ConfigurationProvider.getConfigurationBuilder().setConfiguration(this);
     }
 
-
 }
