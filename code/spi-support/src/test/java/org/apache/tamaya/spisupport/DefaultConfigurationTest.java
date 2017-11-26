@@ -121,11 +121,10 @@ public class DefaultConfigurationTest {
         c.getOrDefault(null, "ok");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void getOrDefaultDoesNotAcceptNullAsDefaultValueForTwoParameterVariantDefaultValueIsSecond() {
+    @Test
+    public void getOrDefaultDoesAcceptNullAsDefaultValueForTwoParameterVariantDefaultValueIsSecond() {
         DefaultConfiguration c = new DefaultConfiguration(new DummyConfigurationContext());
-
-        c.getOrDefault("a", null);
+       assertNull(c.getOrDefault("a", null));
     }
 
     @Test(expected = NullPointerException.class)
