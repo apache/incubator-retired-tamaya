@@ -18,35 +18,26 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.core.internal.converters.*;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
+import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.apache.tamaya.spisupport.DefaultConfigurationContext;
 import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Currency;
-
 /**
- * Default implementation of {@link ConfigurationContextBuilder}.
+ * Default implementation of {@link ConfigurationBuilder}.
  */
-public final class CoreConfigurationContext extends DefaultConfigurationContext {
+public final class CoreConfiguration extends DefaultConfiguration {
 
     /**
      * Creates a new builder instance.
      */
-    public CoreConfigurationContext(CoreConfigurationContextBuilder builder) {
-        super(builder);
+    public CoreConfiguration(ConfigurationContext context) {
+        super(context);
     }
 
     @Override
-    public ConfigurationContextBuilder toBuilder() {
-        return new CoreConfigurationContextBuilder(this);
+    public ConfigurationBuilder toBuilder() {
+        return new CoreConfigurationBuilder(this);
     }
 }

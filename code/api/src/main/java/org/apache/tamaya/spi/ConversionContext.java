@@ -93,7 +93,7 @@ public class ConversionContext {
      * Allows to add information on the supported/tried formats, which can be shown to the user, especially when
      * conversion failed. Adding of formats is synchronized, all formats are added in order to the overall list.
      * This means formats should be passed in order of precedence.
-     * @param converterType the converter, which implements the formats provided.
+     * @param converterType the converters, which implements the formats provided.
      * @param formatDescriptors the format descriptions in a human readable form, e.g. as regular expressions.
      */
     public void addSupportedFormats(@SuppressWarnings("rawtypes") Class<? extends PropertyConverter> converterType, String... formatDescriptors){
@@ -230,9 +230,9 @@ public class ConversionContext {
         }
 
         /**
-         * Add the formats provided by a {@link PropertyConverter}. This method should be called by each converter
+         * Add the formats provided by a {@link PropertyConverter}. This method should be called by each converters
          * performing/trying conversion, so the user can be given feedback on the supported formats on failure.
-         * @param converterType the converter type, not {@code null}.
+         * @param converterType the converters type, not {@code null}.
          * @param formatDescriptors the formats supported in a human readable form, e.g. as regular expressions.
          * @return the builder instance, for chaining
          */

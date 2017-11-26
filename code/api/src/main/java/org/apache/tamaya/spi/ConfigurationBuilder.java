@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 
 import java.util.Collection;
@@ -37,10 +38,20 @@ import java.util.Map;
  * After all changes are applied to a builder a new {@link ConfigurationContext} instance can
  * be created and can be applied by calling
  * {@link org.apache.tamaya.ConfigurationProvider#setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)}.
- * @deprecated Use {@link ConfigurationBuilder} instead.
+ *
  */
-@Deprecated
-public interface ConfigurationContextBuilder {
+public interface ConfigurationBuilder {
+
+    /**
+     * Init this builder instance with the given {@link Configuration} instance. This
+     * method will use any existing property sources, filters, converters and the combination
+     * policy of the given {@link Configuration} and initialize the current builder
+     * with them.
+     *
+     * @param config the {@link Configuration} instance to be used, not {@code null}.
+     * @return this builder, for chaining, never null.
+     */
+    ConfigurationBuilder setConfiguration(Configuration config);
 
     /**
      * Init this builder instance with the given {@link ConfigurationContext} instance. This
@@ -51,7 +62,7 @@ public interface ConfigurationContextBuilder {
      * @param context the {@link ConfigurationContext} instance to be used, not {@code null}.
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder setContext(ConfigurationContext context);
+    ConfigurationBuilder setContext(ConfigurationContext context);
 
     /**
      * This method can be used for adding {@link PropertySource}s.
@@ -64,7 +75,7 @@ public interface ConfigurationContextBuilder {
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
      */
-    ConfigurationContextBuilder addPropertySources(PropertySource... propertySources);
+    ConfigurationBuilder addPropertySources(PropertySource... propertySources);
 
     /**
      * This method can be used for programmatically adding {@link PropertySource}s.
@@ -77,7 +88,7 @@ public interface ConfigurationContextBuilder {
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
      */
-    ConfigurationContextBuilder addPropertySources(Collection<PropertySource> propertySources);
+    ConfigurationBuilder addPropertySources(Collection<PropertySource> propertySources);
 
     /**
      * Add all registered (default) property sources to the context built. The sources are ordered
@@ -85,7 +96,7 @@ public interface ConfigurationContextBuilder {
      * higher priority.
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder addDefaultPropertySources();
+    ConfigurationBuilder addDefaultPropertySources();
 
     /**
      * Removes the given property sources, if existing. The existing order of property
@@ -94,7 +105,7 @@ public interface ConfigurationContextBuilder {
      * @param propertySources the property sources to remove, not {@code null}.
      * @return the builder for chaining.
      */
-    ConfigurationContextBuilder removePropertySources(PropertySource... propertySources);
+    ConfigurationBuilder removePropertySources(PropertySource... propertySources);
 
     /**
      * Removes the given property sources, if existing. The existing order of property
@@ -103,7 +114,7 @@ public interface ConfigurationContextBuilder {
      * @param propertySources the property sources to remove, not {@code null}.
      * @return the builder for chaining.
      */
-    ConfigurationContextBuilder removePropertySources(Collection<PropertySource> propertySources);
+    ConfigurationBuilder removePropertySources(Collection<PropertySource> propertySources);
 
     /**
      * Access the current chain of property sources. Items at the end of the list have
@@ -138,7 +149,7 @@ public interface ConfigurationContextBuilder {
      * @throws IllegalArgumentException If no such property source exists in the current
      * chain.
      */
-    ConfigurationContextBuilder increasePriority(PropertySource propertySource);
+    ConfigurationBuilder increasePriority(PropertySource propertySource);
 
     /**
      * Decreases the priority of the given property source, by moving it towards the start
@@ -150,7 +161,7 @@ public interface ConfigurationContextBuilder {
      * @throws IllegalArgumentException If no such property source exists in the current
      * chain.
      */
-    ConfigurationContextBuilder decreasePriority(PropertySource propertySource);
+    ConfigurationBuilder decreasePriority(PropertySource propertySource);
 
     /**
      * Increases the priority of the given property source to be maximal, by moving it to
@@ -163,7 +174,7 @@ public interface ConfigurationContextBuilder {
      * @throws IllegalArgumentException If no such property source exists in the current
      * chain.
      */
-    ConfigurationContextBuilder highestPriority(PropertySource propertySource);
+    ConfigurationBuilder highestPriority(PropertySource propertySource);
 
     /**
      * Decreases the priority of the given property source to be minimal, by moving it to
@@ -176,7 +187,7 @@ public interface ConfigurationContextBuilder {
      * @throws IllegalArgumentException If no such property source exists in the current
      * chain.
      */
-    ConfigurationContextBuilder lowestPriority(PropertySource propertySource);
+    ConfigurationBuilder lowestPriority(PropertySource propertySource);
 
     /**
      * Adds the given PropertyFilter instances, hereby the instances are added
@@ -187,7 +198,7 @@ public interface ConfigurationContextBuilder {
      * @param filters the filters to add
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder addPropertyFilters(PropertyFilter... filters);
+    ConfigurationBuilder addPropertyFilters(PropertyFilter... filters);
 
     /**
      * Adds the given PropertyFilter instances, hereby the instances are added
@@ -198,13 +209,13 @@ public interface ConfigurationContextBuilder {
      * @param filters the filters to add
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder addPropertyFilters(Collection<PropertyFilter> filters);
+    ConfigurationBuilder addPropertyFilters(Collection<PropertyFilter> filters);
 
     /**
      * Add all registered (default) property filters to the context built.
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder addDefaultPropertyFilters();
+    ConfigurationBuilder addDefaultPropertyFilters();
 
 
     /**
@@ -214,7 +225,7 @@ public interface ConfigurationContextBuilder {
      * @param filters the filter to remove
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder removePropertyFilters(PropertyFilter... filters);
+    ConfigurationBuilder removePropertyFilters(PropertyFilter... filters);
 
     /**
      * Removes the given PropertyFilter instances, if existing. The order of the remaining
@@ -223,7 +234,7 @@ public interface ConfigurationContextBuilder {
      * @param filters the filter to remove
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder removePropertyFilters(Collection<PropertyFilter> filters);
+    ConfigurationBuilder removePropertyFilters(Collection<PropertyFilter> filters);
 
     /**
      * This method can be used for adding {@link PropertyConverter}s.
@@ -231,13 +242,13 @@ public interface ConfigurationContextBuilder {
      * For converters already registered for the current target type the
      * method has no effect.
      *
-     * @param typeToConvert     the type for which the converters is for
+     * @param typeToConvert     the type for which the converter is for
      * @param propertyConverters the PropertyConverters to add for this type
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
-    <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
-                                                          @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
+    <T> ConfigurationBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
+                                                   @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
 
     /**
      * This method can be used for adding {@link PropertyConverter}s.
@@ -245,52 +256,52 @@ public interface ConfigurationContextBuilder {
      * For converters already registered for the current target type the
      * method has no effect.
      *
-     * @param typeToConvert     the type for which the converters is for
+     * @param typeToConvert     the type for which the converter is for
      * @param propertyConverters the PropertyConverters to add for this type
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
-    <T> ConfigurationContextBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
-                                                          Collection<PropertyConverter<T>> propertyConverters);
+    <T> ConfigurationBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
+                                                   Collection<PropertyConverter<T>> propertyConverters);
 
     /**
      * Add all registered (default) property converters to the context built.
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder addDefaultPropertyConverters();
+    ConfigurationBuilder addDefaultPropertyConverters();
 
     /**
      * Removes the given PropertyConverter instances for the given type,
      * if existing.
      *
-     * @param typeToConvert the type which the converters is for
-     * @param propertyConverters    the converters to remove
+     * @param typeToConvert the type which the converter is for
+     * @param propertyConverters    the converter to remove
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
-    <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
-                                                             @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
+    <T> ConfigurationBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
+                                                      @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
 
     /**
      * Removes the given PropertyConverter instances for the given type,
      * if existing.
      *
-     * @param typeToConvert the type which the converters is for
-     * @param propertyConverters    the converters to remove
+     * @param typeToConvert the type which the converter is for
+     * @param propertyConverters    the converter to remove
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
-    <T> ConfigurationContextBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
-                                                             Collection<PropertyConverter<T>> propertyConverters);
+    <T> ConfigurationBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
+                                                      Collection<PropertyConverter<T>> propertyConverters);
 
     /**
      * Removes all converters for the given type, which actually renders a given type
      * unsupported for type conversion.
      *
-     * @param typeToConvert the type which the converters is for
+     * @param typeToConvert the type which the converter is for
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder removePropertyConverters(TypeLiteral<?> typeToConvert);
+    ConfigurationBuilder removePropertyConverters(TypeLiteral<?> typeToConvert);
 
     /**
      * Sorts the current registered property sources using the given comparator.
@@ -300,7 +311,7 @@ public interface ConfigurationContextBuilder {
      * @param comparator the comparator to be used, not {@code null}.
      * @return this instance for chaining.
      */
-    ConfigurationContextBuilder sortPropertySources(Comparator<PropertySource> comparator);
+    ConfigurationBuilder sortPropertySources(Comparator<PropertySource> comparator);
 
     /**
      * Sorts the current registered property filters using the given comparator.
@@ -310,7 +321,7 @@ public interface ConfigurationContextBuilder {
      * @param comparator the comparator to be used, not {@code null}.
      * @return this instance for chaining.
      */
-    ConfigurationContextBuilder sortPropertyFilter(Comparator<PropertyFilter> comparator);
+    ConfigurationBuilder sortPropertyFilter(Comparator<PropertyFilter> comparator);
 
     /**
      * Sets the {@link PropertyValueCombinationPolicy} used to evaluate the final
@@ -319,7 +330,7 @@ public interface ConfigurationContextBuilder {
      * @param policy the {@link PropertyValueCombinationPolicy} used, not {@code null}.
      * @return this builder, for chaining, never null.
      */
-    ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy);
+    ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy);
 
     /**
      * Builds a new {@link ConfigurationContext} based on the data in this builder. The ordering of property
@@ -330,7 +341,7 @@ public interface ConfigurationContextBuilder {
      * @return the final context to be used to create a configuration.
      * @see org.apache.tamaya.ConfigurationProvider#createConfiguration(ConfigurationContext)
      */
-    ConfigurationContext build();
+    Configuration build();
 
 }
 

@@ -18,50 +18,47 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.core.internal.converters.*;
+import org.apache.tamaya.spisupport.DefaultConfigurationBuilder;
+import org.apache.tamaya.spisupport.DefaultConfigurationContext;
 import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
-import org.apache.tamaya.spisupport.propertysource.CLIPropertySource;
-import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
-import org.apache.tamaya.spisupport.propertysource.JavaConfigurationPropertySource;
-import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
 
 import java.io.File;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
- * Default implementation of {@link ConfigurationContextBuilder}.
+ * Default implementation of {@link ConfigurationBuilder}.
  */
-public final class CoreConfigurationContextBuilder extends DefaultConfigurationContextBuilder {
+public final class CoreConfigurationBuilder extends DefaultConfigurationBuilder {
 
     /**
      * Creates a new builder instance.
      */
-    public CoreConfigurationContextBuilder() {
+    public CoreConfigurationBuilder() {
+        super();
+    }
+
+    /**
+     * Creates a new builder instance.
+     */
+    public CoreConfigurationBuilder(Configuration config) {
+        super(config);
     }
 
     /**
      * Creates a new builder instance initializing it with the given context.
      * @param context the context to be used, not null.
      */
-    public CoreConfigurationContextBuilder(ConfigurationContext context) {
+    public CoreConfigurationBuilder(ConfigurationContext context) {
         super(context);
     }
 
@@ -87,7 +84,8 @@ public final class CoreConfigurationContextBuilder extends DefaultConfigurationC
     }
 
     @Override
-    public ConfigurationContext build() {
-        return new CoreConfigurationContext(this);
+    public Configuration build() {
+        return new CoreConfiguration(contextBuilder.build());
     }
+
 }

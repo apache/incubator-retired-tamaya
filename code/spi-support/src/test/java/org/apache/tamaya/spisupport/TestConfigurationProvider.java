@@ -16,40 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
-import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Objects;
 
 /**
- * Implementation of the Configuration API. This class uses the current {@link org.apache.tamaya.spi.ConfigurationContext} to evaluate the
+ * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
  * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
  * instance to evaluate the current Configuration.
  */
 @Component(service = ConfigurationProviderSpi.class)
-public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
+public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
-    ConfigurationContext context = new CoreConfigurationContextBuilder()
+    private Configuration config = new DefaultConfigurationBuilder()
             .addDefaultPropertyConverters()
             .addDefaultPropertyFilters()
             .addDefaultPropertySources()
             .build();
-
-    private Configuration config = new DefaultConfiguration(context);
-
-    {
-        String bannerConfig = config.getOrDefault("tamaya.banner", "OFF");
-
-        BannerManager bm = new BannerManager(bannerConfig);
-        bm.outputBanner();
-    }
-
     @Override
     public Configuration getConfiguration() {
         return config;
@@ -61,15 +51,19 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
+    public ConfigurationBuilder getConfigurationBuilder() {
+        return new DefaultConfigurationBuilder();
+    }
+
+    @Override
     public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return new CoreConfigurationContextBuilder();
+        return new DefaultConfigurationContextBuilder();
     }
 
     @Override
     public void setConfiguration(Configuration config) {
         Objects.requireNonNull(config.getContext());
         this.config = Objects.requireNonNull(config);
-        this.context = config.getContext();
     }
 
     @Override
@@ -83,7 +77,7 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
     @Deprecated
     @Override
     public ConfigurationContext getConfigurationContext() {
-        return context;
+        return this.config.getContext();
     }
 
     /**
@@ -92,15 +86,7 @@ public class DefaultConfigurationProvider implements ConfigurationProviderSpi {
     @Deprecated
     @Override
     public void setConfigurationContext(ConfigurationContext context){
-        this.config = new DefaultConfiguration(context);
-        this.context = context;
-    }
-
-
-    @Deprecated
-    @Override
-    public boolean isConfigurationContextSettable() {
-        return true;
+        this.config = new DefaultConfigurationBuilder(context).build();
     }
 
 }

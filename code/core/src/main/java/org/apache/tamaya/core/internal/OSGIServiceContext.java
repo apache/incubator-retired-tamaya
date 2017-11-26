@@ -62,7 +62,7 @@ public class OSGIServiceContext implements ServiceContext{
         }
         if(ConfigurationProviderSpi.class==serviceType){
             @SuppressWarnings("unchecked")
-			T service = (T)new DefaultConfigurationProvider();
+			T service = (T)new CoreConfigurationProvider();
             this.osgiServiceLoader.getBundleContext().registerService(
                     serviceType.getName(),
                     service,

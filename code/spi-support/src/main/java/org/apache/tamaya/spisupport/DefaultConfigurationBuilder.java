@@ -21,21 +21,29 @@ package org.apache.tamaya.spisupport;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 
 import java.util.*;
 
 /**
- * Default implementation of {@link ConfigurationContextBuilder}.
+ * Default implementation of {@link ConfigurationBuilder}.
  */
 public class DefaultConfigurationBuilder implements ConfigurationBuilder {
 
-    private final ConfigurationContextBuilder contextBuilder;
+    protected final DefaultConfigurationContextBuilder contextBuilder;
 
     /**
      * Creates a new builder instance.
      */
-    public DefaultConfigurationBuilder(ConfigurationContextBuilder contextBuilder) {
-        this.contextBuilder = Objects.requireNonNull(contextBuilder);
+    public DefaultConfigurationBuilder() {
+        this.contextBuilder = new DefaultConfigurationContextBuilder();
+    }
+
+    /**
+     * Creates a new builder instance.
+     */
+    public DefaultConfigurationBuilder(ConfigurationContext context) {
+        this.contextBuilder = new DefaultConfigurationContextBuilder(context);
     }
 
     /**
@@ -43,13 +51,13 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
      * @param configuration the configuration to be used, not null.
      */
     public DefaultConfigurationBuilder(Configuration configuration) {
-        this.contextBuilder = configuration.getContext().toBuilder();
+        this.contextBuilder = new DefaultConfigurationContextBuilder(configuration.getContext());
     }
 
     /**
      * Allows to set configuration context during unit tests.
      */
-    ConfigurationBuilder setConfiguration(Configuration configuration) {
+    public ConfigurationBuilder setConfiguration(Configuration configuration) {
         this.contextBuilder.setContext(configuration.getContext());
         return this;
     }
@@ -180,7 +188,6 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
         this.contextBuilder.setPropertyValueCombinationPolicy(combinationPolicy);
         return this;
     }
-
 
     @Override
     public <T> ConfigurationBuilder addPropertyConverters(TypeLiteral<T> type, PropertyConverter<T>... propertyConverters){

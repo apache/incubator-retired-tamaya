@@ -68,7 +68,7 @@ public interface ConfigurationContext {
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param <T> the type of the type literal
-     * @param type the type which the converter is for
+     * @param type the type which the converters is for
      * @param propertyConverter the PropertyConverters to add for this type
      * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
      * @see #toBuilder()
@@ -139,13 +139,13 @@ public interface ConfigurationContext {
      *
      * <p>
      * The converters returned for a type should be used as a chain, whereas the result of the
-     * first converter that is able to convert the configured value, is taken as the chain's result.
-     * No more converters are called after a converter has successfully converted the input into
+     * first converters that is able to convert the configured value, is taken as the chain's result.
+     * No more converters are called after a converters has successfully converted the input into
      * the required target type.
      * </p>
      * 
      * @param <T> the type of the type literal
-     * @param type type of the desired converter
+     * @param type type of the desired converters
      * @return a sorted list of registered PropertySources per type.
      */
     <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type);
@@ -166,7 +166,9 @@ public interface ConfigurationContext {
     /**
      * Creates a {@link ConfigurationContextBuilder} preinitialized with the data from this instance.
      * @return a new builder instance, never null.
+     * @deprecated Will be removed.
      */
+    @Deprecated
     ConfigurationContextBuilder toBuilder();
 
 }

@@ -124,7 +124,6 @@ public class DefaultConfiguration implements Configuration {
     @Override
     public String getOrDefault(String key, String defaultValue) {
         Objects.requireNonNull(key, "Key must not be null.");
-        Objects.requireNonNull(defaultValue, "Default value must not be null");
 
         String val = get(key);
         if(val==null){
@@ -255,6 +254,24 @@ public class DefaultConfiguration implements Configuration {
     @Override
     public ConfigurationContext getContext() {
         return this.configurationContext;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DefaultConfiguration that = (DefaultConfiguration) o;
+
+        if (!configurationContext.equals(that.configurationContext)) return false;
+        return configEvaluator.getClass().equals(that.configEvaluator.getClass());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = configurationContext.hashCode();
+        result = 31 * result + configEvaluator.getClass().hashCode();
+        return result;
     }
 
     @Override

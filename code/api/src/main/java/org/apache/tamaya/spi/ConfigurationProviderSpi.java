@@ -48,8 +48,17 @@ public interface ConfigurationProviderSpi {
      * Creates a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder} instance.
      *
      * @return a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder}, never null.
+     * @deprecated Will be removed
      */
+    @Deprecated
     ConfigurationContextBuilder getConfigurationContextBuilder();
+
+    /**
+     * Creates a new {@link org.apache.tamaya.spi.ConfigurationBuilder} instance.
+     *
+     * @return a new {@link org.apache.tamaya.spi.ConfigurationBuilder}, never null.
+     */
+    ConfigurationBuilder getConfigurationBuilder();
 
     /**
      * This method allows to replace the current {@link org.apache.tamaya.Configuration} with a new
@@ -70,7 +79,9 @@ public interface ConfigurationProviderSpi {
      * by the current implementation.
      * @see #setConfiguration(org.apache.tamaya.Configuration)
      */
-    boolean isConfigurationSettable();
+    default boolean isConfigurationSettable(){
+        return true;
+    }
 
     /**
      * Get access to the current {@link ConfigurationContext}.

@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
 
 import java.util.Map;
@@ -53,7 +54,9 @@ public interface Configuration {
      * @param key the property's key, not {@code null}.
      * @return the property's value.
      */
-    String get(String key);
+    default String get(String key){
+        return get(key, TypeLiteral.of(String.class));
+    }
 
     /**
      * Access a property.
@@ -62,7 +65,9 @@ public interface Configuration {
      * @param defaultValue value to be returned, if no value is present, not {@code null}
      * @return the property's keys.
      */
-    String getOrDefault(String key, String defaultValue);
+    default String getOrDefault(String key, String defaultValue){
+        return getOrDefault(key, TypeLiteral.of(String.class), defaultValue);
+    }
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -77,7 +82,9 @@ public interface Configuration {
      * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
-    <T> T getOrDefault(String key, Class<T> type, T defaultValue);
+    default <T> T getOrDefault(String key, Class<T> type, T defaultValue){
+        return getOrDefault(key, TypeLiteral.of(type), defaultValue);
+    }
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -91,7 +98,9 @@ public interface Configuration {
      * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
-    <T> T get(String key, Class<T> type);
+    default <T> T get(String key, Class<T> type){
+        return get(key, TypeLiteral.of(type));
+    }
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -158,5 +167,14 @@ public interface Configuration {
      * @return the configuration context, never null.
      */
     ConfigurationContext getContext();
+
+    /**
+     * Create a new builder using this instance as it's base.
+     * @return a new builder, never null.
+     */
+    default ConfigurationBuilder toBuilder() {
+        return ConfigurationProvider.getConfigurationBuilder().setConfiguration(this);
+    }
+
 
 }

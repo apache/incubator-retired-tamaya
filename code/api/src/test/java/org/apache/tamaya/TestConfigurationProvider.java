@@ -21,6 +21,7 @@ package org.apache.tamaya;
 import javax.annotation.Priority;
 
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 
@@ -55,6 +56,11 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     @Override
     public boolean isConfigurationContextSettable() {
         return false;
+    }
+
+    @Override
+    public ConfigurationBuilder getConfigurationBuilder() {
+        return null;
     }
 
     @Override

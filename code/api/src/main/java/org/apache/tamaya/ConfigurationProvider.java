@@ -18,10 +18,7 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.ConfigurationProviderSpi;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.*;
 
 import java.util.logging.Logger;
 
@@ -109,17 +106,33 @@ public final class ConfigurationProvider {
     }
 
     /**
-     * Create a new {@link org.apache.tamaya.spi.ConfigurationContextBuilder} instance. This method creates
+     * Create a new {@link ConfigurationBuilder} instance. This method creates
      * a new builder instance that is not related to any concrete {@link org.apache.tamaya.spi.ConfigurationContext}.
      * You can use {@link #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)} to change the
      * current configuration context.
      *
-     * @return a new, empty {@link org.apache.tamaya.spi.ConfigurationContextBuilder}, never null.
+     * @return a new, empty {@link ConfigurationBuilder}, never null.
+     * @see #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)
+     * @see org.apache.tamaya.spi.ConfigurationContext
+     * @deprecated Will be removed.
+     */
+    @Deprecated
+    public static ConfigurationContextBuilder getConfigurationContextBuilder() {
+        return spi().getConfigurationContextBuilder();
+    }
+
+    /**
+     * Create a new {@link ConfigurationBuilder} instance. This method creates
+     * a new builder instance that is not related to any concrete {@link org.apache.tamaya.spi.ConfigurationContext}.
+     * You can use {@link #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)} to change the
+     * current configuration context.
+     *
+     * @return a new, empty {@link ConfigurationBuilder}, never null.
      * @see #setConfigurationContext(org.apache.tamaya.spi.ConfigurationContext)
      * @see org.apache.tamaya.spi.ConfigurationContext
      */
-    public static ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return spi().getConfigurationContextBuilder();
+    public static ConfigurationBuilder getConfigurationBuilder() {
+        return spi().getConfigurationBuilder();
     }
 
 }

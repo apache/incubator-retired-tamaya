@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.core.internal;
+package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
@@ -39,7 +39,7 @@ public class DefaultServiceContextTest {
     public void testGetService() {
         ConfigurationProviderSpi providerSpi = context.getService(ConfigurationProviderSpi.class);
         Assert.assertNotNull(providerSpi);
-        Assert.assertTrue(providerSpi instanceof DefaultConfigurationProvider);
+        Assert.assertTrue(providerSpi instanceof TestConfigurationProvider);
     }
 
     @Test(expected = ConfigException.class)
