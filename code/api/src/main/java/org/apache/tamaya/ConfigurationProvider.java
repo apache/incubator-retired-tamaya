@@ -23,7 +23,7 @@ import org.apache.tamaya.spi.*;
 import java.util.logging.Logger;
 
 /**
- * Static access to the {@link Configuration} for the very application.
+ * Static access to the {@link Configuration} of the whole application.
  */
 public final class ConfigurationProvider {
 
@@ -65,7 +65,7 @@ public final class ConfigurationProvider {
      * Get access to the current ConfigurationContext.
      *
      * @return the current ConfigurationContext, never null.
-     * @deprecated Use {@link Configuration#getContext()} instead of.
+     * @deprecated Use {@link Configuration#getContext()} instead.
      */
     @Deprecated
     public static ConfigurationContext getConfigurationContext() {
