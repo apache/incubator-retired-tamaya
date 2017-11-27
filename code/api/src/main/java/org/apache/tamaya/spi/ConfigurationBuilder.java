@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A builder for creating new instance of {@link Configuration}.
+ * A builder for creating new instances of {@link Configuration}.
  * Builders can be obtained in exactly two ways:
  * <ol>
  *     <li>By accessing a preinitialized builder from an existing {@link Configuration},
@@ -93,7 +93,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder addPropertySources(Collection<PropertySource> propertySources);
 
     /**
-     * Add all registered (default) property sources to the context built. The sources are ordered
+     * Adds all registered (default) property sources to the context built. The sources are ordered
      * based on their ordinal values and added to the chain of property sources with
      * higher priority.
      * @return this builder, for chaining, never null.
@@ -120,7 +120,7 @@ public interface ConfigurationBuilder {
 
     /**
      * Access the current chain of property sources. Items at the end of the list have
-     * precedence/more significance.
+     * precedence/higher significance.
      *
      * @return the property source chain, never {@code null}.
      */
@@ -128,7 +128,7 @@ public interface ConfigurationBuilder {
 
     /**
      * Access the current chain of property filters. Items at the end of the list have
-     * precedence/more significance.
+     * precedence/higher significance.
      *
      * @return the property filter chain, never {@code null}.
      */
@@ -218,7 +218,6 @@ public interface ConfigurationBuilder {
      * @return this builder, for chaining, never null.
      */
     ConfigurationBuilder addDefaultPropertyFilters();
-
 
     /**
      * Removes the given PropertyFilter instances, if existing. The order of the remaining
