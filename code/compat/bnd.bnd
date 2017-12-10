@@ -1,0 +1,34 @@
+-buildpath: \
+	osgi.annotation; version=6.0.0,\
+	osgi.core; version=6.0,\
+	osgi.cmpn; version=6.0
+
+-testpath: \
+	${junit}
+
+javac.source: 1.8
+javac.target: 1.8
+
+Bundle-Version: ${version}.${tstamp}
+Bundle-SymbolicName: org.apache.tamaya.compat
+Bundle-Name: Apache Tamaya - API
+Bundle-Description: Apacha Tamaya Configuration Java API
+Bundle-Category: API
+Bundle-Copyright: (C) Apache Foundation
+Bundle-License: Apache Licence version 2
+Bundle-Vendor: Apache Software Foundation
+Bundle-ContactAddress: dev-tamaya@incubator.apache.org
+Bundle-DocURL: http://tamaya.apache.org
+Export-Package: \
+	org.apache.tamaya,\
+	org.apache.tamaya.spisupport,\
+	org.apache.tamaya.spi,\
+	org.apache.tamaya.spisupport.propertysource
+Import-Package: \
+    javax.config,\
+    javax.config.spi,\
+    org.apache.tamaya.base,\
+    org.apache.tamaya.base.configsource,\
+    org.apache.tamaya.base.convert,\
+    org.apache.tamaya.base.filter,\
+    org.apache.tamaya.spi
