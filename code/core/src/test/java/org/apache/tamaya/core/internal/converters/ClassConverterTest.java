@@ -19,7 +19,8 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.core.converters.ClassConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -31,37 +32,37 @@ import static org.junit.Assert.*;
  */
 public class ClassConverterTest {
 
-    ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Class.class))
+    ConversionContext context = new ConversionContext.Builder("<nokey>", Class.class)
             .build();
 
     @Test
     public void testConvert_Class() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("java.math.BigDecimal", context));
+        assertEquals(BigDecimal.class, converter.convert("java.math.BigDecimal"));
     }
 
     @Test
     public void testConvert_Class_WithSpaces() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("  java.math.BigDecimal\t", context));
+        assertEquals(BigDecimal.class, converter.convert("  java.math.BigDecimal\t"));
     }
 
     @Test
     public void testConvert_Class_WithSpacesBefore() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("  java.math.BigDecimal", context));
+        assertEquals(BigDecimal.class, converter.convert("  java.math.BigDecimal"));
     }
 
     @Test
     public void testConvert_Class_WithSpacesAfter() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("java.math.BigDecimal  ", context));
+        assertEquals(BigDecimal.class, converter.convert("java.math.BigDecimal  "));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertNull(converter.convert("", context));
-        assertNull(converter.convert(null, context));
+        assertNull(converter.convert(""));
+        assertNull(converter.convert(null));
     }
 }

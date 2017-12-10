@@ -18,17 +18,15 @@
  */
 package org.apache.tamaya.core;
 
-
-
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.core.internal.*;
+import org.apache.tamaya.base.DefaultConfigBuilder;
+import org.apache.tamaya.base.configsource.ConfigSourceComparator;
+import org.apache.tamaya.base.filter.FilterComparator;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
-import org.apache.tamaya.spisupport.DefaultConfiguration;
-import org.apache.tamaya.spisupport.PropertyFilterComparator;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import javax.config.spi.ConfigProviderResolver;
 import java.util.logging.Logger;
 
 /**
@@ -47,14 +45,15 @@ public class OSGIActivator implements BundleActivator {
         context.addBundleListener(serviceLoader);
         ServiceContextManager.set(new OSGIServiceContext(serviceLoader));
         LOG.info("Registered Tamaya OSGI ServiceContext...");
-        ConfigurationProvider.setConfiguration(
-                       new CoreConfigurationBuilder()
-                        .addDefaultPropertyConverters()
-                        .addDefaultPropertyFilters()
-                        .addDefaultPropertySources()
-                        .sortPropertyFilter(PropertyFilterComparator.getInstance())
-                        .sortPropertySources(PropertySourceComparator.getInstance())
-                        .build()
+        ConfigProviderResolver.instance().registerConfig(
+                new DefaultConfigBuilder()
+                        .addDiscoveredConverters()
+                        .addDiscoveredFilters()
+                        .addDiscoveredSources()
+                        .sortFilter(FilterComparator.getInstance())
+                        .sortSources(ConfigSourceComparator.getInstance())
+                        .build(),
+                ServiceContext.defaultClassLoader()
         );
         LOG.info("Loaded default configuration from OSGI.");
     }

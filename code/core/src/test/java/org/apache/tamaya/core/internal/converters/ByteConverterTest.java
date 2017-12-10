@@ -18,9 +18,12 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+
+
 import org.junit.Test;
+
+import javax.config.Config;
+import javax.config.ConfigProvider;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
@@ -36,20 +39,20 @@ public class ByteConverterTest {
      */
     @Test
     public void testConvert_Byte() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Byte valueRead = config.get("tests.converter.byte.decimal", Byte.class);
+        Config config = ConfigProvider.getConfig();
+        Byte valueRead = config.getValue("tests.converter.byte.decimal", Byte.class);
         assertNotNull(valueRead);
         assertEquals(valueRead.byteValue(), 101);
-        valueRead = config.get("tests.converter.byte.octal", Byte.class);
+        valueRead = config.getValue("tests.converter.byte.octal", Byte.class);
         assertNotNull(valueRead);
         assertEquals(valueRead.byteValue(), Byte.decode("02").byteValue());
-        valueRead = config.get("tests.converter.byte.hex.lowerX", Byte.class);
+        valueRead = config.getValue("tests.converter.byte.hex.lowerX", Byte.class);
         assertNotNull(valueRead);
         assertEquals(valueRead.byteValue(), Byte.decode("0x2F").byteValue());
-        valueRead = config.get("tests.converter.byte.hex.upperX", Byte.class);
+        valueRead = config.getValue("tests.converter.byte.hex.upperX", Byte.class);
         assertNotNull(valueRead);
         assertEquals(valueRead.byteValue(), Byte.decode("0X3F").byteValue());
-        valueRead = config.get("tests.converter.byte.foo", Byte.class);
+        valueRead = config.getValue("tests.converter.byte.foo", Byte.class);
         assertNull(valueRead);
     }
 
@@ -60,8 +63,8 @@ public class ByteConverterTest {
      */
     @Test
     public void testConvert_Byte_MinValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Byte valueRead = config.get("tests.converter.byte.min", Byte.class);
+        Config config = ConfigProvider.getConfig();
+        Byte valueRead = config.getValue("tests.converter.byte.min", Byte.class);
         assertThat(valueRead).isNotNull();
         assertEquals(Byte.MIN_VALUE, valueRead.byteValue());
     }
@@ -73,8 +76,8 @@ public class ByteConverterTest {
      */
     @Test
     public void testConvert_Byte_MaxValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Byte valueRead = config.get("tests.converter.byte.max", Byte.class);
+        Config config = ConfigProvider.getConfig();
+        Byte valueRead = config.getValue("tests.converter.byte.max", Byte.class);
         assertThat(valueRead).isNotNull();
         assertEquals(Byte.MAX_VALUE, valueRead.byteValue());
     }

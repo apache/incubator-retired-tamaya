@@ -18,10 +18,12 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+
+
 import org.junit.Test;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
@@ -38,8 +40,8 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Number valueRead = config.get("tests.converter.bd.decimal", Number.class);
+        Config config = ConfigProvider.getConfig();
+        Number valueRead = config.getValue("tests.converter.bd.decimal", Number.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead, 101L);
     }
@@ -52,11 +54,11 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_Hex() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Number valueRead = config.get("tests.converter.bd.hex.lowerX", Number.class);
+        Config config = ConfigProvider.getConfig();
+        Number valueRead = config.getValue("tests.converter.bd.hex.lowerX", Number.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead, Long.valueOf("47"));
-        valueRead = config.get("tests.converter.bd.hex.upperX", Number.class);
+        valueRead = config.getValue("tests.converter.bd.hex.upperX", Number.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead, Long.valueOf("63"));
     }
@@ -68,8 +70,8 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_NotPresent() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Number valueRead = config.get("tests.converter.bd.foo", Number.class);
+        Config config = ConfigProvider.getConfig();
+        Number valueRead = config.getValue("tests.converter.bd.foo", Number.class);
         assertFalse(valueRead!=null);
     }
 
@@ -80,8 +82,8 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_BigValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Number valueRead = config.get("tests.converter.bd.big", Number.class);
+        Config config = ConfigProvider.getConfig();
+        Number valueRead = config.getValue("tests.converter.bd.big", Number.class);
         assertTrue(valueRead!=null);
         assertEquals(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"),
                 valueRead);
@@ -94,8 +96,8 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_BigFloatValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Number valueRead = config.get("tests.converter.bd.bigFloat", Number.class);
+        Config config = ConfigProvider.getConfig();
+        Number valueRead = config.getValue("tests.converter.bd.bigFloat", Number.class);
         assertTrue(valueRead!=null);
         assertEquals(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372" +
                 "63723628763821638923628193612983618293628763"), valueRead);

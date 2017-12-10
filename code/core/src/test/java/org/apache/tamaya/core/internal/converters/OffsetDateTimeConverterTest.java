@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.core.converters.OffsetDateTimeConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -40,9 +41,9 @@ public class OffsetDateTimeConverterTest {
     @Test
     public void convert() throws Exception {
         OffsetDateTimeConverter conv = new OffsetDateTimeConverter();
-        OffsetDateTime value = conv.convert("2007-12-03T10:15:30+01:00", context);
+        OffsetDateTime value = conv.convert("2007-12-03T10:15:30+01:00");
         assertEquals(value, OffsetDateTime.parse("2007-12-03T10:15:30+01:00"));
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertNull(value);
     }
 

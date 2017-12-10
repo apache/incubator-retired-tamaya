@@ -18,16 +18,15 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
+import javax.config.spi.ConfigSource;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Test Property Source used by converter tests.
  */
-public class ConverterTestsPropertySource implements PropertySource{
+public class ConverterTestsPropertySource implements ConfigSource{
 
     @Override
     public int getOrdinal() {
@@ -40,215 +39,216 @@ public class ConverterTestsPropertySource implements PropertySource{
     }
 
     @Override
-    public PropertyValue get(String key) {
+    public String getValue(String key) {
         switch(key){
             // Bytes
             case "tests.converter.byte.decimal":
-                return PropertyValue.of(key, "101", getName());
+                return "101";
             case "tests.converter.byte.octal":
-                return PropertyValue.of(key, "02", getName());
+                return "02";
             case "tests.converter.byte.hex.lowerX":
-                return PropertyValue.of(key, "0x2F", getName());
+                return "0x2F";
             case "tests.converter.byte.hex.upperX":
-                return PropertyValue.of(key, "0X3F", getName());
+                return "0X3F";
             case "tests.converter.byte.min":
-                return PropertyValue.of(key, "min", getName());
+                return "min";
             case "tests.converter.byte.max":
-                return PropertyValue.of(key, "MAX_Value", getName());
+                return "MAX_Value";
             // Boolean
             case "tests.converter.boolean.y1":
-                return PropertyValue.of(key, "y", getName());
+                return "y";
             case "tests.converter.boolean.y2":
-                return PropertyValue.of(key, "Y", getName());
+                return "Y";
             case "tests.converter.boolean.yes1":
-                return PropertyValue.of(key, "yes", getName());
+                return "yes";
             case "tests.converter.boolean.yes2":
-                return PropertyValue.of(key, "Yes", getName());
+                return "Yes";
             case "tests.converter.boolean.yes3":
-                return PropertyValue.of(key, "yeS", getName());
+                return "yeS";
             case "tests.converter.boolean.true1":
-                return PropertyValue.of(key, "true", getName());
+                return "true";
             case "tests.converter.boolean.true2":
-                return PropertyValue.of(key, "True", getName());
+                return "True";
             case "tests.converter.boolean.true3":
-                return PropertyValue.of(key, "trUe", getName());
+                return "trUe";
             case "tests.converter.boolean.t1":
-                return PropertyValue.of(key, "t", getName());
+                return "t";
             case "tests.converter.boolean.t2":
-                return PropertyValue.of(key, "T", getName());
+                return "T";
             case "tests.converter.boolean.n1":
-                return PropertyValue.of(key, "n", getName());
+                return "n";
             case "tests.converter.boolean.n2":
-                return PropertyValue.of(key, "N", getName());
+                return "N";
             case "tests.converter.boolean.no1":
-                return PropertyValue.of(key, "no", getName());
+                return "no";
             case "tests.converter.boolean.no2":
-                return PropertyValue.of(key, "No", getName());
+                return "No";
             case "tests.converter.boolean.no3":
-                return PropertyValue.of(key, "nO", getName());
+                return "nO";
             case "tests.converter.boolean.false1":
-                return PropertyValue.of(key, "false", getName());
+                return "false";
             case "tests.converter.boolean.false2":
-                return PropertyValue.of(key, "False", getName());
+                return "False";
             case "tests.converter.boolean.false3":
-                return PropertyValue.of(key, "falSe", getName());
+                return "falSe";
             case "tests.converter.boolean.f1":
-                return PropertyValue.of(key, "f", getName());
+                return "f";
             case "tests.converter.boolean.f2":
-                return PropertyValue.of(key, "F", getName());
+                return "F";
             // Character
             case "tests.converter.char.f":
-                return PropertyValue.of(key, "f", getName());
+                return "f";
             case "tests.converter.char.d":
-                return PropertyValue.of(key, "'d'", getName());
+                return "'d'";
             case "tests.converter.char.f-before":
-                return PropertyValue.of(key, "  f", getName());
+                return "  f";
             case "tests.converter.char.f-after":
-                return PropertyValue.of(key, "f   ", getName());
+                return "f   ";
             case "tests.converter.char.f-around":
-                return PropertyValue.of(key, "   f      ", getName());
+                return "   f      ";
             case "tests.converter.char.f-numeric":
-                return PropertyValue.of(key, "101", getName());
+                return "101";
             // currency
             case "tests.converter.currency.code1":
-                return PropertyValue.of(key, "CHF", getName());
+                return "CHF";
             case "tests.converter.currency.code2":
-                return PropertyValue.of(key, "cHf", getName());
+                return "cHf";
             case "tests.converter.currency.code3":
-                return PropertyValue.of(key, "  CHF", getName());
+                return "  CHF";
             case "tests.converter.currency.code4":
-                return PropertyValue.of(key, "CHF   ", getName());
+                return "CHF   ";
             case "tests.converter.currency.code5":
-                return PropertyValue.of(key, "  CHF   ", getName());
+                return "  CHF   ";
             case "tests.converter.currency.code-numeric1":
-                return PropertyValue.of(key, "100", getName());
+                return "100";
             case "tests.converter.currency.code-numeric2":
-                return PropertyValue.of(key, "  100", getName());
+                return "  100";
             case "tests.converter.currency.code-numeric3":
-                return PropertyValue.of(key, "100  ", getName());
+                return "100  ";
             case "tests.converter.currency.code-numeric4":
-                return PropertyValue.of(key, "  100  ", getName());
+                return "  100  ";
             case "tests.converter.currency.code-locale1":
-                return PropertyValue.of(key, "DE", getName());
+                return "DE";
             case "tests.converter.currency.code-locale2":
-                return PropertyValue.of(key, "  DE", getName());
+                return "  DE";
             case "tests.converter.currency.code-locale3":
-                return PropertyValue.of(key, "DE  ", getName());
+                return "DE  ";
             case "tests.converter.currency.code-locale4":
-                return PropertyValue.of(key, "  DE  ", getName());
+                return "  DE  ";
             //double
             case "tests.converter.double.decimal":
-                return PropertyValue.of(key, "1.23456789", getName());
+                return "1.23456789";
             case "tests.converter.double.decimalNegative":
-                return PropertyValue.of(key, "-1.23456789", getName());
+                return "-1.23456789";
             case "tests.converter.double.integer":
-                return PropertyValue.of(key, "  100", getName());
+                return "  100";
             case "tests.converter.double.hex1":
-                return PropertyValue.of(key, " 0XFF", getName());
+                return " 0XFF";
             case "tests.converter.double.hex2":
-                return PropertyValue.of(key, "-0xFF  ", getName());
+                return "-0xFF  ";
             case "tests.converter.double.hex3":
-                return PropertyValue.of(key, "#FF", getName());
+                return "#FF";
             case "tests.converter.double.octal":
-                return PropertyValue.of(key, "0013", getName());
+                return "0013";
             case "tests.converter.double.min":
-                return PropertyValue.of(key, "MIN_Value", getName());
+                return "MIN_Value";
             case "tests.converter.double.max":
-                return PropertyValue.of(key, "max", getName());
+                return "max";
             case "tests.converter.double.nan":
-                return PropertyValue.of(key, "NAN", getName());
+                return "NAN";
             case "tests.converter.double.pi":
-                return PropertyValue.of(key, "positive_infinity", getName());
+                return "positive_infinity";
             case "tests.converter.double.ni":
-                return PropertyValue.of(key, "Negative_Infinity", getName());
+                return "Negative_Infinity";
             //float
             case "tests.converter.float.decimal":
-                return PropertyValue.of(key, "1.23456789", getName());
+                return "1.23456789";
             case "tests.converter.float.decimalNegative":
-                return PropertyValue.of(key, "-1.23456789", getName());
+                return "-1.23456789";
             case "tests.converter.float.integer":
-                return PropertyValue.of(key, "  100", getName());
+                return "  100";
             case "tests.converter.float.hex1":
-                return PropertyValue.of(key, " 0XFF", getName());
+                return " 0XFF";
             case "tests.converter.float.hex2":
-                return PropertyValue.of(key, "-0xFF  ", getName());
+                return "-0xFF  ";
             case "tests.converter.float.hex3":
-                return PropertyValue.of(key, "#FF", getName());
+                return "#FF";
             case "tests.converter.float.octal":
-                return PropertyValue.of(key, "0013", getName());
+                return "0013";
             case "tests.converter.float.min":
-                return PropertyValue.of(key, "MIN_Value", getName());
+                return "MIN_Value";
             case "tests.converter.float.max":
-                return PropertyValue.of(key, "max", getName());
+                return "max";
             case "tests.converter.float.nan":
-                return PropertyValue.of(key, "NAN", getName());
+                return "NAN";
             case "tests.converter.float.pi":
-                return PropertyValue.of(key, "positive_infinity", getName());
+                return "positive_infinity";
             case "tests.converter.float.ni":
-                return PropertyValue.of(key, "Negative_Infinity", getName());
+                return "Negative_Infinity";
             // Integer
             case "tests.converter.integer.decimal":
-                return PropertyValue.of(key, "101", getName());
+                return "101";
             case "tests.converter.integer.octal":
-                return PropertyValue.of(key, "02", getName());
+                return "02";
             case "tests.converter.integer.hex.lowerX":
-                return PropertyValue.of(key, "0x2F", getName());
+                return "0x2F";
             case "tests.converter.integer.hex.upperX":
-                return PropertyValue.of(key, "0X3F", getName());
+                return "0X3F";
             case "tests.converter.integer.min":
-                return PropertyValue.of(key, "min", getName());
+                return "min";
             case "tests.converter.integer.max":
-                return PropertyValue.of(key, "MAX_Value", getName());
+                return "MAX_Value";
             // Long
             case "tests.converter.long.decimal":
-                return PropertyValue.of(key, "101", getName());
+                return "101";
             case "tests.converter.long.octal":
-                return PropertyValue.of(key, "02", getName());
+                return "02";
             case "tests.converter.long.hex.lowerX":
-                return PropertyValue.of(key, "0x2F", getName());
+                return "0x2F";
             case "tests.converter.long.hex.upperX":
-                return PropertyValue.of(key, "0X3F", getName());
+                return "0X3F";
             case "tests.converter.long.min":
-                return PropertyValue.of(key, "min", getName());
+                return "min";
             case "tests.converter.long.max":
-                return PropertyValue.of(key, "MAX_Value", getName());
+                return "MAX_Value";
             // Short
             case "tests.converter.short.decimal":
-                return PropertyValue.of(key, "101", getName());
+                return "101";
             case "tests.converter.short.octal":
-                return PropertyValue.of(key, "02", getName());
+                return "02";
             case "tests.converter.short.hex.lowerX":
-                return PropertyValue.of(key, "0x2F", getName());
+                return "0x2F";
             case "tests.converter.short.hex.upperX":
-                return PropertyValue.of(key, "0X3F", getName());
+                return "0X3F";
             case "tests.converter.short.min":
-                return PropertyValue.of(key, "min", getName());
+                return "min";
             case "tests.converter.short.max":
-                return PropertyValue.of(key, "MAX_Value", getName());
+                return "MAX_Value";
             // BigDecimal
             case "tests.converter.bd.decimal":
-                return PropertyValue.of(key, "101", getName());
+                return "101";
             case "tests.converter.bd.float":
-                return PropertyValue.of(key, "101.36438746", getName());
+                return "101.36438746";
             case "tests.converter.bd.big":
-                return PropertyValue.of(key, "101666666666666662333337263723628763821638923628193612983618293628763", getName());
+                return "101666666666666662333337263723628763821638923628193612983618293628763";
             case "tests.converter.bd.bigFloat":
-                return PropertyValue.of(key, "1016666666666666623333372637236287638216389293628763.101666666666666662333337263723628763821638923628193612983618293628763", getName());
+                return "1016666666666666623333372637236287638216389293628763.101666666666666662333337263723628763821638923628193612983618293628763";
             case "tests.converter.bd.hex.lowerX":
-                return PropertyValue.of(key, "0x2F", getName());
+                return "0x2F";
             case "tests.converter.bd.hex.upperX":
-                return PropertyValue.of(key, "0X3F", getName());
+                return "0X3F";
         }
         return null;
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
+    public Map<String, String> getProperties() {
         return Collections.emptyMap();
     }
 
     @Override
-    public boolean isScannable() {
-        return false;
+    public Set<String> getPropertyNames() {
+        return Collections.emptySet();
     }
+
 }

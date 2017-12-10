@@ -18,9 +18,10 @@
  */
 package org.apache.tamaya.core;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
+
+import javax.config.Config;
+import javax.config.ConfigProvider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -36,22 +37,22 @@ public class ConfigurationTest {
         assertNotNull(current());
     }
 
-    private Configuration current() {
-        return ConfigurationProvider.getConfiguration();
+    private Config current() {
+        return ConfigProvider.getConfig();
     }
 
     @Test
     public void testContent(){
-        assertNotNull(current().get("name"));
-        assertNotNull(current().get("name2")); // from default
-        assertNotNull(current().get("name3")); // overridden default, mapped by filter to name property
-        assertNotNull(current().get("name4")); // final only
+        assertNotNull(current().getValue("name", String.class));
+        assertNotNull(current().getValue("name2", String.class)); // from default
+        assertNotNull(current().getValue("name3", String.class)); // overridden default, mapped by filter to name property
+        assertNotNull(current().getValue("name4", String.class)); // final only
 
 
-        assertEquals("Robin", current().get("name"));
-        assertEquals("Sabine", current().get("name2")); // from default
-        assertEquals("Mapped to name: Robin", current().get("name3"));  // overridden default, mapped by filter to name property
-        assertEquals("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)", current().get("name4")); // final only
-        assertNull(current().get("name5")); // final only, but removed from filter
+        assertEquals("Robin", current().getValue("name", String.class));
+        assertEquals("Sabine", current().getValue("name2", String.class)); // from default
+        assertEquals("Mapped to name: Robin", current().getValue("name3", String.class));  // overridden default, mapped by filter to name property
+        assertEquals("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)", current().getValue("name4", String.class)); // final only
+        assertNull(current().getValue("name5", String.class)); // final only, but removed from filter
     }
 }

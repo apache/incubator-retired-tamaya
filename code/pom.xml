@@ -33,9 +33,9 @@ under the License.
     <name>Apache Tamaya Code - all</name>
 
     <modules>
-        <module>api</module>
-        <module>spi-support</module>
+        <module>base</module>
         <module>core</module>
+        <module>compat</module>
     </modules>
 
 </project>

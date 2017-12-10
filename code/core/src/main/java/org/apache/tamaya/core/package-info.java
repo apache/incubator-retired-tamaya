@@ -20,5 +20,5 @@
 /**
  * This is the root package of the Apache Tamaya API implementation.
  */
-@org.osgi.annotation.versioning.Version("0.4")
+//@org.osgi.annotation.versioning.Version("0.4")
 package org.apache.tamaya.core;

@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.core.converters.PathConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -41,9 +42,9 @@ public class PathConverterTest {
     @Test
     public void convert() throws Exception {
         PathConverter conv = new PathConverter();
-        Path value = conv.convert("testRoot", context);
+        Path value = conv.convert("testRoot");
         assertEquals(value, Paths.get("testRoot"));
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertNotNull(value);
     }
 

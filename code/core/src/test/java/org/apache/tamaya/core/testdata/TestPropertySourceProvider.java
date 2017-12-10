@@ -18,13 +18,11 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.base.configsource.BaseConfigSource;
 
+import javax.config.spi.ConfigSource;
+import javax.config.spi.ConfigSourceProvider;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,30 +31,30 @@ import java.util.Map;
 /**
  * Test provider reading properties from classpath:cfg/final/**.properties.
  */
-public class TestPropertySourceProvider implements PropertySourceProvider {
+public class TestPropertySourceProvider implements ConfigSourceProvider {
 
-    private List<PropertySource> list = new ArrayList<>();
+    private List<ConfigSource> list = new ArrayList<>();
 
     public TestPropertySourceProvider(){
-        list.add(new MyPropertySource());
+        list.add(new MyConfigSource());
         list = Collections.unmodifiableList(list);
     }
 
     @Override
-    public Collection<PropertySource> getPropertySources() {
+    public Iterable<ConfigSource> getConfigSources(ClassLoader forClassLoader) {
         return list;
     }
 
-    private static class MyPropertySource extends BasePropertySource {
+    private static class MyConfigSource extends BaseConfigSource {
 
-        private Map<String, PropertyValue> properties = new HashMap<>();
+        private Map<String, String> properties = new HashMap<>();
 
-        public MyPropertySource() {
+        public MyConfigSource() {
             super(200);
-            properties.put("name", PropertyValue.of("name", "Robin", "test"));
-            properties.put("name3", PropertyValue.of("name3", "Lukas", "test"));
-            properties.put("name4", PropertyValue.of("name4", "Sereina", "test"));
-            properties.put("name5", PropertyValue.of("name5", "Benjamin", "test"));
+            properties.put("name", "Robin");
+            properties.put("name3", "Lukas");
+            properties.put("name4", "Sereina");
+            properties.put("name5", "Benjamin");
             properties = Collections.unmodifiableMap(properties);
         }
 
@@ -66,14 +64,10 @@ public class TestPropertySourceProvider implements PropertySourceProvider {
         }
 
         @Override
-        public Map<String, PropertyValue> getProperties() {
+        public Map<String, String> getProperties() {
             return properties;
         }
 
-        @Override
-        public boolean isScannable() {
-            return true;
-        }
     }
 
 }

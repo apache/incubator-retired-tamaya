@@ -18,15 +18,14 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import javax.config.spi.Converter;
 
 /**
  * Created by Anatole on 13.06.2015.
  */
-public class CTestConverter implements PropertyConverter<C>{
+public class CTestConverter implements Converter<C> {
     @Override
-    public C convert(String value, ConversionContext context) {
+    public C convert(String value) {
         return new C(value);
     }
 }

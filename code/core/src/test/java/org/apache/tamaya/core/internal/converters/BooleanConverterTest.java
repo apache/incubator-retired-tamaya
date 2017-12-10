@@ -23,9 +23,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+
+
 import org.junit.Test;
+
+import javax.config.Config;
+import javax.config.ConfigProvider;
 
 /**
  * Tests the default converter for bytes.
@@ -39,35 +42,35 @@ public class BooleanConverterTest {
      */
     @Test
     public void testConvert_BooleanTrue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
+        Config config = ConfigProvider.getConfig();
+        Boolean valueRead = config.getValue("tests.converter.boolean.y1", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.y2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.y2", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.yes1", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.yes1", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.yes2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.yes2", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.yes3", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.yes3", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.true1", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.true1", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.true2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.true2", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.true3", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.true3", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.t1", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.t1", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
-        valueRead = config.get("tests.converter.boolean.t2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.t2", Boolean.class);
         assertNotNull(valueRead);
         assertEquals(valueRead, Boolean.TRUE);
     }
@@ -79,40 +82,40 @@ public class BooleanConverterTest {
      */
     @Test
     public void testConvert_BooleanFalse() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
+        Config config = ConfigProvider.getConfig();
+        Boolean valueRead = config.getValue("tests.converter.boolean.y1", Boolean.class);
         assertNotNull(valueRead);
-        valueRead = config.get("tests.converter.boolean.n1", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.n2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.n1", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.no1", Boolean.class);
-        assertFalse(valueRead);
-        assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.no2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.n2", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.no3", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.no1", Boolean.class);
+        assertFalse(valueRead);
+        assertFalse(valueRead);
+        valueRead = config.getValue("tests.converter.boolean.no2", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.false1", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.no3", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.false2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.false1", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.false3", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.false2", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.f1", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.false3", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.f2", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.f1", Boolean.class);
         assertNotNull(valueRead);
         assertFalse(valueRead);
-        valueRead = config.get("tests.converter.boolean.foo", Boolean.class);
+        valueRead = config.getValue("tests.converter.boolean.f2", Boolean.class);
+        assertNotNull(valueRead);
+        assertFalse(valueRead);
+        valueRead = config.getValue("tests.converter.boolean.foo", Boolean.class);
         assertNull(valueRead);
     }
 }

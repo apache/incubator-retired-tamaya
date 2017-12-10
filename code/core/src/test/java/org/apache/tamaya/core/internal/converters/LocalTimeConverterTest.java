@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.core.converters.LocalTimeConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -40,9 +41,9 @@ public class LocalTimeConverterTest {
     @Test
     public void convert() throws Exception {
         LocalTimeConverter conv = new LocalTimeConverter();
-        LocalTime value = conv.convert("10:15:30", context);
+        LocalTime value = conv.convert("10:15:30");
         assertEquals(value, LocalTime.parse("10:15:30"));
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertNull(value);
     }
 

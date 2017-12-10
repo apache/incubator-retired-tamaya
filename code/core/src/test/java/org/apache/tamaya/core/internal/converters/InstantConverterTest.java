@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.base.convert.ConversionContext;
+import org.apache.tamaya.core.converters.InstantConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -40,9 +41,9 @@ public class InstantConverterTest {
     @Test
     public void convert() throws Exception {
         InstantConverter conv = new InstantConverter();
-        Instant value = conv.convert("2007-12-03T10:15:30.00Z", context);
+        Instant value = conv.convert("2007-12-03T10:15:30.00Z");
         assertEquals(value, Instant.parse("2007-12-03T10:15:30.00Z"));
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertNull(value);
     }
 

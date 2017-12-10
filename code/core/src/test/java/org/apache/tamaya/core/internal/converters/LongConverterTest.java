@@ -18,9 +18,12 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+
+
 import org.junit.Test;
+
+import javax.config.Config;
+import javax.config.ConfigProvider;
 
 import static org.junit.Assert.*;
 
@@ -36,8 +39,8 @@ public class LongConverterTest {
      */
     @Test
     public void testConvert_Long_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Long valueRead = config.get("tests.converter.long.decimal", Long.class);
+        Config config = ConfigProvider.getConfig();
+        Long valueRead = config.getValue("tests.converter.long.decimal", Long.class);
         assertTrue(valueRead != null);
         assertEquals(valueRead.intValue(), 101);
     }
@@ -49,8 +52,8 @@ public class LongConverterTest {
      */
     @Test
     public void testConvert_Long_Octal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Long valueRead = config.get("tests.converter.long.octal", Long.class);
+        Config config = ConfigProvider.getConfig();
+        Long valueRead = config.getValue("tests.converter.long.octal", Long.class);
         assertTrue(valueRead != null);
         assertEquals(valueRead.intValue(), Long.decode("02").intValue());
     }
@@ -62,11 +65,11 @@ public class LongConverterTest {
      */
     @Test
     public void testConvert_Long_Hex() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Long valueRead = config.get("tests.converter.long.hex.lowerX", Long.class);
+        Config config = ConfigProvider.getConfig();
+        Long valueRead = config.getValue("tests.converter.long.hex.lowerX", Long.class);
         assertTrue(valueRead != null);
         assertEquals(valueRead.intValue(), Long.decode("0x2F").intValue());
-        valueRead = config.get("tests.converter.long.hex.upperX", Long.class);
+        valueRead = config.getValue("tests.converter.long.hex.upperX", Long.class);
         assertTrue(valueRead != null);
         assertEquals(valueRead.intValue(), Long.decode("0X3F").intValue());
     }
@@ -78,8 +81,8 @@ public class LongConverterTest {
      */
     @Test
     public void testConvert_NotPresent() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Long valueRead = config.get("tests.converter.long.foo", Long.class);
+        Config config = ConfigProvider.getConfig();
+        Long valueRead = config.getValue("tests.converter.long.foo", Long.class);
         assertFalse(valueRead != null);
     }
 
@@ -90,8 +93,8 @@ public class LongConverterTest {
      */
     @Test
     public void testConvert_Long_MinValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Long valueRead = config.get("tests.converter.long.min", Long.class);
+        Config config = ConfigProvider.getConfig();
+        Long valueRead = config.getValue("tests.converter.long.min", Long.class);
         assertTrue(valueRead != null);
         assertEquals(Long.MIN_VALUE, valueRead.longValue());
     }
@@ -103,8 +106,8 @@ public class LongConverterTest {
      */
     @Test
     public void testConvert_Long_MaxValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Long valueRead = config.get("tests.converter.long.max", Long.class);
+        Config config = ConfigProvider.getConfig();
+        Long valueRead = config.getValue("tests.converter.long.max", Long.class);
         assertTrue(valueRead != null);
         assertEquals(Long.MAX_VALUE, valueRead.longValue());
     }

@@ -18,9 +18,13 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+
+
+import org.apache.tamaya.core.converters.CharConverter;
 import org.junit.Test;
+
+import javax.config.Config;
+import javax.config.ConfigProvider;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
@@ -31,56 +35,56 @@ public class CharConverterTest {
 
     @Test
     public void testConvert_Character() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Character valueRead = config.get("tests.converter.char.f", Character.class);
+        Config config = ConfigProvider.getConfig();
+        Character valueRead = config.getValue("tests.converter.char.f", Character.class);
         assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 
     @Test
     public void testConvert_Character_Numeric() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Character valueRead = config.get("tests.converter.char.f-numeric", Character.class);
+        Config config = ConfigProvider.getConfig();
+        Character valueRead = config.getValue("tests.converter.char.f-numeric", Character.class);
         assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), (char)101);
     }
 
     @Test
     public void testConvert_Character_Quoted() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Character valueRead = config.get("tests.converter.char.d", Character.class);
+        Config config = ConfigProvider.getConfig();
+        Character valueRead = config.getValue("tests.converter.char.d", Character.class);
         assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'd');
     }
 
     @Test
     public void testConvert_Character_WithWhitespace_Before() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Character valueRead = config.get("tests.converter.char.f-before", Character.class);
+        Config config = ConfigProvider.getConfig();
+        Character valueRead = config.getValue("tests.converter.char.f-before", Character.class);
         assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 
     @Test
     public void testConvert_Character_WithWhitespace_After() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Character valueRead = config.get("tests.converter.char.f-after", Character.class);
+        Config config = ConfigProvider.getConfig();
+        Character valueRead = config.getValue("tests.converter.char.f-after", Character.class);
         assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 
     @Test
     public void testConvert_Character_WithWhitespace_Around() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Character valueRead = config.get("tests.converter.char.f-around", Character.class);
+        Config config = ConfigProvider.getConfig();
+        Character valueRead = config.getValue("tests.converter.char.f-around", Character.class);
         assertThat(valueRead).isNotNull();
         assertEquals(valueRead.charValue(), 'f');
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Character valueRead = config.get("tests.converter.char.foo", Character.class);
+        Config config = ConfigProvider.getConfig();
+        Character valueRead = config.getValue("tests.converter.char.foo", Character.class);
         assertNull(valueRead);
     }
 }

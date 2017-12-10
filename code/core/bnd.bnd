@@ -12,7 +12,7 @@ javac.target: 1.8
 Bundle-Version: ${version}.${tstamp}
 Bundle-Name: Apache Tamaya - Core
 Bundle-SymbolicName: org.apache.tamaya.core
-Bundle-Description: Apacha Tamaya Configuration Java Core Implementation
+Bundle-Description: Apacha Tamaya Configuration Core Implementation
 Bundle-Category: Implementation
 Bundle-Copyright: (C) Apache Foundation
 Bundle-License: Apache Licence version 2
@@ -23,21 +23,23 @@ Bundle-Activator: org.apache.tamaya.core.OSGIActivator
 Export-Package: \
 	org.apache.tamaya.core
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi,\
-	org.apache.tamaya.spisupport,\
-	org.apache.tamaya.spisupport.propertysource,\
+	javax.config,\
+	javax.config.spi,\
+	org.apache.tamaya.base,\
+    org.apache.tamaya.base.configsource,\
+    org.apache.tamaya.base.convert,\
+    org.apache.tamaya.base.filter,\
+    org.apache.tamaya.spi,\
 	org.osgi.framework,\
 	javax.annotation
 Private-Package: \
-	org.apache.tamaya.core.internal,\
-	org.apache.tamaya.core.internal.converters
+	org.apache.tamaya.core,\
+	org.apache.tamaya.core.converters
 Export-Service: \
-    org.apache.tamaya.Configuration,\
-    org.apache.tamaya.core.internal.ConfigValueEvaluator,\
-    org.apache.tamaya.spi.ConfigurationContextBuilder,\
-    org.apache.tamaya.spi.ConfigurationProviderSpi,\
-    org.apache.tamaya.spi.PropertyConverter,\
-    org.apache.tamaya.spi.PropertySource,\
+    javax.config.Config,\
+    javax.config.spi.ConfigBuilder,\
+    javax.config.spi.ConfigProviderResolver,\
+    javax.config.spi.Converter,\
+    javax.config.spi.ConfigSource,\
     org.apache.tamaya.spi.ServiceContext
     

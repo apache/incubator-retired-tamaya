@@ -19,7 +19,8 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.core.converters.URLConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
 import org.junit.Test;
 
 import java.net.URI;
@@ -33,37 +34,37 @@ import static org.junit.Assert.assertNull;
  */
 public class URLConverterTest {
 
-    ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(URI.class))
+    ConversionContext context = new ConversionContext.Builder("<nokey>", URI.class)
             .build();
 
     @Test
     public void testConvert_URL() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("http://google.com:4000/path", context));
+        assertEquals(new URL("http://google.com:4000/path"), converter.convert("http://google.com:4000/path"));
     }
 
     @Test
     public void testConvert_URL_WithSpaces() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("  http://google.com:4000/path\t", context));
+        assertEquals(new URL("http://google.com:4000/path"), converter.convert("  http://google.com:4000/path\t"));
     }
 
     @Test
     public void testConvert_URL_WithSpacesBefore() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("  http://google.com:4000/path", context));
+        assertEquals(new URL("http://google.com:4000/path"), converter.convert("  http://google.com:4000/path"));
     }
 
     @Test
     public void testConvert_URL_WithSpacesAfter() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("http://google.com:4000/path  ", context));
+        assertEquals(new URL("http://google.com:4000/path"), converter.convert("http://google.com:4000/path  "));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         URLConverter converter = new URLConverter();
-        assertNull(converter.convert("", context));
-        assertNull(converter.convert(null, context));
+        assertNull(converter.convert(""));
+        assertNull(converter.convert(null));
     }
 }

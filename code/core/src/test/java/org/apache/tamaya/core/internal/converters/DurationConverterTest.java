@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.core.converters.DurationConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -54,17 +55,17 @@ public class DurationConverterTest {
     @Test
     public void convert() throws Exception {
         DurationConverter conv = new DurationConverter();
-        Duration duration = conv.convert("PT20.345S", context);
+        Duration duration = conv.convert("PT20.345S");
         assertEquals(Duration.parse("PT20.345S"), duration);
-        duration = conv.convert("PT15M", context);
+        duration = conv.convert("PT15M");
         assertEquals(Duration.parse("PT15M"), duration);
-        duration = conv.convert("PT10H", context);
+        duration = conv.convert("PT10H");
         assertEquals(Duration.parse("PT10H"), duration);
-        duration = conv.convert("P2D", context);
+        duration = conv.convert("P2D");
         assertEquals(Duration.parse("P2D"), duration);
-        duration = conv.convert("P2DT3H4M", context);
+        duration = conv.convert("P2DT3H4M");
         assertEquals(Duration.parse("P2DT3H4M"), duration);
-        duration = conv.convert("foo", context);
+        duration = conv.convert("foo");
         assertNull(duration);
     }
 

@@ -19,7 +19,10 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.core.converters.URIConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URI;
@@ -32,37 +35,47 @@ import static org.junit.Assert.assertNull;
  */
 public class URIConverterTest {
 
-    ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(URI.class))
+    ConversionContext context = new ConversionContext.Builder("<nokey>", URI.class)
             .build();
+
+    @Before
+    public void before(){
+        ConversionContext.setContext(context);
+    }
+
+    @After
+    public void after(){
+        ConversionContext.reset();
+    }
 
     @Test
     public void testConvert_URI() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("test:path", context));
+        assertEquals(new URI("test:path"), converter.convert("test:path"));
     }
 
     @Test
     public void testConvert_URI_WithSpaces() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("  test:path\t", context));
+        assertEquals(new URI("test:path"), converter.convert("  test:path\t"));
     }
 
     @Test
     public void testConvert_URI_WithSpacesBefore() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("  test:path", context));
+        assertEquals(new URI("test:path"), converter.convert("  test:path"));
     }
 
     @Test
     public void testConvert_URI_WithSpacesAfter() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("test:path  ", context));
+        assertEquals(new URI("test:path"), converter.convert("test:path  "));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         URIConverter converter = new URIConverter();
-        assertNull(converter.convert("", context));
-        assertNull(converter.convert(null, context));
+        assertNull(converter.convert(""));
+        assertNull(converter.convert(null));
     }
 }

@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.base.convert.ConversionContext;
+import org.apache.tamaya.core.converters.OptionalConverter;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -29,14 +30,16 @@ public class OptionalConverterTest {
 
     @Test
     public void nullConversionYieldsEmptyOptional() {
-        final Optional<?> result = new OptionalConverter().convert(null, null);
+        final Optional<?> result = new OptionalConverter().convert(null);
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isFalse();
     }
 
-    @Test(expected = ConfigException.class)
-    public void emulateExceptionWhenGivenContextIsNull() {
-        new OptionalConverter().convert("JustATestValueThatIsIgnored", null);
+    @Test(expected = IllegalStateException.class)
+    public void emulateExceptionWhenGivenConfigIsNull() {
+        ConversionContext ctx = new ConversionContext.Builder("someKey", String.class).build();
+        ConversionContext.setContext(ctx);
+        new OptionalConverter().convert("JustATestValueThatIsIgnored");
     }
 
 }

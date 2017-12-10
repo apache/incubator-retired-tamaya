@@ -18,18 +18,20 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spi.ConversionContext;
+
+
+import org.apache.tamaya.base.convert.ConversionContext;
+import org.apache.tamaya.core.converters.BigDecimalConverter;
 import org.junit.Test;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the default converter for bytes.
@@ -44,8 +46,8 @@ public class BigDecimalConverterTest {
 	 */
 	@Test
 	public void testConvert_BigDecimal_Decimal() throws Exception {
-		Configuration config = ConfigurationProvider.getConfiguration();
-		BigDecimal valueRead = config.get("tests.converter.bd.decimal", BigDecimal.class);
+		Config config = ConfigProvider.getConfig();
+		BigDecimal valueRead = config.getValue("tests.converter.bd.decimal", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
 		assertEquals(new BigDecimal(101), valueRead);
 	}
@@ -58,11 +60,11 @@ public class BigDecimalConverterTest {
 	 */
 	@Test
 	public void testConvert_BigDecimal_Hex() throws Exception {
-		Configuration config = ConfigurationProvider.getConfiguration();
-		BigDecimal valueRead = config.get("tests.converter.bd.hex.lowerX", BigDecimal.class);
+		Config config = ConfigProvider.getConfig();
+		BigDecimal valueRead = config.getValue("tests.converter.bd.hex.lowerX", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
 		assertEquals(new BigDecimal("47"), valueRead);
-		valueRead = config.get("tests.converter.bd.hex.upperX", BigDecimal.class);
+		valueRead = config.getValue("tests.converter.bd.hex.upperX", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
 		assertEquals(new BigDecimal("63"), valueRead);
 	}
@@ -75,8 +77,8 @@ public class BigDecimalConverterTest {
 	 */
 	@Test
 	public void testConvert_NotPresent() throws Exception {
-		Configuration config = ConfigurationProvider.getConfiguration();
-		BigDecimal valueRead = config.get("tests.converter.bd.foo", BigDecimal.class);
+		Config config = ConfigProvider.getConfig();
+		BigDecimal valueRead = config.getValue("tests.converter.bd.foo", BigDecimal.class);
 		assertNull(valueRead);
 	}
 
@@ -88,8 +90,8 @@ public class BigDecimalConverterTest {
 	 */
 	@Test
 	public void testConvert_BigDecimal_BigValue() throws Exception {
-		Configuration config = ConfigurationProvider.getConfiguration();
-		BigDecimal valueRead = config.get("tests.converter.bd.big", BigDecimal.class);
+		Config config = ConfigProvider.getConfig();
+		BigDecimal valueRead = config.getValue("tests.converter.bd.big", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
 		assertEquals(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"),
 				valueRead);
@@ -103,8 +105,8 @@ public class BigDecimalConverterTest {
 	 */
 	@Test
 	public void testConvert_BigDecimal_BigFloatValue() throws Exception {
-		Configuration config = ConfigurationProvider.getConfiguration();
-		BigDecimal valueRead = config.get("tests.converter.bd.bigFloat", BigDecimal.class);
+		Config config = ConfigProvider.getConfig();
+		BigDecimal valueRead = config.getValue("tests.converter.bd.bigFloat", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
 		assertEquals(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372"
 				+ "63723628763821638923628193612983618293628763"), valueRead);
@@ -112,22 +114,23 @@ public class BigDecimalConverterTest {
 
 	@Test
 	public void converterHandlesNullValueCorrectly() throws Exception {
-		ConversionContext context = mock(ConversionContext.class);
-
+		ConversionContext context = new ConversionContext.Builder("key", BigDecimal.class).build();
+		ConversionContext.setContext(context);
 		BigDecimalConverter converter = new BigDecimalConverter();
-		BigDecimal value = converter.convert("", context);
-
+		BigDecimal value = converter.convert("");
+		ConversionContext.reset();
 		assertThat(value).isNull();
 	}
 
 	@Test
 	public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-		ConversionContext context = mock(ConversionContext.class);
+		ConversionContext context = new ConversionContext.Builder("<nokey>", BigDecimal.class).build();
+		ConversionContext.setContext(context);
 
 		BigDecimalConverter converter = new BigDecimalConverter();
-		BigDecimal value = converter.convert("", context);
-
+		BigDecimal value = converter.convert("");
+		assertTrue(context.getSupportedFormats().contains("<BigDecimal> -> new BigDecimal(String) (BigDecimalConverter)"));
+		ConversionContext.reset();
 		assertThat(value).isNull();
-		verify(context).addSupportedFormats(BigDecimalConverter.class, "<bigDecimal> -> new BigDecimal(String)");
 	}
 }

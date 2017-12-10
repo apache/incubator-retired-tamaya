@@ -18,9 +18,12 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+
+
 import org.junit.Test;
+
+import javax.config.Config;
+import javax.config.ConfigProvider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -37,8 +40,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.decimal", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.decimal", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead.floatValue(), 1.23456789f, 0.0f);
     }
@@ -50,8 +53,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_DecimalNegative() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.decimalNegative", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.decimalNegative", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead.floatValue(), -1.23456789f, 0.0f);
     }
@@ -63,8 +66,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_Integer() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.integer", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.integer", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead.floatValue(),100f, 0.0f);
     }
@@ -76,8 +79,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_Hex1() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.hex1", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.hex1", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead.floatValue(),255f, 0.0f);
     }
@@ -89,8 +92,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_Hex2() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.hex2", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.hex2", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead.floatValue(),-255f, 0.0f);
     }
@@ -102,8 +105,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_Hex3() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.hex3", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.hex3", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(valueRead.floatValue(),255f, 0.0f);
     }
@@ -115,8 +118,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_MinValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.min", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.min", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(Float.MIN_VALUE, valueRead.floatValue(),0.0f);
     }
@@ -128,8 +131,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_MaxValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.max", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.max", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(Float.MAX_VALUE, valueRead.floatValue(),0.0f);
     }
@@ -141,8 +144,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_NaNValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.nan", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.nan", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(Float.NaN, valueRead.floatValue(),0.0f);
     }
@@ -154,8 +157,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_PositiveInfinityValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.pi", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.pi", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(Float.POSITIVE_INFINITY, valueRead.floatValue(),0.0f);
     }
@@ -167,8 +170,8 @@ public class FloatConverterTest {
      */
     @Test
     public void testConvert_Float_NegativeInfinityValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Float valueRead = config.get("tests.converter.float.ni", Float.class);
+        Config config = ConfigProvider.getConfig();
+        Float valueRead = config.getValue("tests.converter.float.ni", Float.class);
         assertTrue(valueRead!=null);
         assertEquals(Float.NEGATIVE_INFINITY, valueRead.floatValue(),0.0f);
     }
