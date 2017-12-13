@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.converters.URLConverter;
 import org.apache.tamaya.base.convert.ConversionContext;
 import org.junit.Test;

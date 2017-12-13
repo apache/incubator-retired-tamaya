@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.spisupport.PriorityServiceComparator;
+import org.apache.tamaya.base.PriorityServiceComparator;
 import org.osgi.framework.*;
 
 /**

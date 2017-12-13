@@ -18,11 +18,11 @@
  */
 package org.apache.tamaya.examples.minimal;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -34,14 +34,11 @@ import static java.lang.String.format;
  *
  * <p>
  *  Without any additional configuration Tamaya allows you access via
- *  {@link ConfigurationProvider#getConfiguration} all configuration values.
+ *  {@link ConfigProvider#getConfig} all configuration values.
  *  Accessable are all system environment properties, all system properties,
  *  and all properties which are found in {@code /META-INF/javaconfiguration.properties}
  *  or {@code /META-INF/javaconfiguration.xml}.
  * </p>
- *
- * @see org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource
- * @see org.apache.tamaya.spisupport.propertysource.SystemPropertySource
  */
 public class Main {
     /*
@@ -57,28 +54,28 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Configuration cfg = ConfigurationProvider.getConfiguration();
+        Config cfg = ConfigProvider.getConfig();
 
         System.out.println("****************************************************");
         System.out.println("Minimal Example");
         System.out.println("****************************************************");
         System.out.println();
         System.out.println("Example Metadata:");
-        System.out.println("\tType        :  " + cfg.get("example.type"));
-        System.out.println("\tName        :  " + cfg.get("example.name"));
-        System.out.println("\tDescription :  " + cfg.get("example.description"));
-        System.out.println("\tVersion     :  " + cfg.get("example.version"));
-        System.out.println("\tAuthor      :  " + cfg.get("example.author"));
+        System.out.println("\tType        :  " + cfg.getValue("example.type", String.class));
+        System.out.println("\tName        :  " + cfg.getValue("example.name", String.class));
+        System.out.println("\tDescription :  " + cfg.getValue("example.description", String.class));
+        System.out.println("\tVersion     :  " + cfg.getValue("example.version", String.class));
+        System.out.println("\tAuthor      :  " + cfg.getValue("example.author", String.class));
         System.out.println();
 
-        dump(cfg.getProperties(), System.out);
+        dump(cfg.getPropertyNames(), System.out, cfg);
     }
 
-    private static void dump(Map<String, String> properties, PrintStream stream) {
+    private static void dump(Iterable<String> properties, PrintStream stream, Config config) {
         stream.println("FULL DUMP:\n\n");
 
-        for (Map.Entry<String, String> en : new TreeMap<>(properties).entrySet()) {
-            stream.println(format("\t%s = %s", en.getKey(), en.getValue()));
+        for (String key : properties) {
+            stream.println(format("\t%s = %s", key, config.getValue(key, String.class)));
         }
     }
 }

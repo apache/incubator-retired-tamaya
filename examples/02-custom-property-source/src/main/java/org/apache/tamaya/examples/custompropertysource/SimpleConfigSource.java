@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.examples.custompropertysource;
 
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.base.configsource.BaseConfigSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,13 +28,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class SimplePropertySource extends BasePropertySource {
+public class SimpleConfigSource extends BaseConfigSource {
 
     public static final String CONFIG_PROPERTIES_LOCATION = "META-INF/MyOtherConfigProperties.properties";
-    private Map<String,PropertyValue> props = new HashMap<>();
+    private Map<String,String> props = new HashMap<>();
 
-    public SimplePropertySource() throws IOException {
-        URL url = ClassLoader.getSystemClassLoader().getResource(CONFIG_PROPERTIES_LOCATION);
+    public SimpleConfigSource() throws IOException {
+        this(ClassLoader.getSystemClassLoader().getResource(CONFIG_PROPERTIES_LOCATION));
+    }
+    public SimpleConfigSource(URL url) throws IOException {
         Properties properties = new Properties();
 
         try(InputStream is = url.openStream()){
@@ -43,8 +44,7 @@ public class SimplePropertySource extends BasePropertySource {
 
             for(Map.Entry en: properties.entrySet()){
                 props.put(en.getKey().toString(),
-                        PropertyValue.of(en.getKey().toString(), en.getValue().toString(),
-                                getName()));
+                        en.getValue().toString());
             }
         }
         finally{
@@ -58,7 +58,7 @@ public class SimplePropertySource extends BasePropertySource {
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
+    public Map<String, String> getProperties() {
         return props;
     }
 }

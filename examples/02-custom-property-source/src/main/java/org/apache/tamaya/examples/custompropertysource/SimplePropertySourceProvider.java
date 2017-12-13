@@ -18,30 +18,32 @@
  */
 package org.apache.tamaya.examples.custompropertysource;
 
-import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-
+import javax.config.spi.ConfigSource;
+import javax.config.spi.ConfigSourceProvider;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class SimplePropertySourceProvider implements PropertySourceProvider {
+public class SimplePropertySourceProvider implements ConfigSourceProvider {
     private static final String[] RESOURCES = {
         "cfgOther/a.properties", "cfgOther/b.properties", "cfgOther/c.properties"
     };
 
     @Override
-    public Collection<PropertySource> getPropertySources() {
-        List<PropertySource> propertySources = new ArrayList<>();
+    public Collection<ConfigSource> getConfigSources(ClassLoader cl) {
+        List<ConfigSource> propertySources = new ArrayList<>();
 
         for (String res : RESOURCES) {
             URL url = ClassLoader.getSystemClassLoader().getResource(res);
-            propertySources.add(new SimplePropertySource(url));
+            try {
+                propertySources.add(new SimpleConfigSource(url));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        return Collections.unmodifiableList(propertySources);
+        return propertySources;
     }
 }
