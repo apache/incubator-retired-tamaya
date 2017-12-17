@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.examples.custompropertysource;
+package org.apache.tamaya.examples.customconfigsource;
 
 import org.apache.tamaya.base.configsource.BaseConfigSource;
 
@@ -36,6 +36,7 @@ public class SimpleConfigSource extends BaseConfigSource {
     public SimpleConfigSource() throws IOException {
         this(ClassLoader.getSystemClassLoader().getResource(CONFIG_PROPERTIES_LOCATION));
     }
+
     public SimpleConfigSource(URL url) throws IOException {
         Properties properties = new Properties();
 

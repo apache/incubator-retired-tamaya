@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.examples.custompropertysource;
+package org.apache.tamaya.examples.customconfigsource;
 
 import javax.config.spi.ConfigSource;
 import javax.config.spi.ConfigSourceProvider;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SimplePropertySourceProvider implements ConfigSourceProvider {
+public class SimpleConfigSourceProvider implements ConfigSourceProvider {
     private static final String[] RESOURCES = {
         "cfgOther/a.properties", "cfgOther/b.properties", "cfgOther/c.properties"
     };

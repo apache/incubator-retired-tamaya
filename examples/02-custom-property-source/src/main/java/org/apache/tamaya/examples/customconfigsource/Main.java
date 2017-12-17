@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.examples.custompropertysource;
+package org.apache.tamaya.examples.customconfigsource;
 
 import javax.config.Config;
 import javax.config.ConfigProvider;
@@ -35,16 +35,16 @@ import static java.lang.String.format;
  *  {@link javax.config.spi.ConfigSource}. It reads its properties from a
  *  flexibly configurable location. As it is an implementation
  *  of {@code PropertySource} and it is listed as service implementation
- *  in {@code META-INF/services/org.apache.tamaya.spi.PropertySource} Tamaya is able
+ *  in {@code META-INF/services/javax.config.spi.ConfigSource} Tamaya is able
  *  to find and to use it through the Service Provider Interface service of Java.
  * </p>
  *
  * <p>
- *  The same applies to {@link SimplePropertySourceProvider} which is an implementation
+ *  The same applies to {@link SimpleConfigSourceProvider} which is an implementation
  *  of {@link javax.config.spi.ConfigSourceProvider}. Tamaya finds implementations
  *  of a {@link javax.config.spi.ConfigSourceProvider} also through the
  *  Service Provider Interface service of Java. Therefore it is listed in
- *  {@code META-INF/services/org.apache.tamaya.spi.PropertySourceProvider} file.
+ *  {@code META-INF/services/javax.config.spi.ConfigSourceProvider} file.
  * </p>
  */
 public class Main {

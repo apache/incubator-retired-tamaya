@@ -16,4 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.examples.custompropertysource;
+
+/**
+ * Contains default implementations for config sources.
+ */
+package org.apache.tamaya.base.configsource;
