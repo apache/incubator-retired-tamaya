@@ -20,7 +20,6 @@ package org.apache.tamaya.base.convert;
 
 import org.apache.tamaya.base.FormatUtils;
 import org.apache.tamaya.base.PriorityServiceComparator;
-import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -110,7 +109,7 @@ public class ConverterManager {
     }
 
     /**
-     * This method can be used for adding {@link PropertyConverter}s.
+     * This method can be used for adding {@link Converter}s.
      * Converters are added at the end after any existing converters.
      * For converters already registered for the current target type the
      * method has no effect.
@@ -124,7 +123,7 @@ public class ConverterManager {
     }
 
     /**
-     * This method can be used for adding {@link PropertyConverter}s.
+     * This method can be used for adding {@link Converter}s.
      * Converters are added at the end after any existing converters.
      * For converters already registered for the current target type the
      * method has no effect.
