@@ -114,8 +114,8 @@ public class SimpleConfigSource extends BaseConfigSource {
         setName(builder.name);
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
+    public static Builder builder(String name) {
+        return new Builder().withName(name);
     }
 
     @Override
@@ -186,10 +186,10 @@ public class SimpleConfigSource extends BaseConfigSource {
          * Sets the {@code name} and returns a reference to this Builder so that the methods
          * can be chained together.
          *
-         * @param val the {@code name} to set, not null.
+         * @param name the {@code name} to set, not null.
          * @return a reference to this Builder
          */
-        public Builder withName(String val) {
+        public Builder withName(String name) {
             this.name = Objects.requireNonNull(name);
             return this;
         }

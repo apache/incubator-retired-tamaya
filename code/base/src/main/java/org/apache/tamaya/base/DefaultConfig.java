@@ -91,7 +91,7 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
         }
         value = filterManager.filterValue(value, this);
         if(value!=null){
-            return (T)converterManager.convertValue(key, value.getValue(), targetType, this);
+            return (T)converterManager.convertValue(value.getValue(), targetType);
         }
         return null;
     }

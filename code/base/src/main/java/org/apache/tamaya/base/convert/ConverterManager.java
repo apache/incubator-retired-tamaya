@@ -20,6 +20,8 @@ package org.apache.tamaya.base.convert;
 
 import org.apache.tamaya.base.FormatUtils;
 import org.apache.tamaya.base.PriorityServiceComparator;
+import org.apache.tamaya.spi.ConfigContext;
+import org.apache.tamaya.spi.ConfigContextSupplier;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -42,6 +44,7 @@ public class ConverterManager {
      * The logger used.
      */
     private static final Logger LOG = Logger.getLogger(ConverterManager.class.getName());
+
     /**
      * The registered converters.
      */
@@ -67,6 +70,20 @@ public class ConverterManager {
             }
         }
     };
+
+    private static final ConverterManager INSTANCE = new ConverterManager()
+            .addCoreConverters()
+            .addDiscoveredConverters();
+
+
+    /**
+     * Access the shared common default instance, that can be used for conversion if the current {@link Config}
+     * does not implement the {@link ConfigContextSupplier} interface.
+     * @return the shared instance, not null.
+     */
+    public static ConverterManager defaultInstance(){
+        return INSTANCE;
+    }
 
     /**
      * Get the classloader used for instance creation.
@@ -118,7 +135,7 @@ public class ConverterManager {
      * @param converters the converters to add for this type
      * @return this builder, for chaining, never null.
      */
-    public <T> ConverterManager addConverter(Type typeToConvert, Converter<T>... converters) {
+    public ConverterManager addConverter(Type typeToConvert, Converter... converters) {
         return addConverter(typeToConvert, Arrays.asList(converters));
     }
 
@@ -132,7 +149,7 @@ public class ConverterManager {
      * @param converters the converters to add for this type
      * @return this builder, for chaining, never null.
      */
-    public <T> ConverterManager addConverter(Type typeToConvert, Collection<Converter<T>> converters) {
+    public ConverterManager addConverter(Type typeToConvert, Collection<Converter> converters) {
         Objects.requireNonNull(converters);
         List<Converter> converterList = List.class.cast(this.converters.get(typeToConvert));
         if(converterList==null){
@@ -374,31 +391,8 @@ public class ConverterManager {
         return converterList;
     }
 
-    public Object convertValue(String key, String value, Type type, Config config) {
-        if (value != null) {
-            List<Converter> converters = getConverters(type);
-            org.apache.tamaya.base.convert.ConversionContext context = new org.apache.tamaya.base.convert.ConversionContext.Builder(config, key, type)
-                    .build();
-            ConversionContext.setContext(context);
-            for (Converter converter : converters) {
-                try {
-                    Object t = converter.convert(value);
-                    if (t != null) {
-                        return t;
-                    }
-                } catch (Exception e) {
-                    LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
-                }
-            }
-            // if the target type is a String, we can return the value, no conversion required.
-            if(type.equals(String.class)){
-                return value;
-            }
-            // unsupported type, throw an exception
-            throw new IllegalStateException("Unparseable config value for type: " + type.getTypeName() + ": " + key +
-                    ", supported formats: " + context.getSupportedFormats());
-        }
-        return null;
+    public <T> T convertValue(String value, Type type){
+        return convertValue(value, type, this.getConverters(type));
     }
 
     private <T> void addConvertersToList(Collection<Converter> converters, List<Converter> converterList) {
@@ -562,6 +556,34 @@ public class ConverterManager {
     @Override
     public int hashCode() {
         return converters.hashCode();
+    }
+
+    /**
+     * Converts a given text input using the given config.
+     * @param textValue the text value.
+     * @param type the target type.
+     * @param converters the converters to be used.
+     * @param <T> the type
+     * @return the converted type, or null.
+     */
+    public <T> T convertValue(String textValue, Type type, Iterable<Converter> converters) {
+        if(textValue==null){
+            return null;
+        }
+        for(Converter<T> converter:converters){
+            try{
+                T t = converter.convert(textValue);
+                if(t!=null){
+                    return t;
+                }
+            }catch(Exception e){
+                LOG.log(Level.FINE, e, () -> "Could not parse config value: " + textValue);
+            }
+        }
+        if(String.class.equals(type) || CharSequence.class.equals(type)){
+            return (T)textValue;
+        }
+        throw new IllegalArgumentException("Uncovertible config value: '" + textValue + "', target type: " + type.getTypeName());
     }
 
     /**

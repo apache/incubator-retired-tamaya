@@ -37,7 +37,9 @@ public class InstantConverter implements Converter<Instant> {
     @Override
     public Instant convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), Instant.now().toString());
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), Instant.now().toString());
+        }
         try{
             return Instant.parse(value);
         }catch(Exception e){

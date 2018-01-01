@@ -37,7 +37,9 @@ public class BooleanConverter implements Converter<Boolean> {
     @Override
     public Boolean convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "yes (ignore case)", "y (ignore case)", "true (ignore case)", "t (ignore case)", "1", "no (ignore case)", "n (ignore case)", "false (ignore case)", "f (ignore case)", "0");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "yes (ignore case)", "y (ignore case)", "true (ignore case)", "t (ignore case)", "1", "no (ignore case)", "n (ignore case)", "false (ignore case)", "f (ignore case)", "0");
+        }
         String ignoreCaseValue = Objects.requireNonNull(value)
                                         .trim()
                                         .toLowerCase(Locale.ENGLISH);

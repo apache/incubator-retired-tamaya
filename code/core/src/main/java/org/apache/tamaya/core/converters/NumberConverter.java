@@ -47,8 +47,10 @@ public class NumberConverter implements Converter<Number> {
     @Override
     public Number convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "<double>, <long>", "0x (hex)", "0X... (hex)", "POSITIVE_INFINITY",
-                "NEGATIVE_INFINITY", "NAN");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "<double>, <long>", "0x (hex)", "0X... (hex)", "POSITIVE_INFINITY",
+                    "NEGATIVE_INFINITY", "NAN");
+        }
 
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)) {

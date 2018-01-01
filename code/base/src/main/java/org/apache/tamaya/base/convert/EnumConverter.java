@@ -52,7 +52,10 @@ public class EnumConverter<T> implements Converter<T> {
 
     @Override
     public T convert(String value) {
-        ConversionContext.getContext().addSupportedFormats(getClass(),"<enumValue>");
+        ConversionContext context =  ConversionContext.getContext();
+        if(context!=null){
+            context.addSupportedFormats(getClass(),"<enumValue>");
+        }
         try {
             return (T) factory.invoke(null, value);
         } catch (InvocationTargetException | IllegalAccessException e) {

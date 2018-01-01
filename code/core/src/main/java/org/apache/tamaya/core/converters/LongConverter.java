@@ -51,7 +51,9 @@ public class LongConverter implements Converter<Long> {
     @Override
     public Long convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "<long>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "<long>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
+        }
 
         String trimmed = Objects.requireNonNull(value).trim();
             switch (trimmed.toUpperCase(Locale.ENGLISH)) {

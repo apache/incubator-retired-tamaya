@@ -50,7 +50,9 @@ public class DoubleConverter implements Converter<Double> {
     @Override
     public Double convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "<double>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE", "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "<double>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE", "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":

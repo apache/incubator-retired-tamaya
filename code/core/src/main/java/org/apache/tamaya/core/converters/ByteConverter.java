@@ -52,7 +52,9 @@ public class ByteConverter implements Converter<Byte> {
     @Override
     public Byte convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(),"<byte>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(),"<byte>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":

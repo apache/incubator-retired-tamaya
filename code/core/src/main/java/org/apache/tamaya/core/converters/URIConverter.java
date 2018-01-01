@@ -41,7 +41,9 @@ public class URIConverter implements Converter<URI> {
         if(value==null || value.isEmpty()){
             return null;
         }
-        context.addSupportedFormats(getClass(), "<uri> -> new URI(uri)");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "<uri> -> new URI(uri)");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return new URI(trimmed);

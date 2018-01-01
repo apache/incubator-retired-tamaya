@@ -58,7 +58,7 @@ public class ConversionContext {
      * @param builder the builder, not {@code null}.
      */
     protected ConversionContext(Builder builder){
-        this.key = Objects.requireNonNull(builder.key);
+        this.key = builder.key;
         this.annotatedElement = builder.annotatedElement;
         this.targetType = Objects.requireNonNull(builder.targetType, "Target type required.");
         this.supportedFormats.addAll(builder.supportedFormats);
@@ -168,7 +168,7 @@ public class ConversionContext {
          * @param targetType the target type
          */
         public Builder(Config configuration, String key, Type targetType){
-            this.key = Objects.requireNonNull(key, "Key required");
+            this.key = key;
             this.configuration = configuration;
             this.targetType = Objects.requireNonNull(targetType, "Target type required.");
         }

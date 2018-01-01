@@ -46,7 +46,9 @@ public class CurrencyConverter implements Converter<Currency> {
     @Override
     public Currency convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "<currencyCode>, using Locale.ENGLISH", "<numericValue>", "<locale>");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "<currencyCode>, using Locale.ENGLISH", "<numericValue>", "<locale>");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));

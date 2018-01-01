@@ -43,7 +43,9 @@ public class CharConverter implements Converter<Character> {
     @Override
     public Character convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(),"\\'<char>\\'", "<char>", "<charNum>");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(),"\\'<char>\\'", "<char>", "<charNum>");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.isEmpty()){
             return null;

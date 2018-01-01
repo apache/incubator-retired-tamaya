@@ -38,8 +38,10 @@ public class DurationConverter implements Converter<Duration> {
     @Override
     public Duration convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(),
-                Duration.of(1234, ChronoUnit.SECONDS).toString());
+        if(context!=null) {
+            context.addSupportedFormats(getClass(),
+                    Duration.of(1234, ChronoUnit.SECONDS).toString());
+        }
         try {
             return Duration.parse(value);
         }catch(Exception e){

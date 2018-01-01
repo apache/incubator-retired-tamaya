@@ -49,7 +49,9 @@ public class BigIntegerConverter implements Converter<BigInteger> {
     @Override
     public BigInteger convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
             LOG.finest("Parsing Hex value to BigInteger: " + value);

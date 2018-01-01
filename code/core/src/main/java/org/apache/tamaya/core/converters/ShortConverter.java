@@ -52,7 +52,9 @@ public class ShortConverter implements Converter<Short> {
     @Override
     public Short convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "short", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "short", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":

@@ -41,7 +41,9 @@ public class URLConverter implements Converter<URL> {
         if(value==null || value.isEmpty()){
             return null;
         }
-        context.addSupportedFormats(getClass(),"<URL>");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(),"<URL>");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return new URL(trimmed);

@@ -44,7 +44,9 @@ public class ClassConverter implements Converter<Class<?>> {
         if(value==null){
             return null;
         }
-        context.addSupportedFormats(getClass(),"<fullyQualifiedClassName>");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(),"<fullyQualifiedClassName>");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         try{
             return Class.forName(trimmed, false, Thread.currentThread().getContextClassLoader());

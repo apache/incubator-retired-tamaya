@@ -37,7 +37,9 @@ public class LocalDateTimeConverter implements Converter<LocalDateTime> {
     @Override
     public LocalDateTime convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), LocalDateTime.now().toString());
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), LocalDateTime.now().toString());
+        }
         try{
             return LocalDateTime.parse(value);
         }catch(Exception e){

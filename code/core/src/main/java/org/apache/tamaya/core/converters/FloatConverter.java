@@ -50,7 +50,9 @@ public class FloatConverter implements Converter<Float> {
     @Override
     public Float convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), "<float>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE", "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), "<float>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE", "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "POSITIVE_INFINITY":

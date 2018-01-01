@@ -37,7 +37,9 @@ public class OffsetDateTimeConverter implements Converter<OffsetDateTime> {
     @Override
     public OffsetDateTime convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), OffsetDateTime.now().toString());
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), OffsetDateTime.now().toString());
+        }
         try{
             return OffsetDateTime.parse(value);
         }catch(Exception e){

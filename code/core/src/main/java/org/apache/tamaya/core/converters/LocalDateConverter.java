@@ -37,7 +37,9 @@ public class LocalDateConverter implements Converter<LocalDate> {
     @Override
     public LocalDate convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), LocalDate.now().toString());
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), LocalDate.now().toString());
+        }
         try{
             return LocalDate.parse(value);
         }catch(Exception e){

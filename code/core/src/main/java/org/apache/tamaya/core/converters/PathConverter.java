@@ -42,7 +42,9 @@ public class PathConverter implements Converter<Path> {
         if(value==null || value.isEmpty()){
             return null;
         }
-        context.addSupportedFormats(getClass(),"<File>");
+        if(context!=null) {
+            context.addSupportedFormats(getClass(),"<File>");
+        }
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return FileSystems.getDefault().getPath(value);

@@ -37,7 +37,9 @@ public class LocalTimeConverter implements Converter<LocalTime> {
     @Override
     public LocalTime convert(String value) {
         ConversionContext context = ConversionContext.getContext();
-        context.addSupportedFormats(getClass(), LocalTime.now().toString());
+        if(context!=null) {
+            context.addSupportedFormats(getClass(), LocalTime.now().toString());
+        }
         try{
             return LocalTime.parse(value);
         }catch(Exception e){
