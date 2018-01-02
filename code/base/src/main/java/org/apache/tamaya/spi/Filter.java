@@ -40,11 +40,12 @@ public interface Filter {
      *     <li>reentrant</li>
      *     <li>thread-safe</li>
      * </ul>
+     * @param key the key, not null.
      * @param value the value to be filtered, which also can be {@code null} if removed by another filter.
      * @return the filtered value, or {@code null} if the value should be removed alltogether.
      * @see ConfigValue
      * @see ConfigValueBuilder
      */
-    ConfigValue filterProperty(ConfigValue value);
+    String filterProperty(String key, String value);
 
 }

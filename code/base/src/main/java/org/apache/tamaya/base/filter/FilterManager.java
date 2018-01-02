@@ -173,22 +173,12 @@ public class FilterManager {
     /**
      * Filters a single value.
      * @param value the raw value, not {@code null}.
-     * @return the filtered value, including {@code null}.
-     */
-    public ConfigValue filterValue(ConfigValue value) {
-        FilterContext filterContext = new FilterContext(value, null);
-        return filterValue(filterContext);
-    }
-
-    /**
-     * Filters a single value.
-     * @param value the raw value, not {@code null}.
      * @param config the config
      * @return the filtered value, including {@code null}.
      */
-    public ConfigValue filterValue(ConfigValue value, Config config) {
-        FilterContext filterContext = new FilterContext(value, config);
-        return filterValue(filterContext);
+    public String filterValue(String key, String value, Config config) {
+        FilterContext filterContext = new FilterContext(config);
+        return filterValue(key, value, filterContext);
     }
 
     /**
@@ -197,14 +187,14 @@ public class FilterManager {
      * @param config the config
      * @return the filtered value, inclusing null.
      */
-    public Map<String, String> applyFilters(Map<String, String> rawProperties, Config config) {
-        Map<String, String> result = new HashMap<>();
+    public String applyFilters(String value, Map<String, String> rawProperties, Config config) {
+        String result = value;
         // Apply filters to values, prevent values filtered to null!
         for (Map.Entry<String, String> entry : rawProperties.entrySet()) {
-            FilterContext filterContext = new FilterContext(ConfigValue.of(entry.getKey(), rawProperties), config);
-            ConfigValue filtered = filterValue(filterContext);
-            if(filtered!=null){
-                result.putAll(filtered.asMap());
+            FilterContext filterContext = new FilterContext(rawProperties, config);
+            String filtered = filterValue(entry.getKey(), result, filterContext);
+            if(result!=null){
+                result = filtered;
             }
         }
         return result;
@@ -215,13 +205,12 @@ public class FilterManager {
      * @param context the filter context, not {@code null}.
      * @return the filtered value.
      */
-    private ConfigValue filterValue(FilterContext context) {
-        ConfigValue inputValue = context.getProperty();
-        ConfigValue filteredValue = inputValue;
+    private String filterValue(String key, String inputValue, FilterContext context) {
+        String filteredValue = inputValue;
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             int changes = 0;
             for (Filter filter :filters) {
-                filteredValue = filter.filterProperty(inputValue);
+                filteredValue = filter.filterProperty(key, inputValue);
                 if (filteredValue != null && !filteredValue.equals(inputValue)) {
                     changes++;
                     LOG.finest("Filter - " + inputValue + " -> " + filteredValue + " by " + filter);

@@ -85,13 +85,13 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
         Objects.requireNonNull(key, "Key must not be null.");
         Objects.requireNonNull(targetType, "Target type must not be null.");
 
-        ConfigValue value = configSourceManager.evaluteRawValue(key);
-        if(value==null || value.getValue()==null){
+        String value = configSourceManager.evaluteRawValue(key);
+        if(value==null){
             return null;
         }
-        value = filterManager.filterValue(value, this);
+        value = filterManager.filterValue(key, value, this);
         if(value!=null){
-            return (T)converterManager.convertValue(value.getValue(), targetType);
+            return (T)converterManager.convertValue(value, targetType);
         }
         return null;
     }
@@ -113,7 +113,7 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
      */
     @Override
     public Set<String> getPropertyNames() {
-        Map<String, ConfigValue> filtered = configSourceManager.evaluateRawValues();
+        Map<String, String> filtered = configSourceManager.evaluateRawValues();
         return filtered.keySet();
     }
 

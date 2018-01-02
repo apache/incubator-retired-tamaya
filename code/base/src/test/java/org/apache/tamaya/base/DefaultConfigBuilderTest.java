@@ -76,8 +76,8 @@ public class DefaultConfigBuilderTest {
 
     @Test
     public void addPropertyFilters_Array() throws Exception {
-        Filter filter1 = (value) -> value;
-        Filter filter2 = (value) -> value;
+        Filter filter1 = (key,value) -> value;
+        Filter filter2 = (key,value) -> value;
         DefaultConfigBuilder b = new DefaultConfigBuilder();
         b.withFilters(filter1, filter2);
         ConfigContext ctx = b.getConfigContext();
@@ -92,8 +92,8 @@ public class DefaultConfigBuilderTest {
 
     @Test
     public void removePropertyFilters_Array() throws Exception {
-        Filter filter1 = (value) -> value;
-        Filter filter2 = (value) -> value;
+        Filter filter1 = (key,value) -> value;
+        Filter filter2 = (key,value) -> value;
         TamayaConfigBuilder b = new DefaultConfigBuilder()
                 .withFilters(filter1, filter2);
         ConfigContext ctx = b.getConfigContext();

@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.base.filter;
 
-import org.apache.tamaya.spi.ConfigValue;
 import org.apache.tamaya.spi.Filter;
 
 import javax.config.Config;
@@ -26,14 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+
 /**
  * A filter context containing all the required values for implementing filtering.
  *
  * @see Filter
  */
 public final class FilterContext {
-    /** The key. */
-    private final ConfigValue property;
 
     private Map<String,String> configEntries = new HashMap<>();
 
@@ -56,18 +54,15 @@ public final class FilterContext {
      * Creates a new FilterContext, for filtering of a multi value access
      * using {@link Config#getPropertyNames()} .
      *
-     * @param value the value under evaluation, not {@code null}.
      * @param configEntries the raw configuration data available in the
      *                      current evaluation context, not {@code null}.
      * @param config the current config, not {@code null}.
      */
-    public FilterContext(ConfigValue value, Map<String,String> configEntries, Config config) {
-        Objects.requireNonNull(value, "Value must not be null.");
+    public FilterContext(Map<String,String> configEntries, Config config) {
         Objects.requireNonNull(configEntries, "Initial configuration entries must be not null.");
         Objects.requireNonNull(config, "config must be not null.");
 
         this.singlePropertyScoped = false;
-        this.property = Objects.requireNonNull(value);
         this.configEntries.putAll(configEntries);
         this.config = config;
     }
@@ -75,12 +70,10 @@ public final class FilterContext {
     /**
      * Creates a new FilterContext, for filtering of a single value access
      * using {@link Config#getPropertyNames()}.
-     * @param value the value under evaluation, not {@code null}.
      * @param config the current config, not {@code null}.
      */
-    public FilterContext(ConfigValue value, Config config) {
+    public FilterContext(Config config) {
         this.config = config;
-        this.property = Objects.requireNonNull(value, "Value must not be null.");
         this.singlePropertyScoped = true;
     }
 
@@ -90,17 +83,6 @@ public final class FilterContext {
      */
     public Config getConfig(){
         return config;
-    }
-
-    /**
-     * Get the property value under evaluation. This information is very useful to evaluate additional metadata needed to determine/
-     * control further aspects of the conversion.
-     *
-     * @return the key. This may be null in case where a default value has to be converted and no unique underlying
-     * key/value configuration is present.
-     */
-    public ConfigValue getProperty() {
-        return property;
     }
 
     /**
@@ -138,7 +120,7 @@ public final class FilterContext {
 
     @Override
     public String toString() {
-        return "FilterContext{property='" + property + "', configEntries=" + configEntries.keySet() + '}';
+        return "FilterContext{configEntries=" + configEntries.keySet() + '}';
     }
 
 }

@@ -306,9 +306,9 @@ public class ConfigSourceManager {
      * @param key the key, not null.
      * @return the value, before filtering is applied.
      */
-    public ConfigValue evaluteRawValue(String key) {
+    public String evaluteRawValue(String key) {
         List<ConfigSource> configSources = getSources();
-        ConfigValue unfilteredValue = null;
+        String unfilteredValue = null;
         ConfigValueCombinationPolicy combinationPolicy = getConfigValueCombinationPolicy();
         for (ConfigSource propertySource : configSources) {
             unfilteredValue = combinationPolicy.collect(unfilteredValue, key, propertySource);
@@ -316,17 +316,17 @@ public class ConfigSourceManager {
         return unfilteredValue;
     }
 
-    public Map<String, ConfigValue> evaluateRawValues() {
+    public Map<String, String> evaluateRawValues() {
         List<ConfigSource> configSources = getSources();
         ConfigValueCombinationPolicy combinationPolicy = getConfigValueCombinationPolicy();
-        Map<String, ConfigValue> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         for (ConfigSource propertySource : configSources) {
             for (Map.Entry<String,String> propEntry: propertySource.getProperties().entrySet()) {
-                ConfigValue unfilteredValue = result.get(propEntry.getKey());
+                String unfilteredValue = result.get(propEntry.getKey());
                 unfilteredValue = combinationPolicy.
                         collect(unfilteredValue, propEntry.getKey(), propertySource);
                 if(unfilteredValue!=null){
-                    result.put(unfilteredValue.getKey(), unfilteredValue);
+                    result.put(propEntry.getKey(), unfilteredValue);
                 }
             }
         }

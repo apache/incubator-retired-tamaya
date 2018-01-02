@@ -30,12 +30,10 @@ import javax.annotation.Priority;
 @Priority(100)
 public class TestFilter implements Filter {
     @Override
-    public ConfigValue filterProperty(ConfigValue valueToBeFiltered) {
+    public String filterProperty(String key, String valueToBeFiltered) {
         FilterContext context = FilterContext.getContext();
-        if("name4".equals(valueToBeFiltered.getKey())){
-            return valueToBeFiltered.toBuilder()
-                    .setValue(valueToBeFiltered.getValue() + "(filtered)")
-                    .build();
+        if("name4".equals(key)){
+            return valueToBeFiltered + "(filtered)";
         }
         return valueToBeFiltered;
     }

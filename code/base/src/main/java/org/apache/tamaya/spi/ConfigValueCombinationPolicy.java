@@ -38,8 +38,7 @@ public interface ConfigValueCombinationPolicy {
     ConfigValueCombinationPolicy DEFAULT_OVERRIDING_POLICY = (currentValue, key, propertySource) -> {
         String value = propertySource.getValue(key);
         String meta = propertySource.getValue(key+"[meta]");
-        return value!=null? ConfigValue.builder(key, value).setMetaEntry(meta)
-                .build():currentValue;
+        return value!=null? value:currentValue;
     };
 
     /**
@@ -67,6 +66,6 @@ public interface ConfigValueCombinationPolicy {
      *                       {@code currentValue} should be returned in almost all cases.
      * @return the value to be used for future evaluation, including metadata entries.
      */
-    ConfigValue collect(ConfigValue currentValue, String key, ConfigSource propertySource);
+        String collect(String currentValue, String key, ConfigSource propertySource);
 
 }

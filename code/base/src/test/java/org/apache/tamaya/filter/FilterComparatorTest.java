@@ -61,14 +61,14 @@ public class FilterComparatorTest {
 
     @Priority(1)
     private static class FilterA implements Filter {
-        public ConfigValue filterProperty(ConfigValue value) {
+        public String filterProperty(String key, String value) {
             throw new RuntimeException("Not implemented or look at me!");
         }
     }
 
     @Priority(2)
     private static class FilterB implements Filter {
-        public ConfigValue filterProperty(ConfigValue value) {
+        public String filterProperty(String key, String value) {
             throw new RuntimeException("Not implemented or look at me!");
         }
     }

@@ -31,16 +31,14 @@ import javax.config.ConfigProvider;
 @Priority(200)
 public class TestRemovingFilter implements Filter {
     @Override
-    public ConfigValue filterProperty(ConfigValue valueToBeFiltered) {
+    public String filterProperty(String key, String valueToBeFiltered) {
         FilterContext context = FilterContext.getContext();
 
-        if("name5".equals(valueToBeFiltered.getKey())){
+        if("name5".equals(key)){
             return null;
         }
-        else if("name3".equals(valueToBeFiltered.getKey())){
-            return valueToBeFiltered.toBuilder().setValue(
-                    "Mapped to name: " + ConfigProvider.getConfig().getValue("name", String.class))
-                    .build();
+        else if("name3".equals(key)){
+            return "Mapped to name: " + ConfigProvider.getConfig().getValue("name", String.class);
         }
         return valueToBeFiltered;
     }
