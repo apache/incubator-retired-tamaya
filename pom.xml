@@ -331,10 +331,11 @@
                             <param>org.apache.tamaya.*</param>
                         </targetClasses>
                         <excludedClasses>
+                            <param>org.apache.tamaya.core.internal.BannerManager</param>
                             <param>org.apache.tamaya.core.internal.BannerManagerTest</param>
                         </excludedClasses>
 			                  <excludedMethods>
-			                      <param>toString</param>
+			                  <param>toString</param>
                         </excludedMethods>
                         <verbose>true</verbose>
                     </configuration>
