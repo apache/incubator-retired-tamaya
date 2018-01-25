@@ -22,9 +22,16 @@ More information on Tamaya can be found on the [homepage of Apache Tamaya](https
 The Apache Tamaya project is built with [Maven 3](https://maven.apache.org/) and [Java 8](https://java.sun.com/), so you need JDK >=1.8 and a reasonable version of maven
 installed on your computer.
 
+## Local builds
 
 Then you can build Tamaya via:
 ```
 $ export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
 $ mvn
 ```
+
+### Travis / CI
+
+Apart from integration into ASF CI there's a travis build:
+
+[![Build Status](https://travis-ci.org/apache/incubator-tamaya.svg?branch=master)](https://travis-ci.org/apache/incubator-tamaya/branches)
