@@ -30,6 +30,7 @@ import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
 import java.lang.reflect.Type;
 import java.util.*;
+import javax.config.spi.ConfigBuilder;
 
 /**
  * Default implementation of {@link TamayaConfigBuilder}.
@@ -246,6 +247,12 @@ public class DefaultConfigBuilder implements TamayaConfigBuilder {
     }
 
     @Override
+    public <T> ConfigBuilder withConverter(Class<T> type, int i, Converter<T> cnvrtr) {
+        this.converterManager.addConverter(type, cnvrtr);
+        return this;
+    }
+
+    @Override
     public TamayaConfigBuilder sortFilter(Comparator<Filter> comparator) {
         this.filterManager.sortFilter(comparator);
         return this;
@@ -302,4 +309,5 @@ public class DefaultConfigBuilder implements TamayaConfigBuilder {
             }
         };
     }
+
 }

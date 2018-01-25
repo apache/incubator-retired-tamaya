@@ -205,13 +205,20 @@
         <module>distribution</module>
     </modules>
 
+    <repositories>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <!-- Config API -->
             <dependency>
-                <groupId>javax.config</groupId>
-                <artifactId>javaconfig-api</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <groupId>com.github.eclipse</groupId>
+                <artifactId>ConfigJSR</artifactId>
+                <version>6280ed4149055eee9a5f583dda0d75b2a41c4498</version>
             </dependency>
             <!-- test support -->
             <dependency>
@@ -302,8 +309,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>javax.config</groupId>
-            <artifactId>javaconfig-api</artifactId>
+            <groupId>com.github.eclipse</groupId>
+            <artifactId>ConfigJSR</artifactId>
+            <version>6280ed4149055eee9a5f583dda0d75b2a41c4498</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

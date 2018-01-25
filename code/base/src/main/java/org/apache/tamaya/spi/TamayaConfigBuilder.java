@@ -326,7 +326,6 @@ public interface TamayaConfigBuilder extends ConfigBuilder, ConfigContextSupplie
     @Override
     TamayaConfigBuilder withConverters(Converter<?>... converters);
 
-    @Override
     <T> TamayaConfigBuilder withConverter(Class<T> type, Converter<T> converter);
 
 }
