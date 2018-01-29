@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>{@link PropertySource} to access environment variables via Tamaya
+ * <p>{@link org.apache.tamaya.spi.PropertySource} to access environment variables via Tamaya
  * which are set via {@code export VARIABLE=value} on UNIX systems or
  * {@code set VARIABLE=value} on Windows systems.</p>
  *
@@ -50,9 +50,9 @@ import java.util.Map;
  * PropertyValue color = ps.get("COLOR");
  * </pre>
  *
- * <h1>Application specific environmet variables with prefix</h1>
+ * <h1>Application specific environment variables with prefix</h1>
  *
- * <p>Given the case where to instances of the same application are running on
+ * <p>Given the case where two instances of the same application are running on
  * a single machine but need different values for the environment variable
  * {@code CUSTOMER}. The {@linkplain EnvironmentPropertySource} allows you
  * to prefix the environment variable with an application specific prefix
@@ -64,7 +64,7 @@ import java.util.Map;
  * $ export b78.CUSTOMER=luna
  * </pre>
  *
- * <p>Given an environment with these tree variables the application running
+ * <p>Given an environment with these three variables the application running
  * for the customer called Moon could be started with the following command:</p>
  *
  * <pre>
@@ -84,8 +84,8 @@ import java.util.Map;
  *
  * <h1>Disabling the access to environment variables</h1>
  *
- * <p>The access to environment variables could be simply
- * disabled by the setting the systemproperty {@code tamaya.envprops.disable}
+ * <p>The access to environment variables can simply be
+ * disabled by setting the systemproperty {@code tamaya.envprops.disable}
  * or {@code tamaya.defaults.disable} to {@code true}.</p>
  */
 public class EnvironmentPropertySource extends BasePropertySource {
