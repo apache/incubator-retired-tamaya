@@ -31,7 +31,7 @@ import java.util.Map;
  * Builders can be obtained in exactly two ways:
  * <ol>
  *     <li>By accessing a preinitialized builder from an existing {@link Configuration},
- *     by calling {@link org.apache.tamaya.spi.Configuration#toBuilder()}.</li>
+ *     by calling {@link Configuration#toBuilder()}.</li>
  *     <li>By accessing an empty builder instance from
  *     {@link org.apache.tamaya.ConfigurationProvider#getConfigurationBuilder()}.</li>
  * </ol>
