@@ -41,6 +41,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
 
     /**
      * Creates a new builder instance.
+     * @param context the configuration context to be used, not null.
      */
     public DefaultConfigurationBuilder(ConfigurationContext context) {
         this.contextBuilder = new DefaultConfigurationContextBuilder(context);
@@ -56,6 +57,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
 
     /**
      * Allows to set configuration context during unit tests.
+     * @param configuration the configuration to be used, not null.
      */
     public ConfigurationBuilder setConfiguration(Configuration configuration) {
         this.contextBuilder.setContext(configuration.getContext());
@@ -75,6 +77,12 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
         return this;
     }
 
+    /**
+     * Adds the given sources as property sources.
+     *
+     * @param sources property sources to add.
+     * @return the current configuration builder.
+     */
     @Override
     public ConfigurationBuilder addPropertySources(Collection<PropertySource> sources){
         this.contextBuilder.addPropertySources(sources);
