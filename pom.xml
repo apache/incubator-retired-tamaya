@@ -61,7 +61,7 @@
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
         <hamcrest.version>2.0.0.0</hamcrest.version>
-        <javadoc.version>2.10.4</javadoc.version>
+        <javadoc.version>3.0.0</javadoc.version>
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.26</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
