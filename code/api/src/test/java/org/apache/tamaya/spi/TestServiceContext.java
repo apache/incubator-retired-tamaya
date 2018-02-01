@@ -37,7 +37,7 @@ public final class TestServiceContext implements ServiceContext {
 
     @Override
     public int ordinal() {
-        return 1;
+        return 5;
     }
 
     @SuppressWarnings("rawtypes")

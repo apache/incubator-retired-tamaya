@@ -57,9 +57,8 @@ public final class ServiceContextManager {
         try {
             int highestOrdinal = 0;
             for (ServiceContext serviceContext : ServiceLoader.load(ServiceContext.class)) {
-                if(highestServiceContext==null){
-                    highestServiceContext = serviceContext;
-                }else if (serviceContext.ordinal() > highestOrdinal) {
+                if (highestServiceContext == null
+                        || serviceContext.ordinal() > highestOrdinal) {
                     highestServiceContext = serviceContext;
                     highestOrdinal = serviceContext.ordinal();
                 }
