@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spi;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
@@ -25,6 +27,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.junit.Test;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,22 +37,29 @@ import static org.junit.Assert.*;
  * Tests for {@link ConversionContext}, created by atsticks on 20.08.16.
  */
 public class ConversionContextTest {
+
     @Test
-    public void getKey() throws Exception {
+    public void getSetKey() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("getKey", TypeLiteral.of(String.class)).build();
         assertEquals("getKey", ctx.getKey());
+        ctx = new ConversionContext.Builder("getKey", TypeLiteral.of(String.class)).setKey("setKey").build();
+        assertEquals("setKey", ctx.getKey());
     }
 
     @Test
-    public void getTargetType() throws Exception {
+    public void getSetTargetType() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("getTargetType", TypeLiteral.of(String.class)).build();
         assertEquals(TypeLiteral.of(String.class), ctx.getTargetType());
+        ctx = new ConversionContext.Builder("setTargetType", TypeLiteral.of(String.class)).setTargetType(TypeLiteral.of(Integer.class)).build();
+        assertEquals(TypeLiteral.of(Integer.class), ctx.getTargetType());
     }
 
     @Test
-    public void getAnnotatedElement() throws Exception {
+    public void getSetAnnotatedElement() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("getAnnotatedElement", TypeLiteral.of(List.class)).build();
         assertNull(ctx.getAnnotatedElement());
+        ctx = new ConversionContext.Builder(TypeLiteral.of(List.class)).setAnnotatedElement(MyAnnotatedElement).build();
+        assertEquals(MyAnnotatedElement, ctx.getAnnotatedElement());
     }
 
     @Test
@@ -62,35 +72,68 @@ public class ConversionContextTest {
 
     @Test
     public void testSupportedFormats() throws Exception {
-        ConversionContext ctx = new ConversionContext.Builder("getAnnotatedElement", TypeLiteral.of(List.class))
-                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn").build();
-        assertTrue(ctx.getSupportedFormats().contains("0.0.0.0/nnn (MyConverter)"));
+        ArrayList<String> readable = new ArrayList<>(2);
+        readable.add("0.0.0.0/nnn (MyConverter)");
+        readable.add("x.x.x.x/yyy (MyConverter)");
+        ArrayList<String> writeable = new ArrayList<>(2);
+        writeable.add("0.0.0.0/nnn");
+        writeable.add("x.x.x.x/yyy");
+
+        ConversionContext ctx = new ConversionContext.Builder("getSupportedFormats", TypeLiteral.of(List.class))
+                .addSupportedFormats(MyConverter.class, writeable.get(0), writeable.get(1)).build();
+        assertTrue(ctx.getSupportedFormats().containsAll(readable));
+        assertTrue(ctx.getSupportedFormats().indexOf(readable.get(0))
+                < ctx.getSupportedFormats().indexOf(readable.get(1)));
+
+        ctx = new ConversionContext.Builder(TypeLiteral.of(List.class)).build();
+        assertTrue(ctx.getSupportedFormats().isEmpty());
+        ctx.addSupportedFormats(MyConverter.class, writeable.get(0), writeable.get(1));
+        assertTrue(ctx.getSupportedFormats().containsAll(readable));
+        assertTrue(ctx.getSupportedFormats().indexOf(readable.get(0))
+                < ctx.getSupportedFormats().indexOf(readable.get(1)));
     }
 
     @Test
     public void testToString() throws Exception {
-        ConversionContext ctx = new ConversionContext.Builder("getAnnotatedElement", TypeLiteral.of(List.class))
-                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn").build();
-        assertEquals("ConversionContext{configuration=null, key='getAnnotatedElement', targetType=TypeLiteral{type=interface java.util.List}, annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter)]}", ctx.toString());
+        ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
+                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy").build();
+        assertEquals("ConversionContext{configuration=null, key='toString', targetType=TypeLiteral{type=interface java.util.List}, annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]}", ctx.toString());
     }
 
     @Test
-    public void getConfigurationContext() throws Exception {
+    public void testGetConfigurationContext() throws Exception {
         ConfigurationContext context = new MyConfigurationContext();
-        ConversionContext ctx = new ConversionContext.Builder("getAnnotatedElement", TypeLiteral.of(List.class))
+        ConversionContext ctx = new ConversionContext.Builder("getConfigurationContext", TypeLiteral.of(List.class))
                 .setConfigurationContext(context).build();
         assertEquals(context, ctx.getConfigurationContext());
     }
 
+    private static final AnnotatedElement MyAnnotatedElement = new AnnotatedElement() {
+        @Override
+        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
 
-    private static final class MyConverter implements PropertyConverter<InetAddress>{
+        @Override
+        public Annotation[] getAnnotations() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Annotation[] getDeclaredAnnotations() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    };
+
+    private static final class MyConverter implements PropertyConverter<InetAddress> {
+
         @Override
         public InetAddress convert(String value, ConversionContext context) {
             return null;
         }
     }
 
-    private static final class MyConfigurationContext implements ConfigurationContext{
+    private static final class MyConfigurationContext implements ConfigurationContext {
 
         @Override
         public void addPropertySources(PropertySource... propertySources) {
@@ -138,7 +181,7 @@ public class ConversionContextTest {
         }
     }
 
-    private static final class MyConfiguration implements Configuration{
+    private static final class MyConfiguration implements Configuration {
 
         @Override
         public String get(String key) {
