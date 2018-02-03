@@ -133,11 +133,7 @@ public abstract class BaseConfigSource implements ConfigSource{
     @Override
     public String getValue(String key) {
         Map<String,String> properties = getProperties();
-        String val = properties.get(key);
-        if(val==null){
-            return null;
-        }
-        return val;
+        return properties.get(key);
     }
 
     @Override

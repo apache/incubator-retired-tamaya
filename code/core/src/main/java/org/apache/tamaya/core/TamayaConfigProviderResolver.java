@@ -19,9 +19,7 @@
 package org.apache.tamaya.core;
 
 import org.apache.tamaya.base.DefaultConfigBuilder;
-import org.apache.tamaya.spi.ConfigContext;
-import org.apache.tamaya.spi.Filter;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.*;
 import org.osgi.service.component.annotations.Component;
 
 import javax.config.Config;
@@ -29,6 +27,7 @@ import javax.config.spi.ConfigBuilder;
 import javax.config.spi.ConfigProviderResolver;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -38,6 +37,8 @@ import java.util.logging.Logger;
  */
 @Component(service = ConfigProviderResolver.class)
 public class TamayaConfigProviderResolver extends ConfigProviderResolver {
+
+    private static final Logger LOG = Logger.getLogger(TamayaConfigProviderResolver.class.getName());
 
     private Map<ClassLoader, Config> configs = new ConcurrentHashMap<>();
 
@@ -50,13 +51,24 @@ public class TamayaConfigProviderResolver extends ConfigProviderResolver {
     public Config getConfig(ClassLoader loader) {
         Config config = this.configs.get(loader);
         if(config==null){
-            config = new DefaultConfigBuilder()
-                    .addDiscoveredFilters()
-                    .addDiscoveredConverters()
-                    .addDefaultSources()
-                    .addDiscoveredSources()
-                    .build();
-            this.configs.put(loader, config);
+            ConfigFactory factory = ServiceContextManager.getServiceContext().getService(ConfigFactory.class);
+            if(factory!=null){
+                try {
+                    config = factory.createConfig(loader);
+                }catch(Exception e){
+                    LOG.log(Level.SEVERE, "Config factory threw exception: " + factory, e);
+                }
+            }
+            if(config==null) {
+                LOG.finest(() -> "Creating default config for classloader: " + loader);
+                config = new DefaultConfigBuilder()
+                        .addDiscoveredFilters()
+                        .addDiscoveredConverters()
+                        .addDefaultSources()
+                        .addDiscoveredSources()
+                        .build();
+            }
+            registerConfig(config, loader);
         }
         return config;
     }
@@ -72,10 +84,9 @@ public class TamayaConfigProviderResolver extends ConfigProviderResolver {
             classLoader = ServiceContext.defaultClassLoader();
         }
         if(configs.containsKey(classLoader)){
-            Logger.getLogger(getClass().getName())
-                    .warning("Replacing existing config for classloader: " + classLoader);
-//            throw new IllegalArgumentException("Already a config registered with classloader: " + classLoader);
+            LOG.warning("Replacing existing config for classloader: " + classLoader);
         }
+        LOG.info( "Registering config for classloader: " + classLoader + ": " + config);
         this.configs.put(classLoader, config);
     }
 
@@ -83,10 +94,26 @@ public class TamayaConfigProviderResolver extends ConfigProviderResolver {
     public void releaseConfig(Config config) {
         for(Map.Entry<ClassLoader, Config> en: this.configs.entrySet()){
             if(en.getValue().equals(config)){
+                LOG.info( "Releasing config for classloader: " + en.getKey());
                 this.configs.remove(en.getKey());
                 return;
             }
         }
+    }
+
+    /**
+     * Registering an implementation allows to define the way the default configurations are created if accessed the
+     * first time.
+     */
+    @FunctionalInterface
+    public interface ConfigFactory{
+
+        /**
+         * Create a new configuration to be used for the given classloader.
+         * @param classLoader the classloader, not null.
+         * @return the new config to be used, or null.
+         */
+        Config createConfig(ClassLoader classLoader);
     }
 
 }
