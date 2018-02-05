@@ -66,7 +66,7 @@ public class OSGIServiceContext implements ServiceContext{
             this.osgiServiceLoader.getBundleContext().registerService(
                     serviceType.getName(),
                     service,
-                    new Hashtable<String, Object>());
+                    new Hashtable<>());
             return service;
         }
         return null;
@@ -104,7 +104,7 @@ public class OSGIServiceContext implements ServiceContext{
         List<T> services = new ArrayList<>(refs.size());
         try {
             refs.addAll(this.osgiServiceLoader.getBundleContext().getServiceReferences(serviceType, null));
-            Collections.sort(refs, REF_COMPARATOR);
+            refs.sort(REF_COMPARATOR);
             for(ServiceReference<T> ref:refs){
                 T service = osgiServiceLoader.getBundleContext().getService(ref);
                 if(service!=null) {

@@ -164,9 +164,7 @@ public class BuildableConfigSource implements ConfigSource{
          * @return the builder
          */
         public Builder withProperty(Map<String, String> properties, String source) {
-            properties.forEach((k,v) -> {
-                withProperty(k, v, source);
-            });
+            properties.forEach((k,v) -> withProperty(k, v, source));
             return this;
         }
 
@@ -177,9 +175,7 @@ public class BuildableConfigSource implements ConfigSource{
          * @return the builder
          */
         public Builder withProperties(Map<String, String> properties) {
-            properties.forEach((k,v) -> {
-                withProperty(k, v);
-            });
+            properties.forEach(this::withProperty);
             return this;
         }
 

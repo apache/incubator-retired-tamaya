@@ -152,12 +152,12 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
 
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder("Configuration{\n")
-            .append(this.configSourceManager).append('\n')
-            .append(this.filterManager).append('\n')
-            .append(this.converterManager).append('\n')
-            .append('}');
-        return b.toString();
+        String b = "Configuration{\n" +
+                this.configSourceManager + '\n' +
+                this.filterManager + '\n' +
+                this.converterManager + '\n' +
+                '}';
+        return b;
     }
 
 }

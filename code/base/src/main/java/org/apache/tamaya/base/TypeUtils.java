@@ -99,7 +99,7 @@ public final class TypeUtils {
      *
      * @return the actual type represented by defined class, or an empty array.
      */
-    public static final Type[] getActualTypeArguments(Type type) {
+    public static Type[] getActualTypeArguments(Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
             return pt.getActualTypeArguments();

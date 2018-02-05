@@ -32,13 +32,9 @@ public interface PropertyValueCombinationPolicy {
      * Default overriding collector, where each existing entry ({@code current} is overridden by a subsequent non-null
      * entry evaluated by {@code propertySource.get(key)}.
      */
-    PropertyValueCombinationPolicy DEFAULT_OVERRIDING_POLICY = new PropertyValueCombinationPolicy(){
-
-        @Override
-        public PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource) {
-            PropertyValue value = propertySource.get(key);
-            return value!=null?value:currentValue;
-        }
+    PropertyValueCombinationPolicy DEFAULT_OVERRIDING_POLICY = (currentValue, key, propertySource) -> {
+        PropertyValue value = propertySource.get(key);
+        return value!=null?value:currentValue;
     };
 
     /**

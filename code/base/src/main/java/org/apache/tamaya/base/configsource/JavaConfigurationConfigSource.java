@@ -56,26 +56,23 @@ public class JavaConfigurationConfigSource extends BaseConfigSource {
 
     private boolean evaluateEnabled() {
         String value = System.getProperty("tamaya.defaultprops.disable");
-        if(value==null){
+        if (value == null) {
             value = System.getenv("tamaya.defaultprops.disable");
         }
-        if(value==null){
+        if (value == null) {
             value = System.getProperty("tamaya.defaults.disable");
         }
-        if(value==null){
+        if (value == null) {
             value = System.getenv("tamaya.defaults.disable");
         }
-        if(value==null){
-            return true;
-        }
-        return value.isEmpty() || !Boolean.parseBoolean(value);
+        return value == null || value.isEmpty() || !Boolean.parseBoolean(value);
     }
 
     private List<ConfigSource> getPropertySources() {
         List<ConfigSource> propertySources = new ArrayList<>();
         propertySources.addAll(loadPropertySourcesByName(DEFAULT_SIMPLE_PROPERTIES_FILE_NAME));
         propertySources.addAll(loadPropertySourcesByName(DEFAULT_XML_PROPERTIES_FILE_NAME));
-        Collections.sort(propertySources, ConfigSourceComparator.getInstance());
+        propertySources.sort(ConfigSourceComparator.getInstance());
         return propertySources;
     }
 

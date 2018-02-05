@@ -19,7 +19,6 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.base.ServiceContextManager;
-import org.apache.tamaya.spi.TypeLiteral;
 import org.apache.tamaya.spi.*;
 import org.apache.tamaya.spisupport.propertysource.CLIPropertySource;
 import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
@@ -93,9 +92,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     public ConfigurationContextBuilder setContext(ConfigurationContext context) {
         checkBuilderState();
         this.propertyConverters.putAll(context.getPropertyConverters());
-        for(PropertySource ps:context.getPropertySources()){
-            this.propertySources.add(ps);
-        }
+        this.propertySources.addAll(context.getPropertySources());
         this.propertyFilters.addAll(context.getPropertyFilters());
         this.combinationPolicy = context.getPropertyValueCombinationPolicy();
         return this;
@@ -131,7 +128,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
                 ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class)){
                 propertySources.addAll(provider.getPropertySources());
         }
-        Collections.sort(propertySources, PropertySourceComparator.getInstance());
+        propertySources.sort(PropertySourceComparator.getInstance());
         return addPropertySources(propertySources);
     }
 
@@ -321,11 +318,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         checkBuilderState();
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverters);
-        Collection<PropertyConverter<?>> converters = this.propertyConverters.get(type);
-        if(converters==null){
-            converters = new ArrayList<>();
-            this.propertyConverters.put(type, converters);
-        }
+        Collection<PropertyConverter<?>> converters = this.propertyConverters.computeIfAbsent(type, k -> new ArrayList<>());
         for(PropertyConverter<T> propertyConverter:propertyConverters) {
             if (!converters.contains(propertyConverter)) {
                 converters.add(propertyConverter);
@@ -341,11 +334,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         checkBuilderState();
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverters);
-        Collection<PropertyConverter<?>> converters = this.propertyConverters.get(type);
-        if(converters==null){
-            converters = new ArrayList<>();
-            this.propertyConverters.put(type, converters);
-        }
+        Collection<PropertyConverter<?>> converters = this.propertyConverters.computeIfAbsent(type, k -> new ArrayList<>());
         for(PropertyConverter<T> propertyConverter:propertyConverters) {
             if (!converters.contains(propertyConverter)) {
                 converters.add(propertyConverter);
@@ -375,11 +364,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
                     ParameterizedType pt = (ParameterizedType)type;
                     if(PropertyConverter.class.equals(((ParameterizedType) type).getRawType())){
                         TypeLiteral target = TypeLiteral.of(pt.getActualTypeArguments()[0]);
-                        Collection<PropertyConverter> convList = result.get(target);
-                        if (convList == null) {
-                            convList = new ArrayList<>();
-                            result.put(target, convList);
-                        }
+                        Collection<PropertyConverter> convList = result.computeIfAbsent(target, k -> new ArrayList<>());
                         convList.add(conv);
                     }
                 }
@@ -404,13 +389,13 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     @Override
     public ConfigurationContextBuilder sortPropertyFilter(Comparator<PropertyFilter> comparator) {
-        Collections.sort(propertyFilters, comparator);
+        propertyFilters.sort(comparator);
         return this;
     }
 
     @Override
     public ConfigurationContextBuilder sortPropertySources(Comparator<PropertySource> comparator) {
-        Collections.sort(propertySources, comparator);
+        propertySources.sort(comparator);
         return this;
     }
 

@@ -32,13 +32,8 @@ class OSGIServiceComparator implements Comparator<ServiceReference> {
     @Override
     public int compare(ServiceReference o1, ServiceReference o2) {
         int prio = getPriority(o1) - getPriority(o2);
-        if (prio < 0) {
-            return 1;
-        } else if (prio > 0) {
-            return -1;
-        } else {
-            return 0; //o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
-        }
+        //o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+        return Integer.compare(0, prio);
     }
 
     /**
@@ -59,7 +54,7 @@ class OSGIServiceComparator implements Comparator<ServiceReference> {
      * @param type the type, not {@code null}.
      * @return a priority, by default 1.
      */
-    public static int getPriority(Class<? extends Object> type) {
+    public static int getPriority(Class<?> type) {
         int prio = 1;
         Priority priority = type.getAnnotation(Priority.class);
         if (priority != null) {

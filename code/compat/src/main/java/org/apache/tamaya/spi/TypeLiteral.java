@@ -72,7 +72,7 @@ public class TypeLiteral<T> implements Serializable {
     public static <R> TypeLiteral<R> of(Type type) {
         Objects.requireNonNull(type, "Type must be given.");
 
-        return new TypeLiteral<R>(type);
+        return new TypeLiteral<>(type);
     }
 
     /**

@@ -55,18 +55,14 @@ public class ConverterManager {
 
     private ClassLoader classloader = ServiceContext.defaultClassLoader();
 
-    private static final Comparator<Object> PRIORITY_COMPARATOR = new Comparator<Object>() {
-
-        @Override
-        public int compare(Object o1, Object o2) {
-            int prio = PriorityServiceComparator.getPriority(o1) - PriorityServiceComparator.getPriority(o2);
-            if (prio < 0) {
-                return 1;
-            } else if (prio > 0) {
-                return -1;
-            } else {
-                return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
-            }
+    private static final Comparator<Object> PRIORITY_COMPARATOR = (o1, o2) -> {
+        int prio = PriorityServiceComparator.getPriority(o1) - PriorityServiceComparator.getPriority(o2);
+        if (prio < 0) {
+            return 1;
+        } else if (prio > 0) {
+            return -1;
+        } else {
+            return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
         }
     };
 
@@ -161,7 +157,7 @@ public class ConverterManager {
                 converterList.add(converter);
             }
         }
-        Collections.sort(converterList, PRIORITY_COMPARATOR);
+        converterList.sort(PRIORITY_COMPARATOR);
         this.converters.put(typeToConvert, Collections.unmodifiableList(converterList));
         addTransitiveConverters(typeToConvert, Collection.class.cast(converters));
         return this;
@@ -184,7 +180,7 @@ public class ConverterManager {
                         converterList.add(converter);
                     }
                 }
-                Collections.sort(converterList, PRIORITY_COMPARATOR);
+                converterList.sort(PRIORITY_COMPARATOR);
                 this.transitiveConverters.put(ifaceType, Collections.unmodifiableList(converterList));
             }
             Class<?> superClass = targetClass.getSuperclass();
@@ -200,7 +196,7 @@ public class ConverterManager {
                         converterList.add(converter);
                     }
                 }
-                Collections.sort(converterList, PRIORITY_COMPARATOR);
+                converterList.sort(PRIORITY_COMPARATOR);
                 this.transitiveConverters.put(superClass, Collections.unmodifiableList(converterList));
                 addTransitiveConverters(superClass, converters);
                 superClass = superClass.getSuperclass();
@@ -286,7 +282,7 @@ public class ConverterManager {
             converterList = new ArrayList<>(converterList);
             converterList.removeAll(converters);
         }
-        Collections.sort(converterList, PRIORITY_COMPARATOR);
+        converterList.sort(PRIORITY_COMPARATOR);
         this.converters.put(typeToConvert, Collections.unmodifiableList(converterList));
         return this;
     }
@@ -491,30 +487,21 @@ public class ConverterManager {
                 LOG.log(Level.FINEST, "No matching constrctor for " + targetType, e);
                 return null;
             }
-            converter = new Converter() {
-                    @Override
-                    public Object convert(String value) {
-                        AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                            @Override
-                            public Object run() {
-                                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                                    @Override
-                                    public Object run() {
-                                        constr.setAccessible(true);
-                                        return null;
-                                    }
-                                });
-                                return null;
-                            }
-                        });
-                        try {
-                            return constr.newInstance(value);
-                        } catch (Exception e) {
-                            LOG.log(Level.SEVERE, "Error creating new PropertyConverter instance " + targetType, e);
-                        }
+            converter = value -> {
+                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                    AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                        constr.setAccessible(true);
                         return null;
-                    }
-                };
+                    });
+                    return null;
+                });
+                try {
+                    return constr.newInstance(value);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Error creating new PropertyConverter instance " + targetType, e);
+                }
+                return null;
+            };
         }
         return converter;
     }
@@ -610,12 +597,9 @@ public class ConverterManager {
                         "methods can be used as factory methods.");
             }
             try {
-                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                    @Override
-                    public Object run() {
-                        factoryMethod.setAccessible(true);
-                        return null;
-                    }
+                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                    factoryMethod.setAccessible(true);
+                    return null;
                 });
                 Object invoke = factoryMethod.invoke(null, value);
                 return targetType.cast(invoke);

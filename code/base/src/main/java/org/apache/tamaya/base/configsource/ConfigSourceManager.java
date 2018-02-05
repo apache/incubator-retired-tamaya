@@ -126,7 +126,7 @@ public class ConfigSourceManager {
                 ServiceContextManager.getServiceContext().getServices(ConfigSourceProvider.class)){
             provider.getConfigSources(classloader).forEach(propertySources::add);
         }
-        Collections.sort(propertySources, ConfigSourceComparator.getInstance());
+        propertySources.sort(ConfigSourceComparator.getInstance());
         return addSources(propertySources);
     }
 
@@ -281,7 +281,7 @@ public class ConfigSourceManager {
     }
 
     public ConfigSourceManager sortSources(Comparator<ConfigSource> comparator) {
-        Collections.sort(configSources, comparator);
+        configSources.sort(comparator);
         return this;
     }
 
@@ -367,7 +367,7 @@ public class ConfigSourceManager {
             b.append("\n");
         }
         b.append("\n");
-        b.append("  ConfigValueCombinationPolicy: " + configValueCombinationPolicy.getClass().getName()).append('\n');
+        b.append("  ConfigValueCombinationPolicy: ").append(configValueCombinationPolicy.getClass().getName()).append('\n');
         return b.toString();
     }
 

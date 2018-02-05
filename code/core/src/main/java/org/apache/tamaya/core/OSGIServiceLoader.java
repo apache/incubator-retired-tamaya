@@ -158,10 +158,8 @@ public class OSGIServiceLoader implements BundleListener {
 							BundleContext bundleContext = bundle.getBundleContext();
 							bundleContext.registerService(serviceName, factory, props);
 							log.info("Registered Tamaya service class: " + implClassName + "(" + serviceName + ")");
-						} catch (Exception e) {
+						} catch (Exception | NoClassDefFoundError e) {
 							log.log(Level.SEVERE, "Failed to load service: " + implClassName, e);
-						} catch (NoClassDefFoundError err) {
-							log.log(Level.SEVERE, "Failed to load service: " + implClassName, err);
 						}
 					}
 					implClassName = br.readLine();
@@ -210,10 +208,8 @@ public class OSGIServiceLoader implements BundleListener {
 						if (ref != null) {
 							bundle.getBundleContext().ungetService(ref);
 						}
-					} catch (Exception e) {
+					} catch (Exception | NoClassDefFoundError e) {
 						log.log(Level.SEVERE, "Failed to unload service: " + implClassName, e);
-					} catch (NoClassDefFoundError err) {
-						log.log(Level.SEVERE, "Failed to unload service: " + implClassName, err);
 					}
 				}
 				implClassName = br.readLine();

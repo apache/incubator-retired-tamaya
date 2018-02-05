@@ -122,7 +122,7 @@ public final class DefaultServiceContext implements ServiceContext {
                     services.add(t);
                 }
             }
-            Collections.sort(services, org.apache.tamaya.base.PriorityServiceComparator.getInstance());
+            services.sort(PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
         } catch (ServiceConfigurationError e) {
             LOG.log(Level.WARNING,

@@ -61,18 +61,14 @@ public class PropertyConverterManager {
      */
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    private static final Comparator<Object> PRIORITY_COMPARATOR = new Comparator<Object>() {
-
-        @Override
-        public int compare(Object o1, Object o2) {
-            int prio = org.apache.tamaya.base.PriorityServiceComparator.getPriority(o1) - PriorityServiceComparator.getPriority(o2);
-            if (prio < 0) {
-                return 1;
-            } else if (prio > 0) {
-                return -1;
-            } else {
-                return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
-            }
+    private static final Comparator<Object> PRIORITY_COMPARATOR = (o1, o2) -> {
+        int prio = PriorityServiceComparator.getPriority(o1) - PriorityServiceComparator.getPriority(o2);
+        if (prio < 0) {
+            return 1;
+        } else if (prio > 0) {
+            return -1;
+        } else {
+            return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
         }
     };
 
@@ -124,7 +120,7 @@ public class PropertyConverterManager {
             if(!newConverters.contains(converter)) {
                 newConverters.add(converter);
             }
-            Collections.sort(newConverters, PRIORITY_COMPARATOR);
+            newConverters.sort(PRIORITY_COMPARATOR);
             this.converters.put(targetType, Collections.unmodifiableList(newConverters));
             // evaluate transitive closure for all inherited supertypes and implemented interfaces
             // direct implemented interfaces
@@ -135,7 +131,7 @@ public class PropertyConverterManager {
                     newConverters.addAll(converters);
                 }
                 newConverters.add(converter);
-                Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                newConverters.sort(PRIORITY_COMPARATOR);
                 this.transitiveConverters.put(TypeLiteral.of(ifaceType), Collections.unmodifiableList(newConverters));
             }
             Class<?> superClass = targetType.getRawType().getSuperclass();
@@ -146,7 +142,7 @@ public class PropertyConverterManager {
                     newConverters.addAll(converters);
                 }
                 newConverters.add(converter);
-                Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                newConverters.sort(PRIORITY_COMPARATOR);
                 this.transitiveConverters.put(TypeLiteral.of(superClass), Collections.unmodifiableList(newConverters));
                 for (Class<?> ifaceType : superClass.getInterfaces()) {
                     converters = List.class.cast(this.transitiveConverters.get(TypeLiteral.of(ifaceType)));
@@ -155,7 +151,7 @@ public class PropertyConverterManager {
                         newConverters.addAll(converters);
                     }
                     newConverters.add(converter);
-                    Collections.sort(newConverters, PRIORITY_COMPARATOR);
+                    newConverters.sort(PRIORITY_COMPARATOR);
                     this.transitiveConverters.put(TypeLiteral.of(ifaceType), Collections.unmodifiableList(newConverters));
                 }
                 superClass = superClass.getSuperclass();
@@ -364,30 +360,21 @@ public class PropertyConverterManager {
                 LOG.log(Level.FINEST, "No matching constrctor for " + targetType, e);
                 return null;
             }
-            converter = new PropertyConverter<T>() {
-                    @Override
-                    public T convert(String value, ConversionContext context) {
-                        AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                            @Override
-                            public Object run() {
-                                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                                    @Override
-                                    public Object run() {
-                                        constr.setAccessible(true);
-                                        return null;
-                                    }
-                                });
-                                return null;
-                            }
-                        });
-                        try {
-                            return constr.newInstance(value);
-                        } catch (Exception e) {
-                            LOG.log(Level.SEVERE, "Error creating new PropertyConverter instance " + targetType, e);
-                        }
+            converter = (value, context) -> {
+                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                    AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                        constr.setAccessible(true);
                         return null;
-                    }
-                };
+                    });
+                    return null;
+                });
+                try {
+                    return constr.newInstance(value);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Error creating new PropertyConverter instance " + targetType, e);
+                }
+                return null;
+            };
         }
         return converter;
     }
@@ -455,12 +442,9 @@ public class PropertyConverterManager {
                         "methods can be used as factory methods.");
             }
             try {
-                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                    @Override
-                    public Object run() {
-                        factoryMethod.setAccessible(true);
-                        return null;
-                    }
+                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                    factoryMethod.setAccessible(true);
+                    return null;
                 });
                 Object invoke = factoryMethod.invoke(null, value);
                 return targetType.cast(invoke);

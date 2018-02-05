@@ -19,7 +19,6 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.base.ServiceContextManager;
-import org.apache.tamaya.spi.TypeLiteral;
 import org.apache.tamaya.spi.*;
 
 import java.util.*;
@@ -101,7 +100,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             writeLock.lock();
             List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
             newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
-            Collections.sort(newPropertySources, PropertySourceComparator.getInstance());
+            newPropertySources.sort(PropertySourceComparator.getInstance());
 
             this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
         } finally {
@@ -114,7 +113,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DefaultConfigurationContext)){
+        if (!(o instanceof DefaultConfigurationContext)) {
             return false;
         }
 
@@ -126,10 +125,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         if (!immutablePropertySources.equals(that.immutablePropertySources)) {
             return false;
         }
-        if (!immutablePropertyFilters.equals(that.immutablePropertyFilters)) {
-            return false;
-        }
-        return getPropertyValueCombinationPolicy().equals(that.getPropertyValueCombinationPolicy());
+        return immutablePropertyFilters.equals(that.immutablePropertyFilters) && getPropertyValueCombinationPolicy().equals(that.getPropertyValueCombinationPolicy());
 
     }
 
@@ -205,7 +201,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             }
         }
         b.append("\n\n");
-        b.append("  PropertyValueCombinationPolicy: " + getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
+        b.append("  PropertyValueCombinationPolicy: ").append(getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
         b.append('}');
         return b.toString();
     }

@@ -155,7 +155,7 @@ public class FilterManager {
     }
 
     public FilterManager sortFilter(Comparator<Filter> comparator) {
-        Collections.sort(filters, comparator);
+        filters.sort(comparator);
         return this;
     }
 

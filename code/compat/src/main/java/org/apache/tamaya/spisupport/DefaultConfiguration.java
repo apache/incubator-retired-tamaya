@@ -261,8 +261,7 @@ public class DefaultConfiguration implements Configuration {
 
         DefaultConfiguration that = (DefaultConfiguration) o;
 
-        if (!configurationContext.equals(that.configurationContext)) return false;
-        return configEvaluator.getClass().equals(that.configEvaluator.getClass());
+        return configurationContext.equals(that.configurationContext) && configEvaluator.getClass().equals(that.configEvaluator.getClass());
     }
 
     @Override
