@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import org.apache.tamaya.base.ServiceContext;
+import org.apache.tamaya.base.ServiceContextManager;
 import org.junit.Test;
 
 public class ServiceContextTest {

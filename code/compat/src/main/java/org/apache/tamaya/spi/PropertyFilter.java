@@ -19,9 +19,10 @@
 package org.apache.tamaya.spi;
 
 
+
 /**
  * <p>Interface for filtering the current map of properties during the evaluation of the chain of PropertySources.
- * Filters can be registered using the {@link org.apache.tamaya.spi.ServiceContext}. The ordinal
+ * Filters can be registered using the {@link org.apache.tamaya.base.ServiceContext}. The ordinal
  * hereby is defined by the corresponding {@code @Priority} annotation.</p>
  * <p>Filters </p>
  */

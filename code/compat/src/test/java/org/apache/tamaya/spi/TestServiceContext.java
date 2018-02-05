@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.base.ServiceContext;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -26,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class implements the (default) {@link org.apache.tamaya.spi.ServiceContext} interface and hereby uses the JDK
+ * This class implements the (default) {@link ServiceContext} interface and hereby uses the JDK
  * {@link java.util.ServiceLoader} to load the services required.
  */
 public final class TestServiceContext implements ServiceContext {

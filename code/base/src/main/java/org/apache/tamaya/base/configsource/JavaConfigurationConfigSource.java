@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.base.configsource;
 
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import javax.config.spi.ConfigSource;
 import java.io.IOException;

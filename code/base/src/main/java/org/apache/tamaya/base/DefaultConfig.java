@@ -21,10 +21,8 @@ package org.apache.tamaya.base;
 
 import org.apache.tamaya.base.configsource.ConfigSourceManager;
 import org.apache.tamaya.base.convert.ConverterManager;
-import org.apache.tamaya.spi.ConfigValue;
-import org.apache.tamaya.spi.Filter;
+import org.apache.tamaya.base.filter.Filter;
 import org.apache.tamaya.base.filter.FilterManager;
-import org.apache.tamaya.spi.*;
 
 import javax.config.Config;
 import javax.config.spi.ConfigSource;

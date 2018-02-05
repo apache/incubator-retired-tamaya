@@ -20,10 +20,9 @@ package org.apache.tamaya.base.convert;
 
 import org.apache.tamaya.base.FormatUtils;
 import org.apache.tamaya.base.PriorityServiceComparator;
-import org.apache.tamaya.spi.ConfigContext;
-import org.apache.tamaya.spi.ConfigContextSupplier;
-import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ConfigContextSupplier;
+import org.apache.tamaya.base.ServiceContext;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import javax.config.Config;
 import javax.config.spi.Converter;

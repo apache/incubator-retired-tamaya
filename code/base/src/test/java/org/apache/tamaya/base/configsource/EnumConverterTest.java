@@ -19,7 +19,6 @@
 package org.apache.tamaya.base.configsource;
 
 import org.apache.tamaya.base.convert.ConversionContext;
-import org.apache.tamaya.spi.TypeLiteral;
 import org.apache.tamaya.base.convert.EnumConverter;
 import org.junit.Test;
 

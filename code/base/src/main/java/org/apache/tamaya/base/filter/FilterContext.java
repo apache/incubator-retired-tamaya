@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.base.filter;
 
-import org.apache.tamaya.spi.Filter;
-
 import javax.config.Config;
 import java.util.HashMap;
 import java.util.Map;

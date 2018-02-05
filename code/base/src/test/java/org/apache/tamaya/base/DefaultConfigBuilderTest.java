@@ -18,16 +18,10 @@
  */
 package org.apache.tamaya.base;
 
-import org.apache.tamaya.spi.TamayaConfigBuilder;
-import org.apache.tamaya.spi.ConfigContext;
-import org.apache.tamaya.spi.ConfigValueCombinationPolicy;
-import org.apache.tamaya.spi.TypeLiteral;
-import org.apache.tamaya.spi.Filter;
-import org.apache.tamaya.base.DefaultConfigBuilder;
+import org.apache.tamaya.base.ConfigValueCombinationPolicy;
+import org.apache.tamaya.base.filter.Filter;
 import org.junit.Test;
 
-import javax.config.Config;
-import javax.config.ConfigProvider;
 import javax.config.spi.ConfigBuilder;
 import javax.config.spi.ConfigProviderResolver;
 import javax.config.spi.ConfigSource;

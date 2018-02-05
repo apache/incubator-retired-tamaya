@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya.base;
 
 import java.io.Serializable;
 import java.util.HashMap;

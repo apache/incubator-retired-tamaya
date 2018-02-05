@@ -19,6 +19,8 @@
 package org.apache.tamaya.spi;
 
 
+import org.apache.tamaya.spi.TypeLiteral;
+
 import java.util.List;
 import java.util.Map;
 

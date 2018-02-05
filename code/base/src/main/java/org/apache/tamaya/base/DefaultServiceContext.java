@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.base;
 
-import org.apache.tamaya.spi.ServiceContext;
-
 import javax.annotation.Priority;
 import java.io.IOException;
 import java.net.URL;

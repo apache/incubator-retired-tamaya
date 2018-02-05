@@ -19,6 +19,7 @@
 package org.apache.tamaya.spi;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.base.Experimental;
 
 import java.util.Collections;
 import java.util.HashMap;

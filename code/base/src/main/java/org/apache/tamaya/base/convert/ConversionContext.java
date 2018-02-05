@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.base.convert;
 
-import org.apache.tamaya.spi.TypeLiteral;
-
 import javax.config.Config;
 import javax.config.spi.Converter;
 import java.lang.reflect.AnnotatedElement;

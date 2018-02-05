@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.base;
 
-import org.apache.tamaya.spi.TypeLiteral;
 import org.junit.Test;
 
 

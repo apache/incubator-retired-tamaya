@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core;
 
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.base.ServiceContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;

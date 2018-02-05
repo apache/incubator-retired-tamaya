@@ -29,7 +29,6 @@ Import-Package: \
     org.apache.tamaya.base.configsource,\
     org.apache.tamaya.base.convert,\
     org.apache.tamaya.base.filter,\
-    org.apache.tamaya.spi,\
 	org.osgi.framework,\
 	javax.annotation
 Private-Package: \
@@ -41,5 +40,5 @@ Export-Service: \
     javax.config.spi.ConfigProviderResolver,\
     javax.config.spi.Converter,\
     javax.config.spi.ConfigSource,\
-    org.apache.tamaya.spi.ServiceContext
+    org.apache.tamaya.ServiceContext
     

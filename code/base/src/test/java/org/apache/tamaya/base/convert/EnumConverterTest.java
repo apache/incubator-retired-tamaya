@@ -18,9 +18,6 @@
  */
 package org.apache.tamaya.base.convert;
 
-import org.apache.tamaya.base.convert.EnumConverter;
-import org.apache.tamaya.base.convert.ConversionContext;
-import org.apache.tamaya.spi.TypeLiteral;
 import org.junit.Test;
 
 import java.math.RoundingMode;

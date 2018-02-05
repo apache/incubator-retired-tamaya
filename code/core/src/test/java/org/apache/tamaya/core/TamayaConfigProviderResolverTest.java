@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.core;
 
-import org.apache.tamaya.core.TamayaConfigProviderResolver;
-import org.apache.tamaya.spi.ConfigContext;
-import org.apache.tamaya.spi.ConfigContextSupplier;
+import org.apache.tamaya.base.ConfigContextSupplier;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

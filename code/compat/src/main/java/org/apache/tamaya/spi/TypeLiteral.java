@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.spi;
 
+
 import java.io.Serializable;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Objects;
-
 
 /**
  * <p>Class for instantiation of objects that represent parameterized types

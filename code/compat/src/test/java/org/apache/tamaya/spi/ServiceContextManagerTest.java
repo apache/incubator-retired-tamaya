@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.base.ServiceContext;
+import org.apache.tamaya.base.ServiceContextManager;
 import org.junit.Test;
 
 import java.io.IOException;

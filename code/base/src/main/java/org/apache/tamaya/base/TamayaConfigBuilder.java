@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya.base;
 
-import org.apache.tamaya.base.DefaultConfigBuilder;
+import org.apache.tamaya.base.filter.Filter;
+import org.apache.tamaya.base.ConfigValueCombinationPolicy;
 
 import javax.config.spi.ConfigBuilder;
 import javax.config.spi.ConfigSource;
@@ -37,7 +38,7 @@ import java.util.Map;
  *     {@link javax.config.spi.ConfigProviderResolver#getBuilder()}.</li>
  * </ol>
  */
-public interface TamayaConfigBuilder extends ConfigBuilder, ConfigContextSupplier{
+public interface TamayaConfigBuilder extends ConfigBuilder, ConfigContextSupplier {
 
     /**
      * Create a new empty configuration builder.

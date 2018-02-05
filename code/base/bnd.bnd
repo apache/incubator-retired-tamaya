@@ -23,8 +23,7 @@ Export-Package: \
 	org.apache.tamaya.base,\
     org.apache.tamaya.base.configsource,\
     org.apache.tamaya.base.convert,\
-    org.apache.tamaya.base.filter,\
-    org.apache.tamaya.spi
+    org.apache.tamaya.base.filter
 Import-Package: \
     javax.config,\
     javax.config.spi,\

@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.base.ServiceContextManager;
 import org.apache.tamaya.spi.TypeLiteral;
 import org.apache.tamaya.spi.*;
 

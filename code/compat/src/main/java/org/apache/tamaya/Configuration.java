@@ -56,7 +56,7 @@ public interface Configuration {
      * @return the property's value.
      */
     default String get(String key){
-        return get(key, org.apache.tamaya.spi.TypeLiteral.of(String.class));
+        return get(key, TypeLiteral.of(String.class));
     }
 
     /**
@@ -67,7 +67,7 @@ public interface Configuration {
      * @return the property's keys.
      */
     default String getOrDefault(String key, String defaultValue){
-        return getOrDefault(key, org.apache.tamaya.spi.TypeLiteral.of(String.class), defaultValue);
+        return getOrDefault(key, TypeLiteral.of(String.class), defaultValue);
     }
 
     /**
@@ -84,7 +84,7 @@ public interface Configuration {
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T getOrDefault(String key, Class<T> type, T defaultValue){
-        return getOrDefault(key, org.apache.tamaya.spi.TypeLiteral.of(type), defaultValue);
+        return getOrDefault(key, TypeLiteral.of(type), defaultValue);
     }
 
     /**
@@ -100,7 +100,7 @@ public interface Configuration {
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T get(String key, Class<T> type){
-        return get(key, org.apache.tamaya.spi.TypeLiteral.of(type));
+        return get(key, TypeLiteral.of(type));
     }
 
     /**
@@ -115,7 +115,7 @@ public interface Configuration {
      * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
-    <T> T get(String key, org.apache.tamaya.spi.TypeLiteral<T> type);
+    <T> T get(String key, TypeLiteral<T> type);
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link

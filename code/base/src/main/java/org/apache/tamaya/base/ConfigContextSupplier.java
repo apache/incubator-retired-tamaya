@@ -16,15 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
-
-import jdk.nashorn.internal.objects.annotations.Function;
+package org.apache.tamaya.base;
 
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.

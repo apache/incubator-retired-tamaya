@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.base.filter;
 
-import org.apache.tamaya.spi.Filter;
-
 import javax.annotation.Priority;
 import java.io.Serializable;
 import java.util.Comparator;

@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya.base.filter;
 
 
 /**
  * <p>Interface for filtering the current map of properties during the evaluation of the chain of PropertySources.
- * Filters can be registered using the {@link org.apache.tamaya.spi.ServiceContext}. The ordinal
+ * Filters can be registered using the {@link org.apache.tamaya.base.ServiceContext}. The ordinal
  * hereby is defined by the corresponding {@code @Priority} annotation.</p>
  * <p>Filters </p>
  */
@@ -43,8 +43,8 @@ public interface Filter {
      * @param key the key, not null.
      * @param value the value to be filtered, which also can be {@code null} if removed by another filter.
      * @return the filtered value, or {@code null} if the value should be removed alltogether.
-     * @see ConfigValue
-     * @see ConfigValueBuilder
+     * @see org.apache.tamaya.base.ConfigValue
+     * @see org.apache.tamaya.base.ConfigValueBuilder
      */
     String filterProperty(String key, String value);
 

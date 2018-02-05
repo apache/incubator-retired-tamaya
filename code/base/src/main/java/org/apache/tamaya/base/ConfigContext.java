@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.spi;
+package org.apache.tamaya.base;
+
+import org.apache.tamaya.base.filter.Filter;
 
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;

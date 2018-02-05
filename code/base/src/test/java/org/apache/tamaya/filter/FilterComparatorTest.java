@@ -19,8 +19,7 @@
 package org.apache.tamaya.filter;
 
 import org.apache.tamaya.base.filter.FilterComparator;
-import org.apache.tamaya.spi.ConfigValue;
-import org.apache.tamaya.spi.Filter;
+import org.apache.tamaya.base.filter.Filter;
 import org.junit.Test;
 
 import javax.annotation.Priority;

@@ -19,10 +19,8 @@
 package org.apache.tamaya.base.filter;
 
 import org.apache.tamaya.base.FormatUtils;
-import org.apache.tamaya.spi.Filter;
-import org.apache.tamaya.spi.ConfigValue;
-import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContext;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import javax.config.Config;
 import java.util.*;

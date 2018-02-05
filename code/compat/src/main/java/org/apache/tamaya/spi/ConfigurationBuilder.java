@@ -19,6 +19,7 @@
 package org.apache.tamaya.spi;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.TypeLiteral;
 
 import java.util.Collection;
 import java.util.Comparator;

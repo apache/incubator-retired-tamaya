@@ -18,9 +18,8 @@
  */
 package org.apache.tamaya.base;
 
-import org.apache.tamaya.spi.Filter;
-import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.base.DefaultConfigBuilder;
+import org.apache.tamaya.base.filter.Filter;
+import org.apache.tamaya.base.ServiceContext;
 
 import javax.config.Config;
 import javax.config.spi.ConfigBuilder;

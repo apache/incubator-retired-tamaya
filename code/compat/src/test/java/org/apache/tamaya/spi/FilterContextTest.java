@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.spi.FilterContext;
+import org.apache.tamaya.spi.TypeLiteral;
 import org.junit.Test;
 
 import java.util.Collections;

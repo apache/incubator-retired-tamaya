@@ -21,6 +21,7 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.TypeLiteral;
 import org.junit.Test;
 
 import java.net.InetAddress;

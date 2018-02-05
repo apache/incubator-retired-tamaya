@@ -19,10 +19,10 @@
 package org.apache.tamaya.core;
 
 import org.apache.tamaya.base.DefaultConfigBuilder;
+import org.apache.tamaya.base.ServiceContext;
+import org.apache.tamaya.base.ServiceContextManager;
 import org.apache.tamaya.base.configsource.ConfigSourceComparator;
 import org.apache.tamaya.base.filter.FilterComparator;
-import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spi.ServiceContextManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

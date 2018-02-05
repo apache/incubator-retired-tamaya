@@ -23,7 +23,7 @@ import org.apache.tamaya.spi.TypeLiteral;
 import org.apache.tamaya.base.PriorityServiceComparator;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

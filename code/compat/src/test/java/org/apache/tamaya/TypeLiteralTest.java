@@ -30,39 +30,39 @@ import org.apache.tamaya.spi.TypeLiteral;
 import org.junit.Test;
 
 /**
- * Tests for the {@link org.apache.tamaya.spi.TypeLiteral} class.
+ * Tests for the {@link TypeLiteral} class.
  */
 @SuppressWarnings("serial")
 public class TypeLiteralTest {
 
 	@Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullParameter() {
-       new org.apache.tamaya.spi.TypeLiteral<List<String>>(null){};
+       new TypeLiteral<List<String>>(null){};
     }
 
     @Test
     public void test_constrcutor(){
-        org.apache.tamaya.spi.TypeLiteral<List<String>> listTypeLiteral = new org.apache.tamaya.spi.TypeLiteral<List<String>>(){};
+        TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>(){};
         assertEquals(List.class, listTypeLiteral.getRawType());
-        assertEquals(String.class, org.apache.tamaya.spi.TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]);
+        assertEquals(String.class, TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]);
     }
 
     @Test
     public void test_of(){
         class MyListClass extends ArrayList<String>{}
-        org.apache.tamaya.spi.TypeLiteral<MyListClass> listTypeLiteral = org.apache.tamaya.spi.TypeLiteral.of(MyListClass.class);
+        TypeLiteral<MyListClass> listTypeLiteral = TypeLiteral.of(MyListClass.class);
         assertEquals(MyListClass.class, listTypeLiteral.getRawType());
         assertEquals(MyListClass.class, listTypeLiteral.getType());
     }
 
     @Test(expected = NullPointerException.class)
     public void ofDoesNotAcceptNullAsParamter() {
-        org.apache.tamaya.spi.TypeLiteral.of(null);
+        TypeLiteral.of(null);
     }
 
     @Test
     public void test_getTypeParameter(){
-        org.apache.tamaya.spi.TypeLiteral<List<String>> listTypeLiteral = new org.apache.tamaya.spi.TypeLiteral<List<String>>(){};
+        TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>(){};
         assertEquals(List.class, listTypeLiteral.getRawType());
         assertEquals(String.class, TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]);
     }

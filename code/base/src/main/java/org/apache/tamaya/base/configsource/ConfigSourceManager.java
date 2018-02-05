@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.base.configsource;
 
+import org.apache.tamaya.base.ConfigValueCombinationPolicy;
 import org.apache.tamaya.base.FormatUtils;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.base.ServiceContext;
+import org.apache.tamaya.base.ServiceContextManager;
+import org.apache.tamaya.base.filter.Filter;
 
 import javax.config.Config;
 import javax.config.spi.ConfigSource;

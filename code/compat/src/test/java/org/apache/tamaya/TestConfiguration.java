@@ -103,7 +103,7 @@ public class TestConfiguration implements Configuration{
     }
 
     @Override
-    public <T> T get(String key, org.apache.tamaya.spi.TypeLiteral<T> type) {
+    public <T> T get(String key, TypeLiteral<T> type) {
         throw new RuntimeException("Method not implemented yet.");
     }
 

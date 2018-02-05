@@ -19,7 +19,10 @@
 package org.apache.tamaya.core;
 
 import org.apache.tamaya.base.DefaultConfigBuilder;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.ServiceContext;
+import org.apache.tamaya.base.ServiceContextManager;
+import org.apache.tamaya.base.filter.Filter;
 import org.osgi.service.component.annotations.Component;
 
 import javax.config.Config;
