@@ -54,6 +54,14 @@ public class CharConverterTest {
     }
 
     @Test
+    public void testConvert_Character_SingleQuote() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Character valueRead = config.get("tests.converter.char.single-quote", Character.class);
+        assertThat(valueRead).isNotNull();
+        assertEquals(valueRead.charValue(), '\'');
+    }
+
+    @Test
     public void testConvert_Character_WithWhitespace_Before() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-before", Character.class);
