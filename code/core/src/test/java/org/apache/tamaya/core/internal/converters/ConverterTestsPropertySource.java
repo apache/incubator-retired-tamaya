@@ -101,6 +101,8 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "f", getName());
             case "tests.converter.char.d":
                 return PropertyValue.of(key, "'d'", getName());
+            case "tests.converter.char.single-quote":
+                return PropertyValue.of(key, "'", getName());
             case "tests.converter.char.f-before":
                 return PropertyValue.of(key, "  f", getName());
             case "tests.converter.char.f-after":

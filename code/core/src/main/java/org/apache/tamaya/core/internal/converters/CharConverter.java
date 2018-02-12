@@ -49,6 +49,9 @@ public class CharConverter implements PropertyConverter<Character>{
         }
         if(trimmed.startsWith("'")) {
             try {
+                if (trimmed.length() == 1){
+                    return '\'';
+                }
                 trimmed = trimmed.substring(1, trimmed.length() - 1);
                 if (trimmed.isEmpty()) {
                     return null;
