@@ -324,8 +324,8 @@ public class PropertyConverterManager {
         if (parameterType == long[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Long[].class));
         }
-        if (parameterType == boolean.class) {
-            return TypeLiteral.class.cast(TypeLiteral.of(Boolean.class));
+        if (parameterType == boolean[].class) {
+            return TypeLiteral.class.cast(TypeLiteral.of(Boolean[].class));
         }
         if (parameterType == char[].class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Character[].class));
