@@ -56,7 +56,7 @@ public class TypeLiteral<T> implements Serializable {
     }
 
     /**
-     * Constructor only for directly implemeting a TypeLiteral hereby dynamically implementing a generic interface.
+     * Constructor only for directly implementing a TypeLiteral hereby dynamically implementing a generic interface.
      */
     public TypeLiteral() {
         this.definedType = getDefinedType(this.getClass());
