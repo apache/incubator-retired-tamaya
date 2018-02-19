@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.base;
 
-import org.apache.tamaya.base.ConfigValueCombinationPolicy;
 import org.apache.tamaya.base.filter.Filter;
 import org.junit.Test;
 
@@ -45,9 +44,9 @@ public class DefaultConfigBuilderTest {
         TamayaConfigBuilder b = new DefaultConfigBuilder()
                 .withSources(testPropertySource, testPS2);
         ConfigContext ctx = b.getConfigContext();
-        assertEquals(2, ctx.getSources().size());
-        assertTrue(ctx.getSources().contains(testPropertySource));
-        assertTrue(ctx.getSources().contains(testPS2));
+        assertEquals(2, ctx.getConfigSources().size());
+        assertTrue(ctx.getConfigSources().contains(testPropertySource));
+        assertTrue(ctx.getConfigSources().contains(testPS2));
     }
 
     @Test
@@ -56,16 +55,16 @@ public class DefaultConfigBuilderTest {
         TamayaConfigBuilder b = new DefaultConfigBuilder()
                 .withSources(testPropertySource, testPS2);
         ConfigContext ctx = b.getConfigContext();
-        assertEquals(2, ctx.getSources().size());
-        assertTrue(ctx.getSources().contains(testPropertySource));
-        assertTrue(ctx.getSources().contains(testPS2));
+        assertEquals(2, ctx.getConfigSources().size());
+        assertTrue(ctx.getConfigSources().contains(testPropertySource));
+        assertTrue(ctx.getConfigSources().contains(testPS2));
         b = new DefaultConfigBuilder()
                 .withSources(testPropertySource, testPS2);
         b.removeSources(testPropertySource);
         ctx = b.getConfigContext();
-        assertEquals(1, ctx.getSources().size());
-        assertFalse(ctx.getSources().contains(testPropertySource));
-        assertTrue(ctx.getSources().contains(testPS2));
+        assertEquals(1, ctx.getConfigSources().size());
+        assertFalse(ctx.getConfigSources().contains(testPropertySource));
+        assertTrue(ctx.getConfigSources().contains(testPS2));
     }
 
     @Test

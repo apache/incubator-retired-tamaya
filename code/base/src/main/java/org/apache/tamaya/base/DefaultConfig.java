@@ -61,7 +61,7 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
      * @param configContext The configuration Context to be used.
      */
     public DefaultConfig(ConfigContext configContext){
-        this.configSourceManager.addSources(configContext.getSources());
+        this.configSourceManager.addSources(configContext.getConfigSources());
         this.configSourceManager.setConfigValueCombinationPolicy(configContext.getConfigValueCombinationPolicy());
         configContext.getConverters().forEach((t,c) -> this.converterManager.addConverter(t, Collection.class.cast(c)));
         this.filterManager.addFilter(configContext.getFilters());
@@ -133,7 +133,7 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
     public ConfigContext getConfigContext() {
         return new ConfigContext() {
             @Override
-            public List<ConfigSource> getSources() {
+            public List<ConfigSource> getConfigSources() {
                 return configSourceManager.getSources();
             }
 

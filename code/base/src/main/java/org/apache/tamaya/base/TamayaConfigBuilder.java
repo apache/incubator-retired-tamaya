@@ -21,6 +21,7 @@ package org.apache.tamaya.base;
 import org.apache.tamaya.base.filter.Filter;
 import org.apache.tamaya.base.ConfigValueCombinationPolicy;
 
+import javax.config.Config;
 import javax.config.spi.ConfigBuilder;
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
@@ -48,17 +49,17 @@ public interface TamayaConfigBuilder extends ConfigBuilder, ConfigContextSupplie
         return new DefaultConfigBuilder();
     }
 
-    static TamayaConfigBuilder create(ConfigContextSupplier contextSupplier){
-        return new DefaultConfigBuilder(contextSupplier.getConfigContext());
+    static TamayaConfigBuilder create(Config config){
+        return new DefaultConfigBuilder(ConfigContext.from(config));
     }
 
     static TamayaConfigBuilder from(ConfigBuilder configBuilder){
         if(configBuilder instanceof TamayaConfigBuilder) {
             return (TamayaConfigBuilder) configBuilder;
         }else if(configBuilder instanceof ConfigContextSupplier){
-            return create((ConfigContextSupplier)configBuilder);
+            return new DefaultConfigBuilder((ConfigContextSupplier)configBuilder);
         }
-        throw new IllegalArgumentException("Builder must implement ConfigContextSupplier.");
+        return new DefaultConfigBuilder(ConfigContext.from(configBuilder.build()));
     }
 
     /**

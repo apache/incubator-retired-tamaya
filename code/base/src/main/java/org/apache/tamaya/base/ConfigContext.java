@@ -18,15 +18,15 @@
  */
 package org.apache.tamaya.base;
 
+import org.apache.tamaya.base.convert.ConverterManager;
 import org.apache.tamaya.base.filter.Filter;
+import org.apache.tamaya.base.filter.FilterManager;
 
+import javax.config.Config;
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
@@ -34,6 +34,43 @@ import java.util.Optional;
  * managing {@link javax.config.spi.Converter}s, ConfigFilters, etc.
  */
 public interface ConfigContext {
+
+    /**
+     * Get a context from the given {@link Config}. If the {@link Config} implements
+     * {@link ConfigContextSupplier} it is cast and the result will be returned. If the
+     * config does not implement {@link ConfigContextSupplier}, a default context is created,
+     * which includes all convereters as defined by {@link ConverterManager#defaultInstance()#getConverters()},
+     * an empty filter list and the {@link ConfigSource}s as declared by the given {@link Config}
+     * instance.
+     * @param config the config instance, not null.
+     * @return a context instance, never null.
+     */
+    static ConfigContext from(Config config){
+        if(config instanceof ConfigContextSupplier){
+            return ((ConfigContextSupplier)config).getConfigContext();
+        }
+        return new ConfigContext() {
+            @Override
+            public Iterable<ConfigSource> getConfigSources() {
+                return Objects.requireNonNull(config.getConfigSources());
+            }
+
+            @Override
+            public List<Filter> getFilters() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public Map<Type, List<Converter>> getConverters() {
+                return ConverterManager.defaultInstance().getConverters();
+            }
+
+            @Override
+            public String toString() {
+                return "ConfigContext#default{\n  delegate:"+config+"\n}";
+            }
+        };
+    }
 
     /**
      * This method returns the current list of registered PropertySources ordered via their ordinal.
@@ -47,7 +84,7 @@ public interface ConfigContext {
      *
      * @return a sorted list of registered PropertySources.  The returned list need not be modifiable
      */
-    List<ConfigSource> getSources();
+    Iterable<ConfigSource> getConfigSources();
 
 //    /**
 //     * Access a {@link ConfigSource} using its (unique) name.
@@ -55,7 +92,7 @@ public interface ConfigContext {
 //     * @return the propoerty source found, or {@code null}.
 //     */
 //    default ConfigSource getSource(String name) {
-//        for(ConfigSource ps: getSources()){
+//        for(ConfigSource ps: getConfigSources()){
 //            if(name.equals(ps.getName())){
 //                return ps;
 //            }

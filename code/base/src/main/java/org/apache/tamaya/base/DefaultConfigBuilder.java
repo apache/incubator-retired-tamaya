@@ -49,7 +49,7 @@ public class DefaultConfigBuilder implements TamayaConfigBuilder {
      * Creates a new builder instance.
      */
     public DefaultConfigBuilder(ConfigContext context) {
-        this.configSourceManager.addSources(context.getSources());
+        this.configSourceManager.addSources(context.getConfigSources());
         this.configSourceManager.setConfigValueCombinationPolicy(context.getConfigValueCombinationPolicy());
         this.filterManager.addFilter(context.getFilters());
         context.getConverters().forEach((t,c) -> converterManager.addConverter(t, Collection.class.cast(c)));
@@ -287,7 +287,7 @@ public class DefaultConfigBuilder implements TamayaConfigBuilder {
     public ConfigContext getConfigContext() {
         return new ConfigContext() {
             @Override
-            public List<ConfigSource> getSources() {
+            public List<ConfigSource> getConfigSources() {
                 return configSourceManager.getSources();
             }
 
