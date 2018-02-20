@@ -104,7 +104,7 @@ public class ConfigSourceManager {
      *
      * @param configSources  the config source, not {@code null}.
      */
-    public ConfigSourceManager addSources(Collection<ConfigSource> configSources) {
+    public ConfigSourceManager addSources(Iterable<ConfigSource> configSources) {
         Objects.requireNonNull(configSources);
         for(ConfigSource configSource:configSources) {
             if (!this.configSources.contains(configSource)) {

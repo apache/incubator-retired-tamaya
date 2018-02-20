@@ -26,6 +26,7 @@ import javax.config.spi.ConfigProviderResolver;
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -44,9 +45,10 @@ public class DefaultConfigBuilderTest {
         TamayaConfigBuilder b = new DefaultConfigBuilder()
                 .withSources(testPropertySource, testPS2);
         ConfigContext ctx = b.getConfigContext();
-        assertEquals(2, ctx.getConfigSources().size());
-        assertTrue(ctx.getConfigSources().contains(testPropertySource));
-        assertTrue(ctx.getConfigSources().contains(testPS2));
+        Iterator it = ctx.getConfigSources().iterator();
+        assertTrue(it.next() == testPropertySource);
+        assertTrue(it.next() == testPS2);
+        assertFalse(it.hasNext());
     }
 
     @Test
@@ -55,16 +57,17 @@ public class DefaultConfigBuilderTest {
         TamayaConfigBuilder b = new DefaultConfigBuilder()
                 .withSources(testPropertySource, testPS2);
         ConfigContext ctx = b.getConfigContext();
-        assertEquals(2, ctx.getConfigSources().size());
-        assertTrue(ctx.getConfigSources().contains(testPropertySource));
-        assertTrue(ctx.getConfigSources().contains(testPS2));
+        Iterator it = ctx.getConfigSources().iterator();
+        assertTrue(it.next() == testPropertySource);
+        assertTrue(it.next() == testPS2);
+        assertFalse(it.hasNext());
         b = new DefaultConfigBuilder()
                 .withSources(testPropertySource, testPS2);
         b.removeSources(testPropertySource);
         ctx = b.getConfigContext();
-        assertEquals(1, ctx.getConfigSources().size());
-        assertFalse(ctx.getConfigSources().contains(testPropertySource));
-        assertTrue(ctx.getConfigSources().contains(testPS2));
+        it = ctx.getConfigSources().iterator();
+        assertTrue(it.next() == testPS2);
+        assertFalse(it.hasNext());
     }
 
     @Test
