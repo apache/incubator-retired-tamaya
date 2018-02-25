@@ -18,6 +18,13 @@
  */
 package org.apache.tamaya.core.internal;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Collection;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
@@ -25,7 +32,9 @@ import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Map;
+import org.apache.tamaya.core.internal.converters.BigDecimalConverter;
 
 import static org.junit.Assert.*;
 
@@ -52,6 +61,7 @@ public class CoreConfigurationBuilderTest {
         assertEquals(cfg, b.build());
     }
 
+    
     @Test
     public void addPropertySources_Array() throws Exception {
         PropertySource testPS2 = new TestPropertySource("addPropertySources_Array_2");
@@ -173,9 +183,33 @@ public class CoreConfigurationBuilderTest {
     }
 
     @Test
-    public void bla() throws Exception {
+    public void addDefaultPropertyConverters() throws Exception {
         ConfigurationBuilder builder = ConfigurationProvider.getConfigurationBuilder();
         builder.addDefaultPropertyConverters();
+    }
+    
+    @Test
+    public void addCorePropertyConverters() throws Exception {
+        CoreConfigurationBuilder b = new CoreConfigurationBuilder();
+        b.addCorePropertyConverters();
+        Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> converters = b.getPropertyConverter();
+        assertTrue(converters.containsKey(TypeLiteral.<BigDecimal>of(BigDecimal.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<BigInteger>of(BigInteger.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Boolean>of(Boolean.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Byte>of(Byte.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Character>of(Character.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Class<?>>of(Class.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Currency>of(Currency.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Double>of(Double.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<File>of(File.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Float>of(Float.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Integer>of(Integer.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Long>of(Long.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Number>of(Number.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Path>of(Path.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<Short>of(Short.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<URI>of(URI.class)));
+        assertTrue(converters.containsKey(TypeLiteral.<URL>of(URL.class)));
     }
 
     private static class TestPropertySource implements PropertySource{

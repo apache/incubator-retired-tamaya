@@ -18,15 +18,18 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests the default converter for bytes.
+ * Tests the default converter for doubles.
  */
 public class DoubleConverterTest {
 
@@ -40,7 +43,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.decimal", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(valueRead.doubleValue(), 1.23456789, 0.0d);
+        assertEquals(valueRead, 1.23456789, 0.0d);
     }
 
     /**
@@ -53,7 +56,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.decimalNegative", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(valueRead.doubleValue(), -1.23456789, 0.0d);
+        assertEquals(valueRead, -1.23456789, 0.0d);
     }
 
     /**
@@ -66,7 +69,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.integer", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(valueRead.doubleValue(),100d, 0.0d);
+        assertEquals(valueRead,100d, 0.0d);
     }
 
     /**
@@ -79,7 +82,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.hex1", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(valueRead.doubleValue(),255d, 0.0d);
+        assertEquals(valueRead,255d, 0.0d);
     }
 
     /**
@@ -92,7 +95,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.hex2", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(valueRead.doubleValue(),-255d, 0.0d);
+        assertEquals(valueRead,-255d, 0.0d);
     }
 
     /**
@@ -117,7 +120,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.min", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(Double.MIN_VALUE, valueRead.doubleValue(),0.0d);
+        assertEquals(Double.MIN_VALUE, valueRead,0.0d);
     }
 
     /**
@@ -130,7 +133,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.max", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(Double.MAX_VALUE, valueRead.doubleValue(),0.0d);
+        assertEquals(Double.MAX_VALUE, valueRead,0.0d);
     }
 
     /**
@@ -143,7 +146,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.nan", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(Double.NaN, valueRead.doubleValue(),0.0d);
+        assertEquals(Double.NaN, valueRead,0.0d);
     }
 
     /**
@@ -156,7 +159,7 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.pi", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(Double.POSITIVE_INFINITY, valueRead.doubleValue(),0.0d);
+        assertEquals(Double.POSITIVE_INFINITY, valueRead,0.0d);
     }
 
     /**
@@ -169,7 +172,31 @@ public class DoubleConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Double valueRead = config.get("tests.converter.double.ni", Double.class);
         assertTrue(valueRead!=null);
-        assertEquals(Double.NEGATIVE_INFINITY, valueRead.doubleValue(),0.0d);
+        assertEquals(Double.NEGATIVE_INFINITY, valueRead,0.0d);
+    }
+    
+    
+    @Test(expected = ConfigException.class)
+    public void testConvert_DoubleInvalid() throws ConfigException {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        config.get("tests.converter.double.invalid", Double.class);
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Double.class)).build();
+        DoubleConverter converter = new DoubleConverter();
+        converter.convert("", context);
+
+        assertTrue(context.getSupportedFormats().contains("<double> (DoubleConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MIN_VALUE (DoubleConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MAX_VALUE (DoubleConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        DoubleConverter instance = new DoubleConverter();
+        assertEquals(DoubleConverter.class.hashCode(), instance.hashCode());
     }
 
 }

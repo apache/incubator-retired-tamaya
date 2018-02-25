@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -77,5 +80,34 @@ public class ByteConverterTest {
         Byte valueRead = config.get("tests.converter.byte.max", Byte.class);
         assertThat(valueRead).isNotNull();
         assertEquals(Byte.MAX_VALUE, valueRead.byteValue());
+    }
+    /**
+     * Test conversion. The value are provided by
+     * {@link ConverterTestsPropertySource}.
+     *
+     * @throws ConfigException
+     */
+    @Test(expected = ConfigException.class)
+    public void testConvert_ByteInvalid() throws ConfigException {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Byte valueRead = config.get("tests.converter.byte.invalid", Byte.class);
+        assertNull(valueRead);
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Byte.class)).build();
+        ByteConverter converter = new ByteConverter();
+        converter.convert("", context);
+        
+        assertTrue(context.getSupportedFormats().contains("<byte> (ByteConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MIN_VALUE (ByteConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MAX_VALUE (ByteConverter)"));
+    }
+    
+    @Test
+    public void testHashCode() {
+        ByteConverter instance = new ByteConverter();
+        assertEquals(ByteConverter.class.hashCode(), instance.hashCode());
     }
 }

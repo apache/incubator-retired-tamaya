@@ -18,12 +18,17 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import static org.apache.tamaya.ConfigurationProvider.getConfiguration;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class JavaConfigurationProviderTest {
 
@@ -42,5 +47,45 @@ public class JavaConfigurationProviderTest {
             MatcherAssert.assertThat(value, Matchers.equalTo(propertySource.get(key).getValue()));
         }
 
+    }
+    
+    @Test
+    public void testConstructionPropertiesAndDisabledBehavior() throws IOException {
+        JavaConfigurationPropertySource localJavaConfigurationPropertySource = new JavaConfigurationPropertySource();
+        StringWriter stringBufferWriter = new StringWriter();
+        System.getProperties().store(stringBufferWriter, null);
+        String before = stringBufferWriter.toString();
+
+        try {
+            assertTrue(localJavaConfigurationPropertySource.isEnabled());
+
+            System.setProperty("tamaya.defaultprops.disable", "true");
+            localJavaConfigurationPropertySource = new JavaConfigurationPropertySource();
+            assertFalse(localJavaConfigurationPropertySource.isEnabled());
+            assertTrue(localJavaConfigurationPropertySource.getProperties().isEmpty());
+            assertTrue(localJavaConfigurationPropertySource.toString().contains("enabled=false"));
+
+            System.getProperties().clear();
+            System.getProperties().load(new StringReader(before));
+            System.setProperty("tamaya.defaults.disable", "true");
+            localJavaConfigurationPropertySource = new JavaConfigurationPropertySource();
+            assertFalse(localJavaConfigurationPropertySource.isEnabled());
+
+            System.getProperties().clear();
+            System.getProperties().load(new StringReader(before));
+            System.setProperty("tamaya.defaultprops.disable", "");
+            localJavaConfigurationPropertySource = new JavaConfigurationPropertySource();
+            assertTrue(localJavaConfigurationPropertySource.isEnabled());
+
+            System.getProperties().clear();
+            System.getProperties().load(new StringReader(before));
+            System.setProperty("tamaya.defaults.disable", "");
+            localJavaConfigurationPropertySource = new JavaConfigurationPropertySource();
+            assertTrue(localJavaConfigurationPropertySource.isEnabled());
+
+        } finally {
+            System.getProperties().clear();
+            System.getProperties().load(new StringReader(before));
+        }
     }
 }

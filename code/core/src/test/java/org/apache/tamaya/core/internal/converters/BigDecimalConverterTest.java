@@ -65,6 +65,12 @@ public class BigDecimalConverterTest {
 		valueRead = config.get("tests.converter.bd.hex.upperX", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
 		assertEquals(new BigDecimal("63"), valueRead);
+		valueRead = config.get("tests.converter.bd.hex.negLowerX", BigDecimal.class);
+		assertThat(valueRead).isNotNull();
+		assertEquals(new BigDecimal("-47"), valueRead);
+		valueRead = config.get("tests.converter.bd.hex.negUpperX", BigDecimal.class);
+		assertThat(valueRead).isNotNull();
+		assertEquals(new BigDecimal("-63"), valueRead);
 	}
 
 	/**

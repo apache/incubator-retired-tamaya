@@ -64,4 +64,19 @@ public class ClassConverterTest {
         assertNull(converter.convert("", context));
         assertNull(converter.convert(null, context));
     }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Class.class)).build();
+        ClassConverter converter = new ClassConverter();
+        converter.convert("", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().contains("<fullyQualifiedClassName> (ClassConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        ClassConverter instance = new ClassConverter();
+        assertEquals(ClassConverter.class.hashCode(), instance.hashCode());
+    }
 }

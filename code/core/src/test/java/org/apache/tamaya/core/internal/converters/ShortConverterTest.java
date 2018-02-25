@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -107,5 +110,29 @@ public class ShortConverterTest {
         Short valueRead = config.get("tests.converter.short.max", Short.class);
         assertTrue(valueRead != null);
         assertEquals(Short.MAX_VALUE, valueRead.intValue());
+    }
+    
+        
+    @Test(expected = ConfigException.class)
+    public void testConvert_ShortInvalid() throws ConfigException {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        config.get("tests.converter.short.invalid", Short.class);
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Short.class)).build();
+        ShortConverter converter = new ShortConverter();
+        converter.convert("", context);
+
+        assertTrue(context.getSupportedFormats().contains("short (ShortConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MIN_VALUE (ShortConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MAX_VALUE (ShortConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        ShortConverter instance = new ShortConverter();
+        assertEquals(ShortConverter.class.hashCode(), instance.hashCode());
     }
 }

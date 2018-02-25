@@ -23,6 +23,9 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 
 import static org.junit.Assert.*;
 
@@ -40,7 +43,7 @@ public class NumberConverterTest {
     public void testConvert_Decimal() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.decimal", Number.class);
-        assertTrue(valueRead!=null);
+        assertNotNull(valueRead);
         assertEquals(valueRead, 101L);
     }
 
@@ -54,10 +57,10 @@ public class NumberConverterTest {
     public void testConvert_Hex() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.hex.lowerX", Number.class);
-        assertTrue(valueRead!=null);
+        assertNotNull(valueRead);
         assertEquals(valueRead, Long.valueOf("47"));
         valueRead = config.get("tests.converter.bd.hex.upperX", Number.class);
-        assertTrue(valueRead!=null);
+        assertNotNull(valueRead);
         assertEquals(valueRead, Long.valueOf("63"));
     }
 
@@ -70,7 +73,7 @@ public class NumberConverterTest {
     public void testConvert_NotPresent() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.foo", Number.class);
-        assertFalse(valueRead!=null);
+        assertNull(valueRead);
     }
 
     /**
@@ -82,7 +85,7 @@ public class NumberConverterTest {
     public void testConvert_BigValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.big", Number.class);
-        assertTrue(valueRead!=null);
+        assertNotNull(valueRead);
         assertEquals(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"),
                 valueRead);
     }
@@ -96,8 +99,71 @@ public class NumberConverterTest {
     public void testConvert_BigFloatValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.bigFloat", Number.class);
-        assertTrue(valueRead!=null);
+        assertNotNull(valueRead);
         assertEquals(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372" +
                 "63723628763821638923628193612983618293628763"), valueRead);
+    }
+    
+    /**
+     * Test conversion. The value are provided by
+     * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_PositiveInfinityValue() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Number valueRead = config.get("tests.converter.double.pi", Number.class);
+        assertNotNull(valueRead);
+        assertEquals(Double.POSITIVE_INFINITY, valueRead.doubleValue(),0.0d);
+    }
+
+    /**
+     * Test conversion. The value are provided by
+     * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_NegativeInfinityValue() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Number valueRead = config.get("tests.converter.double.ni", Number.class);
+        assertNotNull(valueRead);
+        assertEquals(Double.NEGATIVE_INFINITY, valueRead.doubleValue(),0.0d);
+    }
+   
+    /**
+     * Test conversion. The value are provided by
+     * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     * @throws Exception
+     */
+    @Test
+    public void testConvert_NaNValue() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Number valueRead = config.get("tests.converter.double.nan", Number.class);
+        assertNotNull(valueRead);
+        assertEquals(Double.NaN, valueRead.doubleValue(),0.0d);
+    }
+        
+    @Test(expected = ConfigException.class)
+    public void testConvert_NumberInvalid() throws ConfigException {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        config.get("tests.converter.bd.invalid", Number.class);
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Number.class)).build();
+        NumberConverter converter = new NumberConverter();
+        converter.convert("", context);
+
+        assertTrue(context.getSupportedFormats().contains("<double>, <long> (NumberConverter)"));
+        assertTrue(context.getSupportedFormats().contains("POSITIVE_INFINITY (NumberConverter)"));
+        assertTrue(context.getSupportedFormats().contains("NEGATIVE_INFINITY (NumberConverter)"));
+        assertTrue(context.getSupportedFormats().contains("NAN (NumberConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        NumberConverter instance = new NumberConverter();
+        assertEquals(NumberConverter.class.hashCode(), instance.hashCode());
     }
 }

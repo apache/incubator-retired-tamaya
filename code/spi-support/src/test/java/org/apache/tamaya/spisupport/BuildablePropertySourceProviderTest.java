@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spisupport;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySourceProvider;
 import org.junit.Test;
@@ -28,12 +30,18 @@ public class BuildablePropertySourceProviderTest {
 
     @Test
     public void getPropertySources() throws Exception {
-        BuildablePropertySource ps = BuildablePropertySource.builder()
+        BuildablePropertySource ps1 = BuildablePropertySource.builder()
                 .withName("test1").build();
+        BuildablePropertySource ps2 = BuildablePropertySource.builder()
+                .withName("test2").build();
         BuildablePropertySourceProvider prov = BuildablePropertySourceProvider.builder()
-                .withPropertySourcs(ps).build();
+                .withPropertySourcs(ps1)
+                .withPropertySourcs(Arrays.asList(ps2))
+                .build();
         assertNotNull(prov);
-        assertEquals(prov.getPropertySources().iterator().next(), ps);
+        Iterator testable = prov.getPropertySources().iterator();
+        assertEquals(testable.next(), ps1);
+        assertEquals(testable.next(), ps2);
     }
 
     @Test
@@ -44,12 +52,16 @@ public class BuildablePropertySourceProviderTest {
                 .withPropertySourcs(ps).build();
         BuildablePropertySourceProvider prov2 = BuildablePropertySourceProvider.builder()
                 .withPropertySourcs(ps).build();
-        assertEquals(prov1, prov2);
         BuildablePropertySource ps2 = BuildablePropertySource.builder()
-                .withName("test12").build();
-        prov2 = BuildablePropertySourceProvider.builder()
+                .withName("test2").build();
+        BuildablePropertySourceProvider prov3 = BuildablePropertySourceProvider.builder()
                 .withPropertySourcs(ps2).build();
-        assertNotEquals(prov1, prov2);
+        
+        assertEquals(prov1, prov1);
+        assertEquals(prov1, prov2);
+        assertNotEquals(prov1, prov3);
+        assertNotEquals(prov1, null);
+        assertNotEquals(prov1, "aString");
     }
 
     @Test

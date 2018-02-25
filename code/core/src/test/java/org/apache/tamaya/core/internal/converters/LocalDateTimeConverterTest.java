@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
+import org.apache.tamaya.TypeLiteral;
 
 import static org.junit.Assert.*;
 
@@ -54,4 +55,18 @@ public class LocalDateTimeConverterTest {
         assertEquals(conv1.hashCode(), conv2.hashCode());
     }
 
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(LocalDateTime.class)).build();
+        LocalDateTimeConverter converter = new LocalDateTimeConverter();
+        converter.convert("", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().toString().contains(" (LocalDateTimeConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        LocalDateTimeConverter instance = new LocalDateTimeConverter();
+        assertEquals(LocalDateTimeConverter.class.hashCode(), instance.hashCode());
+    }
 }
