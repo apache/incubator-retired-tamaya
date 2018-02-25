@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.OffsetTime;
+import org.apache.tamaya.TypeLiteral;
 
 import static org.junit.Assert.*;
 
@@ -33,6 +34,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class OffsetTimeConverterTest {
+
     @Mock
     ConversionContext context;
 
@@ -53,4 +55,18 @@ public class OffsetTimeConverterTest {
         assertEquals(conv1.hashCode(), conv2.hashCode());
     }
 
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(OffsetTime.class)).build();
+        OffsetTimeConverter converter = new OffsetTimeConverter();
+        converter.convert("", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().toString().contains(" (OffsetTimeConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        OffsetTimeConverter instance = new OffsetTimeConverter();
+        assertEquals(OffsetTimeConverter.class.hashCode(), instance.hashCode());
+    }
 }

@@ -18,120 +18,97 @@
  */
 package org.apache.tamaya;
 
-
 import org.apache.tamaya.spi.ConfigurationContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.mockito.Mockito;
 
 /**
- * Test Configuration class, that is used to testdata the default methods provided by the API.
+ * Test Configuration class, that is used to testdata the default methods
+ * provided by the API.
  */
-public class TestConfiguration implements Configuration{
+public class TestConfiguration implements Configuration {
 
-    private static final Map<String, String> VALUES;
+    private static final Map<String, Object> VALUES;
+
     static {
         VALUES = new HashMap<>();
-        VALUES.put("long", String.valueOf(Long.MAX_VALUE));
-        VALUES.put("int", String.valueOf(Integer.MAX_VALUE));
-        VALUES.put("double", String.valueOf(Double.MAX_VALUE));
-        VALUES.put("float", String.valueOf(Float.MAX_VALUE));
-        VALUES.put("short", String.valueOf(Short.MAX_VALUE));
-        VALUES.put("byte", String.valueOf(Byte.MAX_VALUE));
-        VALUES.put("booleanTrue", "true");
-        VALUES.put("booleanFalse", "false");
+        VALUES.put("long", Long.MAX_VALUE);
+        VALUES.put("int", Integer.MAX_VALUE);
+        VALUES.put("double", Double.MAX_VALUE);
+        VALUES.put("float", Float.MAX_VALUE);
+        VALUES.put("short", Short.MAX_VALUE);
+        VALUES.put("byte", Byte.MAX_VALUE);
         VALUES.put("String", "aStringValue");
     }
 
-    @Override
-    public String get(String key) {
-        return VALUES.get(key);
-    }
-
-    @Override
-    public String getOrDefault(String key, String defaultValue) {
-        String val = get(key);
-        if(val==null){
-            return defaultValue;
-        }
-        return val;
-    }
-
-    @Override
-    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-        T val = get(key, type);
-        if(val==null){
-            return defaultValue;
-        }
-        return val;
-    }
-
     @SuppressWarnings("unchecked")
-	@Override
-    public <T> T get(String key, Class<T> type) {
-        if(type.equals(Long.class)){
-            return (T)(Object)Long.MAX_VALUE;
-        }
-        else if(type.equals(Integer.class)){
-            return (T)(Object) Integer.MAX_VALUE;
-        }
-        else if(type.equals(Double.class)){
-            return (T)(Object) Double.MAX_VALUE;
-        }
-        else if(type.equals(Float.class)){
-            return (T)(Object) Float.MAX_VALUE;
-        }
-        else if(type.equals(Short.class)){
-            return (T)(Object) Short.MAX_VALUE;
-        }
-        else if(type.equals(Byte.class)){
-            return (T)(Object) Byte.MAX_VALUE;
-        }
-        else if(type.equals(Boolean.class)){
-            if("booleanTrue".equals(key)) {
-                return (T)Boolean.TRUE;
+    @Override
+    public <T> T get(String key, TypeLiteral<T> type) {
+        if (type.getRawType().equals(Long.class)) {
+            return (T) VALUES.get(key);
+        } else if (type.getRawType().equals(Integer.class)) {
+            return (T) VALUES.get(key);
+        } else if (type.getRawType().equals(Double.class)) {
+            return (T) VALUES.get(key);
+        } else if (type.getRawType().equals(Float.class)) {
+            return (T) VALUES.get(key);
+        } else if (type.getRawType().equals(Short.class)) {
+            return (T) VALUES.get(key);
+        } else if (type.getRawType().equals(Byte.class)) {
+            return (T) VALUES.get(key);
+        } else if (type.getRawType().equals(Boolean.class)) {
+            if ("booleanTrue".equals(key)) {
+                return (T) Boolean.TRUE;
+            } else {
+                return (T) Boolean.FALSE;
             }
-            else{
-                return (T)Boolean.FALSE;
-            }
-        }
-        else if(type.equals(String.class)){
-            return (T)"aStringValue";
+        } else if (type.getRawType().equals(String.class)) {
+            return (T) VALUES.get(key);
         }
         throw new ConfigException("No such property: " + key);
     }
 
     @Override
-    public <T> T get(String key, TypeLiteral<T> type) {
-        throw new RuntimeException("Method not implemented yet.");
-    }
-
-    @Override
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
         T val = get(key, type);
-        if(val==null){
+        if (val == null) {
             return defaultValue;
         }
         return val;
     }
 
     @Override
-    public Configuration with(ConfigOperator operator) {
-        return null;
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        throw new RuntimeException("Method not implemented yet.");
-    }
-
-    @Override
     public ConfigurationContext getContext() {
-        return null;
+        return Mockito.mock(ConfigurationContext.class);
     }
 
     @Override
     public Map<String, String> getProperties() {
-        throw new RuntimeException("Method not implemented yet.");
+        // run toString on each value of the (key, value) set in VALUES
+        return VALUES.entrySet().stream().collect(
+                Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().toString()));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TestConfiguration)) {
+            return false;
+        }
+        TestConfiguration that = (TestConfiguration) o;
+        return that.getProperties().equals(this.getProperties());
+    }
+
+    @Override
+    public int hashCode() {
+        return VALUES.hashCode();
+    }
+
 }

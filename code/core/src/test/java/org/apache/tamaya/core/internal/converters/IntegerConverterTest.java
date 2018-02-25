@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -107,5 +110,28 @@ public class IntegerConverterTest {
         Integer valueRead = config.get("tests.converter.integer.max", Integer.class);
         assertTrue(valueRead != null);
         assertEquals(Integer.MAX_VALUE, valueRead.intValue());
+    }
+        
+    @Test(expected = ConfigException.class)
+    public void testConvert_IntegerInvalid() throws ConfigException {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        config.get("tests.converter.integer.invalid", Integer.class);
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Integer.class)).build();
+        IntegerConverter converter = new IntegerConverter();
+        converter.convert("", context);
+
+        assertTrue(context.getSupportedFormats().contains("<int> (IntegerConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MIN_VALUE (IntegerConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MAX_VALUE (IntegerConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        IntegerConverter instance = new IntegerConverter();
+        assertEquals(IntegerConverter.class.hashCode(), instance.hashCode());
     }
 }

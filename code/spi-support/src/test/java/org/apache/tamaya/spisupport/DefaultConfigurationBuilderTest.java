@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spisupport;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
@@ -26,6 +28,7 @@ import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -35,7 +38,8 @@ import static org.junit.Assert.*;
  */
 public class DefaultConfigurationBuilderTest {
 
-    private TestPropertySource testPropertySource = new TestPropertySource(){};
+    private TestPropertySource testPropertySource = new TestPropertySource() {
+    };
 
     @Test
     public void setContext() throws Exception {
@@ -54,8 +58,8 @@ public class DefaultConfigurationBuilderTest {
     }
 
     @Test
-    public void addPropertySources_Array() throws Exception {
-        PropertySource testPS2 = new TestPropertySource("addPropertySources_Array_2");
+    public void addRemovePropertySources_Array() throws Exception {
+        PropertySource testPS2 = new TestPropertySource("addRemovePropertySources_Array");
         ConfigurationBuilder b = new DefaultConfigurationBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         Configuration cfg = b.build();
@@ -63,22 +67,10 @@ public class DefaultConfigurationBuilderTest {
         assertEquals(2, ctx.getPropertySources().size());
         assertTrue(ctx.getPropertySources().contains(testPropertySource));
         assertTrue(ctx.getPropertySources().contains(testPS2));
-    }
 
-    @Test
-    public void removePropertySources_Array() throws Exception {
-        PropertySource testPS2 = new TestPropertySource("addPropertySources_Array_2");
-        ConfigurationBuilder b = new DefaultConfigurationBuilder()
-                .addPropertySources(testPropertySource, testPS2);
-        Configuration cfg = b.build();
-        ConfigurationContext ctx = cfg.getContext();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
         b = new DefaultConfigurationBuilder()
                 .addPropertySources(testPropertySource, testPS2);
-        b.removePropertySources(testPropertySource);
-        cfg = b.build();
+        cfg = b.removePropertySources(testPropertySource).build();
         ctx = cfg.getContext();
         assertEquals(1, ctx.getPropertySources().size());
         assertFalse(ctx.getPropertySources().contains(testPropertySource));
@@ -86,75 +78,297 @@ public class DefaultConfigurationBuilderTest {
     }
 
     @Test
-    public void addPropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value, context) -> value;
-        PropertyFilter filter2 = (value, context) -> value;
-        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
-        b.addPropertyFilters(filter1, filter2);
+    public void addRemovePropertySources_Collection() throws Exception {
+        PropertySource testPS2 = new TestPropertySource("addRemovePropertySources_Collection");
+        ConfigurationBuilder b = new DefaultConfigurationBuilder()
+                .addPropertySources(Arrays.asList(testPropertySource, testPS2));
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertTrue(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
-        assertEquals(2, ctx.getPropertyFilters().size());
-        b = new DefaultConfigurationBuilder();
-        b.addPropertyFilters(filter1, filter2);
-        b.addPropertyFilters(filter1, filter2);
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertEquals(2, ctx.getPropertySources().size());
+        assertTrue(ctx.getPropertySources().contains(testPropertySource));
+        assertTrue(ctx.getPropertySources().contains(testPS2));
+
+        b = new DefaultConfigurationBuilder()
+                .addPropertySources(testPropertySource, testPS2);
+        cfg = b.removePropertySources(Arrays.asList(testPropertySource)).build();
+        ctx = cfg.getContext();
+        assertEquals(1, ctx.getPropertySources().size());
+        assertFalse(ctx.getPropertySources().contains(testPropertySource));
+        assertTrue(ctx.getPropertySources().contains(testPS2));
     }
 
     @Test
-    public void removePropertyFilters_Array() throws Exception {
+    public void addRemovePropertyFilters_Array() throws Exception {
         PropertyFilter filter1 = (value, context) -> value;
         PropertyFilter filter2 = (value, context) -> value;
-        ConfigurationBuilder b = new DefaultConfigurationBuilder()
-                .addPropertyFilters(filter1, filter2);
-        Configuration cfg = b.build();
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        Configuration cfg = b.addPropertyFilters(filter1, filter2).build();
         ConfigurationContext ctx = cfg.getContext();
         assertTrue(ctx.getPropertyFilters().contains(filter1));
         assertTrue(ctx.getPropertyFilters().contains(filter2));
         assertEquals(2, ctx.getPropertyFilters().size());
-        b = new DefaultConfigurationBuilder()
-                .addPropertyFilters(filter1, filter2);
-        b.removePropertyFilters(filter1);
-        cfg = b.build();
+
+        b = new DefaultConfigurationBuilder();
+        b.addPropertyFilters(filter1, filter2);
+        cfg = b.addPropertyFilters(filter1, filter2).build();
+        ctx = cfg.getContext();
+        assertEquals(2, ctx.getPropertyFilters().size());
+
+        b = new DefaultConfigurationBuilder();
+        b.addPropertyFilters(filter1, filter2);
+        cfg = b.removePropertyFilters(filter1).build();
         ctx = cfg.getContext();
         assertEquals(1, ctx.getPropertyFilters().size());
         assertFalse(ctx.getPropertyFilters().contains(filter1));
         assertTrue(ctx.getPropertyFilters().contains(filter2));
+
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void addPropertyConverter() throws Exception {
-		PropertyConverter converter = (value, context) -> value.toLowerCase();
-		ConfigurationBuilder b = new DefaultConfigurationBuilder()
-                .addPropertyConverters(TypeLiteral.of(String.class), converter);
-        Configuration cfg = b.build();
+    public void addRemovePropertyFilters_Collection() throws Exception {
+        PropertyFilter filter1 = (value, context) -> value;
+        PropertyFilter filter2 = (value, context) -> value;
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        Configuration cfg = b.addPropertyFilters(Arrays.asList(filter1, filter2)).build();
         ConfigurationContext ctx = cfg.getContext();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(1, ctx.getPropertyConverters().size());
-        b = new DefaultConfigurationBuilder()
-                .addPropertyConverters(TypeLiteral.of(String.class), converter);
-        b.addPropertyConverters(TypeLiteral.of(String.class), converter);
-        assertEquals(1, ctx.getPropertyConverters().size());
-    }
+        assertTrue(ctx.getPropertyFilters().contains(filter1));
+        assertTrue(ctx.getPropertyFilters().contains(filter2));
+        assertEquals(2, ctx.getPropertyFilters().size());
 
-    @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void removePropertyConverters_Array() throws Exception {
-        PropertyConverter converter = (value, context) -> value.toLowerCase();
-        ConfigurationBuilder b = new DefaultConfigurationBuilder()
-                .addPropertyConverters(TypeLiteral.of(String.class), converter);
-        Configuration cfg = b.build();
-        ConfigurationContext ctx = cfg.getContext();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(1, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
-        b = new DefaultConfigurationBuilder()
-                .addPropertyConverters(TypeLiteral.of(String.class), converter);
-        b.removePropertyConverters(TypeLiteral.of(String.class), converter);
-        cfg = b.build();
+        b = new DefaultConfigurationBuilder();
+        b.addPropertyFilters(Arrays.asList(filter1, filter2, filter1));
+        cfg = b.addPropertyFilters(Arrays.asList(filter1, filter2)).build();
         ctx = cfg.getContext();
-        assertFalse(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
+        assertEquals(2, ctx.getPropertyFilters().size());
+
+        b = new DefaultConfigurationBuilder();
+        b.addPropertyFilters(Arrays.asList(filter1, filter2));
+        cfg = b.removePropertyFilters(Arrays.asList(filter1)).build();
+        ctx = cfg.getContext();
+        assertEquals(1, ctx.getPropertyFilters().size());
+        assertFalse(ctx.getPropertyFilters().contains(filter1));
+        assertTrue(ctx.getPropertyFilters().contains(filter2));
+
+    }
+
+    @Test
+    public void increasePriority() {
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        MockedPropertySource[] propertySources = new MockedPropertySource[10];
+        for (int i = 0; i < propertySources.length; i++) {
+            propertySources[i] = new MockedPropertySource("ps" + i, i);
+        }
+        b.addPropertySources(propertySources);
+        b.increasePriority(propertySources[propertySources.length - 1]);
+        for (int i = 0; i < propertySources.length; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        b.increasePriority(propertySources[propertySources.length - 2]).build();
+        for (int i = 0; i < propertySources.length - 2; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        assertEquals(propertySources[propertySources.length - 1], b.getPropertySources().get(propertySources.length - 2));
+        assertEquals(propertySources[propertySources.length - 2], b.getPropertySources().get(propertySources.length - 1));
+        boolean caughtAlreadyBuilt = false;
+        try {
+            b.increasePriority(propertySources[propertySources.length - 2]);
+        } catch (IllegalStateException e) {
+            caughtAlreadyBuilt = true;
+        }
+        assertTrue(caughtAlreadyBuilt);
+    }
+
+    @Test
+    public void decreasePriority() {
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        MockedPropertySource[] propertySources = new MockedPropertySource[10];
+        for (int i = 0; i < propertySources.length; i++) {
+            propertySources[i] = new MockedPropertySource("ps" + i, i);
+        }
+        b.addPropertySources(propertySources);
+        b.decreasePriority(propertySources[0]);
+        for (int i = 0; i < propertySources.length; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        b.decreasePriority(propertySources[1]).build();
+        for (int i = 2; i < propertySources.length; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        assertEquals(propertySources[0], b.getPropertySources().get(1));
+        assertEquals(propertySources[1], b.getPropertySources().get(0));
+        boolean caughtAlreadyBuilt = false;
+        try {
+            b.decreasePriority(propertySources[1]);
+        } catch (IllegalStateException e) {
+            caughtAlreadyBuilt = true;
+        }
+        assertTrue(caughtAlreadyBuilt);
+    }
+
+    @Test
+    public void lowestPriority() {
+        // setup
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        MockedPropertySource[] propertySources = new MockedPropertySource[10];
+        for (int i = 0; i < propertySources.length; i++) {
+            propertySources[i] = new MockedPropertySource("ps" + i, i);
+        }
+        b.addPropertySources(propertySources);
+        // test
+        b.lowestPriority(propertySources[0]);
+        for (int i = 0; i < propertySources.length; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        b.lowestPriority(propertySources[1]);
+        for (int i = 2; i < propertySources.length; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        assertEquals(propertySources[0], b.getPropertySources().get(1));
+        assertEquals(propertySources[1], b.getPropertySources().get(0));
+        b.lowestPriority(propertySources[5]).build();
+        assertEquals(propertySources[5], b.getPropertySources().get(0));
+        boolean caughtAlreadyBuilt = false;
+        try {
+            b.lowestPriority(propertySources[5]);
+        } catch (IllegalStateException e) {
+            caughtAlreadyBuilt = true;
+        }
+        assertTrue(caughtAlreadyBuilt);
+    }
+
+    @Test
+    public void highestPriority() {
+        // setup
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        MockedPropertySource[] propertySources = new MockedPropertySource[10];
+        for (int i = 0; i < propertySources.length; i++) {
+            propertySources[i] = new MockedPropertySource("ps" + i, i);
+        }
+        b.addPropertySources(propertySources);
+        // test
+        b.highestPriority(propertySources[propertySources.length - 1]);
+        for (int i = 0; i < propertySources.length; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        b.highestPriority(propertySources[propertySources.length - 2]);
+        for (int i = 0; i < propertySources.length - 2; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+        assertEquals(propertySources[propertySources.length - 2], b.getPropertySources().get(propertySources.length - 1));
+        assertEquals(propertySources[propertySources.length - 1], b.getPropertySources().get(propertySources.length - 2));
+        b.highestPriority(propertySources[5]).build();
+        assertEquals(propertySources[5], b.getPropertySources().get(propertySources.length - 1));
+        boolean caughtAlreadyBuilt = false;
+        try {
+            b.highestPriority(propertySources[5]);
+        } catch (IllegalStateException e) {
+            caughtAlreadyBuilt = true;
+        }
+        assertTrue(caughtAlreadyBuilt);
+    }
+
+    @Test
+    public void sortPropertySources() {
+        // setup
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        MockedPropertySource[] propertySources = new MockedPropertySource[10];
+        for (int i = 0; i < propertySources.length; i++) {
+            propertySources[i] = new MockedPropertySource("ps" + i, i);
+        }
+        b.addPropertySources(propertySources);
+        Comparator<PropertySource> psComp = (o1, o2) -> o1.toString().compareTo(o2.toString());
+        // test 
+        assertEquals(DefaultConfigurationBuilder.class, b.sortPropertySources(psComp).getClass());
+        Arrays.sort(propertySources, psComp);
+        for (int i = 0; i < propertySources.length; i++) {
+            assertEquals(propertySources[i], b.getPropertySources().get(i));
+        }
+    }
+
+    @Test
+    public void sortPropertyFilter() {
+        // setup
+        DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
+        PropertyFilter[] propertyFilters = new PropertyFilter[10];
+        for (int i = 0; i < propertyFilters.length; i++) {
+            propertyFilters[i] = (value, context) -> value.toBuilder().setValue(toString() + " - ").build();
+        }
+
+        b.addPropertyFilters(propertyFilters);
+        Comparator<PropertyFilter> pfComp = (o1, o2) -> o1.toString().compareTo(o2.toString());
+        //test
+        assertEquals(DefaultConfigurationBuilder.class, b.sortPropertyFilter(pfComp).getClass());
+        Arrays.sort(propertyFilters, pfComp);
+        for (int i = 0; i < propertyFilters.length; i++) {
+            assertEquals(propertyFilters[i], b.getPropertyFilters().get(i));
+        }
+    }
+
+    @Test
+    public void addRemovePropertyConverter_Array() throws Exception {
+        PropertyConverter converter1 = (value, context) -> value.toLowerCase();
+        PropertyConverter converter2 = (value, context) -> value.toUpperCase();
+        ConfigurationBuilder b = new DefaultConfigurationBuilder()
+                .addPropertyConverters(TypeLiteral.of(String.class), converter1, converter2);
+        Configuration cfg = b.build();
+        ConfigurationContext ctx = cfg.getContext();
+        Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
+        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1));
+        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2));
+        assertEquals(1, ctx.getPropertyConverters().size());
+        assertEquals(2, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
+        assertTrue(buildConverters.get(TypeLiteral.of(String.class)).containsAll(
+                        ctx.getPropertyConverters().get(TypeLiteral.of(String.class))));
+
+        b = new DefaultConfigurationBuilder()
+                .addPropertyConverters(TypeLiteral.of(String.class), converter1);
+        cfg = b.addPropertyConverters(TypeLiteral.of(String.class), converter1).build();
+        ctx = cfg.getContext();
+        assertEquals(1, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
+
+        b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), converter1, converter2);
+        cfg = b.removePropertyConverters(TypeLiteral.of(String.class), converter1).build();
+        ctx = cfg.getContext();
+        assertFalse(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1));
+        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2));
+
+        b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), converter1, converter2);
+        cfg = b.removePropertyConverters(TypeLiteral.of(String.class)).build();
+        ctx = cfg.getContext();
+        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty());
+    }
+
+    @Test
+    public void addRemovePropertyConverter_Collection() throws Exception {
+        PropertyConverter converter1 = (value, context) -> value.toLowerCase();
+        PropertyConverter converter2 = (value, context) -> value.toUpperCase();
+        ConfigurationBuilder b = new DefaultConfigurationBuilder()
+                .addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1, converter2));
+        Configuration cfg = b.build();
+        ConfigurationContext ctx = cfg.getContext();
+        Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
+        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1));
+        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2));
+        assertEquals(1, ctx.getPropertyConverters().size());
+        assertEquals(2, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
+        assertTrue(buildConverters.get(TypeLiteral.of(String.class)).containsAll(
+                        ctx.getPropertyConverters().get(TypeLiteral.of(String.class))));
+
+        b = new DefaultConfigurationBuilder()
+                .addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1));
+        cfg = b.addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1)).build();
+        ctx = cfg.getContext();
+        assertEquals(1, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
+
+        b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1, converter2));
+        cfg = b.removePropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1)).build();
+        ctx = cfg.getContext();
+        assertFalse(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1));
+        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2));
+
+        b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1, converter2));
+        cfg = b.removePropertyConverters(TypeLiteral.of(String.class)).build();
+        ctx = cfg.getContext();
         assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty());
     }
 
@@ -179,15 +393,15 @@ public class DefaultConfigurationBuilderTest {
         builder.addDefaultPropertyConverters();
     }
 
-    private static class TestPropertySource implements PropertySource{
+    private static class TestPropertySource implements PropertySource {
 
         private String id;
 
-        public TestPropertySource(){
+        public TestPropertySource() {
             this(null);
         }
 
-        public TestPropertySource(String id){
+        public TestPropertySource(String id) {
             this.id = id;
         }
 
@@ -198,7 +412,7 @@ public class DefaultConfigurationBuilderTest {
 
         @Override
         public String getName() {
-            return id!=null?id:"TestPropertySource";
+            return id != null ? id : "TestPropertySource";
         }
 
         @Override

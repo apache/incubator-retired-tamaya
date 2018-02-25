@@ -27,29 +27,20 @@ import org.junit.Test;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 public class BasePropertySourceTest {
 
     @Test
     public void isAlwaysScanable() {
-        BasePropertySource bs = new BasePropertySource() {
-            @Override
-            public Map<String, PropertyValue> getProperties() {
-                return Collections.emptyMap();
-            }
-        };
+        BasePropertySource bs = new EmptyPropertySource();
 
         assertThat(bs.isScannable()).isTrue();
     }
 
     @Test
     public void givenOrdinalOverwritesGivenDefaulOrdinal() {
-        BasePropertySource bs = new BasePropertySource() {
-            @Override
-            public Map<String, PropertyValue> getProperties() {
-                return Collections.emptyMap();
-            }
-        };
+        BasePropertySource bs = new EmptyPropertySource();
 
         bs.setDefaultOrdinal(10);
 
@@ -94,6 +85,33 @@ public class BasePropertySourceTest {
         Assert.assertEquals(1000, new OverriddenOrdinalPropertySource().getOrdinal());
     }
 
+    @Test
+    public void testEqualsAndHashAndToStringValues() {
+        BasePropertySource bs1 = new EmptyPropertySource();
+        bs1.setName("testEqualsName");
+        BasePropertySource bs2 = new EmptyPropertySource();
+        bs2.setName("testEqualsName");
+        BasePropertySource bs3 = new EmptyPropertySource();
+        bs3.setName("testNotEqualsName");
+
+        assertEquals(bs1, bs1);
+        assertNotEquals(null, bs1);
+        assertNotEquals("aString", bs1);
+        assertEquals(bs1, bs2);
+        assertNotEquals(bs1, bs3);
+        assertEquals(bs1.hashCode(), bs2.hashCode());
+        assertNotEquals(bs1.hashCode(), bs3.hashCode());
+        assertTrue(bs1.toStringValues().contains("name='testEqualsName'"));
+    }
+
+    private class EmptyPropertySource extends BasePropertySource {
+
+        @Override
+        public Map<String, PropertyValue> getProperties() {
+            return Collections.emptyMap();
+        }
+    }
+
     private static class OverriddenOrdinalPropertySource extends BasePropertySource {
 
         private OverriddenOrdinalPropertySource() {
@@ -107,7 +125,7 @@ public class BasePropertySourceTest {
 
         @Override
         public Map<String, PropertyValue> getProperties() {
-            Map<String,PropertyValue> result = new HashMap<>(1);
+            Map<String, PropertyValue> result = new HashMap<>(1);
             result.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.of(PropertySource.TAMAYA_ORDINAL, "1000", getName()));
             return result;
         }
@@ -126,11 +144,10 @@ public class BasePropertySourceTest {
 
         @Override
         public Map<String, PropertyValue> getProperties() {
-            Map<String,PropertyValue> result = new HashMap<>(1);
+            Map<String, PropertyValue> result = new HashMap<>(1);
             result.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.of(PropertySource.TAMAYA_ORDINAL, "invalid", getName()));
             return result;
         }
     }
-
 
 }

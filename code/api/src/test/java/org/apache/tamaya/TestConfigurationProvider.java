@@ -24,14 +24,17 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.mockito.Mockito;
 
 /**
- * Test Configuration class, that is used to testdata the default methods provided by the API.
+ * Test Configuration class, that is used to testdata the default methods
+ * provided by the API.
  */
 @Priority(-1)
 public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
-    private static final Configuration config = new TestConfiguration();
+    private Configuration config = new TestConfiguration();
+    private ConfigurationContext context = Mockito.mock(ConfigurationContext.class);
 
     @Override
     public Configuration getConfiguration() {
@@ -45,35 +48,31 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
     @Override
     public ConfigurationContext getConfigurationContext() {
-        return config.getContext();
+        return context;
+    }
+    
+    public ConfigurationContext getConfigurationContextFromInterface(){
+        return ConfigurationProviderSpi.super.getConfigurationContext();
     }
 
     @Override
     public void setConfigurationContext(ConfigurationContext context) {
-        throw new UnsupportedOperationException();
+        this.context = context;
     }
 
-    @Override
-    public boolean isConfigurationContextSettable() {
-        return false;
-    }
 
     @Override
     public ConfigurationBuilder getConfigurationBuilder() {
-        return null;
+        return Mockito.mock(ConfigurationBuilder.class, Mockito.RETURNS_DEEP_STUBS);
     }
 
     @Override
     public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return null;
+        return Mockito.mock(ConfigurationContextBuilder.class);
     }
 
     @Override
     public void setConfiguration(Configuration config) {
-    }
-
-    @Override
-    public boolean isConfigurationSettable() {
-        return false;
+        this.config = config;
     }
 }

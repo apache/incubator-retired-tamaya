@@ -24,8 +24,12 @@ import org.junit.Test;
 
 import java.net.URI;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests conversion of the {@link URI}-converter.
@@ -65,4 +69,27 @@ public class URIConverterTest {
         assertNull(converter.convert("", context));
         assertNull(converter.convert(null, context));
     }
+    
+    @Test
+    public void testConvert_URIInvalid() throws ConfigException {
+        URIConverter converter = new URIConverter();
+        assertNull(converter.convert("not a uri", context));
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(URI.class)).build();
+        URIConverter converter = new URIConverter();
+        converter.convert("test:path", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().contains("<uri> -> new URI(uri) (URIConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        URIConverter instance = new URIConverter();
+        assertEquals(URIConverter.class.hashCode(), instance.hashCode());
+    }
+    
+    
 }

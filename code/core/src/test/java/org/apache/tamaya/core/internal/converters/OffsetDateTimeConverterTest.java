@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import java.time.LocalDate;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.OffsetDateTime;
+import org.apache.tamaya.TypeLiteral;
 
 import static org.junit.Assert.*;
 
@@ -54,4 +56,18 @@ public class OffsetDateTimeConverterTest {
         assertEquals(conv1.hashCode(), conv2.hashCode());
     }
 
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(OffsetDateTime.class)).build();
+        OffsetDateTimeConverter converter = new OffsetDateTimeConverter();
+        converter.convert("", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().toString().contains(" (OffsetDateTimeConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        OffsetDateTimeConverter instance = new OffsetDateTimeConverter();
+        assertEquals(OffsetDateTimeConverter.class.hashCode(), instance.hashCode());
+    }
 }

@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -107,5 +110,28 @@ public class LongConverterTest {
         Long valueRead = config.get("tests.converter.long.max", Long.class);
         assertTrue(valueRead != null);
         assertEquals(Long.MAX_VALUE, valueRead.longValue());
+    }    
+    
+    @Test(expected = ConfigException.class)
+    public void testConvert_LongInvalid() throws ConfigException {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        config.get("tests.converter.long.invalid", Long.class);
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Long.class)).build();
+        LongConverter converter = new LongConverter();
+        converter.convert("", context);
+
+        assertTrue(context.getSupportedFormats().contains("<long> (LongConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MIN_VALUE (LongConverter)"));
+        assertTrue(context.getSupportedFormats().contains("MAX_VALUE (LongConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        LongConverter instance = new LongConverter();
+        assertEquals(LongConverter.class.hashCode(), instance.hashCode());
     }
 }

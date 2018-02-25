@@ -18,20 +18,23 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import java.util.List;
 import org.apache.tamaya.ConfigException;
 import org.junit.Test;
 
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
+import static org.junit.Assert.*;
 
 public class OptionalConverterTest {
 
     @Test
     public void nullConversionYieldsEmptyOptional() {
         final Optional<?> result = new OptionalConverter().convert(null, null);
-        assertThat(result).isNotNull();
-        assertThat(result.isPresent()).isFalse();
+        assertNotNull(result);
+        assertFalse(result.isPresent());
     }
 
     @Test(expected = ConfigException.class)
@@ -39,4 +42,36 @@ public class OptionalConverterTest {
         new OptionalConverter().convert("JustATestValueThatIsIgnored", null);
     }
 
+    @Test
+    public void testOptionalString() {
+        TypeLiteral<List<String>> listOfStringTypeLiteral = new TypeLiteral<List<String>>() {
+        };
+        ConversionContext ctx = new ConversionContext.Builder("testOptionalString", listOfStringTypeLiteral).build();
+
+        final Optional<String> result = new OptionalConverter().convert("astring", ctx);
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals("astring", result.get());
+    }
+
+    @Test
+    public void testOptionalInteger() {
+        TypeLiteral<List<Integer>> listOfIntegerTypeLiteral = new TypeLiteral<List<Integer>>() {
+        };
+        ConversionContext ctx = new ConversionContext.Builder("testOptionalInteger", listOfIntegerTypeLiteral)
+                .setConfiguration(ConfigurationProvider.getConfiguration())
+                .build();
+
+        final Optional<Integer> result = new OptionalConverter().convert("11", ctx);
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals(11, result.get().intValue());
+    }
+    
+    
+    @Test
+    public void testHashCode() {
+        OptionalConverter instance = new OptionalConverter();
+        assertEquals(OptionalConverter.class.hashCode(), instance.hashCode());
+    }
 }

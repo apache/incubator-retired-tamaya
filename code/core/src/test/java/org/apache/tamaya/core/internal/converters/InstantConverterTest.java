@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.Instant;
+import org.apache.tamaya.TypeLiteral;
 
 import static org.junit.Assert.*;
 
@@ -52,6 +53,21 @@ public class InstantConverterTest {
         InstantConverter conv2 = new InstantConverter();
         assertEquals(conv1, conv2);
         assertEquals(conv1.hashCode(), conv2.hashCode());
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Instant.class)).build();
+        InstantConverter converter = new InstantConverter();
+        converter.convert("", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().toString().contains(" (InstantConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        InstantConverter instance = new InstantConverter();
+        assertEquals(InstantConverter.class.hashCode(), instance.hashCode());
     }
 
 }

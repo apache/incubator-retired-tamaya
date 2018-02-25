@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Test Property Source used by converter tests.
  */
-public class ConverterTestsPropertySource implements PropertySource{
+public class ConverterTestsPropertySource implements PropertySource {
 
     @Override
     public int getOrdinal() {
@@ -35,13 +35,13 @@ public class ConverterTestsPropertySource implements PropertySource{
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return "ConverterTestsPropertySource";
     }
 
     @Override
     public PropertyValue get(String key) {
-        switch(key){
+        switch (key) {
             // Bytes
             case "tests.converter.byte.decimal":
                 return PropertyValue.of(key, "101", getName());
@@ -55,6 +55,8 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "min", getName());
             case "tests.converter.byte.max":
                 return PropertyValue.of(key, "MAX_Value", getName());
+            case "tests.converter.byte.invalid":
+                return PropertyValue.of(key, "invalid", getName());
             // Boolean
             case "tests.converter.boolean.y1":
                 return PropertyValue.of(key, "y", getName());
@@ -96,13 +98,13 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "f", getName());
             case "tests.converter.boolean.f2":
                 return PropertyValue.of(key, "F", getName());
+            case "tests.converter.boolean.invalid":
+                return PropertyValue.of(key, "invalid", getName());
             // Character
             case "tests.converter.char.f":
                 return PropertyValue.of(key, "f", getName());
             case "tests.converter.char.d":
                 return PropertyValue.of(key, "'d'", getName());
-            case "tests.converter.char.single-quote":
-                return PropertyValue.of(key, "'", getName());
             case "tests.converter.char.f-before":
                 return PropertyValue.of(key, "  f", getName());
             case "tests.converter.char.f-after":
@@ -111,6 +113,21 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "   f      ", getName());
             case "tests.converter.char.f-numeric":
                 return PropertyValue.of(key, "101", getName());
+            case "tests.converter.char.single-quote":
+                return PropertyValue.of(key, "'", getName());
+            case "tests.converter.char.two-single-quotes":
+                return PropertyValue.of(key, "''", getName());
+            case "tests.converter.char.three-single-quotes":
+                return PropertyValue.of(key, "'''", getName());
+            case "tests.converter.char.invalid":
+                return PropertyValue.of(key, "invalid", getName());
+            case "tests.converter.char.quoted-invalid":
+                return PropertyValue.of(key, "'invalid'", getName());
+            case "tests.converter.char.あ":
+                return PropertyValue.of(key, "あ", getName());
+            case "tests.converter.char.กขฃคฅฆงจฉช":
+                return PropertyValue.of(key, "กขฃคฅฆงจฉช", getName());
+
             // currency
             case "tests.converter.currency.code1":
                 return PropertyValue.of(key, "CHF", getName());
@@ -138,6 +155,14 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "DE  ", getName());
             case "tests.converter.currency.code-locale4":
                 return PropertyValue.of(key, "  DE  ", getName());
+            case "tests.converter.currency.code-locale-twopart":
+                return PropertyValue.of(key, "jp_JP", getName());
+            case "tests.converter.currency.code-locale-threepart":
+                return PropertyValue.of(key, "jp_JP_JP", getName());
+            case "tests.converter.currency.code-locale-fourpart":
+                return PropertyValue.of(key, "jp_JP_JP_JP", getName());
+            case "tests.converter.currency.invalid":
+                return PropertyValue.of(key, "invalid", getName());
             //double
             case "tests.converter.double.decimal":
                 return PropertyValue.of(key, "1.23456789", getName());
@@ -163,6 +188,8 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "positive_infinity", getName());
             case "tests.converter.double.ni":
                 return PropertyValue.of(key, "Negative_Infinity", getName());
+            case "tests.converter.double.invalid":
+                return PropertyValue.of(key, "invalid", getName());
             //float
             case "tests.converter.float.decimal":
                 return PropertyValue.of(key, "1.23456789", getName());
@@ -188,6 +215,8 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "positive_infinity", getName());
             case "tests.converter.float.ni":
                 return PropertyValue.of(key, "Negative_Infinity", getName());
+            case "tests.converter.float.invalid":
+                return PropertyValue.of(key, "invalid", getName());
             // Integer
             case "tests.converter.integer.decimal":
                 return PropertyValue.of(key, "101", getName());
@@ -201,6 +230,8 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "min", getName());
             case "tests.converter.integer.max":
                 return PropertyValue.of(key, "MAX_Value", getName());
+            case "tests.converter.integer.invalid":
+                return PropertyValue.of(key, "invalid", getName());
             // Long
             case "tests.converter.long.decimal":
                 return PropertyValue.of(key, "101", getName());
@@ -214,6 +245,8 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "min", getName());
             case "tests.converter.long.max":
                 return PropertyValue.of(key, "MAX_Value", getName());
+            case "tests.converter.long.invalid":
+                return PropertyValue.of(key, "invalid", getName());
             // Short
             case "tests.converter.short.decimal":
                 return PropertyValue.of(key, "101", getName());
@@ -227,7 +260,9 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "min", getName());
             case "tests.converter.short.max":
                 return PropertyValue.of(key, "MAX_Value", getName());
-            // BigDecimal
+            case "tests.converter.short.invalid":
+                return PropertyValue.of(key, "invalid", getName());
+            // BigDecimal & BigInteger
             case "tests.converter.bd.decimal":
                 return PropertyValue.of(key, "101", getName());
             case "tests.converter.bd.float":
@@ -240,6 +275,21 @@ public class ConverterTestsPropertySource implements PropertySource{
                 return PropertyValue.of(key, "0x2F", getName());
             case "tests.converter.bd.hex.upperX":
                 return PropertyValue.of(key, "0X3F", getName());
+            case "tests.converter.bd.hex.negLowerX":
+                return PropertyValue.of(key, "-0x2F", getName());
+            case "tests.converter.bd.hex.negUpperX":
+                return PropertyValue.of(key, "-0X3F", getName());
+            case "tests.converter.bd.hex.badX":
+                return PropertyValue.of(key, "0X3G2", getName());
+            case "tests.converter.bd.hex.negBadX":
+                return PropertyValue.of(key, "-0X3G2", getName());
+            case "tests.converter.bd.hex.subTenX":
+                return PropertyValue.of(key, "0XFFFFFF", getName());
+            case "tests.converter.bd.hex.negSubTenX":
+                return PropertyValue.of(key, "-0X0107", getName());
+            case "tests.converter.bd.invalid":
+                return PropertyValue.of(key, "invalid", getName());
+
         }
         return null;
     }

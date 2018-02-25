@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya;
 
+import java.lang.reflect.Type;
 import static org.apache.tamaya.TypeLiteral.getGenericInterfaceTypeParameters;
 import static org.apache.tamaya.TypeLiteral.getTypeParameters;
 import static org.junit.Assert.assertEquals;
@@ -25,8 +26,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Tests for the {@link TypeLiteral} class.
@@ -34,21 +37,21 @@ import org.junit.Test;
 @SuppressWarnings("serial")
 public class TypeLiteralTest {
 
-	@Test(expected = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullParameter() {
-       new TypeLiteral<List<String>>(null){};
+        new TypeLiteral<List<String>>(null) { };
     }
 
     @Test
-    public void test_constrcutor(){
-        TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>(){};
+    public void test_constructor() {
+        TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>() { };
         assertEquals(List.class, listTypeLiteral.getRawType());
         assertEquals(String.class, TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]);
     }
 
     @Test
-    public void test_of(){
-        class MyListClass extends ArrayList<String>{}
+    public void test_of() {
+        class MyListClass extends ArrayList<String> { }
         TypeLiteral<MyListClass> listTypeLiteral = TypeLiteral.of(MyListClass.class);
         assertEquals(MyListClass.class, listTypeLiteral.getRawType());
         assertEquals(MyListClass.class, listTypeLiteral.getType());
@@ -60,16 +63,26 @@ public class TypeLiteralTest {
     }
 
     @Test
-    public void test_getTypeParameter(){
-        TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>(){};
+    public void test_getTypeParameters() {
+        TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>() { };
         assertEquals(List.class, listTypeLiteral.getRawType());
         assertEquals(String.class, TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]);
     }
 
     @Test
-    public void test_getGenericInterfaceTypeParameter(){
-        class MyListClass extends ArrayList<String> implements List<String>{}
+    public void testGetTypeParametersNoGenerics() {
+        assertEquals(0, getTypeParameters(String.class).length);
+    }
+
+    @Test
+    public void test_getGenericInterfaceTypeParameter() {
+        class MyListClass extends ArrayList<String> implements List<String> { }
         assertEquals(String.class, getGenericInterfaceTypeParameters(MyListClass.class, List.class)[0]);
+    }
+
+    @Test
+    public void testGetGenericInterfaceTypeParameterNoGenerics() {
+        assertEquals(0, getGenericInterfaceTypeParameters(String.class, String.class).length);
     }
 
     @Test(expected = NullPointerException.class)
@@ -85,6 +98,40 @@ public class TypeLiteralTest {
     @Test(expected = NullPointerException.class)
     public void getTypeParametersRequiresNonNullParameter() {
         getTypeParameters(null);
+    }
+
+    @Test
+    public void testTypeTakingParametersMustBeSubclassOfParameterizedType() {
+        //Reflection on ArrayList<String> gives a ParameterizedType
+        class A extends ArrayList<String> { };
+        class B extends A { };
+        TypeLiteral<List<String>> checker = new TypeLiteral<List<String>>() { };
+        Type t = checker.getDefinedType(B.class);
+        assertEquals(t.getTypeName(), "java.lang.String");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testTypeTakingParametersMustNotBeSubclassOfObject() {
+        //Create a class hierarchy where B is a subclass of Object and not
+        // ParameterizedType, but still takes parameters.
+        class A<T> { };
+        class B extends A { };
+        TypeLiteral<List<String>> checker = new TypeLiteral<List<String>>() { };
+        checker.getDefinedType(B.class);
+    }
+    
+    @Test
+    public void testHashAndEquals(){
+        TypeLiteral a = TypeLiteral.of(List.class);
+        TypeLiteral b = TypeLiteral.of(List.class);
+        TypeLiteral c = TypeLiteral.of(Map.class);
+        assertEquals(a.hashCode(), b.hashCode());
+        assertNotEquals(a.hashCode(), c.hashCode());
+        assertTrue(a.equals(a));
+        assertTrue(a.equals(b));
+        assertFalse(a.equals(null));
+        assertFalse(a.equals("SomeString"));
+        assertFalse(a.equals(c));
     }
 
 }

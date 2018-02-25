@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.Duration;
+import org.apache.tamaya.TypeLiteral;
 
 import static org.junit.Assert.*;
 
@@ -74,6 +75,21 @@ public class DurationConverterTest {
         DurationConverter conv2 = new DurationConverter();
         assertEquals(conv1, conv2);
         assertEquals(conv1.hashCode(), conv2.hashCode());
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Duration.class)).build();
+        DurationConverter converter = new DurationConverter();
+        converter.convert("", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().contains("PT20M34S (DurationConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        DurationConverter instance = new DurationConverter();
+        assertEquals(DurationConverter.class.hashCode(), instance.hashCode());
     }
 
 }
