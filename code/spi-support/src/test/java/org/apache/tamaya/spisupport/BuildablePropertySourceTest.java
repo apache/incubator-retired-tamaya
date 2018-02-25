@@ -18,6 +18,9 @@
  */
 package org.apache.tamaya.spisupport;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
 import org.junit.Test;
 
@@ -46,7 +49,7 @@ public class BuildablePropertySourceTest {
                 .withSimpleProperty("a", "b").build();
         assertEquals("b", ps1.get("a").getValue());
     }
-
+    
     @Test
     public void getProperties() throws Exception {
         BuildablePropertySource ps1 = BuildablePropertySource.builder()
@@ -54,6 +57,61 @@ public class BuildablePropertySourceTest {
         assertNotNull(ps1.getProperties());
         assertEquals(1, ps1.getProperties().size());
         assertEquals("b", ps1.getProperties().get("a").getValue());
+    }
+    
+    @Test
+    public void testScannable() {
+        BuildablePropertySource bps = BuildablePropertySource.builder().build();
+        assertTrue(bps.isScannable());
+    }
+    
+    @Test
+    public void testSource() {
+        BuildablePropertySource bps = BuildablePropertySource.builder()
+                .withSource("fakeSource")
+                .withSimpleProperty("defaultSourceKey", "defaultSourceValue")
+                .withSimpleProperty("namedSourceKey", "namedSourceValue", "namedSource")
+                .build();
+        
+        assertEquals("fakeSource", bps.get("defaultSourceKey").getSource());
+        assertEquals("namedSource", bps.get("namedSourceKey").getSource());
+    }
+    
+    @Test
+    public void testWithMaps() {
+        Map<String, String> propertyFirst = new HashMap<>();
+        propertyFirst.put("firstKey", "firstValue");
+        Map<String, String> propertySecond = new HashMap<>();
+        propertySecond.put("secondKey", "secondValue");
+        
+        Map<String, PropertyValue> propertyThird = new HashMap<>();
+        propertyThird.put("thirdKey", PropertyValue.of("thirdPVKey", "thirdValue", "thirdSource"));
+        
+        //This seems wrong
+        BuildablePropertySource bps = BuildablePropertySource.builder()
+                .withSimpleProperties(propertyFirst)
+                .withProperties(propertySecond, "secondSource")
+                .withProperties(propertyThird)
+                .build();
+        
+        assertNull(bps.get("firstKey"));
+        assertNull(bps.get("secondKey"));
+        assertEquals("thirdValue", bps.get("thirdKey").getValue());
+        assertEquals("thirdSource", bps.get("thirdKey").getSource());
+        assertNull(bps.get("thirdPVKey"));
+        
+        bps = BuildablePropertySource.builder()
+                .withProperties(propertyThird)
+                .withSimpleProperties(propertyFirst)
+                .withProperties(propertySecond, "secondSource")
+                .build();
+        
+        assertEquals("firstValue", bps.get("firstKey").getValue());
+        assertEquals("secondSource", bps.get("secondKey").getSource());
+        assertEquals("secondValue", bps.get("secondKey").getValue());
+        assertEquals("thirdValue", bps.get("thirdKey").getValue());
+        assertEquals("thirdSource", bps.get("thirdKey").getSource());
+        assertNull(bps.get("thirdPVKey"));
     }
 
     @Test
@@ -66,6 +124,8 @@ public class BuildablePropertySourceTest {
         ps2 = BuildablePropertySource.builder()
                 .withName("test2").build();
         assertNotEquals(ps1, ps2);
+        assertNotEquals(ps2, null);
+        assertNotEquals(ps1, "aString");
     }
 
     @Test
@@ -83,6 +143,7 @@ public class BuildablePropertySourceTest {
     @Test
     public void builder() throws Exception {
         assertNotNull(BuildablePropertySource.builder());
+        assertNotNull(BuildablePropertySource.builder().but());
         assertNotEquals(BuildablePropertySource.builder(), BuildablePropertySource.builder());
     }
 

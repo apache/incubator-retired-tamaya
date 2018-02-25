@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -66,6 +67,7 @@ public class PropertyConverterManagerTest {
     @Test
     public void testDirectConverterMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(C.class)));
         List<PropertyConverter<C>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(C.class)));
         assertThat(converters, hasSize(1));
 
@@ -80,6 +82,7 @@ public class PropertyConverterManagerTest {
     @Test
     public void testDirectSuperclassConverterMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(B.class)));
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters, hasSize(1));
         converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
@@ -96,6 +99,7 @@ public class PropertyConverterManagerTest {
     @Test
     public void testMultipleConverterLoad() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(B.class)));
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters, hasSize(1));
         manager = new PropertyConverterManager(true);
@@ -106,6 +110,7 @@ public class PropertyConverterManagerTest {
     @Test
     public void testTransitiveSuperclassConverterMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(A.class)));
         List<PropertyConverter<A>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(A.class)));
         assertThat(converters, hasSize(1));
 
@@ -120,6 +125,7 @@ public class PropertyConverterManagerTest {
     @Test
     public void testDirectInterfaceMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(Readable.class)));
         List<PropertyConverter<Readable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Readable.class)));
         assertThat(converters, hasSize(1));
 
@@ -134,6 +140,7 @@ public class PropertyConverterManagerTest {
     @Test
     public void testTransitiveInterfaceMapping1() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(Runnable.class)));
         List<PropertyConverter<Runnable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Runnable.class)));
         assertThat(converters, hasSize(1));
 
@@ -148,6 +155,7 @@ public class PropertyConverterManagerTest {
     @Test
     public void testTransitiveInterfaceMapping2() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(AutoCloseable.class)));
         List<PropertyConverter<AutoCloseable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(AutoCloseable.class)));
         assertThat(converters, hasSize(1));
 
@@ -157,6 +165,50 @@ public class PropertyConverterManagerTest {
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(C.class));
         assertThat(((C) result).getInValue(), equalTo("testTransitiveInterfaceMapping2"));
+    }
+
+    @Test
+    public void testBoxedConverterMapping() {
+        PropertyConverterManager manager = new PropertyConverterManager(true);
+        assertFalse(manager.isTargetTypeSupported(TypeLiteral.of(int.class)));
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(Integer.class)));
+        List<PropertyConverter<Integer>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(int.class)));
+        assertThat(converters, hasSize(1));
+
+        PropertyConverter<Integer> converter = converters.get(0);
+        Integer result = converter.convert("101", DUMMY_CONTEXT);
+
+        assertThat(result, notNullValue());
+        assertThat(result, instanceOf(Integer.class));
+        assertThat(result, equalTo(101));
+    }
+
+    
+    @Test
+    public void testCreateEnumPropertyConverter() {
+        PropertyConverterManager manager = new PropertyConverterManager(false);
+        PropertyConverter pc = manager.createDefaultPropertyConverter(TypeLiteral.of(MyEnum.class));
+        assertTrue(pc instanceof EnumConverter);
+        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(MyEnum.class)));
+    }
+
+    @Test
+    public void testGetFactoryMethod() throws Exception {
+        PropertyConverterManager manager = new PropertyConverterManager(false);
+        Method getFactoryMethod = PropertyConverterManager.class.getDeclaredMethod("getFactoryMethod", new Class[]{Class.class, String[].class});
+        getFactoryMethod.setAccessible(true);
+
+        Method foundMethod = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"instanceOf"});
+        assertEquals("instanceOf", foundMethod.getName());
+        
+        Method staticOf = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"of"});
+        assertEquals("of", staticOf.getName());
+
+        Method notFoundMethod = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"missingMethod"});
+        assertNull(notFoundMethod);
+
+        Method wrongSignature = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"getValue"});
+        assertNull(wrongSignature);
     }
 
     @Test
@@ -199,6 +251,14 @@ public class PropertyConverterManagerTest {
             return typeValue;
         }
 
+        public String instanceOf(String input) {
+            return input;
+        }
+
+    }
+
+    private enum MyEnum {
+        A, B, C
     }
 
 }

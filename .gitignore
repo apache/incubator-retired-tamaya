@@ -20,4 +20,5 @@ modules/integration/commons-config/commons-configuration.iml
 examples/simple-propertysource/tamaya-example-simple-propertysource.iml
 **/*.checkstyle
 **/*.fbExcludeFilterFile
-
+nbproject
+nb-configuration.xml

@@ -58,6 +58,21 @@ public class RegexPropertyFilterTest {
         assertNotNull(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext)));
         assertNull(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext)));
         assertNotNull(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext)));
+        filter = new RegexPropertyFilter();
+        filter.setExcludes("test1.*");
+        assertNull(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext)));
+        assertEquals(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext)),
+                prop2);
+        assertNull(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext)));
+        
+        filter = new RegexPropertyFilter();
+        filter.setIncludes("test1.*"); //Includes overrides Excludes
+        filter.setExcludes("test1.*");
+        assertNotNull(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext)));
+        assertNull(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext)));
+        assertNotNull(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext)));
+        
+        
     }
 
     @org.junit.Test

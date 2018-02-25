@@ -25,8 +25,12 @@ import org.junit.Test;
 import java.net.URI;
 import java.net.URL;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests conversion of the {@link URL}-converter.
@@ -65,5 +69,26 @@ public class URLConverterTest {
         URLConverter converter = new URLConverter();
         assertNull(converter.convert("", context));
         assertNull(converter.convert(null, context));
+    }
+    
+    @Test
+    public void testConvert_URLInvalid() throws ConfigException {
+        URLConverter converter = new URLConverter();
+        assertNull(converter.convert("not a url", context));
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(URL.class)).build();
+        URLConverter converter = new URLConverter();
+        converter.convert("http://localhost", localcontext);
+
+        assertTrue(localcontext.getSupportedFormats().contains("<URL> (URLConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        URLConverter instance = new URLConverter();
+        assertEquals(URLConverter.class.hashCode(), instance.hashCode());
     }
 }

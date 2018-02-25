@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +87,7 @@ public class PropertyValueBuilderTest {
     public void setKeyRequiresNonNullParameterForValue() {
         new PropertyValueBuilder("a", "b", "s").setValue(null);
     }
-
+    
     /*
      * Tests für addMetaEntries(Map)
      */
@@ -124,6 +122,15 @@ public class PropertyValueBuilderTest {
         PropertyValueBuilder b = new PropertyValueBuilder("k", "testKey").setValue("v");
         PropertyValue val = b.build();
         assertEquals(val.getKey(),"k");
+        assertEquals(val.getValue(),"v");
+        assertNull(val.getMetaEntries().get("k"));
+    }
+    
+    @Test
+    public void testSetKey() {
+        PropertyValueBuilder b = new PropertyValueBuilder("k", "testSetKey").setKey("key");
+        PropertyValue val = b.build();
+        assertEquals(val.getKey(),"key");
     }
 
     @Test
@@ -131,14 +138,10 @@ public class PropertyValueBuilderTest {
         PropertyValueBuilder b = new PropertyValueBuilder("k", "testSource").setValue("v");
         PropertyValue val = b.build();
         assertEquals(val.getSource(),"testSource");
-    }
-
-    @Test
-    public void testValue() throws Exception {
-        PropertyValueBuilder b = new PropertyValueBuilder("k", "testValue").setValue("v");
-        PropertyValue val = b.build();
-        assertEquals(val.getValue(),"v");
-        assertNull(val.getMetaEntries().get("k"));
+        
+        PropertyValueBuilder b2 = b.setSource("differentSource");
+        val = b2.build();
+        assertEquals(val.getSource(),"differentSource");
     }
 
     @Test(expected=NullPointerException.class)
@@ -157,8 +160,9 @@ public class PropertyValueBuilderTest {
                 .setMetaEntries(meta).build();
         assertEquals("v", pv.getValue());
         assertEquals("k", pv.getKey());
-        assertNull("v2", pv.getMetaEntry("k"));
+        assertNull(pv.getMetaEntry("k"));
         assertEquals("testGetKey", pv.getSource());
+        assertEquals(2, pv.getMetaEntries().size());
         assertEquals("2", pv.getMetaEntry("1"));
         assertEquals("b", pv.getMetaEntry("a"));
     }
@@ -207,9 +211,11 @@ public class PropertyValueBuilderTest {
         Map<String,String> meta = new HashMap<>();
         meta.put("1","2");
         meta.put("a", "b");
-        PropertyValue pv = PropertyValue.builder("k", "testGetKey")
+        PropertyValueBuilder b = PropertyValue.builder("k", "testGetKey")
                 .setValue("v")
-                .setMetaEntries(meta).build();
+                .setMetaEntries(meta);
+        PropertyValue pv = b.build();
+        assertEquals(meta, b.getMetaEntries());
         assertEquals(meta, pv.getMetaEntries());
     }
 
@@ -241,6 +247,29 @@ public class PropertyValueBuilderTest {
         assertEquals(contextData.getMetaEntries().size(), 2);
         assertNotNull(contextData.getMetaEntry("ts"));
         assertEquals(contextData.getMetaEntry("y"), "y2");
+    }
+    
+    @Test
+    public void testMapKey() {
+        PropertyValueBuilder b = new PropertyValueBuilder("key", "testMapKey")
+                .setValue("value")
+                .addMetaEntry("_keyAndThenSome", "mappedvalue")
+                .addMetaEntry("somethingelse", "othervalue")
+                .mapKey("mappedkey");
+        PropertyValue pv = b.build();     
+        assertEquals("mappedkey", pv.getKey());
+        assertEquals("value", pv.getValue());
+        assertEquals(2, pv.getMetaEntries().size());
+        assertEquals("mappedvalue", pv.getMetaEntry("_mappedkey.AndThenSome"));
+        assertEquals("othervalue", pv.getMetaEntry("somethingelse"));
+    }
+    
+    @Test
+    public void testToString(){
+        PropertyValueBuilder b = new PropertyValueBuilder("k")
+                .setValue("v")
+                .addMetaEntry("metak", "metav");
+        assertEquals("PropertyValueBuilder{key='k'value='v', metaEntries={metak=metav}}", b.toString());
     }
 
 }

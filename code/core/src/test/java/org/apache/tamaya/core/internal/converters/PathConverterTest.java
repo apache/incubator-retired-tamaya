@@ -26,6 +26,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.tamaya.TypeLiteral;
 
 import static org.junit.Assert.*;
 
@@ -48,11 +49,41 @@ public class PathConverterTest {
     }
 
     @Test
+    public void convertNull() throws Exception {
+        PathConverter conv = new PathConverter();
+        Path value = conv.convert(null, context);
+        assertNull(value);
+        value = conv.convert("", context);
+        assertNull(value);
+    }
+    
+    @Test
+    public void convertInvalidPath() throws Exception {
+        PathConverter conv = new PathConverter();
+        Path value = conv.convert("/invalid:/\u0000", context);
+        assertNull(value);
+    }
+
+    @Test
     public void equalsAndHashcode() throws Exception {
         PathConverter conv1 = new PathConverter();
         PathConverter conv2 = new PathConverter();
         assertEquals(conv1, conv2);
         assertEquals(conv1.hashCode(), conv2.hashCode());
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Path.class)).build();
+        PathConverter converter = new PathConverter();
+        converter.convert("notempty", localcontext);
+        assertTrue(localcontext.getSupportedFormats().contains("<File> (PathConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        PathConverter instance = new PathConverter();
+        assertEquals(PathConverter.class.hashCode(), instance.hashCode());
     }
 
 }

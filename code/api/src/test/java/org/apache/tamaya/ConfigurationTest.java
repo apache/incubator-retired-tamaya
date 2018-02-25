@@ -22,8 +22,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Test class that tests the default methods implemented on {@link org.apache.tamaya.Configuration}. The provided
- * {@link org.apache.tamaya.TestConfiguration} is implemeted with maximal use of the default methods.
+ * Test class that tests the default methods implemented on
+ * {@link org.apache.tamaya.Configuration}. The provided
+ * {@link org.apache.tamaya.TestConfiguration} is implemented with maximal use of
+ * the default methods.
  */
 public class ConfigurationTest {
 
@@ -31,11 +33,12 @@ public class ConfigurationTest {
     public void testget() throws Exception {
         assertEquals(Boolean.TRUE, ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class));
         assertEquals(Boolean.FALSE, ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class));
-        assertEquals((int)Byte.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("byte", Byte.class));
-        assertEquals(Integer.MAX_VALUE, (int)ConfigurationProvider.getConfiguration().get("int", Integer.class));
-        assertEquals(Long.MAX_VALUE, (long)ConfigurationProvider.getConfiguration().get("long", Long.class));
-        assertEquals(Float.MAX_VALUE, (double)ConfigurationProvider.getConfiguration().get("float", Float.class), 0.0d);
+        assertEquals((int) Byte.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().get("byte", Byte.class));
+        assertEquals(Integer.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().get("int", Integer.class));
+        assertEquals(Long.MAX_VALUE, (long) ConfigurationProvider.getConfiguration().get("long", Long.class));
+        assertEquals(Float.MAX_VALUE, (double) ConfigurationProvider.getConfiguration().get("float", Float.class), 0.0d);
         assertEquals(Double.MAX_VALUE, ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
+        assertEquals("aStringValue", ConfigurationProvider.getConfiguration().get("String"));
     }
 
     @Test
@@ -47,17 +50,39 @@ public class ConfigurationTest {
 
     @Test
     public void testGetInteger() throws Exception {
-        assertEquals(Integer.MAX_VALUE,(int) ConfigurationProvider.getConfiguration().get("int", Integer.class));
+        assertEquals(Integer.MAX_VALUE, (int) ConfigurationProvider.getConfiguration().get("int", Integer.class));
     }
 
     @Test
     public void testGetLong() throws Exception {
-        assertEquals(Long.MAX_VALUE,(long) ConfigurationProvider.getConfiguration().get("long", Long.class));
+        assertEquals(Long.MAX_VALUE, (long) ConfigurationProvider.getConfiguration().get("long", Long.class));
     }
 
     @Test
     public void testGetDouble() throws Exception {
-        assertEquals(Double.MAX_VALUE,ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
+        assertEquals(Double.MAX_VALUE, ConfigurationProvider.getConfiguration().get("double", Double.class), 0.0d);
     }
 
+    @Test
+    public void testGetOrDefault() throws Exception {
+        assertEquals("StringIfThereWasNotAValueThere", ConfigurationProvider.getConfiguration().getOrDefault("nonexistant", "StringIfThereWasNotAValueThere"));
+        assertEquals("StringIfThereWasNotAValueThere", ConfigurationProvider.getConfiguration().getOrDefault("nonexistant", String.class, "StringIfThereWasNotAValueThere"));
+    }
+
+    @Test
+    public void testToBuilder() throws Exception {
+        assertNotNull(ConfigurationProvider.getConfiguration().toBuilder());
+    }
+    
+    @Test
+    public void testWith() throws Exception {
+        ConfigOperator noop = (Configuration config) -> config;
+        assertNotNull(ConfigurationProvider.getConfiguration().with(noop));
+    }
+    
+    @Test
+    public void testQuery() throws Exception {
+        ConfigQuery<String> stringQuery = (ConfigQuery) (Configuration config) -> config.get("String");
+        assertEquals("aStringValue", ConfigurationProvider.getConfiguration().query(stringQuery));
+    }
 }

@@ -23,6 +23,9 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import java.util.Currency;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
@@ -33,12 +36,14 @@ import static org.junit.Assert.*;
 public class CurrencyConverterTest {
 
     private static final String BGL = "BGL";
-	private static final String CHF = "CHF";
-	private static final String EUR = "EUR";
+    private static final String CHF = "CHF";
+    private static final String EUR = "EUR";
+    private static final String JPY = "JPY";
 
-	/**
+    /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
@@ -52,6 +57,7 @@ public class CurrencyConverterTest {
     /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
@@ -65,6 +71,7 @@ public class CurrencyConverterTest {
     /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
@@ -78,6 +85,7 @@ public class CurrencyConverterTest {
     /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
@@ -91,6 +99,7 @@ public class CurrencyConverterTest {
     /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
@@ -104,6 +113,7 @@ public class CurrencyConverterTest {
     /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
@@ -126,6 +136,7 @@ public class CurrencyConverterTest {
     /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
@@ -148,12 +159,47 @@ public class CurrencyConverterTest {
     /**
      * Test conversion. The values are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
+     *
      * @throws Exception
      */
     @Test
-    public void testConvert_NotPresent() throws Exception {
+    public void testConvert_Currency_Code_Multipart_Locale() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        Byte valueRead = config.get("tests.converter.byte.foo", Byte.class);
-        assertThat(valueRead).isNull();
+        Currency valueRead = config.get("tests.converter.currency.code-locale-twopart", Currency.class);
+        assertThat(valueRead).isNotNull();
+        assertEquals(JPY, valueRead.getCurrencyCode());
+        valueRead = config.get("tests.converter.currency.code-locale-threepart", Currency.class);
+        assertThat(valueRead).isNotNull();
+        assertEquals(JPY, valueRead.getCurrencyCode());
+    }
+
+    @Test(expected = ConfigException.class)
+    public void testConvert_Currency_Code_Fourpart_Locale_Invalid() throws Exception {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        Currency valueRead = config.get("tests.converter.currency.code-locale-fourpart", Currency.class);
+        assertNull(valueRead);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void testConvert_CurrencyInvalid() throws ConfigException {
+        Configuration config = ConfigurationProvider.getConfiguration();
+        config.get("tests.converter.currency.invalid", Currency.class);
+    }
+
+    @Test
+    public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Currency.class)).build();
+        CurrencyConverter converter = new CurrencyConverter();
+        converter.convert("", context);
+
+        assertTrue(context.getSupportedFormats().contains("<numericValue> (CurrencyConverter)"));
+        assertTrue(context.getSupportedFormats().contains("<locale> (CurrencyConverter)"));
+        assertTrue(context.getSupportedFormats().contains("<currencyCode>, using Locale.ENGLISH (CurrencyConverter)"));
+    }
+
+    @Test
+    public void testHashCode() {
+        CurrencyConverter instance = new CurrencyConverter();
+        assertEquals(CurrencyConverter.class.hashCode(), instance.hashCode());
     }
 }

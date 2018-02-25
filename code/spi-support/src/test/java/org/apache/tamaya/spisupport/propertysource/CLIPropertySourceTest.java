@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
-import org.apache.tamaya.spisupport.propertysource.CLIPropertySource;
+import java.io.StringReader;
+import java.io.StringWriter;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -30,30 +31,59 @@ public class CLIPropertySourceTest {
 
     @Test
     public void setCLIProps() throws Exception {
-        System.clearProperty("main.args");
-        CLIPropertySource ps = new CLIPropertySource();
-        assertTrue(ps.getProperties().isEmpty());
-        CLIPropertySource.initMainArgs("-a", "b");
-        assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("a").getValue(), "b");
-        CLIPropertySource.initMainArgs("--c");
-        assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("c").getValue(), "c");
-        CLIPropertySource.initMainArgs("sss");
-        assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("sss").getValue(), "sss");
-        CLIPropertySource.initMainArgs("-a", "b", "--c", "sss", "--val=vvv");
-        assertFalse(ps.getProperties().isEmpty());
-        assertEquals(ps.getProperties().get("a").getValue(), "b");
-        assertEquals(ps.getProperties().get("c").getValue(), "c");
-        assertEquals(ps.getProperties().get("sss").getValue(), "sss");
-    // getProperties() throws Exception {
-        System.setProperty("main.args", "-a b\t--c sss  ");
-        ps = new CLIPropertySource();
-        assertFalse(ps.getProperties().isEmpty());
-        System.clearProperty("main.args");
-        assertEquals(ps.getProperties().get("a").getValue(), "b");
-        assertEquals(ps.getProperties().get("c").getValue(), "c");
-        assertEquals(ps.getProperties().get("sss").getValue(), "sss");
+        StringWriter stringBufferWriter = new StringWriter();
+        System.getProperties().store(stringBufferWriter, null);
+        String before = stringBufferWriter.toString();
+
+        try {
+            System.clearProperty("main.args");
+            
+            CLIPropertySource ps = new CLIPropertySource();
+            assertTrue(ps.getProperties().isEmpty());
+            
+            ps = new CLIPropertySource(26);
+            assertTrue(ps.getProperties().isEmpty());
+            assertEquals(26, ps.getOrdinal());
+            
+            ps = new CLIPropertySource("-a", "b");
+            assertFalse(ps.getProperties().isEmpty());
+            assertEquals(ps.getProperties().get("a").getValue(), "b");
+            assertTrue(ps.toStringValues().contains("args=[-a, b]"));
+            
+            ps = new CLIPropertySource(16, "-c", "d");
+            assertFalse(ps.getProperties().isEmpty());
+            assertEquals(ps.getProperties().get("c").getValue(), "d");
+            assertEquals(16, ps.getOrdinal());
+            
+            CLIPropertySource.initMainArgs("-e", "f");
+            assertFalse(ps.getProperties().isEmpty());
+            assertEquals(ps.getProperties().get("e").getValue(), "f");
+            
+            CLIPropertySource.initMainArgs("--g");
+            assertFalse(ps.getProperties().isEmpty());
+            assertEquals(ps.getProperties().get("g").getValue(), "g");
+            
+            CLIPropertySource.initMainArgs("sss");
+            assertFalse(ps.getProperties().isEmpty());
+            assertEquals(ps.getProperties().get("sss").getValue(), "sss");
+            
+            CLIPropertySource.initMainArgs("-a", "b", "--c", "sss", "--val=vvv");
+            assertFalse(ps.getProperties().isEmpty());
+            assertEquals(ps.getProperties().get("a").getValue(), "b");
+            assertEquals(ps.getProperties().get("c").getValue(), "c");
+            assertEquals(ps.getProperties().get("sss").getValue(), "sss");
+            
+            System.setProperty("main.args", "-a b\t--c sss  ");
+            ps = new CLIPropertySource();
+            assertFalse(ps.getProperties().isEmpty());
+            System.clearProperty("main.args");
+            assertEquals(ps.getProperties().get("a").getValue(), "b");
+            assertEquals(ps.getProperties().get("c").getValue(), "c");
+            assertEquals(ps.getProperties().get("sss").getValue(), "sss");
+            
+        } finally {
+            System.getProperties().clear();
+            System.getProperties().load(new StringReader(before));
+        }
     }
 }
