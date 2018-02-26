@@ -22,9 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This tests checks if the combination of 2 prioritized PropertySource return valid results of the final configuration.
@@ -33,7 +31,7 @@ public class ConfigurationTest {
 
     @Test
     public void testAccess(){
-        assertNotNull(current());
+        assertThat(current()).isNotNull();
     }
 
     private Configuration current() {
@@ -42,16 +40,16 @@ public class ConfigurationTest {
 
     @Test
     public void testContent(){
-        assertNotNull(current().get("name"));
-        assertNotNull(current().get("name2")); // from default
-        assertNotNull(current().get("name3")); // overridden default, mapped by filter to name property
-        assertNotNull(current().get("name4")); // final only
+        assertThat(current().get("name")).isNotNull();
+        assertThat(current().get("name2")).isNotNull(); // from default
+        assertThat(current().get("name3")).isNotNull(); // overridden default, mapped by filter to name property
+        assertThat(current().get("name4")).isNotNull(); // final only
 
 
-        assertEquals("Robin", current().get("name"));
-        assertEquals("Sabine", current().get("name2")); // from default
-        assertEquals("Mapped to name: Robin", current().get("name3"));  // overridden default, mapped by filter to name property
-        assertEquals("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)", current().get("name4")); // final only
-        assertNull(current().get("name5")); // final only, but removed from filter
+        assertThat(current().get("name")).isEqualTo("Robin");
+        assertThat(current().get("name2")).isEqualTo("Sabine"); // from default
+        assertThat(current().get("name3")).isEqualTo("Mapped to name: Robin");  // overridden default, mapped by filter to name property
+        assertThat(current().get("name4")).isEqualTo("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)"); // final only
+        assertThat(current().get("name5")).isNull(); // final only, but removed from filter
     }
 }

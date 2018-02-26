@@ -28,7 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.OffsetDateTime;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsti on 02.10.2017.
@@ -43,17 +43,17 @@ public class OffsetDateTimeConverterTest {
     public void convert() throws Exception {
         OffsetDateTimeConverter conv = new OffsetDateTimeConverter();
         OffsetDateTime value = conv.convert("2007-12-03T10:15:30+01:00", context);
-        assertEquals(value, OffsetDateTime.parse("2007-12-03T10:15:30+01:00"));
+        assertThat(OffsetDateTime.parse("2007-12-03T10:15:30+01:00")).isEqualTo(value);
         value = conv.convert("foo", context);
-        assertNull(value);
+        assertThat(value).isNull();
     }
 
     @Test
     public void equalsAndHashcode() throws Exception {
         OffsetDateTimeConverter conv1 = new OffsetDateTimeConverter();
         OffsetDateTimeConverter conv2 = new OffsetDateTimeConverter();
-        assertEquals(conv1, conv2);
-        assertEquals(conv1.hashCode(), conv2.hashCode());
+        assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 
     @Test
@@ -62,12 +62,12 @@ public class OffsetDateTimeConverterTest {
         OffsetDateTimeConverter converter = new OffsetDateTimeConverter();
         converter.convert("", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().toString().contains(" (OffsetDateTimeConverter)"));
+        assertThat(localcontext.getSupportedFormats().toString().contains(" (OffsetDateTimeConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         OffsetDateTimeConverter instance = new OffsetDateTimeConverter();
-        assertEquals(OffsetDateTimeConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(OffsetDateTimeConverter.class.hashCode());
     }
 }

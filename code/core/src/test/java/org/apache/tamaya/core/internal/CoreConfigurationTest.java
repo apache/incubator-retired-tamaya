@@ -25,7 +25,7 @@ import org.apache.tamaya.core.testdata.TestPropertyDefaultSource;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Simple tests for {@link CoreConfiguration} by atsticks on 16.08.16.
@@ -36,9 +36,9 @@ public class CoreConfigurationTest {
     public void addPropertySources() throws Exception {
         Configuration cfg = new CoreConfigurationBuilder().build();
         TestPropertyDefaultSource def = new TestPropertyDefaultSource();
-        assertFalse(cfg.getContext().getPropertySources().contains(def));
+        assertThat(cfg.getContext().getPropertySources().contains(def)).isFalse();
         cfg.getContext().addPropertySources(def);
-        assertTrue(cfg.getContext().getPropertySources().contains(def));
+        assertThat(cfg.getContext().getPropertySources().contains(def)).isTrue();
     }
 
     @Test
@@ -49,11 +49,11 @@ public class CoreConfigurationTest {
     @Test
     public void getPropertySources() throws Exception {
         Configuration cfg = new CoreConfigurationBuilder().build();
-        assertNotNull(cfg.getContext().getPropertySources());
-        assertEquals(cfg.getContext().getPropertySources().size(), 0);
+        assertThat(cfg.getContext().getPropertySources()).isNotNull();
+        assertThat(0).isEqualTo(cfg.getContext().getPropertySources().size());
         cfg = new CoreConfigurationBuilder().addDefaultPropertySources().build();
-        assertNotNull(cfg.getContext().getPropertySources());
-        assertEquals(7, cfg.getContext().getPropertySources().size());
+        assertThat(cfg.getContext().getPropertySources()).isNotNull();
+        assertThat(cfg.getContext().getPropertySources()).hasSize(7);
     }
 
     @Test
@@ -61,11 +61,11 @@ public class CoreConfigurationTest {
         TestPropertyDefaultSource ps = new TestPropertyDefaultSource();
         Configuration cfg = new CoreConfigurationBuilder()
                 .addPropertySources(ps).build();
-        assertNotNull(cfg.getContext().getPropertySources());
-        assertEquals(cfg.getContext().getPropertySources().size(), 1);
-        assertNotNull((cfg.getContext()).getPropertySource(ps.getName()));
-        assertEquals(ps.getName(), cfg.getContext().getPropertySource(ps.getName()).getName());
-        assertNull(cfg.getContext().getPropertySource("huhu"));
+        assertThat(cfg.getContext().getPropertySources()).isNotNull();
+        assertThat(1).isEqualTo(cfg.getContext().getPropertySources().size());
+        assertThat((cfg.getContext()).getPropertySource(ps.getName())).isNotNull();
+        assertThat(cfg.getContext().getPropertySource(ps.getName()).getName()).isEqualTo(ps.getName());
+        assertThat(cfg.getContext().getPropertySource("huhu")).isNull();
 
     }
 
@@ -76,10 +76,10 @@ public class CoreConfigurationTest {
                 .addPropertySources(ps).build();
         Configuration cfg2 = new CoreConfigurationBuilder()
                 .addPropertySources(ps).build();
-        assertEquals(cfg1.hashCode(), cfg2.hashCode());
+        assertThat(cfg2.hashCode()).isEqualTo(cfg1.hashCode());
         cfg2 = new CoreConfigurationBuilder()
                 .build();
-        assertNotEquals(cfg1.hashCode(), cfg2.hashCode());
+        assertThat(cfg1.hashCode()).isNotEqualTo(cfg2.hashCode());
 
     }
 
@@ -92,9 +92,9 @@ public class CoreConfigurationTest {
                 return "";
             }
         };
-        assertFalse(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter));
+        assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter)).isFalse();
         cfg.getContext().addPropertyConverter(TypeLiteral.of(String.class), testConverter);
-        assertTrue(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter));
+        assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
     }
 
     @Test
@@ -107,9 +107,9 @@ public class CoreConfigurationTest {
             }
         };
         cfg.getContext().addPropertyConverter(TypeLiteral.of(String.class), testConverter);
-        assertNotNull(cfg.getContext().getPropertyConverters());
-        assertTrue(cfg.getContext().getPropertyConverters().containsKey(TypeLiteral.of(String.class)));
-        assertTrue(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(String.class)).contains(testConverter));
+        assertThat(cfg.getContext().getPropertyConverters()).isNotNull();
+        assertThat(cfg.getContext().getPropertyConverters().containsKey(TypeLiteral.of(String.class))).isTrue();
+        assertThat(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
         testConverter = new PropertyConverter() {
             @Override
             public Object convert(String value, ConversionContext context) {
@@ -117,8 +117,8 @@ public class CoreConfigurationTest {
             }
         };
         cfg.getContext().addPropertyConverter(TypeLiteral.of(Integer.class), testConverter);
-        assertTrue(cfg.getContext().getPropertyConverters().containsKey(TypeLiteral.of(Integer.class)));
-        assertTrue(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(Integer.class)).contains(testConverter));
+        assertThat(cfg.getContext().getPropertyConverters().containsKey(TypeLiteral.of(Integer.class))).isTrue();
+        assertThat(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(Integer.class)).contains(testConverter)).isTrue();
     }
 
     @Test
@@ -130,12 +130,12 @@ public class CoreConfigurationTest {
                 return "";
             }
         };
-        assertNotNull(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)));
-        assertEquals(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).size(),0);
+        assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class))).isNotNull();
+        assertThat(0).isEqualTo(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).size());
         cfg.getContext().addPropertyConverter(TypeLiteral.of(String.class), testConverter);
-        assertNotNull(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)));
-        assertEquals(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).size(),1);
-        assertTrue(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter));
+        assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class))).isNotNull();
+        assertThat(1).isEqualTo(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).size());
+        assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
 
     }
 
@@ -149,29 +149,29 @@ public class CoreConfigurationTest {
                 return value;
             }
         };
-        assertNotNull(cfg.getContext().getPropertyFilters());
-        assertFalse(cfg.getContext().getPropertyFilters().contains(testFilter));
+        assertThat(cfg.getContext().getPropertyFilters()).isNotNull();
+        assertThat(cfg.getContext().getPropertyFilters().contains(testFilter)).isFalse();
         cfg = cfg.toBuilder().addPropertyFilters(testFilter).build();
-        assertTrue(cfg.getContext().getPropertyFilters().contains(testFilter));
+        assertThat(cfg.getContext().getPropertyFilters().contains(testFilter)).isTrue();
     }
 
     @Test
     public void getPropertyValueCombinationPolicy() throws Exception {
         Configuration cfg = new CoreConfigurationBuilder().build();
-        assertNotNull(cfg.getContext().getPropertyValueCombinationPolicy());
-        assertEquals(cfg.getContext().getPropertyValueCombinationPolicy(),
-                PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY);
+        assertThat(cfg.getContext().getPropertyValueCombinationPolicy()).isNotNull();
+        assertThat(cfg.getContext().getPropertyValueCombinationPolicy())
+                .isEqualTo(PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY);
     }
 
     @Test
     public void toBuilder() throws Exception {
-        assertNotNull(new CoreConfigurationBuilder().build().toBuilder());
+        assertThat(new CoreConfigurationBuilder().build().toBuilder()).isNotNull();
     }
 
     @Test
     public void testRoundTrip() throws Exception {
         Configuration cfg = new CoreConfigurationBuilder().build();
-        assertEquals(cfg.toBuilder().build(), cfg);
+        assertThat(cfg).isEqualTo(cfg.toBuilder().build());
     }
 
 }

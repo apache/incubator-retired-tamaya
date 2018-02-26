@@ -19,7 +19,7 @@
 package org.apache.tamaya.spi;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class PropertySourceProviderTest {
     
@@ -29,7 +29,7 @@ public class PropertySourceProviderTest {
     @Test
     public void testEmptySourceProvider() {
         PropertySourceProvider instance = PropertySourceProvider.EMPTY;
-        assertTrue(instance.getPropertySources().isEmpty());
-        assertEquals("PropertySourceProvider(empty)", instance.toString());
+        assertThat(instance.getPropertySources().isEmpty()).isTrue();
+        assertThat(instance.toString()).isEqualTo("PropertySourceProvider(empty)");
     }
 }

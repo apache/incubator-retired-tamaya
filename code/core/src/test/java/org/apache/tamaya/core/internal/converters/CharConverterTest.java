@@ -25,7 +25,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -38,7 +38,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'f');
+        assertThat('f').isEqualTo(valueRead.charValue());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-numeric", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), (char) 101);
+        assertThat((char) 101).isEqualTo(valueRead.charValue());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.d", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'd');
+        assertThat('d').isEqualTo(valueRead.charValue());
 
     }
 
@@ -63,7 +63,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.single-quote", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), '\'');
+        assertThat('\'').isEqualTo(valueRead.charValue());
     }
 
     @Test(expected = ConfigException.class)
@@ -77,7 +77,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.three-single-quotes", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), '\'');
+        assertThat('\'').isEqualTo(valueRead.charValue());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-before", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'f');
+        assertThat('f').isEqualTo(valueRead.charValue());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-after", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'f');
+        assertThat('f').isEqualTo(valueRead.charValue());
     }
 
     @Test
@@ -101,14 +101,14 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.f-around", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'f');
+        assertThat('f').isEqualTo(valueRead.charValue());
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.foo", Character.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     /**
@@ -122,7 +122,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.invalid", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'i'); //Strings return the first character
+        assertThat('i').isEqualTo(valueRead.charValue()); //Strings return the first character
     }
 
     @Test
@@ -130,7 +130,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.quoted-invalid", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'i'); //Strings return the first character
+        assertThat('i').isEqualTo(valueRead.charValue()); //Strings return the first character
     }
 
     @Test
@@ -138,7 +138,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.あ", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'あ');
+        assertThat('あ').isEqualTo(valueRead.charValue());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class CharConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Character valueRead = config.get("tests.converter.char.กขฃคฅฆงจฉช", Character.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead.charValue(), 'ก'); //Strings return the first character
+        assertThat('ก').isEqualTo(valueRead.charValue()); //Strings return the first character
     }
 
     @Test
@@ -155,13 +155,13 @@ public class CharConverterTest {
         CharConverter converter = new CharConverter();
         converter.convert("", context);
 
-        assertTrue(context.getSupportedFormats().contains("<char> (CharConverter)"));
-        assertTrue(context.getSupportedFormats().contains("\\'<char>\\' (CharConverter)"));
+        assertThat(context.getSupportedFormats().contains("<char> (CharConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("\\'<char>\\' (CharConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         CharConverter instance = new CharConverter();
-        assertEquals(CharConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(CharConverter.class.hashCode());
     }
 }

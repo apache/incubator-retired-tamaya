@@ -22,7 +22,7 @@ package org.apache.tamaya.examples.distributed;
 import io.vertx.core.json.Json;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsticks on 13.11.16.
@@ -63,8 +63,8 @@ public class DisplayRegistrationTest {
         DisplayRegistration reg = new DisplayRegistration("myDisplay", "VT100");
         String val = Json.encode(reg);
         DisplayRegistration decoded = Json.decodeValue(val, DisplayRegistration.class);
-        assertNotNull(decoded);
-        assertEquals(reg, decoded);
+        assertThat(decoded).isNotNull();
+        assertThat(decoded).isEqualTo(reg);
     }
 
 }

@@ -23,15 +23,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.Properties;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SystemPropertySourceTest {
 
@@ -45,35 +41,35 @@ public class SystemPropertySourceTest {
         String before = stringBufferWriter.toString();
 
         try {
-            assertFalse(testPropertySource.toStringValues().contains("disabled=true"));
+            assertThat(testPropertySource.toStringValues().contains("disabled=true")).isFalse();
 
             System.setProperty("tamaya.sysprops.prefix", "fakeprefix");
             System.setProperty("tamaya.sysprops.disable", "true");
             localSystemPropertySource = new SystemPropertySource();
-            //assertEquals("fakeprefix", localSystemPropertySource.getPrefix());
-            assertTrue(localSystemPropertySource.toStringValues().contains("disabled=true"));
-            assertNull(localSystemPropertySource.get(System.getenv().entrySet().iterator().next().getKey()));
-            assertTrue(localSystemPropertySource.getName().contains("(disabled)"));
-            assertTrue(localSystemPropertySource.getProperties().isEmpty());
-            assertTrue(localSystemPropertySource.toString().contains("disabled=true"));
+            //assertThat(localSystemPropertySource.getPrefix()).isEqualTo("fakeprefix");
+            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isTrue();
+            assertThat(localSystemPropertySource.get(System.getenv().entrySet().iterator().next().getKey())).isNull();
+            assertThat(localSystemPropertySource.getName().contains("(disabled)")).isTrue();
+            assertThat(localSystemPropertySource.getProperties().isEmpty()).isTrue();
+            assertThat(localSystemPropertySource.toString().contains("disabled=true")).isTrue();
 
             System.getProperties().clear();
             System.getProperties().load(new StringReader(before));
             System.setProperty("tamaya.defaults.disable", "true");
             localSystemPropertySource = new SystemPropertySource();
-            assertTrue(localSystemPropertySource.toStringValues().contains("disabled=true"));
+            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isTrue();
 
             System.getProperties().clear();
             System.getProperties().load(new StringReader(before));
             System.setProperty("tamaya.sysprops.disable", "");
             localSystemPropertySource = new SystemPropertySource();
-            assertFalse(localSystemPropertySource.toStringValues().contains("disabled=true"));
+            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isFalse();
 
             System.getProperties().clear();
             System.getProperties().load(new StringReader(before));
             System.setProperty("tamaya.defaults.disable", "");
             localSystemPropertySource = new SystemPropertySource();
-            assertFalse(localSystemPropertySource.toStringValues().contains("disabled=true"));
+            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isFalse();
 
         } finally {
             System.getProperties().clear();
@@ -85,31 +81,31 @@ public class SystemPropertySourceTest {
     public void testGetOrdinal() throws Exception {
 
         // test the default ordinal
-        Assert.assertEquals(SystemPropertySource.DEFAULT_ORDINAL, testPropertySource.getOrdinal());
+        assertThat(testPropertySource.getOrdinal()).isEqualTo(SystemPropertySource.DEFAULT_ORDINAL);
 
         // set the ordinal to 1001
         System.setProperty(PropertySource.TAMAYA_ORDINAL, "1001");
-        Assert.assertEquals(1001, new SystemPropertySource().getOrdinal());
+        assertThat(new SystemPropertySource().getOrdinal()).isEqualTo(1001);
         // currently its not possible to change ordinal at runtime
 
         // reset it to not destroy other tests!!
         System.clearProperty(PropertySource.TAMAYA_ORDINAL);
 
         SystemPropertySource constructorSetOrdinal22 = new SystemPropertySource(22);
-        assertEquals(22, constructorSetOrdinal22.getOrdinal());
+        assertThat(constructorSetOrdinal22.getOrdinal()).isEqualTo(22);
 
         SystemPropertySource constructorSetOrdinal16 = new SystemPropertySource("sixteenprefix", 16);
-        assertEquals(16, constructorSetOrdinal16.getOrdinal());
+        assertThat(constructorSetOrdinal16.getOrdinal()).isEqualTo(16);
     }
 
     @Test
     public void testIsScannable() throws Exception {
-        assertTrue(testPropertySource.isScannable());
+        assertThat(testPropertySource.isScannable()).isTrue();
     }
 
     @Test
     public void testGetName() throws Exception {
-        Assert.assertEquals("system-properties", testPropertySource.getName());
+        assertThat(testPropertySource.getName()).isEqualTo("system-properties");
     }
 
     @Test
@@ -117,9 +113,8 @@ public class SystemPropertySourceTest {
         String propertyKeyToCheck = System.getProperties().stringPropertyNames().iterator().next();
 
         PropertyValue property = testPropertySource.get(propertyKeyToCheck);
-        Assert.assertNotNull("Property '" + propertyKeyToCheck + "' is not present in "
-                + SystemPropertySource.class.getSimpleName(), property);
-        Assert.assertEquals(System.getProperty(propertyKeyToCheck), property.getValue());
+        assertThat(property).isNotNull();
+        assertThat(property.getValue()).isEqualTo(System.getProperty(propertyKeyToCheck));
     }
 
     @Test
@@ -143,10 +138,8 @@ public class SystemPropertySourceTest {
                 continue; // meta entry
             }
             num++;
-            Assert.assertEquals("Entry values for key '" + propertySourceEntry.getKey() + "' do not match",
-                    systemEntries.getProperty(propertySourceEntry.getKey()), propertySourceEntry.getValue());
+            assertThat(systemEntries.getProperty(propertySourceEntry.getKey())).isEqualTo(propertySourceEntry.getValue());
         }
-        Assert.assertEquals("size of System.getProperties().entrySet() must be the same as SystemPropertySrouce.getProperties().entrySet()",
-                systemEntries.size(), num);
+          assertThat(systemEntries).hasSize(num);
     }
 }

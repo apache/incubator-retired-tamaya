@@ -27,7 +27,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link ConfigurationContextBuilder} by atsticks on 06.09.16.
@@ -41,7 +41,7 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContext context = ConfigurationProvider.getConfiguration().getContext();
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .setContext(context);
-        assertEquals(context, b.build());
+        assertThat(b.build()).isEqualTo(context);
     }
 
     @Test
@@ -50,19 +50,19 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         ConfigurationContext ctx = b.build();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
         // Ensure no sorting happens during add, so switch ordinals!
         testPS2 = new TestPropertySource("addPropertySources_Array", 1);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertySources(testPS2, testPropertySource);
         ctx = b.build();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
-        assertEquals(ctx.getPropertySources().get(1).getName(), "TestPropertySource");
-        assertEquals(ctx.getPropertySources().get(0).getName(), "addPropertySources_Array");
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat("TestPropertySource").isEqualTo(ctx.getPropertySources().get(1).getName());
+        assertThat("addPropertySources_Array").isEqualTo(ctx.getPropertySources().get(0).getName());
     }
 
     @Test
@@ -71,21 +71,21 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertySources(Arrays.asList(new PropertySource[]{testPropertySource, testPS2}));
         ConfigurationContext ctx = b.build();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
-        assertEquals(ctx.getPropertySources().get(0).getName(), "TestPropertySource");
-        assertEquals(ctx.getPropertySources().get(1).getName(), "addPropertySources_Collection");
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat("TestPropertySource").isEqualTo(ctx.getPropertySources().get(0).getName());
+        assertThat("addPropertySources_Collection").isEqualTo(ctx.getPropertySources().get(1).getName());
         // Ensure no sorting happens during add, so switch ordinals!
         testPS2 = new TestPropertySource("addPropertySources_Collection", 1);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertySources(Arrays.asList(new PropertySource[]{testPS2, testPropertySource}));
         ctx = b.build();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
-        assertEquals(ctx.getPropertySources().get(1).getName(), "TestPropertySource");
-        assertEquals(ctx.getPropertySources().get(0).getName(), "addPropertySources_Collection");
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat("TestPropertySource").isEqualTo(ctx.getPropertySources().get(1).getName());
+        assertThat("addPropertySources_Collection").isEqualTo(ctx.getPropertySources().get(0).getName());
     }
 
     @Test
@@ -94,16 +94,16 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         ConfigurationContext ctx = b.build();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         b.removePropertySources(testPropertySource);
         ctx = b.build();
-        assertFalse(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
-        assertEquals(1, ctx.getPropertySources().size());
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isFalse();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat(ctx.getPropertySources()).hasSize(1);
     }
 
     @Test
@@ -112,16 +112,16 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         ConfigurationContext ctx = b.build();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         b.removePropertySources(testPropertySource);
         ctx = b.build();
-        assertEquals(1, ctx.getPropertySources().size());
-        assertFalse(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
+        assertThat(ctx.getPropertySources()).hasSize(1);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isFalse();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
     }
 
     @Test
@@ -131,13 +131,13 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
         b.addPropertyFilters(filter1, filter2);
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
         b = ConfigurationProvider.getConfigurationContextBuilder();
         b.addPropertyFilters(filter1, filter2);
         b.addPropertyFilters(filter1, filter2);
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
     }
 
     @Test
@@ -147,13 +147,13 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
         b.addPropertyFilters(Arrays.asList(new PropertyFilter[]{filter1, filter2}));
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
         b = ConfigurationProvider.getConfigurationContextBuilder();
         b.addPropertyFilters(filter1, filter2);
         b.addPropertyFilters(filter1, filter2);
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
     }
 
     @Test
@@ -163,16 +163,16 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyFilters(filter1, filter2);
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyFilters(filter1, filter2);
         b.removePropertyFilters(filter1);
         ctx = b.build();
-        assertEquals(1, ctx.getPropertyFilters().size());
-        assertFalse(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
+        assertThat(ctx.getPropertyFilters()).hasSize(1);
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isFalse();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
     }
 
     @Test
@@ -182,16 +182,16 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyFilters(Arrays.asList(new PropertyFilter[]{filter1, filter2}));
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyFilters(Arrays.asList(new PropertyFilter[]{filter1, filter2}));
         b.removePropertyFilters(filter1);
         ctx = b.build();
-        assertEquals(1, ctx.getPropertyFilters().size());
-        assertFalse(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
+        assertThat(ctx.getPropertyFilters()).hasSize(1);
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isFalse();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
     }
 
     @Test
@@ -201,12 +201,12 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(1, ctx.getPropertyConverters().size());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isTrue();
+        assertThat(ctx.getPropertyConverters()).hasSize(1);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
-        assertEquals(1, ctx.getPropertyConverters().size());
+        assertThat(ctx.getPropertyConverters()).hasSize(1);
     }
 
     @Test
@@ -217,13 +217,13 @@ public class ConfigurationContextBuilderTest {
                 .addPropertyConverters(TypeLiteral.of(String.class),
                         Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(ctx.getPropertyConverters().size(), 1);
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isTrue();
+        assertThat(1).isEqualTo(ctx.getPropertyConverters().size());
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class),
                         Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
-        assertEquals(ctx.getPropertyConverters().size(), 1);
+        assertThat(1).isEqualTo(ctx.getPropertyConverters().size());
     }
 
     @Test
@@ -233,14 +233,14 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(1, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).hasSize(1);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.removePropertyConverters(TypeLiteral.of(String.class), converter);
         ctx = b.build();
-        assertFalse(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isFalse();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty()).isTrue();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -250,14 +250,14 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         ConfigurationContext ctx = b.build();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(1, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).hasSize(1);
         b = ConfigurationProvider.getConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         b.removePropertyConverters(TypeLiteral.of(String.class), Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         ctx = b.build();
-        assertFalse(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isFalse();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty()).isTrue();
     }
 
     @Test
@@ -266,7 +266,7 @@ public class ConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder()
                 .setPropertyValueCombinationPolicy(combPol);
         ConfigurationContext ctx = b.build();
-        assertEquals(ctx.getPropertyValueCombinationPolicy(), combPol);
+        assertThat(combPol).isEqualTo(ctx.getPropertyValueCombinationPolicy());
     }
 
     @Test
@@ -279,14 +279,14 @@ public class ConfigurationContextBuilderTest {
         b.addPropertySources(propertySources);
         b.increasePriority(propertySources[propertySources.length-1]);
         for(int i=0;i<propertySources.length;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
         b.increasePriority(propertySources[propertySources.length-2]);
         for(int i=0;i<propertySources.length-2;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
-        assertEquals(propertySources[propertySources.length-1], b.getPropertySources().get(propertySources.length-2));
-        assertEquals(propertySources[propertySources.length-2], b.getPropertySources().get(propertySources.length-1));
+        assertThat(b.getPropertySources().get(propertySources.length-2)).isEqualTo(propertySources[propertySources.length-1]);
+        assertThat(b.getPropertySources().get(propertySources.length-1)).isEqualTo(propertySources[propertySources.length-2]);
     }
 
     @Test
@@ -299,14 +299,14 @@ public class ConfigurationContextBuilderTest {
         b.addPropertySources(propertySources);
         b.decreasePriority(propertySources[0]);
         for(int i=0;i<propertySources.length;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
         b.decreasePriority(propertySources[1]);
         for(int i=2;i<propertySources.length;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
-        assertEquals(propertySources[0], b.getPropertySources().get(1));
-        assertEquals(propertySources[1], b.getPropertySources().get(0));
+        assertThat(b.getPropertySources().get(1)).isEqualTo(propertySources[0]);
+        assertThat(b.getPropertySources().get(0)).isEqualTo(propertySources[1]);
     }
 
     @Test
@@ -321,16 +321,16 @@ public class ConfigurationContextBuilderTest {
         // test
         b.lowestPriority(propertySources[0]);
         for(int i=0;i<propertySources.length;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
         b.lowestPriority(propertySources[1]);
         for(int i=2;i<propertySources.length;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
-        assertEquals(propertySources[0], b.getPropertySources().get(1));
-        assertEquals(propertySources[1], b.getPropertySources().get(0));
+        assertThat(b.getPropertySources().get(1)).isEqualTo(propertySources[0]);
+        assertThat(b.getPropertySources().get(0)).isEqualTo(propertySources[1]);
         b.lowestPriority(propertySources[5]);
-        assertEquals(propertySources[5], b.getPropertySources().get(0));
+        assertThat(b.getPropertySources().get(0)).isEqualTo(propertySources[5]);
     }
 
     @Test
@@ -345,16 +345,16 @@ public class ConfigurationContextBuilderTest {
         // test
         b.highestPriority(propertySources[propertySources.length-1]);
         for(int i=0;i<propertySources.length;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
         b.highestPriority(propertySources[propertySources.length-2]);
         for(int i=0;i<propertySources.length-2;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
-        assertEquals(propertySources[propertySources.length-2], b.getPropertySources().get(propertySources.length-1));
-        assertEquals(propertySources[propertySources.length-1], b.getPropertySources().get(propertySources.length-2));
+        assertThat(b.getPropertySources().get(propertySources.length-1)).isEqualTo(propertySources[propertySources.length-2]);
+        assertThat(b.getPropertySources().get(propertySources.length-2)).isEqualTo(propertySources[propertySources.length-1]);
         b.highestPriority(propertySources[5]);
-        assertEquals(propertySources[5], b.getPropertySources().get(propertySources.length-1));
+        assertThat(b.getPropertySources().get(propertySources.length-1)).isEqualTo(propertySources[5]);
     }
 
     @Test
@@ -371,7 +371,7 @@ public class ConfigurationContextBuilderTest {
         b.sortPropertySources(psComp);
         Arrays.sort(propertySources, psComp);
         for(int i=0;i<propertySources.length;i++){
-            assertEquals(propertySources[i], b.getPropertySources().get(i));
+            assertThat(b.getPropertySources().get(i)).isEqualTo(propertySources[i]);
         }
     }
 
@@ -389,7 +389,7 @@ public class ConfigurationContextBuilderTest {
         b.sortPropertyFilter(pfComp);
         Arrays.sort(propertyFilters, pfComp);
         for(int i=0;i<propertyFilters.length;i++){
-            assertEquals(propertyFilters[i], b.getPropertyFilters().get(i));
+            assertThat(b.getPropertyFilters().get(i)).isEqualTo(propertyFilters[i]);
         }
     }
 
@@ -397,26 +397,26 @@ public class ConfigurationContextBuilderTest {
     public void build() throws Exception {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
         ConfigurationContext ctx = b.build();
-        assertNotNull(ctx);
-        assertTrue(ctx.getPropertySources().isEmpty());
-        assertTrue(ctx.getPropertyFilters().isEmpty());
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.getPropertySources().isEmpty()).isTrue();
+        assertThat(ctx.getPropertyFilters().isEmpty()).isTrue();
     }
 
     @Test
     public void testRemoveAllFilters() throws Exception {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
         b.addPropertyFilters((value, context) -> value.toBuilder().setValue(toString() + " - ").build());
-        assertFalse(b.getPropertyFilters().isEmpty());
+        assertThat(b.getPropertyFilters().isEmpty()).isFalse();
         b.removePropertyFilters(b.getPropertyFilters());
-        assertTrue(b.getPropertyFilters().isEmpty());
+        assertThat(b.getPropertyFilters().isEmpty()).isTrue();
     }
 
     @Test
     public void testRemoveAllSources() throws Exception {
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
         b.addPropertySources(new TestPropertySource());
-        assertFalse(b.getPropertySources().isEmpty());
+        assertThat(b.getPropertySources().isEmpty()).isFalse();
         b.removePropertySources(b.getPropertySources());
-        assertTrue(b.getPropertyFilters().isEmpty());
+        assertThat(b.getPropertyFilters().isEmpty()).isTrue();
     }
 }

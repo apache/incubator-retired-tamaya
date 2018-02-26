@@ -20,7 +20,7 @@ package org.apache.tamaya;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests instantiating {@link ConfigException}.
@@ -30,16 +30,16 @@ public class ConfigExceptionTest {
     @Test
     public void testCreationMessage(){
         ConfigException ex = new ConfigException("test");
-        assertNull(ex.getCause());
-        assertEquals(ex.getMessage(), "test");
+        assertThat(ex.getCause()).isNull();
+        assertThat("test").isEqualTo(ex.getMessage());
     }
 
     @Test
     public void testCreationMessageThrowable(){
         Exception e = new IllegalStateException("blabla");
         ConfigException ex = new ConfigException("test", e);
-        assertTrue(ex.getCause() == e);
-        assertEquals("test", ex.getMessage());
+        assertThat(ex.getCause() == e).isTrue();
+        assertThat(ex.getMessage()).isEqualTo("test");
     }
 
 }

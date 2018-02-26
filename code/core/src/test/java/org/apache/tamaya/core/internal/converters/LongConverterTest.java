@@ -25,7 +25,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the default converter for Longs.
@@ -41,8 +41,8 @@ public class LongConverterTest {
     public void testConvert_Long_Decimal() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Long valueRead = config.get("tests.converter.long.decimal", Long.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.intValue(), 101);
+        assertThat(valueRead != null).isTrue();
+        assertThat(101).isEqualTo(valueRead.intValue());
     }
 
     /**
@@ -54,8 +54,8 @@ public class LongConverterTest {
     public void testConvert_Long_Octal() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Long valueRead = config.get("tests.converter.long.octal", Long.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.intValue(), Long.decode("02").intValue());
+        assertThat(valueRead != null).isTrue();
+        assertThat(Long.decode("02").intValue()).isEqualTo(valueRead.intValue());
     }
 
     /**
@@ -67,11 +67,11 @@ public class LongConverterTest {
     public void testConvert_Long_Hex() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Long valueRead = config.get("tests.converter.long.hex.lowerX", Long.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.intValue(), Long.decode("0x2F").intValue());
+        assertThat(valueRead != null).isTrue();
+        assertThat(Long.decode("0x2F").intValue()).isEqualTo(valueRead.intValue());
         valueRead = config.get("tests.converter.long.hex.upperX", Long.class);
-        assertTrue(valueRead != null);
-        assertEquals(valueRead.intValue(), Long.decode("0X3F").intValue());
+        assertThat(valueRead != null).isTrue();
+        assertThat(Long.decode("0X3F").intValue()).isEqualTo(valueRead.intValue());
     }
 
     /**
@@ -83,7 +83,7 @@ public class LongConverterTest {
     public void testConvert_NotPresent() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Long valueRead = config.get("tests.converter.long.foo", Long.class);
-        assertFalse(valueRead != null);
+        assertThat(valueRead != null).isFalse();
     }
 
     /**
@@ -95,8 +95,8 @@ public class LongConverterTest {
     public void testConvert_Long_MinValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Long valueRead = config.get("tests.converter.long.min", Long.class);
-        assertTrue(valueRead != null);
-        assertEquals(Long.MIN_VALUE, valueRead.longValue());
+        assertThat(valueRead != null).isTrue();
+        assertThat(valueRead.longValue()).isEqualTo(Long.MIN_VALUE);
     }
 
     /**
@@ -108,8 +108,8 @@ public class LongConverterTest {
     public void testConvert_Long_MaxValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Long valueRead = config.get("tests.converter.long.max", Long.class);
-        assertTrue(valueRead != null);
-        assertEquals(Long.MAX_VALUE, valueRead.longValue());
+        assertThat(valueRead != null).isTrue();
+        assertThat(valueRead.longValue()).isEqualTo(Long.MAX_VALUE);
     }    
     
     @Test(expected = ConfigException.class)
@@ -124,14 +124,14 @@ public class LongConverterTest {
         LongConverter converter = new LongConverter();
         converter.convert("", context);
 
-        assertTrue(context.getSupportedFormats().contains("<long> (LongConverter)"));
-        assertTrue(context.getSupportedFormats().contains("MIN_VALUE (LongConverter)"));
-        assertTrue(context.getSupportedFormats().contains("MAX_VALUE (LongConverter)"));
+        assertThat(context.getSupportedFormats().contains("<long> (LongConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("MIN_VALUE (LongConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("MAX_VALUE (LongConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         LongConverter instance = new LongConverter();
-        assertEquals(LongConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(LongConverter.class.hashCode());
     }
 }

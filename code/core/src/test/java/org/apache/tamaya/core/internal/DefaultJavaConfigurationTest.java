@@ -18,13 +18,10 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spisupport.propertysource.JavaConfigurationPropertySource;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static org.apache.tamaya.ConfigurationProvider.getConfiguration;
+import static org.assertj.core.api.Assertions.*;
 
 public class DefaultJavaConfigurationTest {
 
@@ -37,14 +34,14 @@ public class DefaultJavaConfigurationTest {
             String key = "confkey" + i;
             String value = "javaconf-value" + i;
             // check if we had our key in configuration.current
-            MatcherAssert.assertThat(getConfiguration().getProperties().containsKey(key), Matchers.is(true));
-            MatcherAssert.assertThat(value, Matchers.equalTo(getConfiguration().get(key)));
+            assertThat(getConfiguration().getProperties().containsKey(key)).isTrue();
+            assertThat(value).isEqualTo(getConfiguration().get(key));
         }
 
-        MatcherAssert.assertThat(getConfiguration().getProperties().containsKey("aaeehh"), Matchers.is(true));
-        MatcherAssert.assertThat(getConfiguration().getProperties().get("aaeehh"), Matchers.equalTo(A_UMLAUT));
+        assertThat(getConfiguration().getProperties().containsKey("aaeehh")).isTrue();
+        assertThat(getConfiguration().getProperties().get("aaeehh")).isEqualTo(A_UMLAUT);
 
-        MatcherAssert.assertThat(getConfiguration().getProperties().containsKey(O_UMLAUT), Matchers.is(true));
-        MatcherAssert.assertThat(getConfiguration().getProperties().get(O_UMLAUT), Matchers.equalTo("o"));
+        assertThat(getConfiguration().getProperties().containsKey(O_UMLAUT)).isTrue();
+        assertThat(getConfiguration().getProperties().get(O_UMLAUT)).isEqualTo("o");
     }
 }

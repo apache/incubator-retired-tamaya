@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.Duration;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsti on 02.10.2017.
@@ -56,25 +56,25 @@ public class DurationConverterTest {
     public void convert() throws Exception {
         DurationConverter conv = new DurationConverter();
         Duration duration = conv.convert("PT20.345S", context);
-        assertEquals(Duration.parse("PT20.345S"), duration);
+        assertThat(duration).isEqualTo(Duration.parse("PT20.345S"));
         duration = conv.convert("PT15M", context);
-        assertEquals(Duration.parse("PT15M"), duration);
+        assertThat(duration).isEqualTo(Duration.parse("PT15M"));
         duration = conv.convert("PT10H", context);
-        assertEquals(Duration.parse("PT10H"), duration);
+        assertThat(duration).isEqualTo(Duration.parse("PT10H"));
         duration = conv.convert("P2D", context);
-        assertEquals(Duration.parse("P2D"), duration);
+        assertThat(duration).isEqualTo(Duration.parse("P2D"));
         duration = conv.convert("P2DT3H4M", context);
-        assertEquals(Duration.parse("P2DT3H4M"), duration);
+        assertThat(duration).isEqualTo(Duration.parse("P2DT3H4M"));
         duration = conv.convert("foo", context);
-        assertNull(duration);
+        assertThat(duration).isNull();
     }
 
     @Test
     public void equalsAndHashcode() throws Exception {
         DurationConverter conv1 = new DurationConverter();
         DurationConverter conv2 = new DurationConverter();
-        assertEquals(conv1, conv2);
-        assertEquals(conv1.hashCode(), conv2.hashCode());
+        assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 
     @Test
@@ -83,13 +83,13 @@ public class DurationConverterTest {
         DurationConverter converter = new DurationConverter();
         converter.convert("", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().contains("PT20M34S (DurationConverter)"));
+        assertThat(localcontext.getSupportedFormats().contains("PT20M34S (DurationConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         DurationConverter instance = new DurationConverter();
-        assertEquals(DurationConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(DurationConverter.class.hashCode());
     }
 
 }

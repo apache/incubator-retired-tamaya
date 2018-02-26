@@ -24,7 +24,7 @@ import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySourceProvider;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class BuildablePropertySourceProviderTest {
 
@@ -38,10 +38,10 @@ public class BuildablePropertySourceProviderTest {
                 .withPropertySourcs(ps1)
                 .withPropertySourcs(Arrays.asList(ps2))
                 .build();
-        assertNotNull(prov);
+        assertThat(prov).isNotNull();
         Iterator testable = prov.getPropertySources().iterator();
-        assertEquals(testable.next(), ps1);
-        assertEquals(testable.next(), ps2);
+        assertThat(ps1).isEqualTo(testable.next());
+        assertThat(ps2).isEqualTo(testable.next());
     }
 
     @Test
@@ -57,11 +57,11 @@ public class BuildablePropertySourceProviderTest {
         BuildablePropertySourceProvider prov3 = BuildablePropertySourceProvider.builder()
                 .withPropertySourcs(ps2).build();
         
-        assertEquals(prov1, prov1);
-        assertEquals(prov1, prov2);
-        assertNotEquals(prov1, prov3);
-        assertNotEquals(prov1, null);
-        assertNotEquals(prov1, "aString");
+        assertThat(prov1).isEqualTo(prov1);
+        assertThat(prov2).isEqualTo(prov1);
+        assertThat(prov1).isNotEqualTo(prov3);
+        assertThat(prov1).isNotEqualTo(null);
+        assertThat(prov1).isNotEqualTo("aString");
     }
 
     @Test
@@ -72,19 +72,19 @@ public class BuildablePropertySourceProviderTest {
                 .withPropertySourcs(ps).build();
         BuildablePropertySourceProvider prov2 = BuildablePropertySourceProvider.builder()
                 .withPropertySourcs(ps).build();
-        assertEquals(prov1.hashCode(), prov2.hashCode());
+        assertThat(prov2.hashCode()).isEqualTo(prov1.hashCode());
         BuildablePropertySource ps2 = BuildablePropertySource.builder()
                 .withName("test12").build();
         prov2 = BuildablePropertySourceProvider.builder()
                 .withPropertySourcs(ps2).build();
-        assertNotEquals(prov1.hashCode(), prov2.hashCode());
+        assertThat(prov1.hashCode()).isNotEqualTo(prov2.hashCode());
     }
 
 
     @Test
     public void builder() throws Exception {
-        assertNotNull(BuildablePropertySource.builder());
-        assertNotEquals(BuildablePropertySource.builder(), BuildablePropertySource.builder());
+        assertThat(BuildablePropertySource.builder()).isNotNull();
+        assertThat(BuildablePropertySource.builder()).isNotEqualTo(BuildablePropertySource.builder());
     }
 
 }

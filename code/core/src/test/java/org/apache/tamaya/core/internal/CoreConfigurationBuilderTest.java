@@ -36,7 +36,7 @@ import java.util.Currency;
 import java.util.Map;
 import org.apache.tamaya.core.internal.converters.BigDecimalConverter;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link CoreConfigurationBuilder} by atsticks on 06.09.16.
@@ -50,7 +50,7 @@ public class CoreConfigurationBuilderTest {
         ConfigurationContext context = ConfigurationProvider.getConfiguration().getContext();
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .setContext(context);
-        assertEquals(context, b.build().getContext());
+        assertThat(b.build().getContext()).isEqualTo(context);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class CoreConfigurationBuilderTest {
         Configuration cfg = ConfigurationProvider.getConfiguration();
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .setConfiguration(cfg);
-        assertEquals(cfg, b.build());
+        assertThat(b.build()).isEqualTo(cfg);
     }
 
     
@@ -69,9 +69,9 @@ public class CoreConfigurationBuilderTest {
                 .addPropertySources(testPropertySource, testPS2);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
     }
 
     @Test
@@ -81,17 +81,17 @@ public class CoreConfigurationBuilderTest {
                 .addPropertySources(testPropertySource, testPS2);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertEquals(2, ctx.getPropertySources().size());
-        assertTrue(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
+        assertThat(ctx.getPropertySources()).hasSize(2);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
         b = new CoreConfigurationBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         b.removePropertySources(testPropertySource);
         cfg = b.build();
         ctx = cfg.getContext();
-        assertEquals(1, ctx.getPropertySources().size());
-        assertFalse(ctx.getPropertySources().contains(testPropertySource));
-        assertTrue(ctx.getPropertySources().contains(testPS2));
+        assertThat(ctx.getPropertySources()).hasSize(1);
+        assertThat(ctx.getPropertySources().contains(testPropertySource)).isFalse();
+        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
     }
 
     @Test
@@ -102,13 +102,13 @@ public class CoreConfigurationBuilderTest {
         b.addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertTrue(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
         b = new CoreConfigurationBuilder();
         b.addPropertyFilters(filter1, filter2);
         b.addPropertyFilters(filter1, filter2);
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
     }
 
     @Test
@@ -119,17 +119,17 @@ public class CoreConfigurationBuilderTest {
                 .addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertTrue(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
-        assertEquals(2, ctx.getPropertyFilters().size());
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(2);
         b = new CoreConfigurationBuilder()
                 .addPropertyFilters(filter1, filter2);
         b.removePropertyFilters(filter1);
         cfg = b.build();
         ctx = cfg.getContext();
-        assertEquals(1, ctx.getPropertyFilters().size());
-        assertFalse(ctx.getPropertyFilters().contains(filter1));
-        assertTrue(ctx.getPropertyFilters().contains(filter2));
+        assertThat(ctx.getPropertyFilters()).hasSize(1);
+        assertThat(ctx.getPropertyFilters().contains(filter1)).isFalse();
+        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
     }
 
     @Test
@@ -140,12 +140,12 @@ public class CoreConfigurationBuilderTest {
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(1, ctx.getPropertyConverters().size());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isTrue();
+        assertThat(ctx.getPropertyConverters()).hasSize(1);
         b = new CoreConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
-        assertEquals(1, ctx.getPropertyConverters().size());
+        assertThat(ctx.getPropertyConverters()).hasSize(1);
     }
 
     @Test
@@ -156,15 +156,15 @@ public class CoreConfigurationBuilderTest {
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertEquals(1, ctx.getPropertyConverters(TypeLiteral.of(String.class)).size());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).hasSize(1);
         b = new CoreConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.removePropertyConverters(TypeLiteral.of(String.class), converter);
         cfg = b.build();
         ctx = cfg.getContext();
-        assertFalse(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter));
-        assertTrue(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty());
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter)).isFalse();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty()).isTrue();
     }
 
     @Test
@@ -174,12 +174,12 @@ public class CoreConfigurationBuilderTest {
                 .setPropertyValueCombinationPolicy(combPol);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertEquals(ctx.getPropertyValueCombinationPolicy(), combPol);
+        assertThat(combPol).isEqualTo(ctx.getPropertyValueCombinationPolicy());
     }
 
     @Test
     public void build() throws Exception {
-        assertNotNull(new CoreConfigurationBuilder().build());
+        assertThat(new CoreConfigurationBuilder().build()).isNotNull();
     }
 
     @Test
@@ -193,23 +193,23 @@ public class CoreConfigurationBuilderTest {
         CoreConfigurationBuilder b = new CoreConfigurationBuilder();
         b.addCorePropertyConverters();
         Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> converters = b.getPropertyConverter();
-        assertTrue(converters.containsKey(TypeLiteral.<BigDecimal>of(BigDecimal.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<BigInteger>of(BigInteger.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Boolean>of(Boolean.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Byte>of(Byte.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Character>of(Character.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Class<?>>of(Class.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Currency>of(Currency.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Double>of(Double.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<File>of(File.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Float>of(Float.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Integer>of(Integer.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Long>of(Long.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Number>of(Number.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Path>of(Path.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<Short>of(Short.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<URI>of(URI.class)));
-        assertTrue(converters.containsKey(TypeLiteral.<URL>of(URL.class)));
+        assertThat(converters.containsKey(TypeLiteral.<BigDecimal>of(BigDecimal.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<BigInteger>of(BigInteger.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Boolean>of(Boolean.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Byte>of(Byte.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Character>of(Character.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Class<?>>of(Class.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Currency>of(Currency.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Double>of(Double.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<File>of(File.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Float>of(Float.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Integer>of(Integer.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Long>of(Long.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Number>of(Number.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Path>of(Path.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<Short>of(Short.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<URI>of(URI.class))).isTrue();
+        assertThat(converters.containsKey(TypeLiteral.<URL>of(URL.class))).isTrue();
     }
 
     private static class TestPropertySource implements PropertySource{

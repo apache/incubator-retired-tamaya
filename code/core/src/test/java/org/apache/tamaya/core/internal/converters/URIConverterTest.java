@@ -25,11 +25,7 @@ import org.junit.Test;
 import java.net.URI;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests conversion of the {@link URI}-converter.
@@ -42,38 +38,38 @@ public class URIConverterTest {
     @Test
     public void testConvert_URI() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("test:path", context));
+         assertThat(new URI("test:path")).isEqualTo(converter.convert("test:path", context));
     }
 
     @Test
     public void testConvert_URI_WithSpaces() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("  test:path\t", context));
+        assertThat(new URI("test:path")).isEqualTo(converter.convert("  test:path\t", context));
     }
 
     @Test
     public void testConvert_URI_WithSpacesBefore() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("  test:path", context));
+        assertThat(new URI("test:path")).isEqualTo(converter.convert("  test:path", context));
     }
 
     @Test
     public void testConvert_URI_WithSpacesAfter() throws Exception {
         URIConverter converter = new URIConverter();
-        assertEquals(new URI("test:path"), converter.convert("test:path  ", context));
+        assertThat(new URI("test:path")).isEqualTo(converter.convert("test:path  ", context));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         URIConverter converter = new URIConverter();
-        assertNull(converter.convert("", context));
-        assertNull(converter.convert(null, context));
+        assertThat(converter.convert("", context)).isNull();
+        assertThat(converter.convert(null, context)).isNull();
     }
     
     @Test
     public void testConvert_URIInvalid() throws ConfigException {
         URIConverter converter = new URIConverter();
-        assertNull(converter.convert("not a uri", context));
+        assertThat(converter.convert("not a uri", context)).isNull();
     }
 
     @Test
@@ -82,13 +78,13 @@ public class URIConverterTest {
         URIConverter converter = new URIConverter();
         converter.convert("test:path", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().contains("<uri> -> new URI(uri) (URIConverter)"));
+        assertThat(localcontext.getSupportedFormats().contains("<uri> -> new URI(uri) (URIConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         URIConverter instance = new URIConverter();
-        assertEquals(URIConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(URIConverter.class.hashCode());
     }
     
     

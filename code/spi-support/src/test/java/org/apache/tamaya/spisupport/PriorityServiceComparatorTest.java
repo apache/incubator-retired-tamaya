@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import javax.annotation.Priority;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsticks on 12.09.16.
@@ -32,10 +32,10 @@ public class PriorityServiceComparatorTest {
 
     @Test
     public void compare() throws Exception {
-        assertTrue(PriorityServiceComparator.getInstance().compare("a", "b")==0);
-        assertTrue(PriorityServiceComparator.getInstance().compare(getClass(), getClass())==0);
-        assertTrue(PriorityServiceComparator.getInstance().compare(new A(), new SystemPropertySource())==-1);
-        assertTrue(PriorityServiceComparator.getInstance().compare(new SystemPropertySource(), new A())==1);
+        assertThat(PriorityServiceComparator.getInstance().compare("a", "b")==0).isTrue();
+        assertThat(PriorityServiceComparator.getInstance().compare(getClass(), getClass())==0).isTrue();
+        assertThat(PriorityServiceComparator.getInstance().compare(new A(), new SystemPropertySource())==-1).isTrue();
+        assertThat(PriorityServiceComparator.getInstance().compare(new SystemPropertySource(), new A())==1).isTrue();
     }
 
     @Priority(100)

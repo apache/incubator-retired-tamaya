@@ -20,7 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import java.util.Set;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -39,7 +39,7 @@ public class OSGIServiceLoaderTest {
         BundleContext mockBundleContext = new MockBundleContext();
         OSGIServiceLoader instance = new OSGIServiceLoader(mockBundleContext);
         BundleContext result = instance.getBundleContext();
-        assertEquals(mockBundleContext, result);
+        assertThat(result).isEqualTo(mockBundleContext);
     }
 
     /**
@@ -57,7 +57,7 @@ public class OSGIServiceLoaderTest {
         mockBundleContext.installBundle(startedBundle);
         OSGIServiceLoader instance = new OSGIServiceLoader(mockBundleContext);
         Set<Bundle> result = instance.getResourceBundles();
-        assertFalse(result.isEmpty());
+        assertThat(result.isEmpty()).isFalse();
     }
 
     /**
@@ -90,24 +90,24 @@ public class OSGIServiceLoaderTest {
         mockBundleContext.setServiceCount(0);
         OSGIServiceLoader instance = new OSGIServiceLoader(mockBundleContext);
         resultBundles = instance.getResourceBundles();
-        assertEquals(1, resultBundles.size());
-        assertEquals(2, mockBundleContext.getServiceCount());
+        assertThat(resultBundles).hasSize(1);
+        assertThat(mockBundleContext.getServiceCount()).isEqualTo(2);
 
         //After start
         mockBundleContext.setServiceCount(0);
         BundleEvent startedEvent = new BundleEvent(BundleEvent.STARTED, flipBundle);
         instance.bundleChanged(startedEvent);
         resultBundles = instance.getResourceBundles();
-        assertEquals(2, resultBundles.size());
-        assertEquals(2, mockBundleContext.getServiceCount());
+        assertThat(resultBundles).hasSize(2);
+        assertThat(mockBundleContext.getServiceCount()).isEqualTo(2);
 
         //After stop
         mockBundleContext.setServiceCount(0);
         BundleEvent stoppedEvent = new BundleEvent(BundleEvent.STOPPED, flipBundle);
         instance.bundleChanged(stoppedEvent);
         resultBundles = instance.getResourceBundles();
-        assertEquals(1, resultBundles.size());
-        assertEquals(0, mockBundleContext.getServiceCount());
+        assertThat(resultBundles).hasSize(1);
+        assertThat(mockBundleContext.getServiceCount()).isEqualTo(0);
     }
 
     

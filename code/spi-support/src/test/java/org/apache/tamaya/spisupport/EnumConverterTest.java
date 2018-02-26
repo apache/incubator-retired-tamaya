@@ -24,12 +24,8 @@ import org.junit.Test;
 
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Objects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test class testing the {@link EnumConverter} class.
@@ -48,13 +44,13 @@ public class EnumConverterTest {
     @Test
     public void testConversionWithMixedCasing() {
         for (String input : Arrays.asList(RoundingMode.CEILING.toString(), "ceiling", "CeiLinG")) {
-            assertEquals(RoundingMode.CEILING, testConverter.convert(input, DUMMY_CONTEXT));
+            assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert(input, DUMMY_CONTEXT));
         }
     }
 
     @Test
     public void testConvert_OtherValue() {
-        assertNull(testConverter.convert("fooBars", DUMMY_CONTEXT));
+        assertThat(testConverter.convert("fooBars", DUMMY_CONTEXT)).isNull();
     }
 
     @Test
@@ -63,7 +59,7 @@ public class EnumConverterTest {
         EnumConverter<RoundingMode> converter = new EnumConverter<>(RoundingMode.class);
         converter.convert("fooBars", context);
 
-        assertTrue(context.getSupportedFormats().contains("<enumValue> (EnumConverter)"));
+        assertThat(context.getSupportedFormats().contains("<enumValue> (EnumConverter)")).isTrue();
     }
 
     @Test
@@ -72,13 +68,13 @@ public class EnumConverterTest {
         EnumConverter converter2 = new EnumConverter<>(RoundingMode.class);
         EnumConverter converter3 = new EnumConverter<>(TEST_ENUM.class);
 
-        assertEquals(converter1, converter1);
-        assertNotEquals(null, converter1);
-        assertNotEquals(converter1, "aString");
-        assertNotEquals("aString", converter1);
-        assertEquals(converter1, converter2);
-        assertNotEquals(converter1, converter3);
-        assertEquals(converter1.hashCode(), converter2.hashCode());
-        assertNotEquals(converter1.hashCode(), converter3.hashCode());
+        assertThat(converter1).isEqualTo(converter1);
+        assertThat(converter1).isNotEqualTo(null);
+        assertThat(converter1).isNotEqualTo("aString");
+        assertThat("aString").isNotEqualTo(converter1);
+        assertThat(converter2).isEqualTo(converter1);
+        assertThat(converter1).isNotEqualTo(converter3);
+        assertThat(converter2.hashCode()).isEqualTo(converter1.hashCode());
+        assertThat(converter1.hashCode()).isNotEqualTo(converter3.hashCode());
     }
 }

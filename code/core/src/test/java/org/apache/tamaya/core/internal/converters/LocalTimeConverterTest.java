@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.LocalTime;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsti on 02.10.2017.
@@ -42,17 +42,17 @@ public class LocalTimeConverterTest {
     public void convert() throws Exception {
         LocalTimeConverter conv = new LocalTimeConverter();
         LocalTime value = conv.convert("10:15:30", context);
-        assertEquals(value, LocalTime.parse("10:15:30"));
+        assertThat(LocalTime.parse("10:15:30")).isEqualTo(value);
         value = conv.convert("foo", context);
-        assertNull(value);
+        assertThat(value).isNull();
     }
 
     @Test
     public void equalsAndHashcode() throws Exception {
         LocalTimeConverter conv1 = new LocalTimeConverter();
         LocalTimeConverter conv2 = new LocalTimeConverter();
-        assertEquals(conv1, conv2);
-        assertEquals(conv1.hashCode(), conv2.hashCode());
+        assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 
     @Test
@@ -61,12 +61,12 @@ public class LocalTimeConverterTest {
         LocalTimeConverter converter = new LocalTimeConverter();
         converter.convert("", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().toString().contains(" (LocalTimeConverter)"));
+        assertThat(localcontext.getSupportedFormats().toString().contains(" (LocalTimeConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         LocalTimeConverter instance = new LocalTimeConverter();
-        assertEquals(LocalTimeConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(LocalTimeConverter.class.hashCode());
     }
 }

@@ -26,7 +26,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import org.mockito.Mockito;
 
@@ -47,10 +47,10 @@ public class SupplierConverterTest {
         ConversionContext stringContext = new ConversionContext.Builder(listStringTypeLiteral).build();
         
         stringResult = instance.convert(null, stringContext);
-        assertNull(stringResult.get());
+        assertThat(stringResult.get()).isNull();
         
         stringResult = instance.convert("aString", stringContext);
-        assertEquals("aString", stringResult.get());
+        assertThat(stringResult.get()).isEqualTo("aString");
         
         Supplier<InetAddress> addressResult;
         
@@ -63,14 +63,14 @@ public class SupplierConverterTest {
                 .build();
 
         addressResult = instance.convert("someKey", myConverterContext);
-        assertTrue(addressResult.get() instanceof InetAddress);
+        assertThat(addressResult.get() instanceof InetAddress).isTrue();
 
 }
         
     @Test
     public void testHashCode(){
         SupplierConverter instance = new SupplierConverter();
-        assertEquals(SupplierConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(SupplierConverter.class.hashCode());
     }
 
     private class MyConverter<T extends InetAddress> implements PropertyConverter<InetAddress> {

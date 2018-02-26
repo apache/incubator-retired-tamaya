@@ -24,45 +24,45 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class BuildablePropertySourceTest {
     @Test
     public void getOrdinal() throws Exception {
         BuildablePropertySource ps1 = BuildablePropertySource.builder()
                 .withOrdinal(55).build();
-        assertEquals(55, ps1.getOrdinal());
+        assertThat(ps1.getOrdinal()).isEqualTo(55);
     }
 
     @Test
     public void getName() throws Exception {
         BuildablePropertySource ps1 = BuildablePropertySource.builder()
                 .withName("test1").build();
-        assertEquals("test1", ps1.getName());
+        assertThat(ps1.getName()).isEqualTo("test1");
         ps1 = BuildablePropertySource.builder().build();
-        assertNotNull(ps1.getName());
+        assertThat(ps1.getName()).isNotNull();
     }
 
     @Test
     public void get() throws Exception {
         BuildablePropertySource ps1 = BuildablePropertySource.builder()
                 .withSimpleProperty("a", "b").build();
-        assertEquals("b", ps1.get("a").getValue());
+        assertThat(ps1.get("a").getValue()).isEqualTo("b");
     }
     
     @Test
     public void getProperties() throws Exception {
         BuildablePropertySource ps1 = BuildablePropertySource.builder()
                 .withSimpleProperty("a", "b").build();
-        assertNotNull(ps1.getProperties());
-        assertEquals(1, ps1.getProperties().size());
-        assertEquals("b", ps1.getProperties().get("a").getValue());
+        assertThat(ps1.getProperties()).isNotNull();
+        assertThat(ps1.getProperties()).hasSize(1);
+        assertThat(ps1.getProperties().get("a").getValue()).isEqualTo("b");
     }
     
     @Test
     public void testScannable() {
         BuildablePropertySource bps = BuildablePropertySource.builder().build();
-        assertTrue(bps.isScannable());
+        assertThat(bps.isScannable()).isTrue();
     }
     
     @Test
@@ -73,8 +73,8 @@ public class BuildablePropertySourceTest {
                 .withSimpleProperty("namedSourceKey", "namedSourceValue", "namedSource")
                 .build();
         
-        assertEquals("fakeSource", bps.get("defaultSourceKey").getSource());
-        assertEquals("namedSource", bps.get("namedSourceKey").getSource());
+        assertThat(bps.get("defaultSourceKey").getSource()).isEqualTo("fakeSource");
+        assertThat(bps.get("namedSourceKey").getSource()).isEqualTo("namedSource");
     }
     
     @Test
@@ -94,11 +94,11 @@ public class BuildablePropertySourceTest {
                 .withProperties(propertyThird)
                 .build();
         
-        assertNull(bps.get("firstKey"));
-        assertNull(bps.get("secondKey"));
-        assertEquals("thirdValue", bps.get("thirdKey").getValue());
-        assertEquals("thirdSource", bps.get("thirdKey").getSource());
-        assertNull(bps.get("thirdPVKey"));
+        assertThat(bps.get("firstKey")).isNull();
+        assertThat(bps.get("secondKey")).isNull();
+        assertThat(bps.get("thirdKey").getValue()).isEqualTo("thirdValue");
+        assertThat(bps.get("thirdKey").getSource()).isEqualTo("thirdSource");
+        assertThat(bps.get("thirdPVKey")).isNull();
         
         bps = BuildablePropertySource.builder()
                 .withProperties(propertyThird)
@@ -106,12 +106,12 @@ public class BuildablePropertySourceTest {
                 .withProperties(propertySecond, "secondSource")
                 .build();
         
-        assertEquals("firstValue", bps.get("firstKey").getValue());
-        assertEquals("secondSource", bps.get("secondKey").getSource());
-        assertEquals("secondValue", bps.get("secondKey").getValue());
-        assertEquals("thirdValue", bps.get("thirdKey").getValue());
-        assertEquals("thirdSource", bps.get("thirdKey").getSource());
-        assertNull(bps.get("thirdPVKey"));
+        assertThat(bps.get("firstKey").getValue()).isEqualTo("firstValue");
+        assertThat(bps.get("secondKey").getSource()).isEqualTo("secondSource");
+        assertThat(bps.get("secondKey").getValue()).isEqualTo("secondValue");
+        assertThat(bps.get("thirdKey").getValue()).isEqualTo("thirdValue");
+        assertThat(bps.get("thirdKey").getSource()).isEqualTo("thirdSource");
+        assertThat(bps.get("thirdPVKey")).isNull();
     }
 
     @Test
@@ -120,12 +120,12 @@ public class BuildablePropertySourceTest {
                 .withName("test1").build();
         BuildablePropertySource ps2 = BuildablePropertySource.builder()
                 .withName("test1").build();
-        assertEquals(ps1, ps2);
+        assertThat(ps2).isEqualTo(ps1);
         ps2 = BuildablePropertySource.builder()
                 .withName("test2").build();
-        assertNotEquals(ps1, ps2);
-        assertNotEquals(ps2, null);
-        assertNotEquals(ps1, "aString");
+        assertThat(ps1).isNotEqualTo(ps2);
+        assertThat(ps2).isNotEqualTo(null);
+        assertThat(ps1).isNotEqualTo("aString");
     }
 
     @Test
@@ -134,17 +134,17 @@ public class BuildablePropertySourceTest {
                 .withName("test1").build();
         BuildablePropertySource ps2 = BuildablePropertySource.builder()
                 .withName("test1").build();
-        assertEquals(ps1.hashCode(), ps2.hashCode());
+        assertThat(ps2.hashCode()).isEqualTo(ps1.hashCode());
         ps2 = BuildablePropertySource.builder()
                 .withName("test2").build();
-        assertNotEquals(ps1.hashCode(), ps2.hashCode());
+        assertThat(ps1.hashCode()).isNotEqualTo(ps2.hashCode());
     }
 
     @Test
     public void builder() throws Exception {
-        assertNotNull(BuildablePropertySource.builder());
-        assertNotNull(BuildablePropertySource.builder().but());
-        assertNotEquals(BuildablePropertySource.builder(), BuildablePropertySource.builder());
+        assertThat(BuildablePropertySource.builder()).isNotNull();
+        assertThat(BuildablePropertySource.builder().but()).isNotNull();
+        assertThat(BuildablePropertySource.builder()).isNotEqualTo(BuildablePropertySource.builder());
     }
 
 }

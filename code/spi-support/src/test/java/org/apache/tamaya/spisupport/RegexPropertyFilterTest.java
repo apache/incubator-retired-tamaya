@@ -25,7 +25,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link RegexPropertyFilter}. Created by anatole on 11.02.16.
@@ -45,32 +45,31 @@ public class RegexPropertyFilterTest {
         map.put(prop1.getKey(), prop1);
         map.put(prop2.getKey(), prop2);
         map.put(prop3.getKey(), prop3);
-        assertEquals(filter.filterProperty(prop1, new FilterContext(prop1, configContext)), prop1);
-        assertNull(filter.filterProperty(prop2, new FilterContext(prop2, configContext)));
-        assertEquals(filter.filterProperty(
+        assertThat(filter.filterProperty(prop1, new FilterContext(prop1, configContext))).isEqualTo(prop1);
+        assertThat(filter.filterProperty(prop2, new FilterContext(prop2, configContext))).isNull();
+        assertThat(filter.filterProperty(
                 prop3,
-                new FilterContext(prop3, map, configContext)), prop3);
-        assertEquals(filter.filterProperty(
+                new FilterContext(prop3, map, configContext))).isEqualTo(prop3);
+        assertThat(filter.filterProperty(
                 prop3,
-                new FilterContext(prop3, map, configContext)), prop3);
+                new FilterContext(prop3, map, configContext))).isEqualTo(prop3);
         filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*");
-        assertNotNull(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext)));
-        assertNull(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext)));
-        assertNotNull(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext)));
+        assertThat(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext))).isNotNull();
+        assertThat(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext))).isNull();
+        assertThat(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext))).isNotNull();
         filter = new RegexPropertyFilter();
         filter.setExcludes("test1.*");
-        assertNull(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext)));
-        assertEquals(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext)),
-                prop2);
-        assertNull(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext)));
+        assertThat(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext))).isNull();
+        assertThat(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext))).isEqualTo(prop2);
+        assertThat(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext))).isNull();
         
         filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*"); //Includes overrides Excludes
         filter.setExcludes("test1.*");
-        assertNotNull(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext)));
-        assertNull(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext)));
-        assertNotNull(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext)));
+        assertThat(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext))).isNotNull();
+        assertThat(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext))).isNull();
+        assertThat(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext))).isNotNull();
         
         
     }
@@ -79,7 +78,7 @@ public class RegexPropertyFilterTest {
     public void testToString() throws Exception {
         RegexPropertyFilter filter = new RegexPropertyFilter();
         filter.setIncludes("test\\..*");
-        assertTrue(filter.toString().contains("test\\..*"));
-        assertTrue(filter.toString().contains("RegexPropertyFilter"));
+        assertThat(filter.toString().contains("test\\..*")).isTrue();
+        assertThat(filter.toString().contains("RegexPropertyFilter")).isTrue();
     }
 }

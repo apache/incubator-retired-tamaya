@@ -60,7 +60,6 @@
         <enforcer.version>1.4.1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
-        <hamcrest.version>2.0.0.0</hamcrest.version>
         <javadoc.version>3.0.0</javadoc.version>
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.26</jruby.version>
@@ -220,12 +219,6 @@
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -237,18 +230,6 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>java-hamcrest</artifactId>
-                <version>${hamcrest.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- quality gates -->

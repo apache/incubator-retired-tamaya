@@ -18,11 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.URL;
@@ -76,38 +72,38 @@ public class ServiceContextTest {
 
     @Test
     public void testOrdinal() throws Exception {
-        assertEquals(1, serviceContext.ordinal());
+        assertThat(serviceContext.ordinal()).isEqualTo(1);
     }
 
     @Test
     public void testgetService() throws Exception {
-        assertEquals("ServiceContextTest", serviceContext.getService(String.class));
-        assertNull(serviceContext.getService(Integer.class));
+        assertThat(serviceContext.getService(String.class)).isEqualTo("ServiceContextTest");
+        assertThat(serviceContext.getService(Integer.class)).isNull();
     }
 
     @Test
     public void testGetService() throws Exception {
         String service = serviceContext.getService(String.class);
-        assertNotNull(service);
-        assertEquals("ServiceContextTest", service);
+        assertThat(service).isNotNull();
+        assertThat(service).isEqualTo("ServiceContextTest");
         Integer intService = serviceContext.getService(Integer.class);
-        assertNull(intService);
+        assertThat(intService).isNull();
     }
 
     @Test
     public void testGetServices() throws Exception {
         Collection<String> services = serviceContext.getServices(String.class);
-        assertNotNull(services);
-        assertFalse(services.isEmpty());
-        assertEquals("ServiceContextTest", services.iterator().next());
+        assertThat(services).isNotNull();
+        assertThat(services.isEmpty()).isFalse();
+        assertThat(services.iterator().next()).isEqualTo("ServiceContextTest");
         List<Integer> intServices = serviceContext.getServices(Integer.class);
-        assertNotNull(intServices);
-        assertTrue(intServices.isEmpty());
+        assertThat(intServices).isNotNull();
+        assertThat(intServices.isEmpty()).isTrue();
     }
 
     @Test
     public void testGetInstance() throws Exception {
-        assertNotNull(ServiceContextManager.getServiceContext());
+        assertThat(ServiceContextManager.getServiceContext()).isNotNull();
     }
 
 }

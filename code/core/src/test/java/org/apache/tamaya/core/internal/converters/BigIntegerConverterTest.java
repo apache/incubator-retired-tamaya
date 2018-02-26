@@ -24,9 +24,8 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Ignore;
 import static org.mockito.Mockito.mock;
 
@@ -47,7 +46,7 @@ public class BigIntegerConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         BigInteger valueRead = config.get("tests.converter.bd.decimal", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(BigInteger.valueOf(101), valueRead);
+        assertThat(valueRead).isEqualTo(BigInteger.valueOf(101));
     }
 
     /**
@@ -61,16 +60,16 @@ public class BigIntegerConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         BigInteger valueRead = config.get("tests.converter.bd.hex.lowerX", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(new BigInteger("47"), valueRead);
+        assertThat(valueRead).isEqualTo(new BigInteger("47"));
         valueRead = config.get("tests.converter.bd.hex.upperX", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(new BigInteger("63"), valueRead);
+        assertThat(valueRead).isEqualTo(new BigInteger("63"));
         valueRead = config.get("tests.converter.bd.hex.negLowerX", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(new BigInteger("-47"), valueRead);
+        assertThat(valueRead).isEqualTo(new BigInteger("-47"));
         valueRead = config.get("tests.converter.bd.hex.negUpperX", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(new BigInteger("-63"), valueRead);
+        assertThat(valueRead).isEqualTo(new BigInteger("-63"));
 
     }
 
@@ -86,10 +85,10 @@ public class BigIntegerConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         BigInteger valueRead = config.get("tests.converter.bd.hex.subTenX", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(new BigInteger("16777215"), valueRead);
+        assertThat(valueRead).isEqualTo(new BigInteger("16777215"));
         valueRead = config.get("tests.converter.bd.hex.negSubTenX", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(new BigInteger("-263"), valueRead);
+        assertThat(valueRead).isEqualTo(new BigInteger("-263"));
     }
 
     @Test(expected = ConfigException.class)
@@ -114,7 +113,7 @@ public class BigIntegerConverterTest {
     public void testConvert_NotPresent() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         BigInteger valueRead = config.get("tests.converter.bd.foo", BigInteger.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     /**
@@ -128,8 +127,8 @@ public class BigIntegerConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         BigInteger valueRead = config.get("tests.converter.bd.big", BigInteger.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(new BigInteger("101666666666666662333337263723628763821638923628193612983618293628763"),
-                valueRead);
+        assertThat(new BigInteger("101666666666666662333337263723628763821638923628193612983618293628763"))
+                .isEqualTo(valueRead);
     }
 
     @Test
@@ -149,13 +148,13 @@ public class BigIntegerConverterTest {
         BigInteger value = converter.convert("", context);
 
         assertThat(value).isNull();
-        assertTrue(context.getSupportedFormats().contains("<bigint> -> new BigInteger(bigint) (BigIntegerConverter)"));
+        assertThat(context.getSupportedFormats().contains("<bigint> -> new BigInteger(bigint) (BigIntegerConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         BigIntegerConverter instance = new BigIntegerConverter();
-        assertEquals(BigIntegerConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(BigIntegerConverter.class.hashCode());
     }
 
 }

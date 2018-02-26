@@ -26,8 +26,6 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -47,7 +45,7 @@ public class BigDecimalConverterTest {
 		Configuration config = ConfigurationProvider.getConfiguration();
 		BigDecimal valueRead = config.get("tests.converter.bd.decimal", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
-		assertEquals(new BigDecimal(101), valueRead);
+		assertThat(valueRead).isEqualTo(new BigDecimal(101));
 	}
 
 	/**
@@ -61,16 +59,16 @@ public class BigDecimalConverterTest {
 		Configuration config = ConfigurationProvider.getConfiguration();
 		BigDecimal valueRead = config.get("tests.converter.bd.hex.lowerX", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
-		assertEquals(new BigDecimal("47"), valueRead);
+		assertThat(valueRead).isEqualTo(new BigDecimal("47"));
 		valueRead = config.get("tests.converter.bd.hex.upperX", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
-		assertEquals(new BigDecimal("63"), valueRead);
+		assertThat(valueRead).isEqualTo(new BigDecimal("63"));
 		valueRead = config.get("tests.converter.bd.hex.negLowerX", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
-		assertEquals(new BigDecimal("-47"), valueRead);
+		assertThat(valueRead).isEqualTo(new BigDecimal("-47"));
 		valueRead = config.get("tests.converter.bd.hex.negUpperX", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
-		assertEquals(new BigDecimal("-63"), valueRead);
+		assertThat(valueRead).isEqualTo(new BigDecimal("-63"));
 	}
 
 	/**
@@ -83,7 +81,7 @@ public class BigDecimalConverterTest {
 	public void testConvert_NotPresent() throws Exception {
 		Configuration config = ConfigurationProvider.getConfiguration();
 		BigDecimal valueRead = config.get("tests.converter.bd.foo", BigDecimal.class);
-		assertNull(valueRead);
+		assertThat(valueRead).isNull();
 	}
 
 	/**
@@ -97,8 +95,8 @@ public class BigDecimalConverterTest {
 		Configuration config = ConfigurationProvider.getConfiguration();
 		BigDecimal valueRead = config.get("tests.converter.bd.big", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
-		assertEquals(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"),
-				valueRead);
+		assertThat(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"))
+                        .isEqualTo(valueRead);
 	}
 
 	/**
@@ -112,8 +110,9 @@ public class BigDecimalConverterTest {
 		Configuration config = ConfigurationProvider.getConfiguration();
 		BigDecimal valueRead = config.get("tests.converter.bd.bigFloat", BigDecimal.class);
 		assertThat(valueRead).isNotNull();
-		assertEquals(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372"
-				+ "63723628763821638923628193612983618293628763"), valueRead);
+		assertThat(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372"
+				+ "63723628763821638923628193612983618293628763"))
+                        .isEqualTo(valueRead);
 	}
 
 	@Test

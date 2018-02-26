@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
-import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 import org.apache.tamaya.spi.PropertySource;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class PropertiesFilePropertySourceTest {
 
@@ -33,28 +33,28 @@ public class PropertiesFilePropertySourceTest {
 
     @Test
     public void testGetOrdinal() {
-        Assert.assertEquals(0, testfilePropertySource.getOrdinal());
-        Assert.assertEquals(Integer.parseInt(overrideOrdinalPropertySource.get(PropertySource.TAMAYA_ORDINAL)
-                .getValue()),
-                overrideOrdinalPropertySource.getOrdinal());
+        assertThat(testfilePropertySource.getOrdinal()).isEqualTo(0);
+        assertThat(Integer.parseInt(overrideOrdinalPropertySource.get(PropertySource.TAMAYA_ORDINAL)
+                .getValue()))
+                .isEqualTo(overrideOrdinalPropertySource.getOrdinal());
     }
 
 
     @Test
     public void testGet() {
-        Assert.assertEquals("val3", testfilePropertySource.get("key3").getValue());
-        Assert.assertEquals("myval5", overrideOrdinalPropertySource.get("mykey5").getValue());
-        Assert.assertNull(testfilePropertySource.get("nonpresentkey"));
+        assertThat(testfilePropertySource.get("key3").getValue()).isEqualTo("val3");
+        assertThat(overrideOrdinalPropertySource.get("mykey5").getValue()).isEqualTo("myval5");
+        assertThat(testfilePropertySource.get("nonpresentkey")).isNull();
     }
 
 
     @Test
     public void testGetProperties() throws Exception {
-        Assert.assertEquals(5, testfilePropertySource.getProperties().size());
-        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key1"));
-        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key2"));
-        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key3"));
-        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key4"));
-        Assert.assertTrue(testfilePropertySource.getProperties().containsKey("key5"));
+        assertThat(testfilePropertySource.getProperties()).hasSize(5);
+        assertThat(testfilePropertySource.getProperties().containsKey("key1")).isTrue();
+        assertThat(testfilePropertySource.getProperties().containsKey("key2")).isTrue();
+        assertThat(testfilePropertySource.getProperties().containsKey("key3")).isTrue();
+        assertThat(testfilePropertySource.getProperties().containsKey("key4")).isTrue();
+        assertThat(testfilePropertySource.getProperties().containsKey("key5")).isTrue();
     }
 }

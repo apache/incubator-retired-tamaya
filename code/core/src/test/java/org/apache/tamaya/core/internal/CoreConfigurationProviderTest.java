@@ -21,7 +21,7 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.Configuration;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsticks on 11.09.16.
@@ -35,32 +35,30 @@ public class CoreConfigurationProviderTest {
 
     @Test
     public void getConfiguration() throws Exception {
-        assertNotNull(new CoreConfigurationProvider().getConfiguration());
+        assertThat(new CoreConfigurationProvider().getConfiguration()).isNotNull();
     }
 
     @Test
     public void createConfiguration() throws Exception {
         Configuration cfg = new CoreConfigurationBuilder().build();
-        assertNotNull(new CoreConfigurationProvider().createConfiguration(cfg.getContext()));
-        assertEquals(cfg,
-                new CoreConfigurationProvider().createConfiguration(cfg.getContext()));
+        assertThat(new CoreConfigurationProvider().createConfiguration(cfg.getContext())).isNotNull();
+        assertThat(cfg).isEqualTo(new CoreConfigurationProvider().createConfiguration(cfg.getContext()));
     }
 
     @Test
     public void getConfigurationContext() throws Exception {
-        assertNotNull(new CoreConfigurationProvider().getConfigurationContext());
-        assertEquals(new CoreConfigurationProvider().getConfigurationContext(),
-                new CoreConfigurationProvider().getConfiguration().getContext());
+        assertThat(new CoreConfigurationProvider().getConfigurationContext()).isNotNull();
+        assertThat(new CoreConfigurationProvider().getConfigurationContext()).isEqualTo(new CoreConfigurationProvider().getConfiguration().getContext());
     }
 
     @Test
     public void getConfigurationContextBuilder() throws Exception {
-        assertNotNull(new CoreConfigurationProvider().getConfigurationContextBuilder());
+        assertThat(new CoreConfigurationProvider().getConfigurationContextBuilder()).isNotNull();
     }
 
     @Test
     public void getConfigurationBuilder() throws Exception {
-        assertNotNull(new CoreConfigurationProvider().getConfigurationBuilder());
+        assertThat(new CoreConfigurationProvider().getConfigurationBuilder()).isNotNull();
     }
 
     @SuppressWarnings("deprecation")
@@ -80,13 +78,13 @@ public class CoreConfigurationProviderTest {
     @SuppressWarnings("deprecation")
 	@Test
     public void isConfigurationContextSettable() throws Exception {
-        assertTrue(new CoreConfigurationProvider().isConfigurationContextSettable());
+        assertThat(new CoreConfigurationProvider().isConfigurationContextSettable()).isTrue();
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void isConfigurationSettable() throws Exception {
-        assertTrue(new CoreConfigurationProvider().isConfigurationSettable());
+        assertThat(new CoreConfigurationProvider().isConfigurationSettable()).isTrue();
     }
 
 

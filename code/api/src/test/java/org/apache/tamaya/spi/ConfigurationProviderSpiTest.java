@@ -20,7 +20,7 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TestConfigurationProvider;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import org.mockito.Mockito;
 
 public class ConfigurationProviderSpiTest {
@@ -29,12 +29,12 @@ TestConfigurationProvider configProvider = new TestConfigurationProvider();
 
     @Test
     public void testIsConfigurationSettableByDefault(){
-        assertTrue(configProvider.isConfigurationSettable());
+        assertThat(configProvider.isConfigurationSettable()).isTrue();
     }
     
     @Test
     public void testIsConfigurationContextSettable(){
-        assertTrue(configProvider.isConfigurationContextSettable());
+        assertThat(configProvider.isConfigurationContextSettable()).isTrue();
     }    
     
     /**
@@ -44,13 +44,13 @@ TestConfigurationProvider configProvider = new TestConfigurationProvider();
     @Test
     public void testGetSetConfigurationContext() {
         ConfigurationContext currentContext = configProvider.getConfigurationContextFromInterface();
-        assertTrue(currentContext instanceof ConfigurationContext);
+        assertThat(currentContext instanceof ConfigurationContext).isTrue();
         ConfigurationContext newContext = Mockito.mock(ConfigurationContext.class);
         try{
             configProvider.setConfigurationContext(newContext);
             //The mocked TestConfigurationProvider doesn't set the context on the
             // inner Configuration object, as that's deprecated.
-            assertEquals(newContext, configProvider.getConfigurationContext());
+            assertThat(configProvider.getConfigurationContext()).isEqualTo(newContext);
         }finally{
             configProvider.setConfigurationContext(currentContext);
         }

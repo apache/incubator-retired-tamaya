@@ -26,15 +26,15 @@ import java.util.Optional;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class OptionalConverterTest {
 
     @Test
     public void nullConversionYieldsEmptyOptional() {
         final Optional<?> result = new OptionalConverter().convert(null, null);
-        assertNotNull(result);
-        assertFalse(result.isPresent());
+        assertThat(result).isNotNull();
+        assertThat(result.isPresent()).isFalse();
     }
 
     @Test(expected = ConfigException.class)
@@ -49,9 +49,9 @@ public class OptionalConverterTest {
         ConversionContext ctx = new ConversionContext.Builder("testOptionalString", listOfStringTypeLiteral).build();
 
         final Optional<String> result = new OptionalConverter().convert("astring", ctx);
-        assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals("astring", result.get());
+        assertThat(result).isNotNull();
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get()).isEqualTo("astring");
     }
 
     @Test
@@ -63,15 +63,15 @@ public class OptionalConverterTest {
                 .build();
 
         final Optional<Integer> result = new OptionalConverter().convert("11", ctx);
-        assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals(11, result.get().intValue());
+        assertThat(result).isNotNull();
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().intValue()).isEqualTo(11);
     }
     
     
     @Test
     public void testHashCode() {
         OptionalConverter instance = new OptionalConverter();
-        assertEquals(OptionalConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(OptionalConverter.class.hashCode());
     }
 }

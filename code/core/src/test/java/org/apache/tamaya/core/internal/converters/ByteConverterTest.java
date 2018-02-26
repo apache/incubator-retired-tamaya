@@ -25,7 +25,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 /**
  * Tests the default converter for bytes.
@@ -41,19 +41,19 @@ public class ByteConverterTest {
     public void testConvert_Byte() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Byte valueRead = config.get("tests.converter.byte.decimal", Byte.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead.byteValue(), 101);
+        assertThat(valueRead).isNotNull();
+        assertThat(101).isEqualTo(valueRead.byteValue());
         valueRead = config.get("tests.converter.byte.octal", Byte.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead.byteValue(), Byte.decode("02").byteValue());
+        assertThat(valueRead).isNotNull();
+        assertThat(Byte.decode("02").byteValue()).isEqualTo(valueRead.byteValue());
         valueRead = config.get("tests.converter.byte.hex.lowerX", Byte.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead.byteValue(), Byte.decode("0x2F").byteValue());
+        assertThat(valueRead).isNotNull();
+        assertThat(Byte.decode("0x2F").byteValue()).isEqualTo(valueRead.byteValue());
         valueRead = config.get("tests.converter.byte.hex.upperX", Byte.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead.byteValue(), Byte.decode("0X3F").byteValue());
+        assertThat(valueRead).isNotNull();
+        assertThat(Byte.decode("0X3F").byteValue()).isEqualTo(valueRead.byteValue());
         valueRead = config.get("tests.converter.byte.foo", Byte.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     /**
@@ -66,7 +66,7 @@ public class ByteConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Byte valueRead = config.get("tests.converter.byte.min", Byte.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Byte.MIN_VALUE, valueRead.byteValue());
+        assertThat(valueRead.byteValue()).isEqualTo(Byte.MIN_VALUE);
     }
 
     /**
@@ -79,7 +79,7 @@ public class ByteConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Byte valueRead = config.get("tests.converter.byte.max", Byte.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Byte.MAX_VALUE, valueRead.byteValue());
+        assertThat(valueRead.byteValue()).isEqualTo(Byte.MAX_VALUE);
     }
     /**
      * Test conversion. The value are provided by
@@ -91,7 +91,7 @@ public class ByteConverterTest {
     public void testConvert_ByteInvalid() throws ConfigException {
         Configuration config = ConfigurationProvider.getConfiguration();
         Byte valueRead = config.get("tests.converter.byte.invalid", Byte.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     @Test
@@ -100,14 +100,14 @@ public class ByteConverterTest {
         ByteConverter converter = new ByteConverter();
         converter.convert("", context);
         
-        assertTrue(context.getSupportedFormats().contains("<byte> (ByteConverter)"));
-        assertTrue(context.getSupportedFormats().contains("MIN_VALUE (ByteConverter)"));
-        assertTrue(context.getSupportedFormats().contains("MAX_VALUE (ByteConverter)"));
+        assertThat(context.getSupportedFormats().contains("<byte> (ByteConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("MIN_VALUE (ByteConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("MAX_VALUE (ByteConverter)")).isTrue();
     }
     
     @Test
     public void testHashCode() {
         ByteConverter instance = new ByteConverter();
-        assertEquals(ByteConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(ByteConverter.class.hashCode());
     }
 }

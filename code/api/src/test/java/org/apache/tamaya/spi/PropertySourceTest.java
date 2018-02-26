@@ -20,7 +20,7 @@ package org.apache.tamaya.spi;
 
 import java.util.Map;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class PropertySourceTest {
 
@@ -31,12 +31,12 @@ public class PropertySourceTest {
     @Test
     public void testEmptySource() {
         PropertySource instance = PropertySource.EMPTY;
-        assertEquals(Integer.MIN_VALUE, instance.getOrdinal());
-        assertEquals("<empty>", instance.getName());
-        assertNull(instance.get("key"));
-        assertTrue(instance.getProperties().isEmpty());
-        assertFalse(instance.isScannable());
-        assertEquals("PropertySource.EMPTY", instance.toString());
+        assertThat(instance.getOrdinal()).isEqualTo(Integer.MIN_VALUE);
+        assertThat(instance.getName()).isEqualTo("<empty>");
+        assertThat(instance.get("key")).isNull();
+        assertThat(instance.getProperties().isEmpty()).isTrue();
+        assertThat(instance.isScannable()).isFalse();
+        assertThat(instance.toString()).isEqualTo("PropertySource.EMPTY");
         
     }
 
@@ -46,7 +46,7 @@ public class PropertySourceTest {
     @Test
     public void testIsScannableByDefault() {
         PropertySource instance = new PropertySourceImpl();
-        assertEquals(true, instance.isScannable());
+        assertThat(instance.isScannable()).isEqualTo(true);
     }
 
     public class PropertySourceImpl implements PropertySource {

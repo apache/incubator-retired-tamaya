@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Additional tests for {@link ServiceContextManager}, created by atsticks on 20.08.16.
@@ -39,12 +39,12 @@ public class ServiceContextManagerTest {
         try {
             MyServiceContext mine = new MyServiceContext();
             ServiceContextManager.set(mine);
-            assertTrue(ServiceContextManager.getServiceContext() == mine);
+            assertThat(ServiceContextManager.getServiceContext() == mine).isTrue();
             ServiceContextManager.set(mine);
-            assertTrue(ServiceContextManager.getServiceContext() == mine);
+            assertThat(ServiceContextManager.getServiceContext() == mine).isTrue();
         } finally {
             ServiceContextManager.set(prev);
-            assertTrue(ServiceContextManager.getServiceContext() == prev);
+            assertThat(ServiceContextManager.getServiceContext() == prev).isTrue();
         }
 
     }

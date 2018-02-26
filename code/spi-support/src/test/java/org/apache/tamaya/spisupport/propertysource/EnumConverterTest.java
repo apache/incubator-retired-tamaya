@@ -25,8 +25,7 @@ import org.junit.Test;
 
 import java.math.RoundingMode;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test class testing the {@link EnumConverter} class.
@@ -39,22 +38,21 @@ public class EnumConverterTest {
 
     @Test
     public void testConvert() {
-        assertEquals(testConverter.convert(RoundingMode.CEILING.toString(),
-                DUMMY_CONTEXT), RoundingMode.CEILING);
+        assertThat(testConverter.convert(RoundingMode.CEILING.toString(), DUMMY_CONTEXT)).isEqualTo(RoundingMode.CEILING);
     }
 
     @Test
     public void testConvert_LowerCase() {
-        assertEquals(testConverter.convert("ceiling", DUMMY_CONTEXT), RoundingMode.CEILING);
+        assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert("ceiling", DUMMY_CONTEXT));
     }
 
     @Test
     public void testConvert_MixedCase()  {
-        assertEquals(testConverter.convert("CeiLinG", DUMMY_CONTEXT), RoundingMode.CEILING);
+        assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert("CeiLinG", DUMMY_CONTEXT));
     }
 
     @Test
     public void testConvert_OtherValue() {
-        assertNull(testConverter.convert("fooBars", DUMMY_CONTEXT));
+        assertThat(testConverter.convert("fooBars", DUMMY_CONTEXT)).isNull();
     }
 }

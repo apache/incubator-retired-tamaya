@@ -19,16 +19,12 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -46,35 +42,35 @@ public class BooleanConverterTest {
     public void testConvert_BooleanTrue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.y2", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.yes1", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.yes2", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.yes3", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.true1", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.true2", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.true3", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.t1", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.boolean.t2", Boolean.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Boolean.TRUE);
+        assertThat(valueRead).isNotNull();
+        assertThat(Boolean.TRUE).isEqualTo(valueRead);
     }
 
     /**
@@ -87,39 +83,39 @@ public class BooleanConverterTest {
     public void testConvert_BooleanFalse() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
-        assertNotNull(valueRead);
+        assertThat(valueRead).isNotNull();
         valueRead = config.get("tests.converter.boolean.n1", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.n2", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.no1", Boolean.class);
-        assertFalse(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isFalse();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.no2", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.no3", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.false1", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.false2", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.false3", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.f1", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.f2", Boolean.class);
-        assertNotNull(valueRead);
-        assertFalse(valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead).isFalse();
         valueRead = config.get("tests.converter.boolean.foo", Boolean.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     /**
@@ -132,7 +128,7 @@ public class BooleanConverterTest {
     public void testConvert_BooleanInvalid() throws ConfigException {
         Configuration config = ConfigurationProvider.getConfiguration();
         Boolean valueRead = config.get("tests.converter.boolean.invalid", Boolean.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     @Test
@@ -141,14 +137,14 @@ public class BooleanConverterTest {
         BooleanConverter converter = new BooleanConverter();
         converter.convert("", context);
 
-        assertTrue(context.getSupportedFormats().contains("true (ignore case) (BooleanConverter)"));
-        assertTrue(context.getSupportedFormats().contains("false (ignore case) (BooleanConverter)"));
+        assertThat(context.getSupportedFormats().contains("true (ignore case) (BooleanConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("false (ignore case) (BooleanConverter)")).isTrue();
     }
     
     @Test
     public void testHashCode() {
         BooleanConverter instance = new BooleanConverter();
-        assertEquals(BooleanConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(BooleanConverter.class.hashCode());
     }
 
 }

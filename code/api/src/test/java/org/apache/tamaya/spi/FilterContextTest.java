@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link FilterContext}.
@@ -65,16 +65,16 @@ public class FilterContextTest {
         PropertyValue val = PropertyValue.of("getKey", "v", "");
         FilterContext ctx = new FilterContext(val,
                 new HashMap<String,PropertyValue>(), new TestConfigContext());
-        assertEquals(val, ctx.getProperty());
+        assertThat(ctx.getProperty()).isEqualTo(val);
     }
 
     @Test
     public void isSinglePropertyScoped() throws Exception {
         PropertyValue val = PropertyValue.of("isSinglePropertyScoped", "v", "");
         FilterContext ctx = new FilterContext(val, new HashMap<String,PropertyValue>(), new TestConfigContext());
-        assertEquals(false, ctx.isSinglePropertyScoped());
+        assertThat(ctx.isSinglePropertyScoped()).isEqualTo(false);
         ctx = new FilterContext(val, new TestConfigContext());
-        assertEquals(true, ctx.isSinglePropertyScoped());
+        assertThat(ctx.isSinglePropertyScoped()).isEqualTo(true);
     }
 
     @Test
@@ -85,8 +85,8 @@ public class FilterContextTest {
         }
         PropertyValue val = PropertyValue.of("getConfigEntries", "v", "");
         FilterContext ctx = new FilterContext(val, config, new TestConfigContext());
-        assertEquals(config, ctx.getConfigEntries());
-        assertTrue(config != ctx.getConfigEntries());
+        assertThat(ctx.getConfigEntries()).isEqualTo(config);
+        assertThat(config != ctx.getConfigEntries()).isTrue();
     }
 
     @Test
@@ -99,12 +99,12 @@ public class FilterContextTest {
         FilterContext ctx = new FilterContext(val, config, new TestConfigContext());
         String toString = ctx.toString();
 
-        assertNotNull(toString);
-        assertTrue(toString.contains("FilterContext{value='PropertyValue{key='testToString', value='val', " +
-                                     "source='mySource'}', configEntries=["));
-        assertTrue(toString.contains("key-0"));
-        assertTrue(toString.contains("key-1"));
-        assertTrue(toString.endsWith("}"));
+        assertThat(toString).isNotNull();
+        assertThat(toString.contains("FilterContext{value='PropertyValue{key='testToString', value='val', " +
+                                     "source='mySource'}', configEntries=[")).isTrue();
+        assertThat(toString.contains("key-0")).isTrue();
+        assertThat(toString.contains("key-1")).isTrue();
+        assertThat(toString.endsWith("}")).isTrue();
     }
 
     private static class TestConfigContext implements ConfigurationContext{

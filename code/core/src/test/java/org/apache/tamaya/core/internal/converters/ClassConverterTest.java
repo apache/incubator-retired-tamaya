@@ -24,7 +24,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests conversion of the {@link ClassConverter}.
@@ -37,32 +37,32 @@ public class ClassConverterTest {
     @Test
     public void testConvert_Class() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("java.math.BigDecimal", context));
+        assertThat(BigDecimal.class).isEqualTo(converter.convert("java.math.BigDecimal", context));
     }
 
     @Test
     public void testConvert_Class_WithSpaces() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("  java.math.BigDecimal\t", context));
+         assertThat(BigDecimal.class).isEqualTo(converter.convert("  java.math.BigDecimal\t", context));
     }
 
     @Test
     public void testConvert_Class_WithSpacesBefore() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("  java.math.BigDecimal", context));
+        assertThat(BigDecimal.class).isEqualTo(converter.convert("  java.math.BigDecimal", context));
     }
 
     @Test
     public void testConvert_Class_WithSpacesAfter() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertEquals(BigDecimal.class, converter.convert("java.math.BigDecimal  ", context));
+        assertThat(BigDecimal.class).isEqualTo(converter.convert("java.math.BigDecimal  ", context));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertNull(converter.convert("", context));
-        assertNull(converter.convert(null, context));
+        assertThat(converter.convert("", context)).isNull();
+        assertThat(converter.convert(null, context)).isNull();
     }
 
     @Test
@@ -71,12 +71,12 @@ public class ClassConverterTest {
         ClassConverter converter = new ClassConverter();
         converter.convert("", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().contains("<fullyQualifiedClassName> (ClassConverter)"));
+        assertThat(localcontext.getSupportedFormats().contains("<fullyQualifiedClassName> (ClassConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         ClassConverter instance = new ClassConverter();
-        assertEquals(ClassConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(ClassConverter.class.hashCode());
     }
 }

@@ -20,7 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import javax.annotation.Priority;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 
@@ -39,14 +39,13 @@ public class OSGIServiceComparatorTest {
         ServiceReference nullPriority = new MockServiceReference();
         ServiceReference high = new MockHighPriorityServiceReference();
         OSGIServiceComparator instance = new OSGIServiceComparator();
-        
-        assertEquals(1, instance.compare(low, high));
-        assertEquals(-1, instance.compare(high, low));
-        assertEquals(0, instance.compare(low, low));
-        
-        assertEquals(1, instance.compare(nullPriority, high));
-        assertEquals(-1, instance.compare(high, nullPriority));
-        assertEquals(0, instance.compare(nullPriority, low));
+        assertThat(1).isEqualTo(instance.compare(low, high));
+        assertThat(-1).isEqualTo(instance.compare(high, low));
+        assertThat(0).isEqualTo(instance.compare(low, low));
+
+        assertThat(1).isEqualTo(instance.compare(nullPriority, high));
+        assertThat(-1).isEqualTo(instance.compare(high, nullPriority));
+        assertThat(0).isEqualTo(instance.compare(nullPriority, low));
     }
 
     /**
@@ -55,13 +54,13 @@ public class OSGIServiceComparatorTest {
     @Test
     public void testGetPriority_Object() {
         ServiceReference low = new MockLowPriorityServiceReference();
-        assertEquals(1, OSGIServiceComparator.getPriority(low));
+        assertThat(OSGIServiceComparator.getPriority(low)).isEqualTo(1);
         
         ServiceReference nullPriority = new MockServiceReference();
-        assertEquals(1, OSGIServiceComparator.getPriority(nullPriority));
+        assertThat(OSGIServiceComparator.getPriority(nullPriority)).isEqualTo(1);
         
         ServiceReference high = new MockHighPriorityServiceReference();
-        assertEquals(10, OSGIServiceComparator.getPriority(high));
+        assertThat(OSGIServiceComparator.getPriority(high)).isEqualTo(10);
     }
 
     /**
@@ -69,9 +68,9 @@ public class OSGIServiceComparatorTest {
      */
     @Test
     public void testGetPriority_Class() {
-        assertEquals(10, OSGIServiceComparator.getPriority(MockHighPriorityServiceReference.class));
-        assertEquals(1, OSGIServiceComparator.getPriority(MockLowPriorityServiceReference.class));
-        assertEquals(1, OSGIServiceComparator.getPriority(MockServiceReference.class));
+        assertThat(OSGIServiceComparator.getPriority(MockHighPriorityServiceReference.class)).isEqualTo(10);
+        assertThat(OSGIServiceComparator.getPriority(MockLowPriorityServiceReference.class)).isEqualTo(1);
+        assertThat(OSGIServiceComparator.getPriority(MockServiceReference.class)).isEqualTo(1);
     }
     
     private class MockServiceReference implements ServiceReference {

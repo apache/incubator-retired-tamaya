@@ -27,7 +27,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -44,7 +44,7 @@ public class OSGIServiceContextTest {
     @Test
     public void testIsInitialized() {
         OSGIServiceContext instance = new OSGIServiceContext(Mockito.mock(OSGIServiceLoader.class));
-        assertTrue(instance.isInitialized());
+        assertThat(instance.isInitialized()).isTrue();
     }
 
     /**
@@ -53,7 +53,7 @@ public class OSGIServiceContextTest {
     @Test
     public void testOrdinal() {
         OSGIServiceContext instance = new OSGIServiceContext(Mockito.mock(OSGIServiceLoader.class));
-        assertEquals(10, instance.ordinal());
+        assertThat(instance.ordinal()).isEqualTo(10);
     }
 
     /**
@@ -66,9 +66,9 @@ public class OSGIServiceContextTest {
         OSGIServiceContext instance = new OSGIServiceContext(loader);
 
         Integer value = instance.create(Integer.class);
-        assertNull(value);
+        assertThat(value).isNull();
         value = instance.getService(Integer.class);
-        assertNull(value);
+        assertThat(value).isNull();
     }
 
     /**
@@ -81,8 +81,8 @@ public class OSGIServiceContextTest {
         OSGIServiceContext instance = new OSGIServiceContext(loader);
 
         List services = instance.getServices(Integer.class);
-        assertNotNull(services);
-        assertTrue(services.isEmpty());
+        assertThat(services).isNotNull();
+        assertThat(services.isEmpty()).isTrue();
     }
 
     /**
@@ -101,10 +101,10 @@ public class OSGIServiceContextTest {
         OSGIServiceContext instance = new OSGIServiceContext(loader);
 
         Enumeration<URL> resources = instance.getResources("dummy" , ClassLoader.getSystemClassLoader());
-        assertNotNull(resources);
+        assertThat(resources).isNotNull();
         URL resource = (URL)resources.nextElement();
-        assertTrue(resource.toString().contains("mockbundle.service"));
-        assertFalse(resources.hasMoreElements());
+        assertThat(resource.toString().contains("mockbundle.service")).isTrue();
+        assertThat(resources.hasMoreElements()).isFalse();
     }
 
     /**
@@ -122,8 +122,8 @@ public class OSGIServiceContextTest {
         OSGIServiceContext instance = new OSGIServiceContext(loader);
 
         URL resource = instance.getResource("mockbundle.service", ClassLoader.getSystemClassLoader());
-        assertNotNull(resource);
-        assertTrue(resource.toString().contains("mockbundle.service"));
+        assertThat(resource).isNotNull();
+        assertThat(resource.toString().contains("mockbundle.service")).isTrue();
     }
 
 }

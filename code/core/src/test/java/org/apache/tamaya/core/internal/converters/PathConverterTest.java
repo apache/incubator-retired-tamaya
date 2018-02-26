@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsti on 02.10.2017.
@@ -43,33 +43,33 @@ public class PathConverterTest {
     public void convert() throws Exception {
         PathConverter conv = new PathConverter();
         Path value = conv.convert("testRoot", context);
-        assertEquals(value, Paths.get("testRoot"));
+        assertThat(Paths.get("testRoot")).isEqualTo(value);
         value = conv.convert("foo", context);
-        assertNotNull(value);
+        assertThat(value).isNotNull();
     }
 
     @Test
     public void convertNull() throws Exception {
         PathConverter conv = new PathConverter();
         Path value = conv.convert(null, context);
-        assertNull(value);
+        assertThat(value).isNull();
         value = conv.convert("", context);
-        assertNull(value);
+        assertThat(value).isNull();
     }
     
     @Test
     public void convertInvalidPath() throws Exception {
         PathConverter conv = new PathConverter();
         Path value = conv.convert("/invalid:/\u0000", context);
-        assertNull(value);
+        assertThat(value).isNull();
     }
 
     @Test
     public void equalsAndHashcode() throws Exception {
         PathConverter conv1 = new PathConverter();
         PathConverter conv2 = new PathConverter();
-        assertEquals(conv1, conv2);
-        assertEquals(conv1.hashCode(), conv2.hashCode());
+        assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 
     @Test
@@ -77,13 +77,13 @@ public class PathConverterTest {
         ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Path.class)).build();
         PathConverter converter = new PathConverter();
         converter.convert("notempty", localcontext);
-        assertTrue(localcontext.getSupportedFormats().contains("<File> (PathConverter)"));
+        assertThat(localcontext.getSupportedFormats().contains("<File> (PathConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         PathConverter instance = new PathConverter();
-        assertEquals(PathConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(PathConverter.class.hashCode());
     }
 
 }

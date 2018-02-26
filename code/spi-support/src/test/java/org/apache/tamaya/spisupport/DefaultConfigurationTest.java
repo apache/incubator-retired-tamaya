@@ -24,7 +24,8 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
+import org.assertj.core.internal.cglib.core.Predicate;
 
 public class DefaultConfigurationTest {
 
@@ -62,9 +63,9 @@ public class DefaultConfigurationTest {
     @Test
     public void getReturnsNullOrNotAsAppropriate() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertNotNull(c.get("valueOfValid"));
-        assertNull(c.get("valueOfNull"));
-        assertNull(c.get("Filternull")); //get does apply filtering
+        assertThat(c.get("valueOfValid")).isNotNull();
+        assertThat(c.get("valueOfNull")).isNull();
+        assertThat(c.get("Filternull")).isNull(); //get does apply filtering
     }
 
     /**
@@ -98,9 +99,8 @@ public class DefaultConfigurationTest {
     @Test
     public void getOrDefaultDoesAcceptNullAsDefaultValueForThreeParameterVariant() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-
-        assertNotNull(c.getOrDefault("a", String.class, null));
-        assertNotNull(c.getOrDefault("a", TypeLiteral.of(String.class), null));
+        assertThat(c.getOrDefault("a", String.class, null)).isNotNull();
+        assertThat((String) c.getOrDefault("a", TypeLiteral.of(String.class), null)).isNotNull();
     }
 
     @Test(expected = NullPointerException.class)
@@ -123,15 +123,15 @@ public class DefaultConfigurationTest {
     @Test
     public void getOrDefaultDoesAcceptNullAsDefaultValueForTwoParameterVariantDefaultValueIsSecond() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertNotNull(c.getOrDefault("a", null));
+        assertThat(c.getOrDefault("a", null)).isNotNull();
     }
 
     @Test
     public void getOrDefaultReturnDefaultIfValueWouldHaveBeenNull() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertEquals("ok", c.getOrDefault("valueOfNull", "ok"));
-        assertEquals("ok", c.getOrDefault("valueOfNull", String.class, "ok"));
-        assertEquals("ok", c.getOrDefault("valueOfNull", TypeLiteral.of(String.class), "ok"));
+        assertThat("ok").isEqualTo(c.getOrDefault("valueOfNull", "ok"));
+        assertThat("ok").isEqualTo(c.getOrDefault("valueOfNull", String.class, "ok"));
+        assertThat("ok").isEqualTo(c.getOrDefault("valueOfNull", TypeLiteral.of(String.class), "ok"));
     }
 
     /**
@@ -140,9 +140,9 @@ public class DefaultConfigurationTest {
     @Test
     public void evaluateRawValueReturnsNullOrNotAsAppropriate() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertNotNull(c.evaluteRawValue("valueOfValid"));
-        assertNull(c.evaluteRawValue("valueOfNull"));
-        assertNotNull(c.evaluteRawValue("Filternull")); //evaluateRawValue does not apply filtering
+        assertThat(c.evaluteRawValue("valueOfValid")).isNotNull();
+        assertThat(c.evaluteRawValue("valueOfNull")).isNull();
+        assertThat(c.evaluteRawValue("Filternull")).isNotNull(); //evaluateRawValue does not apply filtering
     }
 
     /**
@@ -152,10 +152,10 @@ public class DefaultConfigurationTest {
     public void getPropertiesReturnsNullOrNotAsAppropriate() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
         Map<String, String> result = c.getProperties();
-        assertEquals("valueFromMockedPropertySource", result.get("someKey"));
-        assertNull(result.get("notInThePropertiesMock"));
-        assertNull(result.get("valueOfNull"));
-        assertNull(result.get("Filternull"));
+        assertThat(result.get("someKey")).isEqualTo("valueFromMockedPropertySource");
+        assertThat(result.get("notInThePropertiesMock")).isNull();
+        assertThat(result.get("valueOfNull")).isNull();
+        assertThat(result.get("Filternull")).isNull();
     }
 
     /**
@@ -164,7 +164,7 @@ public class DefaultConfigurationTest {
     @Test
     public void testConvertValue() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertTrue(100 == (Integer) c.convertValue("aHundred", "100", TypeLiteral.of(Integer.class)));
+        assertThat(100 == (Integer) c.convertValue("aHundred", "100", TypeLiteral.of(Integer.class))).isTrue();
     }
 
     @Test(expected = NullPointerException.class)
@@ -184,13 +184,13 @@ public class DefaultConfigurationTest {
     @Test
     public void with() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertEquals(c.with(config -> config), c);
+        assertThat(c).isEqualTo(c.with(config -> config));
     }
 
     @Test
     public void query() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertEquals(c.query(config -> "testQ"), "testQ");
+        assertThat("testQ").isEqualTo(c.query(config -> "testQ"));
     }
     
     @Test
@@ -200,16 +200,16 @@ public class DefaultConfigurationTest {
         DefaultConfiguration config2 = new DefaultConfiguration(sharedContext);
         DefaultConfiguration config3 = new DefaultConfiguration(new MockedConfigurationContext());
 
-        assertEquals(config1, config1);
-        assertNotEquals(null, config1);
-        assertNotEquals(sharedContext, config1);
-        assertNotEquals(config1, sharedContext);
-        assertNotEquals("aString", config1);
-        assertEquals(config1, config2);
-        assertNotEquals(config1, config3);
-        assertEquals(config1.hashCode(), config2.hashCode());
-        assertNotEquals(config1.hashCode(), config3.hashCode());
-        assertTrue(config1.toString().contains("Configuration{"));
+        assertThat(config1).isEqualTo(config1);
+        assertThat(config1).isNotEqualTo(null);
+        assertThat(sharedContext).isNotEqualTo(config1);
+        assertThat(config1).isNotEqualTo(sharedContext);
+        assertThat("aString").isNotEqualTo(config1);
+        assertThat(config2).isEqualTo(config1);
+        assertThat(config1).isNotEqualTo(config3);
+        assertThat(config2.hashCode()).isEqualTo(config1.hashCode());
+        assertThat(config1.hashCode()).isNotEqualTo(config3.hashCode());
+        assertThat(config1.toString().contains("Configuration{")).isTrue();
     }
 
 }

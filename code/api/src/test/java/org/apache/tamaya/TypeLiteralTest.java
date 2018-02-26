@@ -21,7 +21,7 @@ package org.apache.tamaya;
 import java.lang.reflect.Type;
 import static org.apache.tamaya.TypeLiteral.getGenericInterfaceTypeParameters;
 import static org.apache.tamaya.TypeLiteral.getTypeParameters;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Tests for the {@link TypeLiteral} class.
@@ -45,16 +44,16 @@ public class TypeLiteralTest {
     @Test
     public void test_constructor() {
         TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>() { };
-        assertEquals(List.class, listTypeLiteral.getRawType());
-        assertEquals(String.class, TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]);
+        assertThat(listTypeLiteral.getRawType()).isEqualTo(List.class);
+        assertThat(TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]).isEqualTo(String.class);
     }
 
     @Test
     public void test_of() {
         class MyListClass extends ArrayList<String> { }
         TypeLiteral<MyListClass> listTypeLiteral = TypeLiteral.of(MyListClass.class);
-        assertEquals(MyListClass.class, listTypeLiteral.getRawType());
-        assertEquals(MyListClass.class, listTypeLiteral.getType());
+        assertThat(listTypeLiteral.getRawType()).isEqualTo(MyListClass.class);
+        assertThat(listTypeLiteral.getType()).isEqualTo(MyListClass.class);
     }
 
     @Test(expected = NullPointerException.class)
@@ -65,24 +64,24 @@ public class TypeLiteralTest {
     @Test
     public void test_getTypeParameters() {
         TypeLiteral<List<String>> listTypeLiteral = new TypeLiteral<List<String>>() { };
-        assertEquals(List.class, listTypeLiteral.getRawType());
-        assertEquals(String.class, TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]);
+        assertThat(listTypeLiteral.getRawType()).isEqualTo(List.class);
+        assertThat(TypeLiteral.getTypeParameters(listTypeLiteral.getType())[0]).isEqualTo(String.class);
     }
 
     @Test
     public void testGetTypeParametersNoGenerics() {
-        assertEquals(0, getTypeParameters(String.class).length);
+        assertThat(getTypeParameters(String.class).length).isEqualTo(0);
     }
 
     @Test
     public void test_getGenericInterfaceTypeParameter() {
         class MyListClass extends ArrayList<String> implements List<String> { }
-        assertEquals(String.class, getGenericInterfaceTypeParameters(MyListClass.class, List.class)[0]);
+        assertThat(getGenericInterfaceTypeParameters(MyListClass.class, List.class)[0]).isEqualTo(String.class);
     }
 
     @Test
     public void testGetGenericInterfaceTypeParameterNoGenerics() {
-        assertEquals(0, getGenericInterfaceTypeParameters(String.class, String.class).length);
+        assertThat(getGenericInterfaceTypeParameters(String.class, String.class).length).isEqualTo(0);
     }
 
     @Test(expected = NullPointerException.class)
@@ -107,7 +106,7 @@ public class TypeLiteralTest {
         class B extends A { };
         TypeLiteral<List<String>> checker = new TypeLiteral<List<String>>() { };
         Type t = checker.getDefinedType(B.class);
-        assertEquals(t.getTypeName(), "java.lang.String");
+        assertThat("java.lang.String").isEqualTo(t.getTypeName());
     }
 
     @Test(expected = RuntimeException.class)
@@ -125,13 +124,13 @@ public class TypeLiteralTest {
         TypeLiteral a = TypeLiteral.of(List.class);
         TypeLiteral b = TypeLiteral.of(List.class);
         TypeLiteral c = TypeLiteral.of(Map.class);
-        assertEquals(a.hashCode(), b.hashCode());
-        assertNotEquals(a.hashCode(), c.hashCode());
-        assertTrue(a.equals(a));
-        assertTrue(a.equals(b));
-        assertFalse(a.equals(null));
-        assertFalse(a.equals("SomeString"));
-        assertFalse(a.equals(c));
+        assertThat(b.hashCode()).isEqualTo(a.hashCode());
+        assertThat(a.hashCode()).isNotEqualTo(c.hashCode());
+        assertThat(a.equals(a)).isTrue();
+        assertThat(a.equals(b)).isTrue();
+        assertThat(a.equals(null)).isFalse();
+        assertThat(a.equals("SomeString")).isFalse();
+        assertThat(a.equals(c)).isFalse();
     }
 
 }

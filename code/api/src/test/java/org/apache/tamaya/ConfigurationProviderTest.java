@@ -22,7 +22,7 @@ import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import org.mockito.Mockito;
 
 /**
@@ -40,7 +40,7 @@ public class ConfigurationProviderTest {
     @Test
     public void testCreateConfiguration() {
         Configuration result = ConfigurationProvider.createConfiguration(ConfigurationProvider.getConfiguration().getContext());
-        assertNotNull(result);
+        assertThat(result).isNotNull();
     }
     
     /**
@@ -50,15 +50,15 @@ public class ConfigurationProviderTest {
     @Test
     public void testGetSetConfigurationContext() {
         ConfigurationContext currentContext = ConfigurationProvider.getConfigurationContext();
-        assertTrue(currentContext instanceof ConfigurationContext);
+        assertThat(currentContext instanceof ConfigurationContext).isTrue();
         ConfigurationContext newContext = Mockito.mock(ConfigurationContext.class);
         try{
             ConfigurationProvider.setConfigurationContext(newContext);
-            assertEquals(newContext, ConfigurationProvider.getConfigurationContext());
+            assertThat(ConfigurationProvider.getConfigurationContext()).isEqualTo(newContext);
         }finally{
             ConfigurationProvider.setConfigurationContext(currentContext);
         }
-        assertEquals(currentContext, ConfigurationProvider.getConfigurationContext());
+        assertThat(ConfigurationProvider.getConfigurationContext()).isEqualTo(currentContext);
     }
 
     /**
@@ -67,15 +67,15 @@ public class ConfigurationProviderTest {
     @Test
     public void testGetSetConfiguration() {
         Configuration currentConfig = ConfigurationProvider.getConfiguration();
-        assertTrue(currentConfig instanceof Configuration);
+        assertThat(currentConfig instanceof Configuration).isTrue();
         Configuration newConfig = Mockito.mock(Configuration.class);
         try{
             ConfigurationProvider.setConfiguration(newConfig);
-            assertEquals(newConfig, ConfigurationProvider.getConfiguration());
+            assertThat(ConfigurationProvider.getConfiguration()).isEqualTo(newConfig);
         }finally{
             ConfigurationProvider.setConfiguration(currentConfig);
         }
-        assertEquals(currentConfig, ConfigurationProvider.getConfiguration());
+        assertThat(ConfigurationProvider.getConfiguration()).isEqualTo(currentConfig);
     }
 
     /**
@@ -84,7 +84,7 @@ public class ConfigurationProviderTest {
     @Test
     public void testGetConfigurationBuilder() {
         ConfigurationBuilder result = ConfigurationProvider.getConfigurationBuilder();
-        assertTrue(result instanceof ConfigurationBuilder);
+        assertThat(result instanceof ConfigurationBuilder).isTrue();
     }
 
     /**
@@ -93,11 +93,11 @@ public class ConfigurationProviderTest {
     @Test
     public void testGetConfigurationContextBuilder() {
         ConfigurationContextBuilder result = ConfigurationProvider.getConfigurationContextBuilder();
-        assertTrue(result instanceof ConfigurationContextBuilder);
+        assertThat(result instanceof ConfigurationContextBuilder).isTrue();
     }
 
     @Test
     public void testConstructorFails(){
-        assertTrue(ConfigurationProvider.class.getConstructors().length == 0);
+        assertThat(ConfigurationProvider.class.getConstructors().length == 0).isTrue();
     }
 }

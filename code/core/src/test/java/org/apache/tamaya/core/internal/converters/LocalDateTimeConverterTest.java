@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.LocalDateTime;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsti on 02.10.2017.
@@ -42,17 +42,17 @@ public class LocalDateTimeConverterTest {
     public void convert() throws Exception {
         LocalDateTimeConverter conv = new LocalDateTimeConverter();
         LocalDateTime value = conv.convert("2007-12-03T10:15:30", context);
-        assertEquals(value, LocalDateTime.parse("2007-12-03T10:15:30"));
+        assertThat(LocalDateTime.parse("2007-12-03T10:15:30")).isEqualTo(value);
         value = conv.convert("foo", context);
-        assertNull(value);
+        assertThat(value).isNull();
     }
 
     @Test
     public void equalsAndHashcode() throws Exception {
         LocalDateTimeConverter conv1 = new LocalDateTimeConverter();
         LocalDateTimeConverter conv2 = new LocalDateTimeConverter();
-        assertEquals(conv1, conv2);
-        assertEquals(conv1.hashCode(), conv2.hashCode());
+        assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 
     @Test
@@ -61,12 +61,12 @@ public class LocalDateTimeConverterTest {
         LocalDateTimeConverter converter = new LocalDateTimeConverter();
         converter.convert("", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().toString().contains(" (LocalDateTimeConverter)"));
+        assertThat(localcontext.getSupportedFormats().toString().contains(" (LocalDateTimeConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         LocalDateTimeConverter instance = new LocalDateTimeConverter();
-        assertEquals(LocalDateTimeConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(LocalDateTimeConverter.class.hashCode());
     }
 }

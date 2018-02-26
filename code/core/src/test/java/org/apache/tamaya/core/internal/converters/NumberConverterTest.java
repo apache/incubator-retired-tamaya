@@ -27,7 +27,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the default converter for Number.
@@ -43,8 +43,8 @@ public class NumberConverterTest {
     public void testConvert_Decimal() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.decimal", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, 101L);
+        assertThat(valueRead).isNotNull();
+        assertThat(101L).isEqualTo(valueRead);
     }
 
 
@@ -57,11 +57,11 @@ public class NumberConverterTest {
     public void testConvert_Hex() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.hex.lowerX", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Long.valueOf("47"));
+        assertThat(valueRead).isNotNull();
+        assertThat(Long.valueOf("47")).isEqualTo(valueRead);
         valueRead = config.get("tests.converter.bd.hex.upperX", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(valueRead, Long.valueOf("63"));
+        assertThat(valueRead).isNotNull();
+        assertThat(Long.valueOf("63")).isEqualTo(valueRead);
     }
 
     /**
@@ -73,7 +73,7 @@ public class NumberConverterTest {
     public void testConvert_NotPresent() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.foo", Number.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     /**
@@ -85,9 +85,9 @@ public class NumberConverterTest {
     public void testConvert_BigValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.big", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"),
-                valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"))
+                .isEqualTo(valueRead);
     }
 
     /**
@@ -99,9 +99,10 @@ public class NumberConverterTest {
     public void testConvert_BigFloatValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.bd.bigFloat", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372" +
-                "63723628763821638923628193612983618293628763"), valueRead);
+        assertThat(valueRead).isNotNull();
+        assertThat(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372" +
+                "63723628763821638923628193612983618293628763"))
+                .isEqualTo(valueRead);
     }
     
     /**
@@ -113,8 +114,8 @@ public class NumberConverterTest {
     public void testConvert_PositiveInfinityValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.double.pi", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(Double.POSITIVE_INFINITY, valueRead.doubleValue(),0.0d);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead.doubleValue()).isCloseTo(Double.POSITIVE_INFINITY, within(0.0d));
     }
 
     /**
@@ -126,8 +127,8 @@ public class NumberConverterTest {
     public void testConvert_NegativeInfinityValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.double.ni", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(Double.NEGATIVE_INFINITY, valueRead.doubleValue(),0.0d);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead.doubleValue()).isCloseTo(Double.NEGATIVE_INFINITY, within(0.0d));
     }
    
     /**
@@ -139,8 +140,8 @@ public class NumberConverterTest {
     public void testConvert_NaNValue() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Number valueRead = config.get("tests.converter.double.nan", Number.class);
-        assertNotNull(valueRead);
-        assertEquals(Double.NaN, valueRead.doubleValue(),0.0d);
+        assertThat(valueRead).isNotNull();
+        assertThat(valueRead.doubleValue()).isCloseTo(Double.NaN, within(0.0d));
     }
         
     @Test(expected = ConfigException.class)
@@ -155,15 +156,15 @@ public class NumberConverterTest {
         NumberConverter converter = new NumberConverter();
         converter.convert("", context);
 
-        assertTrue(context.getSupportedFormats().contains("<double>, <long> (NumberConverter)"));
-        assertTrue(context.getSupportedFormats().contains("POSITIVE_INFINITY (NumberConverter)"));
-        assertTrue(context.getSupportedFormats().contains("NEGATIVE_INFINITY (NumberConverter)"));
-        assertTrue(context.getSupportedFormats().contains("NAN (NumberConverter)"));
+        assertThat(context.getSupportedFormats().contains("<double>, <long> (NumberConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("POSITIVE_INFINITY (NumberConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("NEGATIVE_INFINITY (NumberConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("NAN (NumberConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         NumberConverter instance = new NumberConverter();
-        assertEquals(NumberConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(NumberConverter.class.hashCode());
     }
 }

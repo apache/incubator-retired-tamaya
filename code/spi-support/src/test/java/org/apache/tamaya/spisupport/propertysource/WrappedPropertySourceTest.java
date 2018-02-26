@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  *
@@ -37,9 +37,9 @@ public class WrappedPropertySourceTest {
     @Test
     public void testOf_PropertySource() {
         WrappedPropertySource instance = WrappedPropertySource.of(new MockedWrappablePropertySource());
-        assertEquals("MockedWrappablePropertySource", instance.getName());
+        assertThat(instance.getName()).isEqualTo("MockedWrappablePropertySource");
         WrappedPropertySource instance2 = WrappedPropertySource.of(instance);
-        assertEquals("MockedWrappablePropertySource", instance2.getName());
+        assertThat(instance2.getName()).isEqualTo("MockedWrappablePropertySource");
     }
 
     /**
@@ -48,12 +48,12 @@ public class WrappedPropertySourceTest {
     @Test
     public void testOrdinalsAndOrdinalConstructors() {
         WrappedPropertySource instance = WrappedPropertySource.of(new MockedWrappablePropertySource(), null);
-        assertEquals(10, instance.getOrdinal());
+        assertThat(instance.getOrdinal()).isEqualTo(10);
         instance.setOrdinal(20);
-        assertEquals(20, instance.getOrdinal());
+        assertThat(instance.getOrdinal()).isEqualTo(20);
         
         WrappedPropertySource instance2 = WrappedPropertySource.of(instance, null);
-        assertEquals(10, instance2.getOrdinal());
+        assertThat(instance2.getOrdinal()).isEqualTo(10);
     }
 
     /**
@@ -67,9 +67,9 @@ public class WrappedPropertySourceTest {
         first.setName("second");
         
         WrappedPropertySource instance = WrappedPropertySource.of(first);
-        assertEquals(first, instance.getDelegate());
+        assertThat(instance.getDelegate()).isEqualTo(first);
         instance.setDelegate(second);
-        assertEquals(second, instance.getDelegate());
+        assertThat(instance.getDelegate()).isEqualTo(second);
         
     }
 
@@ -81,7 +81,7 @@ public class WrappedPropertySourceTest {
     public void testGet() {
         WrappedPropertySource instance = WrappedPropertySource.of(new MockedWrappablePropertySource());
         PropertyValue result = instance.get("thisKey");
-        assertEquals("valueFromMockedWrappablePropertySource", result.getValue());
+        assertThat(result.getValue()).isEqualTo("valueFromMockedWrappablePropertySource");
     }
 
     /**
@@ -91,8 +91,8 @@ public class WrappedPropertySourceTest {
     public void testGetProperties() {
         WrappedPropertySource instance = WrappedPropertySource.of(new MockedWrappablePropertySource());
         Map<String, PropertyValue> result = instance.getProperties();
-        assertTrue(result.containsKey("someKey"));
-        assertEquals(1, result.size());
+        assertThat(result.containsKey("someKey")).isTrue();
+        assertThat(result).hasSize(1);
     }
 
     /**
@@ -101,7 +101,7 @@ public class WrappedPropertySourceTest {
     @Test
     public void testIsScannable() {
         WrappedPropertySource instance = WrappedPropertySource.of(new MockedWrappablePropertySource());
-        assertTrue(instance.isScannable());
+        assertThat(instance.isScannable()).isTrue();
     }
 
     @Test
@@ -117,16 +117,16 @@ public class WrappedPropertySourceTest {
         WrappedPropertySource wps2 = WrappedPropertySource.of(source2);
         WrappedPropertySource wps3 = WrappedPropertySource.of(source3);
 
-        assertEquals(wps1, wps1);
-        assertNotEquals(null, wps1);
-        assertNotEquals(source1, wps1);
-        assertNotEquals(wps1, source1);
-        assertNotEquals("aString", wps1);
-        assertEquals(wps1, wps2);
-        assertNotEquals(wps1, wps3);
-        assertEquals(wps1.hashCode(), wps2.hashCode());
-        assertNotEquals(wps1.hashCode(), wps3.hashCode());
-        assertTrue(wps1.toString().contains("name=testEqualsName"));
+        assertThat(wps1).isEqualTo(wps1);
+        assertThat(wps1).isNotEqualTo(null);
+        assertThat(source1).isNotEqualTo(wps1);
+        assertThat(wps1).isNotEqualTo(source1);
+        assertThat("aString").isNotEqualTo(wps1);
+        assertThat(wps2).isEqualTo(wps1);
+        assertThat(wps1).isNotEqualTo(wps3);
+        assertThat(wps2.hashCode()).isEqualTo(wps1.hashCode());
+        assertThat(wps1.hashCode()).isNotEqualTo(wps3.hashCode());
+        assertThat(wps1.toString().contains("name=testEqualsName")).isTrue();
     }
 
     private class MockedWrappablePropertySource implements PropertySource{

@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.Instant;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsti on 02.10.2017.
@@ -42,17 +42,17 @@ public class InstantConverterTest {
     public void convert() throws Exception {
         InstantConverter conv = new InstantConverter();
         Instant value = conv.convert("2007-12-03T10:15:30.00Z", context);
-        assertEquals(value, Instant.parse("2007-12-03T10:15:30.00Z"));
+        assertThat(Instant.parse("2007-12-03T10:15:30.00Z")).isEqualTo(value);
         value = conv.convert("foo", context);
-        assertNull(value);
+        assertThat(value).isNull();
     }
 
     @Test
     public void equalsAndHashcode() throws Exception {
         InstantConverter conv1 = new InstantConverter();
         InstantConverter conv2 = new InstantConverter();
-        assertEquals(conv1, conv2);
-        assertEquals(conv1.hashCode(), conv2.hashCode());
+        assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 
     @Test
@@ -61,13 +61,13 @@ public class InstantConverterTest {
         InstantConverter converter = new InstantConverter();
         converter.convert("", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().toString().contains(" (InstantConverter)"));
+        assertThat(localcontext.getSupportedFormats().toString().contains(" (InstantConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         InstantConverter instance = new InstantConverter();
-        assertEquals(InstantConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(InstantConverter.class.hashCode());
     }
 
 }

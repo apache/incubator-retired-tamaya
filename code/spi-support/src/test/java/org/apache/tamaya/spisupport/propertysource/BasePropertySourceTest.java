@@ -21,13 +21,11 @@ package org.apache.tamaya.spisupport.propertysource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class BasePropertySourceTest {
 
@@ -73,16 +71,16 @@ public class BasePropertySourceTest {
             }
         };
 
-        Assert.assertEquals(56, PropertySourceComparator.getOrdinal(defaultPropertySource));
-        Assert.assertEquals(1000, new OverriddenOrdinalPropertySource().getOrdinal());
+        assertThat(PropertySourceComparator.getOrdinal(defaultPropertySource)).isEqualTo(56);
+        assertThat(new OverriddenOrdinalPropertySource().getOrdinal()).isEqualTo(1000);
 
         // propertySource with invalid ordinal
-        Assert.assertEquals(1, new OverriddenInvalidOrdinalPropertySource().getOrdinal());
+        assertThat(new OverriddenInvalidOrdinalPropertySource().getOrdinal()).isEqualTo(1);
     }
 
     @Test
     public void testGet() {
-        Assert.assertEquals(1000, new OverriddenOrdinalPropertySource().getOrdinal());
+        assertThat(new OverriddenOrdinalPropertySource().getOrdinal()).isEqualTo(1000);
     }
 
     @Test
@@ -94,14 +92,14 @@ public class BasePropertySourceTest {
         BasePropertySource bs3 = new EmptyPropertySource();
         bs3.setName("testNotEqualsName");
 
-        assertEquals(bs1, bs1);
-        assertNotEquals(null, bs1);
-        assertNotEquals("aString", bs1);
-        assertEquals(bs1, bs2);
-        assertNotEquals(bs1, bs3);
-        assertEquals(bs1.hashCode(), bs2.hashCode());
-        assertNotEquals(bs1.hashCode(), bs3.hashCode());
-        assertTrue(bs1.toStringValues().contains("name='testEqualsName'"));
+        assertThat(bs1).isEqualTo(bs1);
+        assertThat(bs1).isNotEqualTo(null);
+        assertThat("aString").isNotEqualTo(bs1);
+        assertThat(bs2).isEqualTo(bs1);
+        assertThat(bs1).isNotEqualTo(bs3);
+        assertThat(bs2.hashCode()).isEqualTo(bs1.hashCode());
+        assertThat(bs1.hashCode()).isNotEqualTo(bs3.hashCode());
+        assertThat(bs1.toStringValues().contains("name='testEqualsName'")).isTrue();
     }
 
     private class EmptyPropertySource extends BasePropertySource {

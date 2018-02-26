@@ -21,7 +21,7 @@ package org.apache.tamaya.examples.distributed;
 
 import io.vertx.core.json.Json;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsticks on 13.11.16.
@@ -41,8 +41,8 @@ public class DisplayContentTest {
         content.content.put("content", "myContent");
         String val = Json.encode(content);
         DisplayContent decoded = Json.decodeValue(val, DisplayContent.class);
-        assertNotNull(decoded);
-        assertEquals(content, decoded);
+        assertThat(decoded).isNotNull();
+        assertThat(decoded).isEqualTo(content);
     }
 
 }

@@ -22,7 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for PropertySource for reading main arguments as configuration.
@@ -39,47 +39,47 @@ public class CLIPropertySourceTest {
             System.clearProperty("main.args");
             
             CLIPropertySource ps = new CLIPropertySource();
-            assertTrue(ps.getProperties().isEmpty());
+            assertThat(ps.getProperties().isEmpty()).isTrue();
             
             ps = new CLIPropertySource(26);
-            assertTrue(ps.getProperties().isEmpty());
-            assertEquals(26, ps.getOrdinal());
+            assertThat(ps.getProperties().isEmpty()).isTrue();
+            assertThat(ps.getOrdinal()).isEqualTo(26);
             
             ps = new CLIPropertySource("-a", "b");
-            assertFalse(ps.getProperties().isEmpty());
-            assertEquals(ps.getProperties().get("a").getValue(), "b");
-            assertTrue(ps.toStringValues().contains("args=[-a, b]"));
+            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat("b").isEqualTo(ps.getProperties().get("a").getValue());
+            assertThat(ps.toStringValues().contains("args=[-a, b]")).isTrue();
             
             ps = new CLIPropertySource(16, "-c", "d");
-            assertFalse(ps.getProperties().isEmpty());
-            assertEquals(ps.getProperties().get("c").getValue(), "d");
-            assertEquals(16, ps.getOrdinal());
+            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat("d").isEqualTo(ps.getProperties().get("c").getValue());
+            assertThat(ps.getOrdinal()).isEqualTo(16);
             
             CLIPropertySource.initMainArgs("-e", "f");
-            assertFalse(ps.getProperties().isEmpty());
-            assertEquals(ps.getProperties().get("e").getValue(), "f");
+            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat("f").isEqualTo(ps.getProperties().get("e").getValue());
             
             CLIPropertySource.initMainArgs("--g");
-            assertFalse(ps.getProperties().isEmpty());
-            assertEquals(ps.getProperties().get("g").getValue(), "g");
+            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat("g").isEqualTo(ps.getProperties().get("g").getValue());
             
             CLIPropertySource.initMainArgs("sss");
-            assertFalse(ps.getProperties().isEmpty());
-            assertEquals(ps.getProperties().get("sss").getValue(), "sss");
+            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat("sss").isEqualTo(ps.getProperties().get("sss").getValue());
             
             CLIPropertySource.initMainArgs("-a", "b", "--c", "sss", "--val=vvv");
-            assertFalse(ps.getProperties().isEmpty());
-            assertEquals(ps.getProperties().get("a").getValue(), "b");
-            assertEquals(ps.getProperties().get("c").getValue(), "c");
-            assertEquals(ps.getProperties().get("sss").getValue(), "sss");
+            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat("b").isEqualTo(ps.getProperties().get("a").getValue());
+            assertThat("c").isEqualTo(ps.getProperties().get("c").getValue());
+            assertThat("sss").isEqualTo(ps.getProperties().get("sss").getValue());
             
             System.setProperty("main.args", "-a b\t--c sss  ");
             ps = new CLIPropertySource();
-            assertFalse(ps.getProperties().isEmpty());
+            assertThat(ps.getProperties().isEmpty()).isFalse();
             System.clearProperty("main.args");
-            assertEquals(ps.getProperties().get("a").getValue(), "b");
-            assertEquals(ps.getProperties().get("c").getValue(), "c");
-            assertEquals(ps.getProperties().get("sss").getValue(), "sss");
+            assertThat("b").isEqualTo(ps.getProperties().get("a").getValue());
+            assertThat("c").isEqualTo(ps.getProperties().get("c").getValue());
+            assertThat("sss").isEqualTo(ps.getProperties().get("sss").getValue());
             
         } finally {
             System.getProperties().clear();

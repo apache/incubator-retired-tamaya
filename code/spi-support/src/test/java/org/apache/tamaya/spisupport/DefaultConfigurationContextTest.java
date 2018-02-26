@@ -18,16 +18,9 @@
  */
 package org.apache.tamaya.spisupport;
 
-import java.util.List;
-import java.util.Map;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  *
@@ -45,15 +38,15 @@ public class DefaultConfigurationContextTest {
         DefaultConfigurationContext ctx3 = (DefaultConfigurationContext) new DefaultConfigurationContextBuilder().build();
         ctx3.addPropertySources(new MockedPropertySource());
 
-        assertEquals(ctx1, ctx1);
-        assertNotEquals(null, ctx1);
-        assertNotEquals("aString", ctx1);
-        assertEquals(ctx1, ctx2);
-        assertNotEquals(ctx1, ctx3);
-        assertEquals(ctx1.hashCode(), ctx2.hashCode());
-        assertNotEquals(ctx1.hashCode(), ctx3.hashCode());
+        assertThat(ctx1).isEqualTo(ctx1);
+        assertThat(ctx1).isNotEqualTo(null);
+        assertThat("aString").isNotEqualTo(ctx1);
+        assertThat(ctx2).isEqualTo(ctx1);
+        assertThat(ctx1).isNotEqualTo(ctx3);
+        assertThat(ctx2.hashCode()).isEqualTo(ctx1.hashCode());
+        assertThat(ctx1.hashCode()).isNotEqualTo(ctx3.hashCode());
         String spaces = new String(new char[70 - sharedSource.getName().length()]).replace("\0", " ");
         System.out.println(ctx1.toString());
-        assertTrue(ctx1.toString().contains(sharedSource.getName() + spaces));
+        assertThat(ctx1.toString().contains(sharedSource.getName() + spaces)).isTrue();
     }
 }

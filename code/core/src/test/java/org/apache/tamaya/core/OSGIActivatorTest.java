@@ -25,9 +25,7 @@ import org.apache.tamaya.core.internal.MockBundleContext;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
@@ -69,13 +67,13 @@ public class OSGIActivatorTest {
 
         //Start
         instance.start(mockBundleContext);
-        assertEquals(1, mockBundleContext.getBundleListenersCount());
-        assertFalse(ConfigurationProvider.getConfiguration().getContext().getPropertyConverters().isEmpty());
-        assertNotSame(prevConfiguration, ConfigurationProvider.getConfiguration());
+        assertThat(mockBundleContext.getBundleListenersCount()).isEqualTo(1);
+        assertThat(ConfigurationProvider.getConfiguration().getContext().getPropertyConverters().isEmpty()).isFalse();
+        assertThat(ConfigurationProvider.getConfiguration()).isNotSameAs(prevConfiguration);
 
         //Stop
         instance.stop(mockBundleContext);
-        assertEquals(0, mockBundleContext.getBundleListenersCount());
+        assertThat(mockBundleContext.getBundleListenersCount()).isEqualTo(0);
     }
 
 }

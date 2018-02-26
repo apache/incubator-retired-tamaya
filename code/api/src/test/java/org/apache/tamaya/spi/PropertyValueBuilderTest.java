@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.spi;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -121,27 +121,27 @@ public class PropertyValueBuilderTest {
     public void testKey() throws Exception {
         PropertyValueBuilder b = new PropertyValueBuilder("k", "testKey").setValue("v");
         PropertyValue val = b.build();
-        assertEquals(val.getKey(),"k");
-        assertEquals(val.getValue(),"v");
-        assertNull(val.getMetaEntries().get("k"));
+        assertThat("k").isEqualTo(val.getKey());
+        assertThat("v").isEqualTo(val.getValue());
+        assertThat(val.getMetaEntries().get("k")).isNull();
     }
     
     @Test
     public void testSetKey() {
         PropertyValueBuilder b = new PropertyValueBuilder("k", "testSetKey").setKey("key");
         PropertyValue val = b.build();
-        assertEquals(val.getKey(),"key");
+        assertThat("key").isEqualTo(val.getKey());
     }
 
     @Test
     public void testSource() throws Exception {
         PropertyValueBuilder b = new PropertyValueBuilder("k", "testSource").setValue("v");
         PropertyValue val = b.build();
-        assertEquals(val.getSource(),"testSource");
+        assertThat("testSource").isEqualTo(val.getSource());
         
         PropertyValueBuilder b2 = b.setSource("differentSource");
         val = b2.build();
-        assertEquals(val.getSource(),"differentSource");
+        assertThat("differentSource").isEqualTo(val.getSource());
     }
 
     @Test(expected=NullPointerException.class)
@@ -158,31 +158,31 @@ public class PropertyValueBuilderTest {
                 .setValue("v")
                 .addMetaEntry("k", "v2")
                 .setMetaEntries(meta).build();
-        assertEquals("v", pv.getValue());
-        assertEquals("k", pv.getKey());
-        assertNull(pv.getMetaEntry("k"));
-        assertEquals("testGetKey", pv.getSource());
-        assertEquals(2, pv.getMetaEntries().size());
-        assertEquals("2", pv.getMetaEntry("1"));
-        assertEquals("b", pv.getMetaEntry("a"));
+        assertThat(pv.getValue()).isEqualTo("v");
+        assertThat(pv.getKey()).isEqualTo("k");
+        assertThat(pv.getMetaEntry("k")).isNull();
+        assertThat(pv.getSource()).isEqualTo("testGetKey");
+        assertThat(pv.getMetaEntries()).hasSize(2);
+        assertThat(pv.getMetaEntry("1")).isEqualTo("2");
+        assertThat(pv.getMetaEntry("a")).isEqualTo("b");
     }
 
     @Test
     public void testGetKey() throws Exception {
         PropertyValue pv = PropertyValue.builder("k", "testGetKey").setValue("v").build();
-        assertEquals("k", pv.getKey());
+        assertThat(pv.getKey()).isEqualTo("k");
     }
 
     @Test
     public void testGetValue1() throws Exception {
         PropertyValue pv = PropertyValue.of("k", "v", "testGetValue");
-        assertEquals("v", pv.getValue());
+        assertThat(pv.getValue()).isEqualTo("v");
     }
 
     @Test
     public void testGetValue2() throws Exception {
         PropertyValue pv = PropertyValue.builder("k", "testGetValue").setValue("v").build();
-        assertEquals("v", pv.getValue());
+        assertThat(pv.getValue()).isEqualTo("v");
     }
 
     @Test(expected = NullPointerException.class)
@@ -197,8 +197,8 @@ public class PropertyValueBuilderTest {
                 .addMetaEntry("k", "v2")
                 .addMetaEntry("k2", "v22")
                 .removeMetaEntry("k").build();
-        assertEquals("v22", pv.getMetaEntry("k2"));
-        assertNull(pv.getMetaEntry("k"));
+        assertThat(pv.getMetaEntry("k2")).isEqualTo("v22");
+        assertThat(pv.getMetaEntry("k")).isNull();
     }
 
     @Test(expected=NullPointerException.class)
@@ -215,8 +215,8 @@ public class PropertyValueBuilderTest {
                 .setValue("v")
                 .setMetaEntries(meta);
         PropertyValue pv = b.build();
-        assertEquals(meta, b.getMetaEntries());
-        assertEquals(meta, pv.getMetaEntries());
+        assertThat(b.getMetaEntries()).isEqualTo(meta);
+        assertThat(pv.getMetaEntries()).isEqualTo(meta);
     }
 
     @Test
@@ -231,10 +231,10 @@ public class PropertyValueBuilderTest {
         context.remove("y");
         b.setMetaEntries(context);
         PropertyValue contextData = b.build();
-        assertEquals(contextData.getMetaEntries().size(), context.size());
-        assertEquals(contextData.getMetaEntry("source"), "testSetContextData");
-        assertNotNull(contextData.getMetaEntry("ts"));
-        assertNull(contextData.getMetaEntry("y"));
+        assertThat(context.size()).isEqualTo(contextData.getMetaEntries().size());
+        assertThat("testSetContextData").isEqualTo(contextData.getMetaEntry("source"));
+        assertThat(contextData.getMetaEntry("ts")).isNotNull();
+        assertThat(contextData.getMetaEntry("y")).isNull();
     }
 
     @Test
@@ -244,9 +244,9 @@ public class PropertyValueBuilderTest {
         b.addMetaEntry("y", "yValue");
         b.addMetaEntry("y", "y2");
         PropertyValue contextData = b.build();
-        assertEquals(contextData.getMetaEntries().size(), 2);
-        assertNotNull(contextData.getMetaEntry("ts"));
-        assertEquals(contextData.getMetaEntry("y"), "y2");
+        assertThat(2).isEqualTo(contextData.getMetaEntries().size());
+        assertThat(contextData.getMetaEntry("ts")).isNotNull();
+        assertThat("y2").isEqualTo(contextData.getMetaEntry("y"));
     }
     
     @Test
@@ -257,11 +257,11 @@ public class PropertyValueBuilderTest {
                 .addMetaEntry("somethingelse", "othervalue")
                 .mapKey("mappedkey");
         PropertyValue pv = b.build();     
-        assertEquals("mappedkey", pv.getKey());
-        assertEquals("value", pv.getValue());
-        assertEquals(2, pv.getMetaEntries().size());
-        assertEquals("mappedvalue", pv.getMetaEntry("_mappedkey.AndThenSome"));
-        assertEquals("othervalue", pv.getMetaEntry("somethingelse"));
+        assertThat(pv.getKey()).isEqualTo("mappedkey");
+        assertThat(pv.getValue()).isEqualTo("value");
+        assertThat(pv.getMetaEntries()).hasSize(2);
+        assertThat(pv.getMetaEntry("_mappedkey.AndThenSome")).isEqualTo("mappedvalue");
+        assertThat(pv.getMetaEntry("somethingelse")).isEqualTo("othervalue");
     }
     
     @Test
@@ -269,7 +269,7 @@ public class PropertyValueBuilderTest {
         PropertyValueBuilder b = new PropertyValueBuilder("k")
                 .setValue("v")
                 .addMetaEntry("metak", "metav");
-        assertEquals("PropertyValueBuilder{key='k'value='v', metaEntries={metak=metav}}", b.toString());
+        assertThat(b.toString()).isEqualTo("PropertyValueBuilder{key='k'value='v', metaEntries={metak=metav}}");
     }
 
 }

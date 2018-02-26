@@ -20,12 +20,12 @@ package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
-import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Priority;
 import java.util.Collection;
 import java.util.List;
+import static org.assertj.core.api.Assertions.*;
 
 public class DefaultServiceContextTest {
 
@@ -38,8 +38,8 @@ public class DefaultServiceContextTest {
     @Test
     public void testGetService() {
         ConfigurationProviderSpi providerSpi = context.getService(ConfigurationProviderSpi.class);
-        Assert.assertNotNull(providerSpi);
-        Assert.assertTrue(providerSpi instanceof TestConfigurationProvider);
+        assertThat(providerSpi).isNotNull();
+        assertThat(providerSpi instanceof TestConfigurationProvider).isTrue();
     }
 
     @Test(expected = ConfigException.class)
@@ -51,14 +51,14 @@ public class DefaultServiceContextTest {
     public void testGetService_multipleService_shouldReturnServiceWithHighestPriority() {
         MultiImplsInterface service = context.getService(MultiImplsInterface.class);
 
-        Assert.assertNotNull(service);
-        Assert.assertTrue(service instanceof MultiImpl2);
+        assertThat(service).isNotNull();
+        assertThat(service instanceof MultiImpl2).isTrue();
     }
 
     @Test
     public void testGetService_noImpl_shouldReturnEmptyOpional() {
         NoImplInterface service = context.getService(NoImplInterface.class);
-        Assert.assertNull(service);
+        assertThat(service).isNull();
     }
 
 
@@ -66,22 +66,22 @@ public class DefaultServiceContextTest {
     public void testGetServices_shouldReturnServices() {
         {
             Collection<InvalidPriorityInterface> services = context.getServices(InvalidPriorityInterface.class);
-            Assert.assertNotNull(services);
-            Assert.assertEquals(2, services.size());
+            assertThat(services).isNotNull();
+            assertThat(services).hasSize(2);
 
             for (InvalidPriorityInterface service : services) {
-                Assert.assertTrue(service instanceof InvalidPriorityImpl1 || service instanceof InvalidPriorityImpl2);
+                assertThat(service instanceof InvalidPriorityImpl1 || service instanceof InvalidPriorityImpl2).isTrue();
             }
         }
 
         {
             List<MultiImplsInterface> services = context.getServices(MultiImplsInterface.class);
-            Assert.assertNotNull(services);
-            Assert.assertEquals(3, services.size());
+            assertThat(services).isNotNull();
+            assertThat(services).hasSize(3);
 
-            Assert.assertTrue(services.get(0) instanceof MultiImpl2);
-            Assert.assertTrue(services.get(1) instanceof MultiImpl1);
-            Assert.assertTrue(services.get(2) instanceof MultiImpl3);
+            assertThat(services.get(0) instanceof MultiImpl2).isTrue();
+            assertThat(services.get(1) instanceof MultiImpl1).isTrue();
+            assertThat(services.get(2) instanceof MultiImpl3).isTrue();
         }
     }
 
@@ -89,10 +89,10 @@ public class DefaultServiceContextTest {
     public void testGetServices_redundantAccessToServices() {
         for(int i=0;i<10;i++){
             Collection<InvalidPriorityInterface> services = context.getServices(InvalidPriorityInterface.class);
-            Assert.assertNotNull(services);
-            Assert.assertEquals(2, services.size());
+            assertThat(services).isNotNull();
+            assertThat(services).hasSize(2);
             for (InvalidPriorityInterface service : services) {
-                Assert.assertTrue(service instanceof InvalidPriorityImpl1 || service instanceof InvalidPriorityImpl2);
+                assertThat(service instanceof InvalidPriorityImpl1 || service instanceof InvalidPriorityImpl2).isTrue();
             }
         }
     }
@@ -100,8 +100,8 @@ public class DefaultServiceContextTest {
     @Test
     public void testGetServices_noImpl_shouldReturnEmptyList() {
         Collection<NoImplInterface> services = context.getServices(NoImplInterface.class);
-        Assert.assertNotNull(services);
-        Assert.assertTrue(services.isEmpty());
+        assertThat(services).isNotNull();
+        assertThat(services.isEmpty()).isTrue();
     }
 
 

@@ -20,7 +20,7 @@ package org.apache.tamaya.spisupport.propertysource;
 
 import java.net.URL;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
  	
 
 /**
@@ -35,17 +35,17 @@ public class PropertiesResourcePropertySourceTest {
     @Test
     public void testBasicConstructor() {
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(resource);
-        assertNotNull(source);
-        assertTrue(5 == source.getProperties().size()); // double the size for .source values.
-        assertTrue(source.getProperties().containsKey("key1"));
+        assertThat(source).isNotNull();
+        assertThat(5 == source.getProperties().size()).isTrue(); // double the size for .source values.
+        assertThat(source.getProperties().containsKey("key1")).isTrue();
     }
 
     @Test
     public void testPrefixedConstructor() {
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(resource, "somePrefix");
-        assertNotNull(source);
-        assertTrue(5 == source.getProperties().size());
-        assertTrue(source.getProperties().containsKey("somePrefixkey1"));
+        assertThat(source).isNotNull();
+        assertThat(5 == source.getProperties().size()).isTrue();
+        assertThat(source.getProperties().containsKey("somePrefixkey1")).isTrue();
     }
 
     @Test
@@ -53,9 +53,9 @@ public class PropertiesResourcePropertySourceTest {
         //File path must be relative to classloader, not the class
         System.out.println(resource.getPath());
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix");
-        assertNotNull(source);
-        assertTrue(5 == source.getProperties().size());
-        assertTrue(source.getProperties().containsKey("somePrefixkey1"));
+        assertThat(source).isNotNull();
+        assertThat(5 == source.getProperties().size()).isTrue();
+        assertThat(source.getProperties().containsKey("somePrefixkey1")).isTrue();
     }
     
     @Test
@@ -67,16 +67,16 @@ public class PropertiesResourcePropertySourceTest {
             }
         };
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix", badLoader);
-        assertNotNull(source);
-        assertTrue(source.getProperties().isEmpty());
+        assertThat(source).isNotNull();
+        assertThat(source.getProperties().isEmpty()).isTrue();
     }
     
     @Test
     public void testPrefixedPathClassloaderConstructor() {
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix", null);
-        assertNotNull(source);
-        assertTrue(5 == source.getProperties().size());
-        assertTrue(source.getProperties().containsKey("somePrefixkey1"));
+        assertThat(source).isNotNull();
+        assertThat(5 == source.getProperties().size()).isTrue();
+        assertThat(source.getProperties().containsKey("somePrefixkey1")).isTrue();
     }
 
 }

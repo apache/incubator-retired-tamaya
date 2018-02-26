@@ -23,7 +23,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  *
@@ -43,9 +43,9 @@ public class ReflectionUtilTest<E> {
         Field stringListField = this.getClass().getDeclaredField("reflectable");
         ParameterizedType genericListType = (ParameterizedType) stringListField.getGenericType();
         
-        assertEquals(genericListType.toString(), ReflectionUtil.getParametrizedType(reflectable.getClass()).toString());
-        assertEquals(First.class.getName(), ReflectionUtil.getParametrizedType(multi.getClass()).getRawType().getTypeName());
-        assertNull(ReflectionUtil.getParametrizedType(Object.class));
+        assertThat(ReflectionUtil.getParametrizedType(reflectable.getClass()).toString()).isEqualTo(genericListType.toString());
+        assertThat(ReflectionUtil.getParametrizedType(multi.getClass()).getRawType().getTypeName()).isEqualTo(First.class.getName());
+        assertThat(ReflectionUtil.getParametrizedType(Object.class)).isNull();
     }
     
     private interface First<T> {}

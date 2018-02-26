@@ -22,7 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  *
@@ -38,7 +38,7 @@ public class ConvertQueryTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         ConvertQuery<Integer> converter = new ConvertQuery<>("101", TypeLiteral.of(Integer.class));
         Integer result = converter.query(config);
-        assertEquals(101, result.longValue());
+        assertThat(result.longValue()).isEqualTo(101);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ConvertQueryTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         ConvertQuery<Integer> converter = new ConvertQuery<>("101", TypeLiteral.of(Integer.class));
         Integer result = config.query(converter);
-        assertEquals(101, result.longValue());
+        assertThat(result.longValue()).isEqualTo(101);
     }
 
     /**
@@ -60,10 +60,10 @@ public class ConvertQueryTest {
         Configuration config = ConfigurationProvider.getConfiguration();
 
         Integer intResult = (Integer) new ConvertQuery("101", TypeLiteral.of(Integer.class)).query(config);
-        assertEquals(101, intResult.longValue());
+        assertThat(intResult.longValue()).isEqualTo(101);
 
         Boolean booleanResult = (Boolean) new ConvertQuery("true", TypeLiteral.of(Boolean.class)).query(config);
-        assertEquals(Boolean.TRUE, booleanResult);
+        assertThat(booleanResult).isEqualTo(Boolean.TRUE);
     }
 
     /**
@@ -74,7 +74,7 @@ public class ConvertQueryTest {
         Configuration config = ConfigurationProvider.getConfiguration();
 
         Integer intResult = (Integer) new ConvertQuery("invalid", TypeLiteral.of(Integer.class)).query(config);
-        assertNull(intResult);
+        assertThat(intResult).isNull();
     }
 
 }

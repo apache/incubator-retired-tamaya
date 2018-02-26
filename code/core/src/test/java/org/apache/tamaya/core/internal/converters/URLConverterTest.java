@@ -26,11 +26,7 @@ import java.net.URI;
 import java.net.URL;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests conversion of the {@link URL}-converter.
@@ -43,38 +39,38 @@ public class URLConverterTest {
     @Test
     public void testConvert_URL() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("http://google.com:4000/path", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("http://apache.org:4000/path", context));
     }
 
     @Test
     public void testConvert_URL_WithSpaces() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("  http://google.com:4000/path\t", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("  http://apache.org:4000/path\t", context));
     }
 
     @Test
     public void testConvert_URL_WithSpacesBefore() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("  http://google.com:4000/path", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("  http://apache.org:4000/path", context));
     }
 
     @Test
     public void testConvert_URL_WithSpacesAfter() throws Exception {
         URLConverter converter = new URLConverter();
-        assertEquals(new URL("http://google.com:4000/path"), converter.convert("http://google.com:4000/path  ", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("http://apache.org:4000/path  ", context));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         URLConverter converter = new URLConverter();
-        assertNull(converter.convert("", context));
-        assertNull(converter.convert(null, context));
+        assertThat(converter.convert("", context)).isNull();
+        assertThat(converter.convert(null, context)).isNull();
     }
     
     @Test
     public void testConvert_URLInvalid() throws ConfigException {
         URLConverter converter = new URLConverter();
-        assertNull(converter.convert("not a url", context));
+        assertThat(converter.convert("not a url", context)).isNull();
     }
 
     @Test
@@ -83,12 +79,12 @@ public class URLConverterTest {
         URLConverter converter = new URLConverter();
         converter.convert("http://localhost", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().contains("<URL> (URLConverter)"));
+        assertThat(localcontext.getSupportedFormats().contains("<URL> (URLConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         URLConverter instance = new URLConverter();
-        assertEquals(URLConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(URLConverter.class.hashCode());
     }
 }

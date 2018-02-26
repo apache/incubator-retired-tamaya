@@ -23,7 +23,7 @@ import java.net.URL;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  *
@@ -41,18 +41,18 @@ public class FileConverterTest {
         FileConverter instance = new FileConverter();
         File result;
         
-        assertNull(instance.convert(null, context));
+        assertThat(instance.convert(null, context)).isNull();
         
         URL testfileUrl = getClass().getResource("/testfile.properties");
         System.out.println(testfileUrl.toString());
         result = instance.convert(testfileUrl.toString(), context);
-        assertNotNull(result);
-        assertTrue(context.getSupportedFormats().contains("<File> (FileConverter)"));
+        assertThat(result).isNotNull();
+        assertThat(context.getSupportedFormats().contains("<File> (FileConverter)")).isTrue();
     }
     
     @Test
     public void testHashCode(){
         FileConverter instance = new FileConverter();
-        assertEquals(FileConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(FileConverter.class.hashCode());
     }
 }

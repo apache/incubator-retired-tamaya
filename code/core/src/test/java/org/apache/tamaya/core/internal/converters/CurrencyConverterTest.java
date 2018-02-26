@@ -28,7 +28,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the default converter for currencies.
@@ -51,7 +51,7 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code1", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead, Currency.getInstance(CHF));
+        assertThat(Currency.getInstance(CHF)).isEqualTo(valueRead);
     }
 
     /**
@@ -65,7 +65,7 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code2", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(valueRead, Currency.getInstance(CHF));
+        assertThat(Currency.getInstance(CHF)).isEqualTo(valueRead);
     }
 
     /**
@@ -79,7 +79,7 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code3", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Currency.getInstance(CHF), valueRead);
+        assertThat(valueRead).isEqualTo(Currency.getInstance(CHF));
     }
 
     /**
@@ -93,7 +93,7 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code4", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Currency.getInstance(CHF), valueRead);
+        assertThat(valueRead).isEqualTo(Currency.getInstance(CHF));
     }
 
     /**
@@ -107,7 +107,7 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code5", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Currency.getInstance(CHF), valueRead);
+        assertThat(valueRead).isEqualTo(Currency.getInstance(CHF));
     }
 
     /**
@@ -121,16 +121,16 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code-numeric1", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
+        assertThat(valueRead.getNumericCode()).isEqualTo(Currency.getInstance(BGL).getNumericCode());
         valueRead = config.get("tests.converter.currency.code-numeric2", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
+        assertThat(valueRead.getNumericCode()).isEqualTo(Currency.getInstance(BGL).getNumericCode());
         valueRead = config.get("tests.converter.currency.code-numeric3", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
+        assertThat(valueRead.getNumericCode()).isEqualTo(Currency.getInstance(BGL).getNumericCode());
         valueRead = config.get("tests.converter.currency.code-numeric4", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(Currency.getInstance(BGL).getNumericCode(), valueRead.getNumericCode());
+        assertThat(valueRead.getNumericCode()).isEqualTo(Currency.getInstance(BGL).getNumericCode());
     }
 
     /**
@@ -144,16 +144,16 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code-locale1", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(EUR, valueRead.getCurrencyCode());
+        assertThat(valueRead.getCurrencyCode()).isEqualTo(EUR);
         valueRead = config.get("tests.converter.currency.code-locale2", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(EUR, valueRead.getCurrencyCode());
+        assertThat(valueRead.getCurrencyCode()).isEqualTo(EUR);
         valueRead = config.get("tests.converter.currency.code-locale3", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(EUR, valueRead.getCurrencyCode());
+        assertThat(valueRead.getCurrencyCode()).isEqualTo(EUR);
         valueRead = config.get("tests.converter.currency.code-locale4", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(EUR, valueRead.getCurrencyCode());
+        assertThat(valueRead.getCurrencyCode()).isEqualTo(EUR);
     }
 
     /**
@@ -167,17 +167,17 @@ public class CurrencyConverterTest {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code-locale-twopart", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(JPY, valueRead.getCurrencyCode());
+        assertThat(valueRead.getCurrencyCode()).isEqualTo(JPY);
         valueRead = config.get("tests.converter.currency.code-locale-threepart", Currency.class);
         assertThat(valueRead).isNotNull();
-        assertEquals(JPY, valueRead.getCurrencyCode());
+        assertThat(valueRead.getCurrencyCode()).isEqualTo(JPY);
     }
 
     @Test(expected = ConfigException.class)
     public void testConvert_Currency_Code_Fourpart_Locale_Invalid() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         Currency valueRead = config.get("tests.converter.currency.code-locale-fourpart", Currency.class);
-        assertNull(valueRead);
+        assertThat(valueRead).isNull();
     }
 
     @Test(expected = ConfigException.class)
@@ -192,14 +192,14 @@ public class CurrencyConverterTest {
         CurrencyConverter converter = new CurrencyConverter();
         converter.convert("", context);
 
-        assertTrue(context.getSupportedFormats().contains("<numericValue> (CurrencyConverter)"));
-        assertTrue(context.getSupportedFormats().contains("<locale> (CurrencyConverter)"));
-        assertTrue(context.getSupportedFormats().contains("<currencyCode>, using Locale.ENGLISH (CurrencyConverter)"));
+        assertThat(context.getSupportedFormats().contains("<numericValue> (CurrencyConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("<locale> (CurrencyConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("<currencyCode>, using Locale.ENGLISH (CurrencyConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         CurrencyConverter instance = new CurrencyConverter();
-        assertEquals(CurrencyConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(CurrencyConverter.class.hashCode());
     }
 }

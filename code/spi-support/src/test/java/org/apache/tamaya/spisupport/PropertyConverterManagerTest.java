@@ -26,12 +26,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.*;
 
 public class PropertyConverterManagerTest {
 
@@ -42,8 +37,8 @@ public class PropertyConverterManagerTest {
     public void customTypeWithFactoryMethodOfIsRecognizedAsSupported() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
 
-        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(MyType.class)),
-                is(true));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(MyType.class)))
+                .isTrue();
     }
 
     @Test
@@ -53,134 +48,134 @@ public class PropertyConverterManagerTest {
         List<PropertyConverter<MyType>> converters = manager.getPropertyConverters(
                 (TypeLiteral) TypeLiteral.of(MyType.class));
 
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<MyType> converter = converters.get(0);
 
         Object result = converter.convert("IN", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(MyType.class));
-        assertThat(((MyType) result).getValue(), equalTo("IN"));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(MyType.class);
+        assertThat(((MyType) result).getValue()).isEqualTo("IN");
     }
 
     @Test
     public void testDirectConverterMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(C.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(C.class))).isTrue();
         List<PropertyConverter<C>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(C.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<C> converter = converters.get(0);
         C result = converter.convert("testDirectConverterMapping", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(C.class));
-        assertThat((result).getInValue(), equalTo("testDirectConverterMapping"));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(C.class);
+        assertThat((result).getInValue()).isEqualTo("testDirectConverterMapping");
     }
 
     @Test
     public void testDirectSuperclassConverterMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(B.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(B.class))).isTrue();
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
         converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<B> converter = converters.get(0);
         B result = converter.convert("testDirectSuperclassConverterMapping", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(C.class));
-        assertThat(((C) result).getInValue(), equalTo("testDirectSuperclassConverterMapping"));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(C.class);
+        assertThat(((C) result).getInValue()).isEqualTo("testDirectSuperclassConverterMapping");
     }
 
     @Test
     public void testMultipleConverterLoad() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(B.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(B.class))).isTrue();
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
         manager = new PropertyConverterManager(true);
         converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
     }
 
     @Test
     public void testTransitiveSuperclassConverterMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(A.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(A.class))).isTrue();
         List<PropertyConverter<A>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(A.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<A> converter = converters.get(0);
         A result = converter.convert("testTransitiveSuperclassConverterMapping", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(C.class));
-        assertThat(((C) result).getInValue(), equalTo("testTransitiveSuperclassConverterMapping"));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(C.class);
+        assertThat(((C) result).getInValue()).isEqualTo("testTransitiveSuperclassConverterMapping");
     }
 
     @Test
     public void testDirectInterfaceMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(Readable.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(Readable.class))).isTrue();
         List<PropertyConverter<Readable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Readable.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<Readable> converter = converters.get(0);
         Readable result = converter.convert("testDirectInterfaceMapping", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(C.class));
-        assertThat(((C) result).getInValue(), equalTo("testDirectInterfaceMapping"));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(C.class);
+        assertThat(((C) result).getInValue()).isEqualTo("testDirectInterfaceMapping");
     }
 
     @Test
     public void testTransitiveInterfaceMapping1() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(Runnable.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(Runnable.class))).isTrue();
         List<PropertyConverter<Runnable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Runnable.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<Runnable> converter = converters.get(0);
         Runnable result = converter.convert("testTransitiveInterfaceMapping1", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(C.class));
-        assertThat(((C) result).getInValue(), equalTo("testTransitiveInterfaceMapping1"));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(C.class);
+        assertThat(((C) result).getInValue()).isEqualTo("testTransitiveInterfaceMapping1");
     }
 
     @Test
     public void testTransitiveInterfaceMapping2() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(AutoCloseable.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(AutoCloseable.class))).isTrue();
         List<PropertyConverter<AutoCloseable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(AutoCloseable.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<AutoCloseable> converter = converters.get(0);
         AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(C.class));
-        assertThat(((C) result).getInValue(), equalTo("testTransitiveInterfaceMapping2"));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(C.class);
+        assertThat(((C) result).getInValue()).isEqualTo("testTransitiveInterfaceMapping2");
     }
 
     @Test
     public void testBoxedConverterMapping() {
         PropertyConverterManager manager = new PropertyConverterManager(true);
-        assertFalse(manager.isTargetTypeSupported(TypeLiteral.of(int.class)));
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(Integer.class)));
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(int.class))).isFalse();
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(Integer.class))).isTrue();
         List<PropertyConverter<Integer>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(int.class)));
-        assertThat(converters, hasSize(1));
+        assertThat(converters).hasSize(1);
 
         PropertyConverter<Integer> converter = converters.get(0);
         Integer result = converter.convert("101", DUMMY_CONTEXT);
 
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(Integer.class));
-        assertThat(result, equalTo(101));
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(Integer.class);
+        assertThat(result).isEqualTo(101);
     }
 
     
@@ -188,8 +183,8 @@ public class PropertyConverterManagerTest {
     public void testCreateEnumPropertyConverter() {
         PropertyConverterManager manager = new PropertyConverterManager(false);
         PropertyConverter pc = manager.createDefaultPropertyConverter(TypeLiteral.of(MyEnum.class));
-        assertTrue(pc instanceof EnumConverter);
-        assertTrue(manager.isTargetTypeSupported(TypeLiteral.of(MyEnum.class)));
+        assertThat(pc instanceof EnumConverter).isTrue();
+        assertThat(manager.isTargetTypeSupported(TypeLiteral.of(MyEnum.class))).isTrue();
     }
 
     @Test
@@ -199,16 +194,16 @@ public class PropertyConverterManagerTest {
         getFactoryMethod.setAccessible(true);
 
         Method foundMethod = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"instanceOf"});
-        assertEquals("instanceOf", foundMethod.getName());
+        assertThat(foundMethod.getName()).isEqualTo("instanceOf");
         
         Method staticOf = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"of"});
-        assertEquals("of", staticOf.getName());
+        assertThat(staticOf.getName()).isEqualTo("of");
 
         Method notFoundMethod = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"missingMethod"});
-        assertNull(notFoundMethod);
+        assertThat(notFoundMethod).isNull();
 
         Method wrongSignature = (Method) getFactoryMethod.invoke(manager, MyType.class, new String[]{"getValue"});
-        assertNull(wrongSignature);
+        assertThat(wrongSignature).isNull();
     }
 
     @Test
@@ -228,10 +223,10 @@ public class PropertyConverterManagerTest {
         method.setAccessible(true);
 
         for (int i = 0; i < boxed.length; i++) {
-            assertEquals(TypeLiteral.of(boxed[i]),
-                    method.invoke(manager, TypeLiteral.of(primitive[i])));
-            assertEquals(TypeLiteral.of(boxed[i].getComponentType()),
-                    method.invoke(manager, TypeLiteral.of(primitive[i].getComponentType())));
+            assertThat(TypeLiteral.of(boxed[i]))
+                    .isEqualTo(method.invoke(manager, TypeLiteral.of(primitive[i])));
+            assertThat(TypeLiteral.of(boxed[i].getComponentType()))
+                    .isEqualTo(method.invoke(manager, TypeLiteral.of(primitive[i].getComponentType())));
         }
     }
 

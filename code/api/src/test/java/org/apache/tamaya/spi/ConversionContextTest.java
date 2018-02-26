@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link ConversionContext}, created by atsticks on 20.08.16.
@@ -41,25 +41,25 @@ public class ConversionContextTest {
     @Test
     public void getSetKey() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("getKey", TypeLiteral.of(String.class)).build();
-        assertEquals("getKey", ctx.getKey());
+        assertThat(ctx.getKey()).isEqualTo("getKey");
         ctx = new ConversionContext.Builder("getKey", TypeLiteral.of(String.class)).setKey("setKey").build();
-        assertEquals("setKey", ctx.getKey());
+        assertThat(ctx.getKey()).isEqualTo("setKey");
     }
 
     @Test
     public void getSetTargetType() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("getTargetType", TypeLiteral.of(String.class)).build();
-        assertEquals(TypeLiteral.of(String.class), ctx.getTargetType());
+        assertThat(ctx.getTargetType()).isEqualTo(TypeLiteral.of(String.class));
         ctx = new ConversionContext.Builder("setTargetType", TypeLiteral.of(String.class)).setTargetType(TypeLiteral.of(Integer.class)).build();
-        assertEquals(TypeLiteral.of(Integer.class), ctx.getTargetType());
+        assertThat(ctx.getTargetType()).isEqualTo(TypeLiteral.of(Integer.class));
     }
 
     @Test
     public void getSetAnnotatedElement() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("getAnnotatedElement", TypeLiteral.of(List.class)).build();
-        assertNull(ctx.getAnnotatedElement());
+        assertThat(ctx.getAnnotatedElement()).isNull();
         ctx = new ConversionContext.Builder(TypeLiteral.of(List.class)).setAnnotatedElement(MyAnnotatedElement).build();
-        assertEquals(MyAnnotatedElement, ctx.getAnnotatedElement());
+        assertThat(ctx.getAnnotatedElement()).isEqualTo(MyAnnotatedElement);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ConversionContextTest {
         Configuration config = new MyConfiguration();
         ConversionContext ctx = new ConversionContext.Builder("testConfiguration", TypeLiteral.of(List.class))
                 .setConfiguration(config).build();
-        assertEquals(config, ctx.getConfiguration());
+        assertThat(ctx.getConfiguration()).isEqualTo(config);
     }
 
     @Test
@@ -81,23 +81,23 @@ public class ConversionContextTest {
 
         ConversionContext ctx = new ConversionContext.Builder("getSupportedFormats", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, writeable.get(0), writeable.get(1)).build();
-        assertTrue(ctx.getSupportedFormats().containsAll(readable));
-        assertTrue(ctx.getSupportedFormats().indexOf(readable.get(0))
-                < ctx.getSupportedFormats().indexOf(readable.get(1)));
+        assertThat(ctx.getSupportedFormats().containsAll(readable)).isTrue();
+        assertThat(ctx.getSupportedFormats().indexOf(readable.get(0))
+                < ctx.getSupportedFormats().indexOf(readable.get(1))).isTrue();
 
         ctx = new ConversionContext.Builder(TypeLiteral.of(List.class)).build();
-        assertTrue(ctx.getSupportedFormats().isEmpty());
+        assertThat(ctx.getSupportedFormats().isEmpty()).isTrue();
         ctx.addSupportedFormats(MyConverter.class, writeable.get(0), writeable.get(1));
-        assertTrue(ctx.getSupportedFormats().containsAll(readable));
-        assertTrue(ctx.getSupportedFormats().indexOf(readable.get(0))
-                < ctx.getSupportedFormats().indexOf(readable.get(1)));
+        assertThat(ctx.getSupportedFormats().containsAll(readable)).isTrue();
+        assertThat(ctx.getSupportedFormats().indexOf(readable.get(0))
+                < ctx.getSupportedFormats().indexOf(readable.get(1))).isTrue();
     }
 
     @Test
     public void testToString() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy").build();
-        assertEquals("ConversionContext{configuration=null, key='toString', targetType=TypeLiteral{type=interface java.util.List}, annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]}", ctx.toString());
+        assertThat(ctx.toString()).isEqualTo("ConversionContext{configuration=null, key='toString', targetType=TypeLiteral{type=interface java.util.List}, annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]}");
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ConversionContextTest {
         ConfigurationContext context = new MyConfigurationContext();
         ConversionContext ctx = new ConversionContext.Builder("getConfigurationContext", TypeLiteral.of(List.class))
                 .setConfigurationContext(context).build();
-        assertEquals(context, ctx.getConfigurationContext());
+        assertThat(ctx.getConfigurationContext()).isEqualTo(context);
     }
 
     private static final AnnotatedElement MyAnnotatedElement = new AnnotatedElement() {

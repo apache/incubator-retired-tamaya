@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.LocalDate;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by atsti on 02.10.2017.
@@ -42,17 +42,17 @@ public class LocalDateConverterTest {
     public void convert() throws Exception {
         LocalDateConverter conv = new LocalDateConverter();
         LocalDate value = conv.convert("2007-12-03", context);
-        assertEquals(value, LocalDate.parse("2007-12-03"));
+        assertThat(LocalDate.parse("2007-12-03")).isEqualTo(value);
         value = conv.convert("foo", context);
-        assertNull(value);
+        assertThat(value).isNull();
     }
 
     @Test
     public void equalsAndHashcode() throws Exception {
         LocalDateConverter conv1 = new LocalDateConverter();
         LocalDateConverter conv2 = new LocalDateConverter();
-        assertEquals(conv1, conv2);
-        assertEquals(conv1.hashCode(), conv2.hashCode());
+        assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 
     @Test
@@ -61,12 +61,12 @@ public class LocalDateConverterTest {
         LocalDateConverter converter = new LocalDateConverter();
         converter.convert("", localcontext);
 
-        assertTrue(localcontext.getSupportedFormats().toString().contains(" (LocalDateConverter)"));
+        assertThat(localcontext.getSupportedFormats().toString().contains(" (LocalDateConverter)")).isTrue();
     }
 
     @Test
     public void testHashCode() {
         LocalDateConverter instance = new LocalDateConverter();
-        assertEquals(LocalDateConverter.class.hashCode(), instance.hashCode());
+        assertThat(instance.hashCode()).isEqualTo(LocalDateConverter.class.hashCode());
     }
 }
