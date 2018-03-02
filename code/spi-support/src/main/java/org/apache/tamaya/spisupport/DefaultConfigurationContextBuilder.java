@@ -77,6 +77,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     /**
      * Allows to reset configuration context during unit tests.
+     * @param configurationContext the context to be used, not null.
+     * @return the builder for chaining
      */
     public final ConfigurationContextBuilder resetWithConfigurationContext(ConfigurationContext configurationContext) {
         checkBuilderState();
@@ -397,7 +399,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     /**
      * Builds a new configuration based on the configuration of this builder instance.
      *
-     * @return a new {@link org.apache.tamaya.Configuration configuration instance},
+     * @return a new {@link org.apache.tamaya.Configuration} configuration instance,
      *         never {@code null}.
      */
     @Override

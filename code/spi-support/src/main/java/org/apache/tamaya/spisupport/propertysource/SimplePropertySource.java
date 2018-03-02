@@ -264,7 +264,8 @@ public class SimplePropertySource extends BasePropertySource {
         /**
          * Sets the {@code properties} and returns a reference to this Builder so that the methods can be chained together.
          *
-         * @param val the {@code properties} to set
+         * @param key the {@code properties} key to set
+         * @param val the {@code properties} value to set
          * @return a reference to this Builder
          */
         public Builder withProperty(String key, String val) {

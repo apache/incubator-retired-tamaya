@@ -25,7 +25,7 @@ import java.util.Map;
 
 
 /**
- * Component SPI which encapsulates the evaluation of a single or full <b>raw</b>value
+ * Component SPI which encapsulates the evaluation of a single or full <b>raw</b> value
  * for a {@link ConfigurationContext}.
  */
 public interface ConfigValueEvaluator {

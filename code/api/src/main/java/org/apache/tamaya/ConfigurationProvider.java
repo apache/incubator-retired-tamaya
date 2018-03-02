@@ -73,7 +73,7 @@ public final class ConfigurationProvider {
     }
 
     /**
-     * This method allows to replace the current {@link org.apache.tamaya.spi.ConfigurationContext} with a new
+     * This method allows replacement of the current {@link org.apache.tamaya.spi.ConfigurationContext} with a new
      * instance. This can be used to update the context with a new one, e.g. because some of the configuration
      * data has changed and should be updated. It is the responsibility of the ConfigurationProvider to trigger
      * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
@@ -90,7 +90,7 @@ public final class ConfigurationProvider {
     }
 
     /**
-     * This method allows to replace the current default {@link org.apache.tamaya.Configuration} with a new
+     * This method allows replacement of the current default {@link org.apache.tamaya.Configuration} with a new
      * instance. It is the responsibility of the ConfigurationProvider to trigger
      * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
      * listeners can do whatever is appropriate to react to any given configuration change.

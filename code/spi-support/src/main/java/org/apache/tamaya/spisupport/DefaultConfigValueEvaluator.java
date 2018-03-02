@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
  * chain of {@link PropertySource} and {@link PropertyFilter}
- * instance to evaluate the current Configuration.
+ * instances to evaluate the current Configuration.
  */
 public class DefaultConfigValueEvaluator implements ConfigValueEvaluator{
 

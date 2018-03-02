@@ -31,6 +31,8 @@ public final class CoreConfiguration extends DefaultConfiguration {
 
     /**
      * Creates a new builder instance.
+     *
+     * @param context The configuration Context to be used.
      */
     public CoreConfiguration(ConfigurationContext context) {
         super(context);

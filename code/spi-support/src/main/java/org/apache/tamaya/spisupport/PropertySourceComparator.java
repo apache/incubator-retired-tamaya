@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Comparator for ordering of PropertySources based on their ordinal method and class name.
+ * Comparator for ordering of {@link PropertySource}s based on their ordinal method and class name.
  */
 public class PropertySourceComparator implements Comparator<PropertySource>, Serializable {
     /** serial version UID. */
@@ -71,7 +71,7 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
     }
 
     /**
-     * Evaluates an ordinal value from a {@link PropertySource}, Hereby the ordinal of type {@code int}
+     * Evaluates an ordinal value from a {@link PropertySource}, whereby the ordinal of type {@code int}
      * is evaluated as follows:
      * <ol>
      *     <li>It evaluates the {@code String} value for {@link PropertySource#TAMAYA_ORDINAL} and tries
@@ -104,7 +104,7 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
     }
 
     /**
-     * Overrides/adds the key to evaluate/override a property sources ordinal.
+     * Overrides/adds the key to evaluate/override a property source ordinal.
      * @param ordinalKey sets the alternative ordinal key, if null default
      *                   behaviour will be active.
      * @return the instance for chaining.

@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Boolean.
+ * Converter, converting from String to Supplier.
  */
 @Component(service = PropertyConverter.class)
 public class SupplierConverter implements PropertyConverter<Supplier> {

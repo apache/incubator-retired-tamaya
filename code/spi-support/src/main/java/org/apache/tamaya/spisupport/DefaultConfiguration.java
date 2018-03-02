@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 /**
  * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
  * chain of {@link PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
- * instance to evaluate the current Configuration.
+ * instances to evaluate the current Configuration.
  */
 public class DefaultConfiguration implements Configuration {
     /**
@@ -105,7 +105,7 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Evaluates the raw value using the context's PropertyValueCombinationPolicy.
+     * Evaluates the raw value using the context's {@link PropertyValueCombinationPolicy}.
      * @param key the key, not null.
      * @return the value, before filtering is applied.
      */
@@ -172,7 +172,7 @@ public class DefaultConfiguration implements Configuration {
      * using the {@link PropertyConverter} instances provided by the current
      * {@link ConfigurationContext}.
      *
-     * @param key  the property's absolute, or relative path, e.g. @code
+     * @param key  the property's absolute, or relative path, e.g. {@code
      *             a/b/c/d.myProperty}, never {@code null}.
      * @param type The target type required, not {@code null}.
      * @param <T>  the value type
@@ -188,11 +188,11 @@ public class DefaultConfiguration implements Configuration {
      * using the {@link PropertyConverter} instances provided by the current
      * {@link ConfigurationContext}.
      *
-     * @param key  the property's absolute, or relative path, e.g. @code
+     * @param key  the property's absolute, or relative path, e.g. {@code
      *             a/b/c/d.myProperty}.
-     * @param type The target type required, not null.
+     * @param type The target type required, not {@code null}.
      * @param <T>  the value type
-     * @return the converted value, never null.
+     * @return the converted value, never {@code null}.
      */
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {

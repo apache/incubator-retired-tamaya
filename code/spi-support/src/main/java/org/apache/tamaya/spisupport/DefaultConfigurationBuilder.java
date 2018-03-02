@@ -212,7 +212,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     /**
      * Builds a new configuration based on the configuration of this builder instance.
      *
-     * @return a new {@link org.apache.tamaya.Configuration configuration instance},
+     * @return a new {@link org.apache.tamaya.Configuration} configuration instance,
      *         never {@code null}.
      */
     @Override

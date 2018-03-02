@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Comparator for PropertyFilters based on their priority annotations.
+ * Comparator for {@link PropertyFilter}s based on their priority annotations.
  */
 public final class PropertyFilterComparator implements Comparator<PropertyFilter>, Serializable {
 

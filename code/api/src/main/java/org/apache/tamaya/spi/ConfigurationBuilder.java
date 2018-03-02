@@ -72,7 +72,7 @@ public interface ConfigurationBuilder {
      * lowest priority  regardless of its current ordinal value. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
-     * @param propertySources the PropertySources to add
+     * @param propertySources the {@link PropertySource}s to add
      * @return this builder, for chaining, never null.
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
@@ -85,7 +85,7 @@ public interface ConfigurationBuilder {
      * lowest priority regardless of its current ordinal value. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
-     * @param propertySources the PropertySources to add
+     * @param propertySources the {@link PropertySource}s to add
      * @return this builder, for chaining, never null.
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
@@ -192,7 +192,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder lowestPriority(PropertySource propertySource);
 
     /**
-     * Adds the given PropertyFilter instances, hereby the instances are added
+     * Adds the given {@link PropertyFilter} instances, hereby the instances are added
      * to the end of the list with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
@@ -203,7 +203,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder addPropertyFilters(PropertyFilter... filters);
 
     /**
-     * Adds the given PropertyFilter instances, hereby the instances are added
+     * Adds the given {@link PropertyFilter} instances, hereby the instances are added
      * to the end of the list with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
@@ -220,7 +220,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder addDefaultPropertyFilters();
 
     /**
-     * Removes the given PropertyFilter instances, if existing. The order of the remaining
+     * Removes the given {@link PropertyFilter} instances, if existing. The order of the remaining
      * filters is preserved.
      *
      * @param filters the filter to remove
@@ -229,7 +229,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder removePropertyFilters(PropertyFilter... filters);
 
     /**
-     * Removes the given PropertyFilter instances, if existing. The order of the remaining
+     * Removes the given {@link PropertyFilter} instances, if existing. The order of the remaining
      * filters is preserved.
      *
      * @param filters the filter to remove
@@ -243,8 +243,8 @@ public interface ConfigurationBuilder {
      * For converters already registered for the current target type the
      * method has no effect.
      *
-     * @param typeToConvert     the type for which the converter is for
-     * @param propertyConverters the PropertyConverters to add for this type
+     * @param typeToConvert     the type for which the converter is used
+     * @param propertyConverters the {@link PropertyConverter}s to add for this type
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
@@ -257,7 +257,7 @@ public interface ConfigurationBuilder {
      * For converters already registered for the current target type the
      * method has no effect.
      *
-     * @param typeToConvert the type for which the converter is for
+     * @param typeToConvert the type for which the converter is used
      * @param propertyConverters the PropertyConverters to add for this type
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
@@ -272,10 +272,10 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder addDefaultPropertyConverters();
 
     /**
-     * Removes the given PropertyConverter instances for the given type,
+     * Removes the given {@link PropertyConverter} instances for the given type,
      * if existing.
      *
-     * @param typeToConvert the type which the converter is for
+     * @param typeToConvert the type which the converter is used
      * @param propertyConverters    the converter to remove
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
@@ -287,7 +287,7 @@ public interface ConfigurationBuilder {
      * Removes the given PropertyConverter instances for the given type,
      * if existing.
      *
-     * @param typeToConvert the type which the converter is for
+     * @param typeToConvert the type which the converter is used
      * @param propertyConverters    the converter to remove
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
@@ -299,7 +299,7 @@ public interface ConfigurationBuilder {
      * Removes all converters for the given type, which actually renders a given type
      * unsupported for type conversion.
      *
-     * @param typeToConvert the type which the converter is for
+     * @param typeToConvert the type which the converter is used
      * @return this builder, for chaining, never null.
      */
     ConfigurationBuilder removePropertyConverters(TypeLiteral<?> typeToConvert);
@@ -307,7 +307,7 @@ public interface ConfigurationBuilder {
     /**
      * Sorts the current registered property sources using the given comparator.
      *
-     * NOTE: property sources at the beginning have minimal significance.
+     * <p>NOTE: property sources at the beginning have minimal significance.
      *
      * @param comparator the comparator to be used, not {@code null}.
      * @return this instance for chaining.
@@ -317,7 +317,7 @@ public interface ConfigurationBuilder {
     /**
      * Sorts the current registered property filters using the given comparator.
      *
-     * NOTE: property filters at the beginning have minimal significance.
+     * <p>NOTE: property filters at the beginning have minimal significance.
      *
      * @param comparator the comparator to be used, not {@code null}.
      * @return this instance for chaining.
