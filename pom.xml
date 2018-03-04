@@ -57,7 +57,7 @@
         <checkstyle.version>2.15</checkstyle.version>
         <!-- 201801: v1.3.x gives strange test errors -->
         <pitest-plugin.version>1.2.5</pitest-plugin.version>
-        <enforcer.version>1.4.1</enforcer.version>
+        <enforcer.version>3.0.0-M1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
         <javadoc.version>3.0.0</javadoc.version>
@@ -617,6 +617,18 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-runtime</artifactId>
+                    <version>2.3.0</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>javax.activation-api</artifactId>
+                    <version>1.2.0</version>
+                  </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -691,6 +703,13 @@
                     <source>${maven.compile.sourceLevel}</source>
                     <verbose>false</verbose>
                 </configuration>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                    <version>3.7</version>
+                  </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
