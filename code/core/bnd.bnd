@@ -9,6 +9,7 @@
 javac.source: 1.8
 javac.target: 1.8
 
+Automatic-Module-Name: org.apache.tamaya.core
 Bundle-Version: ${version}.${tstamp}
 Bundle-Name: Apache Tamaya - Core
 Bundle-SymbolicName: org.apache.tamaya.core
