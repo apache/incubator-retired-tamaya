@@ -135,4 +135,13 @@ public class ShortConverterTest {
         ShortConverter instance = new ShortConverter();
         assertThat(instance.hashCode()).isEqualTo(ShortConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        ShortConverter converter = new ShortConverter();
+
+        assertThat(converter).isEqualTo(new ShortConverter());
+        assertThat(converter).isNotEqualTo(new SupplierConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

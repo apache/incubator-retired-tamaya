@@ -74,4 +74,13 @@ public class OptionalConverterTest {
         OptionalConverter instance = new OptionalConverter();
         assertThat(instance.hashCode()).isEqualTo(OptionalConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        OptionalConverter converter = new OptionalConverter();
+
+        assertThat(converter).isEqualTo(new OptionalConverter());
+        assertThat(converter).isNotEqualTo(new PathConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

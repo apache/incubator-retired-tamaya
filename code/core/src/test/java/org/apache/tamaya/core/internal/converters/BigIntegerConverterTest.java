@@ -157,4 +157,13 @@ public class BigIntegerConverterTest {
         assertThat(instance.hashCode()).isEqualTo(BigIntegerConverter.class.hashCode());
     }
 
+    @Test
+    public void testEquality() {
+        BigIntegerConverter converter = new BigIntegerConverter();
+
+        assertThat(converter).isEqualTo(new BigIntegerConverter());
+        assertThat(converter).isNotEqualTo(new BooleanConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
+
 }

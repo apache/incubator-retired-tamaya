@@ -202,4 +202,13 @@ public class CurrencyConverterTest {
         CurrencyConverter instance = new CurrencyConverter();
         assertThat(instance.hashCode()).isEqualTo(CurrencyConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        CurrencyConverter converter = new CurrencyConverter();
+
+        assertThat(converter).isEqualTo(new CurrencyConverter());
+        assertThat(converter).isNotEqualTo(new DoubleConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

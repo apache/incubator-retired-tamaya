@@ -92,4 +92,12 @@ public class DurationConverterTest {
         assertThat(instance.hashCode()).isEqualTo(DurationConverter.class.hashCode());
     }
 
+    @Test
+    public void testEquality() {
+        DurationConverter converter = new DurationConverter();
+
+        assertThat(converter).isEqualTo(new DurationConverter());
+        assertThat(converter).isNotEqualTo(new FileConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

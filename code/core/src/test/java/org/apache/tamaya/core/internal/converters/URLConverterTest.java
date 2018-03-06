@@ -87,4 +87,13 @@ public class URLConverterTest {
         URLConverter instance = new URLConverter();
         assertThat(instance.hashCode()).isEqualTo(URLConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        URLConverter converter = new URLConverter();
+
+        assertThat(converter).isEqualTo(new URLConverter());
+        assertThat(converter).isNotEqualTo(new BigDecimalConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

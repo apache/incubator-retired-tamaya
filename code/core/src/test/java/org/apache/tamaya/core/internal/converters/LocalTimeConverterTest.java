@@ -53,6 +53,8 @@ public class LocalTimeConverterTest {
         LocalTimeConverter conv2 = new LocalTimeConverter();
         assertThat(conv2).isEqualTo(conv1);
         assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
+        assertThat(conv2).isNotEqualTo(new LongConverter());
+        assertThat(conv2).isNotEqualTo(null);
     }
 
     @Test

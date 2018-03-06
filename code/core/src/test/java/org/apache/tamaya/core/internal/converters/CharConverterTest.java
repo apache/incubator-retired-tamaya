@@ -164,4 +164,13 @@ public class CharConverterTest {
         CharConverter instance = new CharConverter();
         assertThat(instance.hashCode()).isEqualTo(CharConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        CharConverter converter = new CharConverter();
+
+        assertThat(converter).isEqualTo(new CharConverter());
+        assertThat(converter).isNotEqualTo(new ClassConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

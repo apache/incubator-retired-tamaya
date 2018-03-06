@@ -52,6 +52,8 @@ public class OffsetTimeConverterTest {
         OffsetTimeConverter conv1 = new OffsetTimeConverter();
         OffsetTimeConverter conv2 = new OffsetTimeConverter();
         assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2).isNotEqualTo(new OptionalConverter());
+        assertThat(conv2).isNotEqualTo(null);
         assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 

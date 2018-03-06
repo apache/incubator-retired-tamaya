@@ -198,5 +198,12 @@ public class FloatConverterTest {
         assertThat(instance.hashCode()).isEqualTo(FloatConverter.class.hashCode());
     }
 
+    @Test
+    public void testEquality() {
+        FloatConverter converter = new FloatConverter();
 
+        assertThat(converter).isEqualTo(new FloatConverter());
+        assertThat(converter).isNotEqualTo(new InstantConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

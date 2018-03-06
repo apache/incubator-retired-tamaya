@@ -134,4 +134,13 @@ public class LongConverterTest {
         LongConverter instance = new LongConverter();
         assertThat(instance.hashCode()).isEqualTo(LongConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        LongConverter converter = new LongConverter();
+
+        assertThat(converter).isEqualTo(new LongConverter());
+        assertThat(converter).isNotEqualTo(new NumberConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }
