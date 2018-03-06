@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +50,7 @@ public class DurationConverter implements PropertyConverter<Duration> {
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override
