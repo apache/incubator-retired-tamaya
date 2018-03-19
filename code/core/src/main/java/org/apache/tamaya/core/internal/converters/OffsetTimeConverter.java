@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Boolean.
+ * Converter, converting from String to OffsetTime.
  */
 @Component(service = PropertyConverter.class)
 public class OffsetTimeConverter implements PropertyConverter<OffsetTime> {

@@ -168,7 +168,7 @@ public class PropertyConverterManager {
      * Allows to evaluate if a given target type is supported.
      *
      * @param targetType the target type, not {@code null}.
-     * @return true, if a converters for the given type is registered, or a default one can be created.
+     * @return true, if a converter for the given type is registered or a default one can be created.
      */
     public boolean isTargetTypeSupported(TypeLiteral<?> targetType) {
         return converters.containsKey(targetType) || transitiveConverters.containsKey(targetType) || createDefaultPropertyConverter(targetType) != null;
@@ -194,23 +194,25 @@ public class PropertyConverterManager {
 
     /**
      * Get the list of all current registered converters for the given target type.
-     * If not converters are registered, they component tries to create and register a dynamic
+     *
+     * <p>
+     * If no converters are registered, the component tries to create and register dynamic
      * converters based on String constructor or static factory methods available.
      * The converters provided are of the following type and returned in the following order:
      * <ul>
      * <li>Converters mapped explicitly to the required target type are returned first, ordered
      * by decreasing priority. This means, if explicit converters are registered these are used
      * primarily for converting a value.</li>
-     * <li>The target type of each explicitly registered converters also can be transitively mapped to
+     * <li>The target type of each explicitly registered converter can also be transitively mapped to
      * 1) all directly implemented interfaces, 2) all its superclasses (except Object), 3) all the interfaces
-     * implemented by its superclasses. These groups of transitive converters is returned similarly in the
-     * order as mentioned, whereas also here a priority based decreasing ordering is applied.</li>
+     * implemented by its superclasses. This group of transitive converters is returned similarly in the
+     * order already mentioned, whereas here a priority based on decreasing ordering is applied.</li>
      * <li>java.lang wrapper classes and native types are automatically mapped.</li>
      * <li>If no explicit converters are registered, for Enum types a default implementation is provided that
-     * compares the configuration values with the different enum members defined (cases sensitive mapping).</li>
+     * compares the configuration values with the different enum members defined (case sensitive mapping).</li>
      * </ul>
      * <p>
-     * So given that list above directly registered mappings always are tried first, before any transitive mapping
+     * The above list of directly registered mappings are always tried first, before any transitive mapping
      * should be used. Also in all cases @Priority annotations are honored for ordering of the converters in place.
      * Transitive conversion is supported for all directly implemented interfaces (including inherited ones) and
      * the inheritance hierarchy (exception Object). Superinterfaces of implemented interfaces are ignored.
@@ -340,7 +342,7 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Creates a dynamic PropertyConverter for the given target type.
+     * Creates a dynamic {@link PropertyConverter} for the given target type.
      *
      * @param targetType the target type
      * @param <T>        the type class
@@ -430,8 +432,8 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Default converters imüöementation perfoming several lookups for String converion
-     * option.
+     * Default converter implementation performing several lookups for String conversion
+     * options.
      * @param <T>
      */
     private static class DefaultPropertyConverter<T> implements PropertyConverter<T> {

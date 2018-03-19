@@ -35,7 +35,7 @@ import java.util.Map;
  * combination and overriding.
  * </p>
  * <h3>Implementation Requirements</h3>
- * Implementations current this interface must be
+ * Implementations of this interface must be
  * <ul>
  *  <li>Thread safe</li>
  *  <li>Immutable</li>
@@ -43,7 +43,7 @@ import java.util.Map;
  *
  * <p>It is not recommended that implementations also are serializable, since the any configuration can be <i>frozen</i>
  * by reading out its complete configuration map into a serializable and remotable structure. This helps significantly
- * simplifying the development of this interface, e.g. for being backed up by systems and stores that are not part 
+ * by simplifying the development of this interface, e.g. for being backed up by systems and stores that are not part of
  * this library at all.</p>
  */
 public interface Configuration {
@@ -169,7 +169,7 @@ public interface Configuration {
     ConfigurationContext getContext();
 
     /**
-     * Create a new builder using this instance as it's base.
+     * Create a new builder using this instance as its base.
      * @return a new builder, never null.
      */
     default ConfigurationBuilder toBuilder() {

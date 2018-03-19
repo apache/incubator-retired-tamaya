@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Comparator implementation for odering services loaded based on their increasing priority values.
+ * Comparator implementation for ordering services loaded based on their increasing priority values.
  */
 public class PriorityServiceComparator implements Comparator<Object>, Serializable {
 

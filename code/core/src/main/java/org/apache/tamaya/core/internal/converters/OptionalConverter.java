@@ -29,7 +29,7 @@ import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
- * Converter, converting from String to Boolean.
+ * Converter, converting from String to Optional.
  */
 @Component(service = PropertyConverter.class)
 public class OptionalConverter implements PropertyConverter<Optional> {

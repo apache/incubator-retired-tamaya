@@ -49,6 +49,7 @@ public final class CoreConfigurationBuilder extends DefaultConfigurationBuilder 
 
     /**
      * Creates a new builder instance.
+     * @param config the configuration to be used, not null.
      */
     public CoreConfigurationBuilder(Configuration config) {
         super(config);
