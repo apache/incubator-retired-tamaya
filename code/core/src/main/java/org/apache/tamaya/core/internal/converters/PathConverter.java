@@ -53,7 +53,7 @@ public class PathConverter implements PropertyConverter<Path> {
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

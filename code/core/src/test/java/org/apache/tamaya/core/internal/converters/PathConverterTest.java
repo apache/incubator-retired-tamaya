@@ -69,6 +69,8 @@ public class PathConverterTest {
         PathConverter conv1 = new PathConverter();
         PathConverter conv2 = new PathConverter();
         assertThat(conv2).isEqualTo(conv1);
+        assertThat(conv2).isNotEqualTo(new ShortConverter());
+        assertThat(conv2).isNotEqualTo(null);
         assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
     }
 

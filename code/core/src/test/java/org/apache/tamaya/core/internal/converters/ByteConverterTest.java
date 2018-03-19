@@ -110,4 +110,13 @@ public class ByteConverterTest {
         ByteConverter instance = new ByteConverter();
         assertThat(instance.hashCode()).isEqualTo(ByteConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        ByteConverter converter = new ByteConverter();
+
+        assertThat(converter).isEqualTo(new ByteConverter());
+        assertThat(converter).isNotEqualTo(new CharConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

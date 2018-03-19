@@ -79,4 +79,13 @@ public class ClassConverterTest {
         ClassConverter instance = new ClassConverter();
         assertThat(instance.hashCode()).isEqualTo(ClassConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        ClassConverter converter = new ClassConverter();
+
+        assertThat(converter).isEqualTo(new ClassConverter());
+        assertThat(converter).isNotEqualTo(new CurrencyConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

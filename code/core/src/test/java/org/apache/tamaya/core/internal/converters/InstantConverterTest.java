@@ -53,6 +53,8 @@ public class InstantConverterTest {
         InstantConverter conv2 = new InstantConverter();
         assertThat(conv2).isEqualTo(conv1);
         assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
+        assertThat(conv1).isNotEqualTo(new IntegerConverter());
+        assertThat(conv1).isNotEqualTo(null);
     }
 
     @Test

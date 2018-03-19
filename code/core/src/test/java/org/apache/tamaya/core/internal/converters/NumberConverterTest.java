@@ -167,4 +167,13 @@ public class NumberConverterTest {
         NumberConverter instance = new NumberConverter();
         assertThat(instance.hashCode()).isEqualTo(NumberConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        NumberConverter converter = new NumberConverter();
+
+        assertThat(converter).isEqualTo(new NumberConverter());
+        assertThat(converter).isNotEqualTo(new OffsetDateTimeConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

@@ -73,7 +73,7 @@ public class LongConverter implements PropertyConverter<Long>{
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

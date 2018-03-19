@@ -86,6 +86,13 @@ public class URIConverterTest {
         URIConverter instance = new URIConverter();
         assertThat(instance.hashCode()).isEqualTo(URIConverter.class.hashCode());
     }
-    
-    
+
+    @Test
+    public void testEquality() {
+        URIConverter converter = new URIConverter();
+
+        assertThat(converter).isEqualTo(new URIConverter());
+        assertThat(converter).isNotEqualTo(new URLConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

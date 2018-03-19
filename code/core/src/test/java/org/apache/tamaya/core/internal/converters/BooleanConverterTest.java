@@ -147,4 +147,12 @@ public class BooleanConverterTest {
         assertThat(instance.hashCode()).isEqualTo(BooleanConverter.class.hashCode());
     }
 
+    @Test
+    public void testEquality() {
+        BooleanConverter converter = new BooleanConverter();
+
+        assertThat(converter).isEqualTo(new BooleanConverter());
+        assertThat(converter).isNotEqualTo(new ByteConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

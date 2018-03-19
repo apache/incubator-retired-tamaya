@@ -87,7 +87,7 @@ public class FloatConverter implements PropertyConverter<Float> {
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

@@ -135,4 +135,13 @@ public class BigDecimalConverterTest {
 		assertThat(value).isNull();
 		verify(context).addSupportedFormats(BigDecimalConverter.class, "<bigDecimal> -> new BigDecimal(String)");
 	}
+
+    @Test
+    public void testEquality() throws Exception {
+        BigDecimalConverter converter = new BigDecimalConverter();
+
+        assertThat(converter).isEqualTo(new BigDecimalConverter());
+        assertThat(converter).isNotEqualTo(new BigIntegerConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

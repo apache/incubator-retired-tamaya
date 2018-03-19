@@ -198,4 +198,12 @@ public class DoubleConverterTest {
         assertThat(instance.hashCode()).isEqualTo(DoubleConverter.class.hashCode());
     }
 
+    @Test
+    public void testEquality() {
+        DoubleConverter converter = new DoubleConverter();
+
+        assertThat(converter).isEqualTo(new DoubleConverter());
+        assertThat(converter).isNotEqualTo(new DurationConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

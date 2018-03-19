@@ -55,4 +55,13 @@ public class FileConverterTest {
         FileConverter instance = new FileConverter();
         assertThat(instance.hashCode()).isEqualTo(FileConverter.class.hashCode());
     }
+
+    @Test
+    public void testEquality() {
+        FileConverter converter = new FileConverter();
+
+        assertThat(converter).isEqualTo(new FileConverter());
+        assertThat(converter).isNotEqualTo(new FloatConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
 }

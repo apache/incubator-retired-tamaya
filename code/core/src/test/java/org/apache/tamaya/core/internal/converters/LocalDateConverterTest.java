@@ -53,6 +53,8 @@ public class LocalDateConverterTest {
         LocalDateConverter conv2 = new LocalDateConverter();
         assertThat(conv2).isEqualTo(conv1);
         assertThat(conv2.hashCode()).isEqualTo(conv1.hashCode());
+        assertThat(conv2).isNotEqualTo(null);
+        assertThat(conv2).isNotEqualTo(new LocalDateTimeConverter());
     }
 
     @Test

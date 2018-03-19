@@ -73,6 +73,15 @@ public class SupplierConverterTest {
         assertThat(instance.hashCode()).isEqualTo(SupplierConverter.class.hashCode());
     }
 
+    @Test
+    public void testEquality() {
+        SupplierConverter converter = new SupplierConverter();
+
+        assertThat(converter).isEqualTo(new SupplierConverter());
+        assertThat(converter).isNotEqualTo(new URIConverter());
+        assertThat(converter).isNotEqualTo(null);
+    }
+
     private class MyConverter<T extends InetAddress> implements PropertyConverter<InetAddress> {
 
         @Override
