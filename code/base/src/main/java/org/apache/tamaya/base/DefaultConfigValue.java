@@ -20,6 +20,7 @@ package org.apache.tamaya.base;
 
 import org.apache.tamaya.base.convert.CompoundConverter;
 
+import javax.config.Config;
 import javax.config.ConfigValue;
 import javax.config.spi.Converter;
 import java.util.*;
@@ -35,7 +36,8 @@ public class DefaultConfigValue<T> implements ConfigValue<T> {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigValue.class.getName());
 
-    private final DefaultConfig config;
+    private final Config config;
+    private final ConfigContextSupplier contextSupplier;
     private final String key;
     private String resolvedKey;
     protected String defaultTextValue;
@@ -57,8 +59,9 @@ public class DefaultConfigValue<T> implements ConfigValue<T> {
      * @param key
      * @param targetClass
      */
-    public DefaultConfigValue(DefaultConfig config, String key, Class targetClass) {
+    public DefaultConfigValue(Config config, ConfigContextSupplier contextSupplier, String key, Class<T> targetClass) {
         this.config = Objects.requireNonNull(config);
+        this.contextSupplier = Objects.requireNonNull(contextSupplier);
         this.key = Objects.requireNonNull(key);
         this.targetClass = Objects.requireNonNull(targetClass);
         if(lastValue!=null && !lastValue.getClass().isAssignableFrom(targetClass)){
@@ -89,7 +92,7 @@ public class DefaultConfigValue<T> implements ConfigValue<T> {
      * @param configValue the base instance, not null.
      * @param targetClass the target class, not null.
      */
-    DefaultConfigValue(DefaultConfigValue configValue, Class targetClass) {
+    DefaultConfigValue(DefaultConfigValue configValue, Class<T> targetClass) {
         this(configValue);
         this.targetClass = Objects.requireNonNull(targetClass);
     }
@@ -100,6 +103,7 @@ public class DefaultConfigValue<T> implements ConfigValue<T> {
      */
     private DefaultConfigValue(DefaultConfigValue configValue) {
         this.config = configValue.config;
+        this.contextSupplier = configValue.contextSupplier;
         this.key = configValue.key;
         this.evaluateVariables = configValue.evaluateVariables;
         this.converter = configValue.converter;
@@ -143,7 +147,7 @@ public class DefaultConfigValue<T> implements ConfigValue<T> {
         if(String.class.equals(targetClass)){
             return (s) -> (N)s;
         }
-        return new CompoundConverter(config.getConfigContext().getConverters(targetClass));
+        return new CompoundConverter(contextSupplier.getConfigContext().getConverters(targetClass));
     }
 
 

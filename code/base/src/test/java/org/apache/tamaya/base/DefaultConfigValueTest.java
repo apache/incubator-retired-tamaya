@@ -38,9 +38,11 @@ import static org.junit.Assert.*;
 public class DefaultConfigValueTest {
 
     private DefaultConfigValue<String> value = new DefaultConfigValue<>(
-            (DefaultConfig)ConfigProvider.getConfig(), "java.version", String.class);
+            (DefaultConfig)ConfigProvider.getConfig(), (DefaultConfig)ConfigProvider.getConfig(),
+            "java.version", String.class);
     private DefaultConfigValue<String> notExisting = new DefaultConfigValue<>(
-            (DefaultConfig)ConfigProvider.getConfig(), "notExisting", String.class);
+            (DefaultConfig)ConfigProvider.getConfig(), (DefaultConfig)ConfigProvider.getConfig(),
+            "notExisting", String.class);
 
     @Test
     public void as() throws Exception {

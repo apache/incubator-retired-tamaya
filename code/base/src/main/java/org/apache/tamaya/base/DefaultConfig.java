@@ -107,7 +107,7 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
 
     @Override
     public ConfigValue<String> access(String key) {
-        return new DefaultConfigValue(this, key, String.class);
+        return new DefaultConfigValue(this, this, key, String.class);
     }
 
     /**
