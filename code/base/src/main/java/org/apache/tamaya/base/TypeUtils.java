@@ -36,6 +36,16 @@ public final class TypeUtils {
     private TypeUtils() {
     }
 
+    public static ParameterizedType getParametrizedType(Class<?> clazz) {
+        Type[] genericTypes = clazz.getGenericInterfaces();
+        for (Type type : genericTypes) {
+            if (type instanceof ParameterizedType) {
+                return (ParameterizedType) type;
+            }
+
+        }
+        return null;
+    }
 
     /**
      * Checks the current implemented generic interfaces and evaluates the given single type parameter.

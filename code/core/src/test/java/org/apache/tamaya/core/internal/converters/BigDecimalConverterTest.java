@@ -22,6 +22,7 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.base.convert.ConversionContext;
 import org.apache.tamaya.core.converters.BigDecimalConverter;
+import org.apache.tamaya.core.converters.BigIntegerConverter;
 import org.junit.Test;
 
 import javax.config.Config;
@@ -133,4 +134,12 @@ public class BigDecimalConverterTest {
 		ConversionContext.reset();
 		assertThat(value).isNull();
 	}
+
+    @Test
+    public void testEquality() throws Exception {
+        BigDecimalConverter converter = new BigDecimalConverter();
+
+        assertThat(converter).isEqualTo(new BigDecimalConverter());
+        assertThat(converter).isNotEqualTo(new BigIntegerConverter());
+    }
 }

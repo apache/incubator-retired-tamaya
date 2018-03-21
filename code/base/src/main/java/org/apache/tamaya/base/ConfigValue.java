@@ -19,6 +19,7 @@
 package org.apache.tamaya.base;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,25 +37,26 @@ public final class ConfigValue implements Serializable{
     /** The value. */
     private String value;
     /** Additional metadata provided by the provider. */
-    private String metaEntry;
+    private Map<String, String> metaEntries = new HashMap<>();
 
     ConfigValue(ConfigValueBuilder builder){
         this.key = Objects.requireNonNull(builder.key);
         this.value = Objects.requireNonNull(builder.value);
-        this.metaEntry = builder.metaEntry;
+        this.metaEntries = builder.metaEntries;
     }
 
     /**
      * Creates a new instance
      * @param key the key, not {@code null}.
      * @param value the value, not {@code null}.
-     * @param metaEntry the source, typically the name of the {@link javax.config.spi.ConfigSource} providing
-     *               the value, not {@code null}.
+     * @param metaEntries the metaEntries, not {@code null}.
      */
-    private ConfigValue(String key, String value, String metaEntry){
+    private ConfigValue(String key, String value, Map<String,String> metaEntries){
         this.key = Objects.requireNonNull(key, "Key is required.");
         this.value = Objects.requireNonNull(value, "Value is required.");
-        this.metaEntry = metaEntry;
+        if(metaEntries!=null) {
+            this.metaEntries.putAll(metaEntries);
+        }
     }
 
     /**
@@ -79,8 +81,8 @@ public final class ConfigValue implements Serializable{
      * is also used for subsequent processing, like value filtering.
      * @return the property value entry map.
      */
-    public String getMetaEntry() {
-        return metaEntry;
+    public Map<String,String> getMetaEntries() {
+        return Collections.unmodifiableMap(metaEntries);
     }
 
     /**
@@ -110,16 +112,15 @@ public final class ConfigValue implements Serializable{
      * Creates a new PropertyValue without any metadata..
      * @param key the key, not {@code null}.
      * @param value the value.
-     * @param metaEntry the metaEntry, typically the name of the {@link javax.config.spi.ConfigSource}
-     *               providing the value, not  {@code null}.
+     * @param metaEntries the metaEntries, not  {@code null}.
      * @return a new property value instance, or {@code null},
      *         if the value passed is {@code null}..
      */
-    public static ConfigValue of(String key, String value, String metaEntry) {
+    public static ConfigValue of(String key, String value, Map<String,String> metaEntries) {
         if (value==null) {
             return null;
         }
-        return new ConfigValue(key, value, metaEntry);
+        return new ConfigValue(key, value, metaEntries);
     }
 
     /**
@@ -129,7 +130,7 @@ public final class ConfigValue implements Serializable{
     public ConfigValueBuilder toBuilder() {
         return new ConfigValueBuilder(this.getKey())
                 .setValue(this.getValue())
-        .setMetaEntry(this.metaEntry);
+        .addMetaEntries(this.metaEntries);
     }
 
     @Override
@@ -139,13 +140,13 @@ public final class ConfigValue implements Serializable{
         ConfigValue that = (ConfigValue) o;
         return Objects.equals(getKey(), that.getKey()) &&
                 Objects.equals(getValue(), that.getValue()) &&
-                Objects.equals(getMetaEntry(), that.getMetaEntry());
+                Objects.equals(getMetaEntries(), that.getMetaEntries());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getKey(), getValue(),
-                getMetaEntry());
+                getMetaEntries());
     }
 
     @Override
@@ -153,57 +154,57 @@ public final class ConfigValue implements Serializable{
         return "PropertyValue{" +
                 "key='" + key + '\'' +
                 ", value='" + value + '\'' +
-                ", metaEntry='" + metaEntry + '\'' +
+                ", metaEntries='" + metaEntries + '\'' +
                 '}';
     }
 
-    /**
-     * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
-     * @param config the String based map, not {@code null}.
-     * @return the corresponding value based map.
-     */
-    public static Map<String,ConfigValue> map(Map<String, String> config) {
-        Map<String,ConfigValue> result = new HashMap<>(config.size());
-        for(Map.Entry<String,String> en:config.entrySet()){
-            result.put(en.getKey(), ConfigValue.of(en.getKey(), en.getValue(), config.get(en.getKey()+"[meta]")));
-        }
-        return result;
-    }
-
-    /**
-     * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
-     *
-     * @param config the String based map, not {@code null}.
-     * @param source the source name, not {@code null}.
-     * @param metaData additional metadata, not {@code null}.
-     * @return the corresponding value based map.
-     */
-    public static Map<String,ConfigValue> map(Map<String, String> config, String source,
-                                              Map<String,String> metaData) {
-        Objects.requireNonNull(config, "Config must be given.");
-        Objects.requireNonNull(source, "Source must be given.");
-        Objects.requireNonNull(metaData, "Meta data must be given.");
-
-        Map<String,ConfigValue> result = new HashMap<>(config.size());
-
-        for(Map.Entry<String,String> en:config.entrySet()){
-            ConfigValue value = new ConfigValueBuilder(en.getKey(), source).setValue(en.getValue())
-                                                                               .addMetaEntries(metaData).build();
-            result.put(en.getKey(), value);
-        }
-        return result;
-    }
-
-    public Map<? extends String, ? extends String> asMap() {
-        Map<String,String> map = new HashMap<>();
-        map.put(key, value);
-        map.put(key+"[meta]", this.metaEntry);
-        return map;
-    }
-
-    public static ConfigValue of(String key, Map<String, String> rawProperties) {
-        String value = rawProperties.get(key);
-        String meta = rawProperties.get(key+"[meta]");
-        return new ConfigValue(key, value, meta);
-    }
+//    /**
+//     * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
+//     * @param config the String based map, not {@code null}.
+//     * @return the corresponding value based map.
+//     */
+//    public static Map<String,ConfigValue> map(Map<String, String> config) {
+//        Map<String,ConfigValue> result = new HashMap<>(config.size());
+//        for(Map.Entry<String,String> en:config.entrySet()){
+//            result.put(en.getKey(), ConfigValue.of(en.getKey(), en.getValue(), config.get(en.getKey()+"[meta]")));
+//        }
+//        return result;
+//    }
+//
+//    /**
+//     * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
+//     *
+//     * @param config the String based map, not {@code null}.
+//     * @param source the source name, not {@code null}.
+//     * @param metaData additional metadata, not {@code null}.
+//     * @return the corresponding value based map.
+//     */
+//    public static Map<String,ConfigValue> map(Map<String, String> config, String source,
+//                                              Map<String,String> metaData) {
+//        Objects.requireNonNull(config, "Config must be given.");
+//        Objects.requireNonNull(source, "Source must be given.");
+//        Objects.requireNonNull(metaData, "Meta data must be given.");
+//
+//        Map<String,ConfigValue> result = new HashMap<>(config.size());
+//
+//        for(Map.Entry<String,String> en:config.entrySet()){
+//            ConfigValue value = new ConfigValueBuilder(en.getKey(), source).setValue(en.getValue())
+//                                                                               .addMetaEntries(metaData).build();
+//            result.put(en.getKey(), value);
+//        }
+//        return result;
+//    }
+//
+//    public Map<? extends String, ? extends String> asMap() {
+//        Map<String,String> map = new HashMap<>();
+//        map.put(key, value);
+//        map.put(key+"[meta]", this.metaEntries);
+//        return map;
+//    }
+//
+//    public static ConfigValue of(String key, Map<String, String> rawProperties) {
+//        String value = rawProperties.get(key);
+//        String meta = rawProperties.get(key+"[meta]");
+//        return new ConfigValue(key, value, meta);
+//    }
 }

@@ -16,27 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.base;
+package org.apache.tamaya.base.convert;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
+import javax.config.spi.Converter;
+import java.math.BigDecimal;
 
 /**
- * Small utility class used by other parts.
+ * Simple converter for BigDecimal.
  */
-public final class ReflectionUtil {
-
-    private ReflectionUtil(){}
-
-    public static ParameterizedType getParametrizedType(Class<?> clazz) {
-        Type[] genericTypes = clazz.getGenericInterfaces();
-        for (Type type : genericTypes) {
-            if (type instanceof ParameterizedType) {
-                return (ParameterizedType) type;
-            }
-
-        }
-        return null;
+public class BigDecimalConverter implements Converter<BigDecimal> {
+    @Override
+    public BigDecimal convert(String s) {
+        return new BigDecimal(s);
     }
 }

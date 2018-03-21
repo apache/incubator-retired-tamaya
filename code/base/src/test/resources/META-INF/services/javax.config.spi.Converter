@@ -17,3 +17,6 @@
 # under the License.
 #
 org.apache.tamaya.base.convert.CTestConverter
+org.apache.tamaya.base.convert.IntConverter
+org.apache.tamaya.base.convert.DoubleConverter
+org.apache.tamaya.base.convert.BigDecimalConverter

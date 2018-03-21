@@ -51,8 +51,12 @@ public interface ConfigContext {
         }
         return new ConfigContext() {
             @Override
-            public Iterable<ConfigSource> getConfigSources() {
-                return Objects.requireNonNull(config.getConfigSources());
+            public List<ConfigSource> getConfigSources() {
+                List<ConfigSource> configSources = new ArrayList<>();
+                for(ConfigSource cs:config.getConfigSources()){
+                    configSources.add(cs);
+                }
+                return configSources;
             }
 
             @Override
@@ -84,21 +88,21 @@ public interface ConfigContext {
      *
      * @return a sorted list of registered PropertySources.  The returned list need not be modifiable
      */
-    Iterable<ConfigSource> getConfigSources();
+    List<ConfigSource> getConfigSources();
 
-//    /**
-//     * Access a {@link ConfigSource} using its (unique) name.
-//     * @param name the propoerty source's name, not {@code null}.
-//     * @return the propoerty source found, or {@code null}.
-//     */
-//    default ConfigSource getSource(String name) {
-//        for(ConfigSource ps: getConfigSources()){
-//            if(name.equals(ps.getName())){
-//                return ps;
-//            }
-//        }
-//        return null;
-//    }
+    /**
+     * Access a {@link ConfigSource} using its (unique) name.
+     * @param name the propoerty source's name, not {@code null}.
+     * @return the propoerty source found, or {@code null}.
+     */
+    default ConfigSource getSource(String name) {
+        for(ConfigSource ps: getConfigSources()){
+            if(name.equals(ps.getName())){
+                return ps;
+            }
+        }
+        return null;
+    }
 
     /**
      * Access the current PropertyFilter instances.

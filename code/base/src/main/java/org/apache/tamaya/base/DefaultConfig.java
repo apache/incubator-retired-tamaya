@@ -25,10 +25,12 @@ import org.apache.tamaya.base.filter.Filter;
 import org.apache.tamaya.base.filter.FilterManager;
 
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 /**
@@ -103,6 +105,11 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
         return Optional.ofNullable(val);
     }
 
+    @Override
+    public ConfigValue<String> access(String key) {
+        return new DefaultConfigValue(this, key, String.class);
+    }
+
     /**
      * Get the current properties, composed by the loaded {@link ConfigSource} and filtered
      * by registered {@link Filter}.
@@ -118,6 +125,11 @@ public class DefaultConfig implements Config, ConfigContextSupplier {
     @Override
     public Iterable<ConfigSource> getConfigSources() {
         return configSourceManager.getSources();
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
 

@@ -92,7 +92,7 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

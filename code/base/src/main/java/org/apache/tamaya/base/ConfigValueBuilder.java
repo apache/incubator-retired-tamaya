@@ -31,11 +31,11 @@ public class ConfigValueBuilder {
     /** The property value. */
     String value;
     /** additional metadata entries (optional). */
-    String metaEntry;
+    Map<String,String> metaEntries = new HashMap<>();
 
     /**
      * Create a new builder instance, for a given set of parameters.
-     * Before calling build at least a {@link #value} and its {@link #metaEntry}
+     * Before calling build at least a {@link #value} and its {@link #metaEntries}
      * must be set.
      */
     ConfigValueBuilder(String key){
@@ -53,26 +53,12 @@ public class ConfigValueBuilder {
     }
 
     /**
-     * Create a new builder instance, for a given set of parameters.
-     *
-     * @param key to access a property value.
-     * @param value the value, not {@code null}. If a value is  {@code null}
-     *              {@link javax.config.spi.ConfigSource#getValue(String)} should return {@code null}.
-     * @param metaEntry property metaEntry.
-     */
-    ConfigValueBuilder(String key, String value, String metaEntry) {
-        this.key = Objects.requireNonNull(key);
-        this.value = value;
-        this.metaEntry = Objects.requireNonNull(metaEntry);
-    }
-
-    /**
      * Replaces/sets the context data.
-     * @param metaEntry the context data to be applied.
+     * @param metaEntries the context data to be applied.
      * @return the builder for chaining.
      */
-    public ConfigValueBuilder setMetaEntry(String metaEntry) {
-        this.metaEntry = metaEntry;
+    public ConfigValueBuilder addMetaEntries(Map<String,String> metaEntries) {
+        this.metaEntries.putAll(metaEntries);
         return this;
     }
 
@@ -85,48 +71,7 @@ public class ConfigValueBuilder {
     public ConfigValueBuilder addMetaEntry(String key, String value) {
         Objects.requireNonNull(key, "Meta key must be given.");
         Objects.requireNonNull(value, "Meta value must be given.");
-        if(metaEntry==null){
-            metaEntry = key+"="+value;
-        }else{
-            metaEntry = "\n" + key+"="+value;
-        }
-        return this;
-    }
-
-    /**
-     * Adds the context data given.
-     * @param metaEntries the context data to be applied, not {@code null}.
-     * @return the builder for chaining.
-     */
-    public ConfigValueBuilder addMetaEntries(Map<String, String> metaEntries) {
-        Properties props = new Properties();
-        props.putAll(metaEntries);
-        StringWriter stringWriter = new StringWriter();
-        try {
-            props.store(stringWriter, null);
-            stringWriter.flush();
-            if(metaEntry==null){
-                metaEntry = stringWriter.toString();
-            }else{
-                metaEntry += '\n' + stringWriter.toString();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
-
-    /**
-     * Adds the context data given as JSON object.
-     * @param meta the context data in JSON format, not {@code null}.
-     * @return the builder for chaining.
-     */
-    public ConfigValueBuilder addMetaEntry(String meta) {
-        if(metaEntry==null){
-            metaEntry = meta;
-        }else{
-            metaEntry += '\n' + meta;
-        }
+        metaEntries.put(key, value);
         return this;
     }
 
@@ -134,8 +79,8 @@ public class ConfigValueBuilder {
      * Get the value's context data.
      * @return the context data, not {@code null}.
      */
-    public String getMetaEntry() {
-        return metaEntry;
+    public Map<String,String> getMetaEntries() {
+        return Collections.unmodifiableMap(metaEntries);
     }
 
     /**
@@ -172,7 +117,7 @@ public class ConfigValueBuilder {
         return "PropertyValueBuilder{" +
                 "key='" + key + '\'' +
                 "value='" + value + '\'' +
-                ", metaEntry=" + metaEntry +
+                ", metaEntries=" + metaEntries +
                 '}';
     }
 
