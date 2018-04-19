@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 /**
  * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
  * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link PropertyFilter}
- * instance to evaluate the current Configuration.
+ * instances to evaluate the current Configuration.
  */
 public final class PropertyFiltering{
     /**
@@ -63,7 +63,7 @@ public final class PropertyFiltering{
      * Filters all properties.
      * @param rawProperties the unfiltered properties, not {@code null}.
      * @param context the context
-     * @return the filtered value, inclusing null.
+     * @return the filtered value, including {@code null}.
      */
     public static Map<String, PropertyValue> applyFilters(Map<String, PropertyValue> rawProperties, ConfigurationContext context) {
         Map<String, PropertyValue> result = new HashMap<>();

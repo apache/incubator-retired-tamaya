@@ -34,6 +34,10 @@ import java.util.logging.Logger;
  * <li>NaN (ignoring case)</li>
  * <li>POSITIVE_INFINITY (ignoring case)</li>
  * <li>NEGATIVE_INFINITY (ignoring case)</li>
+ * <li>MIN_VALUE (ignoring case)</li>
+ * <li>MIN (ignoring case)</li>
+ * <li>MAX_VALUE (ignoring case)</li>
+ * <li>MAX (ignoring case)</li>
  * </ul>
  */
 @Component(service = PropertyConverter.class)
@@ -83,7 +87,7 @@ public class FloatConverter implements PropertyConverter<Float> {
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

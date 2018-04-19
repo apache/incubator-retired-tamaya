@@ -26,11 +26,12 @@ import org.osgi.service.component.annotations.Component;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Boolean.
+ * Converter, converting from String to Supplier.
  */
 @Component(service = PropertyConverter.class)
 public class SupplierConverter implements PropertyConverter<Supplier> {
@@ -60,7 +61,7 @@ public class SupplierConverter implements PropertyConverter<Supplier> {
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

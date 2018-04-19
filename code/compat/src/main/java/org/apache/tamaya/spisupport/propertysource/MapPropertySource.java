@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Simple PropertySource implementation that just takes a Map and an (optional) priority.
+ * Simple {@link org.apache.tamaya.spi.PropertySource} implementation that just takes a Map and an (optional) priority.
  * Optionally the entries passed can be mapped to a different rootContext.
  */
 public class MapPropertySource extends BasePropertySource {
@@ -81,7 +81,7 @@ public class MapPropertySource extends BasePropertySource {
     }
 
     /**
-     * Simple method to convert Properties into a Map instance.
+     * Simple method to convert {@link Properties} into a {@link Map} instance.
      * @param props the properties, not null.
      * @return the corresponding Map instance.
      */

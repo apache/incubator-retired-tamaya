@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Abstract {@link org.apache.tamaya.spi.PropertySource} that allows to set a default ordinal that will be used, if no
+ * Abstract {@link org.apache.tamaya.spi.PropertySource} that allows setting a default ordinal to be used, if no
  * ordinal is provided with the config.
  */
 public abstract class BasePropertySource implements PropertySource{
@@ -88,7 +88,7 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     /**
-     * Allows to set the ordinal of this property source explcitly. This will override any evaluated
+     * Allows setting the ordinal of this property source explcitly. This will override any evaluated
      * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
      * @param ordinal the explicit ordinal, or {@code null}.
      */
@@ -97,7 +97,7 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     /**
-     * Allows to set the ordinal of this property source explcitly. This will override any evaluated
+     * Allows setting the ordinal of this property source explcitly. This will override any evaluated
      * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
      * @param defaultOrdinal the default ordinal, or {@code null}.
      */

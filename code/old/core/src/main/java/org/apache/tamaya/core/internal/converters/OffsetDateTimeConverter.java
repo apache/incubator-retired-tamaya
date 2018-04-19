@@ -23,11 +23,12 @@ import org.apache.tamaya.spi.PropertyConverter;
 import org.osgi.service.component.annotations.Component;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Boolean.
+ * Converter, converting from String to OffsetDateTime.
  */
 @Component(service = PropertyConverter.class)
 public class OffsetDateTimeConverter implements PropertyConverter<OffsetDateTime> {
@@ -47,7 +48,7 @@ public class OffsetDateTimeConverter implements PropertyConverter<OffsetDateTime
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

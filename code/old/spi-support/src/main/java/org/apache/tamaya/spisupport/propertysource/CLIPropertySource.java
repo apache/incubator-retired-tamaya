@@ -23,7 +23,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import java.util.*;
 
 /**
- * PropertySource that allows to add the programs main arguments as configuration entries. Unix syntax using '--' and
+ * PropertySource that allows adding the program's main arguments as configuration entries. Unix syntax using '--' and
  * '-' params is supported.
  */
 public class CLIPropertySource extends BasePropertySource {
@@ -73,7 +73,7 @@ public class CLIPropertySource extends BasePropertySource {
 
     /**
      * Configure the main arguments, hereby parsing and mapping the main arguments into
-     * configuration propertiesi as key-value pairs.
+     * configuration properties as key-value pairs.
      * @param args the main arguments, not null.
      */
     public static void initMainArgs(String... args){

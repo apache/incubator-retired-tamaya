@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
- * This includes adding and enlisting {@link org.apache.tamaya.spi.PropertySource}s,
+ * This includes adding and enlisting {@link PropertySource}s,
  * managing {@link PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
@@ -35,7 +35,7 @@ public interface ConfigurationContext {
      * This method can be used for programmatically adding {@link PropertySource}s.
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
-     * @param propertySources the PropertySources to add
+     * @param propertySources the {@link PropertySource}s to add
      * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
      * @see #toBuilder()
      */
@@ -43,16 +43,16 @@ public interface ConfigurationContext {
     void addPropertySources(PropertySource... propertySources);
 
     /**
-     * This method returns the current list of registered PropertySources ordered via their ordinal.
-     * PropertySources with a lower ordinal come last. The PropertySource with the
+     * This method returns the current list of registered {@link PropertySource}s ordered via their ordinal.
+     * {@link PropertySource}s with a lower ordinal come last. The {@link PropertySource} with the
      * highest ordinal comes first.
-     * If two PropertySources have the same ordinal number they will get sorted
+     * If two {@link PropertySource}s have the same ordinal number they will get sorted
      * using their class name just to ensure the user at least gets the same ordering
      * after a JVM restart, hereby names before are added last.
-     * PropertySources are loaded when this method is called the first time, which basically is
+     * {@link PropertySource}s are loaded when this method is called the first time, which basically is
      * when the first time configuration is accessed.
      *
-     * @return a sorted list of registered PropertySources.  The returned list need not be modifiable
+     * @return a sorted list of registered {@link PropertySource}s.  The returned list need not be modifiable
      */
     List<PropertySource> getPropertySources();
 
@@ -79,10 +79,10 @@ public interface ConfigurationContext {
 
     /**
      * <p>
-     * This method returns the Map of registered PropertyConverters
+     * This method returns the Map of registered {@link PropertyConverter}s
      * per type.
      * The List for each type is ordered via their {@link javax.annotation.Priority} and
-     * cladd name.
+     * class name.
      * </p>
      *
      * <p>A simplified scenario could be like:</p>
@@ -94,27 +94,27 @@ public interface ConfigurationContext {
      *  }
      * </pre>
      *
-     * @return map with sorted list of registered PropertySources per type.
+     * @return map with sorted list of registered {@link PropertySource}s per type.
      */
     Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters();
 
     /**
      * <p>
-     * This method returns the registered PropertyConverters for a given type.
+     * This method returns the registered {@link PropertyConverter}s for a given type.
      * The List for each type is ordered via their {@link javax.annotation.Priority}.
      * </p>
      *
      * <p>
-     * PropertyConverters with a higher Priority come first. The PropertyConverter with the
-     * lowest Priority comes last.
-     * If two PropertyConverter have the same ordinal number they will get sorted
+     * {@link PropertyConverter}s with a higher {@link javax.annotation.Priority} come first.
+     * The {@link PropertyConverter} with the lowest {@link javax.annotation.Priority} comes last.
+     * If two {@link PropertyConverter}s have the same ordinal number they will get sorted
      * using their class name just to ensure the user at least gets the same ordering
      * after a JVM restart.
      * </p>
      *
      * <p>
-     * Additionally if a PropertyProvider is accessed, which is not registered the implementation
-     * should try to figure out, if there could be a default implementation as follows:</p>
+     * Additionally, if a PropertyProvider is accessed which is not registered, the implementation
+     * should try to figure out if there could be a default implementation as follows:</p>
      * <ol>
      *     <li>Look for static factory methods: {@code of(String), valueOf(String), getInstance(String),
      *     instanceOf(String), fomr(String)}</li>
@@ -123,7 +123,7 @@ public interface ConfigurationContext {
      *
      * <p>
      * If a correspoding factory method or constructor could be found, a corresponding
-     * PropertyConverter should be created and registered automatically for the given
+     * {@link PropertyConverter} should be created and registered automatically for the given
      * type.
      * </p>
      *
@@ -140,26 +140,26 @@ public interface ConfigurationContext {
      * <p>
      * The converters returned for a type should be used as a chain, whereas the result of the
      * first converters that is able to convert the configured value, is taken as the chain's result.
-     * No more converters are called after a converters has successfully converted the input into
+     * No more converters are called after a converter has successfully converted the input into
      * the required target type.
      * </p>
      * 
      * @param <T> the type of the type literal
      * @param type type of the desired converters
-     * @return a sorted list of registered PropertySources per type.
+     * @return a sorted list of registered {@link PropertySource}s per type.
      */
     <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type);
 
     /**
-     * Access the current PropertyFilter instances.
-     * @return the list of registered PropertyFilters, never null.
+     * Access the current {@link PropertyFilter} instances.
+     * @return the list of registered {@link PropertyFilter}s, never null.
      */
     List<PropertyFilter> getPropertyFilters();
 
     /**
-     * Access the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used to evaluate the final
+     * Access the {@link PropertyValueCombinationPolicy} used to evaluate the final
      * property values.
-     * @return the {@link org.apache.tamaya.spi.PropertyValueCombinationPolicy} used, never null.
+     * @return the {@link PropertyValueCombinationPolicy} used, never null.
      */
     PropertyValueCombinationPolicy getPropertyValueCombinationPolicy();
 

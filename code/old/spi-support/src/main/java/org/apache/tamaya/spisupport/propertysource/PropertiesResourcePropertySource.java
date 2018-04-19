@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Simple PropertySource, with a fixed ordinal that reads a .properties file from a given URL.
+ * Simple {@link org.apache.tamaya.spi.PropertySource}, with a fixed ordinal that reads a .properties file from a given URL.
  */
 public class PropertiesResourcePropertySource extends MapPropertySource {
     /** The logger used. */
@@ -65,6 +65,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * Creates a new instance.
      * @param prefix the (optional) prefix context for mapping (prefixing) the properties loaded.
      * @param path the resource path, not null.
+     * @param cl the class loader.
      */
     public PropertiesResourcePropertySource(String path, String prefix, ClassLoader cl){
         super(path, loadProps(path, cl), prefix);

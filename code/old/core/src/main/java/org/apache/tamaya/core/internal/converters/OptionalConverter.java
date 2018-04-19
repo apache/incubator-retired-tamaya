@@ -26,10 +26,11 @@ import org.osgi.service.component.annotations.Component;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Converter, converting from String to Boolean.
+ * Converter, converting from String to Optional.
  */
 @Component(service = PropertyConverter.class)
 public class OptionalConverter implements PropertyConverter<Optional> {
@@ -54,7 +55,7 @@ public class OptionalConverter implements PropertyConverter<Optional> {
 
     @Override
     public boolean equals(Object o){
-        return getClass().equals(o.getClass());
+        return Objects.nonNull(o) && getClass().equals(o.getClass());
     }
 
     @Override

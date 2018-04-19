@@ -65,7 +65,7 @@ public class TypeLiteral<T> implements Serializable {
     /**
      * Creates a new TypeLiteral based on a given type.
      *
-     * @param type the type , not {@code null}.
+     * @param type the type, not {@code null}.
      * @param <R>  the literal generic type.
      * @return the corresponding TypeLiteral, never {@code null}.
      */

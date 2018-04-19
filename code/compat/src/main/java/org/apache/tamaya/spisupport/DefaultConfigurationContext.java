@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
 /**
- * Default implementation of a simple ConfigurationContext.
+ * Default implementation of a simple {@link ConfigurationContext}.
  */
 public class DefaultConfigurationContext implements ConfigurationContext {
 

@@ -27,8 +27,8 @@ package org.apache.tamaya;
 public interface ConfigQuery<T> {
 
     /**
-     * Creates a result based on the given Configuration. Queries basically acts similar to
-     * operators, whereas they returns any kind of result.
+     * Creates a result based on the given {@link Configuration}. Queries basically act similar to
+     * operators, whereas they return any kind of result.
      *
      * @param config the input configuration, not {@code null}.
      * @return the query result.

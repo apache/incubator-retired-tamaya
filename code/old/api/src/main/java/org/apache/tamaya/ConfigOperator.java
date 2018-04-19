@@ -20,15 +20,15 @@ package org.apache.tamaya;
 
 /**
  * Models a function that maps a given {@link org.apache.tamaya.Configuration} to another {@link org.apache.tamaya.Configuration}. This can be used
- * to modell additional functionality and applying it to a given {@link org.apache.tamaya.Configuration} instance by calling
+ * to model additional functionality and applying it to a given {@link org.apache.tamaya.Configuration} instance by calling
  * the {@link org.apache.tamaya.Configuration#with(org.apache.tamaya.ConfigOperator)} method.
  */
 @FunctionalInterface
 public interface ConfigOperator {
 
     /**
-     * Creates a new {@link org.apache.tamaya.Configuration} based on the given Configuration. Operators basically acts similar to
-     * decorators, whereas operated instances may have non compatible behaviour, e.g. by applying security constraints
+     * Creates a new {@link org.apache.tamaya.Configuration} based on the given Configuration. Operators basically act similar to
+     * decorators, whereas operated instances may have non-compatible behaviour, e.g. by applying security constraints
      * or view restrictions.
      *
      * @param config the input configuration, not {@code null}.

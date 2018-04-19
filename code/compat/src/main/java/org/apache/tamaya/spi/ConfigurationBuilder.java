@@ -72,7 +72,7 @@ public interface ConfigurationBuilder {
      * lowest priority  regardless of its current ordinal value. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
-     * @param propertySources the PropertySources to add
+     * @param propertySources the {@link PropertySource}s to add
      * @return this builder, for chaining, never null.
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
@@ -192,7 +192,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder lowestPriority(PropertySource propertySource);
 
     /**
-     * Adds the given PropertyFilter instances, hereby the instances are added
+     * Adds the given {@link PropertyFilter} instances, hereby the instances are added
      * to the end of the list with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
@@ -203,7 +203,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder addPropertyFilters(PropertyFilter... filters);
 
     /**
-     * Adds the given PropertyFilter instances, hereby the instances are added
+     * Adds the given {@link PropertyFilter} instances, hereby the instances are added
      * to the end of the list with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
@@ -221,7 +221,7 @@ public interface ConfigurationBuilder {
 
 
     /**
-     * Removes the given PropertyFilter instances, if existing. The order of the remaining
+     * Removes the given {@link PropertyFilter} instances, if existing. The order of the remaining
      * filters is preserved.
      *
      * @param filters the filter to remove
@@ -230,7 +230,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder removePropertyFilters(PropertyFilter... filters);
 
     /**
-     * Removes the given PropertyFilter instances, if existing. The order of the remaining
+     * Removes the given {@link PropertyFilter} instances, if existing. The order of the remaining
      * filters is preserved.
      *
      * @param filters the filter to remove
@@ -273,7 +273,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder addDefaultPropertyConverters();
 
     /**
-     * Removes the given PropertyConverter instances for the given type,
+     * Removes the given {@link PropertyConverter} instances for the given type,
      * if existing.
      *
      * @param typeToConvert the type which the converter is for
@@ -285,7 +285,7 @@ public interface ConfigurationBuilder {
                                                       @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
 
     /**
-     * Removes the given PropertyConverter instances for the given type,
+     * Removes the given {@link PropertyConverter} instances for the given type,
      * if existing.
      *
      * @param typeToConvert the type which the converter is for
