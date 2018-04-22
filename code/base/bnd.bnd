@@ -16,7 +16,7 @@ Bundle-SymbolicName: org.apache.tamaya.spisupport
 Bundle-Description: Apacha Tamaya Config - SPI Support
 Bundle-Category: Implementation
 Bundle-Copyright: (C) Apache Foundation
-Bundle-License: Apache Licence version 2
+Bundle-License: Apache License, Version 2.0
 Bundle-Vendor: Apache Software Foundation
 Bundle-ContactAddress: dev-tamaya@incubator.apache.org
 Bundle-DocURL: http://tamaya.apache.org
