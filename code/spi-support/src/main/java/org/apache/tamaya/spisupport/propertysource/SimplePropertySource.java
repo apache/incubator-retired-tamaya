@@ -31,15 +31,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 /**
  * Simple implementation of a {@link org.apache.tamaya.spi.PropertySource} for
  * simple property files and XML property files.
  */
 public class SimplePropertySource extends BasePropertySource {
-
-    private static final Logger LOG = Logger.getLogger(SimplePropertySource.class.getName());
 
     /**
      * The current properties.
@@ -188,10 +185,10 @@ public class SimplePropertySource extends BasePropertySource {
          * Sets the {@code name} and returns a reference to this Builder so that the methods
          * can be chained together.
          *
-         * @param val the {@code name} to set, not null.
+         * @param name the {@code name} to set, not null.
          * @return a reference to this Builder
          */
-        public Builder withName(String val) {
+        public Builder withName(String name) {
             this.name = Objects.requireNonNull(name);
             return this;
         }

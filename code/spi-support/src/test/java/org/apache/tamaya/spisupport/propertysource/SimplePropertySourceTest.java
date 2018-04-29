@@ -21,6 +21,7 @@ package org.apache.tamaya.spisupport.propertysource;
 import java.io.File;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.propertysource.SimplePropertySource.Builder;
 import org.junit.Test;
 
 import java.net.URL;
@@ -42,7 +43,6 @@ public class SimplePropertySourceTest {
         assertThat(source.getProperties()).hasSize(2); // double the size for .source values.
         assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
         assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
-
     }
 
     @Test
@@ -181,4 +181,17 @@ public class SimplePropertySourceTest {
         assertThat(sps.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
         assertThat(sps.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
     }
+    
+    @Test
+    public void buildingWithValidName() {
+    	final String KEY = "myTestKey"; 
+    	Builder builder = SimplePropertySource.newBuilder().withName(KEY);
+    	assertThat(builder.build().getName()).isEqualTo(KEY);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void buildingWithInvalidNameYieldsNPE() {
+    	SimplePropertySource.newBuilder().withName(null);
+    }
+    
 }
