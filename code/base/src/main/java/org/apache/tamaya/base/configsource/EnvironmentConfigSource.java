@@ -80,6 +80,21 @@ import java.util.Map;
  *
  * <p>The output of application would be {@code moon}.</p>
  *
+ * <h1>Environment Variable Resolution</h1>
+ *
+ * <p>As defined in the current configuration JSR, the environment config source will
+ * use an enhanced resolution mechanism to handle some constraints of operating
+ * systems not being able to handle dots in environment variable keys:
+ *
+ * Depending on the operating system type, environment variables with . are not always allowed. This ConfigSource searches 3 environment variables for a given property name (e.g. com.ACME.size):
+ * <ol>
+ *     <li>Exact match (i.e. com.ACME.size)</li>
+ *     <li>Replace all . by _ (i.e. com_ACME_size)</li>
+ *     <li>Replace all . by _ and convert to upper case (i.e. COM_ACME_SIZE)</li>
+ * </ol>
+ * The first environment variable that is found is returned by this ConfigSource.
+ * </p>
+ *
  * <h1>Disabling the access to environment variables</h1>
  *
  * <p>The access to environment variables could be simply
@@ -195,9 +210,20 @@ public class EnvironmentConfigSource extends BaseConfigSource {
         if (isDisabled()) {
             return null;
         }
+        // Exact match (i.e. com.ACME.size)
         String effectiveKey = hasPrefix() ? getPrefix() + "." + key
-                                          : key;
-        return getPropertiesProvider().getenv(effectiveKey);
+                : key;
+        String value = getPropertiesProvider().getenv(effectiveKey);
+        // Replace all . by _ (i.e. com_ACME_size)
+        if(value==null){
+            value = getPropertiesProvider().getenv(effectiveKey.replaceAll(".", "_"));
+        }
+        // Replace all . by _ and convert to upper case (i.e. COM_ACME_SIZE)
+        if(value==null){
+            value = getPropertiesProvider().getenv(effectiveKey.replaceAll(".", "_")
+            .toUpperCase());
+        }
+        return value;
     }
 
     private boolean hasPrefix() {
