@@ -85,7 +85,7 @@ import java.util.Map;
  * <h1>Disabling the access to environment variables</h1>
  *
  * <p>The access to environment variables can simply be
- * disabled by setting the systemproperty {@code tamaya.envprops.disable}
+ * disabled by setting the system property {@code tamaya.envprops.disable}
  * or {@code tamaya.defaults.disable} to {@code true}.</p>
  */
 public class EnvironmentPropertySource extends BasePropertySource {
@@ -133,19 +133,19 @@ public class EnvironmentPropertySource extends BasePropertySource {
      * </pre>
      */
     private void initFromSystemProperties() {
-        String value = System.getProperty("tamaya.envprops.prefix");
+        String value = System.getProperty(TAMAYA_ENVPROPS_PREFIX);
         if(value==null){
-            prefix = System.getenv("tamaya.envprops.prefix");
+            prefix = System.getenv(TAMAYA_ENVPROPS_PREFIX);
         }
-        value = System.getProperty("tamaya.envprops.disable");
+        value = System.getProperty(TAMAYA_ENVPROPS_DISABLE);
         if(value==null){
-            value = System.getenv("tamaya.envprops.disable");
-        }
-        if(value==null){
-            value = System.getProperty("tamaya.defaults.disable");
+            value = System.getenv(TAMAYA_ENVPROPS_DISABLE);
         }
         if(value==null){
-            value = System.getenv("tamaya.defaults.disable");
+            value = System.getProperty(TAMAYA_DEFAULT_DISABLE);
+        }
+        if(value==null){
+            value = System.getenv(TAMAYA_DEFAULT_DISABLE);
         }
         if(value!=null && !value.isEmpty()) {
             this.disabled = Boolean.parseBoolean(value);
@@ -214,7 +214,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
     }
 
     private boolean hasPrefix() {
-        return null != prefix;
+        return null != prefix && prefix.isEmpty();
     }
 
     @Override
