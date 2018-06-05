@@ -18,16 +18,16 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import org.apache.tamaya.spi.PropertyValue;
-import org.junit.Test;
-
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Tests for {@link EnvironmentPropertySource}.
@@ -49,7 +49,7 @@ public class EnvironmentPropertySourceTest {
             System.setProperty("tamaya.envprops.prefix", "fakeprefix");
             System.setProperty("tamaya.envprops.disable", "true");
             localEnvironmentPropertySource = new EnvironmentPropertySource();
-            //assertThat(environmentSource.getPrefix()).isEqualTo("fakeprefix");
+            assertThat(localEnvironmentPropertySource.getPrefix()).isNull(); // is not fakeprefix because disabled
             assertThat(localEnvironmentPropertySource.isDisabled()).isTrue();
             assertThat(localEnvironmentPropertySource.get(System.getenv().entrySet().iterator().next().getKey())).isNull();
             assertThat(localEnvironmentPropertySource.getName().contains("(disabled)")).isTrue();
@@ -103,12 +103,18 @@ public class EnvironmentPropertySourceTest {
         }
     }
     
-    @Ignore
+    @Ignore("Why is this test case disabled?")
     @Test
     public void testPrefixedGet() throws Exception {
-        EnvironmentPropertySource localEnvironmentPropertySource = new EnvironmentPropertySource("fancyprefix");
+    	System.setProperty("tamaya.envprops.prefix", "fancyprefix");
+        System.setProperty("tamaya.envprops.disable", "false");
+        System.setProperty("tamaya.defaults.disable", "false");
+      // works: EnvironmentPropertySource localEnvironmentPropertySource = new EnvironmentPropertySource("fancyprefix");
+      EnvironmentPropertySource localEnvironmentPropertySource = new EnvironmentPropertySource();
+      System.out.println(localEnvironmentPropertySource);
+      assertThat(localEnvironmentPropertySource.getPrefix()).isEqualTo("fancyprefix");
         localEnvironmentPropertySource.setPropertiesProvider(new MockedSystemPropertiesProvider());
-        assertThat(localEnvironmentPropertySource.get("somekey").getValue()).isEqualTo("fancyprefix.somekey.value");
+        assertThat(localEnvironmentPropertySource.get("somekey").getValue()).isEqualTo("somekey.value");
     }
 
     @Test
@@ -142,7 +148,6 @@ public class EnvironmentPropertySourceTest {
     private class MockedSystemPropertiesProvider extends EnvironmentPropertySource.SystemPropertiesProvider {
         @Override
         String getenv(String key) {
-            System.out.println("Called with key " + key);
             return key + ".value";
         }
     }
