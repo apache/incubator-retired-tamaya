@@ -95,7 +95,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
             try (InputStream is = url.openStream()) {
                 Properties props = new Properties();
                 props.load(is);
-                for (Map.Entry en : props.entrySet()) {
+                for (Map.Entry<?,?> en : props.entrySet()) {
                     result.put(en.getKey().toString(), en.getValue().toString());
                 }
             } catch (Exception e) {

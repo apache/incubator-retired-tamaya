@@ -18,14 +18,13 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueBuilder;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 /**
  * Abstract {@link org.apache.tamaya.spi.PropertySource} that allows setting a default ordinal to be used, if no
@@ -89,8 +88,8 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     /**
-     * Allows setting the ordinal of this property source explcitly. This will override any evaluated
-     * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
+     * Allows setting the ordinal of this property source explicitly. This will override any evaluated
+     * ordinal, or default ordinal. To reset an explicit ordinal call {@code setOrdinal(null);}.
      * @param ordinal the explicit ordinal, or {@code null}.
      */
     public void setOrdinal(Integer ordinal){
@@ -98,8 +97,8 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     /**
-     * Allows setting the ordinal of this property source explcitly. This will override any evaluated
-     * ordinal, or default ordinal. To reset an explcit ordinal call {@code setOrdinal(null);}.
+     * Allows setting the ordinal of this property source explicitly. This will override any evaluated
+     * ordinal, or default ordinal. To reset an explicit ordinal call {@code setOrdinal(null);}.
      * @param defaultOrdinal the default ordinal, or {@code null}.
      */
     public void setDefaultOrdinal(Integer defaultOrdinal){
