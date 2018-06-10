@@ -203,11 +203,11 @@ public class EnvironmentPropertySource extends BasePropertySource {
         String value = getPropertiesProvider().getenv(effectiveKey);
         // Replace all . by _ (i.e. com_ACME_size)
         if(value==null){
-            value = getPropertiesProvider().getenv(effectiveKey.replaceAll(".", "_"));
+            value = getPropertiesProvider().getenv(effectiveKey.replaceAll("\\.", "_"));
         }
         // Replace all . by _ and convert to upper case (i.e. COM_ACME_SIZE)
         if(value==null){
-            value = getPropertiesProvider().getenv(effectiveKey.replaceAll(".", "_")
+            value = getPropertiesProvider().getenv(effectiveKey.replaceAll("\\.", "_")
                     .toUpperCase());
         }
         return PropertyValue.of(key, value, getName());

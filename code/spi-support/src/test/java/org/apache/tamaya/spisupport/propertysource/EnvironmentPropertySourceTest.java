@@ -97,6 +97,11 @@ public class EnvironmentPropertySourceTest {
 		assertThat(envPropertySource.getName()).isEqualTo("environment-properties");
 	}
 
+  @Test
+  public void testSingleCharacterNull() {
+    assertThat(envPropertySource.get("a")).isNull();
+  }
+
 	@Test
 	public void testGet() throws Exception {
 		for (Map.Entry<String, String> envEntry : System.getenv().entrySet()) {
