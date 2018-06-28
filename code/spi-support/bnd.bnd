@@ -24,4 +24,5 @@ Export-Package: \
 	org.apache.tamaya.spisupport,org.apache.tamaya.spisupport.propertysource
 Import-Package: \
     org.apache.tamaya,\
-    org.apache.tamaya.spi
+    org.apache.tamaya.spi, \
+    javax.annotation
