@@ -46,34 +46,7 @@ public interface ConfigContext {
      * @return a context instance, never null.
      */
     static ConfigContext from(Config config){
-        if(config instanceof ConfigContextSupplier){
-            return ((ConfigContextSupplier)config).getConfigContext();
-        }
-        return new ConfigContext() {
-            @Override
-            public List<ConfigSource> getConfigSources() {
-                List<ConfigSource> configSources = new ArrayList<>();
-                for(ConfigSource cs:config.getConfigSources()){
-                    configSources.add(cs);
-                }
-                return configSources;
-            }
-
-            @Override
-            public List<Filter> getFilters() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public Map<Type, List<Converter>> getConverters() {
-                return ConverterManager.defaultInstance().getConverters();
-            }
-
-            @Override
-            public String toString() {
-                return "ConfigContext#default{\n  delegate:"+config+"\n}";
-            }
-        };
+        return ConfigContextSupplier.of(config).getConfigContext();
     }
 
     /**

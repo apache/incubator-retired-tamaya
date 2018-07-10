@@ -18,8 +18,17 @@
  */
 package org.apache.tamaya.base;
 
+import org.apache.tamaya.base.convert.ConverterManager;
+import org.apache.tamaya.base.filter.Filter;
+
+import javax.config.Config;
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Central SPI for programmatically dealing with the setup of the configuration system.
@@ -28,6 +37,47 @@ import javax.config.spi.Converter;
  */
 @FunctionalInterface
 public interface ConfigContextSupplier {
+
+    /**
+     * Get a context supplier from the given {@link Config}. If the {@link Config} implements
+     * {@link ConfigContextSupplier} it is cast and the result will be returned. If the
+     * config does not implement {@link ConfigContextSupplier}, a default context is created,
+     * which includes all convereters as defined by {@link ConverterManager#defaultInstance()#getConverters()},
+     * an empty filter list and the {@link ConfigSource}s as declared by the given {@link Config}
+     * instance.
+     * @param config the config instance, not null.
+     * @return a context supplier instance, never null.
+     */
+    static ConfigContextSupplier of(Config config){
+        if(config instanceof ConfigContextSupplier){
+            return (ConfigContextSupplier)config;
+        }
+        return () -> new ConfigContext() {
+            @Override
+            public List<ConfigSource> getConfigSources() {
+                List<ConfigSource> configSources = new ArrayList<>();
+                for(ConfigSource cs:config.getConfigSources()){
+                    configSources.add(cs);
+                }
+                return configSources;
+            }
+
+            @Override
+            public List<Filter> getFilters() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public Map<Type, List<Converter>> getConverters() {
+                return ConverterManager.defaultInstance().getConverters();
+            }
+
+            @Override
+            public String toString() {
+                return "ConfigContext#default{\n  delegate:"+config+"\n}";
+            }
+        };
+    }
 
     /**
      * Make an instance of a configuration accessible for use with Apache Tamaya specific extensions.
