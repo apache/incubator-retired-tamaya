@@ -10,6 +10,7 @@ javac.source: 1.8
 javac.target: 1.8
 
 Automatic-Module-Name: org.apache.tamaya.spisupport
+Bundle-ActivationPolicy: lazy
 Bundle-Version: ${version}.${tstamp}
 Bundle-Name: Apache Tamaya - SPI Support
 Bundle-SymbolicName: org.apache.tamaya.spisupport
