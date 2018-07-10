@@ -35,6 +35,8 @@ public final class ConfigurationProvider {
         if(spi==null){
             throw new IllegalStateException("ConfigurationProviderSpi not available.");
         }
+        LOG.finest("TAMAYA Delegate    : " + spi.getClass().getName());
+        LOG.info("TAMAYA Configuration : " + spi.getConfiguration());
         return spi;
     }
 
