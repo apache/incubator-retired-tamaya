@@ -21,6 +21,7 @@ Bundle-Vendor: Apache Software Foundation
 Bundle-ContactAddress: dev-tamaya@incubator.apache.org
 Bundle-DocURL: http://tamaya.apache.org
 Bundle-Activator: org.apache.tamaya.core.OSGIActivator
+Bundle-ActivationPolicy: lazy
 Export-Package: \
 	org.apache.tamaya.core
 Import-Package: \
