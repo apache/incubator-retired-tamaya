@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to tge given enum type.
  */
-//@Component(service = Converter.class)
 public class EnumConverter<T> implements Converter<T> {
     private final Logger LOG = Logger.getLogger(EnumConverter.class.getName());
     private Class<T> enumType;
