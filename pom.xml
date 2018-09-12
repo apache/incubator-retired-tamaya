@@ -60,7 +60,7 @@
         <enforcer.version>3.0.0-M1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
-        <javadoc.version>3.0.0</javadoc.version>
+        <javadoc.version>3.0.1</javadoc.version>
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.26</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
@@ -300,7 +300,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.1</version>
+                    <version>0.8.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.pitest</groupId>

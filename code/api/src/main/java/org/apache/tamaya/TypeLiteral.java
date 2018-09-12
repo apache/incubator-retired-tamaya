@@ -30,7 +30,7 @@ import java.util.Objects;
  * with current parameters.</p>
  *
  * <p>An object that represents a parameterized type may be obtained by
- * subclassing <tt>TypeLiteral</tt>.</p>
+ * subclassing {@link TypeLiteral}.</p>
  *
  * <pre>
  * TypeLiteral&lt;List&lt;Integer&gt;&gt; stringListType = new TypeLiteral&lt;List&lt;Integer&gt;&gt;() {};
