@@ -22,11 +22,8 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * A conversion context containing all the required values for implementing conversion. Use the included #Builder
@@ -37,10 +34,46 @@ public class ConversionContext {
 
     private final Configuration configuration;
     private final String key;
+    private final List<PropertyValue> values;
     private final TypeLiteral<?> targetType;
     private final AnnotatedElement annotatedElement;
     private final Set<String> supportedFormats = new LinkedHashSet<>();
-    private final ConfigurationContext configurationContext;
+
+    private static ThreadLocal<ConversionContext> CONTEXT = new ThreadLocal<>();
+
+    /**
+     * Access the current conversion context.
+     * @return the current conversion context, or null.
+     */
+    public static ConversionContext current(){
+        return CONTEXT.get();
+    }
+
+    /**
+     * If the current conversoin context is available, this performs the given action.
+     * @param action the consumer to be executed, not null.
+     */
+    public static void doOptional(Consumer<ConversionContext> action){
+        ConversionContext ctx = current();
+        if(ctx!=null){
+            action.accept(ctx);
+        }
+    }
+
+    /**
+     * Sets the current conversion context.
+     * @param context the conversion context, not null.
+     */
+    public static void set(ConversionContext context){
+        CONTEXT.set(context);
+    }
+
+    /**
+     * Removes the current conversion context.
+     */
+    public static void reset(){
+        CONTEXT.remove();
+    }
 
     /**
      * Private constructor used from builder.
@@ -52,7 +85,9 @@ public class ConversionContext {
         this.targetType = builder.targetType;
         this.supportedFormats.addAll(builder.supportedFormats);
         this.configuration = builder.configuration;
-        this.configurationContext = builder.configurationContext;
+        List<PropertyValue> tempValues = new ArrayList<>();
+        tempValues.addAll(builder.values);
+        this.values = Collections.unmodifiableList(tempValues);
     }
 
     /**
@@ -63,6 +98,15 @@ public class ConversionContext {
      */
     public String getKey(){
         return key;
+    }
+
+    /**
+     * Get the correspnoding underlying property values matching the given key, in order of significance
+     * (most significant last).
+     * @return the underlying values evaluated, never null.
+     */
+    public List<PropertyValue> getValues(){
+        return this.values;
     }
 
     /**
@@ -96,7 +140,7 @@ public class ConversionContext {
      * @param converterType the converters, which implements the formats provided.
      * @param formatDescriptors the format descriptions in a human readable form, e.g. as regular expressions.
      */
-    public void addSupportedFormats(@SuppressWarnings("rawtypes") Class<? extends PropertyConverter> converterType, String... formatDescriptors){
+    public void addSupportedFormats(@SuppressWarnings("rawtypes") Class<?> converterType, String... formatDescriptors){
         synchronized (supportedFormats){
             for(String format: formatDescriptors) {
                 supportedFormats.add(format + " (" + converterType.getSimpleName() + ")");
@@ -126,8 +170,14 @@ public class ConversionContext {
                 '}';
     }
 
+    /**
+     * Get the current configuration context.
+     * @deprecated Use {@link #getConfiguration()} and {@link Configuration#getContext()}.
+     * @return the current configuration context.
+     */
+    @Deprecated
     public ConfigurationContext getConfigurationContext() {
-        return configurationContext;
+        return getConfiguration().getContext();
     }
 
     /**
@@ -136,15 +186,17 @@ public class ConversionContext {
     public static final class Builder{
         /** The backing configuration. */
         private Configuration configuration;
-        /** The configuration context. */
-        private ConfigurationContext configurationContext;
         /** The accessed key, or null. */
         private String key;
+        /** The corresponding property values, as delivered from the corresponding property sources,
+         * in order of significance (highest last).
+         */
+        private final List<PropertyValue> values = new ArrayList<>();
         /** The target type. */
         private TypeLiteral<?> targetType;
-        /** The injection target (only set with injection used). */
+        /** The injection target (only setCurrent with injection used). */
         private AnnotatedElement annotatedElement;
-        /** The ordered set of formats tried. */
+        /** The ordered setCurrent of formats tried. */
         private final Set<String> supportedFormats = new LinkedHashSet<>();
 
         /**
@@ -152,7 +204,7 @@ public class ConversionContext {
          * @param targetType the target type
          */
         public Builder(TypeLiteral<?> targetType) {
-            this(null, null, null, targetType);
+            this(null,  null, targetType);
         }
 
         /**
@@ -161,20 +213,18 @@ public class ConversionContext {
          * @param targetType the target type
          */
         public Builder(String key, TypeLiteral<?> targetType) {
-            this(null, null, key, targetType);
+            this(null,  key, targetType);
         }
 
         /**
          * Creates a new Builder instance.
          * @param configuration the configuration, not {@code null}.
-         * @param configurationContext configuration context, not {@code null}.
          * @param key the requested key, may be {@code null}.
          * @param targetType the target type
          */
-        public Builder(Configuration configuration, ConfigurationContext configurationContext, String key, TypeLiteral<?> targetType){
+        public Builder(Configuration configuration, String key, TypeLiteral<?> targetType){
             this.key = key;
             this.configuration = configuration;
-            this.configurationContext = configurationContext;
             this.targetType = Objects.requireNonNull(targetType);
         }
 
@@ -189,22 +239,22 @@ public class ConversionContext {
         }
 
         /**
+         * Sets the underlying values evaluated.
+         * @param values the values, not {@code null}.
+         * @return the builder instance, for chaining
+         */
+        public Builder setValues(List<PropertyValue> values){
+            this.values.addAll(values);
+            return this;
+        }
+
+        /**
          * Sets the configuration.
          * @param configuration the configuration, not {@code null}
          * @return the builder instance, for chaining
          */
         public Builder setConfiguration(Configuration configuration){
             this.configuration = Objects.requireNonNull(configuration);
-            return this;
-        }
-
-        /**
-         * Sets the configuration.
-         * @param configurationContext the configuration, not {@code null}
-         * @return the builder instance, for chaining
-         */
-        public Builder setConfigurationContext(ConfigurationContext configurationContext){
-            this.configurationContext = Objects.requireNonNull(configurationContext);
             return this;
         }
 
@@ -236,7 +286,7 @@ public class ConversionContext {
          * @param formatDescriptors the formats supported in a human readable form, e.g. as regular expressions.
          * @return the builder instance, for chaining
          */
-        public Builder addSupportedFormats(@SuppressWarnings("rawtypes") Class<? extends PropertyConverter> converterType, String... formatDescriptors){
+        public Builder addSupportedFormats(@SuppressWarnings("rawtypes") Class<?> converterType, String... formatDescriptors){
             for(String format: formatDescriptors) {
                 supportedFormats.add(format + " (" + converterType.getSimpleName() + ")");
             }
@@ -255,7 +305,6 @@ public class ConversionContext {
         public String toString() {
             return "Builder{" +
                     "configuration=" + configuration +
-                    "context=" + configurationContext +
                     ", key='" + key + '\'' +
                     ", targetType=" + targetType +
                     ", annotatedElement=" + annotatedElement +

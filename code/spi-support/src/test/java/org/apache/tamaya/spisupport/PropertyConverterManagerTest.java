@@ -19,9 +19,12 @@
 package org.apache.tamaya.spisupport;
 
 import java.lang.reflect.Method;
+
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
 import java.util.List;
@@ -35,7 +38,8 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void customTypeWithFactoryMethodOfIsRecognizedAsSupported() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
 
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(MyType.class)))
                 .isTrue();
@@ -43,7 +47,8 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void factoryMethodOfIsUsedAsConverter() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
 
         List<PropertyConverter<MyType>> converters = manager.getPropertyConverters(
                 (TypeLiteral) TypeLiteral.of(MyType.class));
@@ -52,7 +57,7 @@ public class PropertyConverterManagerTest {
 
         PropertyConverter<MyType> converter = converters.get(0);
 
-        Object result = converter.convert("IN", DUMMY_CONTEXT);
+        Object result = converter.convert("IN");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(MyType.class);
@@ -61,13 +66,14 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testDirectConverterMapping() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(C.class))).isTrue();
         List<PropertyConverter<C>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(C.class)));
         assertThat(converters).hasSize(1);
 
         PropertyConverter<C> converter = converters.get(0);
-        C result = converter.convert("testDirectConverterMapping", DUMMY_CONTEXT);
+        C result = converter.convert("testDirectConverterMapping");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -76,7 +82,8 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testDirectSuperclassConverterMapping() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(B.class))).isTrue();
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters).hasSize(1);
@@ -84,7 +91,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<B> converter = converters.get(0);
-        B result = converter.convert("testDirectSuperclassConverterMapping", DUMMY_CONTEXT);
+        B result = converter.convert("testDirectSuperclassConverterMapping");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -93,24 +100,26 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testMultipleConverterLoad() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(B.class))).isTrue();
         List<PropertyConverter<B>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters).hasSize(1);
-        manager = new PropertyConverterManager(true);
+        manager = new PropertyConverterManager(serviceContext, true);
         converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(B.class)));
         assertThat(converters).hasSize(1);
     }
 
     @Test
     public void testTransitiveSuperclassConverterMapping() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(A.class))).isTrue();
         List<PropertyConverter<A>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(A.class)));
         assertThat(converters).hasSize(1);
 
         PropertyConverter<A> converter = converters.get(0);
-        A result = converter.convert("testTransitiveSuperclassConverterMapping", DUMMY_CONTEXT);
+        A result = converter.convert("testTransitiveSuperclassConverterMapping");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -119,13 +128,14 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testDirectInterfaceMapping() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(Readable.class))).isTrue();
         List<PropertyConverter<Readable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Readable.class)));
         assertThat(converters).hasSize(1);
 
         PropertyConverter<Readable> converter = converters.get(0);
-        Readable result = converter.convert("testDirectInterfaceMapping", DUMMY_CONTEXT);
+        Readable result = converter.convert("testDirectInterfaceMapping");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -134,13 +144,14 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testTransitiveInterfaceMapping1() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(Runnable.class))).isTrue();
         List<PropertyConverter<Runnable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(Runnable.class)));
         assertThat(converters).hasSize(1);
 
         PropertyConverter<Runnable> converter = converters.get(0);
-        Runnable result = converter.convert("testTransitiveInterfaceMapping1", DUMMY_CONTEXT);
+        Runnable result = converter.convert("testTransitiveInterfaceMapping1");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -149,13 +160,14 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testTransitiveInterfaceMapping2() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(AutoCloseable.class))).isTrue();
         List<PropertyConverter<AutoCloseable>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(AutoCloseable.class)));
         assertThat(converters).hasSize(1);
 
         PropertyConverter<AutoCloseable> converter = converters.get(0);
-        AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2", DUMMY_CONTEXT);
+        AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -164,14 +176,15 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testBoxedConverterMapping() {
-        PropertyConverterManager manager = new PropertyConverterManager(true);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, true);
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(int.class))).isFalse();
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(Integer.class))).isTrue();
         List<PropertyConverter<Integer>> converters = List.class.cast(manager.getPropertyConverters(TypeLiteral.of(int.class)));
         assertThat(converters).hasSize(1);
 
         PropertyConverter<Integer> converter = converters.get(0);
-        Integer result = converter.convert("101", DUMMY_CONTEXT);
+        Integer result = converter.convert("101");
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(Integer.class);
@@ -181,7 +194,8 @@ public class PropertyConverterManagerTest {
     
     @Test
     public void testCreateEnumPropertyConverter() {
-        PropertyConverterManager manager = new PropertyConverterManager(false);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, false);
         PropertyConverter pc = manager.createDefaultPropertyConverter(TypeLiteral.of(MyEnum.class));
         assertThat(pc instanceof EnumConverter).isTrue();
         assertThat(manager.isTargetTypeSupported(TypeLiteral.of(MyEnum.class))).isTrue();
@@ -189,7 +203,8 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testGetFactoryMethod() throws Exception {
-        PropertyConverterManager manager = new PropertyConverterManager(false);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, false);
         Method getFactoryMethod = PropertyConverterManager.class.getDeclaredMethod("getFactoryMethod", new Class[]{Class.class, String[].class});
         getFactoryMethod.setAccessible(true);
 
@@ -208,7 +223,8 @@ public class PropertyConverterManagerTest {
 
     @Test
     public void testMapBoxedType() throws Exception {
-        PropertyConverterManager manager = new PropertyConverterManager(false);
+        ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        PropertyConverterManager manager = new PropertyConverterManager(serviceContext, false);
 
         Class[] boxed = new Class[]{
             Integer[].class, Short[].class, Byte[].class, Long[].class,

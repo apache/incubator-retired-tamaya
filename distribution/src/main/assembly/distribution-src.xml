@@ -42,7 +42,7 @@ under the License.
             </excludes>
             <includes>
             </includes>
-            <outputDirectory>${project.basedir}</outputDirectory>
+            <outputDirectory>/</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

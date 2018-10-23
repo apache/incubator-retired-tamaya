@@ -45,9 +45,10 @@ public class NumberConverter implements PropertyConverter<Number>{
     private final LongConverter longConverter = new LongConverter();
 
     @Override
-    public Number convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "<double>, <long>", "0x (hex)", "0X... (hex)", "POSITIVE_INFINITY",
-                "NEGATIVE_INFINITY", "NAN");
+    public Number convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), "<double>, <long>", "0x (hex)", "0X... (hex)", "POSITIVE_INFINITY",
+                "NEGATIVE_INFINITY", "NAN"));
 
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)) {
@@ -58,7 +59,7 @@ public class NumberConverter implements PropertyConverter<Number>{
             case "NAN":
                 return Double.NaN;
             default:
-                Long lVal = longConverter.convert(trimmed, context);
+                Long lVal = longConverter.convert(trimmed);
                 if (lVal != null) {
                     return lVal;
                 }

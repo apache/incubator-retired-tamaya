@@ -20,7 +20,6 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import static org.assertj.core.api.Assertions.*;
@@ -39,7 +38,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.decimal", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(1.23456789).isCloseTo(valueRead, within(0.0d));
@@ -52,7 +51,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_DecimalNegative() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.decimalNegative", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(-1.23456789).isCloseTo(valueRead, within(0.0d));
@@ -65,7 +64,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_Integer() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.integer", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(100d).isCloseTo(valueRead, within(0.0d));
@@ -78,7 +77,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_Hex1() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.hex1", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(255d).isCloseTo(valueRead, within(0.0d));
@@ -91,7 +90,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_Hex2() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.hex2", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(-255d).isCloseTo(valueRead, within(0.0d));
@@ -104,7 +103,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_Hex3() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.hex3", Double.class);
         assertThat(valueRead!=null).isTrue();
     }
@@ -116,7 +115,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_MinValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.min", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(valueRead).isCloseTo(Double.MIN_VALUE, within(0.0d));
@@ -129,7 +128,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_MaxValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.max", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(valueRead).isCloseTo(Double.MAX_VALUE, within(0.0d));
@@ -142,7 +141,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_NaNValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.nan", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(valueRead).isCloseTo(Double.NaN, within(0.0d));
@@ -155,7 +154,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_PositiveInfinityValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.pi", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(valueRead).isCloseTo(Double.POSITIVE_INFINITY, within(0.0d));
@@ -168,7 +167,7 @@ public class DoubleConverterTest {
      */
     @Test
     public void testConvert_Double_NegativeInfinityValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Double valueRead = config.get("tests.converter.double.ni", Double.class);
         assertThat(valueRead!=null).isTrue();
         assertThat(valueRead).isCloseTo(Double.NEGATIVE_INFINITY, within(0.0d));
@@ -177,15 +176,17 @@ public class DoubleConverterTest {
     
     @Test(expected = ConfigException.class)
     public void testConvert_DoubleInvalid() throws ConfigException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         config.get("tests.converter.double.invalid", Double.class);
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Double.class)).build();
+        ConversionContext.set(context);
         DoubleConverter converter = new DoubleConverter();
-        converter.convert("", context);
+        converter.convert("");
+        ConversionContext.reset();
 
         assertThat(context.getSupportedFormats().contains("<double> (DoubleConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (DoubleConverter)")).isTrue();

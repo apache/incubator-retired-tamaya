@@ -36,11 +36,15 @@ import java.util.Optional;
 public class OptionalConverter implements PropertyConverter<Optional> {
 
     @Override
-    public Optional convert(String value, ConversionContext context) {
+    public Optional convert(String value) {
         if(value==null){
             return Optional.empty();
         }
         try{
+            ConversionContext context = ConversionContext.current();
+            if(context==null){
+                throw new IllegalStateException("Cannot convert optional since target type is unknown.");
+            }
             Type targetType = context.getTargetType().getType();
             ParameterizedType pt = (ParameterizedType) targetType;
             if(String.class.equals(pt.getActualTypeArguments()[0])){

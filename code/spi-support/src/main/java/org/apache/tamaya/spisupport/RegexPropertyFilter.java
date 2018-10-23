@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -29,7 +28,7 @@ import java.util.List;
  * Predicate filtering using a regex expression operating on the key. It allows either
  * to define the target keys to be selected (includes), or to be excluded (excludes).
  */
-public final class RegexPropertyFilter implements PropertyFilter{
+public final class RegexPropertyFilter implements PropertyFilter {
     /** The expression used to include entries that match. */
     private List<String> includes;
     /** The expression used to exclude entries that match. */
@@ -54,10 +53,10 @@ public final class RegexPropertyFilter implements PropertyFilter{
     }
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
         if(includes!=null){
             for(String expression:includes){
-                if(context.getProperty().getKey().matches(expression)){
+                if(valueToBeFiltered.getQualifiedKey().matches(expression)){
                     return valueToBeFiltered;
                 }
             }
@@ -65,7 +64,7 @@ public final class RegexPropertyFilter implements PropertyFilter{
         }
         if(excludes!=null){
             for(String expression:excludes){
-                if(context.getProperty().getKey().matches(expression)){
+                if(valueToBeFiltered.getQualifiedKey().matches(expression)){
                     return null;
                 }
             }

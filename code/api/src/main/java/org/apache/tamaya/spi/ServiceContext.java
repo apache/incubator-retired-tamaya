@@ -18,22 +18,44 @@
  */
 package org.apache.tamaya.spi;
 
+import org.apache.tamaya.ConfigException;
+
+import javax.annotation.Priority;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.logging.Level;
 
 
 /**
  * This class models the component that is managing the lifecycle current the
  * services used by the Configuration API.
  */
-public interface ServiceContext {
+public interface ServiceContext extends ClassloaderAware{
 
     /**
+     * Get the ordinal of the ServiceContext.
      * @return ordinal of the ServiceContext. The one with the highest ordinal will be taken.
      */
-    int ordinal();
+    default int ordinal(){
+        return getPriority(this);
+    }
+
+    /**
+     * Checks the given instance for a @Priority annotation. If present the annotation's value is evaluated. If no such
+     * annotation is present, a default priority of {@code 1} is returned.
+     * @param o the instance, not {@code null}.
+     * @return a priority, by default 1.
+     */
+    static int getPriority(Object o){
+        int prio = 1; //X TODO discuss default priority
+        Priority priority = o.getClass().getAnnotation(Priority.class);
+        if (priority != null) {
+            prio = priority.value();
+        }
+        return prio;
+    }
 
     /**
      * Access a service singleton via its type.
@@ -45,7 +67,9 @@ public interface ServiceContext {
      * @return The instance to be used, or {@code null}
      * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
      */
-    <T> T getService(Class<T> serviceType);
+    default <T> T getService(Class<T> serviceType){
+         return create(serviceType);
+    }
 
     /**
      * Factory method to create a type, hereby a new instance is created on each access.
@@ -58,7 +82,17 @@ public interface ServiceContext {
      * @return The new instance to be used, or {@code null}
      * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
      */
-    <T> T create(Class<T> serviceType);
+   default <T> T create(Class<T> serviceType){
+        @SuppressWarnings("unchecked")
+        Class<? extends T> implType = null;
+        Collection<T> services = getServices(serviceType);
+        if (services.isEmpty()) {
+            return null;
+        } else {
+            return ((List<T>) services).get(0);
+        }
+    }
+
 
     /**
      * Access a list current services, given its type. The bootstrap mechanism should
@@ -71,23 +105,25 @@ public interface ServiceContext {
      * @return The instance to be used, never {@code null}
      */
      <T> List<T> getServices(Class<T> serviceType);
-
     /**
      * Loads resources from the current runtime context. This method allows to use runtime
      * specific code to load resources, e.g. within OSGI environments.
      * @param resource the resource, not {@code null}.
-     * @param cl the desired classloader context, if null, the current thread context classloader is used.
      * @return the resources found
      * @throws IOException if load fails.
      */
-    Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException;
+    default Enumeration<URL> getResources(String resource) throws IOException{
+        return getClassLoader().getResources(resource);
+    }
 
     /**
      * Loads a resource from the current runtime context. This method allows to use runtime
      * specific code to load a resource, e.g. within OSGI environments.
      * @param resource the resource, not {@code null}.
-     * @param cl the desired classloader context, if null, the current thread context classloader is used.
      * @return the resource found, or {@code null}.
      */
-    URL getResource(String resource, ClassLoader cl);
+    default URL getResource(String resource){
+        return getClassLoader().getResource(resource);
+    }
+
 }

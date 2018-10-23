@@ -44,14 +44,16 @@ public class SupplierConverterTest {
         SupplierConverter instance = new SupplierConverter();
         Supplier<String> stringResult;
         TypeLiteral listStringTypeLiteral = new TypeLiteral<List<String>> () {};
-        ConversionContext stringContext = new ConversionContext.Builder(listStringTypeLiteral).build();
-        
-        stringResult = instance.convert(null, stringContext);
+        ConversionContext context = new ConversionContext.Builder(listStringTypeLiteral).build();
+        ConversionContext.set(context);
+        stringResult = instance.convert(null);
         assertThat(stringResult.get()).isNull();
         
-        stringResult = instance.convert("aString", stringContext);
+        stringResult = instance.convert("aString");
         assertThat(stringResult.get()).isEqualTo("aString");
-        
+
+        ConversionContext.reset();
+
         Supplier<InetAddress> addressResult;
         
         Configuration mockConfig = Mockito.mock(Configuration.class);
@@ -61,9 +63,11 @@ public class SupplierConverterTest {
         ConversionContext myConverterContext = new ConversionContext.Builder(myConverterTypeLiteral)
                 .setConfiguration(mockConfig)
                 .build();
+        ConversionContext.set(myConverterContext);
+        addressResult = instance.convert("someKey");
 
-        addressResult = instance.convert("someKey", myConverterContext);
         assertThat(addressResult.get() instanceof InetAddress).isTrue();
+        ConversionContext.reset();
 
 }
         
@@ -85,7 +89,7 @@ public class SupplierConverterTest {
     private class MyConverter<T extends InetAddress> implements PropertyConverter<InetAddress> {
 
         @Override
-        public InetAddress convert(String value, ConversionContext context) {
+        public InetAddress convert(String value) {
             return Mockito.mock(InetAddress.class);
         }
     }

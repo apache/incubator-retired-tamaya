@@ -30,8 +30,8 @@ import java.util.Collections;
  * to implement it via the PropertySourceProvider but should directly
  * expose a {@link PropertySource}.</p>
  *
- * <p>A PropertySourceProvider will get picked up via the
- * {@link java.util.ServiceLoader} mechanism and must get registered via
+ * <p>A PropertySourceProvider will current picked up via the
+ * {@link java.util.ServiceLoader} mechanism and must current registered via
  * META-INF/services/org.apache.tamaya.spi.PropertySourceProvider</p>
  */
 @FunctionalInterface

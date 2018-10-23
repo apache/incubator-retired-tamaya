@@ -36,8 +36,9 @@ public class LocalTimeConverter implements PropertyConverter<LocalTime> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public LocalTime convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), LocalTime.now().toString());
+    public LocalTime convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), LocalTime.now().toString()));
         try{
             return LocalTime.parse(value);
         }catch(Exception e){

@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spisupport;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 
@@ -27,6 +26,16 @@ import java.util.*;
 public class EmptyConfigurationContextBuilder implements ConfigurationContextBuilder{
 
     private static final ConfigurationContextBuilder INSTANCE = new EmptyConfigurationContextBuilder();
+
+    @Override
+    public ConfigurationContextBuilder setClassLoader(ClassLoader classLoader) {
+        return this;
+    }
+
+    @Override
+    public ConfigurationContextBuilder setServiceContext(ServiceContext serviceContext) {
+        return this;
+    }
 
     @Override
     public ConfigurationContextBuilder setContext(ConfigurationContext context) {
@@ -161,6 +170,11 @@ public class EmptyConfigurationContextBuilder implements ConfigurationContextBui
     @Override
     public ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy) {
         return this;
+    }
+
+    @Override
+    public ServiceContext getServiceContext() {
+        return ServiceContextManager.getServiceContext(getClass().getClassLoader());
     }
 
     @Override

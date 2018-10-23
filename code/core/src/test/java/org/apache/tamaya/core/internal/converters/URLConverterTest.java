@@ -39,47 +39,49 @@ public class URLConverterTest {
     @Test
     public void testConvert_URL() throws Exception {
         URLConverter converter = new URLConverter();
-        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("http://apache.org:4000/path", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("http://apache.org:4000/path"));
     }
 
     @Test
     public void testConvert_URL_WithSpaces() throws Exception {
         URLConverter converter = new URLConverter();
-        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("  http://apache.org:4000/path\t", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("  http://apache.org:4000/path\t"));
     }
 
     @Test
     public void testConvert_URL_WithSpacesBefore() throws Exception {
         URLConverter converter = new URLConverter();
-        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("  http://apache.org:4000/path", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("  http://apache.org:4000/path"));
     }
 
     @Test
     public void testConvert_URL_WithSpacesAfter() throws Exception {
         URLConverter converter = new URLConverter();
-        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("http://apache.org:4000/path  ", context));
+        assertThat(new URL("http://apache.org:4000/path")).isEqualTo(converter.convert("http://apache.org:4000/path  "));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         URLConverter converter = new URLConverter();
-        assertThat(converter.convert("", context)).isNull();
-        assertThat(converter.convert(null, context)).isNull();
+        assertThat(converter.convert("")).isNull();
+        assertThat(converter.convert(null)).isNull();
     }
     
     @Test
     public void testConvert_URLInvalid() throws ConfigException {
         URLConverter converter = new URLConverter();
-        assertThat(converter.convert("not a url", context)).isNull();
+        assertThat(converter.convert("not a url")).isNull();
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(URL.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(URL.class)).build();
+        ConversionContext.set(context);
         URLConverter converter = new URLConverter();
-        converter.convert("http://localhost", localcontext);
+        converter.convert("http://localhost");
+        ConversionContext.reset();
 
-        assertThat(localcontext.getSupportedFormats().contains("<URL> (URLConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("<URL> (URLConverter)")).isTrue();
     }
 
     @Test

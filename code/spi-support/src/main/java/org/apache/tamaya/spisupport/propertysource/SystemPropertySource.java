@@ -163,9 +163,14 @@ public class SystemPropertySource extends BasePropertySource {
         if(disabled){
             return null;
         }
+        reload();
         String prefix = this.prefix;
         if(prefix==null) {
-            return PropertyValue.of(key, System.getProperty(key), getName());
+            String value =  System.getProperty(key);
+            if(value == null){
+                return null;
+            }
+            return PropertyValue.of(key, value, getName());
         }
         return PropertyValue.of(key, System.getProperty(key.substring(prefix.length())), getName());
     }
@@ -175,6 +180,11 @@ public class SystemPropertySource extends BasePropertySource {
         if(disabled){
             return Collections.emptyMap();
         }
+        reload();
+        return this.cachedProperties;
+    }
+
+    public void reload() {
         // only need to reload and fill our map if something has changed
         // synchronization was removed, Instance was marked as volatile. In the worst case it
         // is reloaded twice, but the values will be the same.
@@ -182,7 +192,6 @@ public class SystemPropertySource extends BasePropertySource {
             Map<String, PropertyValue> properties = loadProperties();
             this.cachedProperties = Collections.unmodifiableMap(properties);
         }
-        return this.cachedProperties;
     }
 
     @Override

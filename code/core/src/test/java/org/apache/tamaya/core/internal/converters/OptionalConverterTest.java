@@ -20,10 +20,11 @@ package org.apache.tamaya.core.internal.converters;
 
 import java.util.List;
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
 import org.junit.Test;
 
 import java.util.Optional;
-import org.apache.tamaya.ConfigurationProvider;
+
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import static org.assertj.core.api.Assertions.*;
@@ -32,23 +33,25 @@ public class OptionalConverterTest {
 
     @Test
     public void nullConversionYieldsEmptyOptional() {
-        final Optional<?> result = new OptionalConverter().convert(null, null);
+        final Optional<?> result = new OptionalConverter().convert(null);
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isFalse();
     }
 
     @Test(expected = ConfigException.class)
     public void emulateExceptionWhenGivenContextIsNull() {
-        new OptionalConverter().convert("JustATestValueThatIsIgnored", null);
+        new OptionalConverter().convert("JustATestValueThatIsIgnored");
     }
 
     @Test
     public void testOptionalString() {
         TypeLiteral<List<String>> listOfStringTypeLiteral = new TypeLiteral<List<String>>() {
         };
-        ConversionContext ctx = new ConversionContext.Builder("testOptionalString", listOfStringTypeLiteral).build();
+        ConversionContext context = new ConversionContext.Builder("testOptionalString", listOfStringTypeLiteral).build();
+        ConversionContext.set(context);
+        final Optional<String> result = new OptionalConverter().convert("astring");
+        ConversionContext.reset();
 
-        final Optional<String> result = new OptionalConverter().convert("astring", ctx);
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isTrue();
         assertThat(result.get()).isEqualTo("astring");
@@ -58,11 +61,14 @@ public class OptionalConverterTest {
     public void testOptionalInteger() {
         TypeLiteral<List<Integer>> listOfIntegerTypeLiteral = new TypeLiteral<List<Integer>>() {
         };
-        ConversionContext ctx = new ConversionContext.Builder("testOptionalInteger", listOfIntegerTypeLiteral)
-                .setConfiguration(ConfigurationProvider.getConfiguration())
+        ConversionContext context = new ConversionContext.Builder("testOptionalInteger", listOfIntegerTypeLiteral)
+                .setConfiguration(Configuration.current())
                 .build();
+        ConversionContext.set(context);
 
-        final Optional<Integer> result = new OptionalConverter().convert("11", ctx);
+        final Optional<Integer> result = new OptionalConverter().convert("11");
+        ConversionContext.reset();
+
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isTrue();
         assertThat(result.get().intValue()).isEqualTo(11);

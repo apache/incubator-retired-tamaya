@@ -41,8 +41,8 @@ public class OSGIActivatorTest {
 
     @Before
     public void setUp() throws Exception {
-        prevServiceContext = ServiceContextManager.getServiceContext();
-        prevConfiguration = ConfigurationProvider.getConfiguration();
+        prevServiceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        prevConfiguration = Configuration.current();
     }
 
     @After
@@ -68,8 +68,8 @@ public class OSGIActivatorTest {
         //Start
         instance.start(mockBundleContext);
         assertThat(mockBundleContext.getBundleListenersCount()).isEqualTo(1);
-        assertThat(ConfigurationProvider.getConfiguration().getContext().getPropertyConverters().isEmpty()).isFalse();
-        assertThat(ConfigurationProvider.getConfiguration()).isNotSameAs(prevConfiguration);
+        assertThat(Configuration.current().getContext().getPropertyConverters().isEmpty()).isFalse();
+        assertThat(Configuration.current()).isNotSameAs(prevConfiguration);
 
         //Stop
         instance.stop(mockBundleContext);

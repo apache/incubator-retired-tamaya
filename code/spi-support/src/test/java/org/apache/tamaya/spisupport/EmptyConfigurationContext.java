@@ -30,6 +30,11 @@ public class EmptyConfigurationContext implements ConfigurationContext{
     private static final ConfigurationContext INSTANCE = new EmptyConfigurationContext();
 
     @Override
+    public ServiceContext getServiceContext() {
+        return ServiceContextManager.getServiceContext(getClass().getClassLoader());
+    }
+
+    @Override
     public void addPropertySources(PropertySource... propertySources) {
     }
 

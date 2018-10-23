@@ -19,7 +19,6 @@
 package org.apache.tamaya.core;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +34,7 @@ public class ConfigurationTest {
     }
 
     private Configuration current() {
-        return ConfigurationProvider.getConfiguration();
+        return Configuration.current();
     }
 
     @Test
@@ -43,13 +42,14 @@ public class ConfigurationTest {
         assertThat(current().get("name")).isNotNull();
         assertThat(current().get("name2")).isNotNull(); // from default
         assertThat(current().get("name3")).isNotNull(); // overridden default, mapped by filter to name property
-        assertThat(current().get("name4")).isNotNull(); // final only
+        String value4 = current().get("name4");
+        assertThat(value4).isNotNull(); // final only
 
 
         assertThat(current().get("name")).isEqualTo("Robin");
         assertThat(current().get("name2")).isEqualTo("Sabine"); // from default
         assertThat(current().get("name3")).isEqualTo("Mapped to name: Robin");  // overridden default, mapped by filter to name property
-        assertThat(current().get("name4")).isEqualTo("Sereina(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)(filtered)"); // final only
+        assertThat(value4).isEqualTo("Sereina(filtered1)(filtered2)(filtered3)(filtered4)(filtered5)(filtered6)(filtered7)(filtered8)(filtered9)(filtered10)"); // final only
         assertThat(current().get("name5")).isNull(); // final only, but removed from filter
     }
 }

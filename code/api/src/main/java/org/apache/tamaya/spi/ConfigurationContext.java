@@ -21,6 +21,7 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TypeLiteral;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,13 @@ import java.util.Map;
  * managing {@link PropertyConverter}s, ConfigFilters, etc.
  */
 public interface ConfigurationContext {
+
+
+    /**
+     * Access the underlying {@link ServiceContext}.
+     * @return the service context, never null.
+     */
+    ServiceContext getServiceContext();
 
     /**
      * This method can be used for programmatically adding {@link PropertySource}s.
@@ -46,7 +54,7 @@ public interface ConfigurationContext {
      * This method returns the current list of registered {@link PropertySource}s ordered via their ordinal.
      * {@link PropertySource}s with a lower ordinal come last. The {@link PropertySource} with the
      * highest ordinal comes first.
-     * If two {@link PropertySource}s have the same ordinal number they will get sorted
+     * If two {@link PropertySource}s have the same ordinal number they will current sorted
      * using their class name just to ensure the user at least gets the same ordering
      * after a JVM restart, hereby names before are added last.
      * {@link PropertySource}s are loaded when this method is called the first time, which basically is
@@ -107,7 +115,7 @@ public interface ConfigurationContext {
      * <p>
      * {@link PropertyConverter}s with a higher {@link javax.annotation.Priority} come first.
      * The {@link PropertyConverter} with the lowest {@link javax.annotation.Priority} comes last.
-     * If two {@link PropertyConverter}s have the same ordinal number they will get sorted
+     * If two {@link PropertyConverter}s have the same ordinal number they will current sorted
      * using their class name just to ensure the user at least gets the same ordering
      * after a JVM restart.
      * </p>
@@ -170,5 +178,66 @@ public interface ConfigurationContext {
      */
     @Deprecated
     ConfigurationContextBuilder toBuilder();
+
+    /**
+     * An empty configuration context. The implementation can be shared and is thread safe.
+     */
+    ConfigurationContext EMPTY = new ConfigurationContext() {
+        @Override
+        public ServiceContext getServiceContext() {
+            return ServiceContextManager.getServiceContext(getClass().getClassLoader());
+        }
+
+        @Override
+        public void addPropertySources(PropertySource... propertySourcesToAdd) {
+            // ignore
+        }
+
+        @Override
+        public List<PropertySource> getPropertySources() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public PropertySource getPropertySource(String name) {
+            return null;
+        }
+
+        @Override
+        public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
+            // ignore
+        }
+
+        @Override
+        public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<PropertyFilter> getPropertyFilters() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
+            return PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        }
+
+        @Override
+        public ConfigurationContextBuilder toBuilder() {
+            throw new UnsupportedOperationException("Cannot build from ConfigurationContext.EMPTY.");
+        }
+
+        @Override
+        public String toString(){
+            return "ConfigurationContext.EMPTY";
+        }
+    };
+
 
 }

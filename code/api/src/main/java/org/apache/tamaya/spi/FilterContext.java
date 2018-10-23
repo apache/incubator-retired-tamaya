@@ -20,10 +20,8 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.Configuration;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * A filter context containing all the required values for implementing filtering.
@@ -32,13 +30,49 @@ import java.util.Objects;
  */
 public class FilterContext {
     /** The key. */
-    private final PropertyValue value;
+    private final List<PropertyValue> values;
     /** The current context. */
     private final ConfigurationContext context;
     @Experimental
     private Map<String, PropertyValue> configEntries = new HashMap<>();
     @Experimental
     private boolean singlePropertyScoped;
+
+    private static ThreadLocal<FilterContext> CONTEXT = new ThreadLocal<>();
+
+    /**
+     * Access the current filter context.
+     * @return the current filter context, or null.
+     */
+    public static FilterContext get(){
+        return CONTEXT.get();
+    }
+
+    /**
+     * If the current conversoin context is available, this performs the given action.
+     * @param action the consumer to be executed, not null.
+     */
+    public static void doOptional(Consumer<FilterContext> action){
+        FilterContext ctx = get();
+        if(ctx!=null){
+            action.accept(ctx);
+        }
+    }
+
+    /**
+     * Sets the current filter context.
+     * @param context the FilterContext, not null.
+     */
+    public static void set(FilterContext context){
+        CONTEXT.set(context);
+    }
+
+    /**
+     * Removes the current filter context.
+     */
+    public static void reset(){
+        CONTEXT.remove();
+    }
 
 
     /**
@@ -56,7 +90,7 @@ public class FilterContext {
         Objects.requireNonNull(context, "Context must be not null.");
 
         this.singlePropertyScoped = false;
-        this.value = Objects.requireNonNull(value);
+        this.values = Collections.singletonList(Objects.requireNonNull(value));
         this.context = Objects.requireNonNull(context);
         this.configEntries.putAll(configEntries);
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
@@ -74,7 +108,23 @@ public class FilterContext {
 
         this.singlePropertyScoped = true;
         this.context = Objects.requireNonNull(context);
-        this.value = Objects.requireNonNull(value);
+        this.values = Collections.singletonList(Objects.requireNonNull(value));
+        this.configEntries = Collections.unmodifiableMap(this.configEntries);
+    }
+
+    /**
+     * Creates a new FilterContext, for filtering of a single value access
+     * using {@link Configuration#getProperties()}.
+     * @param values the value under evaluation, not {@code null}.
+     * @param context the current context, not {@code null}.
+     */
+    public FilterContext(List<PropertyValue> values, ConfigurationContext context) {
+        Objects.requireNonNull(values, "Value must not be null.");
+        Objects.requireNonNull(context, "Context must be not null.");
+
+        this.singlePropertyScoped = true;
+        this.context = Objects.requireNonNull(context);
+        this.values = Collections.unmodifiableList(new ArrayList<>(values));
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
 
@@ -82,7 +132,7 @@ public class FilterContext {
      * Get the current context.
      * @return the current context, not {@code null}.
      */
-    public ConfigurationContext getContext(){
+    public ConfigurationContext current(){
         return context;
     }
 
@@ -94,7 +144,18 @@ public class FilterContext {
      * key/value configuration is present.
      */
     public PropertyValue getProperty() {
-        return value;
+        return values.get(0);
+    }
+
+    /**
+     * Get the property value under evaluation. This information is very useful to evaluate additional metadata needed to determine/
+     * control further aspects of the conversion.
+     *
+     * @return the key. This may be null in case where a default value has to be converted and no unique underlying
+     * key/value configuration is present.
+     */
+    public List<PropertyValue> getAllValues() {
+        return values;
     }
 
     /**
@@ -112,7 +173,7 @@ public class FilterContext {
      * <ul>
      * <li>the original value <b>before</b> any filters were applied on it.</li>
      * <li>all values starting with an {@code _<key>.}, for example {@code a.value}
-     * may have a map set with {@code a.value} (oringinal value), {@code _a.value.origin,
+     * may have a map setCurrent with {@code a.value} (oringinal value), {@code _a.value.origin,
      * _a.value.type, etc}. The exact contents is determine by the {@link PropertySource}s
      * active.</li>
      * </ul>
@@ -123,7 +184,7 @@ public class FilterContext {
      * passed as input to the filter process will not be affected by any such removal (but the final properties
      * returned are affected, of course).
      * 
-     * Finally, when a single property is accessed, e.g. by calling {@code Configuration.get(String)}.
+     * Finally, when a single property is accessed, e.g. by calling {@code Configuration.current(String)}.
      *
      * @return the configuration instance, or null.
      */
@@ -134,7 +195,7 @@ public class FilterContext {
 
     @Override
     public String toString() {
-        return "FilterContext{value='" + value + "', configEntries=" + configEntries.keySet() + '}';
+        return "FilterContext{value='" + values + "', configEntries=" + configEntries.keySet() + '}';
     }
 
 }

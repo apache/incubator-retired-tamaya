@@ -20,7 +20,6 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
@@ -39,7 +38,7 @@ public class ShortConverterTest {
      */
     @Test
     public void testConvert_Short_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Short valueRead = config.get("tests.converter.short.decimal", Short.class);
         assertThat(valueRead != null).isTrue();
         assertThat(101).isEqualTo(valueRead.intValue());
@@ -52,7 +51,7 @@ public class ShortConverterTest {
      */
     @Test
     public void testConvert_Short_Octal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Short valueRead = config.get("tests.converter.short.octal", Short.class);
         assertThat(valueRead != null).isTrue();
         assertThat(Short.decode("02").intValue()).isEqualTo(valueRead.intValue());
@@ -65,7 +64,7 @@ public class ShortConverterTest {
      */
     @Test
     public void testConvert_Short_Hex() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Short valueRead = config.get("tests.converter.short.hex.lowerX", Short.class);
         assertThat(valueRead != null).isTrue();
         assertThat(Short.decode("0x2F").intValue()).isEqualTo(valueRead.intValue());
@@ -81,7 +80,7 @@ public class ShortConverterTest {
      */
     @Test
     public void testConvert_NotPresent() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Short valueRead = config.get("tests.converter.short.foo", Short.class);
         assertThat(valueRead != null).isFalse();
     }
@@ -93,7 +92,7 @@ public class ShortConverterTest {
      */
     @Test
     public void testConvert_Short_MinValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Short valueRead = config.get("tests.converter.short.min", Short.class);
         assertThat(valueRead != null).isTrue();
         assertThat(valueRead.intValue()).isEqualTo(Short.MIN_VALUE);
@@ -106,7 +105,7 @@ public class ShortConverterTest {
      */
     @Test
     public void testConvert_Short_MaxValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Short valueRead = config.get("tests.converter.short.max", Short.class);
         assertThat(valueRead != null).isTrue();
         assertThat(valueRead.intValue()).isEqualTo(Short.MAX_VALUE);
@@ -115,15 +114,17 @@ public class ShortConverterTest {
         
     @Test(expected = ConfigException.class)
     public void testConvert_ShortInvalid() throws ConfigException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         config.get("tests.converter.short.invalid", Short.class);
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Short.class)).build();
+        ConversionContext.set(context);
         ShortConverter converter = new ShortConverter();
-        converter.convert("", context);
+        converter.convert("");
+        ConversionContext.reset();
 
         assertThat(context.getSupportedFormats().contains("short (ShortConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (ShortConverter)")).isTrue();

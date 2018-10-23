@@ -18,7 +18,13 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -31,58 +37,100 @@ public class ConfigurationTest {
 
     @Test
     public void testget() throws Exception {
-        assertThat(Boolean.TRUE).isEqualTo(ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class));
-        assertThat(Boolean.FALSE).isEqualTo(ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class));
-        assertThat((int) Byte.MAX_VALUE).isEqualTo((int) ConfigurationProvider.getConfiguration().get("byte", Byte.class));
-        assertThat(Integer.MAX_VALUE).isEqualTo((int) ConfigurationProvider.getConfiguration().get("int", Integer.class));
-        assertThat(Long.MAX_VALUE).isEqualTo((long) ConfigurationProvider.getConfiguration().get("long", Long.class));
-        assertThat(Float.MAX_VALUE).isCloseTo((float) ConfigurationProvider.getConfiguration().get("float", Float.class), within(0.001f));
-        assertThat(Double.MAX_VALUE).isEqualTo(ConfigurationProvider.getConfiguration().get("double", Double.class));
-        assertThat("aStringValue").isEqualTo(ConfigurationProvider.getConfiguration().get("String"));
+        assertThat(Boolean.TRUE).isEqualTo(Configuration.current().get("booleanTrue", Boolean.class));
+        assertThat(Boolean.FALSE).isEqualTo(Configuration.current().get("booleanFalse", Boolean.class));
+        assertThat((int) Byte.MAX_VALUE).isEqualTo((int) Configuration.current().get("byte", Byte.class));
+        assertThat(Integer.MAX_VALUE).isEqualTo((int) Configuration.current().get("int", Integer.class));
+        assertThat(Long.MAX_VALUE).isEqualTo((long) Configuration.current().get("long", Long.class));
+        assertThat(Float.MAX_VALUE).isCloseTo((float) Configuration.current().get("float", Float.class), within(0.001f));
+        assertThat(Double.MAX_VALUE).isEqualTo(Configuration.current().get("double", Double.class));
+        assertThat("aStringValue").isEqualTo(Configuration.current().get("String"));
     }
 
     @Test
     public void testGetBoolean() throws Exception {
-        assertThat(ConfigurationProvider.getConfiguration().get("booleanTrue", Boolean.class)).isTrue();
-        assertThat(ConfigurationProvider.getConfiguration().get("booleanFalse", Boolean.class)).isFalse();
-        assertThat(ConfigurationProvider.getConfiguration().get("foorBar", Boolean.class)).isFalse();
+        assertThat(Configuration.current().get("booleanTrue", Boolean.class)).isTrue();
+        assertThat(Configuration.current().get("booleanFalse", Boolean.class)).isFalse();
+        assertThat(Configuration.current().get("foorBar", Boolean.class)).isFalse();
     }
 
     @Test
     public void testGetInteger() throws Exception {
-        assertThat(Integer.MAX_VALUE).isEqualTo((int) ConfigurationProvider.getConfiguration().get("int", Integer.class));
+        assertThat(Integer.MAX_VALUE).isEqualTo((int) Configuration.current().get("int", Integer.class));
     }
 
     @Test
     public void testGetLong() throws Exception {
-        assertThat(Long.MAX_VALUE).isEqualTo((long) ConfigurationProvider.getConfiguration().get("long", Long.class));
+        assertThat(Long.MAX_VALUE).isEqualTo((long) Configuration.current().get("long", Long.class));
     }
 
     @Test
     public void testGetDouble() throws Exception {
-        assertThat(Double.MAX_VALUE).isEqualTo(ConfigurationProvider.getConfiguration().get("double", Double.class));
+        assertThat(Double.MAX_VALUE).isEqualTo(Configuration.current().get("double", Double.class));
     }
 
     @Test
     public void testGetOrDefault() throws Exception {
-        assertThat("StringIfThereWasNotAValueThere").isEqualTo(ConfigurationProvider.getConfiguration().getOrDefault("nonexistant", "StringIfThereWasNotAValueThere"));
-        assertThat("StringIfThereWasNotAValueThere").isEqualTo(ConfigurationProvider.getConfiguration().getOrDefault("nonexistant", String.class, "StringIfThereWasNotAValueThere"));
+        assertThat("StringIfThereWasNotAValueThere").isEqualTo(Configuration.current().getOrDefault("nonexistant", "StringIfThereWasNotAValueThere"));
+        assertThat("StringIfThereWasNotAValueThere").isEqualTo(Configuration.current().getOrDefault("nonexistant", String.class, "StringIfThereWasNotAValueThere"));
     }
 
     @Test
     public void testToBuilder() throws Exception {
-        assertThat(ConfigurationProvider.getConfiguration().toBuilder()).isNotNull();
+        assertThat(Configuration.current().toBuilder()).isNotNull();
     }
 
     @Test
+    @Deprecated
     public void testWith() throws Exception {
         ConfigOperator noop = (Configuration config) -> config;
-        assertThat(ConfigurationProvider.getConfiguration().with(noop)).isNotNull();
+        assertThat(Configuration.current().with(noop)).isNotNull();
     }
 
     @Test
+    @Deprecated
     public void testQuery() throws Exception {
         ConfigQuery<String> stringQuery = (ConfigQuery) (Configuration config) -> config.get("String");
-        assertThat(ConfigurationProvider.getConfiguration().query(stringQuery)).isEqualTo("aStringValue");
+        assertThat(Configuration.current().query(stringQuery)).isEqualTo("aStringValue");
+    }
+
+    @Test
+    public void testMap() throws Exception {
+        UnaryOperator<Configuration> noop = (Configuration config) -> config;
+        assertThat(Configuration.current().map(noop)).isNotNull();
+        assertThat(Configuration.current().map(noop)== Configuration.current());
+    }
+
+    @Test
+    public void testAdapt() throws Exception {
+        Function<Configuration, String> stringQuery = (Configuration config) -> config.get("String");
+        assertThat(Configuration.current().adapt(stringQuery)).isEqualTo("aStringValue");
+    }
+
+
+    /**
+     * Test of getConfiguration method, of class ConfigurationProvider.
+     */
+    @Test
+    public void testGetSetConfiguration() {
+        Configuration currentConfig = Configuration.current();
+        assertThat(currentConfig instanceof Configuration).isTrue();
+        Configuration newConfig = Mockito.mock(Configuration.class);
+        try{
+            Configuration.setCurrent(newConfig);
+            assertThat(Configuration.current()).isEqualTo(newConfig);
+        }finally{
+            Configuration.setCurrent(currentConfig);
+        }
+        assertThat(Configuration.current()).isEqualTo(currentConfig);
+    }
+
+    /**
+     * Test of createConfigurationBuilder method, of class ConfigurationProvider.
+     */
+    @Test
+    public void testGetConfigurationBuilder() {
+        ConfigurationBuilder result = Configuration.createConfigurationBuilder();
+        assertThat(result instanceof ConfigurationBuilder).isTrue();
     }
 }

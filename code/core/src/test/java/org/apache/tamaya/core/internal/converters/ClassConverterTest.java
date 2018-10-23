@@ -37,41 +37,42 @@ public class ClassConverterTest {
     @Test
     public void testConvert_Class() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertThat(BigDecimal.class).isEqualTo(converter.convert("java.math.BigDecimal", context));
+        assertThat(BigDecimal.class).isEqualTo(converter.convert("java.math.BigDecimal"));
     }
 
     @Test
     public void testConvert_Class_WithSpaces() throws Exception {
         ClassConverter converter = new ClassConverter();
-         assertThat(BigDecimal.class).isEqualTo(converter.convert("  java.math.BigDecimal\t", context));
+         assertThat(BigDecimal.class).isEqualTo(converter.convert("  java.math.BigDecimal\t"));
     }
 
     @Test
     public void testConvert_Class_WithSpacesBefore() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertThat(BigDecimal.class).isEqualTo(converter.convert("  java.math.BigDecimal", context));
+        assertThat(BigDecimal.class).isEqualTo(converter.convert("  java.math.BigDecimal"));
     }
 
     @Test
     public void testConvert_Class_WithSpacesAfter() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertThat(BigDecimal.class).isEqualTo(converter.convert("java.math.BigDecimal  ", context));
+        assertThat(BigDecimal.class).isEqualTo(converter.convert("java.math.BigDecimal  "));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         ClassConverter converter = new ClassConverter();
-        assertThat(converter.convert("", context)).isNull();
-        assertThat(converter.convert(null, context)).isNull();
+        assertThat(converter.convert("")).isNull();
+        assertThat(converter.convert(null)).isNull();
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Class.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Class.class)).build();
+        ConversionContext.set(context);
         ClassConverter converter = new ClassConverter();
-        converter.convert("", localcontext);
-
-        assertThat(localcontext.getSupportedFormats().contains("<fullyQualifiedClassName> (ClassConverter)")).isTrue();
+        converter.convert("");
+        ConversionContext.reset();
+        assertThat(context.getSupportedFormats().contains("<fullyQualifiedClassName> (ClassConverter)")).isTrue();
     }
 
     @Test

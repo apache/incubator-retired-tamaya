@@ -39,51 +39,22 @@ import java.util.logging.Logger;
  * </ul>
  */
 @Component(service = PropertyConverter.class)
-public class BigIntegerConverter implements PropertyConverter<BigInteger>{
+public class BigIntegerConverter implements PropertyConverter<BigInteger> {
 
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(BigIntegerConverter.class.getName());
-    /** Converter used to decode hex, octal values. */
-    private final ByteConverter byteConverter = new ByteConverter();
 
     @Override
-    public BigInteger convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)");
+    public BigInteger convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)"));
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
             LOG.finest("Parsing Hex value to BigInteger: " + value);
-            trimmed = trimmed.substring(2);
-            StringBuilder decimal = new StringBuilder();
-            for(int offset = 0;offset < trimmed.length();offset+=2){
-                if(offset==trimmed.length()-1){
-                    LOG.finest("Invalid Hex-Byte-String: " + value);
-                    return null;
-                }
-                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2), context);
-                if(val<10){
-                    decimal.append('0').append(val);
-                } else{
-                    decimal.append(val);
-                }
-            }
-            return new BigInteger(decimal.toString());
+            return new BigInteger(value.substring(2), 16);
         } else if(trimmed.startsWith("-0x") || trimmed.startsWith("-0X")){
             LOG.finest("Parsing Hex value to BigInteger: " + value);
-            trimmed = trimmed.substring(3);
-            StringBuilder decimal = new StringBuilder();
-            for(int offset = 0;offset < trimmed.length();offset+=2){
-                if(offset==trimmed.length()-1){
-                    LOG.finest("Invalid Hex-Byte-String: " + trimmed);
-                    return null;
-                }
-                byte val = byteConverter.convert("0x" + trimmed.substring(offset, offset + 2), context);
-                if(val<10){
-                    decimal.append('0').append(val);
-                } else{
-                    decimal.append(val);
-                }
-            }
-            return new BigInteger('-' + decimal.toString());
+            return new BigInteger('-' + value.substring(3), 16);
         }
         try{
             return new BigInteger(trimmed);

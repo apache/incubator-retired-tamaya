@@ -42,25 +42,25 @@ public class PathConverterTest {
     @Test
     public void convert() throws Exception {
         PathConverter conv = new PathConverter();
-        Path value = conv.convert("testRoot", context);
+        Path value = conv.convert("testRoot");
         assertThat(Paths.get("testRoot")).isEqualTo(value);
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertThat(value).isNotNull();
     }
 
     @Test
     public void convertNull() throws Exception {
         PathConverter conv = new PathConverter();
-        Path value = conv.convert(null, context);
+        Path value = conv.convert(null);
         assertThat(value).isNull();
-        value = conv.convert("", context);
+        value = conv.convert("");
         assertThat(value).isNull();
     }
     
     @Test
     public void convertInvalidPath() throws Exception {
         PathConverter conv = new PathConverter();
-        Path value = conv.convert("/invalid:/\u0000", context);
+        Path value = conv.convert("/invalid:/\u0000");
         assertThat(value).isNull();
     }
 
@@ -76,10 +76,13 @@ public class PathConverterTest {
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Path.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Path.class)).build();
+        ConversionContext.set(context);
         PathConverter converter = new PathConverter();
-        converter.convert("notempty", localcontext);
-        assertThat(localcontext.getSupportedFormats().contains("<File> (PathConverter)")).isTrue();
+        converter.convert("notempty");
+        ConversionContext.reset();
+
+        assertThat(context.getSupportedFormats().contains("<File> (PathConverter)")).isTrue();
     }
 
     @Test

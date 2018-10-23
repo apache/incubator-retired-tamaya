@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport.propertysource;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
@@ -29,7 +30,6 @@ import java.net.URL;
 import java.util.*;
 
 import static java.lang.String.format;
-import static java.lang.Thread.currentThread;
 
 /**
  * Provider which reads all {@value DEFAULT_SIMPLE_PROPERTIES_FILE_NAME} and
@@ -38,7 +38,7 @@ import static java.lang.Thread.currentThread;
  * {@code tamaya.defaultprops.disable} or {@code tamaya.defaults.disable}
  * as system or environment property this feature can be disabled.
  */
-public class JavaConfigurationPropertySource extends BasePropertySource {
+public class JavaConfigurationPropertySource extends BasePropertySource implements ClassloaderAware {
     /**
      * Default location in the classpath, where Tamaya looks for simple line based configuration by default.
      */
@@ -52,6 +52,11 @@ public class JavaConfigurationPropertySource extends BasePropertySource {
     private static final int DEFAULT_ORDINAL = 900;
 
     private boolean enabled = evaluateEnabled();
+
+    private ClassLoader classLoader;
+
+    private List<PropertySource> propertySources = new ArrayList<>();
+
 
     public JavaConfigurationPropertySource(){
         super("resource:META-INF/javaconfiguration.*", DEFAULT_ORDINAL);
@@ -75,19 +80,15 @@ public class JavaConfigurationPropertySource extends BasePropertySource {
     }
 
     private List<PropertySource> getPropertySources() {
-        List<PropertySource> propertySources = new ArrayList<>();
-        propertySources.addAll(loadPropertySourcesByName(DEFAULT_SIMPLE_PROPERTIES_FILE_NAME));
-        propertySources.addAll(loadPropertySourcesByName(DEFAULT_XML_PROPERTIES_FILE_NAME));
-        Collections.sort(propertySources, PropertySourceComparator.getInstance());
-        return propertySources;
+        return this.propertySources;
     }
 
-    private Collection<? extends PropertySource> loadPropertySourcesByName(String filename) {
+    private Collection<? extends PropertySource> loadPropertySourcesByName(String filename, ClassLoader classLoader) {
         List<PropertySource> propertySources = new ArrayList<>();
         Enumeration<URL> propertyLocations;
         try {
-            propertyLocations = ServiceContextManager.getServiceContext()
-                    .getResources(filename, currentThread().getContextClassLoader());
+            propertyLocations = ServiceContextManager.getServiceContext(classLoader)
+                    .getResources(filename);
         } catch (IOException e) {
             String msg = format("Error while searching for %s", filename);
 
@@ -130,5 +131,18 @@ public class JavaConfigurationPropertySource extends BasePropertySource {
         return "JavaConfigurationPropertySource{" +
                 "enabled=" + enabled +
                 '}';
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+        propertySources.addAll(loadPropertySourcesByName(DEFAULT_SIMPLE_PROPERTIES_FILE_NAME, classLoader));
+        propertySources.addAll(loadPropertySourcesByName(DEFAULT_XML_PROPERTIES_FILE_NAME, classLoader));
+        Collections.sort(propertySources, PropertySourceComparator.getInstance());
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 }

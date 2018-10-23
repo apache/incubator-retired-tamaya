@@ -26,8 +26,8 @@ import java.util.Map;
 
 /**
  * <p>{@link org.apache.tamaya.spi.PropertySource} to access environment variables via Tamaya
- * which are set via {@code export VARIABLE=value} on UNIX systems or
- * {@code set VARIABLE=value} on Windows systems.</p>
+ * which are setCurrent via {@code export VARIABLE=value} on UNIX systems or
+ * {@code setCurrent VARIABLE=value} on Windows systems.</p>
  *
  * <p>Using the {@linkplain EnvironmentPropertySource} without any
  * additional configuration gives access to all existing environment
@@ -46,8 +46,8 @@ import java.util.Map;
  *
  * <pre>
  * PropertySource ps = new EnvironmentPropertySource();
- * PropertyValue opsMode = ps.get("OPS_MODE");
- * PropertyValue color = ps.get("COLOR");
+ * PropertyValue opsMode = ps.current("OPS_MODE");
+ * PropertyValue color = ps.current("COLOR");
  * </pre>
  *
  * <h1>Application specific environment variables with prefix</h1>
@@ -76,7 +76,7 @@ import java.util.Map;
  *
  * <pre>
  * PropertySource ps = new EnvironmentPropertySource();
- * PropertyValue pv = ps.get("CUSTOMER");
+ * PropertyValue pv = ps.current("CUSTOMER");
  * System.out.println(pv.getValue());
  * </pre>
  *
@@ -197,7 +197,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
         if (isDisabled()) {
             return null;
         }
-        // Exact match (i.e. com.ACME.size)
+        // Exact match (i.e. com.ACME.getNumChilds)
         String effectiveKey = hasPrefix() ? getPrefix() + "." + key
                 : key;
         String value = getPropertiesProvider().getenv(effectiveKey);
@@ -209,6 +209,9 @@ public class EnvironmentPropertySource extends BasePropertySource {
         if(value==null){
             value = getPropertiesProvider().getenv(effectiveKey.replaceAll("\\.", "_")
                     .toUpperCase());
+        }
+        if(value==null){
+            return null;
         }
         return PropertyValue.of(key, value, getName());
     }

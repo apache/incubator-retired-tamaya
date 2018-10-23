@@ -41,9 +41,9 @@ public class OffsetTimeConverterTest {
     @Test
     public void convert() throws Exception {
         OffsetTimeConverter conv = new OffsetTimeConverter();
-        OffsetTime value = conv.convert("10:15:30+01:00", context);
+        OffsetTime value = conv.convert("10:15:30+01:00");
         assertThat(OffsetTime.parse("10:15:30+01:00")).isEqualTo(value);
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertThat(value).isNull();
     }
 
@@ -59,11 +59,13 @@ public class OffsetTimeConverterTest {
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(OffsetTime.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(OffsetTime.class)).build();
+        ConversionContext.set(context);
         OffsetTimeConverter converter = new OffsetTimeConverter();
-        converter.convert("", localcontext);
+        converter.convert("");
+        ConversionContext.reset();
 
-        assertThat(localcontext.getSupportedFormats().toString().contains(" (OffsetTimeConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().toString().contains(" (OffsetTimeConverter)")).isTrue();
     }
 
     @Test

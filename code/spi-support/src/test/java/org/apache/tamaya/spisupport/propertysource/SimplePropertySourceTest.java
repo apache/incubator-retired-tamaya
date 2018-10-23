@@ -40,7 +40,7 @@ public class SimplePropertySourceTest {
         SimplePropertySource source = new SimplePropertySource(resource);
 
         assertThat(source).isNotNull();
-        assertThat(source.getProperties()).hasSize(2); // double the size for .source values.
+        assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
         assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
         assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
     }
@@ -84,7 +84,7 @@ public class SimplePropertySourceTest {
         SimplePropertySource source = new SimplePropertySource(resource);
 
         assertThat(source).isNotNull();
-        assertThat(source.getProperties()).hasSize(5); // double the size for .source values.
+        assertThat(source.getProperties()).hasSize(5); // double the getNumChilds for .source values.
     }
 
     @Test

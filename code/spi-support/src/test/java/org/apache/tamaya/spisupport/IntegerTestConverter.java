@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport;
 
 import java.util.Objects;
+
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -28,8 +29,9 @@ import org.apache.tamaya.spi.PropertyConverter;
 public class IntegerTestConverter implements PropertyConverter<Integer> {
 
     @Override
-    public Integer convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "<int>");
+    public Integer convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), "<int>"));
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return Integer.decode(trimmed);

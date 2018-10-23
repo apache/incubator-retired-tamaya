@@ -41,8 +41,9 @@ public class CharConverter implements PropertyConverter<Character>{
     private static final Logger LOG = Logger.getLogger(CharConverter.class.getName());
 
     @Override
-    public Character convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(),"\\'<char>\\'", "<char>", "<charNum>");
+    public Character convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(),"\\'<char>\\'", "<char>", "<charNum>"));
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.isEmpty()){
             return null;

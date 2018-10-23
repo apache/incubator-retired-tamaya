@@ -36,11 +36,12 @@ public class URLConverter implements PropertyConverter<URL> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public URL convert(String value, ConversionContext context) {
+    public URL convert(String value) {
         if(value==null || value.isEmpty()){
             return null;
         }
-        context.addSupportedFormats(getClass(),"<URL>");
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(),"<URL>"));
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return new URL(trimmed);

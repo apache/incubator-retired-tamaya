@@ -22,8 +22,10 @@ package org.apache.tamaya;
  * Models a function that maps a given {@link org.apache.tamaya.Configuration} to another {@link org.apache.tamaya.Configuration}. This can be used
  * to model additional functionality and applying it to a given {@link org.apache.tamaya.Configuration} instance by calling
  * the {@link org.apache.tamaya.Configuration#with(org.apache.tamaya.ConfigOperator)} method.
+ * @deprecated Use {@link java.util.function.UnaryOperator}
  */
 @FunctionalInterface
+@Deprecated
 public interface ConfigOperator {
 
     /**

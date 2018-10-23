@@ -41,11 +41,14 @@ public class FileConverterTest {
         FileConverter instance = new FileConverter();
         File result;
         
-        assertThat(instance.convert(null, context)).isNull();
+        assertThat(instance.convert(null)).isNull();
         
         URL testfileUrl = getClass().getResource("/testfile.properties");
         System.out.println(testfileUrl.toString());
-        result = instance.convert(testfileUrl.toString(), context);
+        ConversionContext.set(context);
+        result = instance.convert(testfileUrl.toString());
+        ConversionContext.reset();
+
         assertThat(result).isNotNull();
         assertThat(context.getSupportedFormats().contains("<File> (FileConverter)")).isTrue();
     }

@@ -21,7 +21,6 @@ package org.apache.tamaya.spisupport;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
-import org.osgi.service.component.annotations.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,8 +51,9 @@ public class EnumConverter<T> implements PropertyConverter<T> {
     }
 
     @Override
-    public T convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(),"<enumValue>");
+    public T convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(),"<enumValue>"));
         try {
             return (T) factory.invoke(null, value);
         } catch (InvocationTargetException | IllegalAccessException e) {

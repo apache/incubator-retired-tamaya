@@ -34,8 +34,9 @@ public class JavaConfigurationProviderTest {
 
     @Test
     public void loadsSimpleAndXMLPropertyFilesProper() {
-        PropertySource propertySource = new JavaConfigurationPropertySource();
-        assertThat(propertySource.getProperties().keySet()).hasSize(7);  // double the size for .source values.
+        JavaConfigurationPropertySource propertySource = new JavaConfigurationPropertySource();
+        propertySource.init(getClass().getClassLoader());
+        assertThat(propertySource.getProperties().keySet()).hasSize(7);  // double the getNumChilds for .source values.
 
         for (int i = 1; i < 6; i++) {
             String key = "confkey" + i;

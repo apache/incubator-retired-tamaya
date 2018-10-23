@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.internal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.testdata.TestPropertyDefaultSource;
 import org.apache.tamaya.spi.*;
@@ -43,7 +42,7 @@ public class CoreConfigurationTest {
 
     @Test
     public void testToString() throws Exception {
-        String toString = ConfigurationProvider.getConfiguration().getContext().toString();
+        String toString = Configuration.current().getContext().toString();
     }
 
     @Test
@@ -88,7 +87,7 @@ public class CoreConfigurationTest {
         Configuration cfg = new CoreConfigurationBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value, ConversionContext context) {
+            public Object convert(String value) {
                 return "";
             }
         };
@@ -102,7 +101,7 @@ public class CoreConfigurationTest {
         Configuration cfg = new CoreConfigurationBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value, ConversionContext context) {
+            public Object convert(String value) {
                 return "";
             }
         };
@@ -112,7 +111,7 @@ public class CoreConfigurationTest {
         assertThat(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
         testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value, ConversionContext context) {
+            public Object convert(String value) {
                 return Integer.valueOf(5);
             }
         };
@@ -126,7 +125,7 @@ public class CoreConfigurationTest {
         Configuration cfg = new CoreConfigurationBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value, ConversionContext context) {
+            public Object convert(String value) {
                 return "";
             }
         };
@@ -145,7 +144,7 @@ public class CoreConfigurationTest {
         PropertyFilter testFilter = new PropertyFilter() {
 
             @Override
-            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+            public PropertyValue filterProperty(PropertyValue value) {
                 return value;
             }
         };

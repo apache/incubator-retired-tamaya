@@ -27,7 +27,10 @@ import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
 import org.osgi.service.component.annotations.Component;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * Implementation of the Configuration API. This class uses the current {@link org.apache.tamaya.spi.ConfigurationContext} to evaluate the
@@ -37,21 +40,34 @@ import java.util.Objects;
 @Component(service = ConfigurationProviderSpi.class)
 public class CoreConfigurationProvider implements ConfigurationProviderSpi {
 
-    private Configuration config = new CoreConfigurationBuilder()
+    private static final Logger LOG = Logger.getLogger(CoreConfigurationProvider.class.getName());
+
+    private final Map<ClassLoader, Configuration> configurations = new ConcurrentHashMap<>();
+
+    public CoreConfigurationProvider(){
+        Configuration defaultConfig = new CoreConfigurationBuilder()
+                .setClassLoader(getClass().getClassLoader())
             .addDefaultPropertyConverters()
             .addDefaultPropertyFilters()
             .addDefaultPropertySources()
             .build();
-    {
-        String bannerConfig = config.getOrDefault("tamaya.banner", "OFF");
-
+        configurations.put(getClass().getClassLoader(), defaultConfig);
+        String bannerConfig = defaultConfig.getOrDefault("tamaya.banner", "OFF");
         BannerManager bm = new BannerManager(bannerConfig);
         bm.outputBanner();
     }
 
+
+
     @Override
-    public Configuration getConfiguration() {
-        return config;
+    public Configuration getConfiguration(ClassLoader classLoader) {
+        return configurations.computeIfAbsent(classLoader, cl -> new CoreConfigurationBuilder()
+                    .setClassLoader(classLoader)
+                    .addDefaultPropertyConverters()
+                    .addDefaultPropertyFilters()
+                    .addDefaultPropertySources()
+                    .build()
+        );
     }
 
     @Override
@@ -70,13 +86,16 @@ public class CoreConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
-    public void setConfiguration(Configuration config) {
+    public void setConfiguration(Configuration config, ClassLoader classLoader) {
         Objects.requireNonNull(config.getContext());
-        this.config = Objects.requireNonNull(config);
+        Configuration old = this.configurations.put(classLoader, Objects.requireNonNull(config));
+        if(old != null){
+            LOG.warning(String.format("Replaced config %S with %S for classloader %S", old, config, classLoader));
+        }
     }
 
     @Override
-    public boolean isConfigurationSettable() {
+    public boolean isConfigurationSettable(ClassLoader classLoader) {
         return true;
     }
 
@@ -86,7 +105,7 @@ public class CoreConfigurationProvider implements ConfigurationProviderSpi {
     @Deprecated
     @Override
     public ConfigurationContext getConfigurationContext() {
-        return this.config.getContext();
+        return getConfiguration(Thread.currentThread().getContextClassLoader()).getContext();
     }
 
     /**
@@ -95,7 +114,7 @@ public class CoreConfigurationProvider implements ConfigurationProviderSpi {
     @Deprecated
     @Override
     public void setConfigurationContext(ConfigurationContext context){
-        this.config = new CoreConfigurationBuilder(context).build();
+        setConfiguration(new CoreConfigurationBuilder(context).build(), Thread.currentThread().getContextClassLoader());
     }
 
 }

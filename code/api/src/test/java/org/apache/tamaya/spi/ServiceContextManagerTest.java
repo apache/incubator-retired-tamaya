@@ -35,16 +35,16 @@ public class ServiceContextManagerTest {
 
     @Test
     public void setGetServiceContext() throws Exception {
-        ServiceContext prev = ServiceContextManager.getServiceContext();
+        ServiceContext prev = ServiceContextManager.getServiceContext(getClass().getClassLoader());
         try {
             MyServiceContext mine = new MyServiceContext();
             ServiceContextManager.set(mine);
-            assertThat(ServiceContextManager.getServiceContext() == mine).isTrue();
+            assertThat(ServiceContextManager.getServiceContext(getClass().getClassLoader()) == mine).isTrue();
             ServiceContextManager.set(mine);
-            assertThat(ServiceContextManager.getServiceContext() == mine).isTrue();
+            assertThat(ServiceContextManager.getServiceContext(getClass().getClassLoader()) == mine).isTrue();
         } finally {
             ServiceContextManager.set(prev);
-            assertThat(ServiceContextManager.getServiceContext() == prev).isTrue();
+            assertThat(ServiceContextManager.getServiceContext(getClass().getClassLoader()) == prev).isTrue();
         }
 
     }
@@ -55,6 +55,16 @@ public class ServiceContextManagerTest {
     }
 
     private static final class MyServiceContext implements ServiceContext{
+
+        @Override
+        public ClassLoader getClassLoader() {
+            return getClass().getClassLoader();
+        }
+
+        @Override
+        public void init(ClassLoader classLoader) {
+
+        }
 
         @Override
         public int ordinal() {
@@ -77,12 +87,12 @@ public class ServiceContextManagerTest {
         }
 
         @Override
-        public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
+        public Enumeration<URL> getResources(String resource) throws IOException {
             return null;
         }
 
         @Override
-        public URL getResource(String resource, ClassLoader cl) {
+        public URL getResource(String resource) {
             return null;
         }
     }

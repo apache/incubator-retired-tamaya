@@ -20,13 +20,12 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+
 /**
  * Tests the default converter for bytes.
  */
@@ -39,7 +38,7 @@ public class ByteConverterTest {
      */
     @Test
     public void testConvert_Byte() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Byte valueRead = config.get("tests.converter.byte.decimal", Byte.class);
         assertThat(valueRead).isNotNull();
         assertThat(101).isEqualTo(valueRead.byteValue());
@@ -63,7 +62,7 @@ public class ByteConverterTest {
      */
     @Test
     public void testConvert_Byte_MinValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Byte valueRead = config.get("tests.converter.byte.min", Byte.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead.byteValue()).isEqualTo(Byte.MIN_VALUE);
@@ -76,7 +75,7 @@ public class ByteConverterTest {
      */
     @Test
     public void testConvert_Byte_MaxValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Byte valueRead = config.get("tests.converter.byte.max", Byte.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead.byteValue()).isEqualTo(Byte.MAX_VALUE);
@@ -89,7 +88,7 @@ public class ByteConverterTest {
      */
     @Test(expected = ConfigException.class)
     public void testConvert_ByteInvalid() throws ConfigException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Byte valueRead = config.get("tests.converter.byte.invalid", Byte.class);
         assertThat(valueRead).isNull();
     }
@@ -97,9 +96,10 @@ public class ByteConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Byte.class)).build();
+        ConversionContext.set(context);
         ByteConverter converter = new ByteConverter();
-        converter.convert("", context);
-        
+        converter.convert("");
+        ConversionContext.reset();
         assertThat(context.getSupportedFormats().contains("<byte> (ByteConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (ByteConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MAX_VALUE (ByteConverter)")).isTrue();

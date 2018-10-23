@@ -34,7 +34,7 @@ public class TestPropertyDefaultSource extends BasePropertySource{
 
     public TestPropertyDefaultSource() {
         super(100);
-        properties.put("name",PropertyValue.of("name", "Anatole", "test"));
+        properties.put("name", PropertyValue.of("name", "Anatole", "test"));
         properties.put("name2",PropertyValue.of("name2", "Sabine", "test"));
         properties = Collections.unmodifiableMap(properties);
     }

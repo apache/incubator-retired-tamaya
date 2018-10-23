@@ -26,7 +26,7 @@ package org.apache.tamaya.spi;
  * <p>Filters </p>
  */
 @FunctionalInterface
-public interface PropertyFilter {
+public interface PropertyFilter{
 
     /**
      * <p>Maps the current {@code valueToBeFiltered} value to a new value. The resulting value will be used as the result
@@ -41,11 +41,10 @@ public interface PropertyFilter {
      *     <li>thread-safe</li>
      * </ul>
      * @param value the value to be filtered, which also can be {@code null} if removed by another filter.
-     * @param context the filter context, not {@code null}.
      * @return the filtered value, or {@code null} if the value should be removed alltogether.
      * @see PropertyValue
-     * @see PropertyValueBuilder
+     * @see FilterContext
      */
-    PropertyValue filterProperty(PropertyValue value, FilterContext context);
+    PropertyValue filterProperty(PropertyValue value);
 
 }

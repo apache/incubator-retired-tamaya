@@ -33,7 +33,7 @@ import org.apache.tamaya.spi.PropertyValue;
 public abstract class BasePropertySource implements PropertySource{
     /** default ordinal that will be used, if no ordinal is provided with the config. */
     private int defaultOrdinal;
-    /** Used if the ordinal has been set explicitly. */
+    /** Used if the ordinal has been setCurrent explicitly. */
     private volatile Integer ordinal;
     /** The name of the property source. */
     private String name;
@@ -125,7 +125,7 @@ public abstract class BasePropertySource implements PropertySource{
     }
 
     /**
-     * Returns the  default ordinal used, when no ordinal is set, or the ordinal was not parseable to an int value.
+     * Returns the  default ordinal used, when no ordinal is setCurrent, or the ordinal was not parseable to an int value.
      * @return the  default ordinal used, by default 0.
      */
     public int getDefaultOrdinal(){

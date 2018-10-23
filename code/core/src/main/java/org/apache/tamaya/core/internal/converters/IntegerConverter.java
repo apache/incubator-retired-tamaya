@@ -52,8 +52,9 @@ public class IntegerConverter implements PropertyConverter<Integer>{
     private static final Logger LOG = Logger.getLogger(IntegerConverter.class.getName());
 
     @Override
-    public Integer convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "<int>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX");
+    public Integer convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), "<int>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX"));
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":

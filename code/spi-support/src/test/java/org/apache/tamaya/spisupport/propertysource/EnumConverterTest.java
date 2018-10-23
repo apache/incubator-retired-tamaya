@@ -38,21 +38,21 @@ public class EnumConverterTest {
 
     @Test
     public void testConvert() {
-        assertThat(testConverter.convert(RoundingMode.CEILING.toString(), DUMMY_CONTEXT)).isEqualTo(RoundingMode.CEILING);
+        assertThat(testConverter.convert(RoundingMode.CEILING.toString())).isEqualTo(RoundingMode.CEILING);
     }
 
     @Test
     public void testConvert_LowerCase() {
-        assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert("ceiling", DUMMY_CONTEXT));
+        assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert("ceiling"));
     }
 
     @Test
     public void testConvert_MixedCase()  {
-        assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert("CeiLinG", DUMMY_CONTEXT));
+        assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert("CeiLinG"));
     }
 
     @Test
     public void testConvert_OtherValue() {
-        assertThat(testConverter.convert("fooBars", DUMMY_CONTEXT)).isNull();
+        assertThat(testConverter.convert("fooBars")).isNull();
     }
 }

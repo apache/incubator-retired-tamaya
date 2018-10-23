@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -29,7 +28,7 @@ import org.apache.tamaya.spi.PropertyValue;
 public class MockedPropertyFilter implements PropertyFilter {
 
     @Override
-    public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+    public PropertyValue filterProperty(PropertyValue value) {
         if (value.getKey().contains("Filternull")) {
             return null;
         } else {

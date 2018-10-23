@@ -20,7 +20,6 @@ package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
@@ -39,7 +38,7 @@ public class IntegerConverterTest {
      */
     @Test
     public void testConvert_Integer_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Integer valueRead = config.get("tests.converter.integer.decimal", Integer.class);
         assertThat(valueRead != null).isTrue();
         assertThat(101).isEqualTo(valueRead.intValue());
@@ -52,7 +51,7 @@ public class IntegerConverterTest {
      */
     @Test
     public void testConvert_Integer_Octal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Integer valueRead = config.get("tests.converter.integer.octal", Integer.class);
         assertThat(valueRead != null).isTrue();
         assertThat(Integer.decode("02").intValue()).isEqualTo(valueRead.intValue());
@@ -65,7 +64,7 @@ public class IntegerConverterTest {
      */
     @Test
     public void testConvert_Integer_Hex() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Integer valueRead = config.get("tests.converter.integer.hex.lowerX", Integer.class);
         assertThat(valueRead != null).isTrue();
         assertThat(Integer.decode("0x2F").intValue()).isEqualTo(valueRead.intValue());
@@ -81,7 +80,7 @@ public class IntegerConverterTest {
      */
     @Test
     public void testConvert_NotPresent() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Integer valueRead = config.get("tests.converter.integer.foo", Integer.class);
         assertThat(valueRead != null).isFalse();
     }
@@ -93,7 +92,7 @@ public class IntegerConverterTest {
      */
     @Test
     public void testConvert_Integer_MinValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Integer valueRead = config.get("tests.converter.integer.min", Integer.class);
         assertThat(valueRead != null).isTrue();
         assertThat(valueRead.intValue()).isEqualTo(Integer.MIN_VALUE);
@@ -106,7 +105,7 @@ public class IntegerConverterTest {
      */
     @Test
     public void testConvert_Integer_MaxValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Integer valueRead = config.get("tests.converter.integer.max", Integer.class);
         assertThat(valueRead != null).isTrue();
         assertThat(valueRead.intValue()).isEqualTo(Integer.MAX_VALUE);
@@ -114,15 +113,17 @@ public class IntegerConverterTest {
         
     @Test(expected = ConfigException.class)
     public void testConvert_IntegerInvalid() throws ConfigException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         config.get("tests.converter.integer.invalid", Integer.class);
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Integer.class)).build();
+        ConversionContext.set(context);
         IntegerConverter converter = new IntegerConverter();
-        converter.convert("", context);
+        converter.convert("");
+        ConversionContext.reset();
 
         assertThat(context.getSupportedFormats().contains("<int> (IntegerConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (IntegerConverter)")).isTrue();

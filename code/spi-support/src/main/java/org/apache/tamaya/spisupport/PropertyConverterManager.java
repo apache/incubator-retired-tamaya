@@ -22,7 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.ServiceContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -37,9 +37,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
- * Manager that deals with {@link PropertyConverter} instances.
+ * Manager that deals with {@link org.apache.tamaya.spi.PropertyConverter} instances.
  * This class is thread-safe.
  */
 public class PropertyConverterManager {
@@ -75,14 +76,23 @@ public class PropertyConverterManager {
         }
     };
 
+    private final ServiceContext serviceContext;
+
     /**
-     * Constructor.
+     * Creates a new instance.
+     * @param serviceContext the Service context, not null.
      */
-    public PropertyConverterManager() {
-        this(false);
+    public PropertyConverterManager(ServiceContext serviceContext) {
+        this(serviceContext, false);
     }
 
-    public PropertyConverterManager(boolean init) {
+    /**
+     * Creates a new instance.
+     * @param serviceContext the Service context, not null.
+     * @param init if true, the converters are loaded eagerly.
+     */
+    public PropertyConverterManager(ServiceContext serviceContext, boolean init) {
+        this.serviceContext = Objects.requireNonNull(serviceContext);
         if (init) {
             initConverters();
         }
@@ -93,11 +103,12 @@ public class PropertyConverterManager {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void initConverters() {
-        for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(PropertyConverter.class)) {
+        for (PropertyConverter conv : serviceContext.getServices(PropertyConverter.class)) {
             Type type = TypeLiteral.getGenericInterfaceTypeParameters(conv.getClass(), PropertyConverter.class)[0];
             register(TypeLiteral.of(type), conv);
         }
     }
+
 
     /**
      * Registers a new converters instance.
@@ -191,6 +202,7 @@ public class PropertyConverterManager {
             readLock.unlock();
         }
     }
+
 
     /**
      * Get the list of all current registered converters for the given target type.
@@ -367,7 +379,7 @@ public class PropertyConverterManager {
             }
             converter = new PropertyConverter<T>() {
                     @Override
-                    public T convert(String value, ConversionContext context) {
+                    public T convert(String value) {
                         AccessController.doPrivileged(new PrivilegedAction<Object>() {
                             @Override
                             public Object run() {
@@ -431,6 +443,8 @@ public class PropertyConverterManager {
         return converters.hashCode();
     }
 
+
+
     /**
      * Default converter implementation performing several lookups for String conversion
      * options.
@@ -447,9 +461,11 @@ public class PropertyConverterManager {
         }
 
         @Override
-        public T convert(String value, ConversionContext context) {
-            context.addSupportedFormats(getClass(), "<String -> "+factoryMethod.toGenericString());
-
+        public T convert(String value) {
+            ConversionContext ctx = ConversionContext.current();
+            if(ctx!=null) {
+                ctx.addSupportedFormats(getClass(), "<String -> " + factoryMethod.toGenericString());
+            }
             if (!Modifier.isStatic(factoryMethod.getModifiers())) {
                 throw new ConfigException(factoryMethod.toGenericString() +
                         " is not a static method. Only static " +
@@ -470,4 +486,5 @@ public class PropertyConverterManager {
             }
         }
     }
+
 }

@@ -58,7 +58,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * @param path the resource path, not null.
      */
     public PropertiesResourcePropertySource(String path, String prefix){
-        super(path, loadProps(path, null), prefix);
+        super(path, loadProps(path, Thread.currentThread().getContextClassLoader()), prefix);
     }
 
     /**
@@ -77,10 +77,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * @return the loaded properties.
      */
     private static Map<String, String> loadProps(String path, ClassLoader cl) {
-        if(cl==null){
-            cl = PropertiesResourcePropertySource.class.getClassLoader();
-        }
-        URL url = ServiceContextManager.getServiceContext().getResource(path, cl);
+        URL url = ServiceContextManager.getServiceContext(cl).getResource(path);
         return loadProps(url);
     }
 

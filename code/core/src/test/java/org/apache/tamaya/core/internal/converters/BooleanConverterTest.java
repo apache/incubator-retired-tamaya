@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
@@ -40,7 +39,7 @@ public class BooleanConverterTest {
      */
     @Test
     public void testConvert_BooleanTrue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
         assertThat(valueRead).isNotNull();
         assertThat(Boolean.TRUE).isEqualTo(valueRead);
@@ -81,7 +80,7 @@ public class BooleanConverterTest {
      */
     @Test
     public void testConvert_BooleanFalse() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Boolean valueRead = config.get("tests.converter.boolean.y1", Boolean.class);
         assertThat(valueRead).isNotNull();
         valueRead = config.get("tests.converter.boolean.n1", Boolean.class);
@@ -126,7 +125,7 @@ public class BooleanConverterTest {
      */
     @Test(expected = ConfigException.class)
     public void testConvert_BooleanInvalid() throws ConfigException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Boolean valueRead = config.get("tests.converter.boolean.invalid", Boolean.class);
         assertThat(valueRead).isNull();
     }
@@ -134,9 +133,10 @@ public class BooleanConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Boolean.class)).build();
+        ConversionContext.set(context);
         BooleanConverter converter = new BooleanConverter();
-        converter.convert("", context);
-
+        converter.convert("");
+        ConversionContext.reset();
         assertThat(context.getSupportedFormats().contains("true (ignore case) (BooleanConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("false (ignore case) (BooleanConverter)")).isTrue();
     }

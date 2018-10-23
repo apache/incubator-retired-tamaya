@@ -18,12 +18,17 @@
  */
 package org.apache.tamaya;
 
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.apache.tamaya.spi.ServiceContext;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Any;
 
 /**
  * Test Configuration class, that is used to testdata the default methods
@@ -82,12 +87,20 @@ public class TestConfiguration implements Configuration {
 
     @Override
     public ConfigurationContext getContext() {
-        return Mockito.mock(ConfigurationContext.class);
+        ConfigurationContext ctx = Mockito.mock(ConfigurationContext.class);
+        ServiceContext serviceContext = Mockito.mock(ServiceContext.class);
+        ConfigurationProviderSpi spi = Mockito.mock(ConfigurationProviderSpi.class);
+        ConfigurationBuilder builder = Mockito.mock(ConfigurationBuilder.class);
+        Mockito.when(builder.setConfiguration(this)).thenReturn(builder);
+        Mockito.when(spi.getConfigurationBuilder()).thenReturn(builder);
+        Mockito.when(serviceContext.getService(ConfigurationProviderSpi.class)).thenReturn(spi);
+        Mockito.when(ctx.getServiceContext()).thenReturn(serviceContext);
+        return ctx;
     }
 
     @Override
     public Map<String, String> getProperties() {
-        // run toString on each value of the (key, value) set in VALUES
+        // run toString on each value of the (key, value) setCurrent in VALUES
         return VALUES.entrySet().stream().collect(
                 Collectors.toMap(
                         Map.Entry::getKey,

@@ -109,15 +109,9 @@ public class EnvironmentPropertySourceTest {
 		}
 	}
 
-	@Ignore("Why is this test case disabled?")
 	@Test
 	public void testPrefixedGet() throws Exception {
-		System.setProperty("tamaya.envprops.prefix", "fancyprefix");
-		System.setProperty("tamaya.envprops.disable", "false");
-		System.setProperty("tamaya.defaults.disable", "false");
-		// works: EnvironmentPropertySource localEnvironmentPropertySource = new
-		// EnvironmentPropertySource("fancyprefix");
-		EnvironmentPropertySource localEnvironmentPropertySource = new EnvironmentPropertySource();
+		EnvironmentPropertySource localEnvironmentPropertySource = new EnvironmentPropertySource("fancyprefix");
 		System.out.println(localEnvironmentPropertySource);
 		assertThat(localEnvironmentPropertySource.getPrefix()).isEqualTo("fancyprefix");
 		localEnvironmentPropertySource.setPropertiesProvider(new MockedSystemPropertiesProvider());

@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  * </ul>
  */
 @Component(service = PropertyConverter.class)
-public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
+public class BigDecimalConverter implements PropertyConverter<BigDecimal> {
 
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(BigDecimalConverter.class.getName());
@@ -47,15 +47,16 @@ public class BigDecimalConverter implements PropertyConverter<BigDecimal>{
     private final BigIntegerConverter integerConverter = new BigIntegerConverter();
 
     @Override
-    public BigDecimal convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "<bigDecimal> -> new BigDecimal(String)");
+    public BigDecimal convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), "<bigDecimal> -> new BigDecimal(String)"));
 
         String trimmed = Objects.requireNonNull(value).trim();
         try{
             return new BigDecimal(trimmed);
         } catch(Exception e){
             LOG.finest("Parsing BigDecimal failed, trying BigInteger for: " + value);
-            BigInteger bigInt = integerConverter.convert(value, context);
+            BigInteger bigInt = integerConverter.convert(value);
             if(bigInt!=null){
                 return new BigDecimal(bigInt);
             }

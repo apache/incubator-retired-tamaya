@@ -29,7 +29,7 @@ TestConfigurationProvider configProvider = new TestConfigurationProvider();
 
     @Test
     public void testIsConfigurationSettableByDefault(){
-        assertThat(configProvider.isConfigurationSettable()).isTrue();
+        assertThat(configProvider.isConfigurationSettable(Thread.currentThread().getContextClassLoader())).isTrue();
     }
     
     @Test
@@ -48,7 +48,7 @@ TestConfigurationProvider configProvider = new TestConfigurationProvider();
         ConfigurationContext newContext = Mockito.mock(ConfigurationContext.class);
         try{
             configProvider.setConfigurationContext(newContext);
-            //The mocked TestConfigurationProvider doesn't set the context on the
+            //The mocked TestConfigurationProvider doesn't setCurrent the context on the
             // inner Configuration object, as that's deprecated.
             assertThat(configProvider.getConfigurationContext()).isEqualTo(newContext);
         }finally{

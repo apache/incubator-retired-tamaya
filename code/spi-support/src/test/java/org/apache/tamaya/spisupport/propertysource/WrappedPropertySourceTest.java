@@ -75,7 +75,7 @@ public class WrappedPropertySourceTest {
 
 
     /**
-     * Test of get method, of class WrappedPropertySource.
+     * Test of current method, of class WrappedPropertySource.
      */
     @Test
     public void testGet() {

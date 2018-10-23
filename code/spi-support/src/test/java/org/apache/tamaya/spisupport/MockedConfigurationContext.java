@@ -23,12 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.*;
 
 /**
  *
@@ -36,12 +31,18 @@ import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
  */
 public class MockedConfigurationContext implements ConfigurationContext {
 
-    PropertyConverterManager pcm = new PropertyConverterManager(false);
+    ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
+    PropertyConverterManager pcm = new PropertyConverterManager(serviceContext,false);
     List<PropertySource> pss = new ArrayList<>();
 
     public MockedConfigurationContext() {
         pcm.register(TypeLiteral.of(Integer.class), new IntegerTestConverter());
         pss.add(new MockedPropertySource());
+    }
+
+    @Override
+    public ServiceContext getServiceContext() {
+        return serviceContext;
     }
 
     @Override

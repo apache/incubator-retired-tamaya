@@ -19,6 +19,7 @@
 package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -26,27 +27,60 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.TestCase.assertNull;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests for {@link FilterContext}.
  */
 public class FilterContextTest {
 
+    @Test
+    public void setNullContext() {
+        FilterContext.set(null);
+    }
+
+    @Test
+    public void setGetContext() {
+        PropertyValue val = PropertyValue.of("getKey", "v", "");
+        FilterContext ctx = new FilterContext(val,
+                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
+        FilterContext.set(ctx);
+        assertEquals(ctx, FilterContext.get());
+    }
+
+    @Test
+    public void resetContext() {
+        PropertyValue val = PropertyValue.of("getKey", "v", "");
+        FilterContext ctx = new FilterContext(val,
+                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
+        FilterContext.set(ctx);
+        assertNotNull(FilterContext.get());
+        FilterContext.reset();
+        assertNull(FilterContext.get());
+    }
+
     @Test(expected = NullPointerException.class)
-    public void constructorRequiresNonNullPropertyValueTwoParameterVariant() {
-        new FilterContext(null, new TestConfigContext());
+    public void constructorRequiresNonNullPropertyValueTwoParameterVariant1() {
+        new FilterContext((PropertyValue)null, ConfigurationContext.EMPTY);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void constructorRequiresNonNullPropertyValueTwoParameterVariant2() {
+        new FilterContext((List<PropertyValue>)null, ConfigurationContext.EMPTY);
     }
 
     @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullConfigurationContextTwoParameterVariant() {
-        new FilterContext(PropertyValue.of("a", "b", "s"), null);
+        new FilterContext(Collections.singletonList(PropertyValue.of("a", "b", "s")), null);
     }
 
     @SuppressWarnings("unchecked")
 	@Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullPropertyValueThreeParameterVariant() {
-        new FilterContext(null, Collections.EMPTY_MAP, new TestConfigContext());
+        new FilterContext(null, Collections.EMPTY_MAP, ConfigurationContext.EMPTY);
     }
 
     @SuppressWarnings("unchecked")
@@ -57,23 +91,23 @@ public class FilterContextTest {
 
     @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullMapForConfigEntriesThreeParameterVariant() {
-        new FilterContext(PropertyValue.of("a", "b", "s"), null, new TestConfigContext());
+        new FilterContext(PropertyValue.of("a", "b", "s"), null, ConfigurationContext.EMPTY);
     }
 
     @Test
     public void getKey() throws Exception {
         PropertyValue val = PropertyValue.of("getKey", "v", "");
         FilterContext ctx = new FilterContext(val,
-                new HashMap<String,PropertyValue>(), new TestConfigContext());
+                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
         assertThat(ctx.getProperty()).isEqualTo(val);
     }
 
     @Test
     public void isSinglePropertyScoped() throws Exception {
         PropertyValue val = PropertyValue.of("isSinglePropertyScoped", "v", "");
-        FilterContext ctx = new FilterContext(val, new HashMap<String,PropertyValue>(), new TestConfigContext());
+        FilterContext ctx = new FilterContext(val, new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
         assertThat(ctx.isSinglePropertyScoped()).isEqualTo(false);
-        ctx = new FilterContext(val, new TestConfigContext());
+        ctx = new FilterContext(Collections.singletonList(val), ConfigurationContext.EMPTY);
         assertThat(ctx.isSinglePropertyScoped()).isEqualTo(true);
     }
 
@@ -84,7 +118,7 @@ public class FilterContextTest {
             config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
         }
         PropertyValue val = PropertyValue.of("getConfigEntries", "v", "");
-        FilterContext ctx = new FilterContext(val, config, new TestConfigContext());
+        FilterContext ctx = new FilterContext(val, config, ConfigurationContext.EMPTY);
         assertThat(ctx.getConfigEntries()).isEqualTo(config);
         assertThat(config != ctx.getConfigEntries()).isTrue();
     }
@@ -96,63 +130,16 @@ public class FilterContextTest {
             config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
         }
         PropertyValue val = PropertyValue.of("testToString", "val", "mySource");
-        FilterContext ctx = new FilterContext(val, config, new TestConfigContext());
+        FilterContext ctx = new FilterContext(val, config, ConfigurationContext.EMPTY);
         String toString = ctx.toString();
 
         assertThat(toString).isNotNull();
-        assertThat(toString.contains("FilterContext{value='PropertyValue{key='testToString', value='val', " +
-                                     "source='mySource'}', configEntries=[")).isTrue();
+        System.out.println(toString);
+        assertThat(toString.contains("FilterContext{value='[PropertyValue{'testToString', value='val', children='0', " +
+                "metaData={source=mySource}}]', configEntries=[")).isTrue();
         assertThat(toString.contains("key-0")).isTrue();
         assertThat(toString.contains("key-1")).isTrue();
         assertThat(toString.endsWith("}")).isTrue();
-    }
-
-    private static class TestConfigContext implements ConfigurationContext{
-
-        @Override
-        public void addPropertySources(PropertySource... propertySources) {
-
-        }
-
-        @Override
-        public List<PropertySource> getPropertySources() {
-            return null;
-        }
-
-        @Override
-        public PropertySource getPropertySource(String name) {
-            return null;
-        }
-
-        @Override
-        public <T> void addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter) {
-
-        }
-
-        @Override
-        public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
-            return null;
-        }
-
-        @Override
-        public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type) {
-            return null;
-        }
-
-        @Override
-        public List<PropertyFilter> getPropertyFilters() {
-            return null;
-        }
-
-        @Override
-        public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
-            return null;
-        }
-
-        @Override
-        public ConfigurationContextBuilder toBuilder() {
-            return null;
-        }
     }
 
 }

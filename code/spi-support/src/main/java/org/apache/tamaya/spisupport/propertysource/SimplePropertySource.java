@@ -185,7 +185,7 @@ public class SimplePropertySource extends BasePropertySource {
          * Sets the {@code name} and returns a reference to this Builder so that the methods
          * can be chained together.
          *
-         * @param name the {@code name} to set, not null.
+         * @param name the {@code name} to setCurrent, not null.
          * @return a reference to this Builder
          */
         public Builder withName(String name) {
@@ -197,7 +197,7 @@ public class SimplePropertySource extends BasePropertySource {
          * Sets the {@code ordinal} and returns a reference to this Builder so that the methods
          * can be chained together.
          *
-         * @param val the {@code ordinal} to set
+         * @param val the {@code ordinal} to setCurrent
          * @return a reference to this Builder
          */
         public Builder withOrdinal(int val) {
@@ -209,7 +209,7 @@ public class SimplePropertySource extends BasePropertySource {
          * Sets the {@code defaultOrdinal} and returns a reference to this Builder so that the methods
          * can be chained together.
          *
-         * @param val the {@code defaultOrdinal} to set
+         * @param val the {@code defaultOrdinal} to setCurrent
          * @return a reference to this Builder
          */
         public Builder withDefaultOrdinal(int val) {
@@ -248,7 +248,7 @@ public class SimplePropertySource extends BasePropertySource {
         /**
          * Sets the {@code properties} and returns a reference to this Builder so that the methods can be chained together.
          *
-         * @param val the {@code properties} to set
+         * @param val the {@code properties} to setCurrent
          * @return a reference to this Builder
          */
         public Builder withProperties(Map<String, String> val) {
@@ -261,8 +261,8 @@ public class SimplePropertySource extends BasePropertySource {
         /**
          * Sets the {@code properties} and returns a reference to this Builder so that the methods can be chained together.
          *
-         * @param key the {@code properties} key to set
-         * @param val the {@code properties} value to set
+         * @param key the {@code properties} key to setCurrent
+         * @param val the {@code properties} value to setCurrent
          * @return a reference to this Builder
          */
         public Builder withProperty(String key, String val) {
@@ -271,7 +271,7 @@ public class SimplePropertySource extends BasePropertySource {
         }
 
         /**
-         * Returns a {@code SimplePropertySource} built from the parameters previously set.
+         * Returns a {@code SimplePropertySource} built from the parameters previously setCurrent.
          *
          * @return a {@code SimplePropertySource} built with parameters of this {@code SimplePropertySource.Builder}
          */

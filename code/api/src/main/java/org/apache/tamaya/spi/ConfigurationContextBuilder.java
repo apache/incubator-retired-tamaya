@@ -43,6 +43,21 @@ import java.util.Map;
 public interface ConfigurationContextBuilder {
 
     /**
+     * Set the classloader to be used for loading of configuration resources, equals to
+     * {@code setServiceContext(ServiceContextManager.getServiceContext(classLoader))}.
+     * @param classLoader the classloader, not null.
+     * @return the builder for chaining.
+     */
+    ConfigurationContextBuilder setClassLoader(ClassLoader classLoader);
+
+    /**
+     * Sets the ServiceContext to be used.
+     * @param serviceContext the serviceContext, nuo null.
+     * @return this instance for chaining.
+     */
+    ConfigurationContextBuilder setServiceContext(ServiceContext serviceContext);
+
+    /**
      * Init this builder instance with the given {@link ConfigurationContext} instance. This
      * method will use any existing property sources, filters, converters and the combination
      * policy of the given {@link ConfigurationContext} and initialize the current builder
@@ -320,6 +335,12 @@ public interface ConfigurationContextBuilder {
      * @return this builder, for chaining, never null.
      */
     ConfigurationContextBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy);
+
+    /**
+     * Access the serviceContext used by the builder.
+     * @return the serviceContext, never null.
+     */
+    ServiceContext getServiceContext();
 
     /**
      * Builds a new {@link ConfigurationContext} based on the data in this builder. The ordering of property

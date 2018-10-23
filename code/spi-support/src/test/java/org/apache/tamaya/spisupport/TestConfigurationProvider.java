@@ -41,7 +41,7 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
             .addDefaultPropertySources()
             .build();
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getConfiguration(ClassLoader classLoader) {
         return config;
     }
 
@@ -61,13 +61,13 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
-    public void setConfiguration(Configuration config) {
+    public void setConfiguration(Configuration config, ClassLoader classLoader) {
         Objects.requireNonNull(config.getContext());
         this.config = Objects.requireNonNull(config);
     }
 
     @Override
-    public boolean isConfigurationSettable() {
+    public boolean isConfigurationSettable(ClassLoader classLoader) {
         return true;
     }
 

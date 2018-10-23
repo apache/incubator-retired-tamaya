@@ -35,7 +35,7 @@ public class CoreConfigurationProviderTest {
 
     @Test
     public void getConfiguration() throws Exception {
-        assertThat(new CoreConfigurationProvider().getConfiguration()).isNotNull();
+        assertThat(new CoreConfigurationProvider().getConfiguration(getClass().getClassLoader())).isNotNull();
     }
 
     @Test
@@ -48,7 +48,8 @@ public class CoreConfigurationProviderTest {
     @Test
     public void getConfigurationContext() throws Exception {
         assertThat(new CoreConfigurationProvider().getConfigurationContext()).isNotNull();
-        assertThat(new CoreConfigurationProvider().getConfigurationContext()).isEqualTo(new CoreConfigurationProvider().getConfiguration().getContext());
+        assertThat(new CoreConfigurationProvider().getConfigurationContext()).isEqualTo(
+                new CoreConfigurationProvider().getConfiguration(getClass().getClassLoader()).getContext());
     }
 
     @Test
@@ -65,14 +66,19 @@ public class CoreConfigurationProviderTest {
 	@Test
     public void setConfigurationContext() throws Exception {
         new CoreConfigurationProvider()
-                .setConfigurationContext(new CoreConfigurationProvider().getConfiguration().getContext());
+                .setConfigurationContext(new CoreConfigurationProvider().getConfiguration(
+                        getClass().getClassLoader()
+                ).getContext());
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void setConfiguration() throws Exception {
         new CoreConfigurationProvider()
-                .setConfiguration(new CoreConfigurationProvider().getConfiguration());
+                .setConfiguration(new CoreConfigurationProvider().getConfiguration(
+                        getClass().getClassLoader()),
+                        getClass().getClassLoader()
+                );
     }
 
     @SuppressWarnings("deprecation")
@@ -84,7 +90,9 @@ public class CoreConfigurationProviderTest {
     @SuppressWarnings("deprecation")
     @Test
     public void isConfigurationSettable() throws Exception {
-        assertThat(new CoreConfigurationProvider().isConfigurationSettable()).isTrue();
+        assertThat(new CoreConfigurationProvider().isConfigurationSettable(
+                getClass().getClassLoader()
+        )).isTrue();
     }
 
 

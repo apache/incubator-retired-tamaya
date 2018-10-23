@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -41,7 +40,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.bd.decimal", Number.class);
         assertThat(valueRead).isNotNull();
         assertThat(101L).isEqualTo(valueRead);
@@ -55,7 +54,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_Hex() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.bd.hex.lowerX", Number.class);
         assertThat(valueRead).isNotNull();
         assertThat(Long.valueOf("47")).isEqualTo(valueRead);
@@ -71,7 +70,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_NotPresent() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.bd.foo", Number.class);
         assertThat(valueRead).isNull();
     }
@@ -83,7 +82,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_BigValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.bd.big", Number.class);
         assertThat(valueRead).isNotNull();
         assertThat(new BigDecimal("101666666666666662333337263723628763821638923628193612983618293628763"))
@@ -97,7 +96,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_BigFloatValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.bd.bigFloat", Number.class);
         assertThat(valueRead).isNotNull();
         assertThat(new BigDecimal("1016666666666666623333372637236287638216389293628763.1016666666666666623333372" +
@@ -112,7 +111,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_PositiveInfinityValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.double.pi", Number.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead.doubleValue()).isCloseTo(Double.POSITIVE_INFINITY, within(0.0d));
@@ -125,7 +124,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_NegativeInfinityValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.double.ni", Number.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead.doubleValue()).isCloseTo(Double.NEGATIVE_INFINITY, within(0.0d));
@@ -138,7 +137,7 @@ public class NumberConverterTest {
      */
     @Test
     public void testConvert_NaNValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Number valueRead = config.get("tests.converter.double.nan", Number.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead.doubleValue()).isCloseTo(Double.NaN, within(0.0d));
@@ -146,15 +145,17 @@ public class NumberConverterTest {
         
     @Test(expected = ConfigException.class)
     public void testConvert_NumberInvalid() throws ConfigException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         config.get("tests.converter.bd.invalid", Number.class);
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Number.class)).build();
+        ConversionContext.set(context);
         NumberConverter converter = new NumberConverter();
-        converter.convert("", context);
+        converter.convert("");
+        ConversionContext.reset();
 
         assertThat(context.getSupportedFormats().contains("<double>, <long> (NumberConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("POSITIVE_INFINITY (NumberConverter)")).isTrue();

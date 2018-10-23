@@ -50,8 +50,9 @@ public class ByteConverter implements PropertyConverter<Byte>{
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Byte convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(),"<byte>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX");
+    public Byte convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(),"<byte>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX"));
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":

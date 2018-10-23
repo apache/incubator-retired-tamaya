@@ -18,11 +18,16 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.*;
 import org.assertj.core.internal.cglib.core.Predicate;
@@ -30,7 +35,7 @@ import org.assertj.core.internal.cglib.core.Predicate;
 public class DefaultConfigurationTest {
 
     /**
-     * Tests for get(String)
+     * Tests for current(String)
      */
     @Test(expected = NullPointerException.class)
     public void getDoesNotAcceptNull() {
@@ -40,7 +45,7 @@ public class DefaultConfigurationTest {
     }
 
     /**
-     * Tests for get(String, Class)
+     * Tests for current(String, Class)
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test(expected = NullPointerException.class)
@@ -51,7 +56,7 @@ public class DefaultConfigurationTest {
     }
 
     /**
-     * Tests for get(String, TypeLiteral)
+     * Tests for current(String, TypeLiteral)
      */
     @Test(expected = NullPointerException.class)
     public void getDoesNotAcceptNullForTypeLiteralTargetType() {
@@ -65,7 +70,7 @@ public class DefaultConfigurationTest {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
         assertThat(c.get("valueOfValid")).isNotNull();
         assertThat(c.get("valueOfNull")).isNull();
-        assertThat(c.get("Filternull")).isNull(); //get does apply filtering
+        assertThat(c.get("Filternull")).isNull(); //current does apply filtering
     }
 
     /**
@@ -164,7 +169,9 @@ public class DefaultConfigurationTest {
     @Test
     public void testConvertValue() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
-        assertThat(100 == (Integer) c.convertValue("aHundred", "100", TypeLiteral.of(Integer.class))).isTrue();
+        assertThat(100 == (Integer) c.convertValue("aHundred",
+                Collections.singletonList(PropertyValue.of("aHundred", "100", null)),
+                TypeLiteral.of(Integer.class))).isTrue();
     }
 
     @Test(expected = NullPointerException.class)
@@ -175,10 +182,24 @@ public class DefaultConfigurationTest {
     }
 
     @Test(expected = NullPointerException.class)
+    public void map_Null() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+
+        c.map(null);
+    }
+
+    @Test(expected = NullPointerException.class)
     public void query_Null() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
 
         c.query(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void adapt_Null() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+
+        c.adapt(null);
     }
 
     @Test
@@ -188,9 +209,21 @@ public class DefaultConfigurationTest {
     }
 
     @Test
+    public void map() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+        assertThat(c).isEqualTo(c.map(config -> config));
+    }
+
+    @Test
     public void query() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
         assertThat("testQ").isEqualTo(c.query(config -> "testQ"));
+    }
+
+    @Test
+    public void adapt() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+        assertThat("testQ").isEqualTo(c.adapt(config -> "testQ"));
     }
     
     @Test

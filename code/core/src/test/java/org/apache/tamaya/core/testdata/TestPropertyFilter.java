@@ -18,23 +18,24 @@
  */
 package org.apache.tamaya.core.testdata;
 
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 
 import javax.annotation.Priority;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Simple PropertyFilter that filters exact one value, registered using ServiceLoader.
  */
 @Priority(100)
 public class TestPropertyFilter implements PropertyFilter{
+
+    private AtomicInteger counter = new AtomicInteger();
+
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
-        if("name4".equals(context.getProperty().getKey())){
-            return valueToBeFiltered.toBuilder()
-                    .setValue(valueToBeFiltered.getValue() + "(filtered)")
-                    .build();
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
+        if("name4".equals(valueToBeFiltered.getKey())){
+            return valueToBeFiltered.mutable().setValue(valueToBeFiltered.getValue() + "(filtered"+counter.incrementAndGet()+")");
         }
         return valueToBeFiltered;
     }

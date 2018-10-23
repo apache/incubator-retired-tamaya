@@ -20,8 +20,14 @@ package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.apache.tamaya.spi.ServiceContextManager;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 
 /**
@@ -67,6 +73,40 @@ public interface Configuration {
      */
     default String getOrDefault(String key, String defaultValue){
         return getOrDefault(key, TypeLiteral.of(String.class), defaultValue);
+    }
+
+    /**
+     * Access a String property, using an an {@link Optional} instance.
+     *
+     * @param key the property's key, not {@code null}.
+     * @return the property's keys.
+     */
+    default Optional<String> getOptional(String key){
+        return Optional.ofNullable(getOrDefault(key, String.class, null));
+    }
+
+    /**
+     * Access a property, using an an {@link Optional} instance.
+     *
+     * @param key the property's key, not {@code null}.
+     * @param type the target type, not null.
+     * @param <T> the type of the class modeled by the type parameter
+     * @return the property's keys.
+     */
+    default <T> Optional<T> getOptional(String key, Class<T> type){
+        return Optional.ofNullable(getOrDefault(key, TypeLiteral.of(type), null));
+    }
+
+    /**
+     * Access a property, using an an {@link Optional} instance.
+     *
+     * @param key the property's key, not {@code null}.
+     * @param type the target type, not null.
+     * @param <T> the type of the class modeled by the type parameter
+     * @return the property's keys.
+     */
+    default <T> Optional<T> getOptional(String key, TypeLiteral<T> type){
+        return Optional.ofNullable(getOrDefault(key, type, null));
     }
 
     /**
@@ -135,7 +175,7 @@ public interface Configuration {
      * Access all currently known configuration properties as a full {@code Map<String,String>}.
      * Be aware that entries from non scannable parts of the registered {@link org.apache.tamaya.spi.PropertySource}
      * instances may not be contained in the result, but nevertheless be accessible by calling one of the
-     * {@code get(...)} methods.
+     * {@code current(...)} methods.
      * @return all currently known configuration properties.
      */
     Map<String,String> getProperties();
@@ -146,9 +186,35 @@ public interface Configuration {
      * @param operator A configuration operator, e.g. a filter, or an adjuster
      *                 combining configurations, never  {@code null}.
      * @return the new adjusted configuration returned by the {@code operator}, never {@code null}.
+     * @deprecated use {@link #map(UnaryOperator)}
      */
+    @Deprecated
     default Configuration with(ConfigOperator operator){
         return operator.operate(this);
+    }
+
+    /**
+     * Extension point for adjusting configuration.
+     *
+     * @param operator A configuration operator, e.g. a filter, or an adjuster
+     *                 combining configurations, never  {@code null}.
+     * @return the new adjusted configuration returned by the {@code operator}, never {@code null}.
+     */
+    default Configuration map(UnaryOperator<Configuration> operator){
+        return operator.apply(this);
+    }
+
+    /**
+     * Query a configuration.
+     *
+     * @param <T> the type of the configuration.
+     * @param query the query, not {@code null}.
+     * @return the result returned by the {@code query}.
+     * @deprecated Use {@link #adapt(Function)}
+     */
+    @Deprecated
+    default <T> T query(ConfigQuery<T> query){
+        return query.query(this);
     }
 
     /**
@@ -158,8 +224,8 @@ public interface Configuration {
      * @param query the query, not {@code null}.
      * @return the result returned by the {@code query}.
      */
-    default <T> T query(ConfigQuery<T> query){
-        return query.query(this);
+    default <T> T adapt(Function<Configuration, T> query){
+        return query.apply(this);
     }
 
     /**
@@ -173,7 +239,121 @@ public interface Configuration {
      * @return a new builder, never null.
      */
     default ConfigurationBuilder toBuilder() {
-        return ConfigurationProvider.getConfigurationBuilder().setConfiguration(this);
+        return getContext().getServiceContext()
+                .getService(ConfigurationProviderSpi.class).getConfigurationBuilder().setConfiguration(this);
     }
+
+    /**
+     * This method allows replacement of the current default {@link org.apache.tamaya.Configuration} with a new
+     * instance. It is the responsibility of the ConfigurationProvider to trigger
+     * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
+     * listeners can do whatever is appropriate to react to any given configuration change.
+     *
+     * @param config the new Configuration to be applied, not {@code null}
+     * @throws java.lang.UnsupportedOperationException if the current provider is read-only and
+     *                                                 does not support
+     *                                                 applying a new Configuration.
+     */
+    static void setCurrent(Configuration config) {
+        ServiceContextManager.getServiceContext()
+                .getService(ConfigurationProviderSpi.class).setConfiguration(config, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * This method allows replacement of the current default {@link org.apache.tamaya.Configuration} with a new
+     * instance. It is the responsibility of the ConfigurationProvider to trigger
+     * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
+     * listeners can do whatever is appropriate to react to any given configuration change.
+     *
+     * @param config the new Configuration to be applied, not {@code null}
+     * @param classLoader the target classloader, not null.
+     * @throws java.lang.UnsupportedOperationException if the current provider is read-only and
+     *                                                 does not support
+     *                                                 applying a new Configuration.
+     */
+    static void setCurrent(Configuration config, ClassLoader classLoader) {
+        ServiceContextManager.getServiceContext(classLoader)
+                .getService(ConfigurationProviderSpi.class).setConfiguration(config, classLoader);
+    }
+
+    /**
+     * Access the configuration instance for the current thread's context classloader.
+     * @return the configuration instance, never null.
+     */
+    static Configuration current(){
+        return ServiceContextManager.getServiceContext()
+                .getService(ConfigurationProviderSpi.class).getConfiguration(Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Accesses the configuration for a given classloader.
+     * @param classloader the classloader, not null.
+     * @return the configuration instance, never null.
+     */
+    static Configuration current(ClassLoader classloader){
+        return ServiceContextManager.getServiceContext(classloader)
+                .getService(ConfigurationProviderSpi.class).getConfiguration(classloader);
+    }
+
+    /**
+     * Access a new configuration builder initialized with the current thread's context classloader.
+     * @return the builder, never null.
+     */
+    static ConfigurationBuilder createConfigurationBuilder(){
+        return ServiceContextManager.getServiceContext()
+                .getService(ConfigurationProviderSpi.class).getConfigurationBuilder();
+    }
+
+
+    /**
+     * Immutable and reusable, thread-safe implementation of an empty propertySource.
+     */
+    Configuration EMPTY = new Configuration() {
+
+        @Override
+        public String get(String key) {
+            return null;
+        }
+
+        @Override
+        public String getOrDefault(String key, String defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public <T> T get(String key, Class<T> type) {
+            return null;
+        }
+
+        @Override
+        public <T> T get(String key, TypeLiteral<T> type) {
+            return null;
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public ConfigurationContext getContext() {
+            return ConfigurationContext.EMPTY;
+        }
+
+        @Override
+        public String toString(){
+            return "Configuration<empty>";
+        }
+    };
 
 }

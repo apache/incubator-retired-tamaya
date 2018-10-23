@@ -49,6 +49,17 @@ public class OSGIServiceContext implements ServiceContext{
 
 
     @Override
+    public ClassLoader getClassLoader() {
+        return getClass().getClassLoader();
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        throw new IllegalStateException("Classloader already setCurrent on this context.");
+    }
+
+
+    @Override
     public int ordinal() {
         return 10;
     }
@@ -116,7 +127,7 @@ public class OSGIServiceContext implements ServiceContext{
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException{
+    public Enumeration<URL> getResources(String resource) throws IOException{
         LOG.finest("TAMAYA  Loading resources: " + resource);
         List<URL> result = new ArrayList<>();
         URL url = osgiServiceLoader.getBundleContext().getBundle()
@@ -144,7 +155,7 @@ public class OSGIServiceContext implements ServiceContext{
     }
 
     @Override
-    public URL getResource(String resource, ClassLoader cl){
+    public URL getResource(String resource){
         LOG.finest("TAMAYA  Loading resource: " + resource);
         URL url = osgiServiceLoader.getBundleContext().getBundle()
                 .getEntry(resource);

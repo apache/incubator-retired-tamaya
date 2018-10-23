@@ -39,7 +39,7 @@ public class ConfigurationProviderTest {
      */
     @Test
     public void testCreateConfiguration() {
-        Configuration result = ConfigurationProvider.createConfiguration(ConfigurationProvider.getConfiguration().getContext());
+        Configuration result = ConfigurationProvider.createConfiguration(Configuration.current().getContext());
         assertThat(result).isNotNull();
     }
     
@@ -66,20 +66,20 @@ public class ConfigurationProviderTest {
      */
     @Test
     public void testGetSetConfiguration() {
-        Configuration currentConfig = ConfigurationProvider.getConfiguration();
+        Configuration currentConfig = Configuration.current();
         assertThat(currentConfig instanceof Configuration).isTrue();
         Configuration newConfig = Mockito.mock(Configuration.class);
         try{
             ConfigurationProvider.setConfiguration(newConfig);
-            assertThat(ConfigurationProvider.getConfiguration()).isEqualTo(newConfig);
+            assertThat(Configuration.current()).isEqualTo(newConfig);
         }finally{
             ConfigurationProvider.setConfiguration(currentConfig);
         }
-        assertThat(ConfigurationProvider.getConfiguration()).isEqualTo(currentConfig);
+        assertThat(Configuration.current()).isEqualTo(currentConfig);
     }
 
     /**
-     * Test of getConfigurationBuilder method, of class ConfigurationProvider.
+     * Test of createConfigurationBuilder method, of class ConfigurationProvider.
      */
     @Test
     public void testGetConfigurationBuilder() {

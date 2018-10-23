@@ -35,7 +35,7 @@ import java.util.Map;
  * <li>Thread safe.</li>
  * </ul>
  *
- * <p>A PropertySourceProvider will get picked up via the
+ * <p>A PropertySourceProvider will current picked up via the
  * {@link java.util.ServiceLoader} mechanism and can be registered via
  * {@code META-INF/services/org.apache.tamaya.spi.PropertySource}
  * </p>
@@ -45,7 +45,7 @@ import java.util.Map;
  * interface.
  * </p>
  */
-public interface PropertySource {
+public interface PropertySource{
 
     /**
      * property name to override default tamaya ordinals
@@ -142,7 +142,7 @@ public interface PropertySource {
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @return the property value map, where {@code map.get(key) == value}, including also any metadata. In case a
+     * @return the property value map, where {@code map.current(key) == value}, including also any metadata. In case a
      * value is null, simply return {@code null}.
      */
     PropertyValue get(String key);
@@ -166,7 +166,9 @@ public interface PropertySource {
      *
      * @return {@code true} if this PropertySource can be scanned for its list of properties,
      *         {@code false} if it cannot/should not be scanned.
+     * @deprecated will be removed.
      */
+    @Deprecated
     default boolean isScannable(){
         return true;
     }

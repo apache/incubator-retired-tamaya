@@ -39,11 +39,12 @@ public class ClassConverter implements PropertyConverter<Class<?>>{
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Class<?> convert(String value, ConversionContext context) {
+    public Class<?> convert(String value) {
         if(value==null){
             return null;
         }
-        context.addSupportedFormats(getClass(),"<fullyQualifiedClassName>");
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(),"<fullyQualifiedClassName>"));
         String trimmed = Objects.requireNonNull(value).trim();
         try{
             return Class.forName(trimmed, false, Thread.currentThread().getContextClassLoader());

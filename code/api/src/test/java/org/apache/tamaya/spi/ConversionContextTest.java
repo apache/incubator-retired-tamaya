@@ -24,6 +24,7 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import java.net.InetAddress;
@@ -64,7 +65,7 @@ public class ConversionContextTest {
 
     @Test
     public void testConfiguration() throws Exception {
-        Configuration config = new MyConfiguration();
+        Configuration config = Configuration.EMPTY;
         ConversionContext ctx = new ConversionContext.Builder("testConfiguration", TypeLiteral.of(List.class))
                 .setConfiguration(config).build();
         assertThat(ctx.getConfiguration()).isEqualTo(config);
@@ -100,13 +101,6 @@ public class ConversionContextTest {
         assertThat(ctx.toString()).isEqualTo("ConversionContext{configuration=null, key='toString', targetType=TypeLiteral{type=interface java.util.List}, annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]}");
     }
 
-    @Test
-    public void testGetConfigurationContext() throws Exception {
-        ConfigurationContext context = new MyConfigurationContext();
-        ConversionContext ctx = new ConversionContext.Builder("getConfigurationContext", TypeLiteral.of(List.class))
-                .setConfigurationContext(context).build();
-        assertThat(ctx.getConfigurationContext()).isEqualTo(context);
-    }
 
     private static final AnnotatedElement MyAnnotatedElement = new AnnotatedElement() {
         @Override
@@ -128,110 +122,10 @@ public class ConversionContextTest {
     private static final class MyConverter implements PropertyConverter<InetAddress> {
 
         @Override
-        public InetAddress convert(String value, ConversionContext context) {
-            return null;
-        }
-    }
-
-    private static final class MyConfigurationContext implements ConfigurationContext {
-
-        @Override
-        public void addPropertySources(PropertySource... propertySources) {
-
-        }
-
-        @Override
-        public List<PropertySource> getPropertySources() {
+        public InetAddress convert(String value) {
             return null;
         }
 
-        @Override
-        public PropertySource getPropertySource(String name) {
-            return null;
-        }
-
-        @Override
-        public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
-
-        }
-
-        @Override
-        public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
-            return null;
-        }
-
-        @Override
-        public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type) {
-            return null;
-        }
-
-        @Override
-        public List<PropertyFilter> getPropertyFilters() {
-            return null;
-        }
-
-        @Override
-        public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
-            return null;
-        }
-
-        @Override
-        public ConfigurationContextBuilder toBuilder() {
-            return null;
-        }
-    }
-
-    private static final class MyConfiguration implements Configuration {
-
-        @Override
-        public String get(String key) {
-            return null;
-        }
-
-        @Override
-        public String getOrDefault(String key, String defaultValue) {
-            return null;
-        }
-
-        @Override
-        public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-            return null;
-        }
-
-        @Override
-        public <T> T get(String key, Class<T> type) {
-            return null;
-        }
-
-        @Override
-        public <T> T get(String key, TypeLiteral<T> type) {
-            return null;
-        }
-
-        @Override
-        public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-            return null;
-        }
-
-        @Override
-        public Map<String, String> getProperties() {
-            return null;
-        }
-
-        @Override
-        public Configuration with(ConfigOperator operator) {
-            return null;
-        }
-
-        @Override
-        public <T> T query(ConfigQuery<T> query) {
-            return null;
-        }
-
-        @Override
-        public ConfigurationContext getContext() {
-            return null;
-        }
     }
 
 }

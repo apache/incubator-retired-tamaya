@@ -23,20 +23,9 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,12 +48,12 @@ public class DefaultConfiguration implements Configuration {
     /**
      * EvaluationStrategy
      */
-    private ConfigValueEvaluator configEvaluator = loadConfigValueEvaluator();
+    private ConfigValueEvaluator configEvaluator;
 
     private ConfigValueEvaluator loadConfigValueEvaluator() {
         ConfigValueEvaluator eval = null;
         try{
-            eval = ServiceContextManager.getServiceContext()
+            eval = configurationContext.getServiceContext()
                     .getService(ConfigValueEvaluator.class);
         }catch(Exception e){
             LOG.log(Level.WARNING, "Failed to load ConfigValueEvaluator from ServiceContext, using default.", e);
@@ -82,6 +71,7 @@ public class DefaultConfiguration implements Configuration {
      */
     public DefaultConfiguration(ConfigurationContext configurationContext){
         this.configurationContext = Objects.requireNonNull(configurationContext);
+        this.configEvaluator = loadConfigValueEvaluator();
     }
 
     /**
@@ -103,6 +93,26 @@ public class DefaultConfiguration implements Configuration {
         }
         return null;
     }
+
+    /**
+     * Get a given value, filtered with the context's filters as needed.
+     * @param key the property's key, not null.
+     * @return the filtered value, or null.
+     */
+    public List<PropertyValue> getValues(String key) {
+        Objects.requireNonNull(key, "Key must not be null.");
+
+        List<PropertyValue> value = configEvaluator.evaluteAllValues(key, configurationContext);
+        if(value==null || value.isEmpty()){
+            return Collections.emptyList();
+        }
+        value = PropertyFiltering.applyFilters(value, configurationContext);
+        if(value!=null){
+            return value;
+        }
+        return null;
+    }
+
 
     /**
      * Evaluates the raw value using the context's {@link PropertyValueCombinationPolicy}.
@@ -160,7 +170,6 @@ public class DefaultConfiguration implements Configuration {
             if(val.getValue()!=null) {
                 result.put(val.getKey(), val.getValue());
                 // TODO: Discuss metadata handling...
-                result.putAll(val.getMetaEntries());
             }
         }
         return result;
@@ -199,32 +208,39 @@ public class DefaultConfiguration implements Configuration {
         Objects.requireNonNull(key, "Key must not be null.");
         Objects.requireNonNull(type, "Target type must not be null");
 
-        return convertValue(key, get(key), type);
+        return convertValue(key, getValues(key), type);
     }
 
     @SuppressWarnings("unchecked")
-	protected <T> T convertValue(String key, String value, TypeLiteral<T> type) {
-        if (value != null) {
+	protected <T> T convertValue(String key, List<PropertyValue> values, TypeLiteral<T> type) {
+        if (values != null && !values.isEmpty()) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
-            ConversionContext context = new ConversionContext.Builder(this, this.configurationContext, key, type)
+            ConversionContext context = new ConversionContext.Builder(this, key, type)
+                    .setValues(values)
                     .build();
-            for (PropertyConverter<T> converter : converters) {
-                try {
-                    T t = converter.convert(value, context);
-                    if (t != null) {
-                        return t;
+            try {
+                String value = values.get(0).getValue();
+                ConversionContext.set(context);
+                for (PropertyConverter<T> converter : converters) {
+                    try {
+                        T t = converter.convert(value);
+                        if (t != null) {
+                            return t;
+                        }
+                    } catch (Exception e) {
+                        LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
                     }
-                } catch (Exception e) {
-                    LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
                 }
+                // if the target type is a String, we can return the value, no conversion required.
+                if (type.equals(TypeLiteral.of(String.class))) {
+                    return (T) value;
+                }
+                // unsupported type, throw an exception
+                throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key +
+                        ", supported formats: " + context.getSupportedFormats());
+            }finally{
+                ConversionContext.reset();
             }
-            // if the target type is a String, we can return the value, no conversion required.
-            if(type.equals(TypeLiteral.of(String.class))){
-                return (T)value;
-            }
-            // unsupported type, throw an exception
-            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key +
-                    ", supported formats: " + context.getSupportedFormats());
         }
         return null;
     }

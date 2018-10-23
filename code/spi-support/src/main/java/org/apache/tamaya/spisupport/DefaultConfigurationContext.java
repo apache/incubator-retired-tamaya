@@ -37,7 +37,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /**
      * Subcomponent handling {@link PropertyConverter} instances.
      */
-    private final PropertyConverterManager propertyConverterManager = new PropertyConverterManager();
+    private PropertyConverterManager propertyConverterManager;
 
     /**
      * The current unmodifiable list of loaded {@link PropertySource} instances.
@@ -55,6 +55,9 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      */
     private PropertyValueCombinationPolicy propertyValueCombinationPolicy;
 
+    /** The corresponding classLoader for this instance. */
+    private ServiceContext serviceContext;
+
     /**
      * Lock for internal synchronization.
      */
@@ -62,6 +65,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     @SuppressWarnings("unchecked")
 	protected DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
+        this.serviceContext = builder.getServiceContext();
+        propertyConverterManager = new PropertyConverterManager(serviceContext);
         List<PropertySource> propertySources = new ArrayList<>();
         // first we load all PropertySources which got registered via java.util.ServiceLoader
         propertySources.addAll(builder.propertySources);
@@ -81,16 +86,36 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         LOG.info("Registered " + propertyConverterManager.getPropertyConverters().size() + " property converters: " +
                 propertyConverterManager.getPropertyConverters());
 
-        propertyValueCombinationPolicy = builder.combinationPolicy;
-        if(propertyValueCombinationPolicy==null){
-            propertyValueCombinationPolicy = ServiceContextManager.getServiceContext().getService(PropertyValueCombinationPolicy.class);
+        this.propertyValueCombinationPolicy = builder.combinationPolicy;
+        if(this.propertyValueCombinationPolicy==null){
+            this.propertyValueCombinationPolicy = getServiceContext().getService(PropertyValueCombinationPolicy.class);
         }
-        if(propertyValueCombinationPolicy==null){
-            propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
+        if(this.propertyValueCombinationPolicy==null){
+            this.propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
         }
-        LOG.info("Using PropertyValueCombinationPolicy: " + propertyValueCombinationPolicy);
+        LOG.info("Using PropertyValueCombinationPolicy: " + this.propertyValueCombinationPolicy);
     }
 
+    public DefaultConfigurationContext(ServiceContext serviceContext, PropertyValueCombinationPolicy combinationPolicy,
+                                       List<PropertyFilter> propertyFilters, List<PropertySource> propertySources,
+                                       Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters) {
+        this.propertyValueCombinationPolicy = Objects.requireNonNull(combinationPolicy);
+        this.serviceContext = Objects.requireNonNull(serviceContext);
+        this.immutablePropertyFilters = Collections.unmodifiableList(new ArrayList<>(propertyFilters));
+        this.immutablePropertySources = Collections.unmodifiableList(new ArrayList<>(propertySources));
+        propertyConverterManager = new PropertyConverterManager(serviceContext);
+        for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:propertyConverters.entrySet()) {
+            for (@SuppressWarnings("rawtypes") PropertyConverter converter : en.getValue()) {
+                this.propertyConverterManager.register(en.getKey(), converter);
+            }
+        }
+    }
+
+
+    @Override
+    public ServiceContext getServiceContext() {
+        return serviceContext;
+    }
 
     @Deprecated
     @Override
@@ -162,7 +187,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                     appendFormatted(b, "-", 8);
                 }
                 PropertyValue state = ps.get("_state");
-                if(state==null){
+                if(state==null || state.getValue()==null){
                     appendFormatted(b, "OK", 10);
                 }else {
                     appendFormatted(b, state.getValue(), 10);
@@ -211,6 +236,10 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     private void appendFormatted(StringBuilder b, String text, int length) {
         int padding;
+        if(text==null){
+            b.append("<null>");
+            return;
+        }
         if(text.length() <= (length)){
             b.append(text);
             padding = length - text.length();

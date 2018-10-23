@@ -24,7 +24,9 @@ import java.util.logging.Logger;
 
 /**
  * Static access to the {@link Configuration} of the whole application.
+ * @deprecated Use static methods of {@link Configuration}
  */
+@Deprecated
 public final class ConfigurationProvider {
 
     private static final Logger LOG = Logger.getLogger(ConfigurationProvider.class.getName());
@@ -36,7 +38,7 @@ public final class ConfigurationProvider {
             throw new IllegalStateException("ConfigurationProviderSpi not available.");
         }
         LOG.finest("TAMAYA Delegate    : " + spi.getClass().getName());
-        LOG.info("TAMAYA Configuration : " + spi.getConfiguration());
+        LOG.info("TAMAYA Configuration : " + spi.getConfiguration(Thread.currentThread().getContextClassLoader()));
         return spi;
     }
 
@@ -50,7 +52,16 @@ public final class ConfigurationProvider {
      * @return the corresponding Configuration instance, never {@code null}.
      */
     public static Configuration getConfiguration() {
-        return spi().getConfiguration();
+        return spi().getConfiguration(Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Access the current configuration.
+     * @param classLoader the target classloader, not null.
+     * @return the corresponding Configuration instance, never {@code null}.
+     */
+    public static Configuration getConfiguration(ClassLoader classLoader) {
+        return spi().getConfiguration(classLoader);
     }
 
     /**
@@ -103,8 +114,24 @@ public final class ConfigurationProvider {
      *                                                 applying a new Configuration.
      */
     public static void setConfiguration(Configuration config) {
+        setConfiguration(config, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * This method allows replacement of the current default {@link org.apache.tamaya.Configuration} with a new
+     * instance. It is the responsibility of the ConfigurationProvider to trigger
+     * corresponding update events for the current {@link org.apache.tamaya.Configuration}, so observing
+     * listeners can do whatever is appropriate to react to any given configuration change.
+     *
+     * @param config the new Configuration to be applied, not {@code null}
+     * @param classLoader the target classloader, not null.
+     * @throws java.lang.UnsupportedOperationException if the current provider is read-only and
+     *                                                 does not support
+     *                                                 applying a new Configuration.
+     */
+    public static void setConfiguration(Configuration config, ClassLoader classLoader) {
         LOG.info("TAMAYA Applying new Configuration: " + config);
-        spi().setConfiguration(config);
+        spi().setConfiguration(config, classLoader);
     }
 
     /**

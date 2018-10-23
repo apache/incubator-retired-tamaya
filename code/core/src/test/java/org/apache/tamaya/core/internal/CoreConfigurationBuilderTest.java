@@ -34,7 +34,6 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Map;
-import org.apache.tamaya.core.internal.converters.BigDecimalConverter;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -47,7 +46,7 @@ public class CoreConfigurationBuilderTest {
 
     @Test
     public void setContext() throws Exception {
-        ConfigurationContext context = ConfigurationProvider.getConfiguration().getContext();
+        ConfigurationContext context = Configuration.current().getContext();
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .setContext(context);
         assertThat(b.build().getContext()).isEqualTo(context);
@@ -55,7 +54,7 @@ public class CoreConfigurationBuilderTest {
 
     @Test
     public void setConfiguration() throws Exception {
-        Configuration cfg = ConfigurationProvider.getConfiguration();
+        Configuration cfg = Configuration.current();
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .setConfiguration(cfg);
         assertThat(b.build()).isEqualTo(cfg);
@@ -96,8 +95,8 @@ public class CoreConfigurationBuilderTest {
 
     @Test
     public void addPropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value, context) -> value;
-        PropertyFilter filter2 = (value, context) -> value;
+        PropertyFilter filter1 = (value) -> value;
+        PropertyFilter filter2 = (value) -> value;
         CoreConfigurationBuilder b = new CoreConfigurationBuilder();
         b.addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
@@ -113,8 +112,8 @@ public class CoreConfigurationBuilderTest {
 
     @Test
     public void removePropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value, context) -> value;
-        PropertyFilter filter2 = (value, context) -> value;
+        PropertyFilter filter1 = (value) -> value;
+        PropertyFilter filter2 = (value) -> value;
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
@@ -135,7 +134,7 @@ public class CoreConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverter() throws Exception {
-		PropertyConverter converter = (value, context) -> value.toLowerCase();
+		PropertyConverter converter = (value) -> value.toLowerCase();
 		ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
@@ -151,7 +150,7 @@ public class CoreConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void removePropertyConverters_Array() throws Exception {
-        PropertyConverter converter = (value, context) -> value.toLowerCase();
+        PropertyConverter converter = (value) -> value.toLowerCase();
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();

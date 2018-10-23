@@ -19,7 +19,6 @@
 package org.apache.tamaya.core.internal.converters;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
@@ -35,7 +34,7 @@ public class ConvertQueryTest {
      */
     @Test
     public void testIntegerQuery() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConvertQuery<Integer> converter = new ConvertQuery<>("101", TypeLiteral.of(Integer.class));
         Integer result = converter.query(config);
         assertThat(result.longValue()).isEqualTo(101);
@@ -46,7 +45,7 @@ public class ConvertQueryTest {
      */
     @Test
     public void testConfigUsingIntegerQuery() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConvertQuery<Integer> converter = new ConvertQuery<>("101", TypeLiteral.of(Integer.class));
         Integer result = config.query(converter);
         assertThat(result.longValue()).isEqualTo(101);
@@ -57,7 +56,7 @@ public class ConvertQueryTest {
      */
     @Test
     public void testNonGenericQuery() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
 
         Integer intResult = (Integer) new ConvertQuery("101", TypeLiteral.of(Integer.class)).query(config);
         assertThat(intResult.longValue()).isEqualTo(101);
@@ -71,7 +70,7 @@ public class ConvertQueryTest {
      */
     @Test
     public void testNullWithoutSuccess() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
 
         Integer intResult = (Integer) new ConvertQuery("invalid", TypeLiteral.of(Integer.class)).query(config);
         assertThat(intResult).isNull();

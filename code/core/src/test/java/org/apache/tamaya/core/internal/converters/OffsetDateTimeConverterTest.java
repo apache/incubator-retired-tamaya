@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import java.time.LocalDate;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,9 +41,9 @@ public class OffsetDateTimeConverterTest {
     @Test
     public void convert() throws Exception {
         OffsetDateTimeConverter conv = new OffsetDateTimeConverter();
-        OffsetDateTime value = conv.convert("2007-12-03T10:15:30+01:00", context);
+        OffsetDateTime value = conv.convert("2007-12-03T10:15:30+01:00");
         assertThat(OffsetDateTime.parse("2007-12-03T10:15:30+01:00")).isEqualTo(value);
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertThat(value).isNull();
     }
 
@@ -60,11 +59,13 @@ public class OffsetDateTimeConverterTest {
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(OffsetDateTime.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(OffsetDateTime.class)).build();
+        ConversionContext.set(context);
         OffsetDateTimeConverter converter = new OffsetDateTimeConverter();
-        converter.convert("", localcontext);
+        converter.convert("");
+        ConversionContext.reset();
 
-        assertThat(localcontext.getSupportedFormats().toString().contains(" (OffsetDateTimeConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().toString().contains(" (OffsetDateTimeConverter)")).isTrue();
     }
 
     @Test

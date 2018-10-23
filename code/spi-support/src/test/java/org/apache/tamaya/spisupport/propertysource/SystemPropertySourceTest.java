@@ -83,7 +83,7 @@ public class SystemPropertySourceTest {
         // test the default ordinal
         assertThat(testPropertySource.getOrdinal()).isEqualTo(SystemPropertySource.DEFAULT_ORDINAL);
 
-        // set the ordinal to 1001
+        // setCurrent the ordinal to 1001
         System.setProperty(PropertySource.TAMAYA_ORDINAL, "1001");
         assertThat(new SystemPropertySource().getOrdinal()).isEqualTo(1001);
         // currently its not possible to change ordinal at runtime
@@ -135,7 +135,7 @@ public class SystemPropertySourceTest {
         int num = 0;
         for (PropertyValue propertySourceEntry : toCheck.values()) {
             if (propertySourceEntry.getKey().startsWith("_")) {
-                continue; // meta entry
+                continue; // getMeta entry
             }
             num++;
             assertThat(systemEntries.getProperty(propertySourceEntry.getKey())).isEqualTo(propertySourceEntry.getValue());

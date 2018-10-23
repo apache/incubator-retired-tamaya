@@ -55,17 +55,17 @@ public class DurationConverterTest {
     @Test
     public void convert() throws Exception {
         DurationConverter conv = new DurationConverter();
-        Duration duration = conv.convert("PT20.345S", context);
+        Duration duration = conv.convert("PT20.345S");
         assertThat(duration).isEqualTo(Duration.parse("PT20.345S"));
-        duration = conv.convert("PT15M", context);
+        duration = conv.convert("PT15M");
         assertThat(duration).isEqualTo(Duration.parse("PT15M"));
-        duration = conv.convert("PT10H", context);
+        duration = conv.convert("PT10H");
         assertThat(duration).isEqualTo(Duration.parse("PT10H"));
-        duration = conv.convert("P2D", context);
+        duration = conv.convert("P2D");
         assertThat(duration).isEqualTo(Duration.parse("P2D"));
-        duration = conv.convert("P2DT3H4M", context);
+        duration = conv.convert("P2DT3H4M");
         assertThat(duration).isEqualTo(Duration.parse("P2DT3H4M"));
-        duration = conv.convert("foo", context);
+        duration = conv.convert("foo");
         assertThat(duration).isNull();
     }
 
@@ -79,11 +79,13 @@ public class DurationConverterTest {
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(Duration.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Duration.class)).build();
+        ConversionContext.set(context);
         DurationConverter converter = new DurationConverter();
-        converter.convert("", localcontext);
+        converter.convert("");
+        ConversionContext.reset();
 
-        assertThat(localcontext.getSupportedFormats().contains("PT20M34S (DurationConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("PT20M34S (DurationConverter)")).isTrue();
     }
 
     @Test

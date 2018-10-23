@@ -37,7 +37,7 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     private ConfigurationContext context = Mockito.mock(ConfigurationContext.class);
 
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getConfiguration(ClassLoader classLoader) {
         return config;
     }
 
@@ -72,7 +72,7 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
-    public void setConfiguration(Configuration config) {
+    public void setConfiguration(Configuration config, ClassLoader classLoader) {
         this.config = config;
     }
 }

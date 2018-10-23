@@ -31,6 +31,16 @@ public class ServiceContextTest {
     private final ServiceContext serviceContext = new ServiceContext(){
 
         @Override
+        public ClassLoader getClassLoader() {
+            return null;
+        }
+
+        @Override
+        public void init(ClassLoader classLoader) {
+
+        }
+
+        @Override
         public int ordinal() {
             return 1;
         }
@@ -59,15 +69,6 @@ public class ServiceContextTest {
             return Collections.emptyList();
         }
 
-        @Override
-        public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
-            return cl.getResources(resource);
-        }
-
-        @Override
-        public URL getResource(String resource, ClassLoader cl) {
-            return cl.getResource(resource);
-        }
     };
 
     @Test
@@ -103,7 +104,7 @@ public class ServiceContextTest {
 
     @Test
     public void testGetInstance() throws Exception {
-        assertThat(ServiceContextManager.getServiceContext()).isNotNull();
+        assertThat(ServiceContextManager.getServiceContext(getClass().getClassLoader())).isNotNull();
     }
 
 }

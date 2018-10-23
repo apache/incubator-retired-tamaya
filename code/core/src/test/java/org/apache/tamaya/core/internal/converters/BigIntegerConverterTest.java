@@ -21,12 +21,10 @@ package org.apache.tamaya.core.internal.converters;
 import java.math.BigInteger;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
-import org.junit.Ignore;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -43,7 +41,7 @@ public class BigIntegerConverterTest {
      */
     @Test
     public void testConvert_BigInteger_Decimal() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         BigInteger valueRead = config.get("tests.converter.bd.decimal", BigInteger.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead).isEqualTo(BigInteger.valueOf(101));
@@ -57,7 +55,7 @@ public class BigIntegerConverterTest {
      */
     @Test
     public void testConvert_BigInteger_Hex() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         BigInteger valueRead = config.get("tests.converter.bd.hex.lowerX", BigInteger.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead).isEqualTo(new BigInteger("47"));
@@ -79,10 +77,9 @@ public class BigIntegerConverterTest {
      *
      * @throws Exception
      */
-    @Ignore
     @Test
     public void testConvert_BigInteger_BigHex() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         BigInteger valueRead = config.get("tests.converter.bd.hex.subTenX", BigInteger.class);
         assertThat(valueRead).isNotNull();
         assertThat(valueRead).isEqualTo(new BigInteger("16777215"));
@@ -93,13 +90,13 @@ public class BigIntegerConverterTest {
 
     @Test(expected = ConfigException.class)
     public void badPositiveHex() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         config.get("tests.converter.bd.hex.badX", BigInteger.class);
     }
 
     @Test(expected = ConfigException.class)
     public void badNegativeHex() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         config.get("tests.converter.bd.hex.negBadX", BigInteger.class);
     }
 
@@ -111,7 +108,7 @@ public class BigIntegerConverterTest {
      */
     @Test
     public void testConvert_NotPresent() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         BigInteger valueRead = config.get("tests.converter.bd.foo", BigInteger.class);
         assertThat(valueRead).isNull();
     }
@@ -124,7 +121,7 @@ public class BigIntegerConverterTest {
      */
     @Test
     public void testConvert_BigInteger_BigValue() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         BigInteger valueRead = config.get("tests.converter.bd.big", BigInteger.class);
         assertThat(valueRead).isNotNull();
         assertThat(new BigInteger("101666666666666662333337263723628763821638923628193612983618293628763"))
@@ -136,7 +133,7 @@ public class BigIntegerConverterTest {
         ConversionContext context = mock(ConversionContext.class);
 
         BigIntegerConverter converter = new BigIntegerConverter();
-        BigInteger value = converter.convert("", context);
+        BigInteger value = converter.convert("");
 
         assertThat(value).isNull();
     }
@@ -144,9 +141,10 @@ public class BigIntegerConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(BigInteger.class)).build();
+        ConversionContext.set(context);
         BigIntegerConverter converter = new BigIntegerConverter();
-        BigInteger value = converter.convert("", context);
-
+        BigInteger value = converter.convert("");
+        ConversionContext.reset();
         assertThat(value).isNull();
         assertThat(context.getSupportedFormats().contains("<bigint> -> new BigInteger(bigint) (BigIntegerConverter)")).isTrue();
     }

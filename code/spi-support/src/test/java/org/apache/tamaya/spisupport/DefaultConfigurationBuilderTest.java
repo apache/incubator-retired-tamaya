@@ -51,7 +51,7 @@ public class DefaultConfigurationBuilderTest {
 
     @Test
     public void setConfiguration() throws Exception {
-        Configuration cfg = ConfigurationProvider.getConfiguration();
+        Configuration cfg = Configuration.current();
         ConfigurationBuilder b = new DefaultConfigurationBuilder()
                 .setConfiguration(cfg);
         assertThat(b.build()).isEqualTo(cfg);
@@ -99,8 +99,8 @@ public class DefaultConfigurationBuilderTest {
 
     @Test
     public void addRemovePropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value, context) -> value;
-        PropertyFilter filter2 = (value, context) -> value;
+        PropertyFilter filter1 = (value) -> value;
+        PropertyFilter filter2 = (value) -> value;
         DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
         Configuration cfg = b.addPropertyFilters(filter1, filter2).build();
         ConfigurationContext ctx = cfg.getContext();
@@ -126,8 +126,8 @@ public class DefaultConfigurationBuilderTest {
 
     @Test
     public void addRemovePropertyFilters_Collection() throws Exception {
-        PropertyFilter filter1 = (value, context) -> value;
-        PropertyFilter filter2 = (value, context) -> value;
+        PropertyFilter filter1 = (value) -> value;
+        PropertyFilter filter2 = (value) -> value;
         DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
         Configuration cfg = b.addPropertyFilters(Arrays.asList(filter1, filter2)).build();
         ConfigurationContext ctx = cfg.getContext();
@@ -291,7 +291,7 @@ public class DefaultConfigurationBuilderTest {
         DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
         PropertyFilter[] propertyFilters = new PropertyFilter[10];
         for (int i = 0; i < propertyFilters.length; i++) {
-            propertyFilters[i] = (value, context) -> value.toBuilder().setValue(toString() + " - ").build();
+            propertyFilters[i] = (value) -> value.setValue(toString() + " - ");
         }
 
         b.addPropertyFilters(propertyFilters);
@@ -306,8 +306,8 @@ public class DefaultConfigurationBuilderTest {
 
     @Test
     public void addRemovePropertyConverter_Array() throws Exception {
-        PropertyConverter converter1 = (value, context) -> value.toLowerCase();
-        PropertyConverter converter2 = (value, context) -> value.toUpperCase();
+        PropertyConverter converter1 = (value) -> value.toLowerCase();
+        PropertyConverter converter2 = (value) -> value.toUpperCase();
         ConfigurationBuilder b = new DefaultConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter1, converter2);
         Configuration cfg = b.build();
@@ -340,8 +340,8 @@ public class DefaultConfigurationBuilderTest {
 
     @Test
     public void addRemovePropertyConverter_Collection() throws Exception {
-        PropertyConverter converter1 = (value, context) -> value.toLowerCase();
-        PropertyConverter converter2 = (value, context) -> value.toUpperCase();
+        PropertyConverter converter1 = (value) -> value.toLowerCase();
+        PropertyConverter converter2 = (value) -> value.toUpperCase();
         ConfigurationBuilder b = new DefaultConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1, converter2));
         Configuration cfg = b.build();

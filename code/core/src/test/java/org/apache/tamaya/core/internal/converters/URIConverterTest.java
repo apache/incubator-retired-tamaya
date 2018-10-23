@@ -38,47 +38,49 @@ public class URIConverterTest {
     @Test
     public void testConvert_URI() throws Exception {
         URIConverter converter = new URIConverter();
-         assertThat(new URI("test:path")).isEqualTo(converter.convert("test:path", context));
+         assertThat(new URI("test:path")).isEqualTo(converter.convert("test:path"));
     }
 
     @Test
     public void testConvert_URI_WithSpaces() throws Exception {
         URIConverter converter = new URIConverter();
-        assertThat(new URI("test:path")).isEqualTo(converter.convert("  test:path\t", context));
+        assertThat(new URI("test:path")).isEqualTo(converter.convert("  test:path\t"));
     }
 
     @Test
     public void testConvert_URI_WithSpacesBefore() throws Exception {
         URIConverter converter = new URIConverter();
-        assertThat(new URI("test:path")).isEqualTo(converter.convert("  test:path", context));
+        assertThat(new URI("test:path")).isEqualTo(converter.convert("  test:path"));
     }
 
     @Test
     public void testConvert_URI_WithSpacesAfter() throws Exception {
         URIConverter converter = new URIConverter();
-        assertThat(new URI("test:path")).isEqualTo(converter.convert("test:path  ", context));
+        assertThat(new URI("test:path")).isEqualTo(converter.convert("test:path  "));
     }
 
     @Test
     public void testConvert_NotPresent() throws Exception {
         URIConverter converter = new URIConverter();
-        assertThat(converter.convert("", context)).isNull();
-        assertThat(converter.convert(null, context)).isNull();
+        assertThat(converter.convert("")).isNull();
+        assertThat(converter.convert(null)).isNull();
     }
     
     @Test
     public void testConvert_URIInvalid() throws ConfigException {
         URIConverter converter = new URIConverter();
-        assertThat(converter.convert("not a uri", context)).isNull();
+        assertThat(converter.convert("not a uri")).isNull();
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(URI.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(URI.class)).build();
+        ConversionContext.set(context);
         URIConverter converter = new URIConverter();
-        converter.convert("test:path", localcontext);
+        converter.convert("test:path");
+        ConversionContext.reset();
 
-        assertThat(localcontext.getSupportedFormats().contains("<uri> -> new URI(uri) (URIConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().contains("<uri> -> new URI(uri) (URIConverter)")).isTrue();
     }
 
     @Test

@@ -41,9 +41,9 @@ public class LocalDateConverterTest {
     @Test
     public void convert() throws Exception {
         LocalDateConverter conv = new LocalDateConverter();
-        LocalDate value = conv.convert("2007-12-03", context);
+        LocalDate value = conv.convert("2007-12-03");
         assertThat(LocalDate.parse("2007-12-03")).isEqualTo(value);
-        value = conv.convert("foo", context);
+        value = conv.convert("foo");
         assertThat(value).isNull();
     }
 
@@ -59,11 +59,13 @@ public class LocalDateConverterTest {
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
-        ConversionContext localcontext = new ConversionContext.Builder(TypeLiteral.of(LocalDate.class)).build();
+        ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(LocalDate.class)).build();
+        ConversionContext.set(context);
         LocalDateConverter converter = new LocalDateConverter();
-        converter.convert("", localcontext);
+        converter.convert("");
+        ConversionContext.reset();
 
-        assertThat(localcontext.getSupportedFormats().toString().contains(" (LocalDateConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().toString().contains(" (LocalDateConverter)")).isTrue();
     }
 
     @Test

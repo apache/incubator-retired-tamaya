@@ -32,10 +32,9 @@ public class PropertyValueCombinationPolicyTest {
         PropertyValueCombinationPolicy policy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
 
         PropertyValue current = PropertyValue.of("a", "AAA", "Test");
-        PropertyValue result = policy.collect(current, "a", new DummyPropertySource());
-
-        assertThat(result.getKey()).isEqualTo("a");
-        assertThat(result.getValue()).isEqualTo("Ami");
+        PropertyValue v = policy.collect(current, "a", new DummyPropertySource());
+        assertThat(v.getKey()).isEqualTo("a");
+        assertThat(v.getValue()).isEqualTo("Ami");
     }
 
     @Test
@@ -43,11 +42,10 @@ public class PropertyValueCombinationPolicyTest {
         PropertyValueCombinationPolicy policy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
 
         PropertyValue current = PropertyValue.of("a", "AAA", "Test");
-        PropertyValue result = policy.collect(current, "a", PropertySource.EMPTY);
-
-        assertThat(result.getKey()).isEqualTo("a");
-        assertThat(result.getValue()).isEqualTo("AAA");
-        assertThat(result).isEqualTo(current);
+        PropertyValue v = policy.collect(current, "a", PropertySource.EMPTY);
+        assertThat(v.getKey()).isEqualTo("a");
+        assertThat(v.getValue()).isEqualTo("AAA");
+        assertThat(v).isEqualTo(current);
     }
 
 

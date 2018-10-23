@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Collections;
@@ -34,7 +33,7 @@ public class TestPropertyDefaultSource extends BasePropertySource{
 
     public TestPropertyDefaultSource() {
         super(100);
-        properties.put("name",PropertyValue.of("name", "Anatole", "Test"));
+        properties.put("name", PropertyValue.of("name", "Anatole", "Test"));
         properties.put("name2",PropertyValue.of("name2", "Sabine", "Test"));
         properties = Collections.unmodifiableMap(properties);
     }

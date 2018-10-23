@@ -19,11 +19,10 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
-import java.io.IOException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +35,8 @@ import java.util.logging.Logger;
  */
 public final class DefaultServiceContext implements ServiceContext {
     private static final Logger LOG = Logger.getLogger(DefaultServiceContext.class.getName());
+
+    private ClassLoader classLoader;
     /**
      * List current services loaded, per class.
      */
@@ -80,59 +81,6 @@ public final class DefaultServiceContext implements ServiceContext {
     }
 
     /**
-     * Loads and registers services.
-     *
-     * @param <T>         the concrete type.
-     * @param serviceType The service type.
-     * @return the items found, never {@code null}.
-     */
-    @Override
-    public <T> List<T> getServices(final Class<T> serviceType) {
-        @SuppressWarnings("unchecked")
-		List<T> found = (List<T>) servicesLoaded.get(serviceType);
-        if (found != null) {
-            return found;
-        }
-        List<T> services = new ArrayList<>();
-        try {
-            for (T t : ServiceLoader.load(serviceType)) {
-                services.add(t);
-            }
-            if(services.isEmpty()) {
-                for (T t : ServiceLoader.load(serviceType, serviceType.getClassLoader())) {
-                    services.add(t);
-                }
-            }
-            Collections.sort(services, PriorityServiceComparator.getInstance());
-            services = Collections.unmodifiableList(services);
-        } catch (ServiceConfigurationError e) {
-            LOG.log(Level.WARNING,
-                    "Error loading services current type " + serviceType, e);
-            if(services==null){
-                services = Collections.emptyList();
-            }
-        }
-        @SuppressWarnings("unchecked")
-		final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
-        return previousServices != null ? previousServices : services;
-    }
-
-    /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's value is evaluated. If no such
-     * annotation is present, a default priority of {@code 1} is returned.
-     * @param o the instance, not {@code null}.
-     * @return a priority, by default 1.
-     */
-    public static int getPriority(Object o){
-        int prio = 1; //X TODO discuss default priority
-        Priority priority = o.getClass().getAnnotation(Priority.class);
-        if (priority != null) {
-            prio = priority.value();
-        }
-        return prio;
-    }
-
-    /**
      * @param services to scan
      * @param <T>      type of the service
      *
@@ -153,7 +101,7 @@ public final class DefaultServiceContext implements ServiceContext {
         int highestPriorityServiceCount = 0;
 
         for (T service : services) {
-            int prio = getPriority(service);
+            int prio = ServiceContext.getPriority(service);
             if (highestPriority == null || highestPriority < prio) {
                 highestService = service;
                 highestPriorityServiceCount = 1;
@@ -165,40 +113,73 @@ public final class DefaultServiceContext implements ServiceContext {
 
         if (highestPriorityServiceCount > 1) {
             throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
-                                                           highestPriorityServiceCount,
-                                                           serviceType.getName(),
-                                                           highestPriority,
-                                                           services));
+                    highestPriorityServiceCount,
+                    serviceType.getName(),
+                    highestPriority,
+                    services));
         }
         this.factoryTypes.put(serviceType, highestService.getClass());
         return highestService;
     }
 
+    /**
+     * Loads and registers services.
+     *
+     * @param <T>         the concrete type.
+     * @param serviceType The service type.
+     * @return the items found, never {@code null}.
+     */
     @Override
-    public int ordinal() {
-        return 1;
+    public <T> List<T> getServices(final Class<T> serviceType) {
+        @SuppressWarnings("unchecked")
+		List<T> found = (List<T>) servicesLoaded.get(serviceType);
+        if (found != null) {
+            return found;
+        }
+        List<T> services = new ArrayList<>();
+        try {
+            for (T t : ServiceLoader.load(serviceType, classLoader)) {
+                if(t instanceof ClassloaderAware){
+                    ((ClassloaderAware)t).init(classLoader);
+                }
+                services.add(t);
+            }
+            // TODO does this make sense here...?
+//            if(services.isEmpty()) {
+//                for (T t : ServiceLoader.load(serviceType, serviceType.getClassLoader())) {
+//                    if(t instanceof ClassloaderAware){
+//                        ((ClassloaderAware)t).init(classLoader);
+//                    }
+//                    services.add(t);
+//                }
+//            }
+            Collections.sort(services, PriorityServiceComparator.getInstance());
+            services = Collections.unmodifiableList(services);
+        } catch (ServiceConfigurationError e) {
+            LOG.log(Level.WARNING,
+                    "Error loading services current type " + serviceType, e);
+            if(services==null){
+                services = Collections.emptyList();
+            }
+        }
+        @SuppressWarnings("unchecked")
+		final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
+        return previousServices != null ? previousServices : services;
+    }
+
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
+    public void init(ClassLoader classLoader) {
+        if(this.classLoader==null){
+            this.classLoader = Objects.requireNonNull(classLoader);
+        }else{
+            throw new IllegalStateException("Classloader already setCurrent on this context.");
         }
-        if(cl==null){
-            cl = getClass().getClassLoader();
-        }
-        return cl.getResources(resource);
-    }
-
-    @Override
-    public URL getResource(String resource, ClassLoader cl) {
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        if(cl==null){
-            cl = getClass().getClassLoader();
-        }
-        return cl.getResource(resource);
     }
 
 }

@@ -39,10 +39,12 @@ import java.util.logging.Logger;
 /**
  * Default implementation of {@link ConfigurationContextBuilder}.
  */
+@Deprecated
 public class DefaultConfigurationContextBuilder implements ConfigurationContextBuilder {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationContextBuilder.class.getName());
 
+    protected ServiceContext serviceContext = ServiceContextManager.getServiceContext();
     protected List<PropertyFilter> propertyFilters = new ArrayList<>();
     protected List<PropertySource> propertySources = new ArrayList<>();
     protected PropertyValueCombinationPolicy combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
@@ -95,6 +97,19 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
+    @Override
+    public ConfigurationContextBuilder setServiceContext(ServiceContext serviceContext) {
+        checkBuilderState();
+        this.serviceContext = Objects.requireNonNull(serviceContext);
+        return this;
+    }
+
+    @Override
+    public ConfigurationContextBuilder setClassLoader(ClassLoader classLoader) {
+        checkBuilderState();
+        this.serviceContext = Objects.requireNonNull(serviceContext);
+        return this;
+    }
 
     @Override
     public ConfigurationContextBuilder setContext(ConfigurationContext context) {
@@ -129,13 +144,13 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         checkBuilderState();
         List<PropertySource> propertySources = new ArrayList<>();
         addCorePropertyResources(propertySources);
-        for(PropertySource ps: ServiceContextManager.getServiceContext().getServices(PropertySource.class)) {
+        for(PropertySource ps: serviceContext.getServices(PropertySource.class)) {
             if(!propertySources.contains(ps)){
                 propertySources.add(ps);
             }
         }
         for(PropertySourceProvider provider:
-                ServiceContextManager.getServiceContext().getServices(PropertySourceProvider.class)){
+                serviceContext.getServices(PropertySourceProvider.class)){
                 propertySources.addAll(provider.getPropertySources());
         }
         Collections.sort(propertySources, PropertySourceComparator.getInstance());
@@ -143,9 +158,11 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     protected void addCorePropertyResources(List<PropertySource> propertySources) {
+        JavaConfigurationPropertySource jps = new JavaConfigurationPropertySource();
+        jps.init(getServiceContext().getClassLoader());
         for(PropertySource ps: new PropertySource[]{
                 new EnvironmentPropertySource(),
-                new JavaConfigurationPropertySource(),
+                jps,
                 new CLIPropertySource(),
                 new SystemPropertySource()
         }){
@@ -158,7 +175,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     @Override
     public ConfigurationContextBuilder addDefaultPropertyFilters() {
         checkBuilderState();
-        for(PropertyFilter pf:ServiceContextManager.getServiceContext().getServices(PropertyFilter.class)){
+        for(PropertyFilter pf:serviceContext.getServices(PropertyFilter.class)){
             addPropertyFilters(pf);
         }
         return this;
@@ -375,7 +392,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
 
     protected Map<TypeLiteral, Collection<PropertyConverter>> getDefaultPropertyConverters() {
         Map<TypeLiteral, Collection<PropertyConverter>> result = new HashMap<>();
-        for (PropertyConverter conv : ServiceContextManager.getServiceContext().getServices(
+        for (PropertyConverter conv : serviceContext.getServices(
                 PropertyConverter.class)) {
             for(Type type:conv.getClass().getGenericInterfaces()){
                 if(type instanceof ParameterizedType){
@@ -393,6 +410,11 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
             }
         }
         return result;
+    }
+
+    @Override
+    public ServiceContext getServiceContext() {
+        return serviceContext;
     }
 
 

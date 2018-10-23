@@ -100,7 +100,7 @@ public class OSGIServiceContextTest {
         mockBundleContext.installBundle(startedBundle);
         OSGIServiceContext instance = new OSGIServiceContext(loader);
 
-        Enumeration<URL> resources = instance.getResources("dummy" , ClassLoader.getSystemClassLoader());
+        Enumeration<URL> resources = instance.getResources("dummy");
         assertThat(resources).isNotNull();
         URL resource = (URL)resources.nextElement();
         assertThat(resource.toString().contains("mockbundle.service")).isTrue();
@@ -121,7 +121,7 @@ public class OSGIServiceContextTest {
         mockBundleContext.installBundle(startedBundle);
         OSGIServiceContext instance = new OSGIServiceContext(loader);
 
-        URL resource = instance.getResource("mockbundle.service", ClassLoader.getSystemClassLoader());
+        URL resource = instance.getResource("mockbundle.service");
         assertThat(resource).isNotNull();
         assertThat(resource.toString().contains("mockbundle.service")).isTrue();
     }

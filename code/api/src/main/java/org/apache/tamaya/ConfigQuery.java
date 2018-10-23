@@ -22,9 +22,12 @@ package org.apache.tamaya;
  * Models a function that maps a given {@link Configuration} to something else. This can be used
  * to model additional functionality and applying it to a given {@link Configuration} instance by
  * calling the {@link Configuration#query(ConfigQuery)} method.
+ *
+ * @deprecated Use {@link java.util.function.Function}
  */
 @FunctionalInterface
-public interface ConfigQuery<T> {
+@Deprecated
+public interface ConfigQuery<T>{
 
     /**
      * Creates a result based on the given {@link Configuration}. Queries basically act similar to

@@ -58,7 +58,7 @@ public class MockedPropertySource implements PropertySource {
     @Override
     public PropertyValue get(String key) {
         if (key.contains("Null")) {
-            return PropertyValue.of(key, null, "MockedPropertySource");
+            return null;
         } else if (key.contains("missing")){
             return null;
         }

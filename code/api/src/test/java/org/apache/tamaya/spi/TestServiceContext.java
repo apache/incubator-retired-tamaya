@@ -30,10 +30,27 @@ import java.util.logging.Logger;
  * {@link java.util.ServiceLoader} to load the services required.
  */
 public final class TestServiceContext implements ServiceContext {
+
+    private ClassLoader classLoader;
+
     /** List current services loaded, per class. */
     private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
 
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        if(this.classLoader==null){
+            this.classLoader = classLoader;
+        }else{
+            throw new IllegalStateException("Classloader already setCurrent on this context.");
+        }
+    }
 
     @Override
     public int ordinal() {
@@ -93,13 +110,13 @@ public final class TestServiceContext implements ServiceContext {
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
-        return cl.getResources(resource);
+    public Enumeration<URL> getResources(String resource) throws IOException {
+        return classLoader.getResources(resource);
     }
 
     @Override
-    public URL getResource(String resource, ClassLoader cl) {
-        return cl.getResource(resource);
+    public URL getResource(String resource) {
+        return classLoader.getResource(resource);
     }
 
 }

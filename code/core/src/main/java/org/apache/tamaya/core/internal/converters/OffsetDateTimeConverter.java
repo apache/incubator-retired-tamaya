@@ -36,8 +36,9 @@ public class OffsetDateTimeConverter implements PropertyConverter<OffsetDateTime
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public OffsetDateTime convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), OffsetDateTime.now().toString());
+    public OffsetDateTime convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), OffsetDateTime.now().toString()));
         try{
             return OffsetDateTime.parse(value);
         }catch(Exception e){

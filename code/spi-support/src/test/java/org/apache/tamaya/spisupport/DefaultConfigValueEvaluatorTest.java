@@ -20,7 +20,6 @@ package org.apache.tamaya.spisupport;
 
 import java.util.Map;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
@@ -37,7 +36,7 @@ public class DefaultConfigValueEvaluatorTest {
      */
     @Test
     public void testEvaluteRawValue() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         DefaultConfigValueEvaluator instance = new DefaultConfigValueEvaluator();
         PropertyValue result = instance.evaluteRawValue("confkey1", config.getContext());
         assertThat(result.getValue()).isEqualTo("javaconf-value1");
@@ -50,7 +49,7 @@ public class DefaultConfigValueEvaluatorTest {
      */
     @Test
     public void testEvaluateRawValues() {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         DefaultConfigValueEvaluator instance = new DefaultConfigValueEvaluator();
         Map<String, PropertyValue> result = instance.evaluateRawValues(config.getContext());
         assertThat(result.containsKey("confkey1")).isTrue();

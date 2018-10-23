@@ -32,6 +32,15 @@ public final class TestLowerOrdinalServiceContext implements ServiceContext {
     private final RuntimeException ex = new RuntimeException("Lower ordinal Service Context was used.");
 
     @Override
+    public ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+    }
+
+    @Override
     public int ordinal() {
         return 1;
     }
@@ -52,12 +61,12 @@ public final class TestLowerOrdinalServiceContext implements ServiceContext {
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
+    public Enumeration<URL> getResources(String resource) throws IOException {
         throw ex;
     }
 
     @Override
-    public URL getResource(String resource, ClassLoader cl) {
+    public URL getResource(String resource) {
         throw ex;
     }
 

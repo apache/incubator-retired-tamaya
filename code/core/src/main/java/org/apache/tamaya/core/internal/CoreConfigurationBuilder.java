@@ -23,6 +23,7 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.core.internal.converters.*;
+import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.apache.tamaya.spisupport.DefaultConfigurationBuilder;
 import org.apache.tamaya.spisupport.DefaultConfigurationContext;
 import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
@@ -86,7 +87,15 @@ public final class CoreConfigurationBuilder extends DefaultConfigurationBuilder 
 
     @Override
     public Configuration build() {
-        return new CoreConfiguration(contextBuilder.build());
+        Configuration cfg = new CoreConfiguration(
+                new DefaultConfigurationContext(
+                        serviceContext,
+                        this.combinationPolicy,
+                        this.propertyFilters,
+                        this.propertySources,
+                        this.propertyConverters));
+        built = true;
+        return cfg;
     }
 
 }

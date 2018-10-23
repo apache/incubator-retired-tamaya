@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spi;
 
+import java.util.List;
+
 /**
  * Interface for an property that converts a configured String into something else.
  * This is used for implementing type conversion from a property (String) to a certain target
@@ -30,15 +32,15 @@ public interface PropertyConverter<T>{
 
     /**
      * Convert the given configuration keys from its String representation into the required target type.
-     * The context instance passed also allows to add a list of supported formats, which is very handy in case a
+     * Additional context can be obtained from {@link ConversionContext}, this also allows to add a list
+     * of supported formats, which is very handy in case a
      * value could not be converted. This list of supported formats can then shown to the user to give some hints
      * how a value could be configured.
-     * 
+     *
      * @param value configuration key that needs to be converted
-     * @param context the {@link ConversionContext}, containing the String value and the requested configuration key.
-     * @return converted keys
-     * @see ConversionContext#addSupportedFormats(Class, String...)
+     * @return the converted value
+     * @see ConversionContext
      */
-    T convert(String value, ConversionContext context);
+    T convert(String value);
 
 }

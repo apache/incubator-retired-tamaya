@@ -44,8 +44,9 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
     private static final Logger LOG = Logger.getLogger(CurrencyConverter.class.getName());
 
     @Override
-    public Currency convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "<currencyCode>, using Locale.ENGLISH", "<numericValue>", "<locale>");
+    public Currency convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), "<currencyCode>, using Locale.ENGLISH", "<numericValue>", "<locale>"));
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));

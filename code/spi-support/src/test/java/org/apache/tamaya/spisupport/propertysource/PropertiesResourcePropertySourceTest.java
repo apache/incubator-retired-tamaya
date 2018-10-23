@@ -36,7 +36,7 @@ public class PropertiesResourcePropertySourceTest {
     public void testBasicConstructor() {
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(resource);
         assertThat(source).isNotNull();
-        assertThat(5 == source.getProperties().size()).isTrue(); // double the size for .source values.
+        assertThat(5 == source.getProperties().size()).isTrue(); // double the getNumChilds for .source values.
         assertThat(source.getProperties().containsKey("key1")).isTrue();
     }
 
@@ -73,7 +73,8 @@ public class PropertiesResourcePropertySourceTest {
     
     @Test
     public void testPrefixedPathClassloaderConstructor() {
-        PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix", null);
+        PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix",
+                getClass().getClassLoader());
         assertThat(source).isNotNull();
         assertThat(5 == source.getProperties().size()).isTrue();
         assertThat(source.getProperties().containsKey("somePrefixkey1")).isTrue();

@@ -36,11 +36,12 @@ public class FileConverter implements PropertyConverter<File> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public File convert(String value, ConversionContext context) {
+    public File convert(String value) {
         if(value==null || value.isEmpty()){
             return null;
         }
-        context.addSupportedFormats(getClass(),"<File>");
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(),"<File>"));
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return new File(trimmed);

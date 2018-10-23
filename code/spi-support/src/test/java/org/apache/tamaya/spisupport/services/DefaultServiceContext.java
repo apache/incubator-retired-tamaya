@@ -41,6 +41,21 @@ public final class DefaultServiceContext implements ServiceContext {
      * List current services loaded, per class.
      */
     private final ConcurrentHashMap<Class<?>, List<Object>> servicesLoaded = new ConcurrentHashMap<>();
+
+    /**
+     * The classloader to be used by this instance.
+     */
+    private ClassLoader classLoader;
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        if(this.classLoader==null){
+            this.classLoader = classLoader;
+        }else{
+            throw new IllegalStateException("Classloader already setCurrent on this context.");
+        }
+    }
+
     /**
      * Singletons.
      */
@@ -176,30 +191,23 @@ public final class DefaultServiceContext implements ServiceContext {
     }
 
     @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    @Override
     public int ordinal() {
         return 1;
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        if(cl==null){
-            cl = getClass().getClassLoader();
-        }
-        return cl.getResources(resource);
+    public Enumeration<URL> getResources(String resource) throws IOException {
+        return classLoader.getResources(resource);
     }
 
     @Override
-    public URL getResource(String resource, ClassLoader cl) {
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        if(cl==null){
-            cl = getClass().getClassLoader();
-        }
-        return cl.getResource(resource);
+    public URL getResource(String resource) {
+        return classLoader.getResource(resource);
     }
 
 }

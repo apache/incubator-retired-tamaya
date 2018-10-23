@@ -21,10 +21,7 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A builder for creating new instances of {@link Configuration}.
@@ -43,6 +40,21 @@ import java.util.Map;
 public interface ConfigurationBuilder {
 
     /**
+     * Set the classloader to be used for loading of configuration resources, equals to
+     * {@code setServiceContext(ServiceContextManager.getServiceContext(classLoader))}.
+     * @param classLoader the classloader, not null.
+     * @return the builder for chaining.
+     */
+    ConfigurationBuilder setClassLoader(ClassLoader classLoader);
+
+    /**
+     * Sets the ServiceContext to be used.
+     * @param serviceContext the serviceContext, nuo null.
+     * @return this instance for chaining.
+     */
+    ConfigurationBuilder setServiceContext(ServiceContext serviceContext);
+
+    /**
      * Init this builder instance with the given {@link Configuration} instance. This
      * method will use any existing property sources, filters, converters and the combination
      * policy of the given {@link Configuration} and initialize the current builder
@@ -52,7 +64,9 @@ public interface ConfigurationBuilder {
      * @param config the {@link Configuration} instance to be used, not {@code null}.
      * @return this builder, for chaining, never null.
      */
-    ConfigurationBuilder setConfiguration(Configuration config);
+    default ConfigurationBuilder setConfiguration(Configuration config){
+        return setContext(config.getContext());
+    }
 
     /**
      * Init this builder instance with the given {@link ConfigurationContext} instance. This
@@ -77,7 +91,9 @@ public interface ConfigurationBuilder {
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
      */
-    ConfigurationBuilder addPropertySources(PropertySource... propertySources);
+    default ConfigurationBuilder addPropertySources(PropertySource... propertySources){
+        return addPropertySources(Arrays.asList(propertySources));
+    }
 
     /**
      * This method can be used for programmatically adding {@link PropertySource}s.
@@ -107,7 +123,9 @@ public interface ConfigurationBuilder {
      * @param propertySources the property sources to remove, not {@code null}.
      * @return the builder for chaining.
      */
-    ConfigurationBuilder removePropertySources(PropertySource... propertySources);
+    default ConfigurationBuilder removePropertySources(PropertySource... propertySources){
+        return removePropertySources(Arrays.asList(propertySources));
+    }
 
     /**
      * Removes the given property sources, if existing. The existing order of property
@@ -200,7 +218,9 @@ public interface ConfigurationBuilder {
      * @param filters the filters to add
      * @return this builder, for chaining, never null.
      */
-    ConfigurationBuilder addPropertyFilters(PropertyFilter... filters);
+    default ConfigurationBuilder addPropertyFilters(PropertyFilter... filters){
+        return addPropertyFilters(Arrays.asList(filters));
+    }
 
     /**
      * Adds the given {@link PropertyFilter} instances, hereby the instances are added
@@ -226,16 +246,18 @@ public interface ConfigurationBuilder {
      * @param filters the filter to remove
      * @return this builder, for chaining, never null.
      */
-    ConfigurationBuilder removePropertyFilters(PropertyFilter... filters);
+    default ConfigurationBuilder removePropertyFilters(PropertyFilter... filters){
+        return removePropertyFilters(Arrays.asList(filters));
+    }
 
     /**
      * Removes the given {@link PropertyFilter} instances, if existing. The order of the remaining
      * filters is preserved.
      *
-     * @param filters the filter to remove
+     * @param filter the filter to remove
      * @return this builder, for chaining, never null.
      */
-    ConfigurationBuilder removePropertyFilters(Collection<PropertyFilter> filters);
+    ConfigurationBuilder removePropertyFilters(Collection<PropertyFilter> filter);
 
     /**
      * This method can be used for adding {@link PropertyConverter}s.
@@ -248,8 +270,11 @@ public interface ConfigurationBuilder {
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
-    <T> ConfigurationBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
-                                                   @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
+    default <T> ConfigurationBuilder addPropertyConverters(TypeLiteral<T> typeToConvert,
+                                                   @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters){
+        return addPropertyConverters(typeToConvert, Arrays.asList(propertyConverters));
+    }
+
 
     /**
      * This method can be used for adding {@link PropertyConverter}s.
@@ -280,8 +305,10 @@ public interface ConfigurationBuilder {
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
-    <T> ConfigurationBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
-                                                      @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters);
+    default <T> ConfigurationBuilder removePropertyConverters(TypeLiteral<T> typeToConvert,
+                                                      @SuppressWarnings("unchecked") PropertyConverter<T>... propertyConverters){
+        return removePropertyConverters(typeToConvert, Arrays.asList(propertyConverters));
+    }
 
     /**
      * Removes the given PropertyConverter instances for the given type,
@@ -330,7 +357,9 @@ public interface ConfigurationBuilder {
      *
      * @param policy the {@link PropertyValueCombinationPolicy} used, not {@code null}.
      * @return this builder, for chaining, never null.
+     * @deprecated Will be removed.
      */
+    @Deprecated
     ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy);
 
     /**

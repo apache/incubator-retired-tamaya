@@ -18,8 +18,10 @@
  */
 package org.apache.tamaya.spi;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +41,7 @@ public final class ServiceContextManager {
     /**
      * The ServiceProvider used.
      */
-    private static volatile ServiceContext serviceContextProviderDelegate;
+    private static volatile Map<ClassLoader, ServiceContext> serviceContexts = new ConcurrentHashMap<>();
 
     /**
      * Private singletons constructor.
@@ -52,11 +54,11 @@ public final class ServiceContextManager {
      *
      * @return {@link ServiceContext} to be used for loading the services.
      */
-    private static ServiceContext loadDefaultServiceProvider() {
+    private static ServiceContext loadDefaultServiceProvider(ClassLoader classLoader) {
         ServiceContext highestServiceContext = null;
         try {
             int highestOrdinal = 0;
-            for (ServiceContext serviceContext : ServiceLoader.load(ServiceContext.class)) {
+            for (ServiceContext serviceContext : ServiceLoader.load(ServiceContext.class, classLoader)) {
                 if (highestServiceContext == null
                         || serviceContext.ordinal() > highestOrdinal) {
                     highestServiceContext = serviceContext;
@@ -69,6 +71,7 @@ public final class ServiceContextManager {
         if (highestServiceContext==null){
             throw new ConfigException("No ServiceContext found");
         }
+        highestServiceContext.init(classLoader);
         LOG.info("Using Service Context of type: " + highestServiceContext.getClass().getName());
         return highestServiceContext;
     }
@@ -76,26 +79,37 @@ public final class ServiceContextManager {
     /**
      * Replace the current {@link ServiceContext} in use.
      *
-     * @param serviceContextProvider the new {@link ServiceContext}, not {@code null}.
+     * @param serviceContext the new {@link ServiceContext}, not {@code null}.
      * @return the currently used context after setting it.
      */
-    public static ServiceContext set(ServiceContext serviceContextProvider) {
-        Objects.requireNonNull(serviceContextProvider);
-        ServiceContext currentContext = ServiceContextManager.serviceContextProviderDelegate;
+    public static ServiceContext set(ServiceContext serviceContext) {
+        Objects.requireNonNull(serviceContext);
 
+        ServiceContext previousContext;
         synchronized (ServiceContextManager.class) {
-            if (ServiceContextManager.serviceContextProviderDelegate == null) {
-                ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
-                LOG.log(Level.INFO, "Using ServiceProvider: " + serviceContextProvider.getClass().getName());
-            } else {
-                LOG.log(Level.WARNING, "Replacing ServiceProvider " +
-                                ServiceContextManager.serviceContextProviderDelegate.getClass().getName() +
-                                " with: " + serviceContextProvider.getClass().getName());
-                ServiceContextManager.serviceContextProviderDelegate = serviceContextProvider;
-            }
+            previousContext = ServiceContextManager.serviceContexts
+                    .put(serviceContext.getClassLoader(), serviceContext);
         }
+        if(previousContext!=null) {
+            LOG.log(Level.WARNING, "Replaced ServiceProvider " +
+                    previousContext.getClass().getName() +
+                    " with: " + serviceContext.getClass().getName() + " for classloader: " +
+                    serviceContext.getClassLoader());
+        }else{
+            LOG.log(Level.INFO, "Using ServiceProvider: " + serviceContext.getClass().getName() +
+                    " for classloader: " +  serviceContext.getClassLoader());
+        }
+        return serviceContext;
+    }
 
-        return currentContext;
+    /**
+     * Ge {@link ServiceContext}. If necessary the {@link ServiceContext} will be laziliy loaded.
+     *
+     * @param classLoader the classloader to be used, not null.
+     * @return the {@link ServiceContext} used.
+     */
+    public static ServiceContext getServiceContext(ClassLoader classLoader) {
+        return serviceContexts.computeIfAbsent(classLoader, ServiceContextManager::loadDefaultServiceProvider);
     }
 
     /**
@@ -104,14 +118,22 @@ public final class ServiceContextManager {
      * @return the {@link ServiceContext} used.
      */
     public static ServiceContext getServiceContext() {
-        if (serviceContextProviderDelegate == null) {
-            synchronized (ServiceContextManager.class) {
-                if (serviceContextProviderDelegate == null) {
-                    serviceContextProviderDelegate = loadDefaultServiceProvider();
-                }
-            }
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if(cl==null){
+            cl = ServiceContextManager.class.getClassLoader();
         }
-        return serviceContextProviderDelegate;
+        return getServiceContext(cl);
     }
 
+    /**
+     * Evaluate the default classloader: 1. the thread context classloader, 2. This class's classloader.
+     * @return the classloder, not null.
+     */
+    public static ClassLoader getDefaultClassLoader() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if(cl==null){
+            cl = ServiceContextManager.class.getClassLoader();
+        }
+        return cl;
+    }
 }

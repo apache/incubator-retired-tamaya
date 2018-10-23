@@ -18,10 +18,8 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertyFilterComparator;
 import org.junit.Test;
 
 import javax.annotation.Priority;
@@ -62,14 +60,14 @@ public class PropertyFilterComparatorTest {
 
     @Priority(1)
     private static class PropertyFilterA  implements PropertyFilter {
-        public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+        public PropertyValue filterProperty(PropertyValue value) {
             throw new RuntimeException("Not implemented or look at me!");
         }
     }
 
     @Priority(2)
     private static class PropertyFilterB  implements PropertyFilter {
-        public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+        public PropertyValue filterProperty(PropertyValue value) {
             throw new RuntimeException("Not implemented or look at me!");
         }
     }
