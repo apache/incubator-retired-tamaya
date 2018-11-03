@@ -379,7 +379,7 @@ public class PropertyConverterManager {
             }
             converter = new PropertyConverter<T>() {
                     @Override
-                    public T convert(String value) {
+                    public T convert(String value, ConversionContext context) {
                         AccessController.doPrivileged(new PrivilegedAction<Object>() {
                             @Override
                             public Object run() {
@@ -461,11 +461,8 @@ public class PropertyConverterManager {
         }
 
         @Override
-        public T convert(String value) {
-            ConversionContext ctx = ConversionContext.current();
-            if(ctx!=null) {
-                ctx.addSupportedFormats(getClass(), "<String -> " + factoryMethod.toGenericString());
-            }
+        public T convert(String value, ConversionContext context) {
+            context.addSupportedFormats(getClass(), "<String -> " + factoryMethod.toGenericString());
             if (!Modifier.isStatic(factoryMethod.getModifiers())) {
                 throw new ConfigException(factoryMethod.toGenericString() +
                         " is not a static method. Only static " +

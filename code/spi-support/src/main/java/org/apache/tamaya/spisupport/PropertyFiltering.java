@@ -65,16 +65,11 @@ public final class PropertyFiltering{
     public static List<PropertyValue> applyFilters(List<PropertyValue> values, ConfigurationContext context) {
         List<PropertyValue> result = new ArrayList<>();
         FilterContext filterContext = new FilterContext(values, context);
-        try {
-            FilterContext.set(filterContext);
-            for (PropertyValue val : values) {
-                PropertyValue filtered = filterValue(val, filterContext);
-                if(filtered!=null) {
-                    result.add(filtered);
-                }
+        for (PropertyValue val : values) {
+            PropertyValue filtered = filterValue(val, filterContext);
+            if(filtered!=null) {
+                result.add(filtered);
             }
-        }finally {
-            FilterContext.reset();
         }
         return result;
     }
@@ -90,14 +85,9 @@ public final class PropertyFiltering{
         // Apply filters to values, prevent values filtered to null!
         for (Map.Entry<String, PropertyValue> entry : rawProperties.entrySet()) {
             FilterContext filterContext = new FilterContext(entry.getValue(), rawProperties, context);
-            try{
-                FilterContext.set(filterContext);
-                PropertyValue filtered = filterValue(filterContext.getProperty(), filterContext);
-                if(filtered!=null){
-                    result.put(filtered.getKey(), filtered);
-                }
-            }finally{
-                FilterContext.reset();
+            PropertyValue filtered = filterValue(filterContext.getProperty(), filterContext);
+            if(filtered!=null){
+                result.put(filtered.getKey(), filtered);
             }
         }
         return result;
@@ -111,41 +101,36 @@ public final class PropertyFiltering{
     private static PropertyValue filterValue(PropertyValue inputValue, FilterContext context) {
         PropertyValue filteredValue = inputValue;
 
-        try {
-            FilterContext.set(context);
-            for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
-                int changes = 0;
-                for (PropertyFilter filter : context.current().getPropertyFilters()) {
-                    String value = filteredValue!=null?filteredValue.getValue():null;
-                    filteredValue = filter.filterProperty(filteredValue);
-                    String newValue = filteredValue!=null?filteredValue.getValue():null;
+        for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
+            int changes = 0;
+            for (PropertyFilter filter : context.current().getPropertyFilters()) {
+                String value = filteredValue!=null?filteredValue.getValue():null;
+                filteredValue = filter.filterProperty(filteredValue, context);
+                String newValue = filteredValue!=null?filteredValue.getValue():null;
 
-                    if (!Objects.equals(value, newValue)) {
-                        changes++;
-                        LOG.finest("Filter - " + filteredValue + " by " + filter);
-                    }
-                    if (filteredValue == null) {
-                        LOG.finest("Filter removed entry - " + inputValue + ": " + filter);
-                        break;
-                    }
+                if (!Objects.equals(value, newValue)) {
+                    changes++;
+                    LOG.finest("Filter - " + filteredValue + " by " + filter);
                 }
-                if (changes == 0) {
-                    LOG.finest("Finishing filter loop, no changes detected.");
+                if (filteredValue == null) {
+                    LOG.finest("Filter removed entry - " + inputValue + ": " + filter);
                     break;
-                } else if (filteredValue == null) {
-                    break;
-                } else {
-                    if (i == (MAX_FILTER_LOOPS - 1)) {
-                        if (LOG.isLoggable(Level.WARNING)) {
-                            LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
-                        }
-                    } else {
-                        LOG.finest("Repeating filter loop, changes detected: " + changes);
-                    }
                 }
             }
-        }finally{
-            FilterContext.reset();
+            if (changes == 0) {
+                LOG.finest("Finishing filter loop, no changes detected.");
+                break;
+            } else if (filteredValue == null) {
+                break;
+            } else {
+                if (i == (MAX_FILTER_LOOPS - 1)) {
+                    if (LOG.isLoggable(Level.WARNING)) {
+                        LOG.warning("Maximal filter loop count reached, aborting filter evaluation after cycles: " + i);
+                    }
+                } else {
+                    LOG.finest("Repeating filter loop, changes detected: " + changes);
+                }
+            }
         }
         return filteredValue;
     }

@@ -29,9 +29,8 @@ import org.apache.tamaya.spi.PropertyConverter;
 public class IntegerTestConverter implements PropertyConverter<Integer> {
 
     @Override
-    public Integer convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "<int>"));
+    public Integer convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "<int>");
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return Integer.decode(trimmed);

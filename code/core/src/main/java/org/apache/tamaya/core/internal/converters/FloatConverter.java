@@ -52,10 +52,9 @@ public class FloatConverter implements PropertyConverter<Float> {
     private final IntegerConverter integerConverter = new IntegerConverter();
 
     @Override
-    public Float convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "<float>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE",
-                        "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN"));
+    public Float convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "<float>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE",
+                        "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "POSITIVE_INFINITY":
@@ -78,7 +77,7 @@ public class FloatConverter implements PropertyConverter<Float> {
                     LOG.finest("Parsing of float as floating number failed, trying parsing integral" +
                             " number/hex instead...");
                 }
-                Integer val = integerConverter.convert(trimmed);
+                Integer val = integerConverter.convert(trimmed, ctx);
                 if(val!=null) {
                     return val.floatValue();
                 }

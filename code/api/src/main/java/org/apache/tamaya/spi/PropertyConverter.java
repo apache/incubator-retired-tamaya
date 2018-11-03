@@ -32,15 +32,16 @@ public interface PropertyConverter<T>{
 
     /**
      * Convert the given configuration keys from its String representation into the required target type.
-     * Additional context can be obtained from {@link ConversionContext}, this also allows to add a createList
+     * Additional data can be obtained from {@link ConversionContext}, which also allows to add a list
      * of supported formats, which is very handy in case a
-     * createValue could not be converted. This createList of supported formats can then shown to the user to give some hints
-     * how a createValue could be configured.
+     * value could not be converted. This list of supported formats can then shown to the user to give some hints
+     * how a value could be configured.
      *
      * @param value configuration key that needs to be converted
+     * @param context the converter context, not null.
      * @return the converted createValue
      * @see ConversionContext
      */
-    T convert(String value);
+    T convert(String value, ConversionContext context);
 
 }

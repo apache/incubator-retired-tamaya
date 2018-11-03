@@ -119,7 +119,7 @@ public class BigDecimalConverterTest {
 		ConversionContext context = mock(ConversionContext.class);
 
 		BigDecimalConverter converter = new BigDecimalConverter();
-		BigDecimal value = converter.convert("");
+		BigDecimal value = converter.convert("", context);
 
 		assertThat(value).isNull();
 	}
@@ -127,10 +127,10 @@ public class BigDecimalConverterTest {
 	@Test
 	public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
 		ConversionContext context = mock(ConversionContext.class);
-		ConversionContext.set(context);
+
 		BigDecimalConverter converter = new BigDecimalConverter();
-		BigDecimal value = converter.convert("");
-		ConversionContext.reset();
+		BigDecimal value = converter.convert("", context);
+
 		assertThat(value).isNull();
 		verify(context).addSupportedFormats(BigDecimalConverter.class, "<bigDecimal> -> new BigDecimal(String)");
 	}

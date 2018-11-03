@@ -36,9 +36,8 @@ public class InstantConverter implements PropertyConverter<Instant> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Instant convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), Instant.now().toString()));
+    public Instant convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), Instant.now().toString());
         try{
             return Instant.parse(value);
         }catch(Exception e){

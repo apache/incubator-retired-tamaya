@@ -150,10 +150,10 @@ public class CharConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Character.class)).build();
-        ConversionContext.set(context);
+
         CharConverter converter = new CharConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
         assertThat(context.getSupportedFormats().contains("<char> (CharConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("\\'<char>\\' (CharConverter)")).isTrue();
     }

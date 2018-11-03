@@ -187,10 +187,10 @@ public class CurrencyConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Currency.class)).build();
-        ConversionContext.set(context);
+
         CurrencyConverter converter = new CurrencyConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().contains("<numericValue> (CurrencyConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("<locale> (CurrencyConverter)")).isTrue();

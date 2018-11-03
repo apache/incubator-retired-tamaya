@@ -36,12 +36,11 @@ public class URIConverter implements PropertyConverter<URI> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public URI convert(String value) {
+    public URI convert(String value, ConversionContext ctx) {
         if(value==null || value.isEmpty()){
             return null;
         }
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "<uri> -> new URI(uri)"));
+        ctx.addSupportedFormats(getClass(), "<uri> -> new URI(uri)");
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return new URI(trimmed);

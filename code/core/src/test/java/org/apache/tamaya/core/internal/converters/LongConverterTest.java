@@ -120,10 +120,10 @@ public class LongConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Long.class)).build();
-        ConversionContext.set(context);
+
         LongConverter converter = new LongConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().contains("<long> (LongConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (LongConverter)")).isTrue();

@@ -38,42 +38,6 @@ public class FilterContext {
     @Experimental
     private boolean singlePropertyScoped;
 
-    private static ThreadLocal<FilterContext> CONTEXT = new ThreadLocal<>();
-
-    /**
-     * Access the current filter context.
-     * @return the current filter context, or null.
-     */
-    public static FilterContext get(){
-        return CONTEXT.get();
-    }
-
-    /**
-     * If the current conversoin context is available, this performs the given action.
-     * @param action the consumer to be executed, not null.
-     */
-    public static void doOptional(Consumer<FilterContext> action){
-        FilterContext ctx = get();
-        if(ctx!=null){
-            action.accept(ctx);
-        }
-    }
-
-    /**
-     * Sets the current filter context.
-     * @param context the FilterContext, not null.
-     */
-    public static void set(FilterContext context){
-        CONTEXT.set(context);
-    }
-
-    /**
-     * Removes the current filter context.
-     */
-    public static void reset(){
-        CONTEXT.remove();
-    }
-
 
     /**
      * Creates a new FilterContext, for filtering of a multi createValue access

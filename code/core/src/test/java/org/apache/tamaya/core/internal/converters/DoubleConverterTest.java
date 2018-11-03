@@ -183,10 +183,10 @@ public class DoubleConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Double.class)).build();
-        ConversionContext.set(context);
+
         DoubleConverter converter = new DoubleConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().contains("<double> (DoubleConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (DoubleConverter)")).isTrue();

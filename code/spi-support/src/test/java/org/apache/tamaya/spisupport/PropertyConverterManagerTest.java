@@ -27,6 +27,7 @@ import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
+import java.math.RoundingMode;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -57,7 +58,8 @@ public class PropertyConverterManagerTest {
 
         PropertyConverter<MyType> converter = converters.get(0);
 
-        Object result = converter.convert("IN");
+        ConversionContext ctx = new ConversionContext.Builder(TypeLiteral.of(String.class)).build();
+        Object result = converter.convert("IN", ctx);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(MyType.class);
@@ -73,7 +75,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<C> converter = converters.get(0);
-        C result = converter.convert("testDirectConverterMapping");
+        C result = converter.convert("testDirectConverterMapping", null);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -91,7 +93,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<B> converter = converters.get(0);
-        B result = converter.convert("testDirectSuperclassConverterMapping");
+        B result = converter.convert("testDirectSuperclassConverterMapping", null);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -119,7 +121,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<A> converter = converters.get(0);
-        A result = converter.convert("testTransitiveSuperclassConverterMapping");
+        A result = converter.convert("testTransitiveSuperclassConverterMapping", null);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -135,7 +137,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<Readable> converter = converters.get(0);
-        Readable result = converter.convert("testDirectInterfaceMapping");
+        Readable result = converter.convert("testDirectInterfaceMapping", null);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -151,7 +153,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<Runnable> converter = converters.get(0);
-        Runnable result = converter.convert("testTransitiveInterfaceMapping1");
+        Runnable result = converter.convert("testTransitiveInterfaceMapping1", null);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -167,7 +169,7 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<AutoCloseable> converter = converters.get(0);
-        AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2");
+        AutoCloseable result = converter.convert("testTransitiveInterfaceMapping2", null);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(C.class);
@@ -184,7 +186,8 @@ public class PropertyConverterManagerTest {
         assertThat(converters).hasSize(1);
 
         PropertyConverter<Integer> converter = converters.get(0);
-        Integer result = converter.convert("101");
+        ConversionContext ctx = new ConversionContext.Builder(TypeLiteral.of(String.class)).build();
+        Integer result = converter.convert("101", ctx);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(Integer.class);

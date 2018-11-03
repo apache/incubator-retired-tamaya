@@ -52,9 +52,9 @@ public class DoubleConverter implements PropertyConverter<Double> {
     private final LongConverter integerConverter = new LongConverter();
 
     @Override
-    public Double convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "<double>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE", "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN"));
+    public Double convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "<double>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE",
+                "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
         String trimmed = Objects.requireNonNull(value).trim();
         switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":
@@ -77,7 +77,7 @@ public class DoubleConverter implements PropertyConverter<Double> {
                     LOG.finest("Parsing of double as floating number failed, trying parsing integral" +
                             " number/hex instead...");
                 }
-                Long val = integerConverter.convert(trimmed);
+                Long val = integerConverter.convert(trimmed, ctx);
                 if(val!=null){
                     return val.doubleValue();
                 }

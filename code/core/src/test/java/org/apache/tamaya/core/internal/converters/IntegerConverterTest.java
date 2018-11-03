@@ -120,10 +120,10 @@ public class IntegerConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Integer.class)).build();
-        ConversionContext.set(context);
+
         IntegerConverter converter = new IntegerConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().contains("<int> (IntegerConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (IntegerConverter)")).isTrue();

@@ -133,7 +133,7 @@ public class BigIntegerConverterTest {
         ConversionContext context = mock(ConversionContext.class);
 
         BigIntegerConverter converter = new BigIntegerConverter();
-        BigInteger value = converter.convert("");
+        BigInteger value = converter.convert("", context);
 
         assertThat(value).isNull();
     }
@@ -141,10 +141,10 @@ public class BigIntegerConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(BigInteger.class)).build();
-        ConversionContext.set(context);
+
         BigIntegerConverter converter = new BigIntegerConverter();
-        BigInteger value = converter.convert("");
-        ConversionContext.reset();
+        BigInteger value = converter.convert("", context);
+
         assertThat(value).isNull();
         assertThat(context.getSupportedFormats().contains("<bigint> -> new BigInteger(bigint) (BigIntegerConverter)")).isTrue();
     }

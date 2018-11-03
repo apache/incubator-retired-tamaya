@@ -127,8 +127,8 @@ public class ConfigurationBuilderTest {
 
     @Test
     public void addPropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder();
         b.addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
@@ -144,8 +144,8 @@ public class ConfigurationBuilderTest {
 
     @Test
     public void addPropertyFilters_Collection() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder();
         b.addPropertyFilters(Arrays.asList(new PropertyFilter[]{filter1, filter2}));
         Configuration cfg = b.build();
@@ -161,8 +161,8 @@ public class ConfigurationBuilderTest {
 
     @Test
     public void removePropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder()
                 .addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
@@ -182,8 +182,8 @@ public class ConfigurationBuilderTest {
 
     @Test
     public void removePropertyFilters_Collection() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder()
                 .addPropertyFilters(Arrays.asList(new PropertyFilter[]{filter1, filter2}));
         Configuration cfg = b.build();
@@ -204,7 +204,7 @@ public class ConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverters_Array() throws Exception {
-		PropertyConverter converter = (value) -> value.toLowerCase();
+		PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
@@ -220,7 +220,7 @@ public class ConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverters_Collection() throws Exception {
-		PropertyConverter converter = (value) -> value.toLowerCase();
+		PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class),
                         Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
@@ -238,7 +238,7 @@ public class ConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void removePropertyConverters_Array() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
@@ -258,7 +258,7 @@ public class ConfigurationBuilderTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
     public void removePropertyConverters_Collection() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         Configuration cfg = b.build();
@@ -396,7 +396,7 @@ public class ConfigurationBuilderTest {
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder();
         PropertyFilter[] propertyFilters = new PropertyFilter[10];
         for(int i=0;i<propertyFilters.length;i++){
-            propertyFilters[i] = (value) -> value.setValue(toString() + " - ");
+            propertyFilters[i] = (value, ctx) -> value.setValue(toString() + " - ");
         }
         b.addPropertyFilters(propertyFilters);
         Comparator<PropertyFilter> pfComp = (o1, o2) -> o1.toString().compareTo(o2.toString());
@@ -421,7 +421,7 @@ public class ConfigurationBuilderTest {
     @Test
     public void testRemoveAllFilters() throws Exception {
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder();
-        b.addPropertyFilters((value) -> value.setValue(toString() + " - "));
+        b.addPropertyFilters((value, ctx) -> value.setValue(toString() + " - "));
         assertThat(b.getPropertyFilters().isEmpty()).isFalse();
         b.removePropertyFilters(b.getPropertyFilters());
         assertThat(b.getPropertyFilters().isEmpty()).isTrue();

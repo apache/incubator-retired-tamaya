@@ -50,9 +50,8 @@ public class ShortConverter implements PropertyConverter<Short>{
     private static final Logger LOG = Logger.getLogger(ShortConverter.class.getName());
 
     @Override
-    public Short convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "short", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE"));
+    public Short convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "short", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
         String trimmed = Objects.requireNonNull(value).trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":

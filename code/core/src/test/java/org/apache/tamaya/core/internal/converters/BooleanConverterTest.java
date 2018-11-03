@@ -133,10 +133,10 @@ public class BooleanConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Boolean.class)).build();
-        ConversionContext.set(context);
+
         BooleanConverter converter = new BooleanConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
         assertThat(context.getSupportedFormats().contains("true (ignore case) (BooleanConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("false (ignore case) (BooleanConverter)")).isTrue();
     }

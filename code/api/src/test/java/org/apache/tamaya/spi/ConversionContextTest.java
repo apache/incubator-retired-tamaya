@@ -122,7 +122,7 @@ public class ConversionContextTest {
     private static final class MyConverter implements PropertyConverter<InetAddress> {
 
         @Override
-        public InetAddress convert(String value) {
+        public InetAddress convert(String value, ConversionContext context) {
             return null;
         }
 

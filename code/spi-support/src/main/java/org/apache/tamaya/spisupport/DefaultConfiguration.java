@@ -218,29 +218,24 @@ public class DefaultConfiguration implements Configuration {
             ConversionContext context = new ConversionContext.Builder(this, key, type)
                     .setValues(values)
                     .build();
-            try {
-                String value = values.get(0).getValue();
-                ConversionContext.set(context);
-                for (PropertyConverter<T> converter : converters) {
-                    try {
-                        T t = converter.convert(value);
-                        if (t != null) {
-                            return t;
-                        }
-                    } catch (Exception e) {
-                        LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert createValue: " + value, e);
+            String value = values.get(0).getValue();
+            for (PropertyConverter<T> converter : converters) {
+                try {
+                    T t = converter.convert(value, context);
+                    if (t != null) {
+                        return t;
                     }
+                } catch (Exception e) {
+                    LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert createValue: " + value, e);
                 }
-                // if the target type is a String, we can return the createValue, no conversion required.
-                if (type.equals(TypeLiteral.of(String.class))) {
-                    return (T) value;
-                }
-                // unsupported type, throw an exception
-                throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key +
-                        ", supported formats: " + context.getSupportedFormats());
-            }finally{
-                ConversionContext.reset();
             }
+            // if the target type is a String, we can return the createValue, no conversion required.
+            if (type.equals(TypeLiteral.of(String.class))) {
+                return (T) value;
+            }
+            // unsupported type, throw an exception
+            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key +
+                    ", supported formats: " + context.getSupportedFormats());
         }
         return null;
     }

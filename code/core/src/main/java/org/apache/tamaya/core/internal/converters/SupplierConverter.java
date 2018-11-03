@@ -39,13 +39,9 @@ public class SupplierConverter implements PropertyConverter<Supplier> {
     private static final Logger LOG = Logger.getLogger(SupplierConverter.class.getName());
 
     @Override
-    public Supplier convert(String value) {
+    public Supplier convert(String value, ConversionContext context) {
         return () -> {
             try{
-                ConversionContext context = ConversionContext.current();
-                if(context==null){
-                    throw new IllegalStateException("Cannot convert optional since target type is unknown.");
-                }
                 Type targetType = context.getTargetType().getType();
                 ParameterizedType pt = (ParameterizedType) targetType;
                 if(String.class.equals(pt.getActualTypeArguments()[0])){

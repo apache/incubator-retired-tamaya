@@ -96,10 +96,10 @@ public class ByteConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Byte.class)).build();
-        ConversionContext.set(context);
+
         ByteConverter converter = new ByteConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
         assertThat(context.getSupportedFormats().contains("<byte> (ByteConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (ByteConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MAX_VALUE (ByteConverter)")).isTrue();

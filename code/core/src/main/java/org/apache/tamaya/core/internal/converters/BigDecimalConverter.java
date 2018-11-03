@@ -47,16 +47,15 @@ public class BigDecimalConverter implements PropertyConverter<BigDecimal> {
     private final BigIntegerConverter integerConverter = new BigIntegerConverter();
 
     @Override
-    public BigDecimal convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "<bigDecimal> -> new BigDecimal(String)"));
+    public BigDecimal convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "<bigDecimal> -> new BigDecimal(String)");
 
         String trimmed = Objects.requireNonNull(value).trim();
         try{
             return new BigDecimal(trimmed);
         } catch(Exception e){
             LOG.finest("Parsing BigDecimal failed, trying BigInteger for: " + value);
-            BigInteger bigInt = integerConverter.convert(value);
+            BigInteger bigInt = integerConverter.convert(value, ctx);
             if(bigInt!=null){
                 return new BigDecimal(bigInt);
             }

@@ -41,9 +41,9 @@ public class InstantConverterTest {
     @Test
     public void convert() throws Exception {
         InstantConverter conv = new InstantConverter();
-        Instant value = conv.convert("2007-12-03T10:15:30.00Z");
+        Instant value = conv.convert("2007-12-03T10:15:30.00Z", context);
         assertThat(Instant.parse("2007-12-03T10:15:30.00Z")).isEqualTo(value);
-        value = conv.convert("foo");
+        value = conv.convert("foo", context);
         assertThat(value).isNull();
     }
 
@@ -60,10 +60,10 @@ public class InstantConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Instant.class)).build();
-        ConversionContext.set(context);
+
         InstantConverter converter = new InstantConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().toString().contains(" (InstantConverter)")).isTrue();
     }

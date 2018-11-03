@@ -50,23 +50,18 @@ final class ConvertQuery<T> implements ConfigQuery<T> {
         List<PropertyConverter<T>> converters = config.getContext().getPropertyConverters(type);
         ConversionContext context = new ConversionContext.Builder(type).setConfiguration(config)
                 .setKey(ConvertQuery.class.getName()).build();
-        try {
-            ConversionContext.set(context);
-            for (PropertyConverter<?> conv : converters) {
-                try {
-                    if (conv instanceof OptionalConverter) {
-                        continue;
-                    }
-                    T result = (T) conv.convert(rawValue);
-                    if (result != null) {
-                        return result;
-                    }
-                } catch (Exception e) {
-                    LOG.log(Level.FINEST, e, () -> "Converter " + conv + " failed to convert to " + type);
+        for (PropertyConverter<?> conv : converters) {
+            try {
+                if (conv instanceof OptionalConverter) {
+                    continue;
                 }
+                T result = (T) conv.convert(rawValue, context);
+                if (result != null) {
+                    return result;
+                }
+            } catch (Exception e) {
+                LOG.log(Level.FINEST, e, () -> "Converter " + conv + " failed to convert to " + type);
             }
-        }finally{
-            ConversionContext.reset();
         }
         return null;
     }

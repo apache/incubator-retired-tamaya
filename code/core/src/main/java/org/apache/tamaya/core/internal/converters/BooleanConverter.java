@@ -35,9 +35,10 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Boolean convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "yes (ignore case)", "y (ignore case)", "true (ignore case)", "t (ignore case)", "1", "no (ignore case)", "n (ignore case)", "false (ignore case)", "f (ignore case)", "0"));
+    public Boolean convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "yes (ignore case)", "y (ignore case)",
+                "true (ignore case)", "t (ignore case)", "1", "no (ignore case)", "n (ignore case)",
+                "false (ignore case)", "f (ignore case)", "0");
         String ignoreCaseValue = Objects.requireNonNull(value)
                                         .trim()
                                         .toLowerCase(Locale.ENGLISH);

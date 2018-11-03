@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -53,7 +54,7 @@ public final class RegexPropertyFilter implements PropertyFilter {
     }
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
         if(includes!=null){
             for(String expression:includes){
                 if(valueToBeFiltered.getQualifiedKey().matches(expression)){

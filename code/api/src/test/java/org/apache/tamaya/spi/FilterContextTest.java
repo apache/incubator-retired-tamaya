@@ -37,30 +37,30 @@ import static org.junit.Assert.assertNotNull;
  */
 public class FilterContextTest {
 
-    @Test
-    public void setNullContext() {
-        FilterContext.set(null);
-    }
-
-    @Test
-    public void setGetContext() {
-        PropertyValue val = PropertyValue.of("getKey", "v", "");
-        FilterContext ctx = new FilterContext(val,
-                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
-        FilterContext.set(ctx);
-        assertEquals(ctx, FilterContext.get());
-    }
-
-    @Test
-    public void resetContext() {
-        PropertyValue val = PropertyValue.of("getKey", "v", "");
-        FilterContext ctx = new FilterContext(val,
-                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
-        FilterContext.set(ctx);
-        assertNotNull(FilterContext.get());
-        FilterContext.reset();
-        assertNull(FilterContext.get());
-    }
+//    @Test
+//    public void setNullContext() {
+//        FilterContext.set(null);
+//    }
+//
+//    @Test
+//    public void setGetContext() {
+//        PropertyValue val = PropertyValue.of("getKey", "v", "");
+//        FilterContext ctx = new FilterContext(val,
+//                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
+//        FilterContext.set(ctx);
+//        assertEquals(ctx, FilterContext.get());
+//    }
+//
+//    @Test
+//    public void resetContext() {
+//        PropertyValue val = PropertyValue.of("getKey", "v", "");
+//        FilterContext ctx = new FilterContext(val,
+//                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
+//        FilterContext.set(ctx);
+//        assertNotNull(FilterContext.get());
+//        FilterContext.reset();
+//        assertNull(FilterContext.get());
+//    }
 
     @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullPropertyValueTwoParameterVariant1() {

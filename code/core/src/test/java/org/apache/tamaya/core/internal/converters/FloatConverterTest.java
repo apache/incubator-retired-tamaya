@@ -183,10 +183,10 @@ public class FloatConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Float.class)).build();
-        ConversionContext.set(context);
+
         FloatConverter converter = new FloatConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
         assertThat(context.getSupportedFormats().contains("<float> (FloatConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (FloatConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MAX_VALUE (FloatConverter)")).isTrue();

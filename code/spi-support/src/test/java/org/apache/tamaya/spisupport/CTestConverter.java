@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 /**
@@ -25,7 +26,7 @@ import org.apache.tamaya.spi.PropertyConverter;
  */
 public class CTestConverter implements PropertyConverter<C>{
     @Override
-    public C convert(String value) {
+    public C convert(String value, ConversionContext ctx) {
         return new C(value);
     }
 }

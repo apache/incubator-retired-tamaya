@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.testdata;
 
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -33,7 +34,7 @@ public class TestPropertyFilter implements PropertyFilter{
     private AtomicInteger counter = new AtomicInteger();
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
         if("name4".equals(valueToBeFiltered.getKey())){
             return valueToBeFiltered.mutable()
                     .setValue(valueToBeFiltered.getValue() + "(filtered"+counter.incrementAndGet()+")");

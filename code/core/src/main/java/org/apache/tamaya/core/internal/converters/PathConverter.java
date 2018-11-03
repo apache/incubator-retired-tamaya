@@ -37,12 +37,11 @@ public class PathConverter implements PropertyConverter<Path> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Path convert(String value) {
+    public Path convert(String value, ConversionContext ctx) {
         if(value==null || value.isEmpty()){
             return null;
         }
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(),"<File>"));
+        ctx.addSupportedFormats(getClass(),"<File>");
         String trimmed = Objects.requireNonNull(value).trim();
         try {
             return FileSystems.getDefault().getPath(value);

@@ -32,48 +32,13 @@ import java.util.function.Consumer;
  */
 public class ConversionContext {
 
+    public static final ConversionContext EMPTY = new ConversionContext.Builder(TypeLiteral.of(String.class)).build();
     private final Configuration configuration;
     private final String key;
     private final List<PropertyValue> values;
     private final TypeLiteral<?> targetType;
     private final AnnotatedElement annotatedElement;
     private final Set<String> supportedFormats = new LinkedHashSet<>();
-
-    private static ThreadLocal<ConversionContext> CONTEXT = new ThreadLocal<>();
-
-    /**
-     * Access the current conversion context.
-     * @return the current conversion context, or null.
-     */
-    public static ConversionContext current(){
-        return CONTEXT.get();
-    }
-
-    /**
-     * If the current conversoin context is available, this performs the given action.
-     * @param action the consumer to be executed, not null.
-     */
-    public static void doOptional(Consumer<ConversionContext> action){
-        ConversionContext ctx = current();
-        if(ctx!=null){
-            action.accept(ctx);
-        }
-    }
-
-    /**
-     * Sets the current conversion context.
-     * @param context the conversion context, not null.
-     */
-    public static void set(ConversionContext context){
-        CONTEXT.set(context);
-    }
-
-    /**
-     * Removes the current conversion context.
-     */
-    public static void reset(){
-        CONTEXT.remove();
-    }
 
     /**
      * Private constructor used from builder.

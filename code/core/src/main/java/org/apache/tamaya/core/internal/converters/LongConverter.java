@@ -49,9 +49,8 @@ public class LongConverter implements PropertyConverter<Long>{
     private static final Logger LOGGER = Logger.getLogger(LongConverter.class.getName());
 
     @Override
-    public Long convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "<long>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE"));
+    public Long convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "<long>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
 
         String trimmed = Objects.requireNonNull(value).trim();
             switch (trimmed.toUpperCase(Locale.ENGLISH)) {

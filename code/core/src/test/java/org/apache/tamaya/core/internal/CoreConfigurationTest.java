@@ -87,7 +87,7 @@ public class CoreConfigurationTest {
         Configuration cfg = new CoreConfigurationBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value) {
+            public Object convert(String value, ConversionContext ctx) {
                 return "";
             }
         };
@@ -101,7 +101,7 @@ public class CoreConfigurationTest {
         Configuration cfg = new CoreConfigurationBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value) {
+            public Object convert(String value, ConversionContext ctx) {
                 return "";
             }
         };
@@ -111,7 +111,7 @@ public class CoreConfigurationTest {
         assertThat(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
         testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value) {
+            public Object convert(String value, ConversionContext ctx) {
                 return Integer.valueOf(5);
             }
         };
@@ -125,7 +125,7 @@ public class CoreConfigurationTest {
         Configuration cfg = new CoreConfigurationBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
-            public Object convert(String value) {
+            public Object convert(String value, ConversionContext ctx) {
                 return "";
             }
         };
@@ -144,7 +144,7 @@ public class CoreConfigurationTest {
         PropertyFilter testFilter = new PropertyFilter() {
 
             @Override
-            public PropertyValue filterProperty(PropertyValue value) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
                 return value;
             }
         };

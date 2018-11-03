@@ -164,8 +164,8 @@ public class DefaultConfigurationContextBuilderTest {
 
     @Test
     public void addPropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder();
         b.addPropertyFilters(filter1, filter2);
         ConfigurationContext ctx = b.build();
@@ -187,8 +187,8 @@ public class DefaultConfigurationContextBuilderTest {
 
     @Test
     public void addPropertyFilters_Collection() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder();
         b.addPropertyFilters(Arrays.asList(new PropertyFilter[]{filter1, filter2}));
         ConfigurationContext ctx = b.build();
@@ -210,8 +210,8 @@ public class DefaultConfigurationContextBuilderTest {
 
     @Test
     public void removePropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertyFilters(filter1, filter2);
         ConfigurationContext ctx = b.build();
@@ -235,8 +235,8 @@ public class DefaultConfigurationContextBuilderTest {
 
     @Test
     public void removePropertyFilters_Collection() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertyFilters(Arrays.asList(new PropertyFilter[]{filter1, filter2}));
         ConfigurationContext ctx = b.build();
@@ -261,7 +261,7 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void addPropertyConverters_Array() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
@@ -283,7 +283,7 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void addPropertyConverters_Collection() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class),
                         Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
@@ -308,7 +308,7 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void removePropertyConverters_Type() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
@@ -324,7 +324,7 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void removePropertyConverters_Array() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext ctx = b.build();
@@ -340,7 +340,7 @@ public class DefaultConfigurationContextBuilderTest {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public void removePropertyConverters_Collection() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
         ConfigurationContext ctx = b.build();
@@ -509,7 +509,7 @@ public class DefaultConfigurationContextBuilderTest {
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder();
         PropertyFilter[] propertyFilters = new PropertyFilter[10];
         for (int i = 0; i < propertyFilters.length; i++) {
-            propertyFilters[i] = (value) -> value.setValue(toString() + " - ");
+            propertyFilters[i] = (value, ctx) -> value.setValue(toString() + " - ");
         }
 
         b.addPropertyFilters(propertyFilters);
@@ -541,7 +541,7 @@ public class DefaultConfigurationContextBuilderTest {
     @Test
     public void testRemoveAllFilters() throws Exception {
         ConfigurationContextBuilder b = new DefaultConfigurationContextBuilder();
-        b.addPropertyFilters((value) -> value.setValue(toString() + " - "));
+        b.addPropertyFilters((value, ctx) -> value.setValue(toString() + " - "));
         assertThat(b.getPropertyFilters().isEmpty()).isFalse();
         b.removePropertyFilters(b.getPropertyFilters());
         assertThat(b.getPropertyFilters().isEmpty()).isTrue();
@@ -558,12 +558,12 @@ public class DefaultConfigurationContextBuilderTest {
 
     @Test
     public void testResetContext() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         DefaultConfigurationContextBuilder b = new DefaultConfigurationContextBuilder();
         ConfigurationContext empty = b.build();
 
         b = new DefaultConfigurationContextBuilder();
-        b.addPropertyFilters((value) -> value.setValue(toString() + " - "));
+        b.addPropertyFilters((value, ctx) -> value.setValue(toString() + " - "));
         b.addPropertySources(new MockedPropertySource());
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
         ConfigurationContext full = b.build();
@@ -577,7 +577,7 @@ public class DefaultConfigurationContextBuilderTest {
         assertThat(caughtAlreadyBuilt).isTrue();
 
         b = new DefaultConfigurationContextBuilder();
-        b.addPropertyFilters((value) -> value.setValue(toString() + " - "));
+        b.addPropertyFilters((value, ctx) -> value.setValue(toString() + " - "));
         b.addPropertySources(new MockedPropertySource());
         b.addPropertyConverters(TypeLiteral.of(String.class), converter);
         b.resetWithConfigurationContext(empty);

@@ -52,9 +52,8 @@ public class EnumConverter<T> implements PropertyConverter<T> {
     }
 
     @Override
-    public T convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(),"<enumValue>"));
+    public T convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(),"<enumValue>");
         try {
             return (T) factory.invoke(null, value);
         } catch (InvocationTargetException | IllegalAccessException e) {

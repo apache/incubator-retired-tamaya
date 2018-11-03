@@ -43,23 +43,23 @@ public class EnumConverterTest {
 
     @Test
     public void testConversionWithMixedCasing() {
+        ConversionContext ctx = new ConversionContext.Builder(TypeLiteral.of(RoundingMode.class)).build();
         for (String input : Arrays.asList(RoundingMode.CEILING.toString(), "ceiling", "CeiLinG")) {
-            assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert(input));
+            assertThat(RoundingMode.CEILING).isEqualTo(testConverter.convert(input, ctx));
         }
     }
 
     @Test
     public void testConvert_OtherValue() {
-        assertThat(testConverter.convert("fooBars")).isNull();
+        ConversionContext ctx = new ConversionContext.Builder(TypeLiteral.of(RoundingMode.class)).build();
+        assertThat(testConverter.convert("fooBars", ctx)).isNull();
     }
 
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
-        ConversionContext.set(context);
         EnumConverter<RoundingMode> converter = new EnumConverter<>(RoundingMode.class);
-        converter.convert("fooBars");
-        ConversionContext.reset();;
+        converter.convert("fooBars", context);
         assertThat(context.getSupportedFormats().contains("<enumValue> (EnumConverter)")).isTrue();
     }
 

@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
@@ -44,29 +47,30 @@ public class RegexPropertyFilterTest {
         map.put(prop1.getKey(), prop1);
         map.put(prop2.getKey(), prop2);
         map.put(prop3.getKey(), prop3);
-        assertThat(filter.filterProperty(prop1)).isEqualTo(prop1);
-        assertThat(filter.filterProperty(prop2)).isNull();
+        FilterContext ctx = new FilterContext(prop1, configContext);
+        assertThat(filter.filterProperty(prop1, ctx)).isEqualTo(prop1);
+        assertThat(filter.filterProperty(prop2, ctx)).isNull();
         assertThat(filter.filterProperty(
-                prop3)).isEqualTo(prop3);
+                prop3, ctx)).isEqualTo(prop3);
         assertThat(filter.filterProperty(
-                prop3)).isEqualTo(prop3);
+                prop3, ctx)).isEqualTo(prop3);
         filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*");
-        assertThat(filter.filterProperty(prop1)).isNotNull();
-        assertThat(filter.filterProperty(prop2)).isNull();
-        assertThat(filter.filterProperty(prop3)).isNotNull();
+        assertThat(filter.filterProperty(prop1, ctx)).isNotNull();
+        assertThat(filter.filterProperty(prop2, ctx)).isNull();
+        assertThat(filter.filterProperty(prop3, ctx)).isNotNull();
         filter = new RegexPropertyFilter();
         filter.setExcludes("test1.*");
-        assertThat(filter.filterProperty(prop1)).isNull();
-        assertThat(filter.filterProperty(prop2)).isEqualTo(prop2);
-        assertThat(filter.filterProperty(prop3)).isNull();
+        assertThat(filter.filterProperty(prop1, ctx)).isNull();
+        assertThat(filter.filterProperty(prop2, ctx)).isEqualTo(prop2);
+        assertThat(filter.filterProperty(prop3, ctx)).isNull();
         
         filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*"); //Includes overrides Excludes
         filter.setExcludes("test1.*");
-        assertThat(filter.filterProperty(prop1)).isNotNull();
-        assertThat(filter.filterProperty(prop2)).isNull();
-        assertThat(filter.filterProperty(prop3)).isNotNull();
+        assertThat(filter.filterProperty(prop1, ctx)).isNotNull();
+        assertThat(filter.filterProperty(prop2, ctx)).isNull();
+        assertThat(filter.filterProperty(prop3, ctx)).isNotNull();
         
         
     }

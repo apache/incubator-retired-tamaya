@@ -152,10 +152,10 @@ public class NumberConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Number.class)).build();
-        ConversionContext.set(context);
+
         NumberConverter converter = new NumberConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().contains("<double>, <long> (NumberConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("POSITIVE_INFINITY (NumberConverter)")).isTrue();

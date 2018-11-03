@@ -41,9 +41,9 @@ public class LocalDateTimeConverterTest {
     @Test
     public void convert() throws Exception {
         LocalDateTimeConverter conv = new LocalDateTimeConverter();
-        LocalDateTime value = conv.convert("2007-12-03T10:15:30");
+        LocalDateTime value = conv.convert("2007-12-03T10:15:30", context);
         assertThat(LocalDateTime.parse("2007-12-03T10:15:30")).isEqualTo(value);
-        value = conv.convert("foo");
+        value = conv.convert("foo", context);
         assertThat(value).isNull();
     }
 
@@ -60,10 +60,10 @@ public class LocalDateTimeConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(LocalDateTime.class)).build();
-        ConversionContext.set(context);
+
         LocalDateTimeConverter converter = new LocalDateTimeConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().toString().contains(" (LocalDateTimeConverter)")).isTrue();
     }

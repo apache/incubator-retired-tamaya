@@ -37,10 +37,9 @@ public class DurationConverter implements PropertyConverter<Duration> {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
-    public Duration convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(),
-                Duration.of(1234, ChronoUnit.SECONDS).toString()));
+    public Duration convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(),
+                Duration.of(1234, ChronoUnit.SECONDS).toString());
         try {
             return Duration.parse(value);
         }catch(Exception e){

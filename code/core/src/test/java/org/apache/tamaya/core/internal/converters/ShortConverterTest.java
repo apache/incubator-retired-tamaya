@@ -121,10 +121,10 @@ public class ShortConverterTest {
     @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder(TypeLiteral.of(Short.class)).build();
-        ConversionContext.set(context);
+
         ShortConverter converter = new ShortConverter();
-        converter.convert("");
-        ConversionContext.reset();
+        converter.convert("", context);
+
 
         assertThat(context.getSupportedFormats().contains("short (ShortConverter)")).isTrue();
         assertThat(context.getSupportedFormats().contains("MIN_VALUE (ShortConverter)")).isTrue();

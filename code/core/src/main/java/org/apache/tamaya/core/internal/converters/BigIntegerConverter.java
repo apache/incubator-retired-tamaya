@@ -45,9 +45,8 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger> {
     private static final Logger LOG = Logger.getLogger(BigIntegerConverter.class.getName());
 
     @Override
-    public BigInteger convert(String value) {
-        ConversionContext.doOptional(ctx ->
-                ctx.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)"));
+    public BigInteger convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)");
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
             LOG.finest("Parsing Hex createValue to BigInteger: " + value);

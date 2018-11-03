@@ -95,8 +95,8 @@ public class CoreConfigurationBuilderTest {
 
     @Test
     public void addPropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         CoreConfigurationBuilder b = new CoreConfigurationBuilder();
         b.addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
@@ -112,8 +112,8 @@ public class CoreConfigurationBuilderTest {
 
     @Test
     public void removePropertyFilters_Array() throws Exception {
-        PropertyFilter filter1 = (value) -> value;
-        PropertyFilter filter2 = (value) -> value;
+        PropertyFilter filter1 = (value, ctx) -> value;
+        PropertyFilter filter2 = (value, ctx) -> value;
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .addPropertyFilters(filter1, filter2);
         Configuration cfg = b.build();
@@ -134,7 +134,7 @@ public class CoreConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverter() throws Exception {
-		PropertyConverter converter = (value) -> value.toLowerCase();
+		PropertyConverter converter = (value, ctx) -> value.toLowerCase();
 		ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
@@ -150,7 +150,7 @@ public class CoreConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void removePropertyConverters_Array() throws Exception {
-        PropertyConverter converter = (value) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
