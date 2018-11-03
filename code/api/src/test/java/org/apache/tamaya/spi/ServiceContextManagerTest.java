@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -72,17 +73,17 @@ public class ServiceContextManagerTest {
         }
 
         @Override
-        public <T> T getService(Class<T> serviceType) {
+        public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
             return null;
         }
 
         @Override
-        public <T> T create(Class<T> serviceType) {
+        public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
             return null;
         }
 
         @Override
-        public <T> List<T> getServices(Class<T> serviceType) {
+        public <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> supplier) {
             return Collections.emptyList();
         }
 
@@ -94,6 +95,16 @@ public class ServiceContextManagerTest {
         @Override
         public URL getResource(String resource) {
             return null;
+        }
+
+        @Override
+        public <T> T register(Class<T> type, T instance, boolean force) {
+            return instance;
+        }
+
+        @Override
+        public <T> List<T> register(Class<T> type, List<T> instancea, boolean force) {
+            return instancea;
         }
     }
 

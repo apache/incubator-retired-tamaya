@@ -21,7 +21,7 @@ package org.apache.tamaya.spi;
 
 
 /**
- * Policy that determines how the final value of a configuration entry is evaluated. An instances of this
+ * Policy that determines how the final createValue of a configuration entry is evaluated. An instances of this
  * interface can be registered to current control how multiple PropertySources are combined. This is useful in cases
  * where the default overriding policy as implemented in {@link #DEFAULT_OVERRIDING_POLICY} is not matching
  * the need of the current application, e.g. then entries containing multiple values should be combined to new
@@ -52,22 +52,22 @@ public interface PropertyValueCombinationPolicy {
 
 
      /**
-     * Method that is called for each value evaluated by a PropertySource for the given key. This method is called
+     * Method that is called for each createValue evaluated by a PropertySource for the given key. This method is called
      * either when a single key is accessed, e.g. by calling {@code org.apache.tamaya.Configuration.getXXX}, but also
      * when the full configuration property map is accessed by calling
      * {@link org.apache.tamaya.Configuration#getProperties()}.
      *
-     * @param currentValue the current value, including metadata entries. If no such key is present the current value
+     * @param currentValue the current createValue, including metadata entries. If no such key is present the current createValue
      *                     is null.
-     *                     The collector should either combine the existing value with value from {@code currentValue}
-     *                     or replace the value in {@code currentValue} with {@code valueRead}, hereby returning the
+     *                     The collector should either combine the existing createValue with createValue from {@code currentValue}
+     *                     or replace the createValue in {@code currentValue} with {@code valueRead}, hereby returning the
      *                     result to be used as new {@code currentValue}.
      * @param key The current key to be evaluated.
-     * @param propertySource The PropertySource that may return an value for the given key. The PropertySource given
+     * @param propertySource The PropertySource that may return an createValue for the given key. The PropertySource given
      *                       may be evaluated for additional getMeta-data, how the given values are to be combined.
-     *                       Note that the value returned by a PropertySource can be null. In that case
+     *                       Note that the createValue returned by a PropertySource can be null. In that case
      *                       {@code currentValue} should be returned in almost all cases.
-     * @return the value to be used for future evaluation, including metadata entries.
+     * @return the createValue to be used for future evaluation, including metadata entries.
      */
      PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource);
 

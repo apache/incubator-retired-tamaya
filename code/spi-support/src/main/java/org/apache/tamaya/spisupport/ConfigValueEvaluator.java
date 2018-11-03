@@ -28,16 +28,16 @@ import java.util.logging.Logger;
 
 
 /**
- * Component SPI which encapsulates the evaluation of a single or full <b>raw</b> value
+ * Component SPI which encapsulates the evaluation of a single or full <b>raw</b> createValue
  * for a {@link ConfigurationContext}.
  */
 public interface ConfigValueEvaluator {
 
     /**
-     * Evaluates single value using a {@link ConfigurationContext}.
+     * Evaluates single createValue using a {@link ConfigurationContext}.
      * @param key the config key, not null.
      * @param context the context, not null.
-     * @return the value, or null.
+     * @return the createValue, or null.
      */
     default PropertyValue evaluteRawValue(String key, ConfigurationContext context){
         List<PropertyValue> values = evaluteAllValues(key, context);
@@ -51,7 +51,7 @@ public interface ConfigValueEvaluator {
      * Evaluates all values using a {@link ConfigurationContext}.
      * @param key the config key, not null.
      * @param context the context, not null.
-     * @return the value, or null.
+     * @return the createValue, or null.
      */
     default List<PropertyValue> evaluteAllValues(String key, ConfigurationContext context){
         List<PropertyValue> result = new ArrayList<>();
@@ -74,7 +74,7 @@ public interface ConfigValueEvaluator {
     /**
      * Evaluates all property values from a {@link ConfigurationContext}.
      * @param context the context, not null.
-     * @return the value, or null.
+     * @return the createValue, or null.
      */
     default Map<String, PropertyValue> evaluateRawValues(ConfigurationContext context){
         Map<String, PropertyValue> result = new HashMap<>();

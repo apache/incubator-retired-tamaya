@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,12 +58,11 @@ public final class TestServiceContext implements ServiceContext {
         return 5;
     }
 
-    @SuppressWarnings("rawtypes")
-	@Override
-    public <T> T getService(Class<T> serviceType) {
+    @Override
+    public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
         T cached = serviceType.cast(singletons.get(serviceType));
         if(cached==null) {
-            cached = create(serviceType);
+            cached = create(serviceType, supplier);
             singletons.put((Class)serviceType, cached);
         }
         if (cached == Object.class) {
@@ -71,42 +71,45 @@ public final class TestServiceContext implements ServiceContext {
         return cached;
     }
 
-    @SuppressWarnings("unchecked")
-	@Override
-    public <T> T create(Class<T> serviceType) {
-        Collection<T> services = getServices(serviceType);
-        if (services.isEmpty()) {
-            return (T) Object.class; // as marker for 'nothing here'
+    @Override
+    public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
+        try {
+            for (T t : ServiceLoader.load(serviceType)) {
+                return t;
+            }
+        }catch(Exception e){
+            if(supplier!=null) {
+                T instance = supplier.get();
+                if(instance instanceof ClassloaderAware){
+                    ((ClassloaderAware)instance).init(this.classLoader);
+                }
+                return instance;
+            }
+            throw new IllegalArgumentException("Failed to instantiate instance:");
         }
-        else{
-            return services.iterator().next();
-        }
+        return null;
     }
 
-    /**
-     * Loads and registers services.
-     *
-     * @param   <T>          the concrete type.
-     *
-     * @param   serviceType  The service type.
-     * @return  the items found, never {@code null}.
-     */
     @Override
-    public <T> List<T> getServices(Class<T> serviceType) {
+    public <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> supplier) {
+        List<T> services;
         try {
-            List<T> services = new ArrayList<>();
+            services = new ArrayList<>();
             for (T t : ServiceLoader.load(serviceType)) {
                 services.add(t);
             }
             services = Collections.unmodifiableList(services);
-            @SuppressWarnings("unchecked")
-			final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>)services));
-            return previousServices != null ? previousServices : services;
         } catch (Exception e) {
-            Logger.getLogger(TestServiceContext.class.getName()).log(Level.WARNING,
-                                      "Error loading services current type " + serviceType, e);
-            return Collections.emptyList();
+            if(supplier==null){
+                Logger.getLogger(TestServiceContext.class.getName()).log(Level.WARNING,
+                        "Error loading services current type " + serviceType, e);
+                return Collections.emptyList();
+            }
+            services = Collections.unmodifiableList(supplier.get());
         }
+        @SuppressWarnings("unchecked")
+        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>)services));
+        return previousServices != null ? previousServices : services;
     }
 
     @Override
@@ -117,6 +120,26 @@ public final class TestServiceContext implements ServiceContext {
     @Override
     public URL getResource(String resource) {
         return classLoader.getResource(resource);
+    }
+
+    @Override
+    public <T> T register(Class<T> type, T instance, boolean force) {
+        if(force){
+            servicesLoaded.put(type, Collections.singletonList(instance));
+        }else{
+            servicesLoaded.putIfAbsent(type, Collections.singletonList(instance));
+        }
+        return (T)servicesLoaded.get(type).get(0);
+    }
+
+    @Override
+    public <T> List<T> register(Class<T> type, List<T> instances, boolean force) {
+        if(force){
+            servicesLoaded.put(type, Collections.singletonList(instances));
+        }else {
+            servicesLoaded.putIfAbsent(type, Collections.singletonList(instances));
+        }
+        return (List<T>)servicesLoaded.get(type);
     }
 
 }

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to Double, using the Java number syntax:
- * (-)?[0-9]*\.[0-9]*. In case of error the value given also is tried being parsed as integral number using
+ * (-)?[0-9]*\.[0-9]*. In case of error the createValue given also is tried being parsed as integral number using
  * {@link LongConverter}. Additionally the following values are supported:
  * <ul>
  * <li>NaN (ignoring case)</li>

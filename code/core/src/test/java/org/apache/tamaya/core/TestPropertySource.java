@@ -54,7 +54,7 @@ public class TestPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.create(key, key + "Value")
+        return PropertyValue.createValue(key, key + "Value")
                 .setMeta("source", getName())
                 .setMeta("ordinal", String.valueOf(getOrdinal()))
                 .setMeta("createdAt", String.valueOf(new Date()));

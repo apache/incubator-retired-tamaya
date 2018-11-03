@@ -38,8 +38,8 @@ public class C extends B implements Readable{
     }
 
     /**
-     * Returns the input value, setCurrent on creation. Used for test assertion.
-     * @return the in value.
+     * Returns the input createValue, setCurrent on creation. Used for test assertion.
+     * @return the in createValue.
      */
     public String getInValue() {
         return inValue;

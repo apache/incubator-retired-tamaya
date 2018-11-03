@@ -74,7 +74,7 @@ public class ShortConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link ConverterTestsPropertySource}.
      * @throws Exception
      */

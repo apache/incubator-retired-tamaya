@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Interface for an property that converts a configured String into something else.
  * This is used for implementing type conversion from a property (String) to a certain target
- * type. Hereby the target type can be multi-value (e.g. collections) or complex if needed.
+ * type. Hereby the target type can be multi-createValue (e.g. collections) or complex if needed.
  * 
  * @param <T> the type of the type literal
  */
@@ -32,13 +32,13 @@ public interface PropertyConverter<T>{
 
     /**
      * Convert the given configuration keys from its String representation into the required target type.
-     * Additional context can be obtained from {@link ConversionContext}, this also allows to add a list
+     * Additional context can be obtained from {@link ConversionContext}, this also allows to add a createList
      * of supported formats, which is very handy in case a
-     * value could not be converted. This list of supported formats can then shown to the user to give some hints
-     * how a value could be configured.
+     * createValue could not be converted. This createList of supported formats can then shown to the user to give some hints
+     * how a createValue could be configured.
      *
      * @param value configuration key that needs to be converted
-     * @return the converted value
+     * @return the converted createValue
      * @see ConversionContext
      */
     T convert(String value);

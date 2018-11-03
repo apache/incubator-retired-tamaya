@@ -57,7 +57,7 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
             case "off":
                 return Boolean.FALSE;
             default:
-                LOG.finest("Unknown boolean value encountered: " + value);
+                LOG.finest("Unknown boolean createValue encountered: " + value);
         }
         return null;
     }

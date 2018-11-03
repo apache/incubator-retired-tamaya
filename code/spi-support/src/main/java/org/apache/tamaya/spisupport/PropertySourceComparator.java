@@ -71,18 +71,18 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
     }
 
     /**
-     * Evaluates an ordinal value from a {@link PropertySource}, whereby the ordinal of type {@code int}
+     * Evaluates an ordinal createValue from a {@link PropertySource}, whereby the ordinal of type {@code int}
      * is evaluated as follows:
      * <ol>
-     *     <li>It evaluates the {@code String} value for {@link PropertySource#TAMAYA_ORDINAL} and tries
-     *     to convert it to an {@code int} value, using {@link Integer#parseInt(String)}.</li>
+     *     <li>It evaluates the {@code String} createValue for {@link PropertySource#TAMAYA_ORDINAL} and tries
+     *     to convert it to an {@code int} createValue, using {@link Integer#parseInt(String)}.</li>
      *     <li>It tries to find and evaluate a method {@code int getOrdinal()}.</li>
      *     <li>It tries to find and evaluate a static field {@code int ORDINAL}.</li>
      *     <li>It tries to find and evaluate a class level {@link Priority} annotation.</li>
      *     <li>It uses the default priority ({@code 0}.</li>
      * </ol>
      * @param propertySource the property source, not {@code null}.
-     * @return the ordinal value to compare the property source.
+     * @return the ordinal createValue to compare the property source.
      */
     public static int getOrdinal(PropertySource propertySource) {
         return getOrdinal(propertySource, null);

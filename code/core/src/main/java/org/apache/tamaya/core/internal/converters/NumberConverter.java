@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public class NumberConverter implements PropertyConverter<Number>{
     /** the logger. */
     private static final Logger LOGGER = Logger.getLogger(NumberConverter.class.getName());
-    /** Converter used for trying to parse as an integral value. */
+    /** Converter used for trying to parse as an integral createValue. */
     private final LongConverter longConverter = new LongConverter();
 
     @Override

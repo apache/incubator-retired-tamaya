@@ -42,7 +42,7 @@ class OSGIServiceComparator implements Comparator<ServiceReference> {
     }
 
     /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's value is evaluated. If no such
+     * Checks the given instance for a @Priority annotation. If present the annotation's createValue is evaluated. If no such
      * annotation is present, a default priority {@code 1} is returned.
      *
      * @param o the instance, not {@code null}.
@@ -53,7 +53,7 @@ class OSGIServiceComparator implements Comparator<ServiceReference> {
     }
 
     /**
-     * Checks the given type optionally annotated with a @Priority. If present the annotation's value is evaluated.
+     * Checks the given type optionally annotated with a @Priority. If present the annotation's createValue is evaluated.
      * If no such annotation is present, a default priority {@code 1} is returned.
      *
      * @param type the type, not {@code null}.

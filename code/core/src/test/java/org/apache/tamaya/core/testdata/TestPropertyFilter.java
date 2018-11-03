@@ -25,7 +25,7 @@ import javax.annotation.Priority;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Simple PropertyFilter that filters exact one value, registered using ServiceLoader.
+ * Simple PropertyFilter that filters exact one createValue, registered using ServiceLoader.
  */
 @Priority(100)
 public class TestPropertyFilter implements PropertyFilter{
@@ -35,7 +35,8 @@ public class TestPropertyFilter implements PropertyFilter{
     @Override
     public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
         if("name4".equals(valueToBeFiltered.getKey())){
-            return valueToBeFiltered.mutable().setValue(valueToBeFiltered.getValue() + "(filtered"+counter.incrementAndGet()+")");
+            return valueToBeFiltered.mutable()
+                    .setValue(valueToBeFiltered.getValue() + "(filtered"+counter.incrementAndGet()+")");
         }
         return valueToBeFiltered;
     }

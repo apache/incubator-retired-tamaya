@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to URI, using new URI(value).
+ * Converter, converting from String to URI, using new URI(createValue).
  */
 @Component(service = PropertyConverter.class)
 public class URIConverter implements PropertyConverter<URI> {

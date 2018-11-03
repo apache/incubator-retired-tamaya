@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContext;
 import org.osgi.framework.Bundle;
@@ -27,6 +28,8 @@ import org.osgi.framework.ServiceReference;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -65,7 +68,7 @@ public class OSGIServiceContext implements ServiceContext{
     }
 
     @Override
-    public <T> T getService(Class<T> serviceType) {
+    public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
         LOG.finest("TAMAYA  Loading service: " + serviceType.getName());
         ServiceReference<T> ref = this.osgiServiceLoader.getBundleContext().getServiceReference(serviceType);
         if(ref!=null){
@@ -73,33 +76,66 @@ public class OSGIServiceContext implements ServiceContext{
         }
         if(ConfigurationProviderSpi.class==serviceType){
             @SuppressWarnings("unchecked")
-			T service = (T)new CoreConfigurationProvider();
+            T service = (T)new CoreConfigurationProvider();
             this.osgiServiceLoader.getBundleContext().registerService(
                     serviceType.getName(),
                     service,
                     new Hashtable<String, Object>());
             return service;
         }
+        if(supplier!=null){
+            T t = supplier.get();
+            if(t instanceof ClassloaderAware){
+                ((ClassloaderAware)t).init(getClassLoader());
+            }
+            this.osgiServiceLoader.getBundleContext().registerService(
+                    serviceType.getName(),
+                    t,
+                    new Hashtable<String, Object>());
+            return t;
+        }
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-	@Override
-    public <T> T create(Class<T> serviceType) {
+
+    @Override
+    public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
         LOG.finest("TAMAYA  Creating service: " + serviceType.getName());
         ServiceReference<T> ref = this.osgiServiceLoader.getBundleContext().getServiceReference(serviceType);
         if(ref!=null){
             try {
                 return (T)this.osgiServiceLoader.getBundleContext().getService(ref).getClass().newInstance();
             } catch (Exception e) {
+                if(supplier!=null){
+                    return supplier.get();
+                }
                 return null;
             }
+        }
+        if(supplier!=null){
+            return supplier.get();
         }
         return null;
     }
 
     @Override
-    public <T> List<T> getServices(Class<T> serviceType) {
+    public <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> supplier) {
+        LOG.finest("TAMAYA  Loading services: " + serviceType.getName());
+        List<T> services = loadServices(serviceType, null);
+        if(services.isEmpty() && supplier!=null) {
+            services = supplier.get();
+            try {
+                for (T t : services) {
+                    this.osgiServiceLoader.getBundleContext().registerService(serviceType, t, new Hashtable<>());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return services;
+    }
+
+    private <T> List<T> loadServices(Class<T> serviceType, Supplier<List<T>> supplier) {
         LOG.finest("TAMAYA  Loading services: " + serviceType.getName());
         List<ServiceReference<T>> refs = new ArrayList<>();
         List<T> services = new ArrayList<>(refs.size());
@@ -113,7 +149,7 @@ public class OSGIServiceContext implements ServiceContext{
                 }
             }
         } catch (InvalidSyntaxException e) {
-            e.printStackTrace();
+            LOG.log(Level.INFO,"No services found in OSGI: " + serviceType, e);
         }
         try{
             for(T service:ServiceLoader.load(serviceType)){
@@ -121,7 +157,10 @@ public class OSGIServiceContext implements ServiceContext{
             }
             return services;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.log(Level.INFO, "No services found in ServiceLoader: " + serviceType, e);
+        }
+        if(services.isEmpty() && supplier!=null){
+            return supplier.get();
         }
         return services;
     }
@@ -180,4 +219,61 @@ public class OSGIServiceContext implements ServiceContext{
         }
         return null;
     }
+
+    @Override
+    public <T> T register(Class<T> serviceType, T instance, boolean force) {
+        Collection<ServiceReference<T>> refs;
+        try {
+            refs = this.osgiServiceLoader.getBundleContext().getServiceReferences(serviceType, null);
+            if(refs!=null && force){
+                for(ServiceReference ref:refs) {
+                    osgiServiceLoader.getBundleContext().ungetService(ref);
+                }
+                refs = null;
+            }
+        } catch (InvalidSyntaxException e) {
+            throw new IllegalStateException("Failed to access OSGI services", e);
+        }
+        if(refs!=null && !refs.isEmpty()){
+            return (T)this.osgiServiceLoader.getBundleContext().getService(refs.iterator().next());
+        }
+        this.osgiServiceLoader.getBundleContext().registerService(
+                serviceType, instance, new Hashtable<>()
+        );
+        return instance;
+    }
+
+    @Override
+    public <T> List<T> register(Class<T> serviceType, List<T> instances, boolean force) {
+        Collection<ServiceReference<T>> refs;
+        try {
+            refs = this.osgiServiceLoader.getBundleContext().getServiceReferences(serviceType, null);
+            if(refs!=null && force){
+                for(ServiceReference ref:refs) {
+                    osgiServiceLoader.getBundleContext().ungetService(ref);
+                }
+                refs = null;
+            }
+        } catch (InvalidSyntaxException e) {
+            throw new IllegalStateException("Failed to access OSGI services", e);
+        }
+        if(refs!=null && !refs.isEmpty()){
+            List<T> result = new ArrayList<>();
+            for(ServiceReference ref:refs) {
+                T item = (T) this.osgiServiceLoader.getBundleContext().getService(ref);
+                if (item != null) {
+                    result.add(item);
+                }
+            }
+            return result;
+        }else{
+            for(T instance:instances) {
+                this.osgiServiceLoader.getBundleContext().registerService(
+                        serviceType, instance, new Hashtable<>()
+                );
+            }
+            return instances;
+        }
+    }
+
 }

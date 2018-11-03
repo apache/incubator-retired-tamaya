@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Query to convert a String value.
+ * Query to convert a String createValue.
  * @param <T> the target type.
  */
 final class ConvertQuery<T> implements ConfigQuery<T> {

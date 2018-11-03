@@ -57,7 +57,7 @@ public class OSGIServiceContextTest {
     }
 
     /**
-     * Test of create method, of class OSGIServiceContext.
+     * Test of createObject method, of class OSGIServiceContext.
      */
     @Test
     public void testCreateThenGet() {

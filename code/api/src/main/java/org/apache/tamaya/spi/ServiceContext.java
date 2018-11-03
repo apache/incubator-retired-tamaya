@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 
@@ -43,7 +44,7 @@ public interface ServiceContext extends ClassloaderAware{
     }
 
     /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's value is evaluated. If no such
+     * Checks the given instance for a @Priority annotation. If present the annotation's createValue is evaluated. If no such
      * annotation is present, a default priority of {@code 1} is returned.
      * @param o the instance, not {@code null}.
      * @return a priority, by default 1.
@@ -68,11 +69,26 @@ public interface ServiceContext extends ClassloaderAware{
      * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
      */
     default <T> T getService(Class<T> serviceType){
-         return create(serviceType);
+        return getService(serviceType, null);
     }
 
     /**
-     * Factory method to create a type, hereby a new instance is created on each access.
+     * Access a service singleton via its type.
+     * If multiple implementations for the very serviceType exist then
+     * the one with the highest {@link javax.annotation.Priority} will be used.
+     *
+     * @param <T> the type of the service type.
+     * @param serviceType the service type.
+     * @param supplier the supplier to be used, if no services could be evaluated. If null,
+     *                 an empty collection is returned, when no services
+     *                 could be located.
+     * @return The instance to be used, or {@code null}
+     * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
+     */
+    <T> T getService(Class<T> serviceType, Supplier<T> supplier);
+
+    /**
+     * Factory method to createObject a type, hereby a new instance is created on each access.
      * If multiple implementations for the very serviceType exist then
      * the one with the highest {@link javax.annotation.Priority} will be used as the base
      * for creating subsequent instances.
@@ -82,29 +98,53 @@ public interface ServiceContext extends ClassloaderAware{
      * @return The new instance to be used, or {@code null}
      * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
      */
-   default <T> T create(Class<T> serviceType){
-        @SuppressWarnings("unchecked")
-        Class<? extends T> implType = null;
-        Collection<T> services = getServices(serviceType);
-        if (services.isEmpty()) {
-            return null;
-        } else {
-            return ((List<T>) services).get(0);
-        }
+    default <T> T create(Class<T> serviceType){
+        return create(serviceType, null);
     }
 
+    /**
+     * Factory method to createObject a type, hereby a new instance is created on each access.
+     * If multiple implementations for the very serviceType exist then
+     * the one with the highest {@link javax.annotation.Priority} will be used as the base
+     * for creating subsequent instances.
+     *
+     * @param <T> the type of the service type.
+     * @param serviceType the service type.
+     * @return The new instance to be used, or {@code null}
+     * @throws org.apache.tamaya.ConfigException if there are multiple service implementations with the maximum priority.
+     */
+   <T> T create(Class<T> serviceType, Supplier<T> supplier);
 
     /**
-     * Access a list current services, given its type. The bootstrap mechanism should
+     * Access a createList current services, given its type. The bootstrap mechanism should
      * order the instance for precedence, hereby the most significant should be
      * first in order.
      *
      * @param serviceType
      *            the service type.
-     * @param <T> the type of the list element returned by this method
+     * @param <T> the type of the createList element returned by this method
      * @return The instance to be used, never {@code null}
      */
-     <T> List<T> getServices(Class<T> serviceType);
+    default <T> List<T> getServices(Class<T> serviceType){
+        return getServices(serviceType, null);
+    }
+
+    /**
+     * Access a createList current services, given its type. The bootstrap mechanism should
+     * order the instance for precedence, hereby the most significant should be
+     * first in order. If no instances could be found, the instances supplied by the
+     * supplier given are registered and used.
+     *
+     * @param serviceType
+     *            the service type.
+     * @param <T> the type of the createList element returned by this method
+     * @param supplier the supplier to be used, if no services could be evaluated. If null,
+     *                 an empty collection is returned, when no services
+     *                 could be located.
+     * @return The instance to be used, never {@code null}
+     */
+     <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> supplier);
+
     /**
      * Loads resources from the current runtime context. This method allows to use runtime
      * specific code to load resources, e.g. within OSGI environments.
@@ -126,4 +166,26 @@ public interface ServiceContext extends ClassloaderAware{
         return getClassLoader().getResource(resource);
     }
 
+    /**
+     * Registers the given instance as a singleton service for the given instance, if no
+     * instance already has been registered.
+     *
+     * @param type the type to register, not null.
+     * @param instance the instance, not null.
+     * @param <T> thy type.
+     * @param force if true, any existing instance will be replaced.
+     * @return the instance registered or already present.
+     */
+    <T> T register(Class<T> type, T instance, boolean force);
+
+    /**
+     * Registers the given instancea as servicea for the given instance, if no
+     *      * instance already has been registered.
+     * @param type the type to register, not null.
+     * @param instances the instancea, not null.
+     * @param <T> thy type.
+     * @param force if true, any existing instances will be replaced.
+     * @return the instances registered or already present.
+     */
+    <T> List<T> register(Class<T> type, List<T> instances, boolean force);
 }

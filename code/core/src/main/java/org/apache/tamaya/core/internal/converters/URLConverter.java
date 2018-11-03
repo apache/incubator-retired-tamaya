@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to URL, using new URL(value).
+ * Converter, converting from String to URL, using new URL(createValue).
  */
 @Component(service = PropertyConverter.class)
 public class URLConverter implements PropertyConverter<URL> {

@@ -73,7 +73,7 @@ public class CLIPropertySource extends BasePropertySource {
 
     /**
      * Configure the main arguments, hereby parsing and mapping the main arguments into
-     * configuration properties as key-value pairs.
+     * configuration properties as key-createValue pairs.
      * @param args the main arguments, not null.
      */
     public static void initMainArgs(String... args){

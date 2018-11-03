@@ -32,7 +32,7 @@ import org.junit.Test;
 public class DoubleConverterTest {
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -45,7 +45,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -58,7 +58,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -71,7 +71,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -84,7 +84,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -97,7 +97,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -109,7 +109,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -122,7 +122,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -135,7 +135,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -148,7 +148,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -161,7 +161,7 @@ public class DoubleConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */

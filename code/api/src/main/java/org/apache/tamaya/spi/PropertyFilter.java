@@ -29,7 +29,7 @@ package org.apache.tamaya.spi;
 public interface PropertyFilter{
 
     /**
-     * <p>Maps the current {@code valueToBeFiltered} value to a new value. The resulting value will be used as the result
+     * <p>Maps the current {@code valueToBeFiltered} createValue to a new createValue. The resulting createValue will be used as the result
      * passed to the user.</p>
      * <p>If a filter is currently not available, it should just pass the input map to the method's
      * output.</p>
@@ -40,8 +40,8 @@ public interface PropertyFilter{
      *     <li>reentrant</li>
      *     <li>thread-safe</li>
      * </ul>
-     * @param value the value to be filtered, which also can be {@code null} if removed by another filter.
-     * @return the filtered value, or {@code null} if the value should be removed alltogether.
+     * @param value the createValue to be filtered, which also can be {@code null} if removed by another filter.
+     * @return the filtered createValue, or {@code null} if the createValue should be removed alltogether.
      * @see PropertyValue
      * @see FilterContext
      */

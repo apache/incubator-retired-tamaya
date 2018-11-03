@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
 public class BigDecimalConverterTest {
 
 	/**
-	 * Test conversion. The value are provided by
+	 * Test conversion. The createValue are provided by
 	 * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
 	 * 
 	 * @throws Exception
@@ -48,7 +48,7 @@ public class BigDecimalConverterTest {
 	}
 
 	/**
-	 * Test conversion. The value are provided by
+	 * Test conversion. The createValue are provided by
 	 * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
 	 * 
 	 * @throws Exception
@@ -71,7 +71,7 @@ public class BigDecimalConverterTest {
 	}
 
 	/**
-	 * Test conversion. The value are provided by
+	 * Test conversion. The createValue are provided by
 	 * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
 	 * 
 	 * @throws Exception
@@ -84,7 +84,7 @@ public class BigDecimalConverterTest {
 	}
 
 	/**
-	 * Test conversion. The value are provided by
+	 * Test conversion. The createValue are provided by
 	 * {@link ConverterTestsPropertySource}.
 	 * 
 	 * @throws Exception
@@ -99,7 +99,7 @@ public class BigDecimalConverterTest {
 	}
 
 	/**
-	 * Test conversion. The value are provided by
+	 * Test conversion. The createValue are provided by
 	 * {@link ConverterTestsPropertySource}.
 	 * 
 	 * @throws Exception

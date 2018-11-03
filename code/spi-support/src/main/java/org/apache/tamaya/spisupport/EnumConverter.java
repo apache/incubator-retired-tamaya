@@ -24,6 +24,7 @@ import org.apache.tamaya.spi.PropertyConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -45,7 +46,7 @@ public class EnumConverter<T> implements PropertyConverter<T> {
         try {
             this.factory = enumType.getMethod("valueOf", String.class);
         } catch (NoSuchMethodException e) {
-            throw new ConfigException("Uncovertible enum type without valueOf method found, please provide a custom " +
+            throw new ConfigException("Uncovertible enum type without createValue method found, please provide a custom " +
                     "PropertyConverter for: " + enumType.getName());
         }
     }
@@ -57,12 +58,12 @@ public class EnumConverter<T> implements PropertyConverter<T> {
         try {
             return (T) factory.invoke(null, value);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            LOG.log(Level.FINEST, "Invalid enum value '" + value + "' for " + enumType.getName(), e);
+            LOG.log(Level.FINEST, "Invalid enum createValue '" + value + "' for " + enumType.getName(), e);
         }
         try {
             return (T) factory.invoke(null, value.toUpperCase(Locale.ENGLISH));
         } catch (InvocationTargetException | IllegalAccessException e) {
-            LOG.log(Level.FINEST, "Invalid enum value '" + value + "' for " + enumType.getName(), e);
+            LOG.log(Level.FINEST, "Invalid enum createValue '" + value + "' for " + enumType.getName(), e);
         }
         return null;
     }

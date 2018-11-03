@@ -93,8 +93,8 @@ public class ConversionContext {
     /**
      * Get the key accessed. This information is very useful to evaluate additional metadata needed to determine/
      * control further aspects of the conversion.
-     * @return the key. This may be null in case where a default value has to be converted and no unique underlying
-     * key/value configuration is present.
+     * @return the key. This may be null in case where a default createValue has to be converted and no unique underlying
+     * key/createValue configuration is present.
      */
     public String getKey(){
         return key;
@@ -133,9 +133,29 @@ public class ConversionContext {
         return configuration;
     }
 
+
+    /**
+     * Evaluate the current metadata from the given values. Later values hereby are more significant.
+     * @return the evaluated meta data map.
+     */
+    public Map<String, String> getMeta() {
+        Map<String, String> metaMap = new HashMap<>();
+        if(values.size()>0){
+            String baseKey = values.get(0).getQualifiedKey()+".";
+
+            values.forEach(val -> this.getConfiguration().getContext().getMetadata().entrySet().forEach(
+                    en -> {
+                        if(en.getKey().startsWith(baseKey)) {
+                            metaMap.put(en.getKey().substring(baseKey.length()), en.getValue());
+                        }
+                    }));
+        }
+        return metaMap;
+    }
+
     /**
      * Allows to add information on the supported/tried formats, which can be shown to the user, especially when
-     * conversion failed. Adding of formats is synchronized, all formats are added in order to the overall list.
+     * conversion failed. Adding of formats is synchronized, all formats are added in order to the overall createList.
      * This means formats should be passed in order of precedence.
      * @param converterType the converters, which implements the formats provided.
      * @param formatDescriptors the format descriptions in a human readable form, e.g. as regular expressions.
@@ -181,7 +201,7 @@ public class ConversionContext {
     }
 
     /**
-     * Builder to create new instances of {@link ConversionContext}.
+     * Builder to createObject new instances of {@link ConversionContext}.
      */
     public static final class Builder{
         /** The backing configuration. */
@@ -245,6 +265,16 @@ public class ConversionContext {
          */
         public Builder setValues(List<PropertyValue> values){
             this.values.addAll(values);
+            return this;
+        }
+
+        /**
+         * Sets the underlying values evaluated.
+         * @param values the values, not {@code null}.
+         * @return the builder instance, for chaining
+         */
+        public Builder setValues(PropertyValue... values){
+            this.values.addAll(Arrays.asList(values));
             return this;
         }
 

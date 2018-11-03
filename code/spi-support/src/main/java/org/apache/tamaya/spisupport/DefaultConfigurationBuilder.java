@@ -44,6 +44,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     protected List<PropertySource> propertySources = new ArrayList<>();
     protected PropertyValueCombinationPolicy combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
     protected Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters = new HashMap<>();
+    protected MetadataProvider metaDataProvider = serviceContext.create(MetadataProvider.class, DefaultMetaDataProvider::new);
 
     /**
      * Flag if the config has already been built.
@@ -86,6 +87,11 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     }
 
     @Override
+    public ClassLoader getClassLoader() {
+        return serviceContext.getClassLoader();
+    }
+
+    @Override
     public ConfigurationBuilder setServiceContext(ServiceContext serviceContext) {
         checkBuilderState();
         this.serviceContext = Objects.requireNonNull(serviceContext);
@@ -115,6 +121,18 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
         this.propertyConverters.clear();
         this.propertyConverters.putAll(context.getPropertyConverters());
         this.combinationPolicy = context.getPropertyValueCombinationPolicy();
+        return this;
+    }
+
+    @Override
+    public ConfigurationBuilder setMeta(String key, String value){
+        this.metaDataProvider.setMeta(key, value);
+        return this;
+    }
+
+    @Override
+    public ConfigurationBuilder setMeta(Map<String, String> metaData){
+        this.metaDataProvider.setMeta(metaData);
         return this;
     }
 
@@ -314,7 +332,8 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
                         this.combinationPolicy,
                         this.propertyFilters,
                         this.propertySources,
-                        this.propertyConverters));
+                        this.propertyConverters,
+                        this.metaDataProvider));
         this.built = true;
         return cfg;
     }

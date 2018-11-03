@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * Converter, converting from String to Currency, the supported format is one of the following:
  * <ul>
  *     <li>CHF (currency code)</li>
- *     <li>123 (numeric currency value &gt;
+ *     <li>123 (numeric currency createValue &gt;
  *     = 0)</li>
  *     <li>DE (ISO 2-digit country)</li>
  *     <li>de_DE, de_DE_123 (Locale)</li>

@@ -55,7 +55,7 @@ public interface PropertySourceProvider {
 
     /**
      * @return For each e.g. property file, we return a single PropertySource
-     *         or an empty list if no PropertySource exists.
+     *         or an empty createList if no PropertySource exists.
      */
     Collection<PropertySource> getPropertySources();
 }

@@ -25,7 +25,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import javax.annotation.Priority;
 
 /**
- * Simple PropertyFilter that filters exact one value, registered using ServiceLoader.
+ * Simple PropertyFilter that filters exact one createValue, registered using ServiceLoader.
  */
 @Priority(200)
 public class TestRemovingPropertyFilter implements PropertyFilter{
@@ -35,8 +35,8 @@ public class TestRemovingPropertyFilter implements PropertyFilter{
             return null;
         }
         else if("name3".equals(valueToBeFiltered.getKey())){
-            return valueToBeFiltered.setValue(
-                    "Mapped to name: " + Configuration.current().get("name"));
+            return valueToBeFiltered
+                    .setValue("Mapped to name: " + Configuration.current().get("name"));
         }
         return valueToBeFiltered;
     }

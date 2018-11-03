@@ -25,6 +25,7 @@ import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -58,7 +59,7 @@ public interface Configuration {
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @return the property's value.
+     * @return the property's createValue.
      */
     default String get(String key){
         return get(key, TypeLiteral.of(String.class));
@@ -68,7 +69,7 @@ public interface Configuration {
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @param defaultValue value to be returned, if no value is present, not {@code null}
+     * @param defaultValue createValue to be returned, if no createValue is present, not {@code null}
      * @return the property's keys.
      */
     default String getOrDefault(String key, String defaultValue){
@@ -118,8 +119,8 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. {@code
      *                     a/b/c/d.myProperty}, not  {@code null}.
      * @param type         The target type required, not  {@code null}.
-     * @param defaultValue value to be used, if no value is present, not {@code null}
-     * @return the property value, never {@code null}.
+     * @param defaultValue createValue to be used, if no createValue is present, not {@code null}
+     * @return the property createValue, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T getOrDefault(String key, Class<T> type, T defaultValue){
@@ -135,7 +136,7 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not {@code null}.
-     * @return the property value, never {@code null}.
+     * @return the property createValue, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T get(String key, Class<T> type){
@@ -151,7 +152,7 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}, not {@code null}.
      * @param type         The target type required, not {@code null}.
-     * @return the property value, never {@code null}.
+     * @return the property createValue, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T get(String key, TypeLiteral<T> type);
@@ -165,8 +166,8 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g.
      *                     {@code a/b/c/d.myProperty}, not {@code null}.
      * @param type         The target type required, not {@code null}.
-     * @param defaultValue default value to be used, if no value is present.
-     * @return the property value, never null.
+     * @param defaultValue default createValue to be used, if no createValue is present.
+     * @return the property createValue, never null.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue);
@@ -190,6 +191,7 @@ public interface Configuration {
      */
     @Deprecated
     default Configuration with(ConfigOperator operator){
+        Objects.requireNonNull(operator, "Operator must be given.");
         return operator.operate(this);
     }
 
@@ -201,6 +203,7 @@ public interface Configuration {
      * @return the new adjusted configuration returned by the {@code operator}, never {@code null}.
      */
     default Configuration map(UnaryOperator<Configuration> operator){
+        Objects.requireNonNull(operator, "Operator must be given.");
         return operator.apply(this);
     }
 
@@ -214,6 +217,7 @@ public interface Configuration {
      */
     @Deprecated
     default <T> T query(ConfigQuery<T> query){
+        Objects.requireNonNull(query, "Query must be given.");
         return query.query(this);
     }
 
@@ -225,6 +229,7 @@ public interface Configuration {
      * @return the result returned by the {@code query}.
      */
     default <T> T adapt(Function<Configuration, T> query){
+        Objects.requireNonNull(query, "Adapter must be given.");
         return query.apply(this);
     }
 

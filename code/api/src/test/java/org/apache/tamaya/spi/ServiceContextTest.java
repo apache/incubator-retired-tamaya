@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Supplier;
 
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class ServiceContextTest {
         }
 
         @Override
-        public <T> T getService(Class<T> serviceType) {
+        public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
             if(String.class.equals(serviceType)){
                 return serviceType.cast("ServiceContextTest");
             }
@@ -54,19 +55,28 @@ public class ServiceContextTest {
         }
 
         @Override
-        public <T> T create(Class<T> serviceType) {
+        public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
             return getService(serviceType);
         }
 
-        @SuppressWarnings("unchecked")
-		@Override
-        public <T> List<T> getServices(Class<T> serviceType) {
+        @Override
+        public <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> supplier) {
             if(String.class.equals(serviceType)){
                 List<String> list = new ArrayList<>();
                 list.add("ServiceContextTest");
                 return List.class.cast(list);
             }
             return Collections.emptyList();
+        }
+
+        @Override
+        public <T> T register(Class<T> type, T instance, boolean force) {
+            return instance;
+        }
+
+        @Override
+        public <T> List<T> register(Class<T> type, List<T> instances, boolean force) {
+            return instances;
         }
 
     };

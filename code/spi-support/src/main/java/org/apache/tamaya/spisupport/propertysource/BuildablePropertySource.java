@@ -140,7 +140,7 @@ public class BuildablePropertySource implements PropertySource{
          * With simple property builder.
          *
          * @param key   the key
-         * @param value the value
+         * @param value the createValue
          * @return the builder
          */
         public Builder withSimpleProperty(String key, String value) {
@@ -151,7 +151,7 @@ public class BuildablePropertySource implements PropertySource{
          * With simple property builder.
          *
          * @param key    the key
-         * @param value  the value
+         * @param value  the createValue
          * @param source the source
          * @return the builder
          */

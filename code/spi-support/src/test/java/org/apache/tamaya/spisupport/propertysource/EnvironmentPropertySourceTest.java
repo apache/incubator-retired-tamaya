@@ -115,7 +115,7 @@ public class EnvironmentPropertySourceTest {
 		System.out.println(localEnvironmentPropertySource);
 		assertThat(localEnvironmentPropertySource.getPrefix()).isEqualTo("fancyprefix");
 		localEnvironmentPropertySource.setPropertiesProvider(new MockedSystemPropertiesProvider());
-		assertThat(localEnvironmentPropertySource.get("somekey").getValue()).isEqualTo("somekey.value");
+		assertThat(localEnvironmentPropertySource.get("somekey").getValue()).isEqualTo("somekey.createValue");
 	}
 
 	@Test
@@ -149,7 +149,7 @@ public class EnvironmentPropertySourceTest {
 	private class MockedSystemPropertiesProvider extends EnvironmentPropertySource.SystemPropertiesProvider {
 		@Override
 		String getenv(String key) {
-			return key + ".value";
+			return key + ".createValue";
 		}
 	}
 }

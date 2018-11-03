@@ -93,7 +93,9 @@ public final class CoreConfigurationBuilder extends DefaultConfigurationBuilder 
                         this.combinationPolicy,
                         this.propertyFilters,
                         this.propertySources,
-                        this.propertyConverters));
+                        this.propertyConverters,
+                        this.metaDataProvider
+                ));
         built = true;
         return cfg;
     }

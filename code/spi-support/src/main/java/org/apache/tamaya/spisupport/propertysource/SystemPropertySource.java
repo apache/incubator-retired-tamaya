@@ -101,7 +101,7 @@ public class SystemPropertySource extends BasePropertySource {
     }
 
     /**
-     * Creates a new instance using a fixed ordinal value.
+     * Creates a new instance using a fixed ordinal createValue.
      * @param ordinal the ordinal number.
      */
     public SystemPropertySource(int ordinal){

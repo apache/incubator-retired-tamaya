@@ -26,6 +26,7 @@ import javax.annotation.Priority;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,24 +50,36 @@ public final class DefaultServiceContext implements ServiceContext {
 	private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
 
     @Override
-    public <T> T getService(Class<T> serviceType) {
-        Object cached = singletons.get(serviceType);
-        if (cached == null) {
-            cached = create(serviceType);
-            if(cached!=null) {
-                singletons.put(serviceType, cached);
-            }
+    public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
+        T service = (T)singletons.get(serviceType);
+        if(service!=null){
+            return service;
         }
-        return serviceType.cast(cached);
+        Collection<T> services = loadServices(serviceType, null);
+        if (services.isEmpty() && supplier!=null){
+            T instance = supplier.get();
+            if(instance instanceof ClassloaderAware){
+                ((ClassloaderAware)instance).init(this.classLoader);
+            }
+            register(serviceType, instance, true);
+            return instance;
+        }
+        T t = getServiceWithHighestPriority(services, serviceType);
+        if(t!=null) {
+            this.singletons.put(serviceType, t);
+        }
+        return t;
     }
 
     @Override
-    public <T> T create(Class<T> serviceType) {
-        @SuppressWarnings("unchecked")
-		Class<? extends T> implType = factoryTypes.get(serviceType);
+    public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
+        Class<? extends T> implType = factoryTypes.get(serviceType);
         if(implType==null) {
-            Collection<T> services = getServices(serviceType);
+            Collection<T> services = loadServices(serviceType, null);
             if (services.isEmpty()) {
+                if(supplier!=null){
+                    return supplier.get();
+                }
                 return null;
             } else {
                 return getServiceWithHighestPriority(services, serviceType);
@@ -75,7 +88,7 @@ public final class DefaultServiceContext implements ServiceContext {
         try {
             return implType.newInstance();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Failed to create instance of " + implType.getName(), e);
+            LOG.log(Level.SEVERE, "Failed to createObject instance of " + implType.getName(), e);
             return  null;
         }
     }
@@ -90,7 +103,7 @@ public final class DefaultServiceContext implements ServiceContext {
      */
     private <T> T getServiceWithHighestPriority(Collection<T> services, Class<T> serviceType) {
         T highestService = null;
-        // we do not need the priority stuff if the list contains only one element
+        // we do not need the priority stuff if the createList contains only one element
         if (services.size() == 1) {
             highestService = services.iterator().next();
             this.factoryTypes.put(serviceType, highestService.getClass());
@@ -118,7 +131,9 @@ public final class DefaultServiceContext implements ServiceContext {
                     highestPriority,
                     services));
         }
-        this.factoryTypes.put(serviceType, highestService.getClass());
+        if(highestService!=null) {
+            this.factoryTypes.put(serviceType, highestService.getClass());
+        }
         return highestService;
     }
 
@@ -130,12 +145,26 @@ public final class DefaultServiceContext implements ServiceContext {
      * @return the items found, never {@code null}.
      */
     @Override
-    public <T> List<T> getServices(final Class<T> serviceType) {
+    public <T> List<T> getServices(final Class<T> serviceType, Supplier<List<T>> supplier) {
         @SuppressWarnings("unchecked")
 		List<T> found = (List<T>) servicesLoaded.get(serviceType);
         if (found != null) {
             return found;
         }
+        List<T> services = loadServices(serviceType, supplier);
+        @SuppressWarnings("unchecked")
+		final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
+        return previousServices != null ? previousServices : services;
+    }
+
+    /**
+     * Loads services.
+     *
+     * @param <T>         the concrete type.
+     * @param serviceType The service type.
+     * @return the items found, never {@code null}.
+     */
+    private <T> List<T> loadServices(final Class<T> serviceType, Supplier<List<T>> supplier) {
         List<T> services = new ArrayList<>();
         try {
             for (T t : ServiceLoader.load(serviceType, classLoader)) {
@@ -144,27 +173,40 @@ public final class DefaultServiceContext implements ServiceContext {
                 }
                 services.add(t);
             }
-            // TODO does this make sense here...?
-//            if(services.isEmpty()) {
-//                for (T t : ServiceLoader.load(serviceType, serviceType.getClassLoader())) {
-//                    if(t instanceof ClassloaderAware){
-//                        ((ClassloaderAware)t).init(classLoader);
-//                    }
-//                    services.add(t);
-//                }
-//            }
             Collections.sort(services, PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
         } catch (ServiceConfigurationError e) {
-            LOG.log(Level.WARNING,
-                    "Error loading services current type " + serviceType, e);
+            if(supplier!=null){
+                services = supplier.get();
+            }else {
+                LOG.log(Level.WARNING,
+                        "Error loading services current type " + serviceType, e);
+            }
             if(services==null){
                 services = Collections.emptyList();
             }
         }
-        @SuppressWarnings("unchecked")
-		final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
-        return previousServices != null ? previousServices : services;
+        return services;
+    }
+
+    @Override
+    public <T> T register(Class<T> serviceType, T instance, boolean force) {
+        if(force){
+            singletons.put(serviceType, instance);
+        }else {
+            singletons.putIfAbsent(serviceType, instance);
+        }
+        return (T)singletons.get(serviceType);
+    }
+
+    @Override
+    public <T> List<T> register(Class<T> type, List<T> instances, boolean force) {
+        if(force){
+            servicesLoaded.put(type, (List)instances);
+        }else {
+            servicesLoaded.putIfAbsent(type, (List)instances);
+        }
+        return (List<T>)servicesLoaded.get(type);
     }
 
 

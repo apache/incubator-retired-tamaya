@@ -75,9 +75,9 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Get a given value, filtered with the context's filters as needed.
+     * Get a given createValue, filtered with the context's filters as needed.
      * @param key the property's key, not null.
-     * @return the filtered value, or null.
+     * @return the filtered createValue, or null.
      */
     @Override
     public String get(String key) {
@@ -95,9 +95,9 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Get a given value, filtered with the context's filters as needed.
+     * Get a given createValue, filtered with the context's filters as needed.
      * @param key the property's key, not null.
-     * @return the filtered value, or null.
+     * @return the filtered createValue, or null.
      */
     public List<PropertyValue> getValues(String key) {
         Objects.requireNonNull(key, "Key must not be null.");
@@ -115,9 +115,9 @@ public class DefaultConfiguration implements Configuration {
 
 
     /**
-     * Evaluates the raw value using the context's {@link PropertyValueCombinationPolicy}.
+     * Evaluates the raw createValue using the context's {@link PropertyValueCombinationPolicy}.
      * @param key the key, not null.
-     * @return the value, before filtering is applied.
+     * @return the createValue, before filtering is applied.
      */
     protected PropertyValue evaluteRawValue(String key) {
         List<PropertySource> propertySources = configurationContext.getPropertySources();
@@ -177,15 +177,15 @@ public class DefaultConfiguration implements Configuration {
 
 
     /**
-     * Accesses the current String value for the given key and tries to convert it
+     * Accesses the current String createValue for the given key and tries to convert it
      * using the {@link PropertyConverter} instances provided by the current
      * {@link ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. {@code
      *             a/b/c/d.myProperty}, never {@code null}.
      * @param type The target type required, not {@code null}.
-     * @param <T>  the value type
-     * @return the converted value, never {@code null}.
+     * @param <T>  the createValue type
+     * @return the converted createValue, never {@code null}.
      */
     @Override
     public <T> T get(String key, Class<T> type) {
@@ -193,15 +193,15 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Accesses the current String value for the given key and tries to convert it
+     * Accesses the current String createValue for the given key and tries to convert it
      * using the {@link PropertyConverter} instances provided by the current
      * {@link ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. {@code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not {@code null}.
-     * @param <T>  the value type
-     * @return the converted value, never {@code null}.
+     * @param <T>  the createValue type
+     * @return the converted createValue, never {@code null}.
      */
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
@@ -228,10 +228,10 @@ public class DefaultConfiguration implements Configuration {
                             return t;
                         }
                     } catch (Exception e) {
-                        LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
+                        LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert createValue: " + value, e);
                     }
                 }
-                // if the target type is a String, we can return the value, no conversion required.
+                // if the target type is a String, we can return the createValue, no conversion required.
                 if (type.equals(TypeLiteral.of(String.class))) {
                     return (T) value;
                 }

@@ -50,10 +50,10 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger> {
                 ctx.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)"));
         String trimmed = Objects.requireNonNull(value).trim();
         if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
-            LOG.finest("Parsing Hex value to BigInteger: " + value);
+            LOG.finest("Parsing Hex createValue to BigInteger: " + value);
             return new BigInteger(value.substring(2), 16);
         } else if(trimmed.startsWith("-0x") || trimmed.startsWith("-0X")){
-            LOG.finest("Parsing Hex value to BigInteger: " + value);
+            LOG.finest("Parsing Hex createValue to BigInteger: " + value);
             return new BigInteger('-' + value.substring(3), 16);
         }
         try{

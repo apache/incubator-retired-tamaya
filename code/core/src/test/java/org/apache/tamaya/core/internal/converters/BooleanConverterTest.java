@@ -32,7 +32,7 @@ import org.junit.Test;
 public class BooleanConverterTest {
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link ConverterTestsPropertySource}.
      *
      * @throws Exception
@@ -73,7 +73,7 @@ public class BooleanConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link ConverterTestsPropertySource}.
      *
      * @throws Exception
@@ -118,7 +118,7 @@ public class BooleanConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link ConverterTestsPropertySource}.
      *
      * @throws ConfigException

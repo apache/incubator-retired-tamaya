@@ -68,7 +68,7 @@ public class OSGIServiceLoader implements BundleListener {
 
 	@Override
 	public void bundleChanged(BundleEvent bundleEvent) {
-		// Parse and create metadata when installed
+		// Parse and createObject metadata when installed
 		if (bundleEvent.getType() == BundleEvent.STARTED) {
 			Bundle bundle = bundleEvent.getBundle();
 			checkAndLoadBundle(bundle);
@@ -243,7 +243,7 @@ public class OSGIServiceLoader implements BundleListener {
 				return serviceClass.newInstance();
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				throw new IllegalStateException("Failed to create service: " + serviceClass.getName(), ex);
+				throw new IllegalStateException("Failed to createObject service: " + serviceClass.getName(), ex);
 			}
 		}
 

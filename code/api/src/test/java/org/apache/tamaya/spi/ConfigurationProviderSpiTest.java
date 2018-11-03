@@ -49,7 +49,7 @@ TestConfigurationProvider configProvider = new TestConfigurationProvider();
         try{
             configProvider.setConfigurationContext(newContext);
             //The mocked TestConfigurationProvider doesn't setCurrent the context on the
-            // inner Configuration object, as that's deprecated.
+            // inner Configuration createObject, as that's deprecated.
             assertThat(configProvider.getConfigurationContext()).isEqualTo(newContext);
         }finally{
             configProvider.setConfigurationContext(currentContext);

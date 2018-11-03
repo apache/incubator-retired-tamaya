@@ -26,8 +26,8 @@ import java.util.Map;
 
 /**
  * <p>{@link org.apache.tamaya.spi.PropertySource} to access environment variables via Tamaya
- * which are setCurrent via {@code export VARIABLE=value} on UNIX systems or
- * {@code setCurrent VARIABLE=value} on Windows systems.</p>
+ * which are setCurrent via {@code export VARIABLE=createValue} on UNIX systems or
+ * {@code setCurrent VARIABLE=createValue} on Windows systems.</p>
  *
  * <p>Using the {@linkplain EnvironmentPropertySource} without any
  * additional configuration gives access to all existing environment
@@ -71,7 +71,7 @@ import java.util.Map;
  * $ java -Dtamaya.envprops.prefix=a81 -jar application.jar
  * </pre>
  *
- * <p>The application specific value can now be accessed from the code of the
+ * <p>The application specific createValue can now be accessed from the code of the
  * application like this:</p>
  *
  * <pre>
@@ -153,7 +153,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
     }
 
     /**
-     * Creates a new instance using a fixed ordinal value.
+     * Creates a new instance using a fixed ordinal createValue.
      * @param ordinal the ordinal number.
      */
     public EnvironmentPropertySource(int ordinal){

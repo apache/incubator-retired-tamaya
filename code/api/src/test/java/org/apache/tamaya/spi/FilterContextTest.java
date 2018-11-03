@@ -115,7 +115,7 @@ public class FilterContextTest {
     public void getConfigEntries() throws Exception {
         Map<String,PropertyValue> config = new HashMap<>();
         for(int i=0;i<10;i++) {
-            config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
+            config.put("key-"+i, PropertyValue.of("key-"+i, "createValue-"+i, "test"));
         }
         PropertyValue val = PropertyValue.of("getConfigEntries", "v", "");
         FilterContext ctx = new FilterContext(val, config, ConfigurationContext.EMPTY);
@@ -127,7 +127,7 @@ public class FilterContextTest {
     public void testToString() throws Exception {
         Map<String,PropertyValue> config = new HashMap<>();
         for(int i=0;i<2;i++) {
-            config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
+            config.put("key-"+i, PropertyValue.of("key-"+i, "createValue-"+i, "test"));
         }
         PropertyValue val = PropertyValue.of("testToString", "val", "mySource");
         FilterContext ctx = new FilterContext(val, config, ConfigurationContext.EMPTY);
@@ -135,8 +135,8 @@ public class FilterContextTest {
 
         assertThat(toString).isNotNull();
         System.out.println(toString);
-        assertThat(toString.contains("FilterContext{value='[PropertyValue{'testToString', value='val', children='0', " +
-                "metaData={source=mySource}}]', configEntries=[")).isTrue();
+        assertThat(toString.contains("FilterContext{createValue='[PropertyValue{'testToString', createValue='val'," +
+                " metaData={source=mySource}}]', configEntries=[")).isTrue();
         assertThat(toString.contains("key-0")).isTrue();
         assertThat(toString.contains("key-1")).isTrue();
         assertThat(toString.endsWith("}")).isTrue();

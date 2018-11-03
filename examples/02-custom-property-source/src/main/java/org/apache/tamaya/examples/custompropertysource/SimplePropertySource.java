@@ -43,8 +43,8 @@ public class SimplePropertySource extends BasePropertySource {
 
             for(Map.Entry en: properties.entrySet()){
                 props.put(en.getKey().toString(),
-                        PropertyValue.of(en.getKey().toString(), en.getValue().toString(),
-                                getName()));
+                        PropertyValue.createValue(en.getKey().toString(), en.getValue().toString())
+                        .setMeta("source", getName()));
             }
         }
         finally{

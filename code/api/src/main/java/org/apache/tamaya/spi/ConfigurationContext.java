@@ -21,6 +21,7 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TypeLiteral;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,11 @@ import java.util.Map;
  */
 public interface ConfigurationContext {
 
+    /**
+     * Get the metadata evaluated for this configuration.
+     * @return the metadata accessor, never null.
+     */
+    Map<String,String> getMetadata();
 
     /**
      * Access the underlying {@link ServiceContext}.
@@ -44,14 +50,14 @@ public interface ConfigurationContext {
      * It is not needed for normal 'usage' by end users, but only for Extension Developers!
      *
      * @param propertySources the {@link PropertySource}s to add
-     * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
+     * @deprecated Use {@link ConfigurationContextBuilder} to createObject a new {@link ConfigurationContext}.
      * @see #toBuilder()
      */
     @Deprecated
     void addPropertySources(PropertySource... propertySources);
 
     /**
-     * This method returns the current list of registered {@link PropertySource}s ordered via their ordinal.
+     * This method returns the current createList of registered {@link PropertySource}s ordered via their ordinal.
      * {@link PropertySource}s with a lower ordinal come last. The {@link PropertySource} with the
      * highest ordinal comes first.
      * If two {@link PropertySource}s have the same ordinal number they will current sorted
@@ -60,7 +66,7 @@ public interface ConfigurationContext {
      * {@link PropertySource}s are loaded when this method is called the first time, which basically is
      * when the first time configuration is accessed.
      *
-     * @return a sorted list of registered {@link PropertySource}s.  The returned list need not be modifiable
+     * @return a sorted createList of registered {@link PropertySource}s.  The returned createList need not be modifiable
      */
     List<PropertySource> getPropertySources();
 
@@ -78,7 +84,7 @@ public interface ConfigurationContext {
      * @param <T> the type of the type literal
      * @param type the type which the converters is for
      * @param propertyConverter the PropertyConverters to add for this type
-     * @deprecated Use {@link ConfigurationContextBuilder} to create a new {@link ConfigurationContext}.
+     * @deprecated Use {@link ConfigurationContextBuilder} to createObject a new {@link ConfigurationContext}.
      * @see #toBuilder()
      */
     @Deprecated
@@ -102,7 +108,7 @@ public interface ConfigurationContext {
      *  }
      * </pre>
      *
-     * @return map with sorted list of registered {@link PropertySource}s per type.
+     * @return map with sorted createList of registered {@link PropertySource}s per type.
      */
     Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters();
 
@@ -124,7 +130,7 @@ public interface ConfigurationContext {
      * Additionally, if a PropertyProvider is accessed which is not registered, the implementation
      * should try to figure out if there could be a default implementation as follows:</p>
      * <ol>
-     *     <li>Look for static factory methods: {@code of(String), valueOf(String), getInstance(String),
+     *     <li>Look for static factory methods: {@code of(String), createValue(String), getInstance(String),
      *     instanceOf(String), fomr(String)}</li>
      *     <li>Look for a matching constructor: {@code T(String)}.</li>
      * </ol>
@@ -147,20 +153,20 @@ public interface ConfigurationContext {
      *
      * <p>
      * The converters returned for a type should be used as a chain, whereas the result of the
-     * first converters that is able to convert the configured value, is taken as the chain's result.
+     * first converters that is able to convert the configured createValue, is taken as the chain's result.
      * No more converters are called after a converter has successfully converted the input into
      * the required target type.
      * </p>
      * 
      * @param <T> the type of the type literal
      * @param type type of the desired converters
-     * @return a sorted list of registered {@link PropertySource}s per type.
+     * @return a sorted createList of registered {@link PropertySource}s per type.
      */
     <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type);
 
     /**
      * Access the current {@link PropertyFilter} instances.
-     * @return the list of registered {@link PropertyFilter}s, never null.
+     * @return the createList of registered {@link PropertyFilter}s, never null.
      */
     List<PropertyFilter> getPropertyFilters();
 
@@ -183,6 +189,11 @@ public interface ConfigurationContext {
      * An empty configuration context. The implementation can be shared and is thread safe.
      */
     ConfigurationContext EMPTY = new ConfigurationContext() {
+        @Override
+        public Map<String,String> getMetadata() {
+            return Collections.emptyMap();
+        }
+
         @Override
         public ServiceContext getServiceContext() {
             return ServiceContextManager.getServiceContext(getClass().getClassLoader());

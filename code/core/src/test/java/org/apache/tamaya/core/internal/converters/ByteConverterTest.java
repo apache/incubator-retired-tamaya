@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.*;
 public class ByteConverterTest {
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link org.apache.tamaya.core.internal.converters.ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -56,7 +56,7 @@ public class ByteConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -69,7 +69,7 @@ public class ByteConverterTest {
     }
 
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link ConverterTestsPropertySource}.
      * @throws Exception
      */
@@ -81,7 +81,7 @@ public class ByteConverterTest {
         assertThat(valueRead.byteValue()).isEqualTo(Byte.MAX_VALUE);
     }
     /**
-     * Test conversion. The value are provided by
+     * Test conversion. The createValue are provided by
      * {@link ConverterTestsPropertySource}.
      *
      * @throws ConfigException

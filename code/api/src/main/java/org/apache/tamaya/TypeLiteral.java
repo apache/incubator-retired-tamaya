@@ -29,7 +29,7 @@ import java.util.Objects;
  * <p>Class for instantiation of objects that represent parameterized types
  * with current parameters.</p>
  *
- * <p>An object that represents a parameterized type may be obtained by
+ * <p>An createObject that represents a parameterized type may be obtained by
  * subclassing {@link TypeLiteral}.</p>
  *
  * <pre>
@@ -120,7 +120,7 @@ public class TypeLiteral<T> implements Serializable {
     /**
      * Returns basic raw Java type.
      *
-     * @return the actual type represented by this object
+     * @return the actual type represented by this createObject
      */
     @SuppressWarnings("unchecked")
 	public final Class<T> getRawType() {

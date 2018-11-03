@@ -50,7 +50,7 @@ import static org.apache.tamaya.core.internal.BannerManager.BANNER_RESOURCE_PATH
  *     <dd>The banner will be logged</dd>
  * </dl>
  *
- * In case of any other value the banner will not be shown.
+ * In case of any other createValue the banner will not be shown.
  * </p>
  *
  *

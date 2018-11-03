@@ -44,8 +44,16 @@ public interface ConfigurationBuilder {
      * {@code setServiceContext(ServiceContextManager.getServiceContext(classLoader))}.
      * @param classLoader the classloader, not null.
      * @return the builder for chaining.
+     * @see #getClassLoader()
      */
     ConfigurationBuilder setClassLoader(ClassLoader classLoader);
+
+    /**
+     * Get the classloader used by this builder.
+     * @return the classloader, never null.
+     * @see #setClassLoader(ClassLoader)
+     */
+    ClassLoader getClassLoader();
 
     /**
      * Sets the ServiceContext to be used.
@@ -83,7 +91,7 @@ public interface ConfigurationBuilder {
     /**
      * This method can be used for adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
-     * lowest priority  regardless of its current ordinal value. To sort the property
+     * lowest priority  regardless of its current ordinal createValue. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the {@link PropertySource}s to add
@@ -96,9 +104,24 @@ public interface ConfigurationBuilder {
     }
 
     /**
+     * Adds (overrides existing value) the given sources as property sources.
+     * @param key the key, not null.
+     * @param value the value, not null.
+     * @return the current configuration builder.
+     */
+    ConfigurationBuilder setMeta(String key, String value);
+
+    /**
+     * Adds (overrides existing value with same same keys) the given sources as property sources.
+     * @param metaData the metadata, not null.
+     * @return the current configuration builder.
+     */
+    ConfigurationBuilder setMeta(Map<String, String> metaData);
+
+    /**
      * This method can be used for programmatically adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
-     * lowest priority regardless of its current ordinal value. To sort the property
+     * lowest priority regardless of its current ordinal createValue. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the {@link PropertySource}s to add
@@ -137,7 +160,7 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder removePropertySources(Collection<PropertySource> propertySources);
 
     /**
-     * Access the current chain of property sources. Items at the end of the list have
+     * Access the current chain of property sources. Items at the end of the createList have
      * precedence/higher significance.
      *
      * @return the property source chain, never {@code null}.
@@ -145,7 +168,7 @@ public interface ConfigurationBuilder {
     List<PropertySource> getPropertySources();
 
     /**
-     * Access the current chain of property filters. Items at the end of the list have
+     * Access the current chain of property filters. Items at the end of the createList have
      * precedence/higher significance.
      *
      * @return the property filter chain, never {@code null}.
@@ -211,7 +234,7 @@ public interface ConfigurationBuilder {
 
     /**
      * Adds the given {@link PropertyFilter} instances, hereby the instances are added
-     * to the end of the list with highest priority. The ordering of existing
+     * to the end of the createList with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
      *
@@ -224,7 +247,7 @@ public interface ConfigurationBuilder {
 
     /**
      * Adds the given {@link PropertyFilter} instances, hereby the instances are added
-     * to the end of the list with highest priority. The ordering of existing
+     * to the end of the createList with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
      *

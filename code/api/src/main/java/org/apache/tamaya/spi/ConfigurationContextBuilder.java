@@ -69,9 +69,22 @@ public interface ConfigurationContextBuilder {
     ConfigurationContextBuilder setContext(ConfigurationContext context);
 
     /**
+     * Adds the metadata map to be used.
+     * @param metaData the metadata map, not null.
+     */
+    ConfigurationContextBuilder addMetaData(Map<String,String> metaData);
+
+    /**
+     * Adds the metadata map to be used.
+     * @param key the key, not null.
+     * @param value the value, not null.
+     */
+    ConfigurationContextBuilder addMetaData(String key, String value);
+
+    /**
      * This method can be used for adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
-     * lowest priority  regardless of its current ordinal value. To sort the property
+     * lowest priority  regardless of its current ordinal createValue. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the PropertySources to add
@@ -84,7 +97,7 @@ public interface ConfigurationContextBuilder {
     /**
      * This method can be used for programmatically adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
-     * lowest priority regardless of its current ordinal value. To sort the property
+     * lowest priority regardless of its current ordinal createValue. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the PropertySources to add
@@ -121,7 +134,7 @@ public interface ConfigurationContextBuilder {
     ConfigurationContextBuilder removePropertySources(Collection<PropertySource> propertySources);
 
     /**
-     * Access the current chain of property sources. Items at the end of the list have
+     * Access the current chain of property sources. Items at the end of the createList have
      * precedence/more significance.
      *
      * @return the property source chain, never {@code null}.
@@ -129,7 +142,7 @@ public interface ConfigurationContextBuilder {
     List<PropertySource> getPropertySources();
 
     /**
-     * Access the current chain of property filters. Items at the end of the list have
+     * Access the current chain of property filters. Items at the end of the createList have
      * precedence/more significance.
      *
      * @return the property source chain, never {@code null}.
@@ -195,7 +208,7 @@ public interface ConfigurationContextBuilder {
 
     /**
      * Adds the given PropertyFilter instances, hereby the instances are added
-     * to the end of the list with highest priority. The ordering of existing
+     * to the end of the createList with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
      *
@@ -206,7 +219,7 @@ public interface ConfigurationContextBuilder {
 
     /**
      * Adds the given PropertyFilter instances, hereby the instances are added
-     * to the end of the list with highest priority. The ordering of existing
+     * to the end of the createList with highest priority. The ordering of existing
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
      *
@@ -348,7 +361,7 @@ public interface ConfigurationContextBuilder {
      * ordering/significance call {@link #sortPropertyFilter(Comparator)} and/or {@link #sortPropertySources(Comparator)}
      * before building the context.
      *
-     * @return the final context to be used to create a configuration.
+     * @return the final context to be used to createObject a configuration.
      * @see org.apache.tamaya.ConfigurationProvider#createConfiguration(ConfigurationContext)
      */
     ConfigurationContext build();

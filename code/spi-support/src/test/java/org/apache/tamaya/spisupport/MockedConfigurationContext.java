@@ -18,10 +18,8 @@
  */
 package org.apache.tamaya.spisupport;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 
@@ -34,10 +32,16 @@ public class MockedConfigurationContext implements ConfigurationContext {
     ServiceContext serviceContext = ServiceContextManager.getServiceContext(getClass().getClassLoader());
     PropertyConverterManager pcm = new PropertyConverterManager(serviceContext,false);
     List<PropertySource> pss = new ArrayList<>();
+    Map<String,String> metaData = new HashMap<>();
 
     public MockedConfigurationContext() {
         pcm.register(TypeLiteral.of(Integer.class), new IntegerTestConverter());
         pss.add(new MockedPropertySource());
+    }
+
+    @Override
+    public Map<String, String> getMetadata() {
+        return metaData;
     }
 
     @Override

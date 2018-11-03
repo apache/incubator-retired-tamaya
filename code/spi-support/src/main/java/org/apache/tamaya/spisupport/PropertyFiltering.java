@@ -46,10 +46,10 @@ public final class PropertyFiltering{
     private PropertyFiltering(){}
 
     /**
-     * Filters a single value.
-     * @param value the raw value, not {@code null}.
+     * Filters a single createValue.
+     * @param value the raw createValue, not {@code null}.
      * @param context the context
-     * @return the filtered value, including {@code null}.
+     * @return the filtered createValue, including {@code null}.
      */
     public static PropertyValue applyFilter(PropertyValue value, ConfigurationContext context) {
         FilterContext filterContext = new FilterContext(value, context);
@@ -57,10 +57,10 @@ public final class PropertyFiltering{
     }
 
     /**
-     * Filters a single value.
+     * Filters a single createValue.
      * @param values the full values, not {@code null}.
      * @param context the context
-     * @return the filtered value, including {@code null}.
+     * @return the filtered createValue, including {@code null}.
      */
     public static List<PropertyValue> applyFilters(List<PropertyValue> values, ConfigurationContext context) {
         List<PropertyValue> result = new ArrayList<>();
@@ -83,7 +83,7 @@ public final class PropertyFiltering{
      * Filters all properties.
      * @param rawProperties the unfiltered properties, not {@code null}.
      * @param context the context
-     * @return the filtered value, including {@code null}.
+     * @return the filtered createValue, including {@code null}.
      */
     public static Map<String, PropertyValue> applyFilters(Map<String, PropertyValue> rawProperties, ConfigurationContext context) {
         Map<String, PropertyValue> result = new HashMap<>();
@@ -106,7 +106,7 @@ public final class PropertyFiltering{
     /**
      * Basic filter logic.
      * @param context the filter context, not {@code null}.
-     * @return the filtered value.
+     * @return the filtered createValue.
      */
     private static PropertyValue filterValue(PropertyValue inputValue, FilterContext context) {
         PropertyValue filteredValue = inputValue;

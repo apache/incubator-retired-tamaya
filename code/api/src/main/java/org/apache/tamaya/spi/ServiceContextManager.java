@@ -109,6 +109,7 @@ public final class ServiceContextManager {
      * @return the {@link ServiceContext} used.
      */
     public static ServiceContext getServiceContext(ClassLoader classLoader) {
+        Objects.requireNonNull(classLoader, "Classloader required.");
         return serviceContexts.computeIfAbsent(classLoader, ServiceContextManager::loadDefaultServiceProvider);
     }
 

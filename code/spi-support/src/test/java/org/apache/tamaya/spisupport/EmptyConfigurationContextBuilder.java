@@ -43,6 +43,16 @@ public class EmptyConfigurationContextBuilder implements ConfigurationContextBui
     }
 
     @Override
+    public ConfigurationContextBuilder addMetaData(Map<String, String> metaData) {
+        return this;
+    }
+
+    @Override
+    public ConfigurationContextBuilder addMetaData(String key, String value) {
+        return this;
+    }
+
+    @Override
     public ConfigurationContextBuilder addPropertySources(PropertySource... propertySources) {
         return this;
     }
@@ -179,7 +189,7 @@ public class EmptyConfigurationContextBuilder implements ConfigurationContextBui
 
     @Override
     public ConfigurationContext build() {
-        return EmptyConfigurationContext.instance();
+        return ConfigurationContext.EMPTY;
     }
 
     public static ConfigurationContextBuilder instance() {

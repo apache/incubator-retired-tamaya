@@ -47,6 +47,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     protected ServiceContext serviceContext = ServiceContextManager.getServiceContext();
     protected List<PropertyFilter> propertyFilters = new ArrayList<>();
     protected List<PropertySource> propertySources = new ArrayList<>();
+    protected MetadataProvider metaDataProvider = serviceContext.create(MetadataProvider.class, () -> new DefaultMetaDataProvider());
     protected PropertyValueCombinationPolicy combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
     protected Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters = new HashMap<>();
 
@@ -120,6 +121,18 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         }
         this.propertyFilters.addAll(context.getPropertyFilters());
         this.combinationPolicy = context.getPropertyValueCombinationPolicy();
+        return this;
+    }
+
+    @Override
+    public ConfigurationContextBuilder addMetaData(Map<String, String> metaData) {
+        this.metaDataProvider.setMeta(metaData);
+        return this;
+    }
+
+    @Override
+    public ConfigurationContextBuilder addMetaData(String key, String value) {
+        this.metaDataProvider.setMeta(key, value);
         return this;
     }
 
@@ -457,5 +470,9 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     @Override
     public Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> getPropertyConverter() {
         return Collections.unmodifiableMap(this.propertyConverters);
+    }
+
+    public MetadataProvider getMetaDataProvider() {
+        return metaDataProvider;
     }
 }

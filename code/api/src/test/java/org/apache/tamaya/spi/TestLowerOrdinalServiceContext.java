@@ -21,6 +21,7 @@ package org.apache.tamaya.spi;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * This class implements the (default)
@@ -51,12 +52,27 @@ public final class TestLowerOrdinalServiceContext implements ServiceContext {
     }
 
     @Override
+    public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
+        return null;
+    }
+
+    @Override
     public <T> T create(Class<T> serviceType) {
         throw ex;
     }
 
     @Override
+    public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
+        throw ex;
+    }
+
+    @Override
     public <T> List<T> getServices(Class<T> serviceType) {
+        throw ex;
+    }
+
+    @Override
+    public <T> List<T> getServices(Class<T> serviceType, Supplier<List<T>> supplier) {
         throw ex;
     }
 
@@ -67,6 +83,16 @@ public final class TestLowerOrdinalServiceContext implements ServiceContext {
 
     @Override
     public URL getResource(String resource) {
+        throw ex;
+    }
+
+    @Override
+    public <T> T register(Class<T> type, T instance, boolean force) {
+        throw ex;
+    }
+
+    @Override
+    public <T> List<T> register(Class<T> type, List<T> instancea, boolean force) {
         throw ex;
     }
 

@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to Path, using FileSystem.getPath(value).
+ * Converter, converting from String to Path, using FileSystem.getPath(createValue).
  */
 @Component(service = PropertyConverter.class)
 public class PathConverter implements PropertyConverter<Path> {

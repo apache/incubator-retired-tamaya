@@ -34,7 +34,7 @@ public class RegexPropertyFilterTest {
     private static PropertyValue prop1 = PropertyValue.of("test1", "test1", "test");
     private static PropertyValue prop2 = PropertyValue.of("test2", "test2", "test");
     private static PropertyValue prop3 = PropertyValue.of("test1.test3", "test.test3", "test");
-    private static ConfigurationContext configContext = EmptyConfigurationContext.instance();
+    private static ConfigurationContext configContext = ConfigurationContext.EMPTY;
 
     @org.junit.Test
     public void testFilterProperty() throws Exception {

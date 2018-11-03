@@ -33,6 +33,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     /** The logger used. */
     private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
+    private final MetadataProvider metaDataProvider;
 
     /**
      * Subcomponent handling {@link PropertyConverter} instances.
@@ -40,12 +41,12 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     private PropertyConverterManager propertyConverterManager;
 
     /**
-     * The current unmodifiable list of loaded {@link PropertySource} instances.
+     * The current unmodifiable createList of loaded {@link PropertySource} instances.
      */
     private List<PropertySource> immutablePropertySources;
 
     /**
-     * The current unmodifiable list of loaded {@link PropertyFilter} instances.
+     * The current unmodifiable createList of loaded {@link PropertyFilter} instances.
      */
     private List<PropertyFilter> immutablePropertyFilters;
 
@@ -58,6 +59,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /** The corresponding classLoader for this instance. */
     private ServiceContext serviceContext;
 
+
     /**
      * Lock for internal synchronization.
      */
@@ -66,6 +68,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     @SuppressWarnings("unchecked")
 	protected DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
         this.serviceContext = builder.getServiceContext();
+        this.metaDataProvider = Objects.requireNonNull(builder.getMetaDataProvider());
+        this.metaDataProvider.init(this);
         propertyConverterManager = new PropertyConverterManager(serviceContext);
         List<PropertySource> propertySources = new ArrayList<>();
         // first we load all PropertySources which got registered via java.util.ServiceLoader
@@ -98,11 +102,14 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     public DefaultConfigurationContext(ServiceContext serviceContext, PropertyValueCombinationPolicy combinationPolicy,
                                        List<PropertyFilter> propertyFilters, List<PropertySource> propertySources,
-                                       Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters) {
+                                       Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters,
+                                       MetadataProvider metaDataProvider) {
         this.propertyValueCombinationPolicy = Objects.requireNonNull(combinationPolicy);
         this.serviceContext = Objects.requireNonNull(serviceContext);
         this.immutablePropertyFilters = Collections.unmodifiableList(new ArrayList<>(propertyFilters));
         this.immutablePropertySources = Collections.unmodifiableList(new ArrayList<>(propertySources));
+        this.metaDataProvider = Objects.requireNonNull(metaDataProvider);
+        this.metaDataProvider.init(this);
         propertyConverterManager = new PropertyConverterManager(serviceContext);
         for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:propertyConverters.entrySet()) {
             for (@SuppressWarnings("rawtypes") PropertyConverter converter : en.getValue()) {
@@ -111,6 +118,11 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         }
     }
 
+
+    @Override
+    public Map<String,String> getMetadata() {
+        return metaDataProvider.getMetaData();
+    }
 
     @Override
     public ServiceContext getServiceContext() {

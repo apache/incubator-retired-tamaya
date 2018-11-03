@@ -29,7 +29,7 @@ import org.mockito.Mockito;
  *
  * Test the {@link ConfigurationProivder} class. The tests end up being tests of
  * the default methods in the {@link ConfigurationProivder} interface as they
- * pass through to the {@link TestConfigurationProvider} mocked object.
+ * pass through to the {@link TestConfigurationProvider} mocked createObject.
  */
 public class ConfigurationProviderTest {
 

@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to File, using new File(value).
+ * Converter, converting from String to File, using new File(createValue).
  */
 @Component(service = PropertyConverter.class)
 public class FileConverter implements PropertyConverter<File> {

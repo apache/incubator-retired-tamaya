@@ -164,7 +164,7 @@ public class DefaultConfigurationTest {
     }
 
     /**
-     * Tests for convertValue(String key, String value, TypeLiteral<T> type)
+     * Tests for convertValue(String key, String createValue, TypeLiteral<T> type)
      */
     @Test
     public void testConvertValue() {

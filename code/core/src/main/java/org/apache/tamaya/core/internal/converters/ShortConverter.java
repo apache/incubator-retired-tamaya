@@ -29,14 +29,14 @@ import java.util.logging.Logger;
 /**
  * Converter, converting from String to Short, the supported format is one of the following:
  * <ul>
- *     <li>123 (byte value)</li>
- *     <li>0xFF (byte value)</li>
- *     <li>0XDF (byte value)</li>
- *     <li>0D1 (byte value)</li>
- *     <li>-123 (byte value)</li>
- *     <li>-0xFF (byte value)</li>
- *     <li>-0XDF (byte value)</li>
- *     <li>-0D1 (byte value)</li>
+ *     <li>123 (byte createValue)</li>
+ *     <li>0xFF (byte createValue)</li>
+ *     <li>0XDF (byte createValue)</li>
+ *     <li>0D1 (byte createValue)</li>
+ *     <li>-123 (byte createValue)</li>
+ *     <li>-0xFF (byte createValue)</li>
+ *     <li>-0XDF (byte createValue)</li>
+ *     <li>-0D1 (byte createValue)</li>
  *     <li>MIN_VALUE (ignoring case)</li>
  *     <li>MIN (ignoring case)</li>
  *     <li>MAX_VALUE (ignoring case)</li>

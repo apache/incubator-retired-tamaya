@@ -205,16 +205,16 @@ public class PropertyConverterManager {
 
 
     /**
-     * Get the list of all current registered converters for the given target type.
+     * Get the createList of all current registered converters for the given target type.
      *
      * <p>
-     * If no converters are registered, the component tries to create and register dynamic
+     * If no converters are registered, the component tries to createObject and register dynamic
      * converters based on String constructor or static factory methods available.
      * The converters provided are of the following type and returned in the following order:
      * <ul>
      * <li>Converters mapped explicitly to the required target type are returned first, ordered
      * by decreasing priority. This means, if explicit converters are registered these are used
-     * primarily for converting a value.</li>
+     * primarily for converting a createValue.</li>
      * <li>The target type of each explicitly registered converter can also be transitively mapped to
      * 1) all directly implemented interfaces, 2) all its superclasses (except Object), 3) all the interfaces
      * implemented by its superclasses. This group of transitive converters is returned similarly in the
@@ -224,14 +224,14 @@ public class PropertyConverterManager {
      * compares the configuration values with the different enum members defined (case sensitive mapping).</li>
      * </ul>
      * <p>
-     * The above list of directly registered mappings are always tried first, before any transitive mapping
+     * The above createList of directly registered mappings are always tried first, before any transitive mapping
      * should be used. Also in all cases @Priority annotations are honored for ordering of the converters in place.
      * Transitive conversion is supported for all directly implemented interfaces (including inherited ones) and
      * the inheritance hierarchy (exception Object). Superinterfaces of implemented interfaces are ignored.
      *
      * @param targetType the target type, not {@code null}.
      * @param <T>        the type class
-     * @return the ordered list of converters (may be empty for not convertible types).
+     * @return the ordered createList of converters (may be empty for not convertible types).
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
     public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> targetType) {
@@ -365,7 +365,7 @@ public class PropertyConverterManager {
             return new EnumConverter<>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
-        final Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "valueOf", "instanceOf", "getInstance", "from", "fromString", "parse");
+        final Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "createValue", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
             converter = new DefaultPropertyConverter<>(factoryMethod, targetType.getRawType());
         }
@@ -374,7 +374,7 @@ public class PropertyConverterManager {
             try {
                 constr = targetType.getRawType().getDeclaredConstructor(String.class);
             } catch (NoSuchMethodException e) {
-                LOG.log(Level.FINEST, "No matching constrctor for " + targetType, e);
+                LOG.log(Level.FINEST, "No matching constructor for " + targetType, e);
                 return null;
             }
             converter = new PropertyConverter<T>() {
@@ -406,7 +406,7 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Tries to evaluate a factory method that can be used to create an instance based on a String.
+     * Tries to evaluate a factory method that can be used to createObject an instance based on a String.
      *
      * @param type        the target type
      * @param methodNames the possible static method names
