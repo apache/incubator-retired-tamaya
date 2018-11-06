@@ -373,16 +373,6 @@ public class DefaultConfigurationBuilderTest {
     }
 
     @Test
-    public void setPropertyValueCombinationPolicy() throws Exception {
-        PropertyValueCombinationPolicy combPol = (currentValue, key, propertySource) -> currentValue;
-        ConfigurationBuilder b = new DefaultConfigurationBuilder()
-                .setPropertyValueCombinationPolicy(combPol);
-        Configuration cfg = b.build();
-        ConfigurationContext ctx = cfg.getContext();
-        assertThat(combPol).isEqualTo(ctx.getPropertyValueCombinationPolicy());
-    }
-
-    @Test
     public void build() throws Exception {
         assertThat(new DefaultConfigurationBuilder().build()).isNotNull();
     }

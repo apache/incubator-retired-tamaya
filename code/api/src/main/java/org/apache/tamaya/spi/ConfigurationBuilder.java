@@ -375,17 +375,6 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder sortPropertyFilter(Comparator<PropertyFilter> comparator);
 
     /**
-     * Sets the {@link PropertyValueCombinationPolicy} used to evaluate the final
-     * property values.
-     *
-     * @param policy the {@link PropertyValueCombinationPolicy} used, not {@code null}.
-     * @return this builder, for chaining, never null.
-     * @deprecated Will be removed.
-     */
-    @Deprecated
-    ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy policy);
-
-    /**
      * Builds a new {@link Configuration} based on the data in this builder. The ordering of property
      * sources and property filters is not changed, regardless of their ordinals. For ensure a certain
      * ordering/significance use {@link #sortPropertyFilter(Comparator)} and/or {@link #sortPropertySources(Comparator)}

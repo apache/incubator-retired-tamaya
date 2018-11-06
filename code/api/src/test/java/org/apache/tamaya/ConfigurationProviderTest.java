@@ -19,16 +19,14 @@
 package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationBuilder;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.mockito.Mockito;
 
 /**
  *
- * Test the {@link ConfigurationProivder} class. The tests end up being tests of
- * the default methods in the {@link ConfigurationProivder} interface as they
+ * Test the {@link ConfigurationProvider} class. The tests end up being tests of
+ * the default methods in the {@link ConfigurationProvider} interface as they
  * pass through to the {@link TestConfigurationProvider} mocked createObject.
  */
 public class ConfigurationProviderTest {
@@ -43,24 +41,6 @@ public class ConfigurationProviderTest {
         assertThat(result).isNotNull();
     }
     
-    /**
-     * Test of getConfigurationContext and setConfigurationContext method, of
-     * class ConfigurationProvider.
-     */
-    @Test
-    public void testGetSetConfigurationContext() {
-        ConfigurationContext currentContext = ConfigurationProvider.getConfigurationContext();
-        assertThat(currentContext instanceof ConfigurationContext).isTrue();
-        ConfigurationContext newContext = Mockito.mock(ConfigurationContext.class);
-        try{
-            ConfigurationProvider.setConfigurationContext(newContext);
-            assertThat(ConfigurationProvider.getConfigurationContext()).isEqualTo(newContext);
-        }finally{
-            ConfigurationProvider.setConfigurationContext(currentContext);
-        }
-        assertThat(ConfigurationProvider.getConfigurationContext()).isEqualTo(currentContext);
-    }
-
     /**
      * Test of getConfiguration method, of class ConfigurationProvider.
      */
@@ -85,15 +65,6 @@ public class ConfigurationProviderTest {
     public void testGetConfigurationBuilder() {
         ConfigurationBuilder result = ConfigurationProvider.getConfigurationBuilder();
         assertThat(result instanceof ConfigurationBuilder).isTrue();
-    }
-
-    /**
-     * Test of getConfigurationContextBuilder method, of class ConfigurationProvider.
-     */
-    @Test
-    public void testGetConfigurationContextBuilder() {
-        ConfigurationContextBuilder result = ConfigurationProvider.getConfigurationContextBuilder();
-        assertThat(result instanceof ConfigurationContextBuilder).isTrue();
     }
 
     @Test

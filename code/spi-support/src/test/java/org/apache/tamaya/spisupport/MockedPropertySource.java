@@ -75,9 +75,4 @@ public class MockedPropertySource implements PropertySource {
         return returnable;
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
-
 }

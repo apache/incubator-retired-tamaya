@@ -33,10 +33,11 @@ public class CoreConfigurationTest {
 
     @Test
     public void addPropertySources() throws Exception {
-        Configuration cfg = new CoreConfigurationBuilder().build();
         TestPropertyDefaultSource def = new TestPropertyDefaultSource();
+        Configuration cfg = new CoreConfigurationBuilder().build();
         assertThat(cfg.getContext().getPropertySources().contains(def)).isFalse();
-        cfg.getContext().addPropertySources(def);
+        cfg = new CoreConfigurationBuilder()
+                .addPropertySources(def).build();
         assertThat(cfg.getContext().getPropertySources().contains(def)).isTrue();
     }
 
@@ -92,20 +93,19 @@ public class CoreConfigurationTest {
             }
         };
         assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter)).isFalse();
-        cfg.getContext().addPropertyConverter(TypeLiteral.of(String.class), testConverter);
+        cfg = new CoreConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), testConverter).build();
         assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
     }
 
     @Test
     public void getPropertyConverters() throws Exception {
-        Configuration cfg = new CoreConfigurationBuilder().build();
         PropertyConverter testConverter = new PropertyConverter() {
             @Override
             public Object convert(String value, ConversionContext ctx) {
                 return "";
             }
         };
-        cfg.getContext().addPropertyConverter(TypeLiteral.of(String.class), testConverter);
+        Configuration cfg = new CoreConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), testConverter).build();
         assertThat(cfg.getContext().getPropertyConverters()).isNotNull();
         assertThat(cfg.getContext().getPropertyConverters().containsKey(TypeLiteral.of(String.class))).isTrue();
         assertThat(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
@@ -115,7 +115,7 @@ public class CoreConfigurationTest {
                 return Integer.valueOf(5);
             }
         };
-        cfg.getContext().addPropertyConverter(TypeLiteral.of(Integer.class), testConverter);
+        cfg = new CoreConfigurationBuilder().addPropertyConverters(TypeLiteral.of(Integer.class), testConverter).build();
         assertThat(cfg.getContext().getPropertyConverters().containsKey(TypeLiteral.of(Integer.class))).isTrue();
         assertThat(cfg.getContext().getPropertyConverters().get(TypeLiteral.of(Integer.class)).contains(testConverter)).isTrue();
     }
@@ -131,7 +131,8 @@ public class CoreConfigurationTest {
         };
         assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class))).isNotNull();
         assertThat(0).isEqualTo(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).size());
-        cfg.getContext().addPropertyConverter(TypeLiteral.of(String.class), testConverter);
+
+        cfg = new CoreConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), testConverter).build();
         assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class))).isNotNull();
         assertThat(1).isEqualTo(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).size());
         assertThat(cfg.getContext().getPropertyConverters(TypeLiteral.of(String.class)).contains(testConverter)).isTrue();
@@ -152,14 +153,6 @@ public class CoreConfigurationTest {
         assertThat(cfg.getContext().getPropertyFilters().contains(testFilter)).isFalse();
         cfg = cfg.toBuilder().addPropertyFilters(testFilter).build();
         assertThat(cfg.getContext().getPropertyFilters().contains(testFilter)).isTrue();
-    }
-
-    @Test
-    public void getPropertyValueCombinationPolicy() throws Exception {
-        Configuration cfg = new CoreConfigurationBuilder().build();
-        assertThat(cfg.getContext().getPropertyValueCombinationPolicy()).isNotNull();
-        assertThat(cfg.getContext().getPropertyValueCombinationPolicy())
-                .isEqualTo(PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY);
     }
 
     @Test

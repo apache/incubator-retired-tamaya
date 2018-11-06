@@ -46,29 +46,8 @@ public class CoreConfigurationProviderTest {
     }
 
     @Test
-    public void getConfigurationContext() throws Exception {
-        assertThat(new CoreConfigurationProvider().getConfigurationContext()).isNotNull();
-        assertThat(new CoreConfigurationProvider().getConfigurationContext()).isEqualTo(
-                new CoreConfigurationProvider().getConfiguration(getClass().getClassLoader()).getContext());
-    }
-
-    @Test
-    public void getConfigurationContextBuilder() throws Exception {
-        assertThat(new CoreConfigurationProvider().getConfigurationContextBuilder()).isNotNull();
-    }
-
-    @Test
     public void getConfigurationBuilder() throws Exception {
         assertThat(new CoreConfigurationProvider().getConfigurationBuilder()).isNotNull();
-    }
-
-    @SuppressWarnings("deprecation")
-	@Test
-    public void setConfigurationContext() throws Exception {
-        new CoreConfigurationProvider()
-                .setConfigurationContext(new CoreConfigurationProvider().getConfiguration(
-                        getClass().getClassLoader()
-                ).getContext());
     }
 
     @SuppressWarnings("deprecation")
@@ -79,12 +58,6 @@ public class CoreConfigurationProviderTest {
                         getClass().getClassLoader()),
                         getClass().getClassLoader()
                 );
-    }
-
-    @SuppressWarnings("deprecation")
-	@Test
-    public void isConfigurationContextSettable() throws Exception {
-        assertThat(new CoreConfigurationProvider().isConfigurationContextSettable()).isTrue();
     }
 
     @SuppressWarnings("deprecation")

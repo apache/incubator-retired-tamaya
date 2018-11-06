@@ -49,12 +49,7 @@ public class PropertyValueTest {
 
     @Test(expected = NullPointerException.class)
     public void getMetaEntryRequiresNonNullValueForKey() {
-        PropertyValue.of("a", "b", "s").getMeta((String)null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void getMetaEntryRequiresNonNullValueForKeyClass() {
-        PropertyValue.of("a", "b", "s").getMeta((Class)null);
+        PropertyValue.of("a", "b", "s").getMeta(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -64,7 +59,7 @@ public class PropertyValueTest {
 
     @Test
     public void testSetMetaEntries() throws Exception {
-        Map<String,Object> meta = new HashMap<>();
+        Map<String,String> meta = new HashMap<>();
         meta.put("1","2");
         meta.put("a", "b");
         PropertyValue pv = PropertyValue.createObject()
@@ -78,12 +73,7 @@ public class PropertyValueTest {
 
     @Test(expected = NullPointerException.class)
     public void removeMetaEntryRequiresNonNullParameter() {
-        PropertyValue.createObject().removeMeta((String)null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void removeMetaEntryRequiresNonNullParameterClass() {
-        PropertyValue.createObject().removeMeta((Class)null);
+        PropertyValue.createObject().removeMeta(null);
     }
 
 
@@ -100,16 +90,16 @@ public class PropertyValueTest {
     @Test
     public void testRemoveMetaEntryClass() throws Exception {
         PropertyValue pv = PropertyValue.createObject("k")
-                .setMeta(String.class, "v2")
+                .setMeta("k1", "v2")
                 .setMeta("k2", "v22")
-                .removeMeta(String.class);
+                .removeMeta("k1");
         assertThat(pv.getMeta().get("k2")).isEqualTo("v22");
-        assertThat(pv.getMeta(String.class)).isNull();
+        assertThat(pv.getMeta().get("k1")).isNull();
     }
 
     @Test
     public void testGetMetaEntries() throws Exception {
-        Map<String,Object> meta = new HashMap<>();
+        Map<String,String> meta = new HashMap<>();
         meta.put("1","2");
         meta.put("a", "b");
         PropertyValue pv = PropertyValue.createObject("k")
@@ -192,12 +182,7 @@ public class PropertyValueTest {
 
     @Test(expected = NullPointerException.class)
     public void addMetaEntryRequiresNonNullParameterForKey() {
-        PropertyValue.createObject("k").setMeta((String)null, "a");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void addMetaEntryRequiresNonNullParameterForKeyClass() {
-        PropertyValue.createValue("k", null).setMeta((Class)null, "a");
+        PropertyValue.createObject("k").setMeta(null, "a");
     }
 
     @Test(expected = NullPointerException.class)
@@ -245,9 +230,8 @@ public class PropertyValueTest {
     @Test
     public void addMeta() {
         PropertyValue root = PropertyValue.createObject();
-        assertNotNull(root.setMeta("a"));
         root.setMeta("a", Integer.valueOf(3));
-        assertEquals(Integer.valueOf(3), root.getMeta("a"));
+        assertEquals(Integer.valueOf(3).toString(), root.getMeta("a"));
     }
 
     @Test

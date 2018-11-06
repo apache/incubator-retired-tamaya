@@ -42,7 +42,6 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     protected ServiceContext serviceContext = ServiceContextManager.getServiceContext();
     protected List<PropertyFilter> propertyFilters = new ArrayList<>();
     protected List<PropertySource> propertySources = new ArrayList<>();
-    protected PropertyValueCombinationPolicy combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
     protected Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters = new HashMap<>();
     protected MetadataProvider metaDataProvider = serviceContext.create(MetadataProvider.class, DefaultMetaDataProvider::new);
 
@@ -69,7 +68,6 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
         for(PropertySource ps:context.getPropertySources()) {
             addPropertySources(ps);
         }
-        this.combinationPolicy = context.getPropertyValueCombinationPolicy();
     }
 
     /**
@@ -120,7 +118,6 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
         }
         this.propertyConverters.clear();
         this.propertyConverters.putAll(context.getPropertyConverters());
-        this.combinationPolicy = context.getPropertyValueCombinationPolicy();
         return this;
     }
 
@@ -292,13 +289,6 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     }
 
     @Override
-    public ConfigurationBuilder setPropertyValueCombinationPolicy(PropertyValueCombinationPolicy combinationPolicy){
-        checkBuilderState();
-        this.combinationPolicy = Objects.requireNonNull(combinationPolicy);
-        return this;
-    }
-
-    @Override
     public <T> ConfigurationBuilder addPropertyConverters(TypeLiteral<T> type, Collection<PropertyConverter<T>> propertyConverters){
         checkBuilderState();
         Objects.requireNonNull(type);
@@ -329,7 +319,6 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
         Configuration cfg = new DefaultConfiguration(
                 new DefaultConfigurationContext(
                         serviceContext,
-                        this.combinationPolicy,
                         this.propertyFilters,
                         this.propertySources,
                         this.propertyConverters,
@@ -362,7 +351,6 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
 
     protected ConfigurationBuilder loadDefaults() {
         checkBuilderState();
-        this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
         addDefaultPropertySources();
         addDefaultPropertyFilters();
         addDefaultPropertyConverters();

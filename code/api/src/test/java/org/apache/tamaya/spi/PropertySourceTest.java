@@ -35,18 +35,8 @@ public class PropertySourceTest {
         assertThat(instance.getName()).isEqualTo("<empty>");
         assertThat(instance.get("key")).isNull();
         assertThat(instance.getProperties().isEmpty()).isTrue();
-        assertThat(instance.isScannable()).isFalse();
         assertThat(instance.toString()).isEqualTo("PropertySource.EMPTY");
         
-    }
-
-    /**
-     * Test of default isScannable method, of class PropertySource.
-     */
-    @Test
-    public void testIsScannableByDefault() {
-        PropertySource instance = new PropertySourceImpl();
-        assertThat(instance.isScannable()).isEqualTo(true);
     }
 
     public class PropertySourceImpl implements PropertySource {

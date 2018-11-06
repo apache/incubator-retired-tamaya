@@ -32,6 +32,23 @@ under the License.
     <description>
         The API for accessing configuration data.
     </description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
+                <configuration>
+                    <oldArtifacts>
+                        <artifact>${project.groupId}:${project.artifactId}:0.3-incubating</artifact>
+                    </oldArtifacts>
+                    <newArtifacts>
+                        <artifact>${project.groupId}:${project.artifactId}:${project.version}</artifact>
+                    </newArtifacts>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     
 
     <url>http://tamaya.incubator.apache.org</url>

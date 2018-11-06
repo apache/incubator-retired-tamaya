@@ -50,6 +50,7 @@ public class DefaultConfiguration implements Configuration {
      */
     private ConfigValueEvaluator configEvaluator;
 
+
     private ConfigValueEvaluator loadConfigValueEvaluator() {
         ConfigValueEvaluator eval = null;
         try{
@@ -115,19 +116,14 @@ public class DefaultConfiguration implements Configuration {
 
 
     /**
-     * Evaluates the raw createValue using the context's {@link PropertyValueCombinationPolicy}.
+     * Evaluates the raw value.
      * @param key the key, not null.
      * @return the createValue, before filtering is applied.
+     * @deprecated Use {@link ConfigValueEvaluator#evaluteRawValue(String, ConfigurationContext)}.
      */
+    @Deprecated
     protected PropertyValue evaluteRawValue(String key) {
-        List<PropertySource> propertySources = configurationContext.getPropertySources();
-        PropertyValue filteredValue = null;
-        PropertyValueCombinationPolicy combinationPolicy = this.configurationContext
-                .getPropertyValueCombinationPolicy();
-        for (PropertySource propertySource : propertySources) {
-            filteredValue = combinationPolicy.collect(filteredValue, key, propertySource);
-        }
-        return filteredValue;
+        return configEvaluator.evaluteRawValue(key, configurationContext);
     }
 
 
@@ -169,7 +165,6 @@ public class DefaultConfiguration implements Configuration {
         for(PropertyValue val:filtered.values()){
             if(val.getValue()!=null) {
                 result.put(val.getKey(), val.getValue());
-                // TODO: Discuss metadata handling...
             }
         }
         return result;

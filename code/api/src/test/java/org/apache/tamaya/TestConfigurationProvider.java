@@ -22,7 +22,6 @@ import javax.annotation.Priority;
 
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationBuilder;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.mockito.Mockito;
 
@@ -47,28 +46,8 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
-    public ConfigurationContext getConfigurationContext() {
-        return context;
-    }
-    
-    public ConfigurationContext getConfigurationContextFromInterface(){
-        return ConfigurationProviderSpi.super.getConfigurationContext();
-    }
-
-    @Override
-    public void setConfigurationContext(ConfigurationContext context) {
-        this.context = context;
-    }
-
-
-    @Override
     public ConfigurationBuilder getConfigurationBuilder() {
         return Mockito.mock(ConfigurationBuilder.class, Mockito.RETURNS_DEEP_STUBS);
-    }
-
-    @Override
-    public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return Mockito.mock(ConfigurationContextBuilder.class);
     }
 
     @Override

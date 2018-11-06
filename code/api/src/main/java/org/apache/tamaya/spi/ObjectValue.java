@@ -48,7 +48,15 @@ public final class ObjectValue extends PropertyValue{
      * @param parent the parent.
      */
     ObjectValue(PropertyValue parent, String key){
-        super(parent, key, ValueType.OBJECT);
+        super(parent, key);
+    }
+
+    /**
+     * Get the item's current createValue type.
+     * @return the createValue type, never null.
+     */
+    public ValueType getValueType() {
+        return ValueType.OBJECT;
     }
 
     /**
@@ -72,6 +80,8 @@ public final class ObjectValue extends PropertyValue{
     /**
      * Get a single child getField with the given name, creates it if not existing.
      * @param name the child's name, not null.
+     * @param valueSupplier the supplier to create a new instance, if no value is present, not null.
+     * @param <T> the target type.
      * @return the child found or created, never null.
      * @throws IllegalArgumentException if multiple getList with the given name are existing (ambigous).
      * @throws IllegalStateException if the instance is immutable.
@@ -99,7 +109,7 @@ public final class ObjectValue extends PropertyValue{
 
     @Override
     public PropertyValue toPropertyValue(){
-        PropertyValue value = new PropertyValue(getParent(), getKey(), getValueType(), getValue());
+        PropertyValue value = new PropertyValue(getParent(), getKey(), getValue());
         value.setMeta(getMeta());
         value.setVersion(getVersion());
         return value;
@@ -132,12 +142,13 @@ public final class ObjectValue extends PropertyValue{
     /**
      * Adds a new nvalue child.
      * @param name the child's name, not null.
+     * @param value the value
      * @return the createValue added, not null.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
     public PropertyValue setField(String name, String value){
-        return set(new PropertyValue(this, name, ValueType.VALUE, value));
+        return set(new PropertyValue(this, name, value));
     }
 
     /**
@@ -151,7 +162,7 @@ public final class ObjectValue extends PropertyValue{
         checkImmutable();
         List<PropertyValue> result = new ArrayList<>();
         for(Map.Entry<String, String> en:values.entrySet()) {
-            result.add(new PropertyValue(this, en.getKey(), ValueType.VALUE, en.getValue()));
+            result.add(new PropertyValue(this, en.getKey(), en.getValue()));
         }
         return result;
     }
@@ -182,6 +193,7 @@ public final class ObjectValue extends PropertyValue{
     /**
      * Adds another existing node, hereby setting the corresponding parent node.
      * @param value the createValue, not null
+     * @param <T> the value type.
      * @return the createValue added, not null.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()

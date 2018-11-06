@@ -36,7 +36,6 @@ public final class ListValue extends PropertyValue{
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(ListValue.class.getName());
     /** List of child properties. */
     private List<PropertyValue> list = new ArrayList<>();
 
@@ -46,9 +45,22 @@ public final class ListValue extends PropertyValue{
      * @param parent the parent.
      */
     ListValue(PropertyValue parent, String key){
-        super(parent, key, ValueType.ARRAY);
+        super(parent, key);
     }
 
+    /**
+     * Get the item's current createValue type.
+     * @return the createValue type, never null.
+     */
+    public ValueType getValueType() {
+        return ValueType.ARRAY;
+    }
+
+    /**
+     * Get the index of the given member value.
+     * @param member the member, not null.
+     * @return the index, or -1.
+     */
     public int getIndex(PropertyValue member) {
         return this.list.indexOf(member);
     }
@@ -79,6 +91,7 @@ public final class ListValue extends PropertyValue{
     /**
      * Adds a createValue to the array.
      * @param value the createValue, not null
+     * @param <T> the instance type.
      * @return this instance, for chaining.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
@@ -91,26 +104,26 @@ public final class ListValue extends PropertyValue{
     }
 
     /**
-     * Adds an named text createValue to the array.
-     * @param value the child's createValue, not null.
-     * @return the created createValue, not null.
+     * Adds an named text value to the array.
+     * @param key the child's key, not null.
+     * @param value the child's value, not null.
+     * @return the created value, not null.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
     public PropertyValue addValue(String key, String value) {
-        return add(new PropertyValue(this,key, ValueType.VALUE, value));
+        return add(new PropertyValue(this,key, value));
     }
 
     /**
-     * Adds an anonymous text createValue to the array.
-     * @param value the child's createValue, not null.
-     * @return the created createValue, not null.
+     * Adds an anonymous text value to the array.
+     * @param value the child's value, not null.
+     * @return the created value, not null.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
     public PropertyValue addValue(String value) {
-        return add(new PropertyValue(this,"",
-                ValueType.VALUE, value));
+        return add(new PropertyValue(this,"", value));
     }
 
     /**
@@ -123,7 +136,7 @@ public final class ListValue extends PropertyValue{
     public List<PropertyValue> addValues(String... values) {
         List<PropertyValue> result = new ArrayList<>();
         for(String val:values) {
-            result.add(add(new PropertyValue(this, "", ValueType.VALUE, val)));
+            result.add(add(new PropertyValue(this, "", val)));
         }
         return result;
     }
@@ -254,7 +267,7 @@ public final class ListValue extends PropertyValue{
 
     @Override
     public PropertyValue toPropertyValue(){
-        PropertyValue value = new PropertyValue(getParent(), getKey(), getValueType(), getValue());
+        PropertyValue value = new PropertyValue(getParent(), getKey(), getValue());
         value.setMeta(getMeta());
         value.setVersion(getVersion());
         return value;
@@ -279,8 +292,8 @@ public final class ListValue extends PropertyValue{
     }
 
     /**
-     * Clones this instance and all it's children, marking as mutable createValue.
-     * @return the new createValue clone.
+     * Clones this instance and all it's children, marking as mutable value.
+     * @return the new value clone.
      */
     @Override
     public ListValue mutable(){
@@ -318,7 +331,7 @@ public final class ListValue extends PropertyValue{
     public String toString() {
         return "PropertyValue[ARRAY]{" +
                 '\'' +getQualifiedKey() + '\'' +
-                (getValue()!=null?", createValue='" + getValue() + '\'':"") +
+                (getValue()!=null?", value='" + getValue() + '\'':"") +
                 ", size='" + getSize() + '\'' +
                 (getMeta().isEmpty()?"":", metaData=" + getMeta()) +
                 '}';

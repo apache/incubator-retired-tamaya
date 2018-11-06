@@ -20,17 +20,13 @@ package org.apache.tamaya.spi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 

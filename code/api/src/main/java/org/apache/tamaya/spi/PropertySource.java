@@ -119,11 +119,10 @@ public interface PropertySource{
      *
      * In cases where it is not possible to change a config sources ordinal createValue, you may have several options:
      * <ul>
-     *     <li>you can register an alternate implementation of {@link PropertyValueCombinationPolicy}.</li>
-     *     <li>you can use a {@link ConfigurationContextBuilder} to redefine the source order and finally use
+     *     <li>you can use a {@link ConfigurationBuilder} to redefine the source order and finally use
      *     {@link org.apache.tamaya.ConfigurationProvider#setConfiguration(Configuration)} to
      *     change the current default {@link Configuration}.</li>
-     *     <li>finally, the imeplementor of this API may define alternate mechanism to reconfigure an ordinal
+     *     <li>finally, the implementor of this API may define alternate mechanism to reconfigure an ordinal
      *     in a vendor specific way.</li>
      * </ul>
      * @return the 'importance' aka ordinal of the configured values. The higher, the more important.

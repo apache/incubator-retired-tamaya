@@ -21,10 +21,7 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationBuilder;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
-import org.apache.tamaya.spisupport.DefaultConfiguration;
-import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Map;
@@ -81,11 +78,6 @@ public class CoreConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
-    public ConfigurationContextBuilder getConfigurationContextBuilder() {
-        return new DefaultConfigurationContextBuilder();
-    }
-
-    @Override
     public void setConfiguration(Configuration config, ClassLoader classLoader) {
         Objects.requireNonNull(config.getContext());
         Configuration old = this.configurations.put(classLoader, Objects.requireNonNull(config));
@@ -97,24 +89,6 @@ public class CoreConfigurationProvider implements ConfigurationProviderSpi {
     @Override
     public boolean isConfigurationSettable(ClassLoader classLoader) {
         return true;
-    }
-
-    /**
-     * @deprecated use {@link Configuration#getContext()} instead.
-     */
-    @Deprecated
-    @Override
-    public ConfigurationContext getConfigurationContext() {
-        return getConfiguration(Thread.currentThread().getContextClassLoader()).getContext();
-    }
-
-    /**
-     * @deprecated the context should be given upon creation of the {@link Configuration}
-     */
-    @Deprecated
-    @Override
-    public void setConfigurationContext(ConfigurationContext context){
-        setConfiguration(new CoreConfigurationBuilder(context).build(), Thread.currentThread().getContextClassLoader());
     }
 
 }

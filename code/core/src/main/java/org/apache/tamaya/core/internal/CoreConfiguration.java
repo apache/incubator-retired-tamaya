@@ -21,8 +21,6 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
-import org.apache.tamaya.spisupport.DefaultConfigurationContext;
-import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
 
 /**
  * Default implementation of {@link ConfigurationBuilder}.

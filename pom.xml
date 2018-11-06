@@ -72,6 +72,9 @@
         <reflow-skin.version>1.1.1</reflow-skin.version>
         <released_version>0.3-incubating</released_version>
         <osgi.annotation.version>6.0.0</osgi.annotation.version>
+        <!-- API checker -->
+        <revapi-java.version>0.18.0</revapi-java.version>
+        <revapi.plugin.version>0.10.5</revapi.plugin.version>
     </properties>
 
     <licenses>
@@ -292,6 +295,44 @@
         <defaultGoal>clean install</defaultGoal>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.revapi</groupId>
+                    <artifactId>revapi-maven-plugin</artifactId>
+                    <version>${revapi.plugin.version}</version>
+                    <configuration>
+                        <failSeverity>breaking</failSeverity>
+                        <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+                        <analysisConfiguration>
+                            <revapi.reporter.text id="stdout">
+                                <minSeverity>POTENTIALLY_BREAKING</minSeverity>
+                                <output>out</output>
+                                <append>false</append>
+                            </revapi.reporter.text>
+                            <revapi.filter>
+                                <elements>
+                                    <exclude>
+                                        <item>.*internal.*</item>
+                                        <item>.*osgi.*</item>
+                                    </exclude>
+                                </elements>
+                            </revapi.filter>
+                        </analysisConfiguration>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.revapi</groupId>
+                            <artifactId>revapi-java</artifactId>
+                            <version>${revapi-java.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>report</id>
+                            <phase>package</phase>
+                            <goals><goal>report</goal></goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>

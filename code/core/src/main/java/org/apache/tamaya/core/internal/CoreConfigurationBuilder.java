@@ -23,10 +23,8 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.core.internal.converters.*;
-import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.apache.tamaya.spisupport.DefaultConfigurationBuilder;
 import org.apache.tamaya.spisupport.DefaultConfigurationContext;
-import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -90,7 +88,6 @@ public final class CoreConfigurationBuilder extends DefaultConfigurationBuilder 
         Configuration cfg = new CoreConfiguration(
                 new DefaultConfigurationContext(
                         serviceContext,
-                        this.combinationPolicy,
                         this.propertyFilters,
                         this.propertySources,
                         this.propertyConverters,

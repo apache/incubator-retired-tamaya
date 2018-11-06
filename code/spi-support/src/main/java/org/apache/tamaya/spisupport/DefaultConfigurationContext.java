@@ -22,7 +22,6 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
@@ -50,12 +49,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      */
     private List<PropertyFilter> immutablePropertyFilters;
 
-    /**
-     * The overriding policy used when combining PropertySources registered to evalute the final configuration
-     * values.
-     */
-    private PropertyValueCombinationPolicy propertyValueCombinationPolicy;
-
     /** The corresponding classLoader for this instance. */
     private ServiceContext serviceContext;
 
@@ -66,9 +59,9 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
     @SuppressWarnings("unchecked")
-	protected DefaultConfigurationContext(DefaultConfigurationContextBuilder builder) {
-        this.serviceContext = builder.getServiceContext();
-        this.metaDataProvider = Objects.requireNonNull(builder.getMetaDataProvider());
+	protected DefaultConfigurationContext(DefaultConfigurationBuilder builder) {
+        this.serviceContext = builder.serviceContext;
+        this.metaDataProvider = Objects.requireNonNull(builder.metaDataProvider);
         this.metaDataProvider.init(this);
         propertyConverterManager = new PropertyConverterManager(serviceContext);
         List<PropertySource> propertySources = new ArrayList<>();
@@ -89,22 +82,12 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         }
         LOG.info("Registered " + propertyConverterManager.getPropertyConverters().size() + " property converters: " +
                 propertyConverterManager.getPropertyConverters());
-
-        this.propertyValueCombinationPolicy = builder.combinationPolicy;
-        if(this.propertyValueCombinationPolicy==null){
-            this.propertyValueCombinationPolicy = getServiceContext().getService(PropertyValueCombinationPolicy.class);
-        }
-        if(this.propertyValueCombinationPolicy==null){
-            this.propertyValueCombinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
-        }
-        LOG.info("Using PropertyValueCombinationPolicy: " + this.propertyValueCombinationPolicy);
     }
 
-    public DefaultConfigurationContext(ServiceContext serviceContext, PropertyValueCombinationPolicy combinationPolicy,
+    public DefaultConfigurationContext(ServiceContext serviceContext,
                                        List<PropertyFilter> propertyFilters, List<PropertySource> propertySources,
                                        Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters,
                                        MetadataProvider metaDataProvider) {
-        this.propertyValueCombinationPolicy = Objects.requireNonNull(combinationPolicy);
         this.serviceContext = Objects.requireNonNull(serviceContext);
         this.immutablePropertyFilters = Collections.unmodifiableList(new ArrayList<>(propertyFilters));
         this.immutablePropertySources = Collections.unmodifiableList(new ArrayList<>(propertySources));
@@ -120,29 +103,13 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
 
     @Override
-    public Map<String,String> getMetadata() {
+    public Map<String,String> getMetaData() {
         return metaDataProvider.getMetaData();
     }
 
     @Override
     public ServiceContext getServiceContext() {
         return serviceContext;
-    }
-
-    @Deprecated
-    @Override
-    public void addPropertySources(PropertySource... propertySourcesToAdd) {
-        Lock writeLock = propertySourceLock.writeLock();
-        try {
-            writeLock.lock();
-            List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
-            newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
-            Collections.sort(newPropertySources, PropertySourceComparator.getInstance());
-
-            this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
-        } finally {
-            writeLock.unlock();
-        }
     }
 
     @Override
@@ -165,7 +132,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         if (!immutablePropertyFilters.equals(that.immutablePropertyFilters)) {
             return false;
         }
-        return getPropertyValueCombinationPolicy().equals(that.getPropertyValueCombinationPolicy());
+        return true;
 
     }
 
@@ -174,7 +141,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         int result = propertyConverterManager.hashCode();
         result = 31 * result + immutablePropertySources.hashCode();
         result = 31 * result + immutablePropertyFilters.hashCode();
-        result = 31 * result + getPropertyValueCombinationPolicy().hashCode();
         return result;
     }
 
@@ -240,9 +206,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                 b.append('\n');
             }
         }
-        b.append("\n\n");
-        b.append("  PropertyValueCombinationPolicy: " + getPropertyValueCombinationPolicy().getClass().getName()).append('\n');
-        b.append('}');
+        b.append("\n}");
         return b.toString();
     }
 
@@ -285,12 +249,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     }
 
     @Override
-    public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
-        propertyConverterManager.register(typeToConvert, propertyConverter);
-        LOG.info("Added PropertyConverter: " + propertyConverter.getClass().getName());
-    }
-
-    @Override
     public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
         return propertyConverterManager.getPropertyConverters();
     }
@@ -303,16 +261,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     @Override
     public List<PropertyFilter> getPropertyFilters() {
         return immutablePropertyFilters;
-    }
-
-    @Override
-    public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy(){
-        return propertyValueCombinationPolicy;
-    }
-
-    @Override
-    public ConfigurationContextBuilder toBuilder() {
-        return new DefaultConfigurationContextBuilder(this);
     }
 
 }

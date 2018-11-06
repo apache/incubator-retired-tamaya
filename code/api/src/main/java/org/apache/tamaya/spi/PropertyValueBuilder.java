@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya.spi;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -26,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @deprecated Use {@link PropertyValue} directly.
  */
 @Deprecated
-public final class PropertyValueBuilder {
+public class PropertyValueBuilder {
     /** The key accessed. */
     protected String key;
     /** The property createValue. */
@@ -34,7 +37,7 @@ public final class PropertyValueBuilder {
     /** The property createValue. */
     protected String source;
     /** additional metadata entries (optional). */
-    protected Map<String,Object> metaEntries = new HashMap<>();
+    protected Map<String,String> metaEntries = new HashMap<>();
     /** The getParent getField, null if it's a root getField. */
     protected PropertyValue parent;
     /** The getField's getIndex, if the getField is participating in a createList structure. */
@@ -57,7 +60,7 @@ public final class PropertyValueBuilder {
      * @param metaEntries the context data to be applied, not {@code null}.
      * @return the builder for chaining.
      */
-    public PropertyValueBuilder setMeta(Map<String, Object> metaEntries) {
+    public PropertyValueBuilder setMeta(Map<String, String> metaEntries) {
         this.metaEntries.clear();
         this.metaEntries.putAll(metaEntries);
         return this;
@@ -69,7 +72,7 @@ public final class PropertyValueBuilder {
      * @param value the context createValue, not {@code null} (will be converted to String).
      * @return the builder for chaining.
      */
-    public PropertyValueBuilder addMetaEntry(String key, Object value) {
+    public PropertyValueBuilder addMetaEntry(String key, String value) {
         Objects.requireNonNull(key, "Meta key must be given.");
         Objects.requireNonNull(value, "Meta createValue must be given.");
 
@@ -78,39 +81,11 @@ public final class PropertyValueBuilder {
     }
 
     /**
-     * Add an additional context data information.
-     * @param type the context data type, used as key, not {@code null}.
-     * @param value the context createValue, not {@code null}.
-     * @param <T> the type of the class modeled by the type parameter
-     * @return the builder for chaining.
-     */
-    public <T> PropertyValueBuilder addMetaEntry(Class<T> type, T value) {
-        Objects.requireNonNull(type, "Meta key must be given.");
-        Objects.requireNonNull(value, "Meta createValue must be given.");
-
-        this.metaEntries.put(type.toString(), value);
-        return this;
-    }
-
-    /**
-     * Add an additional context data information, using the data's class name as key.
-     * @param value the context createValue, not {@code null}.
-     * @param <T> the type of the class modeled by the type parameter
-     * @return the builder for chaining.
-     */
-    public <T> PropertyValueBuilder addMetaEntry(T value) {
-        Objects.requireNonNull(value, "Meta createValue must be given.");
-
-        this.metaEntries.put(value.getClass().toString(), value);
-        return this;
-    }
-
-    /**
      * Adds the context data given.
      * @param metaEntries the context data to be applied, not {@code null}.
      * @return the builder for chaining.
      */
-    public PropertyValueBuilder addMetaEntries(Map<String, Object> metaEntries) {
+    public PropertyValueBuilder setMetaEntries(Map<String, String> metaEntries) {
         this.metaEntries.putAll(metaEntries);
         return this;
     }
@@ -120,7 +95,7 @@ public final class PropertyValueBuilder {
      * @param key the entry's key, not {@code null}.
      * @return the builder for chaining.
      */
-    public PropertyValueBuilder removeMeta(String key) {
+    public PropertyValueBuilder removeMetaEntry(String key) {
         Objects.requireNonNull(key, "Key must be given.");
 
         this.metaEntries.remove(key);
@@ -131,17 +106,17 @@ public final class PropertyValueBuilder {
      * Get the createValue's context data.
      * @return the context data, not {@code null}.
      */
-    public Map<String,Object> getMetaEntries() {
+    public Map<String,String> getMetaEntries() {
         return Collections.unmodifiableMap(this.metaEntries);
     }
 
     /**
      * Get the createValue's context data.
-     * @param <T> the type of the class modeled by the type parameter
+     * @param key the key, not null.
      * @return the context data, not {@code null}.
      */
-    public <T> T getMeta(String key) {
-        return (T)this.metaEntries.get(key);
+    public String getMeta(String key) {
+        return this.metaEntries.get(key);
     }
 
     /**
@@ -161,8 +136,8 @@ public final class PropertyValueBuilder {
      */
     public PropertyValueBuilder mapKey(String key) {
         // todo obf if (1==1) throw new RuntimeException("No tests written.");
-        Map<String,Object> newContext = new HashMap<>();
-        for(Map.Entry<String,Object> en:this.metaEntries.entrySet()){
+        Map<String,String> newContext = new HashMap<>();
+        for(Map.Entry<String,String> en:this.metaEntries.entrySet()){
             if(en.getKey().startsWith("_"+this.key)){
                 newContext.put("_"+key+'.'+ en.getKey().substring(this.key.length()+1), en.getValue());
             }else{
@@ -199,7 +174,7 @@ public final class PropertyValueBuilder {
      * Sets a new source.
      * @param source the new source, not {@code null}.
      * @return the builder for chaining.
-     * @deprecated Use {@link #addMetaEntry(String, Object)} (String, Object)}
+     * @deprecated Use {@link #addMetaEntry(String, String)}
      */
     @Deprecated
     public PropertyValueBuilder setSource(String source) {

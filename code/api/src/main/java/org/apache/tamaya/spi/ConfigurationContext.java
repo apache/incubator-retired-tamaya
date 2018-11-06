@@ -21,7 +21,6 @@ package org.apache.tamaya.spi;
 
 import org.apache.tamaya.TypeLiteral;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,24 +36,13 @@ public interface ConfigurationContext {
      * Get the metadata evaluated for this configuration.
      * @return the metadata accessor, never null.
      */
-    Map<String,String> getMetadata();
+    Map<String,String> getMetaData();
 
     /**
      * Access the underlying {@link ServiceContext}.
      * @return the service context, never null.
      */
     ServiceContext getServiceContext();
-
-    /**
-     * This method can be used for programmatically adding {@link PropertySource}s.
-     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
-     *
-     * @param propertySources the {@link PropertySource}s to add
-     * @deprecated Use {@link ConfigurationContextBuilder} to createObject a new {@link ConfigurationContext}.
-     * @see #toBuilder()
-     */
-    @Deprecated
-    void addPropertySources(PropertySource... propertySources);
 
     /**
      * This method returns the current createList of registered {@link PropertySource}s ordered via their ordinal.
@@ -76,20 +64,6 @@ public interface ConfigurationContext {
      * @return the propoerty source found, or {@code null}.
      */
     PropertySource getPropertySource(String name);
-
-    /**
-     * This method can be used for programmatically adding {@link PropertyConverter}s.
-     * It is not needed for normal 'usage' by end users, but only for Extension Developers!
-     *
-     * @param <T> the type of the type literal
-     * @param type the type which the converters is for
-     * @param propertyConverter the PropertyConverters to add for this type
-     * @deprecated Use {@link ConfigurationContextBuilder} to createObject a new {@link ConfigurationContext}.
-     * @see #toBuilder()
-     */
-    @Deprecated
-    <T> void addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter);
-
 
     /**
      * <p>
@@ -171,37 +145,17 @@ public interface ConfigurationContext {
     List<PropertyFilter> getPropertyFilters();
 
     /**
-     * Access the {@link PropertyValueCombinationPolicy} used to evaluate the final
-     * property values.
-     * @return the {@link PropertyValueCombinationPolicy} used, never null.
-     */
-    PropertyValueCombinationPolicy getPropertyValueCombinationPolicy();
-
-    /**
-     * Creates a {@link ConfigurationContextBuilder} preinitialized with the data from this instance.
-     * @return a new builder instance, never null.
-     * @deprecated Will be removed.
-     */
-    @Deprecated
-    ConfigurationContextBuilder toBuilder();
-
-    /**
      * An empty configuration context. The implementation can be shared and is thread safe.
      */
     ConfigurationContext EMPTY = new ConfigurationContext() {
         @Override
-        public Map<String,String> getMetadata() {
+        public Map<String,String> getMetaData() {
             return Collections.emptyMap();
         }
 
         @Override
         public ServiceContext getServiceContext() {
             return ServiceContextManager.getServiceContext(getClass().getClassLoader());
-        }
-
-        @Override
-        public void addPropertySources(PropertySource... propertySourcesToAdd) {
-            // ignore
         }
 
         @Override
@@ -212,11 +166,6 @@ public interface ConfigurationContext {
         @Override
         public PropertySource getPropertySource(String name) {
             return null;
-        }
-
-        @Override
-        public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
-            // ignore
         }
 
         @Override
@@ -232,16 +181,6 @@ public interface ConfigurationContext {
         @Override
         public List<PropertyFilter> getPropertyFilters() {
             return Collections.emptyList();
-        }
-
-        @Override
-        public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
-            return PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
-        }
-
-        @Override
-        public ConfigurationContextBuilder toBuilder() {
-            throw new UnsupportedOperationException("Cannot build from ConfigurationContext.EMPTY.");
         }
 
         @Override

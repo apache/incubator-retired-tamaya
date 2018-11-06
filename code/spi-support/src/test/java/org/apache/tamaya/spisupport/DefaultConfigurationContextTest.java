@@ -19,7 +19,13 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -31,12 +37,17 @@ public class DefaultConfigurationContextTest {
     @Test
     public void testEqualsAndHashAndToStringValues() {
         PropertySource sharedSource = new MockedPropertySource();
-        DefaultConfigurationContext ctx1 = (DefaultConfigurationContext) new DefaultConfigurationContextBuilder().build();
-        ctx1.addPropertySources(sharedSource);
-        DefaultConfigurationContext ctx2 = (DefaultConfigurationContext) new DefaultConfigurationContextBuilder().build();
-        ctx2.addPropertySources(sharedSource);
-        DefaultConfigurationContext ctx3 = (DefaultConfigurationContext) new DefaultConfigurationContextBuilder().build();
-        ctx3.addPropertySources(new MockedPropertySource());
+        ServiceContext serviceContext = Mockito.mock(ServiceContext.class);
+        MetadataProvider metaDataProvider = Mockito.mock(MetadataProvider.class);
+        DefaultConfigurationContext ctx1 = new DefaultConfigurationContext(
+                serviceContext, Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(),
+                metaDataProvider);
+        DefaultConfigurationContext ctx2 = new DefaultConfigurationContext(
+                serviceContext, Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(),
+                metaDataProvider);
+        DefaultConfigurationContext ctx3 = new DefaultConfigurationContext(
+                serviceContext, Collections.emptyList(), Collections.singletonList(sharedSource), Collections.emptyMap(),
+                metaDataProvider);
 
         assertThat(ctx1).isEqualTo(ctx1);
         assertThat(ctx1).isNotEqualTo(null);
@@ -47,6 +58,6 @@ public class DefaultConfigurationContextTest {
         assertThat(ctx1.hashCode()).isNotEqualTo(ctx3.hashCode());
         String spaces = new String(new char[70 - sharedSource.getName().length()]).replace("\0", " ");
         System.out.println(ctx1.toString());
-        assertThat(ctx1.toString().contains(sharedSource.getName() + spaces)).isTrue();
+        assertThat(ctx3.toString().contains(sharedSource.getName() + spaces)).isTrue();
     }
 }

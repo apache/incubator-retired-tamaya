@@ -40,18 +40,13 @@ public class MockedConfigurationContext implements ConfigurationContext {
     }
 
     @Override
-    public Map<String, String> getMetadata() {
+    public Map<String, String> getMetaData() {
         return metaData;
     }
 
     @Override
     public ServiceContext getServiceContext() {
         return serviceContext;
-    }
-
-    @Override
-    public void addPropertySources(PropertySource... propertySources) {
-        throw new RuntimeException("addPropertySources should be never called in this test");
     }
 
     @Override
@@ -70,11 +65,6 @@ public class MockedConfigurationContext implements ConfigurationContext {
     }
 
     @Override
-    public <T> void addPropertyConverter(TypeLiteral<T> type, PropertyConverter<T> propertyConverter) {
-        pcm.register(type, propertyConverter);
-    }
-
-    @Override
     public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
         return pcm.getPropertyConverters();
     }
@@ -89,13 +79,4 @@ public class MockedConfigurationContext implements ConfigurationContext {
         return Arrays.asList(new MockedPropertyFilter());
     }
 
-    @Override
-    public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
-        return PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_POLICY;
-    }
-
-    @Override
-    public ConfigurationContextBuilder toBuilder() {
-        throw new RuntimeException("toBuilder should be never called in this test");
-    }
 }

@@ -40,7 +40,7 @@ public interface MetadataProvider {
 
     /**
      * Access the current metadata for the given configuration context. The MetaData will be
-     * accessible from {@link ConfigurationContext#getMetadata()}. Note that the metadata must not
+     * accessible from {@link ConfigurationContext#getMetaData()}. Note that the metadata must not
      * to be cached by it's consumers, so caching/optimazitation is delegated to this implementation.
      * @return the (immutable) metadata of this configuration context.
      */

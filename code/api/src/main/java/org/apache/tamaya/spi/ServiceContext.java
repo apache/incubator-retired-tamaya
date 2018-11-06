@@ -108,6 +108,7 @@ public interface ServiceContext extends ClassloaderAware{
      * the one with the highest {@link javax.annotation.Priority} will be used as the base
      * for creating subsequent instances.
      *
+     * @param supplier the supplier to create a new service, if no service could be autodetected.
      * @param <T> the type of the service type.
      * @param serviceType the service type.
      * @return The new instance to be used, or {@code null}

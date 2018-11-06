@@ -34,9 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
-    private static final long serialVersionUID = 1L;
-    /** The type of node. */
-    private ValueType valueType;
+    private static final long serialVersionUID = 2L;
     /** The requested key. */
     private String key;
     /** The createValue. */
@@ -48,7 +46,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     /** Flag to mark a createValue as immutable. */
     private boolean immutable;
     /** Additional metadata provided by the provider. */
-    private final transient Map<String,Object> metaData = new HashMap<>();
+    private final Map<String,String> metaEntries = new HashMap<>();
 
     /**
      * Enum of the different supported value types.
@@ -102,7 +100,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return a new createValue instance.
      */
     public static PropertyValue createValue(String key, String value){
-        return new PropertyValue(null, key, ValueType.VALUE, value);
+        return new PropertyValue(null, key, value);
     }
 
     /**
@@ -135,9 +133,9 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     public static PropertyValue of(String key, String value, String source) {
         Objects.requireNonNull(key);
         if(source!=null) {
-            return new PropertyValue(null, key, ValueType.VALUE, value).setMeta("source", source);
+            return new PropertyValue(null, key, value).setMeta("source", source);
         }
-        return new PropertyValue(null, key, ValueType.VALUE, value);
+        return new PropertyValue(null, key, value);
     }
 
     /**
@@ -184,22 +182,19 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * Creates a new instance
      * @param key the key, not {@code null}.
      * @param parent the parent.
-     * @param valueType the createValue type, not null.
      */
-    protected PropertyValue(PropertyValue parent, String key, ValueType valueType){
-        this(parent, key, valueType, null);
+    protected PropertyValue(PropertyValue parent, String key){
+        this(parent, key, null);
     }
 
     /**
      * Creates a new instance
      * @param key the key, not {@code null}.
      * @param parent the parent.
-     * @param valueType the createValue type, not null.
      * @param value the initial text createValue.
      */
-    protected PropertyValue(PropertyValue parent, String key, ValueType valueType, String value){
+    protected PropertyValue(PropertyValue parent, String key, String value){
         this.parent = parent;
-        this.valueType = Objects.requireNonNull(valueType, "ValueType is required.");
         this.key = Objects.requireNonNull(key);
         this.value = value;
     }
@@ -237,8 +232,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * Get the item's current createValue type.
      * @return the createValue type, never null.
      */
-    public final ValueType getValueType() {
-        return valueType;
+    public ValueType getValueType() {
+        return ValueType.VALUE;
     }
 
     /**
@@ -256,6 +251,17 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     public String getValue() {
         return this.value;
     }
+
+    /**
+     * Get the source.
+     * @return the source, or null.
+     * @deprecated Use {@code getMeta("source")}.
+     */
+    @Deprecated
+    public String getSource() {
+        return this.metaEntries.get("source");
+    }
+
 
     /**
      * Sets the createValue.
@@ -323,16 +329,6 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         return version.get();
     }
 
-    /**
-     * Get the source.
-     * @return the source, or null.
-     * @deprecated Use {@code getMeta("source")}.
-     */
-    @Deprecated
-    public final String getSource() {
-        return (String)this.metaData.get("source");
-    }
-
 
     /**
      * Checks if the getField is a root getField.
@@ -355,8 +351,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * is also used for subsequent processing, like createValue filtering.
      * @return the property createValue entry map.
      */
-    public final Map<String, Object> getMeta() {
-        return Collections.unmodifiableMap(metaData);
+    public final Map<String, String> getMeta() {
+        return Collections.unmodifiableMap(metaEntries);
     }
 
     /**
@@ -366,8 +362,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @deprecated Use {@link #getMeta(String)} instead of.
      */
     @Deprecated
-    public final String getMetaEntry(String key) {
-        return (String)this.metaData.get(Objects.requireNonNull(key));
+    public String getMetaEntry(String key) {
+        return (String)this.metaEntries.get(Objects.requireNonNull(key));
     }
 
     /**
@@ -377,19 +373,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return the createValue found, or {@code null}.
      */
     public final <T> T getMeta(String key) {
-        return (T)this.metaData.get(Objects.requireNonNull(key));
+        return (T)this.metaEntries.get(Objects.requireNonNull(key));
     }
-
-    /**
-     * Access the given metadata.
-     * @param type the type, not {@code null}.
-     * @param <T> the target type.
-     * @return the createValue found, or {@code null}.
-     */
-    public final <T> T getMeta(Class<T> type) {
-        return (T)this.metaData.get(type.getName());
-    }
-
 
     /**
      * Get the createValue's number of elements.
@@ -429,11 +414,11 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public final PropertyValue setMeta(Map<String, Object> metaEntries) {
+    public final PropertyValue setMeta(Map<String, String> metaEntries) {
         checkImmutable();
-        if(!Objects.equals(this.metaData, metaEntries)) {
-            this.metaData.clear();
-            this.metaData.putAll(metaEntries);
+        if(!Objects.equals(this.metaEntries, metaEntries)) {
+            this.metaEntries.clear();
+            this.metaEntries.putAll(metaEntries);
             version.incrementAndGet();
         }
         return this;
@@ -451,46 +436,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         checkImmutable();
         Objects.requireNonNull(key, "Meta key must be given.");
         Objects.requireNonNull(value, "Meta createValue must be given.");
-        if(!Objects.equals(this.metaData.get(key), value)) {
-            this.metaData.put(key, value);
-            version.incrementAndGet();
-        }
-        return this;
-    }
-
-    /**
-     * Add an additional context data information.
-     * @param type the context data type, used as key, not {@code null}.
-     * @param value the context createValue, not {@code null}.
-     * @param <T> the target type.
-     * @return the builder for chaining.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public final <T> PropertyValue setMeta(Class<T> type, T value) {
-        checkImmutable();
-        Objects.requireNonNull(type, "Meta key must be given.");
-        Objects.requireNonNull(value, "Meta createValue must be given.");
-        if(!Objects.equals(this.metaData.get(type.toString()), value)) {
-            this.metaData.put(type.toString(), value);
-            version.incrementAndGet();
-        }
-        return this;
-    }
-
-    /**
-     * Add an additional context data information, using the data's class name as key.
-     * @param value the context createValue, not {@code null}.
-     * @param <T> the target type.
-     * @return the builder for chaining.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public final <T> PropertyValue setMeta(T value) {
-        checkImmutable();
-        Objects.requireNonNull(value, "Meta createValue must be given.");
-        if(!Objects.equals(this.metaData.get(value.getClass().toString()), value)) {
-            this.metaData.put(value.getClass().toString(), value);
+        if(!Objects.equals(this.metaEntries.get(key), value.toString())) {
+            this.metaEntries.put(key, value.toString());
             version.incrementAndGet();
         }
         return this;
@@ -506,29 +453,13 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     public final PropertyValue removeMeta(String key) {
         checkImmutable();
         Objects.requireNonNull(key, "Key must be given.");
-        if(this.metaData.containsKey(key)) {
-            this.metaData.remove(key);
+        if(this.metaEntries.containsKey(key)) {
+            this.metaEntries.remove(key);
             version.incrementAndGet();
         }
         return this;
     }
 
-    /**
-     * Removes a getMeta entry.
-     * @param type the entry's type, not {@code null}.
-     * @return the builder for chaining.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public final PropertyValue removeMeta(Class type) {
-        checkImmutable();
-        Objects.requireNonNull(key, "Key must be given.");
-        if(this.metaData.containsKey(type.getName())) {
-            this.metaData.remove(type.getName());
-            version.incrementAndGet();
-        }
-        return this;
-    }
 
     /**
      * Convert the getField tree to a property map.
@@ -564,19 +495,32 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     @Deprecated
     public PropertyValueBuilder toBuilder() {
         return new PropertyValueBuilder(this.getKey(), this.getValue())
-                .setMeta(this.metaData);
+                .setMeta(this.metaEntries);
     }
 
+    /**
+     * Convert an instance to a simple PropertyValue. Note, that in case
+     * of object/list values, data loss can occur.
+     * @return the simple value, never null.
+     */
     public PropertyValue toPropertyValue(){
         return this;
     }
 
+    /**
+     * Convert an instance to a Object PropertyValue.
+     * @return the list value, never null.
+     */
     public ObjectValue toObjectValue(){
         ObjectValue ov = new ObjectValue(getParent(),getKey());
         ov.setField("createValue", value);
         return ov;
     }
 
+    /**
+     * Convert an instance to a List PropertyValue.
+     * @return the list value, never null.
+     */
     public ListValue toListValue(){
         ListValue lv = new ListValue(getParent(),getKey());
         lv.addValue("createValue", value);
@@ -584,11 +528,49 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
 
+    /**
+     * Creates a deep clone of this intance.
+     * @return a clone, never null.
+     */
     protected PropertyValue deepClone() {
-        PropertyValue newProp = new PropertyValue(getParent(), getKey(), ValueType.VALUE, this.value);
+        PropertyValue newProp = new PropertyValue(getParent(), getKey(), this.value);
         newProp.setMeta(getMeta());
         newProp.setVersion(getVersion());
         return newProp;
+    }
+
+    /**
+     * @throws IllegalStateException if the instance is immutable.
+     */
+    protected final void checkImmutable(){
+        if(immutable){
+            throw new IllegalStateException("Instance is immutable.");
+        }
+    }
+
+    /**
+     * Called to mark a change on this instance.
+     * @return the new version.
+     */
+    protected final int incrementVersion(){
+        checkImmutable();
+        return version.incrementAndGet();
+    }
+
+    /**
+     * Sets the new version, used iternally when cloning.
+     * @param version the new version.
+     */
+    protected final void setVersion(int version) {
+        this.version.set(version);
+    }
+
+    /**
+     * Sets the new parent, used iternally when converting between value types.
+     * @param parent the parent value.
+     */
+    protected final void setParent(PropertyValue parent){
+        this.parent = parent;
     }
 
 
@@ -617,25 +599,5 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
                 (getMeta().isEmpty()?"":", metaData=" + getMeta()) +
                 '}';
     }
-
-    protected final void checkImmutable(){
-        if(immutable){
-            throw new IllegalStateException("Instance is immutable.");
-        }
-    }
-
-    protected final int incrementVersion(){
-        checkImmutable();
-        return version.incrementAndGet();
-    }
-
-    protected final void setVersion(int version) {
-        this.version.set(version);
-    }
-
-    protected final void setParent(PropertyValue parent){
-        this.parent = parent;
-    }
-
 
 }

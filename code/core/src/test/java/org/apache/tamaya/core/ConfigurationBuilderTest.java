@@ -275,16 +275,6 @@ public class ConfigurationBuilderTest {
     }
 
     @Test
-    public void setPropertyValueCombinationPolicy() throws Exception {
-        PropertyValueCombinationPolicy combPol = (currentValue, key, propertySource) -> currentValue;
-        ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder()
-                .setPropertyValueCombinationPolicy(combPol);
-        Configuration cfg = b.build();
-        ConfigurationContext ctx = cfg.getContext();
-        assertThat(combPol).isEqualTo(ctx.getPropertyValueCombinationPolicy());
-    }
-
-    @Test
     public void increasePriority(){
         ConfigurationBuilder b = ConfigurationProvider.getConfigurationBuilder();
         TestPropertySource[] propertySources = new TestPropertySource[10];

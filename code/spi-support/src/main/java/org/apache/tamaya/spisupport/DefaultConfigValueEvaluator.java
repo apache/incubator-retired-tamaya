@@ -38,10 +38,13 @@ public class DefaultConfigValueEvaluator implements ConfigValueEvaluator{
     public PropertyValue evaluteRawValue(String key, ConfigurationContext context) {
         PropertyValue unfilteredValue = null;
         for (PropertySource propertySource : context.getPropertySources()) {
-            unfilteredValue = context.getPropertyValueCombinationPolicy().
-                    collect(unfilteredValue, key, propertySource);
+            PropertyValue val = propertySource.get(key);
+            if(val!=null){
+                unfilteredValue = val;
+            }
         }
-        if(unfilteredValue==null || unfilteredValue.getValue()==null){
+        if(unfilteredValue==null ||
+                (unfilteredValue.getValueType()== PropertyValue.ValueType.VALUE && unfilteredValue.getValue()==null)){
             return null;
         }
         return unfilteredValue;
@@ -51,16 +54,25 @@ public class DefaultConfigValueEvaluator implements ConfigValueEvaluator{
     public Map<String, PropertyValue> evaluateRawValues(ConfigurationContext context) {
         Map<String, PropertyValue> result = new HashMap<>();
         for (PropertySource propertySource : context.getPropertySources()) {
-            for (Map.Entry<String,PropertyValue> propEntry: propertySource.getProperties().entrySet()) {
-                PropertyValue unfilteredValue = result.get(propEntry.getKey());
-                unfilteredValue = context.getPropertyValueCombinationPolicy().
-                        collect(unfilteredValue, propEntry.getKey(), propertySource);
-                if(unfilteredValue!=null){
-                    result.put(unfilteredValue.getKey(), unfilteredValue);
+            for (PropertyValue val: propertySource.getProperties().values()) {
+                if (val!=null && (val.getValueType() != PropertyValue.ValueType.VALUE || val.getValue() != null)){
+                    result.put(val.getKey(), val);
                 }
             }
         }
         return result;
+    }
+
+    /**
+     * Default overriding policy.
+     * @param currentValue the
+     * @param key
+     * @param propertySource
+     * @return
+     */
+    private PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource) {
+        PropertyValue value = propertySource.get(key);
+        return value!=null?value:currentValue;
     }
 
     @Override

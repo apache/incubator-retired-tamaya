@@ -23,7 +23,6 @@ import org.apache.tamaya.TypeLiteral;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * A conversion context containing all the required values for implementing conversion. Use the included #Builder
@@ -58,8 +57,8 @@ public class ConversionContext {
     /**
      * Get the key accessed. This information is very useful to evaluate additional metadata needed to determine/
      * control further aspects of the conversion.
-     * @return the key. This may be null in case where a default createValue has to be converted and no unique underlying
-     * key/createValue configuration is present.
+     * @return the key. This may be null in case where a default value has to be converted and no unique underlying
+     * key/value configuration is present.
      */
     public String getKey(){
         return key;
@@ -108,7 +107,7 @@ public class ConversionContext {
         if(values.size()>0){
             String baseKey = values.get(0).getQualifiedKey()+".";
 
-            values.forEach(val -> this.getConfiguration().getContext().getMetadata().entrySet().forEach(
+            values.forEach(val -> this.getConfiguration().getContext().getMetaData().entrySet().forEach(
                     en -> {
                         if(en.getKey().startsWith(baseKey)) {
                             metaMap.put(en.getKey().substring(baseKey.length()), en.getValue());
@@ -166,7 +165,7 @@ public class ConversionContext {
     }
 
     /**
-     * Builder to createObject new instances of {@link ConversionContext}.
+     * Builder to create new instances of {@link ConversionContext}.
      */
     public static final class Builder{
         /** The backing configuration. */
