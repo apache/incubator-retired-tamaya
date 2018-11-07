@@ -435,7 +435,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     public final PropertyValue setMeta(String key, Object value) {
         checkImmutable();
         Objects.requireNonNull(key, "Meta key must be given.");
-        Objects.requireNonNull(value, "Meta createValue must be given.");
+        Objects.requireNonNull(value, "Meta value must be given.");
         if(!Objects.equals(this.metaEntries.get(key), value.toString())) {
             this.metaEntries.put(key, value.toString());
             version.incrementAndGet();
