@@ -19,7 +19,6 @@
 package org.apache.tamaya.core;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.core.internal.MockBundle;
 import org.apache.tamaya.core.internal.MockBundleContext;
 import org.apache.tamaya.spi.ServiceContext;
@@ -48,7 +47,7 @@ public class OSGIActivatorTest {
     @After
     public void tearDown() throws Exception {
         ServiceContextManager.set(prevServiceContext);
-        ConfigurationProvider.setConfiguration(prevConfiguration);
+        Configuration.setCurrent(prevConfiguration);
     }
 
     /**

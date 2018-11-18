@@ -34,8 +34,8 @@ public class TestPropertyDefaultSource extends BasePropertySource{
 
     public TestPropertyDefaultSource() {
         super(100);
-        properties.put("name", PropertyValue.of("name", "Anatole", "test"));
-        properties.put("name2",PropertyValue.of("name2", "Sabine", "test"));
+        properties.put("name", PropertyValue.createValue("name", "Anatole"));
+        properties.put("name2",PropertyValue.createValue("name2", "Sabine"));
         properties = Collections.unmodifiableMap(properties);
     }
 
@@ -47,11 +47,6 @@ public class TestPropertyDefaultSource extends BasePropertySource{
     @Override
     public Map<String, PropertyValue> getProperties() {
         return properties;
-    }
-
-    @Override
-    public boolean isScannable() {
-        return true;
     }
 
 }

@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.core.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -103,7 +103,7 @@ abstract class AbstractBannerPrinter implements BannerPrinter {
 
     @Override
     public void outputBanner() {
-        try (InputStream in = ConfigurationProvider.class.getResourceAsStream(BANNER_RESOURCE_PATH)) {
+        try (InputStream in = Configuration.class.getResourceAsStream(BANNER_RESOURCE_PATH)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line;
 

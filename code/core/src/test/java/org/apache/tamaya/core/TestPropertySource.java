@@ -65,8 +65,4 @@ public class TestPropertySource implements PropertySource {
         return Collections.emptyMap();
     }
 
-    @Override
-    public boolean isScannable() {
-        return false;
-    }
 }

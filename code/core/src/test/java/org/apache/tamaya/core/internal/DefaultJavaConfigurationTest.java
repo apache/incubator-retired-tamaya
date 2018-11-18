@@ -18,9 +18,9 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.Configuration;
 import org.junit.Test;
 
-import static org.apache.tamaya.ConfigurationProvider.getConfiguration;
 import static org.assertj.core.api.Assertions.*;
 
 public class DefaultJavaConfigurationTest {
@@ -34,14 +34,14 @@ public class DefaultJavaConfigurationTest {
             String key = "confkey" + i;
             String value = "javaconf-value" + i;
             // check if we had our key in configuration.current
-            assertThat(getConfiguration().getProperties().containsKey(key)).isTrue();
-            assertThat(value).isEqualTo(getConfiguration().get(key));
+            assertThat(Configuration.current().getProperties().containsKey(key)).isTrue();
+            assertThat(value).isEqualTo(Configuration.current().get(key));
         }
 
-        assertThat(getConfiguration().getProperties().containsKey("aaeehh")).isTrue();
-        assertThat(getConfiguration().getProperties().get("aaeehh")).isEqualTo(A_UMLAUT);
+        assertThat(Configuration.current().getProperties().containsKey("aaeehh")).isTrue();
+        assertThat(Configuration.current().getProperties().get("aaeehh")).isEqualTo(A_UMLAUT);
 
-        assertThat(getConfiguration().getProperties().containsKey(O_UMLAUT)).isTrue();
-        assertThat(getConfiguration().getProperties().get(O_UMLAUT)).isEqualTo("o");
+        assertThat(Configuration.current().getProperties().containsKey(O_UMLAUT)).isTrue();
+        assertThat(Configuration.current().getProperties().get(O_UMLAUT)).isEqualTo("o");
     }
 }

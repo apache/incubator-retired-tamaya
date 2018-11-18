@@ -24,16 +24,12 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.*;
+
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Currency;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -173,7 +169,7 @@ public class CoreConfigurationBuilderTest {
 
     @Test
     public void addDefaultPropertyConverters() throws Exception {
-        ConfigurationBuilder builder = ConfigurationProvider.getConfigurationBuilder();
+        ConfigurationBuilder builder = Configuration.createConfigurationBuilder();
         builder.addDefaultPropertyConverters();
     }
     
@@ -181,7 +177,7 @@ public class CoreConfigurationBuilderTest {
     public void addCorePropertyConverters() throws Exception {
         CoreConfigurationBuilder b = new CoreConfigurationBuilder();
         b.addCorePropertyConverters();
-        Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> converters = b.getPropertyConverter();
+        Map<TypeLiteral<?>, List<PropertyConverter<?>>> converters = b.getPropertyConverter();
         assertThat(converters.containsKey(TypeLiteral.<BigDecimal>of(BigDecimal.class))).isTrue();
         assertThat(converters.containsKey(TypeLiteral.<BigInteger>of(BigInteger.class))).isTrue();
         assertThat(converters.containsKey(TypeLiteral.<Boolean>of(Boolean.class))).isTrue();
@@ -225,7 +221,7 @@ public class CoreConfigurationBuilderTest {
 
         @Override
         public PropertyValue get(String key) {
-            return PropertyValue.of(key, key + "Value", getName());
+            return PropertyValue.createValue(key, key + "Value");
         }
 
         @Override
@@ -233,10 +229,6 @@ public class CoreConfigurationBuilderTest {
             return Collections.emptyMap();
         }
 
-        @Override
-        public boolean isScannable() {
-            return false;
-        }
     }
 
 }

@@ -53,10 +53,10 @@ public class TestPropertySourceProvider implements PropertySourceProvider {
 
         public MyPropertySource() {
             super(200);
-            properties.put("name", PropertyValue.of("name", "Robin", "test"));
-            properties.put("name3", PropertyValue.of("name3", "Lukas", "test"));
-            properties.put("name4", PropertyValue.of("name4", "Sereina", "test"));
-            properties.put("name5", PropertyValue.of("name5", "Benjamin", "test"));
+            properties.put("name", PropertyValue.createValue("name", "Robin"));
+            properties.put("name3", PropertyValue.createValue("name3", "Lukas"));
+            properties.put("name4", PropertyValue.createValue("name4", "Sereina"));
+            properties.put("name5", PropertyValue.createValue("name5", "Benjamin"));
             properties = Collections.unmodifiableMap(properties);
         }
 
@@ -70,10 +70,6 @@ public class TestPropertySourceProvider implements PropertySourceProvider {
             return properties;
         }
 
-        @Override
-        public boolean isScannable() {
-            return true;
-        }
     }
 
 }

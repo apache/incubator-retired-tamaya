@@ -104,7 +104,8 @@ public class OSGIServiceContext implements ServiceContext{
         ServiceReference<T> ref = this.osgiServiceLoader.getBundleContext().getServiceReference(serviceType);
         if(ref!=null){
             try {
-                return (T)this.osgiServiceLoader.getBundleContext().getService(ref).getClass().newInstance();
+                return (T)this.osgiServiceLoader.getBundleContext().getService(ref).getClass().getConstructor()
+                        .newInstance();
             } catch (Exception e) {
                 if(supplier!=null){
                     return supplier.get();

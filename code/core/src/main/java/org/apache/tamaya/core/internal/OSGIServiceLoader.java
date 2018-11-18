@@ -240,7 +240,7 @@ public class OSGIServiceLoader implements BundleListener {
 		public Object getService(Bundle bundle, ServiceRegistration registration) {
 			try {
 				log.fine("Creating Service...:" + serviceClass.getName());
-				return serviceClass.newInstance();
+				return serviceClass.getConstructor().newInstance();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				throw new IllegalStateException("Failed to createObject service: " + serviceClass.getName(), ex);
