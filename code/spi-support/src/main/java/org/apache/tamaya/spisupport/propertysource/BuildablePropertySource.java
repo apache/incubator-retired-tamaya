@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -63,8 +64,8 @@ public class BuildablePropertySource implements PropertySource{
     }
 
     @Override
-    public boolean isScannable() {
-        return true;
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.IMMUTABLE;
     }
 
     @Override

@@ -75,7 +75,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
 
         // Finally add the converters
-        for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:builder.getPropertyConverter().entrySet()) {
+        for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> en:builder.getPropertyConverter().entrySet()) {
             for (@SuppressWarnings("rawtypes") PropertyConverter converter : en.getValue()) {
                 this.propertyConverterManager.register(en.getKey(), converter);
             }
@@ -86,7 +86,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
     public DefaultConfigurationContext(ServiceContext serviceContext,
                                        List<PropertyFilter> propertyFilters, List<PropertySource> propertySources,
-                                       Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters,
+                                       Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters,
                                        MetadataProvider metaDataProvider) {
         this.serviceContext = Objects.requireNonNull(serviceContext);
         this.immutablePropertyFilters = Collections.unmodifiableList(new ArrayList<>(propertyFilters));
@@ -94,7 +94,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         this.metaDataProvider = Objects.requireNonNull(metaDataProvider);
         this.metaDataProvider.init(this);
         propertyConverterManager = new PropertyConverterManager(serviceContext);
-        for(Map.Entry<TypeLiteral<?>, Collection<PropertyConverter<?>>> en:propertyConverters.entrySet()) {
+        for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> en:propertyConverters.entrySet()) {
             for (@SuppressWarnings("rawtypes") PropertyConverter converter : en.getValue()) {
                 this.propertyConverterManager.register(en.getKey(), converter);
             }

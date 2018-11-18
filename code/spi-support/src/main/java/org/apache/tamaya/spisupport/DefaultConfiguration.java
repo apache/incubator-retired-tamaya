@@ -18,11 +18,7 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.*;
 import org.apache.tamaya.spi.*;
 
 import java.util.*;
@@ -260,6 +256,11 @@ public class DefaultConfiguration implements Configuration {
     @Override
     public ConfigurationContext getContext() {
         return this.configurationContext;
+    }
+
+    @Override
+    public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+        return new DefaultConfigurationSnapshot(this, keys);
     }
 
     @Override

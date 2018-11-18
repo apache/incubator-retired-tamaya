@@ -99,6 +99,11 @@ public class TestConfiguration implements Configuration {
     }
 
     @Override
+    public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+        return ConfigurationSnapshot.EMPTY;
+    }
+
+    @Override
     public Map<String, String> getProperties() {
         // run toString on each createValue of the (key, createValue) setCurrent in VALUES
         return VALUES.entrySet().stream().collect(

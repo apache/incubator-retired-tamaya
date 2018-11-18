@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Collections;
@@ -264,6 +265,11 @@ public class EnvironmentPropertySource extends BasePropertySource {
 
     public boolean isDisabled() {
         return disabled;
+    }
+
+    @Override
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.IMMUTABLE;
     }
 
     /**

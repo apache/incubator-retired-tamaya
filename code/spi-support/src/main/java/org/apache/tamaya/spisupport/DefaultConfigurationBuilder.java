@@ -42,7 +42,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     protected ServiceContext serviceContext = ServiceContextManager.getServiceContext();
     protected List<PropertyFilter> propertyFilters = new ArrayList<>();
     protected List<PropertySource> propertySources = new ArrayList<>();
-    protected Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> propertyConverters = new HashMap<>();
+    protected Map<TypeLiteral<?>, List<PropertyConverter<?>>> propertyConverters = new HashMap<>();
     protected MetadataProvider metaDataProvider = serviceContext.create(MetadataProvider.class, DefaultMetaDataProvider::new);
 
     /**
@@ -293,7 +293,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
         checkBuilderState();
         Objects.requireNonNull(type);
         Objects.requireNonNull(propertyConverters);
-        Collection<PropertyConverter<?>> converters = this.propertyConverters.get(type);
+        List<PropertyConverter<?>> converters = this.propertyConverters.get(type);
         if(converters==null){
             converters = new ArrayList<>();
             this.propertyConverters.put(type, converters);
@@ -345,7 +345,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     }
 
     @Override
-    public Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> getPropertyConverter() {
+    public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverter() {
         return this.propertyConverters;
     }
 

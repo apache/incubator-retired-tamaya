@@ -18,22 +18,29 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.spi.ChangeSupport;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spisupport.PropertySourceChangeSupport;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Simple {@link org.apache.tamaya.spi.PropertySource}, with a fixed ordinal that reads a .properties file from a given URL.
  */
-public class PropertiesResourcePropertySource extends MapPropertySource {
+public class PropertiesResourcePropertySource extends BasePropertySource {
     /** The logger used. */
     private static final Logger LOGGER = Logger.getLogger(PropertiesResourcePropertySource.class.getName());
+
+    private volatile PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
+            ChangeSupport.SUPPORTED, this);
 
     /**
      * Creates a new instance.
@@ -49,7 +56,11 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * @param url the resource URL, not null.
      */
     public PropertiesResourcePropertySource(URL url, String prefix){
-        super(url.toExternalForm(), loadProps(url), prefix);
+        super(url.toExternalForm());
+        setPrefix(prefix);
+        this.cachedProperties.update(loadProps(url));
+        this.cachedProperties.scheduleChangeMonitor(() -> loadProps(url),
+                120, TimeUnit.SECONDS);
     }
 
     /**
@@ -58,7 +69,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * @param path the resource path, not null.
      */
     public PropertiesResourcePropertySource(String path, String prefix){
-        super(path, loadProps(path, Thread.currentThread().getContextClassLoader()), prefix);
+        this(path, prefix, ServiceContextManager.getDefaultClassLoader());
     }
 
     /**
@@ -68,7 +79,11 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * @param cl the class loader.
      */
     public PropertiesResourcePropertySource(String path, String prefix, ClassLoader cl){
-        super(path, loadProps(path, cl), prefix);
+        super(path);
+        setPrefix(prefix);
+        this.cachedProperties.update(loadProps(path, cl));
+        this.cachedProperties.scheduleChangeMonitor(() -> loadProps(path, cl),
+                120, TimeUnit.SECONDS);
     }
 
     /**
@@ -76,7 +91,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * @param path the resource classpath, not null.
      * @return the loaded properties.
      */
-    private static Map<String, String> loadProps(String path, ClassLoader cl) {
+    private Map<String, PropertyValue> loadProps(String path, ClassLoader cl) {
         URL url = ServiceContextManager.getServiceContext(cl).getResource(path);
         return loadProps(url);
     }
@@ -86,22 +101,48 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      * @param url the resource URL, not null.
      * @return the loaded properties.
      */
-    private static Map<String, String> loadProps(URL url) {
-        Map<String,String> result = new HashMap<>();
+    private Map<String, PropertyValue> loadProps(URL url) {
         if(url!=null) {
             try (InputStream is = url.openStream()) {
                 Properties props = new Properties();
                 props.load(is);
-                for (Map.Entry<?,?> en : props.entrySet()) {
-                    result.put(en.getKey().toString(), en.getValue().toString());
-                }
+                return mapProperties(MapPropertySource.getMap(props), System.currentTimeMillis());
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Failed to read properties from " + url, e);
             }
         }else{
             LOGGER.log(Level.WARNING, "No properties found at " + url);
         }
-        return result;
+        return Collections.emptyMap();
     }
 
+    @Override
+    public void addChangeListener(BiConsumer<Set<String>, PropertySource> l) {
+        this.cachedProperties.addChangeListener(l);
+    }
+
+    @Override
+    public void removeChangeListener(BiConsumer<Set<String>, PropertySource> l) {
+        this.cachedProperties.removeChangeListener(l);
+    }
+
+    @Override
+    public void removeAllChangeListeners() {
+        this.cachedProperties.removeAllChangeListeners();
+    }
+
+    @Override
+    public Map<String, PropertyValue> getProperties() {
+        return cachedProperties.getProperties();
+    }
+
+    @Override
+    public String getVersion() {
+        return cachedProperties.getVersion();
+    }
+
+    @Override
+    public ChangeSupport getChangeSupport() {
+        return ChangeSupport.SUPPORTED;
+    }
 }

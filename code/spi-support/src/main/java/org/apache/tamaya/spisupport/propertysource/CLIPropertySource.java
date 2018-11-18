@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.*;
@@ -127,6 +128,11 @@ public class CLIPropertySource extends BasePropertySource {
     @Override
     public Map<String, PropertyValue> getProperties() {
         return Collections.unmodifiableMap(mainArgs);
+    }
+
+    @Override
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.IMMUTABLE;
     }
 
     @Override

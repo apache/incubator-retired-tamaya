@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -37,6 +38,14 @@ public abstract class BasePropertySource implements PropertySource{
     private volatile Integer ordinal;
     /** The name of the property source. */
     private String name;
+    /** The optional prefix. */
+    private String prefix;
+    /**
+     * If true, this property source does not return any properties. This is useful since this
+     * property source is applied by default, but can be switched off by setting the
+     * {@code tamaya.envprops.disable} system/environment property to {@code true}.
+     */
+    private boolean disabled = false;
 
     /**
      * Constructor.
@@ -66,7 +75,6 @@ public abstract class BasePropertySource implements PropertySource{
         this.defaultOrdinal = defaultOrdinal;
     }
 
-
     /**
      * Constructor, using a default ordinal of 0.
      */
@@ -76,6 +84,9 @@ public abstract class BasePropertySource implements PropertySource{
 
     @Override
     public String getName() {
+        if(disabled){
+            return name + "(disabled)";
+        }
         return name;
     }
 
@@ -142,6 +153,22 @@ public abstract class BasePropertySource implements PropertySource{
         return val;
     }
 
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -167,6 +194,30 @@ public abstract class BasePropertySource implements PropertySource{
     protected String toStringValues() {
         return  "  defaultOrdinal=" + defaultOrdinal + '\n' +
                 "  ordinal=" + ordinal  + '\n' +
+                "  prefix=" + prefix + '\n' +
+                "  disabled=" + disabled + '\n' +
                 "  name='" + name + '\''  + '\n';
     }
+
+    protected Map<String,PropertyValue> mapProperties(Map<String, String> props, long timestamp) {
+        Map<String,PropertyValue> result = new HashMap<>();
+        String timestampVal = String.valueOf(timestamp);
+        if (prefix == null) {
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                result.put(en.getKey(),
+                        PropertyValue.createValue(en.getKey(), en.getValue())
+                                .setMeta("source", getName())
+                                .setMeta("timestamp", timestampVal));
+            }
+        } else {
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                result.put(prefix + en.getKey(),
+                        PropertyValue.createValue(prefix + en.getKey(), en.getValue())
+                                .setMeta("source", getName())
+                                .setMeta("timestamp", timestampVal));
+            }
+        }
+        return result;
+    }
+
 }

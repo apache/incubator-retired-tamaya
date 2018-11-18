@@ -18,18 +18,14 @@
  */
 package org.apache.tamaya.spisupport;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
+
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -312,7 +308,7 @@ public class DefaultConfigurationBuilderTest {
                 .addPropertyConverters(TypeLiteral.of(String.class), converter1, converter2);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
+        Map<TypeLiteral<?>, List<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
         assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1)).isTrue();
         assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2)).isTrue();
         assertThat(ctx.getPropertyConverters()).hasSize(1);
@@ -346,7 +342,7 @@ public class DefaultConfigurationBuilderTest {
                 .addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1, converter2));
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
+        Map<TypeLiteral<?>, List<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
         assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1)).isTrue();
         assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2)).isTrue();
         assertThat(ctx.getPropertyConverters()).hasSize(1);

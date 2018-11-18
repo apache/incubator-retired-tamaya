@@ -18,12 +18,16 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.PropertySourceChangeSupport;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This {@link org.apache.tamaya.spi.PropertySource} manages the system properties. You can disable this feature by
@@ -36,25 +40,10 @@ public class SystemPropertySource extends BasePropertySource {
      */
     public static final int DEFAULT_ORDINAL = 1000;
 
-    private volatile Map<String,PropertyValue> cachedProperties;
+    private volatile PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
+            ChangeSupport.SUPPORTED, this);
+    private AtomicInteger savedHashcode = new AtomicInteger();
 
-    /**
-     * previous System.getProperties().hashCode()
-     * so we can check if we need to reload
-     */
-    private volatile int previousHash;
-
-    /**
-     * Prefix that allows system properties to virtually be mapped on specified sub section.
-     */
-    private String prefix;
-
-    /**
-     * If true, this property source does not return any properties. This is useful since this
-     * property source is applied by default, but can be switched off by setting the
-     * {@code tamaya.envprops.disable} system/environment property to {@code true}.
-     */
-    private boolean disabled = false;
 
     /**
      * Creates a new instance. Also initializes the {@code prefix} and {@code disabled} properties
@@ -67,8 +56,8 @@ public class SystemPropertySource extends BasePropertySource {
     public SystemPropertySource(){
         super("system-properties", DEFAULT_ORDINAL);
         initFromSystemProperties();
-        if(!disabled){
-            cachedProperties = Collections.unmodifiableMap(loadProperties());
+        if(!isDisabled()){
+            reload();
         }
     }
 
@@ -83,8 +72,9 @@ public class SystemPropertySource extends BasePropertySource {
     private void initFromSystemProperties() {
         String value = System.getProperty("tamaya.sysprops.prefix");
         if(value==null){
-            prefix = System.getenv("tamaya.sysprops.prefix");
+            value = System.getenv("tamaya.sysprops.prefix");
         }
+        setPrefix(value);
         value = System.getProperty("tamaya.sysprops.disable");
         if(value==null){
             value = System.getenv("tamaya.sysprops.disable");
@@ -96,7 +86,7 @@ public class SystemPropertySource extends BasePropertySource {
             value = System.getenv("tamaya.defaults.disable");
         }
         if(value!=null && !value.isEmpty()) {
-            this.disabled = Boolean.parseBoolean(value);
+            setDisabled(Boolean.parseBoolean(value));
         }
     }
 
@@ -114,7 +104,7 @@ public class SystemPropertySource extends BasePropertySource {
      * @param ordinal the ordinal to be used.
      */
     public SystemPropertySource(String prefix, int ordinal){
-        this.prefix = prefix;
+        setPrefix(prefix);
         setOrdinal(ordinal);
     }
 
@@ -123,86 +113,48 @@ public class SystemPropertySource extends BasePropertySource {
      * @param prefix the prefix to be used, or null.
      */
     public SystemPropertySource(String prefix){
-        this.prefix = prefix;
+        setPrefix(prefix);
     }
 
 
     private Map<String, PropertyValue> loadProperties() {
-        Properties sysProps = System.getProperties();
-        previousHash = System.getProperties().hashCode();
-        final String prefix = this.prefix;
-        Map<String, PropertyValue> entries = new HashMap<>();
-        for (Map.Entry<Object,Object> entry : sysProps.entrySet()) {
-            if(entry.getKey() instanceof String && entry.getValue() instanceof String) {
-                if (prefix == null) {
-                    entries.put((String) entry.getKey(),
-                            PropertyValue.of((String) entry.getKey(),
-                                    (String) entry.getValue(),
-                                    getName()));
-                } else {
-                    entries.put(prefix + entry.getKey(),
-                            PropertyValue.of(prefix + entry.getKey(),
-                                    (String) entry.getValue(),
-                                    getName()));
-                }
-            }
-        }
-        return entries;
-    }
-
-    @Override
-    public String getName() {
-        if(disabled){
-            return super.getName() + "(disabled)";
-        }
-        return super.getName();
+        Map<String, String> props = MapPropertySource.getMap(System.getProperties());
+        return mapProperties(props, System.currentTimeMillis());
     }
 
     @Override
     public PropertyValue get(String key) {
-        if(disabled){
+        if(isDisabled()){
             return null;
         }
         reload();
-        String prefix = this.prefix;
-        if(prefix==null) {
-            String value =  System.getProperty(key);
-            if(value == null){
-                return null;
-            }
-            return PropertyValue.of(key, value, getName());
+        return this.cachedProperties.getValue(key);
+    }
+
+    public void reload() {
+        int hashCode = System.getProperties().hashCode();
+        if(hashCode!=this.savedHashcode.get()) {
+            this.savedHashcode.set(hashCode);
+            this.cachedProperties.update(loadProperties());
         }
-        return PropertyValue.of(key, System.getProperty(key.substring(prefix.length())), getName());
     }
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        if(disabled){
+        if(isDisabled()){
             return Collections.emptyMap();
         }
         reload();
-        return this.cachedProperties;
+        return cachedProperties.getProperties();
     }
 
-    public void reload() {
-        // only need to reload and fill our map if something has changed
-        // synchronization was removed, Instance was marked as volatile. In the worst case it
-        // is reloaded twice, but the values will be the same.
-        if (previousHash != System.getProperties().hashCode()) {
-            Map<String, PropertyValue> properties = loadProperties();
-            this.cachedProperties = Collections.unmodifiableMap(properties);
-        }
+    public String getVersion(){
+        return cachedProperties.getVersion();
     }
 
     @Override
-    public boolean isScannable() {
-        return true;
+    public ChangeSupport getChangeSupport() {
+        return ChangeSupport.SUPPORTED;
     }
 
-    @Override
-    protected String toStringValues() {
-        return  super.toStringValues() +
-                "  prefix=" + prefix + '\n' +
-                "  disabled=" + disabled + '\n';
-    }
 }

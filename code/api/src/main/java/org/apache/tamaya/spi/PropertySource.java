@@ -23,6 +23,8 @@ import org.apache.tamaya.Configuration;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 
 /**
@@ -171,5 +173,50 @@ public interface PropertySource{
     default boolean isScannable(){
         return true;
     }
+
+    /**
+     * Get the support for reporting changes to property sources provided by this instance. This support
+     * type should never change during a property source's lifetime.
+     *
+     * @return the change support of this property source, not null.
+     */
+    @Experimental
+    default ChangeSupport getChangeSupport(){
+        return ChangeSupport.UNSUPPORTED;
+    }
+
+    /**
+     * Get the current version. A new version signals that it is known that properties have changed for this property
+     * source. This is especially useful, when {@link #getChangeSupport()} is {@link ChangeSupport#SUPPORTED}.
+     * The content and format of the version String is imeplemtation specific. We recommend to add information
+     * such as the loading timestamp, the source systems read or whatever is appropriate. By default this
+     * method returns {@code "N/A"}.
+     * @return the version this property source, never null.
+     */
+    @Experimental
+    default String getVersion(){
+        return "N/A";
+    }
+
+    /**
+     * Add a change listener for this properrty source.
+     * @param l the listner, not null.
+     */
+    @Experimental
+    default void addChangeListener(BiConsumer<Set<String>, PropertySource> l){}
+
+    /**
+     * Removes a change listener for this properrty source.
+     * @param l the listner, not null.
+     */
+    @Experimental
+    default void removeChangeListener(BiConsumer<Set<String>, PropertySource> l){}
+
+    /**
+     * Removes all registered change listeners, if any.
+     */
+    @Experimental
+    default void removeAllChangeListeners(){}
+
 
 }

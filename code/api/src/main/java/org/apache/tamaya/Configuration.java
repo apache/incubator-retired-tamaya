@@ -23,10 +23,7 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -68,12 +65,33 @@ public interface Configuration {
     /**
      * Access a property.
      *
+     * @param keys the property's keys, in order of evaluation, not {@code null}.
+     * @return the property's createValue.
+     */
+    default String get(Iterable<String> keys){
+        return get(keys, TypeLiteral.of(String.class));
+    }
+
+    /**
+     * Access a property.
+     *
      * @param key the property's key, not {@code null}.
      * @param defaultValue createValue to be returned, if no createValue is present, not {@code null}
      * @return the property's keys.
      */
     default String getOrDefault(String key, String defaultValue){
         return getOrDefault(key, TypeLiteral.of(String.class), defaultValue);
+    }
+
+    /**
+     * Access a property.
+     *
+     * @param keys the property's keys, in order of evaluation, not {@code null}.
+     * @param defaultValue createValue to be returned, if no createValue is present, not {@code null}
+     * @return the property's keys.
+     */
+    default String getOrDefault(Iterable<String> keys, String defaultValue){
+        return getOrDefault(keys, TypeLiteral.of(String.class), defaultValue);
     }
 
     /**
@@ -84,6 +102,16 @@ public interface Configuration {
      */
     default Optional<String> getOptional(String key){
         return Optional.ofNullable(getOrDefault(key, String.class, null));
+    }
+
+    /**
+     * Access a String property, using an an {@link Optional} instance.
+     *
+     * @param keys the property's keys, in evaluation order, not {@code null}.
+     * @return the property's keys.
+     */
+    default Optional<String> getOptional(Iterable<String> keys){
+        return Optional.ofNullable(getOrDefault(keys, String.class, null));
     }
 
     /**
@@ -101,6 +129,18 @@ public interface Configuration {
     /**
      * Access a property, using an an {@link Optional} instance.
      *
+     * @param keys the property's keys, in evaluation order, not {@code null}.
+     * @param type the target type, not null.
+     * @param <T> the type of the class modeled by the type parameter
+     * @return the property's keys.
+     */
+    default <T> Optional<T> getOptional(Iterable<String> keys, Class<T> type){
+        return Optional.ofNullable(getOrDefault(keys, TypeLiteral.of(type), null));
+    }
+
+    /**
+     * Access a property, using an an {@link Optional} instance.
+     *
      * @param key the property's key, not {@code null}.
      * @param type the target type, not null.
      * @param <T> the type of the class modeled by the type parameter
@@ -108,6 +148,18 @@ public interface Configuration {
      */
     default <T> Optional<T> getOptional(String key, TypeLiteral<T> type){
         return Optional.ofNullable(getOrDefault(key, type, null));
+    }
+
+    /**
+     * Access a property, using an an {@link Optional} instance.
+     *
+     * @param keys the property's keys, in evaluation order, not {@code null}.
+     * @param type the target type, not null.
+     * @param <T> the type of the class modeled by the type parameter
+     * @return the property's keys.
+     */
+    default <T> Optional<T> getOptional(Iterable<String> keys, TypeLiteral<T> type){
+        return Optional.ofNullable(getOrDefault(keys, type, null));
     }
 
     /**
@@ -133,6 +185,22 @@ public interface Configuration {
      * fromMap for the given String keys.
      *
      * @param <T> the type of the class modeled by the type parameter
+     * @param keys the property's keys, in evaluation order, not {@code null}.
+     * @param type         The target type required, not  {@code null}.
+     * @param defaultValue createValue to be used, if no createValue is present, not {@code null}
+     * @return the property createValue, never {@code null}.
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    default <T> T getOrDefault(Iterable<String> keys, Class<T> type, T defaultValue){
+        return getOrDefault(keys, TypeLiteral.of(type), defaultValue);
+    }
+
+    /**
+     * Gets the property keys as type T. This will implicitly require a corresponding {@link
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable of providing type T
+     * fromMap for the given String keys.
+     *
+     * @param <T> the type of the class modeled by the type parameter
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not {@code null}.
@@ -142,6 +210,23 @@ public interface Configuration {
     default <T> T get(String key, Class<T> type){
         return get(key, TypeLiteral.of(type));
     }
+
+    /**
+     * Gets the property keys as type T. This will implicitly require a corresponding {@link
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable of providing type T
+     * fromMap for the given String keys.
+     *
+     * @param <T> the type of the class modeled by the type parameter
+     * @param keys the property's keys, in evaluation order, not {@code null}.
+     * @param type         The target type required, not {@code null}.
+     * @return the property createValue, never {@code null}.
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    default <T> T get(Iterable<String> keys, Class<T> type){
+        return get(keys, TypeLiteral.of(type));
+    }
+
+
 
     /**
      * Get the property keys as type T. This will implicitly require a corresponding {@link
@@ -163,6 +248,27 @@ public interface Configuration {
      * literals for the given key.
      *
      * @param <T> the type of the type literal
+     * @param keys the property's keys, in evaluation order, not {@code null}.
+     * @param type         The target type required, not {@code null}.
+     * @return the property createValue, never {@code null}.
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    default <T> T get(Iterable<String> keys, TypeLiteral<T> type){
+        for(String k:keys){
+            T t = getOrDefault(k, type, null);
+            if(t!=null){
+                return t;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable of providing type T
+     * literals for the given key.
+     *
+     * @param <T> the type of the type literal
      * @param key          the property's absolute, or relative path, e.g.
      *                     {@code a/b/c/d.myProperty}, not {@code null}.
      * @param type         The target type required, not {@code null}.
@@ -171,6 +277,28 @@ public interface Configuration {
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue);
+
+    /**
+     * Get the property keys as type T. This will implicitly require a corresponding {@link
+     * org.apache.tamaya.spi.PropertyConverter} to be available that is capable of providing type T
+     * literals for the given key.
+     *
+     * @param <T> the type of the type literal
+     * @param keys the property's keys, in evaluation order, not {@code null}.
+     * @param type         The target type required, not {@code null}.
+     * @param defaultValue default createValue to be used, if no createValue is present.
+     * @return the property createValue, never null.
+     * @throws ConfigException if the keys could not be converted to the required target type.
+     */
+    default <T> T getOrDefault(Iterable<String> keys, TypeLiteral<T> type, T defaultValue){
+        for(String k:keys){
+            T t = getOrDefault(k, type, null);
+            if(t!=null){
+                return t;
+            }
+        }
+        return defaultValue;
+    }
 
     /**
      * Access all currently known configuration properties as a full {@code Map<String,String>}.
@@ -238,6 +366,24 @@ public interface Configuration {
      * @return the configuration context, never null.
      */
     ConfigurationContext getContext();
+
+    /**
+     * Create a snapshot, which contains the given keys.
+     *
+     * @param keys the keys, not null. If empty a full snapshot with all known keys is returned.
+     * @return a corresponding snapshot instance.
+     */
+    ConfigurationSnapshot getSnapshot(Iterable<String> keys);
+
+    /**
+     * Create a snapshot, which contains all known keys.
+     *
+     * @param keys the target key. If empty a full snapshot with all known keys is returned.
+     * @return a corresponding snapshot instance.
+     */
+    default ConfigurationSnapshot getSnapshot(String... keys){
+        return getSnapshot(Arrays.asList(keys));
+    }
 
     /**
      * Create a new builder using this instance as its base.
@@ -356,8 +502,18 @@ public interface Configuration {
         }
 
         @Override
+        public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+            return ConfigurationSnapshot.EMPTY;
+        }
+
+        @Override
+        public ConfigurationSnapshot getSnapshot(String... keys) {
+            return ConfigurationSnapshot.EMPTY;
+        }
+
+        @Override
         public String toString(){
-            return "Configuration<empty>";
+            return "Configuration<EMPTY>";
         }
     };
 

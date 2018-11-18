@@ -41,7 +41,17 @@ public class DefaultConfigurationTest {
     public void getDoesNotAcceptNull() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
 
-        c.get(null);
+        c.get((String)null);
+    }
+
+    /**
+     * Tests for current(String)
+     */
+    @Test(expected = NullPointerException.class)
+    public void getDoesNotAcceptNull2() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+
+        c.get((Iterable<String>) null);
     }
 
     /**
@@ -80,7 +90,17 @@ public class DefaultConfigurationTest {
     public void getOrDefaultDoesNotAcceptNullAsKeyForThreeParameterVariant() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
 
-        c.getOrDefault(null, String.class, "ok");
+        c.getOrDefault((String)null, String.class, "ok");
+    }
+
+    /**
+     * Tests for getOrDefault(String, Class, String)
+     */
+    @Test(expected = NullPointerException.class)
+    public void getOrDefaultDoesNotAcceptNullAsKeyForThreeParameterVariant2() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+
+        c.getOrDefault((Iterable<String>)null, String.class, "ok");
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -98,7 +118,17 @@ public class DefaultConfigurationTest {
     public void getOrDefaultDoesNotAcceptNullAsKeyForThreeParameterVariantSecondIsTypeLiteral() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
 
-        c.getOrDefault(null, TypeLiteral.of(String.class), "ok");
+        c.getOrDefault((String)null, TypeLiteral.of(String.class), "ok");
+    }
+
+    /**
+     * Tests for getOrDefault(String, TypeLiteral, String)
+     */
+    @Test(expected = NullPointerException.class)
+    public void getOrDefaultDoesNotAcceptNullAsKeyForThreeParameterVariantSecondIsTypeLiteral2() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+
+        c.getOrDefault((Iterable<String>)null, TypeLiteral.of(String.class), "ok");
     }
 
     @Test
@@ -122,7 +152,17 @@ public class DefaultConfigurationTest {
     public void getOrDefaultDoesNotAcceptNullAsKeyForTwoParameterVariantDefaultValueIsSecond() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
 
-        c.getOrDefault(null, "ok");
+        c.getOrDefault((String)null, "ok");
+    }
+
+    /**
+     * Tests for getOrDefault(String, String)
+     */
+    @Test(expected = NullPointerException.class)
+    public void getOrDefaultDoesNotAcceptNullAsKeyForTwoParameterVariantDefaultValueIsSecond2() {
+        DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
+
+        c.getOrDefault((Iterable<String>)null, "ok");
     }
 
     @Test

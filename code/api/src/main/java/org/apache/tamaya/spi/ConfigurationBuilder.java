@@ -180,7 +180,7 @@ public interface ConfigurationBuilder {
      *
      * @return the current registered property converters.
      */
-    Map<TypeLiteral<?>, Collection<PropertyConverter<?>>> getPropertyConverter();
+    Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverter();
 
     /**
      * Increases the priority of the given property source, by moving it towards the end

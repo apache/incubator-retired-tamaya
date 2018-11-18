@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport.propertysource;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.File;
@@ -120,6 +121,11 @@ public class SimplePropertySource extends BasePropertySource {
     @Override
     public Map<String, PropertyValue> getProperties() {
         return this.properties;
+    }
+
+    @Override
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.IMMUTABLE;
     }
 
     /**

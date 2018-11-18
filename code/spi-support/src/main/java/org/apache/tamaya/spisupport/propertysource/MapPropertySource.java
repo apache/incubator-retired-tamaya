@@ -16,6 +16,7 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Collections;
@@ -47,29 +48,6 @@ public class MapPropertySource extends BasePropertySource {
 
     /**
      * Creates a new instance, hereby using the default mechanism for evaluating the property source's
-     * priority, but applying a custom mapping {@code prefix} to the entries provided.
-     *
-     * @param name        unique name of this source.
-     * @param props       the properties
-     * @param prefix      the prefix context mapping, or null (for no mapping).
-     */
-    public MapPropertySource(String name, Map<String, String> props, String prefix) {
-        super(name);
-        if (prefix == null) {
-            for (Map.Entry<String, String> en : props.entrySet()) {
-                this.props.put(en.getKey(),
-                        PropertyValue.of(en.getKey(), en.getValue(), name));
-            }
-        } else {
-            for (Map.Entry<String, String> en : props.entrySet()) {
-                this.props.put(prefix + en.getKey(),
-                        PropertyValue.of(prefix + en.getKey(), en.getValue(), name));
-            }
-        }
-    }
-
-    /**
-     * Creates a new instance, hereby using the default mechanism for evaluating the property source's
      * priority, but applying a custom mapping {@code rootContext} to the entries provided.
      *
      * @param name unique name of this source.
@@ -78,6 +56,25 @@ public class MapPropertySource extends BasePropertySource {
      */
     public MapPropertySource(String name, Properties props, String prefix) {
         this(name, getMap(props), prefix);
+    }
+
+    /**
+     * Creates a new instance, hereby using the default mechanism for evaluating the property source's
+     * priority, but applying a custom mapping {@code prefix} to the entries provided.
+     *
+     * @param name        unique name of this source.
+     * @param props       the properties
+     * @param prefix      the prefix context mapping, or null (for no mapping).
+     */
+    public MapPropertySource(String name, Map<String, String> props, String prefix) {
+        super(name);
+        setPrefix(prefix);
+        this.props.putAll(mapProperties(props, System.currentTimeMillis()));
+    }
+
+    @Override
+    public Map<String, PropertyValue> getProperties() {
+        return Collections.unmodifiableMap(this.props);
     }
 
     /**
@@ -93,10 +90,9 @@ public class MapPropertySource extends BasePropertySource {
         return result;
     }
 
-
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        return Collections.unmodifiableMap(this.props);
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.IMMUTABLE;
     }
 
 }

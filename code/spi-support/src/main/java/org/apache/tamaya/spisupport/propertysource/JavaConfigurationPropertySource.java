@@ -19,10 +19,7 @@
 package org.apache.tamaya.spisupport.propertysource;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.ClassloaderAware;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.*;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import java.io.IOException;
@@ -124,6 +121,11 @@ public class JavaConfigurationPropertySource extends BasePropertySource implemen
             result.putAll(ps.getProperties());
         }
         return result;
+    }
+
+    @Override
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.IMMUTABLE;
     }
 
     @Override

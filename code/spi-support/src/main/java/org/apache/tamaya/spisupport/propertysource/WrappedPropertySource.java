@@ -18,12 +18,15 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
  * Property source effectively managed by the configuration context, allowing resetting of ordinal and its
@@ -94,6 +97,31 @@ class WrappedPropertySource implements PropertySource{
         return delegate.isScannable();
     }
 
+    @Override
+    public ChangeSupport getChangeSupport() {
+        return delegate.getChangeSupport();
+    }
+
+    @Override
+    public String getVersion() {
+        return delegate.getVersion();
+    }
+
+    @Override
+    public void addChangeListener(BiConsumer<Set<String>, PropertySource> l) {
+        delegate.addChangeListener(l);
+    }
+
+    @Override
+    public void removeChangeListener(BiConsumer<Set<String>, PropertySource> l) {
+        delegate.removeChangeListener(l);
+    }
+
+    @Override
+    public void removeAllChangeListeners() {
+        delegate.removeAllChangeListeners();
+    }
+
     public PropertySource getDelegate() {
         return delegate;
     }
@@ -119,6 +147,7 @@ class WrappedPropertySource implements PropertySource{
                 "name=" + getName() +
                 ", ordinal=" + getOrdinal() +
                 ", scannable=" + isScannable() +
+                ", changeSupport=" + getChangeSupport() +
                 ", loadedAt=" + loaded +
                 ", delegate-class=" + delegate.getClass().getName() +
                 '}';
