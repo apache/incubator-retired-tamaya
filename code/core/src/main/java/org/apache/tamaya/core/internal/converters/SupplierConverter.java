@@ -48,7 +48,7 @@ public class SupplierConverter implements PropertyConverter<Supplier> {
                     return value;
                 }
                 ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(pt.getActualTypeArguments()[0]));
-                Object o = context.getConfiguration().query(converter);
+                Object o = context.getConfiguration().adapt(converter);
                 if(o==null){
                     throw new ConfigException("No such createValue: " + context.getKey());
                 }

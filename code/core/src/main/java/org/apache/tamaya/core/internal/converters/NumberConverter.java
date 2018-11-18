@@ -49,7 +49,10 @@ public class NumberConverter implements PropertyConverter<Number>{
         ctx.addSupportedFormats(getClass(), "<double>, <long>", "0x (hex)", "0X... (hex)", "POSITIVE_INFINITY",
                 "NEGATIVE_INFINITY", "NAN");
 
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":
                 return Double.POSITIVE_INFINITY;

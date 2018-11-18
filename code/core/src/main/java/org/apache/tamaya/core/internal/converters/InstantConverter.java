@@ -38,6 +38,9 @@ public class InstantConverter implements PropertyConverter<Instant> {
     @Override
     public Instant convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), Instant.now().toString());
+        if(value==null){
+            return null;
+        }
         try{
             return Instant.parse(value);
         }catch(Exception e){

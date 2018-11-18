@@ -55,7 +55,10 @@ public class FloatConverter implements PropertyConverter<Float> {
     public Float convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), "<float>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE",
                         "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "POSITIVE_INFINITY":
                 return Float.POSITIVE_INFINITY;

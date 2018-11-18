@@ -57,7 +57,7 @@ public class SupplierConverterTest {
         Supplier<InetAddress> addressResult;
         
         Configuration mockConfig = Mockito.mock(Configuration.class);
-        Mockito.when(mockConfig.query(any())).thenReturn(Mockito.mock(InetAddress.class));
+        Mockito.when(mockConfig.adapt(any())).thenReturn(Mockito.mock(InetAddress.class));
         
         TypeLiteral myConverterTypeLiteral = new TypeLiteral<MyConverter<InetAddress>> () {};
         ConversionContext myConverterContext = new ConversionContext.Builder(myConverterTypeLiteral)

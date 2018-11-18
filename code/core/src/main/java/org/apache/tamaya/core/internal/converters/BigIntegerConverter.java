@@ -47,7 +47,10 @@ public class BigIntegerConverter implements PropertyConverter<BigInteger> {
     @Override
     public BigInteger convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), "[-]0X.. (hex)", "[-]0x... (hex)", "<bigint> -> new BigInteger(bigint)");
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         if(trimmed.startsWith("0x") || trimmed.startsWith("0X")){
             LOG.finest("Parsing Hex createValue to BigInteger: " + value);
             return new BigInteger(value.substring(2), 16);

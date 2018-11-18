@@ -43,7 +43,10 @@ public class CharConverter implements PropertyConverter<Character>{
     @Override
     public Character convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(),"\\'<char>\\'", "<char>", "<charNum>");
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         if(trimmed.isEmpty()){
             return null;
         }

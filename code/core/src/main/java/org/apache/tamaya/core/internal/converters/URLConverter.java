@@ -37,11 +37,11 @@ public class URLConverter implements PropertyConverter<URL> {
 
     @Override
     public URL convert(String value, ConversionContext ctx) {
-        if(value==null || value.isEmpty()){
+        ctx.addSupportedFormats(getClass(),"<URL>");
+        if(value==null){
             return null;
         }
-        ctx.addSupportedFormats(getClass(),"<URL>");
-        String trimmed = Objects.requireNonNull(value).trim();
+        String trimmed = value.trim();
         try {
             return new URL(trimmed);
         } catch (Exception e) {

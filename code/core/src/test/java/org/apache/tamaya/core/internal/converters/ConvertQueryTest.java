@@ -36,7 +36,7 @@ public class ConvertQueryTest {
     public void testIntegerQuery() {
         Configuration config = Configuration.current();
         ConvertQuery<Integer> converter = new ConvertQuery<>("101", TypeLiteral.of(Integer.class));
-        Integer result = converter.query(config);
+        Integer result = converter.apply(config);
         assertThat(result.longValue()).isEqualTo(101);
     }
 
@@ -47,7 +47,7 @@ public class ConvertQueryTest {
     public void testConfigUsingIntegerQuery() {
         Configuration config = Configuration.current();
         ConvertQuery<Integer> converter = new ConvertQuery<>("101", TypeLiteral.of(Integer.class));
-        Integer result = config.query(converter);
+        Integer result = config.adapt(converter);
         assertThat(result.longValue()).isEqualTo(101);
     }
 
@@ -58,10 +58,10 @@ public class ConvertQueryTest {
     public void testNonGenericQuery() {
         Configuration config = Configuration.current();
 
-        Integer intResult = (Integer) new ConvertQuery("101", TypeLiteral.of(Integer.class)).query(config);
+        Integer intResult = (Integer) new ConvertQuery("101", TypeLiteral.of(Integer.class)).apply(config);
         assertThat(intResult.longValue()).isEqualTo(101);
 
-        Boolean booleanResult = (Boolean) new ConvertQuery("true", TypeLiteral.of(Boolean.class)).query(config);
+        Boolean booleanResult = (Boolean) new ConvertQuery("true", TypeLiteral.of(Boolean.class)).apply(config);
         assertThat(booleanResult).isEqualTo(Boolean.TRUE);
     }
 
@@ -72,7 +72,7 @@ public class ConvertQueryTest {
     public void testNullWithoutSuccess() {
         Configuration config = Configuration.current();
 
-        Integer intResult = (Integer) new ConvertQuery("invalid", TypeLiteral.of(Integer.class)).query(config);
+        Integer intResult = (Integer) new ConvertQuery("invalid", TypeLiteral.of(Integer.class)).apply(config);
         assertThat(intResult).isNull();
     }
 

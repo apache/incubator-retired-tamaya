@@ -54,7 +54,10 @@ public class IntegerConverter implements PropertyConverter<Integer>{
     @Override
     public Integer convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), "<int>", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX");
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":
             case "MIN":

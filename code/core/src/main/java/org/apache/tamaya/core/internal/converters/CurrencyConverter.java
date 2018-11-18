@@ -47,7 +47,10 @@ public class CurrencyConverter implements PropertyConverter<Currency> {
     public Currency convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), "<currencyCode>, using Locale.ENGLISH", "<numericValue>",
                 "<locale>");
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         try {
             return Currency.getInstance(trimmed.toUpperCase(Locale.ENGLISH));
         } catch (Exception e) {

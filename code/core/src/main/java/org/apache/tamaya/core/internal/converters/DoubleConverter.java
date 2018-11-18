@@ -55,7 +55,10 @@ public class DoubleConverter implements PropertyConverter<Double> {
     public Double convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), "<double>", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE",
                 "POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NAN");
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         switch (trimmed.toUpperCase(Locale.ENGLISH)) {
             case "POSITIVE_INFINITY":
                 return Double.POSITIVE_INFINITY;

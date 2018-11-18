@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
@@ -26,6 +25,7 @@ import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * Query to convert a String createValue.
  * @param <T> the target type.
  */
-final class ConvertQuery<T> implements ConfigQuery<T> {
+final class ConvertQuery<T> implements Function<Configuration, T> {
 
     private static final Logger LOG = Logger.getLogger(ConvertQuery.class.getName());
 
@@ -46,7 +46,7 @@ final class ConvertQuery<T> implements ConfigQuery<T> {
     }
 
     @Override
-    public T query(Configuration config) {
+    public T apply(Configuration config) {
         List<PropertyConverter<T>> converters = config.getContext().getPropertyConverters(type);
         ConversionContext context = new ConversionContext.Builder(type).setConfiguration(config)
                 .setKey(ConvertQuery.class.getName()).build();

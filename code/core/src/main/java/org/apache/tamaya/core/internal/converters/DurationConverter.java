@@ -40,6 +40,9 @@ public class DurationConverter implements PropertyConverter<Duration> {
     public Duration convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(),
                 Duration.of(1234, ChronoUnit.SECONDS).toString());
+        if(value==null){
+            return null;
+        }
         try {
             return Duration.parse(value);
         }catch(Exception e){

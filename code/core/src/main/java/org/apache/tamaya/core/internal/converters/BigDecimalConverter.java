@@ -49,8 +49,10 @@ public class BigDecimalConverter implements PropertyConverter<BigDecimal> {
     @Override
     public BigDecimal convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), "<bigDecimal> -> new BigDecimal(String)");
-
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         try{
             return new BigDecimal(trimmed);
         } catch(Exception e){

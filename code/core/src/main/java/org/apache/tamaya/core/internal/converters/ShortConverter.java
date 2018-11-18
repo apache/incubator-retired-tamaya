@@ -52,7 +52,10 @@ public class ShortConverter implements PropertyConverter<Short>{
     @Override
     public Short convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), "short", "MIN", "MIN_VALUE", "MAX", "MAX_VALUE");
-        String trimmed = Objects.requireNonNull(value).trim();
+        if(value==null){
+            return null;
+        }
+        String trimmed = value.trim();
         switch(trimmed.toUpperCase(Locale.ENGLISH)){
             case "MIN_VALUE":
             case "MIN":

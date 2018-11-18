@@ -38,17 +38,20 @@ public class PathConverter implements PropertyConverter<Path> {
 
     @Override
     public Path convert(String value, ConversionContext ctx) {
-        if(value==null || value.isEmpty()){
+        ctx.addSupportedFormats(getClass(),"<File>");
+        if(value==null){
             return null;
         }
-        ctx.addSupportedFormats(getClass(),"<File>");
-        String trimmed = Objects.requireNonNull(value).trim();
+        String trimmed = value.trim();
+        if(value.isEmpty()){
+            return null;
+        }
         try {
             return FileSystems.getDefault().getPath(value);
         } catch (Exception e) {
             LOG.log(Level.FINE, "Unparseable Path: " + trimmed, e);
+            return null;
         }
-        return null;
     }
 
     @Override

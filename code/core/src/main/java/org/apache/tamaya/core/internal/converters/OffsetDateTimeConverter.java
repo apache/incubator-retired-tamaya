@@ -38,6 +38,9 @@ public class OffsetDateTimeConverter implements PropertyConverter<OffsetDateTime
     @Override
     public OffsetDateTime convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), OffsetDateTime.now().toString());
+        if(value==null){
+            return null;
+        }
         try{
             return OffsetDateTime.parse(value);
         }catch(Exception e){

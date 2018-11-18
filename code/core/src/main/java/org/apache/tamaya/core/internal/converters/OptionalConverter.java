@@ -47,7 +47,7 @@ public class OptionalConverter implements PropertyConverter<Optional> {
                 return Optional.of(value);
             }
             ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(pt.getActualTypeArguments()[0]));
-            return Optional.ofNullable(ctx.getConfiguration().query(converter));
+            return Optional.ofNullable(ctx.getConfiguration().adapt(converter));
         }catch(Exception e){
             throw new ConfigException("Error evaluating config createValue.", e);
         }

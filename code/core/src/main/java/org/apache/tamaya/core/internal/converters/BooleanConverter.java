@@ -39,8 +39,10 @@ public class BooleanConverter implements PropertyConverter<Boolean> {
         ctx.addSupportedFormats(getClass(), "yes (ignore case)", "y (ignore case)",
                 "true (ignore case)", "t (ignore case)", "1", "no (ignore case)", "n (ignore case)",
                 "false (ignore case)", "f (ignore case)", "0");
-        String ignoreCaseValue = Objects.requireNonNull(value)
-                                        .trim()
+        if(value==null){
+            return null;
+        }
+        String ignoreCaseValue = value.trim()
                                         .toLowerCase(Locale.ENGLISH);
         switch(ignoreCaseValue) {
             case "1":

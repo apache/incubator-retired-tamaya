@@ -38,6 +38,9 @@ public class LocalDateConverter implements PropertyConverter<LocalDate> {
     @Override
     public LocalDate convert(String value, ConversionContext ctx) {
         ctx.addSupportedFormats(getClass(), LocalDate.now().toString());
+        if(value==null){
+            return null;
+        }
         try{
             return LocalDate.parse(value);
         }catch(Exception e){

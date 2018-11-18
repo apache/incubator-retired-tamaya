@@ -37,17 +37,20 @@ public class URIConverter implements PropertyConverter<URI> {
 
     @Override
     public URI convert(String value, ConversionContext ctx) {
-        if(value==null || value.isEmpty()){
+        ctx.addSupportedFormats(getClass(), "<uri> -> new URI(uri)");
+        if(value==null){
             return null;
         }
-        ctx.addSupportedFormats(getClass(), "<uri> -> new URI(uri)");
-        String trimmed = Objects.requireNonNull(value).trim();
+        String trimmed = value.trim();
+        if(value.isEmpty()){
+            return null;
+        }
         try {
             return new URI(trimmed);
         } catch (Exception e) {
             LOG.log(Level.FINE, "Unparseable URI: " + trimmed, e);
+            return null;
         }
-        return null;
     }
 
     @Override
