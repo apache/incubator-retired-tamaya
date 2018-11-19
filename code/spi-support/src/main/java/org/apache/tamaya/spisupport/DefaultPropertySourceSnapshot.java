@@ -72,7 +72,7 @@ public class DefaultPropertySourceSnapshot implements PropertySource, Serializab
             this.keys.add(k);
         }
         if(this.keys.isEmpty()){
-            this.keys.addAll(getProperties().keySet());
+            this.keys.addAll(propertySource.getProperties().keySet());
         }
         this.keys = Collections.unmodifiableSet(this.keys);
         this.ordinal = PropertySourceComparator.getOrdinal(propertySource);
