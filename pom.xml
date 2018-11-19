@@ -235,12 +235,6 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-            <!-- quality gates -->
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-                <version>${findbugs.version}</version>
-            </dependency>
             <!-- JSON Specs -->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
