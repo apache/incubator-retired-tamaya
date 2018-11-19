@@ -49,7 +49,7 @@ public class ConfigurationTest {
         assertThat(current().get("name")).isEqualTo("Robin");
         assertThat(current().get("name2")).isEqualTo("Sabine"); // from default
         assertThat(current().get("name3")).isEqualTo("Mapped to name: Robin");  // overridden default, mapped by filter to name property
-        assertThat(value4).isEqualTo("Sereina(filtered1)(filtered2)(filtered3)(filtered4)(filtered5)(filtered6)(filtered7)(filtered8)(filtered9)(filtered10)"); // final only
+        assertThat(value4).startsWith("Sereina(filtered1)(filtered2)(filtered3)(filtered4)(filtered5)(filtered6)(filtered7)(filtered8)(filtered9)(filtered10)"); // final only
         assertThat(current().get("name5")).isNull(); // final only, but removed from filter
     }
 }
