@@ -134,10 +134,15 @@ public class EnvironmentPropertySource extends BasePropertySource {
      * </pre>
      */
     private void initFromSystemProperties() {
+        // Read prefix
         String value = System.getProperty(TAMAYA_ENVPROPS_PREFIX);
         if(value==null){
-            prefix = System.getenv(TAMAYA_ENVPROPS_PREFIX);
+            value = System.getenv(TAMAYA_ENVPROPS_PREFIX);
         }
+        if(value !=null){
+            this.prefix = value;
+        }
+        // Read enabled 1) for property source, 2) as default
         value = System.getProperty(TAMAYA_ENVPROPS_DISABLE);
         if(value==null){
             value = System.getenv(TAMAYA_ENVPROPS_DISABLE);
