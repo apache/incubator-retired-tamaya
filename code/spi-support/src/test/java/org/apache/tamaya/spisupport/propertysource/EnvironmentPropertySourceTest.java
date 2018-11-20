@@ -49,7 +49,7 @@ public class EnvironmentPropertySourceTest {
 			System.setProperty("tamaya.envprops.prefix", "fakeprefix");
 			System.setProperty("tamaya.envprops.disable", "true");
 			localEnvironmentPropertySource = new EnvironmentPropertySource();
-			assertThat(localEnvironmentPropertySource.getPrefix()).isNull(); // is not fakeprefix because disabled
+			assertThat(localEnvironmentPropertySource.getPrefix()).isEqualTo("fakeprefix");
 			assertThat(localEnvironmentPropertySource.isDisabled()).isTrue();
 			assertThat(localEnvironmentPropertySource.get(System.getenv().entrySet().iterator().next().getKey()))
 					.isNull();
