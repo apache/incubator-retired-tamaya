@@ -74,6 +74,17 @@ public interface ConfigurationProviderSpi {
     void setConfiguration(Configuration config, ClassLoader classloader);
 
     /**
+     * This method allows to release a {@link org.apache.tamaya.Configuration} for a classloader.
+     * This can be used to refresh the configuration with a new one, e.g. because some of the
+     * data has changed and must be updated.
+     *
+     * @param classloader the classloader to be used.
+     * @return the configuration instance released, or {@code null}.
+     * @throws java.lang.UnsupportedOperationException if the current provider is read-only.
+     */
+    Configuration releaseConfiguration(ClassLoader classloader);
+
+    /**
      * Method that allows to determine if a new {@link org.apache.tamaya.Configuration} can be applied
      * programmatically.
      *

@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -46,6 +47,7 @@ public abstract class BasePropertySource implements PropertySource{
      * {@code tamaya.envprops.disable} system/environment property to {@code true}.
      */
     private boolean disabled = false;
+    private ChangeSupport changeSupport = ChangeSupport.UNSUPPORTED;
 
     /**
      * Constructor.
@@ -220,4 +222,18 @@ public abstract class BasePropertySource implements PropertySource{
         return result;
     }
 
+    @Override
+    public ChangeSupport getChangeSupport() {
+        return changeSupport;
+    }
+
+    /**
+     * Sets the change support.
+     * @param changeSupport the changeSupport, not null.
+     * @return this instance, for chaining.
+     */
+    public PropertySource setChangeSupport(ChangeSupport changeSupport) {
+        this.changeSupport = Objects.requireNonNull(changeSupport);
+        return this;
+    }
 }

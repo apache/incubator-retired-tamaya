@@ -87,6 +87,12 @@ public class CoreConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
+    public Configuration releaseConfiguration(ClassLoader classloader) {
+        LOG.info("Releasing config for classloader: " + classloader);
+        return this.configurations.remove(classloader);
+    }
+
+    @Override
     public boolean isConfigurationSettable(ClassLoader classLoader) {
         return true;
     }

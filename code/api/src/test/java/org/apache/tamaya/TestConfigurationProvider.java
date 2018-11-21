@@ -54,4 +54,9 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     public void setConfiguration(Configuration config, ClassLoader classLoader) {
         this.config = config;
     }
+
+    @Override
+    public Configuration releaseConfiguration(ClassLoader classloader) {
+        return null;
+    }
 }

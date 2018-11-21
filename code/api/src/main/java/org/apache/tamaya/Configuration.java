@@ -390,7 +390,7 @@ public interface Configuration {
      * @return a new builder, never null.
      */
     default ConfigurationBuilder toBuilder() {
-        return getContext().getServiceContext()
+        return ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
                 .getService(ConfigurationProviderSpi.class).getConfigurationBuilder().setConfiguration(this);
     }
 
@@ -406,7 +406,7 @@ public interface Configuration {
      *                                                 applying a new Configuration.
      */
     static void setCurrent(Configuration config) {
-        ServiceContextManager.getServiceContext()
+        ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
                 .getService(ConfigurationProviderSpi.class).setConfiguration(config, Thread.currentThread().getContextClassLoader());
     }
 
@@ -423,7 +423,7 @@ public interface Configuration {
      *                                                 applying a new Configuration.
      */
     static void setCurrent(Configuration config, ClassLoader classLoader) {
-        ServiceContextManager.getServiceContext(classLoader)
+        ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
                 .getService(ConfigurationProviderSpi.class).setConfiguration(config, classLoader);
     }
 
@@ -432,7 +432,7 @@ public interface Configuration {
      * @return the configuration instance, never null.
      */
     static Configuration current(){
-        return ServiceContextManager.getServiceContext()
+        return ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
                 .getService(ConfigurationProviderSpi.class).getConfiguration(Thread.currentThread().getContextClassLoader());
     }
 
@@ -442,8 +442,18 @@ public interface Configuration {
      * @return the configuration instance, never null.
      */
     static Configuration current(ClassLoader classloader){
-        return ServiceContextManager.getServiceContext(classloader)
+        return ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
                 .getService(ConfigurationProviderSpi.class).getConfiguration(classloader);
+    }
+
+    /**
+     * Releases the configuration associated with the given classloader.
+     * @param classloader the classloader, not null.
+     * @return the released configuration, or null.
+     */
+    static Configuration releaseConfiguration(ClassLoader classloader) {
+        return ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
+                .getService(ConfigurationProviderSpi.class).releaseConfiguration(classloader);
     }
 
     /**
@@ -451,7 +461,7 @@ public interface Configuration {
      * @return the builder, never null.
      */
     static ConfigurationBuilder createConfigurationBuilder(){
-        return ServiceContextManager.getServiceContext()
+        return ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
                 .getService(ConfigurationProviderSpi.class).getConfigurationBuilder();
     }
 

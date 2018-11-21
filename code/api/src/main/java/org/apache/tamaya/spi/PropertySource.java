@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -129,7 +131,19 @@ public interface PropertySource{
      * </ul>
      * @return the 'importance' aka ordinal of the configured values. The higher, the more important.
      */
-    int getOrdinal();
+    default int getOrdinal(){
+        PropertyValue ordinalValue = get(TAMAYA_ORDINAL);
+        if(ordinalValue!=null){
+            try{
+                return Integer.parseInt(ordinalValue.getValue());
+            }catch (Exception e){
+                Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                        "Failed to parse ordinal in property source: " + getName(),
+                        e);
+            }
+        }
+        return 0;
+    }
 
 
     /**

@@ -61,6 +61,11 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
     }
 
     @Override
+    public Configuration releaseConfiguration(ClassLoader classloader) {
+        return null;
+    }
+
+    @Override
     public boolean isConfigurationSettable(ClassLoader classLoader) {
         return true;
     }
