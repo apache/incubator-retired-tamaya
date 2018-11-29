@@ -56,6 +56,12 @@ public class EnumConverterTest {
     }
 
     @Test
+    public void testConvert_Nulls() {
+        ConversionContext ctx = new ConversionContext.Builder(TypeLiteral.of(RoundingMode.class)).build();
+        assertThat(testConverter.convert(null, ctx)).isNull();
+    }
+
+    @Test
     public void callToConvertAddsMoreSupportedFormatsToTheContext() throws Exception {
         ConversionContext context = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
         EnumConverter<RoundingMode> converter = new EnumConverter<>(RoundingMode.class);
