@@ -209,6 +209,16 @@
           </roles>
           <timezone>-5</timezone>
         </developer>
+
+        <developer>
+          <id>wlieurance</id>
+          <name>William Lieurance</name>
+          <email>wlieurance AT apache.org</email>
+          <roles>
+            <role>Committer</role>
+          </roles>
+          <timezone>America/Chicago</timezone>
+        </developer>
     </developers>
 
     <modules>
