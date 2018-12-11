@@ -18,9 +18,16 @@
  */
 package org.apache.tamaya.spi;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class PropertySourceTest {
 
@@ -36,25 +43,65 @@ public class PropertySourceTest {
         assertThat(instance.get("key")).isNull();
         assertThat(instance.getProperties().isEmpty()).isTrue();
         assertThat(instance.toString()).isEqualTo("PropertySource.EMPTY");
-        
+
+    }
+
+    @Test
+    public void getOrdinal(){
+        assertEquals(0, new PropertySourceImpl().getOrdinal());
+        PropertySourceImpl ps = new PropertySourceImpl();
+        ps.value = PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "123");
+        assertEquals(123, ps.getOrdinal());
+        ps.value = PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "abc");
+        assertEquals(0, ps.getOrdinal());
+    }
+
+    @Test
+    public void getVersion(){
+        assertEquals("N/A", new PropertySourceImpl().getVersion());
+    }
+
+    @Test
+    public void addChangeListener(){
+        BiConsumer<Set<String>,PropertySource> l = mock(BiConsumer.class);
+        new PropertySourceImpl().addChangeListener(l);
+    }
+
+    @Test
+    public void removeChangeListener(){
+        BiConsumer<Set<String>,PropertySource> l = mock(BiConsumer.class);
+        new PropertySourceImpl().removeChangeListener(l);
+    }
+
+    @Test
+    public void removeAllChangeListeners(){
+        new PropertySourceImpl().removeAllChangeListeners();
+    }
+
+    @Test
+    public void isScannable() {
+        assertTrue(new PropertySourceImpl().isScannable());
+    }
+
+    @Test
+    public void getChangeSupport() {
+        assertEquals(ChangeSupport.UNSUPPORTED, new PropertySourceImpl().getChangeSupport());
     }
 
     public class PropertySourceImpl implements PropertySource {
 
-        public int getOrdinal() {
-            return 0;
-        }
+        PropertyValue value;
 
         public String getName() {
             return "";
         }
 
         public PropertyValue get(String key) {
-            return null;
+            return value;
         }
 
         public Map<String, PropertyValue> getProperties() {
-            return null;
+            return Collections.emptyMap();
         }
     }
     

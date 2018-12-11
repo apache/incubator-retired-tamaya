@@ -82,11 +82,6 @@ public interface PropertySource{
         }
 
         @Override
-        public boolean isScannable() {
-            return false;
-        }
-
-        @Override
         public String toString(){
             return "PropertySource.EMPTY";
         }
