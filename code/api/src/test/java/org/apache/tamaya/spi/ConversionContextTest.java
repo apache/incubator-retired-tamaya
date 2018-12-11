@@ -26,9 +26,11 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.*;
 
 /**
  * Tests for {@link ConversionContext}, created by atsticks on 20.08.16.
@@ -97,6 +99,58 @@ public class ConversionContextTest {
         assertThat(ctx.toString()).isEqualTo("ConversionContext{configuration=null, key='toString', targetType=TypeLiteral{type=interface java.util.List}, annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]}");
     }
 
+    @Test
+    public void testGetSetValues_Ellipse(){
+        ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
+                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
+                .setValues(PropertyValue.createValue("test", "value")).build();
+        assertNotNull(ctx.getValues());
+        assertEquals(ctx.getValues().size(), 1);
+        assertEquals("value", ctx.getValues().get(0).getValue());
+        assertEquals("test", ctx.getValues().get(0).getKey());
+    }
+
+    @Test
+    public void testGetSetValues_List(){
+        ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
+                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
+                .setValues(Collections.singletonList(PropertyValue.createValue("test", "value"))).build();
+        assertNotNull(ctx.getValues());
+        assertEquals(ctx.getValues().size(), 1);
+        assertEquals("value", ctx.getValues().get(0).getValue());
+        assertEquals("test", ctx.getValues().get(0).getKey());
+    }
+
+    @Test
+    public void testGetConfigurationContext(){
+        ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
+                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
+                .setValues(PropertyValue.createValue("test", "value")).build();
+        assertNotNull(ctx.getConfigurationContext());
+    }
+
+    @Test
+    public void testGetMeta(){
+        ConversionContext ctx = new ConversionContext.Builder("test", TypeLiteral.of(List.class))
+                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
+                .setValues(PropertyValue.createValue("test", "value")
+                .setMeta("meta1", "val1").setMeta("meta2", "val2")).build();
+        assertNotNull(ctx.getMeta());
+        assertFalse(ctx.getMeta().isEmpty());
+        assertEquals(2, ctx.getMeta().size());
+    }
+
+    @Test
+    public void testBuilderToString() {
+        ConversionContext.Builder b = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
+                .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy");
+        assertNotNull(b.toString());
+        assertTrue(b.toString().contains("targetType=TypeLiteral{type=interface java.util.List}"));
+        assertTrue(b.toString().contains("supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]"));
+        assertTrue(b.toString().contains("annotatedElement"));
+        assertTrue(b.toString().contains("key='toString'"));
+        assertTrue(b.toString().contains("Builder"));
+    }
 
     private static final AnnotatedElement MyAnnotatedElement = new AnnotatedElement() {
         @Override

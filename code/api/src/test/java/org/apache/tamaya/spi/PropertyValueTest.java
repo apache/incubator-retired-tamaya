@@ -43,6 +43,14 @@ public class PropertyValueTest {
     }
 
     @Test
+    public void builder() throws Exception {
+        PropertyValueBuilder b = PropertyValue.builder("a", "b");
+        assertNotNull(b);
+        assertEquals("a", b.key);
+        assertEquals("b", b.source);
+    }
+
+    @Test
     public void testOf(){
         assertThat(PropertyValue.of("k", "v", "testGetKey")).isNotNull();
     }
@@ -113,6 +121,41 @@ public class PropertyValueTest {
         PropertyValue pv = PropertyValue.of("k", "v", null);
         Assertions.assertThat(pv.getMeta()).isNotNull();
         Assertions.assertThat(pv.getMeta().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testMap() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        map.put("a", "b");
+        map.put("b", "c");
+        Map<String, PropertyValue> result = PropertyValue.map(map, "source");
+        assertNotNull(result);
+        assertEquals(map.size(), result.size());
+       for(PropertyValue pv:result.values()){
+           assertEquals("source", pv.getMetaEntry("source"));
+       }
+        assertEquals("b", map.get("a"));
+        assertEquals("c", map.get("b"));
+    }
+
+    @Test
+    public void testMap_WithMeta() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        map.put("a", "b");
+        map.put("b", "c");
+        Map<String, String> meta = new HashMap<>();
+        meta.put("m1", "m1v");
+        meta.put("m2", "m2v");
+        Map<String, PropertyValue> result = PropertyValue.map(map, "source", meta);
+        assertNotNull(result);
+        assertEquals(map.size(), result.size());
+        for(PropertyValue pv:result.values()){
+            assertEquals("source", pv.getMetaEntry("source"));
+            assertEquals("m1v", pv.getMeta("m1"));
+            assertEquals("m2v", pv.getMeta("m2"));
+        }
+        assertEquals("b", map.get("a"));
+        assertEquals("c", map.get("b"));
     }
 
     @Test
@@ -260,12 +303,92 @@ public class PropertyValueTest {
     }
 
     @Test
+    public void isImmutable() {
+        PropertyValue n = PropertyValue.createValue("", "");
+        assertFalse(n.isImmutable());
+        n.immutable();
+        assertTrue(n.isImmutable());
+        assertFalse(n.mutable().isImmutable());
+    }
+
+    @Test
+    public void isRoot() {
+        PropertyValue n = PropertyValue.createValue("", "");
+        assertTrue(n.isRoot());
+        n = PropertyValue.createValue("", "").setParent(n);
+        assertFalse(n.isRoot());
+    }
+
+    @Test(expected=IllegalStateException.class)
+    public void checkImmutableChangeThrowsExceotion() {
+        PropertyValue n = PropertyValue.createValue("", "");
+        n.immutable();
+        n.setValue("jhgjg");
+    }
+
+    @Test
+    public void checkMutable() {
+        PropertyValue n = PropertyValue.createValue("", "");
+        n.immutable();
+        n = n.mutable();
+        n.setValue("jhgjg");
+        assertEquals("jhgjg", n.getValue());
+    }
+
+    @Test
     public void getParent() {
         ObjectValue n = PropertyValue.createObject("");
         assertNull(n.getParent());
         n.setFieldObject("b");
         assertNotNull(n.getField("b"));
         assertNotNull(n.getField("b").getParent());
+    }
+
+    @Test
+    public void size(){
+        PropertyValue n = PropertyValue.createValue("key", "");
+        assertEquals(0, n.getSize());
+        assertFalse(n.iterator().hasNext());
+    }
+
+    @Test
+    public void setValue() {
+        PropertyValue n = PropertyValue.createValue("key", "");
+        assertEquals("", n.getValue());
+        n.setValue("jhgjg");
+        assertEquals("jhgjg", n.getValue());
+    }
+
+    @Test
+    public void setKey() {
+        PropertyValue n = PropertyValue.createValue("key", "");
+        assertEquals("key", n.getKey());
+        n.setKey("jhgjg");
+        assertEquals("jhgjg", n.getKey());
+    }
+
+    @Test
+    public void toBuilder() {
+        PropertyValue n = PropertyValue.createValue("key", "");
+        assertNotNull(n.toBuilder());
+    }
+
+    @Test
+    public void toPropertyValue() {
+        PropertyValue n = PropertyValue.createValue("key", "");
+        assertTrue(n == n.toPropertyValue());
+    }
+
+    @Test
+    public void toObjectValue() {
+        PropertyValue n = PropertyValue.createValue("key", "");
+        assertNotNull(n.toObjectValue());
+    }
+
+    @Test
+    public void toListValue() {
+        PropertyValue n = PropertyValue.createValue("key", "");
+        assertNotNull(n.toListValue());
     }
 
 //    @Test
@@ -345,7 +468,7 @@ public class PropertyValueTest {
         n.setField("a", "aVal");
         n.setField("b.b2.b3", "b3Val");
         n.setFieldList("c").addValue("cVal1");
-        assertEquals("PropertyValue[OBJECT]{'', size='3'}", n.toString());
+        assertEquals("PropertyValue[MAP]{'', size='3'}", n.toString());
     }
 
 }

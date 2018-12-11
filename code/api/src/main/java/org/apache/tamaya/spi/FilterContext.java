@@ -21,18 +21,17 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.Configuration;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
- * A filter context containing all the required values for implementing filtering.
+ * A filter configurationContext containing all the required values for implementing filtering.
  *
  * @see PropertyFilter
  */
 public class FilterContext {
     /** The key. */
     private final List<PropertyValue> values;
-    /** The current context. */
-    private final ConfigurationContext context;
+    /** The current configurationContext. */
+    private final ConfigurationContext configurationContext;
     @Experimental
     private Map<String, PropertyValue> configEntries = new HashMap<>();
     @Experimental
@@ -45,17 +44,17 @@ public class FilterContext {
      *
      * @param value the createValue under evaluation, not {@code null}.
      * @param configEntries the raw configuration data available in the
-     *                      current evaluation context, not {@code null}.
-     * @param context the current context, not {@code null}.
+     *                      current evaluation configurationContext, not {@code null}.
+     * @param configurationContext the current configurationContext, not {@code null}.
      */
-    public FilterContext(PropertyValue value, Map<String,PropertyValue> configEntries, ConfigurationContext context) {
+    public FilterContext(PropertyValue value, Map<String,PropertyValue> configEntries, ConfigurationContext configurationContext) {
         Objects.requireNonNull(value, "Value must not be null.");
         Objects.requireNonNull(configEntries, "Initial configuration entries must be not null.");
-        Objects.requireNonNull(context, "Context must be not null.");
+        Objects.requireNonNull(configurationContext, "Context must be not null.");
 
         this.singlePropertyScoped = false;
         this.values = Collections.singletonList(Objects.requireNonNull(value));
-        this.context = Objects.requireNonNull(context);
+        this.configurationContext = Objects.requireNonNull(configurationContext);
         this.configEntries.putAll(configEntries);
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
@@ -64,14 +63,14 @@ public class FilterContext {
      * Creates a new FilterContext, for filtering of a single createValue access
      * using {@link Configuration#getProperties()}.
      * @param value the createValue under evaluation, not {@code null}.
-     * @param context the current context, not {@code null}.
+     * @param configurationContext the current configurationContext, not {@code null}.
      */
-    public FilterContext(PropertyValue value, ConfigurationContext context) {
+    public FilterContext(PropertyValue value, ConfigurationContext configurationContext) {
         Objects.requireNonNull(value, "Value must not be null.");
-        Objects.requireNonNull(context, "Context must be not null.");
+        Objects.requireNonNull(configurationContext, "Context must be not null.");
 
         this.singlePropertyScoped = true;
-        this.context = Objects.requireNonNull(context);
+        this.configurationContext = Objects.requireNonNull(configurationContext);
         this.values = Collections.singletonList(Objects.requireNonNull(value));
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
@@ -80,24 +79,24 @@ public class FilterContext {
      * Creates a new FilterContext, for filtering of a single createValue access
      * using {@link Configuration#getProperties()}.
      * @param values the createValue under evaluation, not {@code null}.
-     * @param context the current context, not {@code null}.
+     * @param configurationContext the current configurationContext, not {@code null}.
      */
-    public FilterContext(List<PropertyValue> values, ConfigurationContext context) {
+    public FilterContext(List<PropertyValue> values, ConfigurationContext configurationContext) {
         Objects.requireNonNull(values, "Value must not be null.");
-        Objects.requireNonNull(context, "Context must be not null.");
+        Objects.requireNonNull(configurationContext, "Context must be not null.");
 
         this.singlePropertyScoped = true;
-        this.context = Objects.requireNonNull(context);
+        this.configurationContext = Objects.requireNonNull(configurationContext);
         this.values = Collections.unmodifiableList(new ArrayList<>(values));
         this.configEntries = Collections.unmodifiableMap(this.configEntries);
     }
 
     /**
-     * Get the current context.
-     * @return the current context, not {@code null}.
+     * Get the current configurationContext.
+     * @return the current configurationContext, not {@code null}.
      */
-    public ConfigurationContext current(){
-        return context;
+    public ConfigurationContext getConfigurationContext(){
+        return configurationContext;
     }
 
     /**

@@ -105,18 +105,21 @@ public interface ConfigurationBuilder {
 
     /**
      * Adds (overrides existing value) the given sources as property sources.
+     *
+     * @param property the property key, not null,
      * @param key the key, not null.
      * @param value the value, not null.
      * @return the current configuration builder.
      */
-    ConfigurationBuilder setMeta(String key, String value);
+    ConfigurationBuilder setMeta(String property, String key, String value);
 
     /**
      * Adds (overrides existing value with same same keys) the given sources as property sources.
+     * @param property the property key, not null,
      * @param metaData the metadata, not null.
      * @return the current configuration builder.
      */
-    ConfigurationBuilder setMeta(Map<String, String> metaData);
+    ConfigurationBuilder setMeta(String property, Map<String, String> metaData);
 
     /**
      * This method can be used for programmatically adding {@link PropertySource}s.

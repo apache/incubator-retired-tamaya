@@ -19,9 +19,12 @@
 package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationBuilder;
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -36,6 +39,26 @@ import static org.assertj.core.api.Assertions.*;
 public class ConfigurationTest {
 
     @Test
+    public void test_current() throws Exception {
+        assertThat(Configuration.current()).isNotNull();
+    }
+
+    @Test
+    public void test_current_classloader() throws Exception {
+        assertThat(Configuration.current(ClassLoader.getSystemClassLoader())).isNotNull();
+    }
+
+    @Test
+    public void test_release() throws Exception {
+        Configuration c1 = Configuration.current();
+        Configuration c2 = Configuration.current();
+        Configuration.releaseConfiguration(c2.getContext().getServiceContext().getClassLoader());
+        Configuration c3 = Configuration.current();
+        assertThat(c1).isSameAs(c2);
+        assertThat(c2).isNotSameAs(c3);
+    }
+
+    @Test
     public void testget() throws Exception {
         assertThat(Boolean.TRUE).isEqualTo(Configuration.current().get("booleanTrue", Boolean.class));
         assertThat(Boolean.FALSE).isEqualTo(Configuration.current().get("booleanFalse", Boolean.class));
@@ -48,10 +71,33 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void testget_Iterable() throws Exception {
+        assertThat(Configuration.current().get(Arrays.asList("String","foo"))).isEqualTo("aStringValue");
+        assertThat(Configuration.current().get(Arrays.asList("foo", "bar", "String"))).isEqualTo("aStringValue");
+    }
+
+    @Test
+    public void testget_Iterable_default() throws Exception {
+        assertThat("foo").isEqualTo(Configuration.current().getOrDefault(Arrays.asList("adasd","safsada"), "foo"));
+        assertThat("aStringValue").isEqualTo(Configuration.current().getOrDefault(Arrays.asList("foo1", "bar1", "String"), "foo"));
+    }
+
+    @Test
+    public void testget_Iterable_default_typed() throws Exception {
+        assertThat(25).isEqualTo(Configuration.current().getOrDefault(Arrays.asList("adasd","safsada"),Integer.class,25));
+        assertThat(BigDecimal.ZERO).isEqualTo(Configuration.current().getOrDefault(Arrays.asList("foo1", "bar1", "2.0"), BigDecimal.class, BigDecimal.ZERO));
+    }
+
+    @Test
+    public void testget_Iterable_with_Type() throws Exception {
+        assertThat(Boolean.TRUE).isEqualTo(Configuration.current().get(Arrays.asList("booleanTrue","booleanFalse"), Boolean.class));
+        assertThat(Boolean.TRUE).isEqualTo(Configuration.current().get(Arrays.asList("foo1", "bar1", "booleanTrue"), Boolean.class));
+    }
+
+    @Test
     public void testGetBoolean() throws Exception {
         assertThat(Configuration.current().get("booleanTrue", Boolean.class)).isTrue();
         assertThat(Configuration.current().get("booleanFalse", Boolean.class)).isFalse();
-        assertThat(Configuration.current().get("foorBar", Boolean.class)).isFalse();
     }
 
     @Test
@@ -132,5 +178,26 @@ public class ConfigurationTest {
     public void testGetConfigurationBuilder() {
         ConfigurationBuilder result = Configuration.createConfigurationBuilder();
         assertThat(result instanceof ConfigurationBuilder).isTrue();
+    }
+
+    @Test
+    public void testEmpty() {
+        Configuration c = Configuration.EMPTY;
+        assertThat(c).isNotNull();
+        assertThat(c.get("foo")).isNull();
+        assertThat(c.get("foo", Boolean.class)).isNull();
+        assertThat(c.get(Arrays.asList("foo", "bar"))).isNull();
+        assertThat(c.getOrDefault("foo", "")).isEqualTo("");
+        assertThat(c.getOrDefault("foo", Integer.class, 234)).isEqualTo(234);
+        assertThat(c.getOrDefault(Arrays.asList("foo", "bar"), "default")).isEqualTo("default");
+        assertThat(c.getOrDefault(Arrays.asList("foo", "bar"), Integer.class, 234)).isEqualTo(234);
+        assertThat(c.get(Arrays.asList("foo", "bar"), Integer.class)).isNull();
+        assertThat(c.getContext()).isEqualTo(ConfigurationContext.EMPTY);
+        assertThat(c.getOptional("kjhkjh")).isNotNull();
+        assertThat(c.getOptional("kjhkjh")).isNotPresent();
+        assertThat(c.getOptional("kjhkjh", Integer.class)).isNotNull();
+        assertThat(c.getOptional("kjhkjh", Integer.class)).isNotPresent();
+        assertThat(c.get("foo")).isNull();
+        assertThat(c.get("foo", Boolean.class)).isNull();
     }
 }

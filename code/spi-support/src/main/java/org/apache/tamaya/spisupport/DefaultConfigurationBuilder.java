@@ -122,14 +122,14 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     }
 
     @Override
-    public ConfigurationBuilder setMeta(String key, String value){
-        this.metaDataProvider.setMeta(key, value);
+    public ConfigurationBuilder setMeta(String property, String key, String value){
+        this.metaDataProvider.setMeta(property, key, value);
         return this;
     }
 
     @Override
-    public ConfigurationBuilder setMeta(Map<String, String> metaData){
-        this.metaDataProvider.setMeta(metaData);
+    public ConfigurationBuilder setMeta(String property, Map<String, String> metaData){
+        this.metaDataProvider.setMeta(property, metaData);
         return this;
     }
 

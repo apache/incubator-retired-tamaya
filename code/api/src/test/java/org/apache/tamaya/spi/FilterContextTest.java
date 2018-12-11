@@ -37,6 +37,16 @@ import static org.junit.Assert.assertNotNull;
  */
 public class FilterContextTest {
 
+    @Test
+    public void constructorWithContext() {
+        PropertyValue val = new PropertyValue(null, "");
+        FilterContext ctx = new FilterContext(val, ConfigurationContext.EMPTY);
+        assertEquals(val, ctx.getProperty());
+        assertEquals(ConfigurationContext.EMPTY, ctx.getConfigurationContext());
+        assertNotNull(ctx.getConfigEntries());
+        assertEquals(1, ctx.getAllValues().size());
+    }
+
 //    @Test
 //    public void setNullContext() {
 //        FilterContext.set(null);

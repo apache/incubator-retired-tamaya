@@ -57,6 +57,8 @@ public class TestConfigurationProvider implements ConfigurationProviderSpi {
 
     @Override
     public Configuration releaseConfiguration(ClassLoader classloader) {
-        return null;
+        Configuration prev = config;
+        config = new TestConfiguration();
+        return prev;
     }
 }

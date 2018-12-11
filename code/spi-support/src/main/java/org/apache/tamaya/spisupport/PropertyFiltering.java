@@ -21,7 +21,6 @@ package org.apache.tamaya.spisupport;
 import org.apache.tamaya.spi.*;
 
 import java.util.*;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,7 +102,7 @@ public final class PropertyFiltering{
 
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             int changes = 0;
-            for (PropertyFilter filter : context.current().getPropertyFilters()) {
+            for (PropertyFilter filter : context.getConfigurationContext().getPropertyFilters()) {
                 String value = filteredValue!=null?filteredValue.getValue():null;
                 filteredValue = filter.filterProperty(filteredValue, context);
                 String newValue = filteredValue!=null?filteredValue.getValue():null;

@@ -56,7 +56,7 @@ public final class ObjectValue extends PropertyValue{
      * @return the createValue type, never null.
      */
     public ValueType getValueType() {
-        return ValueType.OBJECT;
+        return ValueType.MAP;
     }
 
     /**
@@ -305,7 +305,7 @@ public final class ObjectValue extends PropertyValue{
 
     @Override
     public String toString() {
-        return "PropertyValue[OBJECT]{" +
+        return "PropertyValue[MAP]{" +
                 '\'' +getQualifiedKey() + '\'' +
                 (getValue()!=null?", createValue='" + getValue() + '\'':"") +
                 ", size='" + getSize() + '\'' +

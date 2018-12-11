@@ -103,8 +103,8 @@ public class DefaultConfigurationContext implements ConfigurationContext {
 
 
     @Override
-    public Map<String,String> getMetaData() {
-        return metaDataProvider.getMetaData();
+    public Map<String,String> getMetaData(String key) {
+        return metaDataProvider.getMetaData(key);
     }
 
     @Override

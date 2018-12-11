@@ -25,19 +25,21 @@ import org.apache.tamaya.spi.PropertyValue;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
 /**
  * Default metadata provider implementation, which searches for all kind of entries
- * starting with {@code [META]}. All matching key/values are added to the
- * meta data map, hereby reoving the key prefix.
+ * formatted as {@code [(META)key].metaKey=metaValue}. All matching key/values are added to the
+ * meta data map for the given key as {@code metaKey=metaValue} meta entries.
  */
 public class DefaultMetaDataProvider implements MetadataProvider {
 
-    private static final String META_PREFIX = "[META]";
+    private static final Logger LOG = Logger.getLogger(DefaultMetaDataProvider.class.getName());
+    private static final String META_PREFIX = "[(META)";
     private ConfigurationContext context;
-    private Map<String, String> additionalProperties = new ConcurrentHashMap<>();
+    private Map<String, Map<String, String>> additionalProperties = new ConcurrentHashMap<>();
     private AtomicLong lastHash = new AtomicLong();
-    private Map<String, String> propertyCache = new HashMap<>();
+    private Map<String, Map<String, String>> propertyCache = new HashMap<>();
 
     @Override
     public MetadataProvider init(ConfigurationContext context) {
@@ -46,50 +48,88 @@ public class DefaultMetaDataProvider implements MetadataProvider {
     }
 
     @Override
-    public Map<String, String> getMetaData() {
+    public Map<String, String> getMetaData(String property) {
         long configHash = Objects.hash(context.getPropertySources().toArray());
         if(configHash!=lastHash.get()){
             lastHash.set(configHash);
             propertyCache = loadMetaProperties();
         }
-        return propertyCache;
+        Map<String, String> meta = propertyCache.get(property);
+        if(meta==null){
+            return Collections.emptyMap();
+        }
+        return Collections.unmodifiableMap(meta);
     }
 
-    private Map<String, String> loadMetaProperties() {
-        Map<String, String> result = new HashMap<>();
+    private Map<String, Map<String, String> > loadMetaProperties() {
+        Map<String, Map<String, String> > result = new HashMap<>();
         for(PropertySource ps:context.getPropertySources()){
             ps.getProperties().values().forEach(v -> {
-                loadMetaData(v, result);
+                Map<String, String> meta = result.computeIfAbsent(v.getKey(), k -> new HashMap<>());
+                meta.putAll(v.getMeta());
+                if(v.getQualifiedKey().toUpperCase(Locale.ENGLISH).startsWith(META_PREFIX)){
+                    loadExplicitMetadata(v);
+                }
             });
         }
-        result.putAll(additionalProperties);
+        // Override with manual properties
+        for(Map.Entry<String,Map<String, String>> en: additionalProperties.entrySet()) {
+            Map<String, String> meta = result.get(en.getKey());
+            meta.putAll(en.getValue());
+        }
         return Collections.unmodifiableMap(result);
     }
 
     /**
-     * Iterates all values and it's children and adds all meta-entries found.
-     * @param value the starting value.
-     * @param result the result map to add/override values found.
+     * Iterates all values and it's children and adds all meta-entries found in the configuration
+     * (entries starting with {@code [(META)}).
      */
-    private void loadMetaData(PropertyValue value, Map<String, String> result) {
+    private void loadExplicitMetadata(PropertyValue value) {
         String key = value.getQualifiedKey();
-        if(key.toUpperCase(Locale.ENGLISH).startsWith(META_PREFIX)){
-            if(value.getValue()!=null){
-                result.put(key.substring(META_PREFIX.length()), value.getValue());
+        if(value.getValue()!=null){
+            String[] keyValue = getMetaKeys(key);
+            if(keyValue==null){
+                LOG.warning("Encountered invalid META-ENTRY: " + key);
+            }else {
+                Map<String, String> meta = additionalProperties.computeIfAbsent(keyValue[0], k -> new HashMap<>());
+                meta.put(keyValue[1], value.getValue());
             }
-            value.iterator().forEachRemaining(v -> loadMetaData(v, result));
         }
     }
 
+    private String[] getMetaKeys(String fullKey) {
+        String strippedKey = fullKey.substring(META_PREFIX.length());
+        int index = strippedKey.lastIndexOf(']');
+        if(index<0){
+            // invalid meta key
+            return null;
+        }
+        String[] result = new String[2];
+        result[0] = strippedKey.substring(0,index);
+        result[1] = strippedKey.substring(index+1);
+        if(result[1].startsWith(".")){
+            result[1] = result[1].substring(1);
+        }
+        return result;
+    }
+
     @Override
-    public MetadataProvider setMeta(String key, String value) {
-        additionalProperties.put(key, value);
+    public MetadataProvider setMeta(String property, String key, String value) {
+        additionalProperties.computeIfAbsent(property, p -> new HashMap<>())
+            .put(key, value);
         return this;
     }
 
     @Override
-    public MetadataProvider setMeta(Map<String, String> metaData) {
-        additionalProperties.putAll(metaData);
+    public MetadataProvider setMeta(String property, Map<String, String> metaData) {
+        additionalProperties.computeIfAbsent(property, p -> new HashMap<>())
+                .putAll(metaData);
+        return this;
+    }
+
+    @Override
+    public MetadataProvider reset(String property) {
+        additionalProperties.remove(property);
         return this;
     }
 

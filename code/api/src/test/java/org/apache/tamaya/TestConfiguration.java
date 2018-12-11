@@ -49,9 +49,7 @@ public class TestConfiguration implements Configuration {
         VALUES.put("String", "aStringValue");
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T get(String key, TypeLiteral<T> type) {
+    private <T> T getInternal(String key, TypeLiteral<T> type) {
         if (type.getRawType().equals(Long.class)) {
             return (T) VALUES.get(key);
         } else if (type.getRawType().equals(Integer.class)) {
@@ -67,18 +65,31 @@ public class TestConfiguration implements Configuration {
         } else if (type.getRawType().equals(Boolean.class)) {
             if ("booleanTrue".equals(key)) {
                 return (T) Boolean.TRUE;
-            } else {
+            } else if ("booleanFalse".equals(key)) {
                 return (T) Boolean.FALSE;
             }
         } else if (type.getRawType().equals(String.class)) {
-            return (T) VALUES.get(key);
+            Object value = VALUES.get(key);
+            if(value!=null){
+                return (T)String.valueOf(value);
+            }
         }
-        throw new ConfigException("No such property: " + key);
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T get(String key, TypeLiteral<T> type) {
+        T t = getInternal(key, type);
+        if(t==null) {
+            throw new ConfigException("No such property: " + key);
+        }
+        return t;
     }
 
     @Override
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-        T val = get(key, type);
+        T val = getInternal(key, type);
         if (val == null) {
             return defaultValue;
         }

@@ -53,7 +53,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      */
     public enum ValueType{
         /** A multi valued property value, which contains named child properties. */
-        OBJECT,
+        MAP,
         /** A multi valued property value, which contains unnamed child properties. */
         ARRAY,
         /** A simple value property. */
@@ -74,7 +74,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         Objects.requireNonNull(key, "Key must be given.");
         Objects.requireNonNull(source, "Source must be given");
 
-        return new PropertyValueBuilder(key, source);
+        return new PropertyValueBuilder(key, null).setSource(source);
     }
 
     /**
@@ -113,7 +113,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
     /**
-     * Creates a new createValue of type {@link ValueType#OBJECT}.
+     * Creates a new createValue of type {@link ValueType#MAP}.
      * @param key the key, not {@code null}.
      * @return a new createValue instance.
      */
@@ -569,8 +569,9 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * Sets the new parent, used iternally when converting between value types.
      * @param parent the parent value.
      */
-    protected final void setParent(PropertyValue parent){
+    protected PropertyValue setParent(PropertyValue parent){
         this.parent = parent;
+        return this;
     }
 
 

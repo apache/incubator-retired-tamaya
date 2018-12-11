@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * This interface allows to plugin different metadata mechanism. The default implementation
  * does load metadata information along the same property sources hierarchy as configuration.
- * MetaData entries are identified by a {@code [META]} prefix. Alternate implementations can
+ * MetaData entries are in the format {@code [(META)key].metakey=metavalue}. Alternate implementations can
  * choose whatever is appropriate, including loading metadata from external sources.
  */
 public interface MetadataProvider {
@@ -39,31 +39,42 @@ public interface MetadataProvider {
     MetadataProvider init(ConfigurationContext context);
 
     /**
-     * Access the current metadata for the given configuration context. The MetaData will be
-     * accessible from {@link ConfigurationContext#getMetaData()}. Note that the metadata must not
+     * Access the current metadata for the given configuration context and key. The MetaData will be
+     * accessible from {@link ConfigurationContext#getMetaData(String)}. Note that the metadata must not
      * to be cached by it's consumers, so caching/optimazitation is delegated to this implementation.
+     * @param key the property key, not null.
      * @return the (immutable) metadata of this configuration context.
      */
-    Map<String,String> getMetaData();
+    Map<String,String> getMetaData(String key);
 
     /**
      * Adds additional metadata. This metadata entries typically override all entries
      * from alternate sources.
      *
-     * @param key the key, not null.
-     * @param value the value, not null.
+     * @param property the property key, not null.
+     * @param key the metadata key, not null.
+     * @param value the metadata value, not null.
      * @return this instance, for chaining.
      */
-    MetadataProvider setMeta(String key, String value);
+    MetadataProvider setMeta(String property, String key, String value);
 
     /**
      * Adds additional metadata. This metadata entries typically override all entries
      * from alternate sources.
      *
+     * @param property the property key, not null.
      * @param metaData the metadata to set/replace.
      * @return this instance, for chaining.
      */
-    MetadataProvider setMeta(Map<String, String> metaData);
+    MetadataProvider setMeta(String property, Map<String, String> metaData);
+
+    /**
+     * Resets metadata for a property, which means it reloads metadata based on the given context and
+     *
+     * param property the property key, not null.
+     * @return this instance, for chaining.
+     */
+    MetadataProvider reset(String property);
 
     /**
      * Resets this instance, which means it reloads metadata based on the given context and

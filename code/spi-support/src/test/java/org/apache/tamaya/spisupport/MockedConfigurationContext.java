@@ -40,7 +40,7 @@ public class MockedConfigurationContext implements ConfigurationContext {
     }
 
     @Override
-    public Map<String, String> getMetaData() {
+    public Map<String, String> getMetaData(String key) {
         return metaData;
     }
 

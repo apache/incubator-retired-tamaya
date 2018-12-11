@@ -99,20 +99,18 @@ public class ConversionContext {
 
 
     /**
-     * Evaluate the current metadata from the given values. Later values hereby are more significant.
+     * Evaluate the metadata for the current target key from the given values. Later values hereby are more significant.
      * @return the evaluated meta data map.
      */
     public Map<String, String> getMeta() {
         Map<String, String> metaMap = new HashMap<>();
-        if(values.size()>0){
-            String baseKey = values.get(0).getQualifiedKey()+".";
-
-            values.forEach(val -> this.getConfiguration().getContext().getMetaData().entrySet().forEach(
-                    en -> {
-                        if(en.getKey().startsWith(baseKey)) {
-                            metaMap.put(en.getKey().substring(baseKey.length()), en.getValue());
-                        }
-                    }));
+        if(configuration!=null){
+            metaMap.putAll(configuration.getContext().getMetaData(key));
+        }
+        for(PropertyValue val:values){
+            if(key.equals(val.getQualifiedKey())){
+                metaMap.putAll(val.getMeta());
+            }
         }
         return metaMap;
     }
@@ -161,7 +159,10 @@ public class ConversionContext {
      */
     @Deprecated
     public ConfigurationContext getConfigurationContext() {
-        return getConfiguration().getContext();
+        if(configuration!=null) {
+            return configuration.getContext();
+        }
+        return ConfigurationContext.EMPTY;
     }
 
     /**

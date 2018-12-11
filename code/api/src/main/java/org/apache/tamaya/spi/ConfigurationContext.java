@@ -34,9 +34,10 @@ public interface ConfigurationContext {
 
     /**
      * Get the metadata evaluated for this configuration.
-     * @return the metadata accessor, never null.
+     * @param key the property key, not null.
+     * @return the metadata fpr this key, never null.
      */
-    Map<String,String> getMetaData();
+    Map<String,String> getMetaData(String key);
 
     /**
      * Access the underlying {@link ServiceContext}.
@@ -149,7 +150,7 @@ public interface ConfigurationContext {
      */
     ConfigurationContext EMPTY = new ConfigurationContext() {
         @Override
-        public Map<String,String> getMetaData() {
+        public Map<String,String> getMetaData(String key) {
             return Collections.emptyMap();
         }
 
