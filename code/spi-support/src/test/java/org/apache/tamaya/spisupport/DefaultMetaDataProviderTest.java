@@ -41,13 +41,13 @@ public class DefaultMetaDataProviderTest {
     @Test
     public void init() {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
-        assertEquals(this, provider.init(ConfigurationContext.EMPTY));
+        assertEquals(provider, provider.init(ConfigurationContext.EMPTY));
     }
 
     @Test
     public void getMetaData() {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
-        assertEquals(this, provider.init(ConfigurationContext.EMPTY));
+        assertEquals(provider, provider.init(ConfigurationContext.EMPTY));
         assertNotNull(provider.getMetaData("foo"));
 
     }
@@ -55,7 +55,7 @@ public class DefaultMetaDataProviderTest {
     @Test
     public void setMeta() {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
-        assertEquals(this, provider.init(ConfigurationContext.EMPTY));
+        assertEquals(provider, provider.init(ConfigurationContext.EMPTY));
         provider.setMeta("foo", "a", "b");
         assertNotNull(provider.getMetaData("foo"));
         assertEquals(1, provider.getMetaData("foo").size());
@@ -64,7 +64,7 @@ public class DefaultMetaDataProviderTest {
     @Test
     public void setMeta_Map() {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
-        assertEquals(this, provider.init(ConfigurationContext.EMPTY));
+        assertEquals(provider, provider.init(ConfigurationContext.EMPTY));
         Map<String,String> map = new HashMap<>();
         map.put("a", "b");
         provider.setMeta("foo", map);
@@ -76,17 +76,19 @@ public class DefaultMetaDataProviderTest {
     @Test
     public void reset() {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
-        assertEquals(this, provider.init(ConfigurationContext.EMPTY));
+        assertEquals(provider, provider.init(ConfigurationContext.EMPTY));
         provider.reset();
-        assertNull(provider.getMetaData("foo"));
+        assertNotNull(provider.getMetaData("foo"));
+        assertTrue(provider.getMetaData("foo").isEmpty());
     }
 
     @Test
     public void reset1() {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
-        assertEquals(this, provider.init(ConfigurationContext.EMPTY));
+        assertEquals(provider, provider.init(ConfigurationContext.EMPTY));
         provider.reset();
-        assertNull(provider.getMetaData("foo"));
+        assertNotNull(provider.getMetaData("foo"));
+        assertTrue(provider.getMetaData("foo").isEmpty());
     }
 
 

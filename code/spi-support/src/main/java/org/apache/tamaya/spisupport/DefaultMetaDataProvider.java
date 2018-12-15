@@ -75,7 +75,11 @@ public class DefaultMetaDataProvider implements MetadataProvider {
         // Override with manual properties
         for(Map.Entry<String,Map<String, String>> en: additionalProperties.entrySet()) {
             Map<String, String> meta = result.get(en.getKey());
-            meta.putAll(en.getValue());
+            if(meta==null){
+                result.put(en.getKey(), new HashMap<>(en.getValue()));
+            }else {
+                meta.putAll(en.getValue());
+            }
         }
         return Collections.unmodifiableMap(result);
     }
@@ -115,6 +119,9 @@ public class DefaultMetaDataProvider implements MetadataProvider {
 
     @Override
     public MetadataProvider setMeta(String property, String key, String value) {
+        Objects.requireNonNull(property, "property null");
+        Objects.requireNonNull(key, "key null");
+        Objects.requireNonNull(value, "value null");
         additionalProperties.computeIfAbsent(property, p -> new HashMap<>())
             .put(key, value);
         return this;
@@ -122,6 +129,8 @@ public class DefaultMetaDataProvider implements MetadataProvider {
 
     @Override
     public MetadataProvider setMeta(String property, Map<String, String> metaData) {
+        Objects.requireNonNull(property, "property null");
+        Objects.requireNonNull(metaData, "metaData null");
         additionalProperties.computeIfAbsent(property, p -> new HashMap<>())
                 .putAll(metaData);
         return this;
@@ -129,6 +138,7 @@ public class DefaultMetaDataProvider implements MetadataProvider {
 
     @Override
     public MetadataProvider reset(String property) {
+        Objects.requireNonNull(property, "property null");
         additionalProperties.remove(property);
         return this;
     }

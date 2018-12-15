@@ -18,19 +18,14 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.*;
-import org.assertj.core.internal.cglib.core.Predicate;
 
 public class DefaultConfigurationTest {
 
