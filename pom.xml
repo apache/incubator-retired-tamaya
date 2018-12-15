@@ -87,13 +87,13 @@
 
     <scm>
         <connection>
-            scm:git://git.apache.org/incubator-tamaya.git
+            scm:git://gitbox.apache.org/incubator-tamaya.git
         </connection>
         <developerConnection>
-            scm:git://git.apache.org/incubator-tamaya.git
+            scm:git://gitbox.apache.org/incubator-tamaya.git
         </developerConnection>
         <url>
-            https://git-wip-us.apache.org/repos/asf?p=incubator-tamaya.git
+            https://gitbox.apache.org/repos/asf?p=incubator-tamaya.git
         </url>
     </scm>
 
@@ -198,6 +198,26 @@
                 <role>PPMC Emeritus</role>
             </roles>
             <timezone>+1</timezone>
+        </developer>
+
+        <developer>
+          <id>acoburn</id>
+          <name>Aaron Coburn</name>
+          <email>acoburn AT apache.org</email>
+          <roles>
+            <role>Committer</role>
+          </roles>
+          <timezone>-5</timezone>
+        </developer>
+
+        <developer>
+          <id>wlieurance</id>
+          <name>William Lieurance</name>
+          <email>wlieurance AT apache.org</email>
+          <roles>
+            <role>Committer</role>
+          </roles>
+          <timezone>America/Chicago</timezone>
         </developer>
     </developers>
 

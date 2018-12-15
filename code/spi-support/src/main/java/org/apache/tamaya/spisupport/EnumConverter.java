@@ -24,7 +24,6 @@ import org.apache.tamaya.spi.PropertyConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -34,6 +33,7 @@ import java.util.logging.Logger;
  * Converter, converting from String to the given enum type.
  */
 public class EnumConverter<T> implements PropertyConverter<T> {
+
     private final Logger LOG = Logger.getLogger(EnumConverter.class.getName());
     private Class<T> enumType;
     private Method factory;
@@ -46,21 +46,23 @@ public class EnumConverter<T> implements PropertyConverter<T> {
         try {
             this.factory = enumType.getMethod("valueOf", String.class);
         } catch (NoSuchMethodException e) {
-            throw new ConfigException("Uncovertible enum type without createValue method found, please provide a custom " +
-                    "PropertyConverter for: " + enumType.getName());
+            throw new ConfigException("Uncovertible enum type without createValue method found, please provide a custom "
+                    + "PropertyConverter for: " + enumType.getName());
         }
     }
 
     @Override
     public T convert(String value, ConversionContext ctx) {
-        ctx.addSupportedFormats(getClass(),"<enumValue>");
+        ctx.addSupportedFormats(getClass(), "<enumValue>");
         try {
             return (T) factory.invoke(null, value);
         } catch (InvocationTargetException | IllegalAccessException e) {
             LOG.log(Level.FINEST, "Invalid enum createValue '" + value + "' for " + enumType.getName(), e);
         }
         try {
-            return (T) factory.invoke(null, value.toUpperCase(Locale.ENGLISH));
+            if (value != null) {
+                return (T) factory.invoke(null, value.toUpperCase(Locale.ENGLISH));
+            }
         } catch (InvocationTargetException | IllegalAccessException e) {
             LOG.log(Level.FINEST, "Invalid enum createValue '" + value + "' for " + enumType.getName(), e);
         }
@@ -69,8 +71,12 @@ public class EnumConverter<T> implements PropertyConverter<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EnumConverter)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof EnumConverter)) {
+            return false;
+        }
         EnumConverter<?> that = (EnumConverter<?>) o;
         return Objects.equals(enumType, that.enumType);
     }
