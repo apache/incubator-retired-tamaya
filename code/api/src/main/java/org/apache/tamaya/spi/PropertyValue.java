@@ -39,7 +39,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     private String key;
     /** The createValue. */
     private String value;
-    /** The getParent getField, null if it's a root getField. */
+    /** The parent value, null if it's a root value. */
     private PropertyValue parent;
     /** The createValue version, used for determining config changes. */
     private AtomicInteger version = new AtomicInteger();
@@ -266,7 +266,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     /**
      * Sets the createValue.
      * @param value the createValue
-     * @return this getField for chaining.
+     * @return this value for chaining.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
@@ -280,7 +280,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
     /**
-     * Get a qualified name of a getField in property format using '.' as separator, e.g.
+     * Get a qualified name of a value in property format using '.' as separator, e.g.
      * {@code a.b.c} or {@code a.b.c[0]} for indexed entries. Entries hereby also can have multiple
      * levels of indexing, e.g. {@code a[1].b.c[14].d} is a valid option.
      *
@@ -314,8 +314,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
     /**
-     * Get the getField's getParent.
-     * @return the getParent, or null.
+     * Get the value's parent.
+     * @return the parent, or null.
      */
     public final PropertyValue getParent(){
         return parent;
@@ -331,16 +331,16 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
 
     /**
-     * Checks if the getField is a root getField.
-     * @return true, if the current getField is a root getField.
+     * Checks if the value is a root value.
+     * @return true, if the current value is a root value.
      */
     public final boolean isRoot() {
         return parent == null;
     }
 
     /**
-     * Checks if the getField is a leaf getField (has no getList).
-     * @return true, if the current getField is a leaf getField.
+     * Checks if the value is a leaf value (has no values).
+     * @return true, if the current value is a leaf value.
      */
     public final boolean isLeaf(){
         return getValueType()==ValueType.VALUE;
@@ -462,7 +462,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
 
     /**
-     * Convert the getField tree to a property map.
+     * Convert the value tree to a property map.
      * @return the corresponding property map, not null.
      */
     public Map<String,String> toMap(){
@@ -513,7 +513,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      */
     public ObjectValue toObjectValue(){
         ObjectValue ov = new ObjectValue(getParent(),getKey());
-        ov.setField("createValue", value);
+        ov.setValue("createValue", value);
         return ov;
     }
 
@@ -536,6 +536,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         PropertyValue newProp = new PropertyValue(getParent(), getKey(), this.value);
         newProp.setMeta(getMeta());
         newProp.setVersion(getVersion());
+        newProp.setValue(getValue());
         return newProp;
     }
 
@@ -580,8 +581,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         if (this == o) return true;
         if (!(o instanceof PropertyValue)) return false;
         PropertyValue dataNode = (PropertyValue) o;
-        return getParent() == dataNode.getParent() &&
-                Objects.equals(getKey(), dataNode.getKey()) &&
+        return Objects.equals(getKey(), dataNode.getKey()) &&
                 Objects.equals(value, dataNode.value) &&
                 Objects.equals(getMeta(), dataNode.getMeta());
     }

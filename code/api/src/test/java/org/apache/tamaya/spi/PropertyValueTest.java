@@ -261,12 +261,12 @@ public class PropertyValueTest {
     public void objectOf() {
         ObjectValue root = PropertyValue.createObject("bar");
         assertTrue(root.getSize() == 0);
-        assertNotNull(root.setField("foo", null));
+        assertNotNull(root.setValue("foo", null));
         assertFalse(root.getSize()==0);
-        assertNotNull(root.getField("foo"));
-        assertNull(root.getField("foo").getValue());
-        assertNotNull(root.setField("foo", "bar"));
-        assertEquals(root.getField("foo").getValue(), "bar");
+        assertNotNull(root.getValue("foo"));
+        assertNull(root.getValue("foo").getValue());
+        assertNotNull(root.setValue("foo", "bar"));
+        assertEquals(root.getValue("foo").getValue(), "bar");
         assertTrue(root.getSize()==1);
     }
 
@@ -290,7 +290,7 @@ public class PropertyValueTest {
         ObjectValue child = PropertyValue.createObject("b");
         ObjectValue n = root.set(child);
         assertEquals("a.b", child.getQualifiedKey());
-        PropertyValue added = child.setField("c", null);
+        PropertyValue added = child.setValue("c", null);
         assertEquals("a.b.c", added.getQualifiedKey());
     }
 
@@ -339,9 +339,10 @@ public class PropertyValueTest {
     public void getParent() {
         ObjectValue n = PropertyValue.createObject("");
         assertNull(n.getParent());
-        n.setFieldObject("b");
-        assertNotNull(n.getField("b"));
-        assertNotNull(n.getField("b").getParent());
+        PropertyValue val = n.setObject("b");
+        assertNotNull(n.getValue("b"));
+        assertEquals(val, n.getValue("b"));
+        assertNotNull(n.getValue("b").getParent());
     }
 
     @Test
@@ -398,39 +399,39 @@ public class PropertyValueTest {
 //        n.setField("b");
 //        n.setField("c");
 //        n.setField("c");
-//        List<PropertyValue> nodes = n.getList("a");
+//        List<PropertyValue> nodes = n.getValues("a");
 //        assertNotNull(nodes);
 //        assertEquals(1, nodes.size());
-//        assertEquals("a", nodes.getField(0).getKey());
+//        assertEquals("a", nodes.getValue(0).getKey());
 //
-//        nodes = n.getList("c");
+//        nodes = n.getValues("c");
 //        assertEquals(2, nodes.size());
-//        assertEquals("c", nodes.getField(0).getKey());
-//        assertEquals("c", nodes.getField(1).getKey());
+//        assertEquals("c", nodes.getValue(0).getKey());
+//        assertEquals("c", nodes.getValue(1).getKey());
 //    }
 //
 //    @Test
-//    public void getList() {
+//    public void getValues() {
 //        PropertyValue n = PropertyValue.createObject();
 //        n.setField("a");
 //        n.setField("b");
 //        n.setField("c");
 //        n.setField("c");
-//        List<PropertyValue> nodes = n.getList();
+//        List<PropertyValue> nodes = n.getValues();
 //        assertNotNull(nodes);
 //        assertEquals(4, nodes.size());
-//        assertEquals("a", nodes.getField(0).getKey());
-//        assertEquals("b", nodes.getField(1).getKey());
-//        assertEquals("c", nodes.getField(2).getKey());
-//        assertEquals("c", nodes.getField(3).getKey());
+//        assertEquals("a", nodes.getValue(0).getKey());
+//        assertEquals("b", nodes.getValue(1).getKey());
+//        assertEquals("c", nodes.getValue(2).getKey());
+//        assertEquals("c", nodes.getValue(3).getKey());
 //    }
 
     @Test
     public void asMap() {
         ObjectValue n = PropertyValue.createObject("");
-        n.setField("a", "aVal");
-        n.setFieldObject("b").setFieldObject("b2").setField("b3", "b3Val");
-        ListValue array = n.setFieldList("c");
+        n.setValue("a", "aVal");
+        n.setObject("b").setObject("b2").setValue("b3", "b3Val");
+        ListValue array = n.setList("c");
         array.addValue("cVal1");
         array.addValue("cVal2");
         Map<String,String> map = n.toMap();
@@ -445,9 +446,9 @@ public class PropertyValueTest {
     @Test
     public void asString() {
         ObjectValue n = PropertyValue.createObject();
-        n.setField("a", "aVal");
-        n.setField("b.b2.b3", "b3Val");
-        n.setField("c", "cVal2");
+        n.setValue("a", "aVal");
+        n.setValue("b.b2.b3", "b3Val");
+        n.setValue("c", "cVal2");
         assertEquals("a = aVal\n" +
                 "b.b2.b3 = b3Val\n" +
                 "c = cVal2\n", n.asString());
@@ -465,9 +466,9 @@ public class PropertyValueTest {
     @Test
     public void testToString() {
         ObjectValue n = PropertyValue.createObject("");
-        n.setField("a", "aVal");
-        n.setField("b.b2.b3", "b3Val");
-        n.setFieldList("c").addValue("cVal1");
+        n.setValue("a", "aVal");
+        n.setValue("b.b2.b3", "b3Val");
+        n.setValue("c", "cVal1");
         assertEquals("PropertyValue[MAP]{'', size='3'}", n.toString());
     }
 

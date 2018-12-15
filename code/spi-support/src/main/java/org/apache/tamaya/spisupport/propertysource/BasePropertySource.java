@@ -128,7 +128,7 @@ public abstract class BasePropertySource implements PropertySource{
         PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){
             try {
-                return Integer.parseInt(configuredOrdinal.getValue());
+                return Double.valueOf(configuredOrdinal.getValue()).intValue();
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
                         "Configured ordinal is not an int number: " + configuredOrdinal, e);

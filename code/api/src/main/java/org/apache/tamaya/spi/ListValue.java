@@ -20,7 +20,6 @@ package org.apache.tamaya.spi;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 
 /**
  * Class modelling the result of a request for a property createValue. A property createValue is basically identified by its key.
@@ -74,15 +73,6 @@ public final class ListValue extends PropertyValue{
         return this.list.size();
     }
 
-    /**
-     * The createValue.
-     * @return the createValue, in case a createValue is null it is valid to return {#code null} as result for
-     * {@link PropertySource#get(String)}.
-     */
-    public List<PropertyValue> getList() {
-        return Collections.unmodifiableList(this.list);
-    }
-
     @Override
     public Iterator<PropertyValue> iterator() {
         return Collections.unmodifiableList(this.list).iterator();
@@ -99,7 +89,9 @@ public final class ListValue extends PropertyValue{
     public <T extends PropertyValue> T add(T value) {
         checkImmutable();
         value.setParent(this);
-        this.list.add(value);
+        if(!this.list.stream().filter(p -> p==value).findAny().isPresent()){
+            this.list.add(value);
+        }
         return value;
     }
 
@@ -188,17 +180,34 @@ public final class ListValue extends PropertyValue{
      * @param filter the filter predicate, null selects all elements.
      * @return this values matching, never null.
      */
-    public List<PropertyValue> getList(Predicate<PropertyValue> filter) {
+    public List<PropertyValue> getValues(Predicate<PropertyValue> filter) {
         List<PropertyValue> result = new ArrayList<>();
-        if(filter==null){
-            result.addAll(this.list);
-        }else {
-            this.list.forEach(el -> {
+        this.list.forEach(el -> {
                 if (filter.test(el)) result.add(el);
             });
-        }
         return result;
     }
+
+    /**
+     * Get the array elements.
+     * @return this values matching, never null.
+     */
+    public List<PropertyValue> getValues() {
+        List<PropertyValue> result = new ArrayList<>();
+        result.addAll(this.list);
+        return result;
+    }
+
+    /**
+     * Get the n-th element of the children.
+     * @param n the index.
+     * @return the element found
+     * @throws NoSuchElementException if no such element exists.
+     */
+    public PropertyValue get(int n) {
+        return this.getValues().get(n);
+    }
+
 
     /**
      * Get the array elements, filtered by the given predicate.
@@ -207,19 +216,11 @@ public final class ListValue extends PropertyValue{
      */
     public List<ObjectValue> getObjects(String name) {
         List<ObjectValue> result = new ArrayList<>();
-        if (name == null) {
-            this.list.forEach(el -> {
-                if (el instanceof ObjectValue) {
-                    result.add((ObjectValue) el);
-                }
-            });
-        } else {
-            this.list.forEach(el -> {
-                if (el instanceof ObjectValue && name.equals(el.getKey())) {
-                    result.add((ObjectValue) el);
-                }
-            });
-        }
+        this.list.forEach(el -> {
+            if (el instanceof ObjectValue && name.equals(el.getKey())) {
+                result.add((ObjectValue) el);
+            }
+        });
         return result;
     }
 
@@ -230,19 +231,25 @@ public final class ListValue extends PropertyValue{
      */
     public List<ListValue> getLists(String name) {
         List<ListValue> result = new ArrayList<>();
-        if (name == null) {
+        this.list.forEach(el -> {
+                if (el instanceof ListValue && name.equals(el.getKey())) {
+                    result.add((ListValue) el);
+                }
+            });
+        return result;
+    }
+
+    /**
+     * Get all array elements of type {@link ListValue}.
+     * @return this values matching, never null.
+     */
+    public List<ListValue> getLists() {
+        List<ListValue> result = new ArrayList<>();
             this.list.forEach(el -> {
                 if (el instanceof ListValue) {
                     result.add((ListValue) el);
                 }
             });
-        } else {
-            this.list.forEach(el -> {
-                if (el instanceof ListValue && name.equals(el.getKey())) {
-                    result.add((ListValue) el);
-                }
-            });
-        }
         return result;
     }
 
@@ -278,9 +285,10 @@ public final class ListValue extends PropertyValue{
         ObjectValue object = new ObjectValue(getParent(), getKey());
         object.setMeta(getMeta());
         object.setVersion(getVersion());
+        object.setValue(getValue());
         int index = 0;
         for(PropertyValue val: list){
-            object.set(val.deepClone().setKey("["+index+"]"));
+            object.set(val.deepClone().setKey(val.getKey()+"["+index+"]"));
             index++;
         }
         return object;
@@ -304,8 +312,9 @@ public final class ListValue extends PropertyValue{
     protected ListValue deepClone(){
         ListValue newProp = new ListValue(getParent(), getKey());
         newProp.setMeta(getMeta());
-        list.forEach(c -> newProp.add(c.mutable()));
+        list.forEach(c -> newProp.add(c.deepClone().mutable()));
         newProp.setVersion(getVersion());
+        newProp.setValue(getValue());
         return newProp;
     }
 
@@ -314,8 +323,7 @@ public final class ListValue extends PropertyValue{
         if (this == o) return true;
         if (!(o instanceof ListValue)) return false;
         ListValue dataNode = (ListValue) o;
-        return getParent() == dataNode.getParent() &&
-                Objects.equals(getKey(), dataNode.getKey()) &&
+        return Objects.equals(getKey(), dataNode.getKey()) &&
                 Objects.equals(getValue(), dataNode.getValue()) &&
                 Objects.equals(list, dataNode.list) &&
                 Objects.equals(getMeta(), dataNode.getMeta());
@@ -323,7 +331,7 @@ public final class ListValue extends PropertyValue{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getParent(), getKey(), list, getValue(), getMeta());
+        return Objects.hash(getKey(), list, getValue(), getMeta());
     }
 
 

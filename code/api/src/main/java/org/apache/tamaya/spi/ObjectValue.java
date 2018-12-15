@@ -19,8 +19,10 @@
 package org.apache.tamaya.spi;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Class modelling the result of a request for a property createValue. A property createValue is basically identified by its key.
@@ -63,31 +65,41 @@ public final class ObjectValue extends PropertyValue{
      * Get the fields of this instance.
      * @return the current fields, never null.
      */
-    public Map<String, PropertyValue> getFields(){
-        return Collections.unmodifiableMap(this.fields);
+    public Collection<PropertyValue> getValues(){
+        return Collections.unmodifiableCollection(this.fields.values());
     }
 
     /**
-     * Get a single child getField by name.
+     * Get the fields of this instance, filtered with the given predicate.
+     * @param predicate the predicate, not null.
+     * @return the current fields, never null.
+     */
+    public Collection<PropertyValue> getValues(Predicate<PropertyValue> predicate){
+        return Collections.unmodifiableCollection(this.fields.values().stream()
+        .filter(predicate).collect(Collectors.toList()));
+    }
+
+    /**
+     * Get a single child getValue by name.
      * @param name the child's name, not null.
      * @return the child found, or null.
-     * @throws IllegalArgumentException if multiple getList with the given name are existing (ambigous).
+     * @throws IllegalArgumentException if multiple getValues with the given name are existing (ambigous).
      */
-    public PropertyValue getField(String name){
+    public PropertyValue getValue(String name){
         return this.fields.get(name);
     }
 
     /**
-     * Get a single child getField with the given name, creates it if not existing.
+     * Get a single child getValue with the given name, creates it if not existing.
      * @param name the child's name, not null.
      * @param valueSupplier the supplier to create a new instance, if no value is present, not null.
      * @param <T> the target type.
      * @return the child found or created, never null.
-     * @throws IllegalArgumentException if multiple getList with the given name are existing (ambigous).
+     * @throws IllegalArgumentException if multiple getValues with the given name are existing (ambigous).
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public <T extends PropertyValue> T getOrSetField(String name, Supplier<T> valueSupplier){
+    public <T extends PropertyValue> T getOrSetValue(String name, Supplier<T> valueSupplier){
         T field = (T)this.fields.get(name);
         if(field==null){
             checkImmutable();
@@ -140,55 +152,21 @@ public final class ObjectValue extends PropertyValue{
     }
 
     /**
-     * Adds a new nvalue child.
-     * @param name the child's name, not null.
-     * @param value the value
-     * @return the createValue added, not null.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public PropertyValue setField(String name, String value){
-        return set(new PropertyValue(this, name, value));
-    }
-
-    /**
      * Adds text values to the createObject.
      * @param values the child's values, not null.
      * @return the created values, not null.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public Collection<PropertyValue> setFields(Map<String, String> values) {
+    public Collection<PropertyValue> setValues(Map<String, String> values) {
         checkImmutable();
         List<PropertyValue> result = new ArrayList<>();
         for(Map.Entry<String, String> en:values.entrySet()) {
-            result.add(new PropertyValue(this, en.getKey(), en.getValue()));
+            PropertyValue val = setValue(en.getKey(), en.getValue());
+            result.add(val);
         }
         return result;
     }
-
-    /**
-     * Adds a new non-indexed child getField.
-     * @param name the child's name, not null.
-     * @return the createValue added, not null.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public ListValue setFieldList(String name){
-        return set(new ListValue(this, name));
-    }
-
-    /**
-     * Adds a new non-indexed child getField.
-     * @param name the child's name, not null.
-     * @return the createValue added, not null.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public ObjectValue setFieldObject(String name){
-        return set(new ObjectValue(this, name));
-    }
-
 
     /**
      * Adds another existing node, hereby setting the corresponding parent node.
@@ -206,22 +184,50 @@ public final class ObjectValue extends PropertyValue{
     }
 
     /**
-     * Adds a new child getField, where the getField is given in '.'-separated property notation,
+     * Sets the given key, value pair.
+     * @param k the key, not null.
+     * @param v the value, not null.
+     * @return the value added, not null.
+     */
+    public PropertyValue setValue(String k, String v) {
+        return set(PropertyValue.createValue(k,v));
+    }
+
+    /**
+     * Sets the given list value.
+     * @param key the key, not null.
+     * @return the value added, not null.
+     */
+    public ListValue setList(String key) {
+        return set(PropertyValue.createList(key));
+    }
+
+    /**
+     * Sets the given object vaöue.
+     * @param key the key, not null.
+     * @return the value added, not null.
+     */
+    public ObjectValue setObject(String key) {
+        return set(PropertyValue.createObject(key));
+    }
+
+    /**
+     * Adds a new child getValue, where the getValue is given in '.'-separated property notation,
      * e.g. {@code a.b.c}.
      * @param key the property key, e.g. {@code a.b.c}
      * @param value the property createValue
-     * @return the new leaf-getField created.
+     * @return the new leaf-getValue created.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public PropertyValue setFieldWithCompositeKey(String key, String value) {
+    public PropertyValue setValueWithCompositeKey(String key, String value) {
         checkImmutable();
         ObjectValue node = this;
         StringTokenizer tokenizer = new StringTokenizer(key, "\\.", false);
         while(tokenizer.hasMoreTokens()){
             String token = tokenizer.nextToken().trim();
             if(tokenizer.hasMoreTokens()) {
-                node = node.getOrSetField(token, () -> PropertyValue.createObject(token));
+                node = node.getOrSetValue(token, () -> PropertyValue.createObject(token));
             }else{
                 return node.set(PropertyValue.createValue(token, value));
             }
@@ -237,17 +243,17 @@ public final class ObjectValue extends PropertyValue{
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public Collection<PropertyValue> setFielsWithCompositeKey(Map<String,String> values) {
+    public Collection<PropertyValue> setValueWithCompositeKey(Map<String,String> values) {
         checkImmutable();
         List<PropertyValue> result = new ArrayList<>();
         for(Map.Entry<String,String> en:values.entrySet()){
-            result.add(setFieldWithCompositeKey(en.getKey(), en.getValue()));
+            result.add(setValueWithCompositeKey(en.getKey(), en.getValue()));
         }
         return result;
     }
 
     /**
-     * Convert the getField tree to a property map.
+     * Convert the getValue tree to a property map.
      * @return the corresponding property map, not null.
      */
     @Override
@@ -281,8 +287,9 @@ public final class ObjectValue extends PropertyValue{
     protected ObjectValue deepClone(){
         ObjectValue newProp = new ObjectValue(getParent(), getKey());
         newProp.setMeta(getMeta());
-        fields.values().forEach(c -> newProp.set(c.mutable()));
+        fields.values().forEach(c -> newProp.set(c.deepClone().mutable()));
         newProp.setVersion(getVersion());
+        newProp.setValue(getValue());
         return newProp;
     }
 
@@ -291,8 +298,7 @@ public final class ObjectValue extends PropertyValue{
         if (this == o) return true;
         if (!(o instanceof ObjectValue)) return false;
         ObjectValue dataNode = (ObjectValue) o;
-        return getParent() == dataNode.getParent() &&
-                Objects.equals(getKey(), dataNode.getKey()) &&
+        return Objects.equals(getKey(), dataNode.getKey()) &&
                 Objects.equals(fields, dataNode.fields) &&
                 Objects.equals(getMeta(), dataNode.getMeta());
     }

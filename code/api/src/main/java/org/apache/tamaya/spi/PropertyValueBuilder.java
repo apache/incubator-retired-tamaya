@@ -38,11 +38,11 @@ public class PropertyValueBuilder {
     protected String source;
     /** additional metadata entries (optional). */
     protected Map<String,String> metaEntries = new HashMap<>();
-    /** The getParent getField, null if it's a root getField. */
+    /** The parent value, null if it's a root value. */
     protected PropertyValue parent;
-    /** The getField's getIndex, if the getField is participating in a createList structure. */
+    /** The value's getIndex, if the value is participating in a createList structure. */
     protected int index = -1;
-    /** Helper structure used for indexing new createList getList. */
+    /** Helper structure used for indexing new createList values. */
     protected Map<String, AtomicInteger> indices = new HashMap<>();
 
     /**
