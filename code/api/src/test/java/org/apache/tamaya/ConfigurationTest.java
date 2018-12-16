@@ -20,12 +20,16 @@ package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ServiceContextManager;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.*;
@@ -37,6 +41,108 @@ import static org.assertj.core.api.Assertions.*;
  * of the default methods.
  */
 public class ConfigurationTest {
+
+    @Before
+    @After
+    public void setup(){
+        ServiceContextManager.getServiceContext().reset();
+    }
+
+    @Test
+    public void test_setCurrent() throws Exception {
+        Configuration saved = Configuration.current();
+        Configuration.setCurrent(Configuration.EMPTY, ServiceContextManager.getDefaultClassLoader());
+        assertThat(Configuration.EMPTY).isEqualTo(Configuration.current());
+        Configuration.setCurrent(saved, ServiceContextManager.getDefaultClassLoader());
+        assertThat(saved).isEqualTo(Configuration.current());
+    }
+
+    @Test
+    public void test_toString() throws Exception {
+        assertThat(Configuration.EMPTY.toString()).isEqualTo("Configuration<EMPTY>");
+    }
+
+    @Test
+    public void test_getProperties() throws Exception {
+        assertThat(Configuration.EMPTY.getProperties()).isEmpty();
+    }
+
+    @Test
+    public void test_get_key() throws Exception {
+        assertThat(Configuration.EMPTY.get("foo")).isNull();
+    }
+
+    @Test
+    public void test_get_key_type() throws Exception {
+        assertThat(Configuration.EMPTY.get("foo", Boolean.class)).isNull();
+    }
+
+    @Test
+    public void test_get_key_typeliteral() throws Exception {
+        assertThat((Predicate<Boolean>)Configuration.EMPTY.get("foo", TypeLiteral.of(Boolean.class))).isNull();
+    }
+
+    @Test
+    public void test_getOptional_key() throws Exception {
+        assertThat(Configuration.EMPTY.getOptional("foo")).isNotNull().isNotPresent();
+    }
+
+    @Test
+    public void test_get_key_class() throws Exception {
+        assertThat(Configuration.EMPTY.get("foo", Boolean.class)).isNull();
+    }
+
+    @Test
+    public void test_get_keys_class() throws Exception {
+        assertThat(Configuration.EMPTY.get(Arrays.asList("foo", "bar"), Boolean.class)).isNull();
+    }
+
+    @Test
+    public void test_get_keys_typeliteral() throws Exception {
+        assertThat((Predicate<Boolean>)Configuration.EMPTY.get(Arrays.asList("foo", "bar"), TypeLiteral.of(Boolean.class)))
+                .isNull();
+    }
+
+    @Test
+    public void test_get_keys_typeliteral_default() throws Exception {
+        assertThat(Configuration.EMPTY.getOrDefault(Arrays.asList("foo", "bar"), TypeLiteral.of(Boolean.class), Boolean.TRUE))
+                .isEqualTo(Boolean.TRUE);
+    }
+
+    @Test
+    public void test_getOptional_key_class() throws Exception {
+        assertThat(Configuration.EMPTY.getOptional("foo", Boolean.class)).isNotNull().isNotPresent();
+    }
+
+    @Test
+    public void test_getOptional_key_typeliteral() throws Exception {
+        assertThat(Configuration.EMPTY.getOptional("foo", TypeLiteral.of(Boolean.class))).isNotNull().isNotPresent();
+    }
+
+    @Test
+    public void test_getOptional_keys() throws Exception {
+        assertThat(Configuration.EMPTY.getOptional(Arrays.asList("foo", "bar"))).isNotNull().isNotPresent();
+    }
+
+    @Test
+    public void test_getOptional_keys_class() throws Exception {
+        assertThat(Configuration.EMPTY.getOptional(Arrays.asList("foo", "bar"), Boolean.class)).isNotNull().isNotPresent();
+    }
+
+    @Test
+    public void test_getOptional_keys_typeliteral() throws Exception {
+        assertThat(Configuration.EMPTY.getOptional(Arrays.asList("foo", "bar"), TypeLiteral.of(Boolean.class))).isNotNull().isNotPresent();
+    }
+
+    @Test
+    public void test_getOrDefault_key_default() throws Exception {
+        assertThat(Configuration.EMPTY.getOrDefault("foo", "bar")).isEqualTo("bar");
+    }
+
+    @Test
+    public void test_getOrDefault_key_type_default() throws Exception {
+        assertThat(Configuration.EMPTY.getOrDefault("foo", Boolean.class, Boolean.TRUE)).isEqualTo(Boolean.TRUE);
+    }
 
     @Test
     public void test_current() throws Exception {
@@ -119,6 +225,21 @@ public class ConfigurationTest {
     public void testGetOrDefault() throws Exception {
         assertThat("StringIfThereWasNotAValueThere").isEqualTo(Configuration.current().getOrDefault("nonexistant", "StringIfThereWasNotAValueThere"));
         assertThat("StringIfThereWasNotAValueThere").isEqualTo(Configuration.current().getOrDefault("nonexistant", String.class, "StringIfThereWasNotAValueThere"));
+    }
+
+    @Test
+    public void testGetSnapshot() throws Exception {
+        assertThat(Configuration.EMPTY.getSnapshot()).isNotNull();
+    }
+
+    @Test
+    public void testGetSnapshot_keys() throws Exception {
+        assertThat(Configuration.EMPTY.getSnapshot("foo", "bar")).isNotNull();
+    }
+
+    @Test
+    public void testGetSnapshot_iterable() throws Exception {
+        assertThat(Configuration.EMPTY.getSnapshot(Arrays.asList("foo", "bar"))).isNotNull();
     }
 
     @Test

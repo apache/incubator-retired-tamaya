@@ -96,4 +96,9 @@ public final class TestLowerOrdinalServiceContext implements ServiceContext {
         throw ex;
     }
 
+    @Override
+    public void reset() {
+
+    }
+
 }

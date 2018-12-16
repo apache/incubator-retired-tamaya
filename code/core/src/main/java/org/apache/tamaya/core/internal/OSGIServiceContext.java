@@ -277,4 +277,9 @@ public class OSGIServiceContext implements ServiceContext{
         }
     }
 
+    @Override
+    public void reset() {
+
+    }
+
 }

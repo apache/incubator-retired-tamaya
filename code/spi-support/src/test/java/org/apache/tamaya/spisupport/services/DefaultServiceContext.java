@@ -242,4 +242,9 @@ public final class DefaultServiceContext implements ServiceContext {
         return (List<T>)servicesLoaded.get(type);
     }
 
+    @Override
+    public void reset() {
+        this.servicesLoaded.clear();
+    }
+
 }

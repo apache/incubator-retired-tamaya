@@ -79,6 +79,11 @@ public class ServiceContextTest {
             return instances;
         }
 
+        @Override
+        public void reset() {
+
+        }
+
     };
 
     @Test

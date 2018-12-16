@@ -106,6 +106,11 @@ public class ServiceContextManagerTest {
         public <T> List<T> register(Class<T> type, List<T> instancea, boolean force) {
             return instancea;
         }
+
+        @Override
+        public void reset() {
+
+        }
     }
 
 }

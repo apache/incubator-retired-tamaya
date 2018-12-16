@@ -189,4 +189,10 @@ public interface ServiceContext extends ClassloaderAware{
      * @return the instances registered or already present.
      */
     <T> List<T> register(Class<T> type, List<T> instances, boolean force);
+
+    /**
+     * Resets the current service context, removing all loaded services. This implicitly triggers a new load
+     * of the service context.
+     */
+    void reset();
 }

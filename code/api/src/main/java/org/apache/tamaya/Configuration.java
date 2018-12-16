@@ -517,11 +517,6 @@ public interface Configuration {
         }
 
         @Override
-        public ConfigurationSnapshot getSnapshot(String... keys) {
-            return ConfigurationSnapshot.EMPTY;
-        }
-
-        @Override
         public String toString(){
             return "Configuration<EMPTY>";
         }

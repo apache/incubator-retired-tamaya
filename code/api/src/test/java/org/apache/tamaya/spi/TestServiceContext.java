@@ -142,4 +142,9 @@ public final class TestServiceContext implements ServiceContext {
         return (List<T>)servicesLoaded.get(type);
     }
 
+    @Override
+    public void reset() {
+
+    }
+
 }
