@@ -18,15 +18,11 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.ConfigException;
-
 import javax.annotation.Priority;
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 
 /**
@@ -44,7 +40,7 @@ public interface ServiceContext extends ClassloaderAware{
     }
 
     /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's createValue is evaluated. If no such
+     * Checks the given instance for a @Priority annotation. If present the annotation's value is evaluated. If no such
      * annotation is present, a default priority of {@code 1} is returned.
      * @param o the instance, not {@code null}.
      * @return a priority, by default 1.

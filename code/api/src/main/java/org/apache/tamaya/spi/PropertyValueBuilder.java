@@ -32,9 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PropertyValueBuilder {
     /** The key accessed. */
     protected String key;
-    /** The property createValue. */
+    /** The property value. */
     protected String value;
-    /** The property createValue. */
+    /** The property value. */
     protected String source;
     /** additional metadata entries (optional). */
     protected Map<String,String> metaEntries = new HashMap<>();
@@ -69,12 +69,12 @@ public class PropertyValueBuilder {
     /**
      * Add an additional context data information.
      * @param key the context data key, not {@code null}.
-     * @param value the context createValue, not {@code null} (will be converted to String).
+     * @param value the context value, not {@code null} (will be converted to String).
      * @return the builder for chaining.
      */
     public PropertyValueBuilder addMetaEntry(String key, String value) {
         Objects.requireNonNull(key, "Meta key must be given.");
-        Objects.requireNonNull(value, "Meta createValue must be given.");
+        Objects.requireNonNull(value, "Meta value must be given.");
 
         this.metaEntries.put(key, value);
         return this;
@@ -103,7 +103,7 @@ public class PropertyValueBuilder {
     }
 
     /**
-     * Get the createValue's context data.
+     * Get the value's context data.
      * @return the context data, not {@code null}.
      */
     public Map<String,String> getMetaEntries() {
@@ -111,7 +111,7 @@ public class PropertyValueBuilder {
     }
 
     /**
-     * Get the createValue's context data.
+     * Get the value's context data.
      * @param key the key, not null.
      * @return the context data, not {@code null}.
      */
@@ -120,7 +120,7 @@ public class PropertyValueBuilder {
     }
 
     /**
-     * Get the createValue's context data.
+     * Get the value's context data.
      * @param <T> the type of the class modeled by the type parameter
      * @param type the target type, not null.
      * @return the context data, not {@code null}.
@@ -160,8 +160,8 @@ public class PropertyValueBuilder {
     }
 
     /**
-     * Sets a new createValue.
-     * @param value the new createValue, not {@code null}.
+     * Sets a new value.
+     * @param value the new value, not {@code null}.
      * @return the builder for chaining.
      */
     public PropertyValueBuilder setValue(String value) {
@@ -196,7 +196,7 @@ public class PropertyValueBuilder {
     public String toString() {
         return "PropertyValueBuilder{" +
                 "key='" + key + '\'' +
-                ", createValue='" + value + '\'' +
+                ", value='" + value + '\'' +
                 ", source='" + source + '\'' +
                 ", metaEntries=" + metaEntries +
                 '}';

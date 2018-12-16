@@ -158,7 +158,7 @@ public class FilterContext {
 
     @Override
     public String toString() {
-        return "FilterContext{createValue='" + values + "', configEntries=" + configEntries.keySet() + '}';
+        return "FilterContext{value='" + values + "', configEntries=" + configEntries.keySet() + '}';
     }
 
 }

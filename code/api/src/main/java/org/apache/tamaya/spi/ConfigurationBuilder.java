@@ -91,7 +91,7 @@ public interface ConfigurationBuilder {
     /**
      * This method can be used for adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
-     * lowest priority  regardless of its current ordinal createValue. To sort the property
+     * lowest priority  regardless of its current ordinal value. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the {@link PropertySource}s to add
@@ -124,7 +124,7 @@ public interface ConfigurationBuilder {
     /**
      * This method can be used for programmatically adding {@link PropertySource}s.
      * Hereby the property source is added to the tail of property sources with
-     * lowest priority regardless of its current ordinal createValue. To sort the property
+     * lowest priority regardless of its current ordinal value. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
      * @param propertySources the {@link PropertySource}s to add

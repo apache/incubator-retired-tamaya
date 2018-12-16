@@ -56,7 +56,7 @@ public interface Configuration {
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @return the property's createValue.
+     * @return the property's value.
      */
     default String get(String key){
         return get(key, TypeLiteral.of(String.class));
@@ -66,7 +66,7 @@ public interface Configuration {
      * Access a property.
      *
      * @param keys the property's keys, in order of evaluation, not {@code null}.
-     * @return the property's createValue.
+     * @return the property's value.
      */
     default String get(Iterable<String> keys){
         return get(keys, TypeLiteral.of(String.class));
@@ -76,7 +76,7 @@ public interface Configuration {
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @param defaultValue createValue to be returned, if no createValue is present, not {@code null}
+     * @param defaultValue value to be returned, if no value is present, not {@code null}
      * @return the property's keys.
      */
     default String getOrDefault(String key, String defaultValue){
@@ -87,7 +87,7 @@ public interface Configuration {
      * Access a property.
      *
      * @param keys the property's keys, in order of evaluation, not {@code null}.
-     * @param defaultValue createValue to be returned, if no createValue is present, not {@code null}
+     * @param defaultValue value to be returned, if no value is present, not {@code null}
      * @return the property's keys.
      */
     default String getOrDefault(Iterable<String> keys, String defaultValue){
@@ -171,8 +171,8 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. {@code
      *                     a/b/c/d.myProperty}, not  {@code null}.
      * @param type         The target type required, not  {@code null}.
-     * @param defaultValue createValue to be used, if no createValue is present, not {@code null}
-     * @return the property createValue, never {@code null}.
+     * @param defaultValue value to be used, if no value is present, not {@code null}
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T getOrDefault(String key, Class<T> type, T defaultValue){
@@ -187,8 +187,8 @@ public interface Configuration {
      * @param <T> the type of the class modeled by the type parameter
      * @param keys the property's keys, in evaluation order, not {@code null}.
      * @param type         The target type required, not  {@code null}.
-     * @param defaultValue createValue to be used, if no createValue is present, not {@code null}
-     * @return the property createValue, never {@code null}.
+     * @param defaultValue value to be used, if no value is present, not {@code null}
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T getOrDefault(Iterable<String> keys, Class<T> type, T defaultValue){
@@ -204,7 +204,7 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}.
      * @param type         The target type required, not {@code null}.
-     * @return the property createValue, never {@code null}.
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T get(String key, Class<T> type){
@@ -219,7 +219,7 @@ public interface Configuration {
      * @param <T> the type of the class modeled by the type parameter
      * @param keys the property's keys, in evaluation order, not {@code null}.
      * @param type         The target type required, not {@code null}.
-     * @return the property createValue, never {@code null}.
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T get(Iterable<String> keys, Class<T> type){
@@ -237,7 +237,7 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g. @code
      *                     a/b/c/d.myProperty}, not {@code null}.
      * @param type         The target type required, not {@code null}.
-     * @return the property createValue, never {@code null}.
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T get(String key, TypeLiteral<T> type);
@@ -250,7 +250,7 @@ public interface Configuration {
      * @param <T> the type of the type literal
      * @param keys the property's keys, in evaluation order, not {@code null}.
      * @param type         The target type required, not {@code null}.
-     * @return the property createValue, never {@code null}.
+     * @return the property value, never {@code null}.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T get(Iterable<String> keys, TypeLiteral<T> type){
@@ -272,8 +272,8 @@ public interface Configuration {
      * @param key          the property's absolute, or relative path, e.g.
      *                     {@code a/b/c/d.myProperty}, not {@code null}.
      * @param type         The target type required, not {@code null}.
-     * @param defaultValue default createValue to be used, if no createValue is present.
-     * @return the property createValue, never null.
+     * @param defaultValue default value to be used, if no value is present.
+     * @return the property value, never null.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue);
@@ -286,8 +286,8 @@ public interface Configuration {
      * @param <T> the type of the type literal
      * @param keys the property's keys, in evaluation order, not {@code null}.
      * @param type         The target type required, not {@code null}.
-     * @param defaultValue default createValue to be used, if no createValue is present.
-     * @return the property createValue, never null.
+     * @param defaultValue default value to be used, if no value is present.
+     * @return the property value, never null.
      * @throws ConfigException if the keys could not be converted to the required target type.
      */
     default <T> T getOrDefault(Iterable<String> keys, TypeLiteral<T> type, T defaultValue){

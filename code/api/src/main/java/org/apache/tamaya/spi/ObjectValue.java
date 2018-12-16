@@ -25,9 +25,9 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Class modelling the result of a request for a property createValue. A property createValue is basically identified by its key.
- * There might be reasons, where one want to further analyze, which PropertySources provided a createValue and which not, so
- * it is possible to createObject a PropertyValue with a null createValue.
+ * Class modelling the result of a request for a property value. A property value is basically identified by its key.
+ * There might be reasons, where one want to further analyze, which PropertySources provided a value and which not, so
+ * it is possible to createObject a PropertyValue with a null value.
  *
  *  A PropertyValue represents an abstract data point in a configuration structure read. PropertyValues actually
  *  represent a tree, with additional functionality for representing data lists/arrays using indexed children
@@ -54,8 +54,8 @@ public final class ObjectValue extends PropertyValue{
     }
 
     /**
-     * Get the item's current createValue type.
-     * @return the createValue type, never null.
+     * Get the item's current value type.
+     * @return the value type, never null.
      */
     public ValueType getValueType() {
         return ValueType.MAP;
@@ -111,8 +111,8 @@ public final class ObjectValue extends PropertyValue{
     }
 
     /**
-     * Get the createValue's number of elements.
-     * @return the getNumChilds of this multi createValue.
+     * Get the value's number of elements.
+     * @return the getNumChilds of this multi value.
      */
     @Override
     public int getSize() {
@@ -170,9 +170,9 @@ public final class ObjectValue extends PropertyValue{
 
     /**
      * Adds another existing node, hereby setting the corresponding parent node.
-     * @param value the createValue, not null
+     * @param value the value, not null
      * @param <T> the value type.
-     * @return the createValue added, not null.
+     * @return the value added, not null.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
@@ -215,7 +215,7 @@ public final class ObjectValue extends PropertyValue{
      * Adds a new child getValue, where the getValue is given in '.'-separated property notation,
      * e.g. {@code a.b.c}.
      * @param key the property key, e.g. {@code a.b.c}
-     * @param value the property createValue
+     * @param value the property value
      * @return the new leaf-getValue created.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
@@ -239,7 +239,7 @@ public final class ObjectValue extends PropertyValue{
      * Adds multiple values, where the keys are given in '.'-separated property notation,
      * e.g. {@code a.b.c}.
      * @param values the values, not null.
-     * @return the createValue instances created.
+     * @return the value instances created.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
@@ -275,8 +275,8 @@ public final class ObjectValue extends PropertyValue{
 
 
     /**
-     * Clones this instance and all it's children, marking as mutable createValue.
-     * @return the new createValue clone.
+     * Clones this instance and all it's children, marking as mutable value.
+     * @return the new value clone.
      */
     @Override
     public ObjectValue mutable(){
@@ -313,7 +313,7 @@ public final class ObjectValue extends PropertyValue{
     public String toString() {
         return "PropertyValue[MAP]{" +
                 '\'' +getQualifiedKey() + '\'' +
-                (getValue()!=null?", createValue='" + getValue() + '\'':"") +
+                (getValue()!=null?", value='" + getValue() + '\'':"") +
                 ", size='" + getSize() + '\'' +
                 (getMeta().isEmpty()?"":", metaData=" + getMeta()) +
                 '}';

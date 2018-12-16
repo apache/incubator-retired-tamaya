@@ -596,7 +596,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     public String toString() {
         return "PropertyValue{" +
                 '\'' +getQualifiedKey() + '\'' +
-                (value!=null?", createValue='" + value + '\'':"") +
+                (value!=null?", value='" + value + '\'':"") +
                 (getMeta().isEmpty()?"":", metaData=" + getMeta()) +
                 '}';
     }

@@ -42,7 +42,7 @@ public interface PropertyFilter{
      * </ul>
      * @param value the value to be filtered, which also can be {@code null} if removed by another filter.
      * @param context the filter context, not null.
-     * @return the filtered createValue, or {@code null} if the createValue should be removed alltogether.
+     * @return the filtered value, or {@code null} if the value should be removed alltogether.
      * @see PropertyValue
      * @see FilterContext
      */

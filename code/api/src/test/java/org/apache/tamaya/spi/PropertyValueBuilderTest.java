@@ -150,7 +150,7 @@
 //        PropertyValueBuilder b = new PropertyValueBuilder("k", "v").setSource("testSetContextData");
 //        Map<String,String> context = new HashMap<>();
 //        context.put("source", "testSetContextData");
-//        context.put("ts", String.createValue(System.currentTimeMillis()));
+//        context.put("ts", String.value(System.currentTimeMillis()));
 //        context.put("y", "yValue");
 //        b.setMeta(new HashMap<String, String>());
 //        b.setMeta(context);
@@ -177,13 +177,13 @@
 //
 //    @Test
 //    public void testMapKey() {
-//        PropertyValueBuilder b = new PropertyValueBuilder("key", "createValue")
+//        PropertyValueBuilder b = new PropertyValueBuilder("key", "value")
 //                .setMeta("_keyAndThenSome", "mappedvalue")
 //                .setMeta("somethingelse", "othervalue")
 //                .mapKey("mappedkey");
 //        PropertyValue pv = b.build();
 //        Assertions.assertThat(pv.getKey()).isEqualTo("mappedkey");
-//        Assertions.assertThat(pv.getValue()).isEqualTo("createValue");
+//        Assertions.assertThat(pv.getValue()).isEqualTo("value");
 //        Assertions.assertThat(pv.getMeta()).hasSize(2);
 //        assertThat(pv.getMeta("_mappedkey.AndThenSome")).isEqualTo("mappedvalue");
 //        assertThat(pv.getMeta("somethingelse")).isEqualTo("othervalue");
@@ -194,7 +194,7 @@
 //        PropertyValueBuilder b = new PropertyValueBuilder("k", "v")
 //                .setMeta("metak", "metav");
 //        System.out.println(b.toString());
-//        assertThat(b.toString()).isEqualTo("PropertyValueBuilder{key='k'createValue='v'listValue='[]', metaEntries={metak=metav}}");
+//        assertThat(b.toString()).isEqualTo("PropertyValueBuilder{key='k'value='v'listValue='[]', metaEntries={metak=metav}}");
 //    }
 //
 //    @Test(expected = NullPointerException.class)

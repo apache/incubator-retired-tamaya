@@ -89,7 +89,7 @@ public interface PropertySource{
 
 
     /**
-     * The ordinal createValue is the default ordering parameter which definines the default order of
+     * The ordinal value is the default ordering parameter which definines the default order of
      * auto-discovered property sources. Ordering of property sources is important since values
      * from property sources with higher ordinal values override values from less significant
      * property sources.
@@ -104,10 +104,10 @@ public interface PropertySource{
      *
      * <p><b>Important Hints for custom implementations</b>:</p>
      * <p>
-     * If a custom implementation should be invoked <b>before</b> the default implementations, use a createValue &gt; 1000
+     * If a custom implementation should be invoked <b>before</b> the default implementations, use a value &gt; 1000
      * </p>
      * <p>
-     * If a custom implementation should be invoked <b>after</b> the default implementations, use a createValue &lt; 100
+     * If a custom implementation should be invoked <b>after</b> the default implementations, use a value &lt; 100
      * </p>
      *
      * <p>Reordering of the default order of the config-sources:</p>
@@ -116,7 +116,7 @@ public interface PropertySource{
      * /META-INF/javaconfiguration.properties . Hint: In case of property files every file is handled as independent
      * config-source, but all of them have ordinal 400 by default (and can be reordered in a fine-grained manner.</p>
      *
-     * In cases where it is not possible to change a config sources ordinal createValue, you may have several options:
+     * In cases where it is not possible to change a config sources ordinal value, you may have several options:
      * <ul>
      *     <li>you can use a {@link ConfigurationBuilder} to redefine the source order and finally use
      *     {@link org.apache.tamaya.ConfigurationProvider#setConfiguration(Configuration)} to
@@ -152,8 +152,8 @@ public interface PropertySource{
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @return the property createValue map, where {@code map.current(key) == createValue}, including also any metadata. In case a
-     * createValue is null, simply return {@code null}.
+     * @return the property value map, where {@code map.current(key) == value}, including also any metadata. In case a
+     * value is null, simply return {@code null}.
      */
     PropertyValue get(String key);
 

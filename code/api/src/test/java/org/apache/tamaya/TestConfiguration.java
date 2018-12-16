@@ -116,7 +116,7 @@ public class TestConfiguration implements Configuration {
 
     @Override
     public Map<String, String> getProperties() {
-        // run toString on each createValue of the (key, createValue) setCurrent in VALUES
+        // run toString on each value of the (key, value) setCurrent in VALUES
         return VALUES.entrySet().stream().collect(
                 Collectors.toMap(
                         Map.Entry::getKey,
