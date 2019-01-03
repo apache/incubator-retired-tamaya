@@ -18,8 +18,8 @@ Bundle-Category: Implementation
 Bundle-Copyright: (C) Apache Foundation
 Bundle-License: Apache Licence version 2
 Bundle-Vendor: Apache Software Foundation
-Bundle-ContactAddress: dev-tamaya@incubator.apache.org
-Bundle-DocURL: http://tamaya.apache.org
+Bundle-ContactAddress: dev@tamaya.incubator.apache.org
+Bundle-DocURL: https://tamaya.apache.org
 Bundle-Activator: org.apache.tamaya.core.OSGIActivator
 Bundle-ActivationPolicy: lazy
 Export-Package: \
