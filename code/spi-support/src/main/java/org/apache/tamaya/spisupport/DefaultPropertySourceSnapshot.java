@@ -65,7 +65,7 @@ public class DefaultPropertySourceSnapshot implements PropertySource, Serializab
      * Constructor.
      *
      * @param propertySource The base PropertySource.
-     * @param keys
+     * @param keys the keys to be added to the snapshot.
      */
     public DefaultPropertySourceSnapshot(PropertySource propertySource, Iterable<String> keys) {
         for(String k:keys){
