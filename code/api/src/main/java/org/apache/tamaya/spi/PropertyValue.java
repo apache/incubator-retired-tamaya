@@ -569,6 +569,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     /**
      * Sets the new parent, used iternally when converting between value types.
      * @param parent the parent value.
+     * @return the simple value, never null.
      */
     protected PropertyValue setParent(PropertyValue parent){
         this.parent = parent;

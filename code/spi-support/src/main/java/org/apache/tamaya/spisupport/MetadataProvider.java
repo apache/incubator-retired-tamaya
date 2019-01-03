@@ -71,7 +71,7 @@ public interface MetadataProvider {
     /**
      * Resets metadata for a property, which means it reloads metadata based on the given context and
      *
-     * param property the property key, not null.
+     * @param property the property key, not null.
      * @return this instance, for chaining.
      */
     MetadataProvider reset(String property);
