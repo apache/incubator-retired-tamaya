@@ -19,7 +19,7 @@ Bundle-Copyright: (C) Apache Foundation
 Bundle-License: Apache Licence version 2
 Bundle-Vendor: Apache Software Foundation
 Bundle-ContactAddress: dev-tamaya@incubator.apache.org
-Bundle-DocURL: http://tamaya.apache.org
+Bundle-DocURL: https://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya,\
 	org.apache.tamaya.spi
