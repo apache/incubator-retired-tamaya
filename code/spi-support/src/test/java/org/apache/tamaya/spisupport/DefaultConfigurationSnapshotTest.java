@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -62,8 +62,8 @@ public class DefaultConfigurationSnapshotTest {
 
         long poiEnd = System.nanoTime();
 
-        assertTrue(fc.getTimestamp()>poiStart);
-        assertTrue(fc.getTimestamp()<poiEnd);
+        assertThat(fc.getTimestamp()>poiStart).isTrue();
+        assertThat(fc.getTimestamp()<poiEnd).isTrue();
     }
 
 
@@ -76,7 +76,7 @@ public class DefaultConfigurationSnapshotTest {
 
         DefaultConfigurationSnapshot fc = new DefaultConfigurationSnapshot(source);
 
-        assertNotNull(fc);
+        assertThat(fc).isNotNull();
     }
 
     /*
@@ -94,7 +94,7 @@ public class DefaultConfigurationSnapshotTest {
         DefaultConfigurationSnapshot fcA = new DefaultConfigurationSnapshot(configuration);
         DefaultConfigurationSnapshot fcB = new DefaultConfigurationSnapshot(configuration);
 
-        assertNotEquals(fcA, fcB);
+        assertThat(fcA).isNotEqualTo(fcB);
     }
 
     /*
@@ -106,9 +106,9 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
-        assertEquals(config.getContext().getPropertySources().size(),snapshot.getContext().getPropertySources().size());
-        assertEquals(config.getContext().getPropertyConverters().size(),snapshot.getContext().getPropertyConverters().size());
-        assertEquals(config.getContext().getPropertyFilters().size(),snapshot.getContext().getPropertyFilters().size());
+        assertThat(config.getContext().getPropertySources().size()).isEqualTo(snapshot.getContext().getPropertySources().size());
+        assertThat(config.getContext().getPropertyConverters().size()).isEqualTo(snapshot.getContext().getPropertyConverters().size());
+        assertThat(config.getContext().getPropertyFilters().size()).isEqualTo(snapshot.getContext().getPropertyFilters().size());
     }
 
     @Test
@@ -116,18 +116,18 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
-        assertEquals("javaconf-value1", snapshot.get("confkey1"));
-        assertEquals("javaconf-value2", snapshot.get("confkey2"));
-        assertEquals("javaconf-value3", snapshot.get("confkey3"));
-        assertNull(snapshot.getOrDefault("confkey4", null));
-        assertEquals("javaconf-value1", snapshot.get("confkey1", String.class));
-        assertEquals("javaconf-value2", snapshot.get("confkey2", String.class));
-        assertEquals("javaconf-value3", snapshot.get("confkey3", String.class));
-        assertNull(snapshot.getOrDefault("confkey4", String.class, null));
-        assertEquals("javaconf-value1", snapshot.get("confkey1", TypeLiteral.of(String.class)));
-        assertEquals("javaconf-value2", snapshot.get("confkey2", TypeLiteral.of(String.class)));
-        assertEquals("javaconf-value3", snapshot.get("confkey3", TypeLiteral.of(String.class)));
-        assertNull(snapshot.getOrDefault("confkey4", TypeLiteral.of(String.class), null));
+        assertThat("javaconf-value1").isEqualTo(snapshot.get("confkey1"));
+        assertThat("javaconf-value2").isEqualTo(snapshot.get("confkey2"));
+        assertThat("javaconf-value3").isEqualTo(snapshot.get("confkey3"));
+        assertThat(snapshot.getOrDefault("confkey4", null)).isNull();
+        assertThat("javaconf-value1").isEqualTo(snapshot.get("confkey1", String.class));
+        assertThat("javaconf-value2").isEqualTo(snapshot.get("confkey2", String.class));
+        assertThat("javaconf-value3").isEqualTo(snapshot.get("confkey3", String.class));
+        assertThat(snapshot.getOrDefault("confkey4", String.class, null)).isNull();
+        assertThat("javaconf-value1").isEqualTo(snapshot.get("confkey1", TypeLiteral.of(String.class)));
+        assertThat("javaconf-value2").isEqualTo(snapshot.get("confkey2", TypeLiteral.of(String.class)));
+        assertThat("javaconf-value3").isEqualTo(snapshot.get("confkey3", TypeLiteral.of(String.class)));
+        assertThat((String) snapshot.getOrDefault("confkey4", TypeLiteral.of(String.class), null)).isNull();
     }
 
     @Test
@@ -136,12 +136,12 @@ public class DefaultConfigurationSnapshotTest {
         ConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
         snapshot = snapshot.getSnapshot(Arrays.asList("confkey1"));
-        assertEquals("javaconf-value1", snapshot.get("confkey1"));
-        assertNull(snapshot.getOrDefault("confkey2", null));
-        assertEquals("javaconf-value1", snapshot.get("confkey1", String.class));
-        assertNull(snapshot.getOrDefault("confkey2", String.class, null));
-        assertEquals("javaconf-value1", snapshot.get("confkey1", TypeLiteral.of(String.class)));
-        assertNull(snapshot.getOrDefault("confkey2", TypeLiteral.of(String.class), null));
+        assertThat("javaconf-value1").isEqualTo(snapshot.get("confkey1"));
+        assertThat(snapshot.getOrDefault("confkey2", null)).isNull();
+        assertThat("javaconf-value1").isEqualTo(snapshot.get("confkey1", String.class));
+        assertThat(snapshot.getOrDefault("confkey2", String.class, null)).isNull();
+        assertThat("javaconf-value1").isEqualTo(snapshot.get("confkey1", TypeLiteral.of(String.class)));
+        assertThat((String) snapshot.getOrDefault("confkey2", TypeLiteral.of(String.class), null)).isNull();
     }
 
     @Test
@@ -149,10 +149,10 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
-        assertEquals("javaconf-value1", snapshot.get(Arrays.asList("confkey1", "foo")));
-        assertEquals("javaconf-value2", snapshot.get(Arrays.asList("foo", "confkey2")));
-        assertEquals("javaconf-value1", snapshot.get(Arrays.asList("confkey1", "foo"), String.class));
-        assertEquals("javaconf-value2", snapshot.get(Arrays.asList("foo", "confkey2"), String.class));
+        assertThat("javaconf-value1").isEqualTo(snapshot.get(Arrays.asList("confkey1", "foo")));
+        assertThat("javaconf-value2").isEqualTo(snapshot.get(Arrays.asList("foo", "confkey2")));
+        assertThat("javaconf-value1").isEqualTo(snapshot.get(Arrays.asList("confkey1", "foo"), String.class));
+        assertThat("javaconf-value2").isEqualTo(snapshot.get(Arrays.asList("foo", "confkey2"), String.class));
     }
 
     @Test
@@ -160,12 +160,12 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
-        assertEquals("javaconf-value1", snapshot.getOrDefault("confkey1", "foo"));
-        assertEquals("javaconf-value2", snapshot.getOrDefault("confkey2", "foo"));
-        assertEquals("javaconf-value2", snapshot.getOrDefault("confkey2", String.class,"foo"));
-        assertEquals("javaconf-value3", snapshot.getOrDefault("confkey3", "foo"));
-        assertEquals("foo", snapshot.getOrDefault("confkey4", "foo"));
-        assertEquals("foo", snapshot.getOrDefault("confkey4", String.class,"foo"));
+        assertThat("javaconf-value1").isEqualTo(snapshot.getOrDefault("confkey1", "foo"));
+        assertThat("javaconf-value2").isEqualTo(snapshot.getOrDefault("confkey2", "foo"));
+        assertThat("javaconf-value2").isEqualTo(snapshot.getOrDefault("confkey2", String.class,"foo"));
+        assertThat("javaconf-value3").isEqualTo(snapshot.getOrDefault("confkey3", "foo"));
+        assertThat("foo").isEqualTo(snapshot.getOrDefault("confkey4", "foo"));
+        assertThat("foo").isEqualTo(snapshot.getOrDefault("confkey4", String.class,"foo"));
     }
 
     @Test
@@ -174,12 +174,12 @@ public class DefaultConfigurationSnapshotTest {
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3", "missing"));
         Map<String, String> properties = snapshot.getProperties();
-        assertNotNull(properties);
-        assertEquals(3, properties.size());
-        assertEquals("javaconf-value1", properties.get("confkey1"));
-        assertEquals("javaconf-value2", properties.get("confkey2"));
-        assertEquals("javaconf-value3", properties.get("confkey3"));
-        assertEquals(null, properties.get("confkey4"));
+        assertThat(properties).isNotNull();
+        assertThat(properties).hasSize(3);
+        assertThat("javaconf-value1").isEqualTo(properties.get("confkey1"));
+        assertThat("javaconf-value2").isEqualTo(properties.get("confkey2"));
+        assertThat("javaconf-value3").isEqualTo(properties.get("confkey3"));
+        assertThat(properties.get("confkey4")).isNull();
     }
 
     @Test
@@ -189,9 +189,9 @@ public class DefaultConfigurationSnapshotTest {
                 Arrays.asList("confkey1", "confkey2", "confkey3", "foo"));
         ConfigurationSnapshot snapshot2 = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3", "foo"));
-        assertNotEquals(snapshot1, snapshot2);
-        assertNotEquals(((DefaultConfigurationSnapshot) snapshot1).getId(),
-                ((DefaultConfigurationSnapshot) snapshot2).getId());
+        assertThat(snapshot1).isNotEqualTo(snapshot2);
+        assertThat(((DefaultConfigurationSnapshot) snapshot1).getId())
+            .isNotEqualTo(((DefaultConfigurationSnapshot) snapshot2).getId());
     }
 
     @Test
@@ -200,10 +200,10 @@ public class DefaultConfigurationSnapshotTest {
         ConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
         snapshot = snapshot.getSnapshot(Arrays.asList("confkey1"));
-        assertEquals("javaconf-value1", snapshot.getOrDefault("confkey1", "foo"));
-        assertEquals("foo", snapshot.getOrDefault("confkey2", "foo"));
-        assertEquals("javaconf-value1", snapshot.getOrDefault("confkey1", String.class,"foo"));
-        assertEquals("foo", snapshot.getOrDefault("confkey2", String.class, "foo"));
+        assertThat("javaconf-value1").isEqualTo(snapshot.getOrDefault("confkey1", "foo"));
+        assertThat("foo").isEqualTo(snapshot.getOrDefault("confkey2", "foo"));
+        assertThat("javaconf-value1").isEqualTo(snapshot.getOrDefault("confkey1", String.class,"foo"));
+        assertThat("foo").isEqualTo(snapshot.getOrDefault("confkey2", String.class, "foo"));
     }
 
     @Test
@@ -211,10 +211,10 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
-        assertEquals("javaconf-value1", snapshot.getOrDefault(Arrays.asList("confkey1", "foo"), "foo"));
-        assertEquals("foo", snapshot.getOrDefault(Arrays.asList("confkeyNone", "foo"), "foo"));
-        assertEquals("javaconf-value1", snapshot.getOrDefault(Arrays.asList("confkey1", "foo"), String.class, "foo"));
-        assertEquals("foo", snapshot.getOrDefault(Arrays.asList("confkeyNone", "foo"), String.class, "foo"));
+        assertThat("javaconf-value1").isEqualTo(snapshot.getOrDefault(Arrays.asList("confkey1", "foo"), "foo"));
+        assertThat("foo").isEqualTo(snapshot.getOrDefault(Arrays.asList("confkeyNone", "foo"), "foo"));
+        assertThat("javaconf-value1").isEqualTo(snapshot.getOrDefault(Arrays.asList("confkey1", "foo"), String.class, "foo"));
+        assertThat("foo").isEqualTo(snapshot.getOrDefault(Arrays.asList("confkeyNone", "foo"), String.class, "foo"));
     }
 
     @Test
@@ -222,11 +222,11 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
-        assertTrue(snapshot.getKeys().contains("confkey1"));
-        assertTrue(snapshot.getKeys().contains("confkey2"));
-        assertTrue(snapshot.getKeys().contains("confkey3"));
-        assertFalse(snapshot.getKeys().contains("confkey4"));
-        assertFalse(snapshot.getKeys().contains("foo"));
+        assertThat(snapshot.getKeys().contains("confkey1")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey2")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey3")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey4")).isFalse();
+        assertThat(snapshot.getKeys().contains("foo")).isFalse();
     }
 
     @Test
@@ -234,23 +234,23 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         ConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
-        assertTrue(snapshot.getKeys().contains("confkey1"));
-        assertTrue(snapshot.getKeys().contains("confkey2"));
-        assertTrue(snapshot.getKeys().contains("confkey3"));
-        assertFalse(snapshot.getKeys().contains("confkey4"));
-        assertFalse(snapshot.getKeys().contains("foo"));
+        assertThat(snapshot.getKeys().contains("confkey1")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey2")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey3")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey4")).isFalse();
+        assertThat(snapshot.getKeys().contains("foo")).isFalse();
         snapshot = snapshot.getSnapshot(Arrays.asList("confkey1", "confkey2"));
-        assertTrue(snapshot.getKeys().contains("confkey1"));
-        assertTrue(snapshot.getKeys().contains("confkey2"));
-        assertFalse(snapshot.getKeys().contains("confkey3"));
-        assertFalse(snapshot.getKeys().contains("confkey4"));
-        assertFalse(snapshot.getKeys().contains("foo"));
+        assertThat(snapshot.getKeys().contains("confkey1")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey2")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey3")).isFalse();
+        assertThat(snapshot.getKeys().contains("confkey4")).isFalse();
+        assertThat(snapshot.getKeys().contains("foo")).isFalse();
         snapshot = snapshot.getSnapshot(Arrays.asList("confkey1", "foo"));
-        assertTrue(snapshot.getKeys().contains("confkey1"));
-        assertFalse(snapshot.getKeys().contains("confkey2"));
-        assertFalse(snapshot.getKeys().contains("confkey3"));
-        assertFalse(snapshot.getKeys().contains("confkey4"));
-        assertTrue(snapshot.getKeys().contains("foo"));
+        assertThat(snapshot.getKeys().contains("confkey1")).isTrue();
+        assertThat(snapshot.getKeys().contains("confkey2")).isFalse();
+        assertThat(snapshot.getKeys().contains("confkey3")).isFalse();
+        assertThat(snapshot.getKeys().contains("confkey4")).isFalse();
+        assertThat(snapshot.getKeys().contains("foo")).isTrue();
     }
 
 }

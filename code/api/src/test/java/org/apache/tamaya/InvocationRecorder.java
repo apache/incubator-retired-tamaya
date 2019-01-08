@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya;
 
-
-import org.junit.Assert;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -71,6 +70,6 @@ public class InvocationRecorder {
                 }
             }
         }
-        Assert.fail("No such invocation: "+method + Arrays.toString(params));
+        fail("No such invocation: "+method + Arrays.toString(params));
     }
 }

@@ -27,8 +27,6 @@ import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class BuildablePropertySourceTest {
     @Test
@@ -153,13 +151,13 @@ public class BuildablePropertySourceTest {
 
     @Test
     public void testToString(){
-        assertNotNull(BuildablePropertySource.builder().toString());
-        assertNotNull(BuildablePropertySource.builder().build().toString());
+        assertThat(BuildablePropertySource.builder().toString()).isNotNull();
+        assertThat(BuildablePropertySource.builder().build().toString()).isNotNull();
     }
 
     @Test
     public void testGetChangeSupport(){
-        assertEquals(ChangeSupport.IMMUTABLE, BuildablePropertySource.builder().build().getChangeSupport());
+        assertThat(ChangeSupport.IMMUTABLE).isEqualTo(BuildablePropertySource.builder().build().getChangeSupport());
     }
 
 

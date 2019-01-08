@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.assertEquals;
 
 public class SimplePropertySourceTest {
 
@@ -95,7 +94,7 @@ public class SimplePropertySourceTest {
     public void getChangeSupport(){
         URL resource = getClass().getResource("/valid-properties.xml");
         SimplePropertySource source = new SimplePropertySource(resource);
-        assertEquals(ChangeSupport.IMMUTABLE, source.getChangeSupport());
+        assertThat(ChangeSupport.IMMUTABLE).isEqualTo(source.getChangeSupport());
     }
 
     @Test

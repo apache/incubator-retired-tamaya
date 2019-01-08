@@ -21,7 +21,7 @@ package org.apache.tamaya.spi;
 import org.apache.tamaya.TypeLiteral;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the abstract functionality of {@link ConfigurationContext}.
@@ -30,18 +30,18 @@ public class ConfigurationContextTest {
 
     @Test
     public void test_EMPTY(){
-        assertNull(ConfigurationContext.EMPTY.getPropertySource("foo"));
-        assertNotNull(ConfigurationContext.EMPTY.getPropertySources());
-        assertTrue(ConfigurationContext.EMPTY.getPropertySources().isEmpty());
-        assertNotNull(ConfigurationContext.EMPTY.getMetaData("foo"));
-        assertNotNull(ConfigurationContext.EMPTY.getPropertyConverters());
-        assertTrue(ConfigurationContext.EMPTY.getPropertyConverters().isEmpty());
-        assertNotNull(ConfigurationContext.EMPTY.getPropertyFilters());
-        assertTrue(ConfigurationContext.EMPTY.getPropertyFilters().isEmpty());
-        assertNotNull(ConfigurationContext.EMPTY.getServiceContext());
-        assertNotNull(ConfigurationContext.EMPTY.getPropertyConverters(TypeLiteral.of(Boolean.class)));
-        assertTrue(ConfigurationContext.EMPTY.getPropertyConverters(TypeLiteral.of(Boolean.class)).isEmpty());
-        assertNotNull(ConfigurationContext.EMPTY.toString());
+        assertThat(ConfigurationContext.EMPTY.getPropertySource("foo")).isNull();
+        assertThat(ConfigurationContext.EMPTY.getPropertySources()).isNotNull();
+        assertThat(ConfigurationContext.EMPTY.getPropertySources().isEmpty()).isTrue();
+        assertThat(ConfigurationContext.EMPTY.getMetaData("foo")).isNotNull();
+        assertThat(ConfigurationContext.EMPTY.getPropertyConverters()).isNotNull();
+        assertThat(ConfigurationContext.EMPTY.getPropertyConverters().isEmpty()).isTrue();
+        assertThat(ConfigurationContext.EMPTY.getPropertyFilters()).isNotNull();
+        assertThat(ConfigurationContext.EMPTY.getPropertyFilters().isEmpty()).isTrue();
+        assertThat(ConfigurationContext.EMPTY.getServiceContext()).isNotNull();
+        assertThat(ConfigurationContext.EMPTY.getPropertyConverters(TypeLiteral.of(Boolean.class))).isNotNull();
+        assertThat(ConfigurationContext.EMPTY.getPropertyConverters(TypeLiteral.of(Boolean.class)).isEmpty()).isTrue();
+        assertThat(ConfigurationContext.EMPTY.toString()).isNotNull();
     }
 
 }

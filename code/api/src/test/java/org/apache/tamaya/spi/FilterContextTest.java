@@ -27,10 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertNull;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link FilterContext}.
@@ -41,10 +38,10 @@ public class FilterContextTest {
     public void constructorWithContext() {
         PropertyValue val = new PropertyValue(null, "");
         FilterContext ctx = new FilterContext(val, ConfigurationContext.EMPTY);
-        assertEquals(val, ctx.getProperty());
-        assertEquals(ConfigurationContext.EMPTY, ctx.getConfigurationContext());
-        assertNotNull(ctx.getConfigEntries());
-        assertEquals(1, ctx.getAllValues().size());
+        assertThat(val).isEqualTo(ctx.getProperty());
+        assertThat(ConfigurationContext.EMPTY).isEqualTo(ctx.getConfigurationContext());
+        assertThat(ctx.getConfigEntries()).isNotNull();
+        assertThat(1).isEqualTo(ctx.getAllValues().size());
     }
 
 //    @Test
