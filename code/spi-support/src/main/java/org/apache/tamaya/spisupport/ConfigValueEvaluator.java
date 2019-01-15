@@ -39,8 +39,8 @@ public interface ConfigValueEvaluator {
      * @param context the context, not null.
      * @return the createValue, or null.
      */
-    default PropertyValue evaluteRawValue(String key, ConfigurationContext context){
-        List<PropertyValue> values = evaluteAllValues(key, context);
+    default PropertyValue evaluateRawValue(String key, ConfigurationContext context){
+        List<PropertyValue> values = evaluateAllValues(key, context);
         if(values.isEmpty()){
             return null;
         }
@@ -53,7 +53,7 @@ public interface ConfigValueEvaluator {
      * @param context the context, not null.
      * @return the createValue, or null.
      */
-    default List<PropertyValue> evaluteAllValues(String key, ConfigurationContext context){
+    default List<PropertyValue> evaluateAllValues(String key, ConfigurationContext context){
         List<PropertyValue> result = new ArrayList<>();
         for(PropertySource ps:context.getPropertySources()){
             try{

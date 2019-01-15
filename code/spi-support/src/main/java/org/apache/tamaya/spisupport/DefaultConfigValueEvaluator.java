@@ -35,7 +35,7 @@ import java.util.Map;
 public class DefaultConfigValueEvaluator implements ConfigValueEvaluator{
 
     @Override
-    public PropertyValue evaluteRawValue(String key, ConfigurationContext context) {
+    public PropertyValue evaluateRawValue(String key, ConfigurationContext context) {
         PropertyValue unfilteredValue = null;
         for (PropertySource propertySource : context.getPropertySources()) {
             PropertyValue val = propertySource.get(key);
@@ -61,18 +61,6 @@ public class DefaultConfigValueEvaluator implements ConfigValueEvaluator{
             }
         }
         return result;
-    }
-
-    /**
-     * Default overriding policy.
-     * @param currentValue the
-     * @param key
-     * @param propertySource
-     * @return
-     */
-    private PropertyValue collect(PropertyValue currentValue, String key, PropertySource propertySource) {
-        PropertyValue value = propertySource.get(key);
-        return value!=null?value:currentValue;
     }
 
     @Override

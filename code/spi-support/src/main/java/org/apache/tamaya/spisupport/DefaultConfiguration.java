@@ -80,7 +80,7 @@ public class DefaultConfiguration implements Configuration {
     public String get(String key) {
         Objects.requireNonNull(key, "Key must not be null.");
 
-        PropertyValue value = configEvaluator.evaluteRawValue(key, configurationContext);
+        PropertyValue value = configEvaluator.evaluateRawValue(key, configurationContext);
         if(value==null || value.getValue()==null){
             return null;
         }
@@ -99,7 +99,7 @@ public class DefaultConfiguration implements Configuration {
     public List<PropertyValue> getValues(String key) {
         Objects.requireNonNull(key, "Key must not be null.");
 
-        List<PropertyValue> value = configEvaluator.evaluteAllValues(key, configurationContext);
+        List<PropertyValue> value = configEvaluator.evaluateAllValues(key, configurationContext);
         if(value==null || value.isEmpty()){
             return Collections.emptyList();
         }
@@ -115,11 +115,11 @@ public class DefaultConfiguration implements Configuration {
      * Evaluates the raw value.
      * @param key the key, not null.
      * @return the createValue, before filtering is applied.
-     * @deprecated Use {@link ConfigValueEvaluator#evaluteRawValue(String, ConfigurationContext)}.
+     * @deprecated Use {@link ConfigValueEvaluator#evaluateRawValue(String, ConfigurationContext)}.
      */
     @Deprecated
     protected PropertyValue evaluteRawValue(String key) {
-        return configEvaluator.evaluteRawValue(key, configurationContext);
+        return configEvaluator.evaluateRawValue(key, configurationContext);
     }
 
 

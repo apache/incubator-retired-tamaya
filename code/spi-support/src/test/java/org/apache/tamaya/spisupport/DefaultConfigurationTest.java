@@ -260,7 +260,7 @@ public class DefaultConfigurationTest {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
         assertThat("testQ").isEqualTo(c.adapt(config -> "testQ"));
     }
-    
+
     @Test
     public void testEqualsAndHashAndToStringValues() {
         ConfigurationContext sharedContext = new MockedConfigurationContext();

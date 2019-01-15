@@ -23,6 +23,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -32,15 +33,15 @@ public class DefaultConfigValueEvaluatorTest {
 
 
     /**
-     * Test of evaluteRawValue method, of class DefaultConfigValueEvaluator.
+     * Test of evaluateRawValue method, of class DefaultConfigValueEvaluator.
      */
     @Test
     public void testEvaluteRawValue() {
         Configuration config = Configuration.current();
         DefaultConfigValueEvaluator instance = new DefaultConfigValueEvaluator();
-        PropertyValue result = instance.evaluteRawValue("confkey1", config.getContext());
+        PropertyValue result = instance.evaluateRawValue("confkey1", config.getContext());
         assertThat(result.getValue()).isEqualTo("javaconf-value1");
-        result = instance.evaluteRawValue("missing", config.getContext());
+        result = instance.evaluateRawValue("missing", config.getContext());
         assertThat(result).isNull();
     }
 
@@ -56,5 +57,9 @@ public class DefaultConfigValueEvaluatorTest {
         assertThat(result.get("confkey1").getValue()).isEqualTo("javaconf-value1");
     }
 
+    @Test
+    public void testToString(){
+        assertNotNull(new DefaultConfigValueEvaluator().toString());
+    }
     
 }

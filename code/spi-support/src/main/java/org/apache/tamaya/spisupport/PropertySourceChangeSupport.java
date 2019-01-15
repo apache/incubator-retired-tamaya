@@ -29,7 +29,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,9 +54,10 @@ public final class PropertySourceChangeSupport {
     /**
      * Create a new property change support instance.
      * @param changeSupport the support type, not null.
-     * @param propertySource the propertySource, not null.
+     * @param propertySource the property source to pass to listeners, not null.
      */
-    public PropertySourceChangeSupport(ChangeSupport changeSupport, PropertySource propertySource){
+    public PropertySourceChangeSupport(ChangeSupport changeSupport,
+                                       PropertySource propertySource){
         this.changeSupport = Objects.requireNonNull(changeSupport);
         this.propertySource = Objects.requireNonNull(propertySource);
     }
@@ -85,20 +85,32 @@ public final class PropertySourceChangeSupport {
     }
 
     public void removeChangeListener(BiConsumer<Set<String>, PropertySource> l){
-        listeners.remove(l);
+        if(changeSupport==ChangeSupport.SUPPORTED) {
+            listeners.remove(l);
+        }
     }
 
     public void removeAllChangeListeners(){
-        listeners.clear();
+        if(changeSupport==ChangeSupport.SUPPORTED) {
+            listeners.clear();
+        }
     }
 
-    public long update(Map<String, PropertyValue> props){
-        Set<String> changedKeys = calculateChangedKeys(this.valueMap, props);
-        if(!changedKeys.isEmpty()) {
-            this.valueMap = props;
-            long newVersion = version.incrementAndGet();
-            fireListeners(changedKeys);
-            return newVersion;
+    public long load(Map<String, PropertyValue> properties){
+        Objects.requireNonNull(properties);
+        if(changeSupport==ChangeSupport.SUPPORTED) {
+            Set<String> changedKeys = calculateChangedKeys(this.valueMap, properties);
+            if(!changedKeys.isEmpty()) {
+                this.valueMap = properties;
+                version.incrementAndGet();
+                fireListeners(changedKeys);
+            }
+        }
+        else{
+            if(!properties.equals(this.valueMap)){
+                this.valueMap = properties;
+                version.incrementAndGet();
+            }
         }
         return version.get();
     }
@@ -131,13 +143,16 @@ public final class PropertySourceChangeSupport {
             try{
                 l.accept(changedKeys, propertySource);
             }catch(Exception e){
-                LOG.log(Level.WARNING, "Failed to update listener on property source change: " + l, e);
+                LOG.log(Level.WARNING, "Failed to load listener on property source change: " + l, e);
             }
         }
     }
 
     public PropertyValue getValue(String key){
-       return valueMap.get(key);
+        if(valueMap==null){
+            return null;
+        }
+        return valueMap.get(key);
     }
 
     public Map<String, PropertyValue> getProperties(){
@@ -147,14 +162,17 @@ public final class PropertySourceChangeSupport {
         return Collections.unmodifiableMap(valueMap);
     }
 
-    public void scheduleChangeMonitor(Supplier<Map<String, PropertyValue>> propsSupplier, long duration, TimeUnit timeUnit){
-        scheduleTask = executorService.schedule(() -> {
-            update(propsSupplier.get());
-        }, duration, timeUnit);
+    public void scheduleChangeMonitor(Supplier<Map<String, PropertyValue>> propertySupplier, long duration, TimeUnit timeUnit){
+        if(changeSupport==ChangeSupport.SUPPORTED) {
+            Objects.requireNonNull(propertySupplier);
+            scheduleTask = executorService.schedule(() -> {
+                load(propertySupplier.get());
+            }, duration, timeUnit);
+        }
     }
 
     public void cancelSchedule(){
-        if(scheduleTask!=null){
+        if(changeSupport==ChangeSupport.SUPPORTED && scheduleTask!=null){
             scheduleTask.cancel(false);
         }
     }

@@ -69,6 +69,39 @@ public class BannerManagerTest {
     }
 
     @Test
+    public void valueLoggerSendsBannerToSystemOut() {
+
+        SecurityManager sm = new SecurityManager();
+        AccessControlContext con = AccessController.getContext();
+
+        Permission p = new RuntimePermission("setIO");
+
+        /*
+         * Here we check the precondition for this unit test
+         * and the correct setup of the test environment
+         * The JVM must have been started with
+         * -Djava.security.policy=<path_to_core_module</src/test/resources/java-security.policy
+         */
+        sm.checkPermission(p, con);
+
+        PrintStream standard = System.out;
+        PrintStream printStream = Mockito.mock(PrintStream.class);
+
+        System.setOut(printStream);
+        standard.println("Changed stream for STDOUT successfully");
+
+        try {
+            BannerManager bm = new BannerManager("LOGGER");
+            bm.outputBanner();
+
+        } finally {
+            System.setOut(standard);
+        }
+
+        Mockito.verifyZeroInteractions(printStream);
+    }
+
+    @Test
     public void invalidValueAvoidsLoggingToConsonle() {
 
         PrintStream standard = System.out;

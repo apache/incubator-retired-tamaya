@@ -20,11 +20,15 @@ package org.apache.tamaya.spisupport;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class BuildablePropertySourceTest {
     @Test
@@ -146,5 +150,17 @@ public class BuildablePropertySourceTest {
         assertThat(BuildablePropertySource.builder().but()).isNotNull();
         assertThat(BuildablePropertySource.builder()).isNotEqualTo(BuildablePropertySource.builder());
     }
+
+    @Test
+    public void testToString(){
+        assertNotNull(BuildablePropertySource.builder().toString());
+        assertNotNull(BuildablePropertySource.builder().build().toString());
+    }
+
+    @Test
+    public void testGetChangeSupport(){
+        assertEquals(ChangeSupport.IMMUTABLE, BuildablePropertySource.builder().build().getChangeSupport());
+    }
+
 
 }

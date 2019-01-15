@@ -23,10 +23,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceChangeSupport;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -40,10 +37,10 @@ public class SystemPropertySource extends BasePropertySource {
      */
     public static final int DEFAULT_ORDINAL = 1000;
 
-    private volatile PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
-            ChangeSupport.SUPPORTED, this);
     private AtomicInteger savedHashcode = new AtomicInteger();
 
+    private volatile PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
+            ChangeSupport.SUPPORTED, this);
 
     /**
      * Creates a new instance. Also initializes the {@code prefix} and {@code disabled} properties
@@ -135,7 +132,7 @@ public class SystemPropertySource extends BasePropertySource {
         int hashCode = System.getProperties().hashCode();
         if(hashCode!=this.savedHashcode.get()) {
             this.savedHashcode.set(hashCode);
-            this.cachedProperties.update(loadProperties());
+            this.cachedProperties.load(loadProperties());
         }
     }
 

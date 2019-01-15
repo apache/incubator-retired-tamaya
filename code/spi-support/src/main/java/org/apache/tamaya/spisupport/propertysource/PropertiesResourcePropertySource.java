@@ -58,7 +58,7 @@ public class PropertiesResourcePropertySource extends BasePropertySource {
     public PropertiesResourcePropertySource(URL url, String prefix){
         super(url.toExternalForm());
         setPrefix(prefix);
-        this.cachedProperties.update(loadProps(url));
+        this.cachedProperties.load(loadProps(url));
         this.cachedProperties.scheduleChangeMonitor(() -> loadProps(url),
                 120, TimeUnit.SECONDS);
     }
@@ -81,7 +81,7 @@ public class PropertiesResourcePropertySource extends BasePropertySource {
     public PropertiesResourcePropertySource(String path, String prefix, ClassLoader cl){
         super(path);
         setPrefix(prefix);
-        this.cachedProperties.update(loadProps(path, cl));
+        this.cachedProperties.load(loadProps(path, cl));
         this.cachedProperties.scheduleChangeMonitor(() -> loadProps(path, cl),
                 120, TimeUnit.SECONDS);
     }

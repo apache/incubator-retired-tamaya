@@ -20,21 +20,53 @@ package org.apache.tamaya.spisupport.propertysource;
 
 import java.io.File;
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.SimplePropertySource.Builder;
 import org.junit.Test;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 public class SimplePropertySourceTest {
 
     @Test
-    public void successfulCreationWithPropertiesFromXMLPropertiesFile() {
+    public void successfulCreationWithPropertiesFromXMLPropertiesFile() throws URISyntaxException {
+        URL resource = getClass().getResource("/valid-properties.xml");
+        File resourceFile = new File(resource.toURI());
+        SimplePropertySource source = new SimplePropertySource(resourceFile);
+
+        assertThat(source).isNotNull();
+        assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
+        assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
+        assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+    }
+
+    @Test(expected=ConfigException.class)
+    public void successfulCreationWithPropertiesFromInvalidsFile() throws URISyntaxException {
+        File resourceFile = new File("fooe.file");
+        new SimplePropertySource(resourceFile);
+    }
+
+    @Test
+    public void successfulCreationWithPropertiesFromURL() throws URISyntaxException {
+        URL resource = getClass().getResource("/valid-properties.xml");
+        SimplePropertySource source = new SimplePropertySource(resource);
+
+        assertThat(source).isNotNull();
+        assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
+        assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
+        assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+    }
+
+    @Test
+    public void successfulCreationWithPropertiesFromXMLPropertiesResource() {
         URL resource = getClass().getResource("/valid-properties.xml");
 
         SimplePropertySource source = new SimplePropertySource(resource);
@@ -43,6 +75,27 @@ public class SimplePropertySourceTest {
         assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
         assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
         assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+    }
+
+    @Test
+    public void successfulCreationWithProperties() {
+        URL resource = getClass().getResource("/valid-properties.xml");
+        Map<String,String> props = new HashMap<>();
+        props.put("a", "b");
+        props.put("b", "1");
+        SimplePropertySource source = new SimplePropertySource("test", props);
+
+        assertThat(source).isNotNull();
+        assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
+        assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", "test")));
+        assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", "test")));
+    }
+
+    @Test
+    public void getChangeSupport(){
+        URL resource = getClass().getResource("/valid-properties.xml");
+        SimplePropertySource source = new SimplePropertySource(resource);
+        assertEquals(ChangeSupport.IMMUTABLE, source.getChangeSupport());
     }
 
     @Test

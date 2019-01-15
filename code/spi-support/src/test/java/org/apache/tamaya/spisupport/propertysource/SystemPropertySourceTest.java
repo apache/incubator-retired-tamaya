@@ -28,10 +28,22 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SystemPropertySourceTest {
 
     private final SystemPropertySource testPropertySource = new SystemPropertySource();
+
+    @Test
+    public void testConstrcutorWithPrefix() throws Exception {
+        SystemPropertySource testPropertySource = new SystemPropertySource("PRE::");
+        assertNotNull(testPropertySource.getProperties());
+        for(Map.Entry en:System.getProperties().entrySet()){
+            assertEquals(System.getProperty(en.getKey().toString()),
+                    testPropertySource.get("PRE::"+en.getKey()).getValue());
+        }
+    }
 
     @Test
     public void testConstructionPropertiesAndDisabledBehavior() throws IOException {

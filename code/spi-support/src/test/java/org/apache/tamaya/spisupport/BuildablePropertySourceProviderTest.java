@@ -25,6 +25,7 @@ import org.apache.tamaya.spisupport.propertysource.BuildablePropertySourceProvid
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertNotNull;
 
 public class BuildablePropertySourceProviderTest {
 
@@ -87,4 +88,9 @@ public class BuildablePropertySourceProviderTest {
         assertThat(BuildablePropertySource.builder()).isNotEqualTo(BuildablePropertySource.builder());
     }
 
+    @Test
+    public void testToString(){
+        assertNotNull(BuildablePropertySourceProvider.builder().toString());
+        assertNotNull(BuildablePropertySourceProvider.builder().build().toString());
+    }
 }
