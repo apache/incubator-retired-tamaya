@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,20 +50,20 @@ public class ConfigValueEvaluatorTest {
     @Test
     public void evaluteRawValue() {
             PropertyValue value = evaluator.evaluateRawValue("foo", ConfigurationContext.EMPTY);
-            assertNull(value);
+            assertThat(value).isNull();
     }
 
     @Test
     public void evaluteAllValues() {
         List<PropertyValue> values = evaluator.evaluateAllValues("foo", ConfigurationContext.EMPTY);
-        assertNotNull(values);
-        assertTrue(values.isEmpty());
+        assertThat(values).isNotNull();
+        assertThat(values.isEmpty()).isTrue();
     }
 
     @Test
     public void evaluateRawValues() {
         Map<String, PropertyValue> map = evaluator.evaluateRawValues(ConfigurationContext.EMPTY);
-        assertNotNull(map);
-        assertTrue(map.isEmpty());
+        assertThat(map).isNotNull();
+        assertThat(map.isEmpty()).isTrue();
     }
 }

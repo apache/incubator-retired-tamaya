@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,9 +42,9 @@ public class PropertySourceChangeSupportTest {
     public void getChangeSupport() {
         PropertySource ps = BuildablePropertySource.builder().withName("test").build();
         PropertySourceChangeSupport support = new PropertySourceChangeSupport(ChangeSupport.IMMUTABLE, ps);
-        assertEquals(ChangeSupport.IMMUTABLE, support.getChangeSupport());
+        assertThat(ChangeSupport.IMMUTABLE).isEqualTo(support.getChangeSupport());
         support = new PropertySourceChangeSupport(ChangeSupport.UNSUPPORTED, ps);
-        assertEquals(ChangeSupport.UNSUPPORTED, support.getChangeSupport());
+        assertThat(ChangeSupport.UNSUPPORTED).isEqualTo(support.getChangeSupport());
     }
 
     @Test
@@ -53,12 +53,12 @@ public class PropertySourceChangeSupportTest {
         PropertySourceChangeSupport support = new PropertySourceChangeSupport(ChangeSupport.IMMUTABLE, ps);
         support.load(ps.getProperties());
         String v0 = support.getVersion();
-        assertNotNull(v0);
+        assertThat(v0).isNotNull();
         String v1 = support.getVersion();
         support.load(Collections.emptyMap());
         String v2 = support.getVersion();
-        assertEquals(v0, v1);
-        assertEquals(v1, v2);
+        assertThat(v0).isEqualTo(v1);
+        assertThat(v1).isEqualTo(v2);
     }
 
     @Test
@@ -67,12 +67,12 @@ public class PropertySourceChangeSupportTest {
         PropertySourceChangeSupport support = new PropertySourceChangeSupport(ChangeSupport.SUPPORTED, ps);
         support.load(ps.getProperties());
         String v0 = support.getVersion();
-        assertNotNull(v0);
+        assertThat(v0).isNotNull();
         String v1 = support.getVersion();
         support.load(Collections.emptyMap());
         String v2 = support.getVersion();
-        assertEquals(v0, v1);
-        assertNotEquals(v1, v2);
+        assertThat(v0).isEqualTo(v1);
+        assertThat(v1).isNotEqualTo(v2);
     }
 
     @Test
@@ -122,8 +122,8 @@ public class PropertySourceChangeSupportTest {
                 .withSimpleProperty("foo", "bar").build();
         PropertySourceChangeSupport support = new PropertySourceChangeSupport(ChangeSupport.IMMUTABLE, ps);
         support.load(ps.getProperties());
-        assertNotNull(support.getValue("foo"));
-        assertNull(support.getValue("bar"));
+        assertThat(support.getValue("foo")).isNotNull();
+        assertThat(support.getValue("bar")).isNull();
     }
 
     @Test
@@ -132,12 +132,12 @@ public class PropertySourceChangeSupportTest {
                 .withSimpleProperty("foo", "bar").build();
         PropertySourceChangeSupport support = new PropertySourceChangeSupport(ChangeSupport.IMMUTABLE, ps);
         Map properties = support.getProperties();
-        assertNotNull(properties);
-        assertTrue(properties.isEmpty());
+        assertThat(properties).isNotNull();
+        assertThat(properties.isEmpty()).isTrue();
         support.load(ps.getProperties());
         properties = support.getProperties();
-        assertNotNull(properties);
-        assertEquals(1, properties.size());
+        assertThat(properties).isNotNull();
+        assertThat(properties).hasSize(1);
     }
 
     @Test
@@ -150,7 +150,7 @@ public class PropertySourceChangeSupportTest {
         support.scheduleChangeMonitor(() -> Collections.emptyMap(), 500, TimeUnit.MILLISECONDS);
         Thread.sleep(600L);
         String v2 = support.getVersion();
-        assertNotEquals(v1, v2);
+        assertThat(v1).isNotEqualTo(v2);
     }
 
     @Test
@@ -164,6 +164,6 @@ public class PropertySourceChangeSupportTest {
         Thread.sleep(500L);
         support.cancelSchedule();
         String v2 = support.getVersion();
-        assertEquals(v1, v2);
+        assertThat(v1).isEqualTo(v2);
     }
 }

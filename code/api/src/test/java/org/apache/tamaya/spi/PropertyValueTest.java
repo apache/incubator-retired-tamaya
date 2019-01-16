@@ -18,16 +18,12 @@
  */
 package org.apache.tamaya.spi;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("unchecked")
 public class PropertyValueTest {
@@ -45,9 +41,9 @@ public class PropertyValueTest {
     @Test
     public void builder() throws Exception {
         PropertyValueBuilder b = PropertyValue.builder("a", "b");
-        assertNotNull(b);
-        assertEquals("a", b.key);
-        assertEquals("b", b.source);
+        assertThat(b).isNotNull();
+        assertThat("a").isEqualTo(b.key);
+        assertThat("b").isEqualTo(b.source);
     }
 
     @Test
@@ -74,7 +70,7 @@ public class PropertyValueTest {
                 .setMeta("k", "v2")
                 .setMeta(meta);
         assertThat(pv.getMeta().get("k")).isNull();
-        Assertions.assertThat(pv.getMeta()).hasSize(2);
+        assertThat(pv.getMeta()).hasSize(2);
         assertThat(pv.getMeta().get("1")).isEqualTo("2");
         assertThat(pv.getMeta().get("a")).isEqualTo("b");
     }
@@ -113,14 +109,14 @@ public class PropertyValueTest {
         PropertyValue pv = PropertyValue.createObject("k")
                 .setMeta(meta);
         assertThat(pv.getMeta()).isEqualTo(meta);
-        Assertions.assertThat(pv.getMeta()).isEqualTo(meta);
+        assertThat(pv.getMeta()).isEqualTo(meta);
     }
 
     @Test
     public void testGetMetaEntries2() throws Exception {
         PropertyValue pv = PropertyValue.of("k", "v", null);
-        Assertions.assertThat(pv.getMeta()).isNotNull();
-        Assertions.assertThat(pv.getMeta().isEmpty()).isTrue();
+        assertThat(pv.getMeta()).isNotNull();
+        assertThat(pv.getMeta().isEmpty()).isTrue();
     }
 
     @Test
@@ -129,13 +125,13 @@ public class PropertyValueTest {
         map.put("a", "b");
         map.put("b", "c");
         Map<String, PropertyValue> result = PropertyValue.map(map, "source");
-        assertNotNull(result);
-        assertEquals(map.size(), result.size());
+        assertThat(result).isNotNull();
+        assertThat(map.size()).isEqualTo(result.size());
        for(PropertyValue pv:result.values()){
-           assertEquals("source", pv.getMetaEntry("source"));
+           assertThat("source").isEqualTo(pv.getMetaEntry("source"));
        }
-        assertEquals("b", map.get("a"));
-        assertEquals("c", map.get("b"));
+        assertThat("b").isEqualTo(map.get("a"));
+        assertThat("c").isEqualTo(map.get("b"));
     }
 
     @Test
@@ -147,15 +143,15 @@ public class PropertyValueTest {
         meta.put("m1", "m1v");
         meta.put("m2", "m2v");
         Map<String, PropertyValue> result = PropertyValue.map(map, "source", meta);
-        assertNotNull(result);
-        assertEquals(map.size(), result.size());
+        assertThat(result).isNotNull();
+        assertThat(map.size()).isEqualTo(result.size());
         for(PropertyValue pv:result.values()){
-            assertEquals("source", pv.getMetaEntry("source"));
-            assertEquals("m1v", pv.getMeta("m1"));
-            assertEquals("m2v", pv.getMeta("m2"));
+            assertThat("source").isEqualTo(pv.getMetaEntry("source"));
+            assertThat("m1v").isEqualTo(pv.getMeta("m1"));
+            assertThat("m2v").isEqualTo(pv.getMeta("m2"));
         }
-        assertEquals("b", map.get("a"));
-        assertEquals("c", map.get("b"));
+        assertThat("b").isEqualTo(map.get("a"));
+        assertThat("c").isEqualTo(map.get("b"));
     }
 
     @Test
@@ -177,28 +173,28 @@ public class PropertyValueTest {
     @Test
     public void testGetKey() throws Exception {
         PropertyValue pv = PropertyValue.of("k", "v", "testGetKey");
-        Assertions.assertThat(pv.getKey()).isEqualTo("k");
+        assertThat(pv.getKey()).isEqualTo("k");
     }
 
     @Test
     public void testGetValue() throws Exception {
         PropertyValue pv = PropertyValue.of("k", "v", "testGetValue");
-        Assertions.assertThat(pv.getValue()).isEqualTo("v");
+        assertThat(pv.getValue()).isEqualTo("v");
     }
 
     @Test
     public void testGetSource() throws Exception {
         PropertyValue pv = PropertyValue.of("k", "v", "testGetSource");
-        Assertions.assertThat(pv.getSource()).isEqualTo("testGetSource");
+        assertThat(pv.getSource()).isEqualTo("testGetSource");
         pv = PropertyValue.of("k", "v", "testGetSource");
-        Assertions.assertThat(pv.getSource()).isEqualTo("testGetSource");
+        assertThat(pv.getSource()).isEqualTo("testGetSource");
     }
 
     @Test
     public void testGetMetaEntry() throws Exception {
         PropertyValue pv = PropertyValue.createObject("k")
                 .setMeta("k", "v2");
-        Assertions.assertThat(pv.getKey()).isEqualTo("k");
+        assertThat(pv.getKey()).isEqualTo("k");
         assertThat(pv.getMeta().get("k")).isEqualTo("v2");
     }
 
@@ -235,88 +231,88 @@ public class PropertyValueTest {
 
     @Test
     public void newXXX() {
-        assertNotNull(PropertyValue.createValue("", null));
-        assertNotNull(PropertyValue.createObject());
-        assertNotNull(PropertyValue.createObject(""));
-        assertNotNull(PropertyValue.createList());
-        assertNotNull(PropertyValue.createList(""));
+        assertThat(PropertyValue.createValue("", null)).isNotNull();
+        assertThat(PropertyValue.createObject()).isNotNull();
+        assertThat(PropertyValue.createObject("")).isNotNull();
+        assertThat(PropertyValue.createList()).isNotNull();
+        assertThat(PropertyValue.createList("")).isNotNull();
     }
 
     @Test
     public void valueOf() {
         PropertyValue foo = PropertyValue.createValue("foo", "bar");
-        assertNotNull(foo);
-        assertEquals("foo", foo.getKey());
-        assertEquals("bar", foo.getValue());
+        assertThat(foo).isNotNull();
+        assertThat("foo").isEqualTo(foo.getKey());
+        assertThat("bar").isEqualTo(foo.getValue());
     }
 
     @Test
     public void arrayOf() {
         ListValue foo = PropertyValue.createList("foo");
-        assertNotNull(foo);
-        assertEquals("foo", foo.getKey());
+        assertThat(foo).isNotNull();
+        assertThat("foo").isEqualTo(foo.getKey());
     }
 
     @Test
     public void objectOf() {
         ObjectValue root = PropertyValue.createObject("bar");
-        assertTrue(root.getSize() == 0);
-        assertNotNull(root.setValue("foo", null));
-        assertFalse(root.getSize()==0);
-        assertNotNull(root.getValue("foo"));
-        assertNull(root.getValue("foo").getValue());
-        assertNotNull(root.setValue("foo", "bar"));
-        assertEquals(root.getValue("foo").getValue(), "bar");
-        assertTrue(root.getSize()==1);
+        assertThat(root.getSize() == 0).isTrue();
+        assertThat(root.setValue("foo", null)).isNotNull();
+        assertThat(root.getSize()==0).isFalse();
+        assertThat(root.getValue("foo")).isNotNull();
+        assertThat(root.getValue("foo").getValue()).isNull();
+        assertThat(root.setValue("foo", "bar")).isNotNull();
+        assertThat(root.getValue("foo").getValue()).isEqualTo("bar");
+        assertThat(root.getSize()==1).isTrue();
     }
 
     @Test
     public void addMeta() {
         PropertyValue root = PropertyValue.createObject();
         root.setMeta("a", Integer.valueOf(3));
-        assertEquals(Integer.valueOf(3).toString(), root.getMeta("a"));
+        assertThat(Integer.valueOf(3).toString()).isEqualTo(root.getMeta("a"));
     }
 
     @Test
     public void getKey() {
         PropertyValue root = PropertyValue.createObject("a");
-        assertEquals("a", root.getKey());
+        assertThat("a").isEqualTo(root.getKey());
     }
 
     @Test
     public void getQualifiedKey() {
         ObjectValue root = PropertyValue.createObject("a");
-        assertEquals("a", root.getQualifiedKey());
+        assertThat("a").isEqualTo(root.getQualifiedKey());
         ObjectValue child = PropertyValue.createObject("b");
         ObjectValue n = root.set(child);
-        assertEquals("a.b", child.getQualifiedKey());
+        assertThat("a.b").isEqualTo(child.getQualifiedKey());
         PropertyValue added = child.setValue("c", null);
-        assertEquals("a.b.c", added.getQualifiedKey());
+        assertThat("a.b.c").isEqualTo(added.getQualifiedKey());
     }
 
     @Test
     public void isLeaf() {
         PropertyValue n = PropertyValue.createValue("", "");
-        assertTrue(n.isLeaf());
+        assertThat(n.isLeaf()).isTrue();
         n = PropertyValue.createList("");
-        assertFalse(n.isLeaf());
+        assertThat(n.isLeaf()).isFalse();
     }
 
     @Test
     public void isImmutable() {
         PropertyValue n = PropertyValue.createValue("", "");
-        assertFalse(n.isImmutable());
+        assertThat(n.isImmutable()).isFalse();
         n.immutable();
-        assertTrue(n.isImmutable());
-        assertFalse(n.mutable().isImmutable());
+        assertThat(n.isImmutable()).isTrue();
+        assertThat(n.mutable().isImmutable()).isFalse();
     }
 
     @Test
     public void isRoot() {
         PropertyValue n = PropertyValue.createValue("", "");
-        assertTrue(n.isRoot());
+        assertThat(n.isRoot()).isTrue();
         n = PropertyValue.createValue("", "").setParent(n);
-        assertFalse(n.isRoot());
+        assertThat(n.isRoot()).isFalse();
     }
 
     @Test(expected=IllegalStateException.class)
@@ -332,64 +328,64 @@ public class PropertyValueTest {
         n.immutable();
         n = n.mutable();
         n.setValue("jhgjg");
-        assertEquals("jhgjg", n.getValue());
+        assertThat("jhgjg").isEqualTo(n.getValue());
     }
 
     @Test
     public void getParent() {
         ObjectValue n = PropertyValue.createObject("");
-        assertNull(n.getParent());
+        assertThat(n.getParent()).isNull();
         PropertyValue val = n.setObject("b");
-        assertNotNull(n.getValue("b"));
-        assertEquals(val, n.getValue("b"));
-        assertNotNull(n.getValue("b").getParent());
+        assertThat(n.getValue("b")).isNotNull();
+        assertThat(val).isEqualTo(n.getValue("b"));
+        assertThat(n.getValue("b").getParent()).isNotNull();
     }
 
     @Test
     public void size(){
         PropertyValue n = PropertyValue.createValue("key", "");
-        assertEquals(0, n.getSize());
-        assertFalse(n.iterator().hasNext());
+        assertThat(0).isEqualTo(n.getSize());
+        assertThat(n.iterator().hasNext()).isFalse();
     }
 
     @Test
     public void setValue() {
         PropertyValue n = PropertyValue.createValue("key", "");
-        assertEquals("", n.getValue());
+        assertThat("").isEqualTo(n.getValue());
         n.setValue("jhgjg");
-        assertEquals("jhgjg", n.getValue());
+        assertThat("jhgjg").isEqualTo(n.getValue());
     }
 
     @Test
     public void setKey() {
         PropertyValue n = PropertyValue.createValue("key", "");
-        assertEquals("key", n.getKey());
+        assertThat("key").isEqualTo(n.getKey());
         n.setKey("jhgjg");
-        assertEquals("jhgjg", n.getKey());
+        assertThat("jhgjg").isEqualTo(n.getKey());
     }
 
     @Test
     public void toBuilder() {
         PropertyValue n = PropertyValue.createValue("key", "");
-        assertNotNull(n.toBuilder());
+        assertThat(n.toBuilder()).isNotNull();
     }
 
     @Test
     public void toPropertyValue() {
         PropertyValue n = PropertyValue.createValue("key", "");
-        assertTrue(n == n.toPropertyValue());
+        assertThat(n == n.toPropertyValue()).isTrue();
     }
 
     @Test
     public void toObjectValue() {
         PropertyValue n = PropertyValue.createValue("key", "");
-        assertNotNull(n.toObjectValue());
+        assertThat(n.toObjectValue()).isNotNull();
     }
 
     @Test
     public void toListValue() {
         PropertyValue n = PropertyValue.createValue("key", "");
-        assertNotNull(n.toListValue());
+        assertThat(n.toListValue()).isNotNull();
     }
 
 //    @Test
@@ -436,11 +432,11 @@ public class PropertyValueTest {
         array.addValue("cVal2");
         Map<String,String> map = n.toMap();
         System.out.println(map);
-        assertEquals(4, map.size());
-        assertEquals("aVal", map.get("a"));
-        assertEquals("b3Val", map.get("b.b2.b3"));
-        assertEquals("cVal1", map.get("c[0]"));
-        assertEquals("cVal2", map.get("c[1]"));
+        assertThat(4).isEqualTo(map.size());
+        assertThat("aVal").isEqualTo(map.get("a"));
+        assertThat("b3Val").isEqualTo(map.get("b.b2.b3"));
+        assertThat("cVal1").isEqualTo(map.get("c[0]"));
+        assertThat("cVal2").isEqualTo(map.get("c[1]"));
     }
 
     @Test
@@ -449,18 +445,18 @@ public class PropertyValueTest {
         n.setValue("a", "aVal");
         n.setValue("b.b2.b3", "b3Val");
         n.setValue("c", "cVal2");
-        assertEquals("a = aVal\n" +
+        assertThat("a = aVal\n" +
                 "b.b2.b3 = b3Val\n" +
-                "c = cVal2\n", n.asString());
+                "c = cVal2\n").isEqualTo(n.asString());
     }
 
     @Test
     public void equals() {
-        assertEquals(PropertyValue.createObject(), PropertyValue.createObject());
-        assertNotEquals(PropertyValue.createObject("a"), PropertyValue.createObject());
-        assertEquals(PropertyValue.createObject(""), PropertyValue.createObject());
+        assertThat(PropertyValue.createObject()).isEqualTo(PropertyValue.createObject());
+        assertThat(PropertyValue.createObject("a")).isNotEqualTo(PropertyValue.createObject());
+        assertThat(PropertyValue.createObject("")).isEqualTo(PropertyValue.createObject());
         PropertyValue root = PropertyValue.createObject();
-        assertEquals(root, root);
+        assertThat(root).isEqualTo(root);
     }
 
     @Test
@@ -469,7 +465,7 @@ public class PropertyValueTest {
         n.setValue("a", "aVal");
         n.setValue("b.b2.b3", "b3Val");
         n.setValue("c", "cVal1");
-        assertEquals("PropertyValue[MAP]{'', size='3'}", n.toString());
+        assertThat("PropertyValue[MAP]{'', size='3'}").isEqualTo(n.toString());
     }
 
 }

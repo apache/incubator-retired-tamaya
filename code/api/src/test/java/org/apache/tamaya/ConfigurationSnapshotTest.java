@@ -23,133 +23,133 @@ import org.junit.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigurationSnapshotTest {
 
     public void testEMPTY(){
-        assertNotNull(ConfigurationSnapshot.EMPTY);
+        assertThat(ConfigurationSnapshot.EMPTY).isNotNull();
     }
 
     @Test
     public void testEMPTY_timestamp(){
-        assertTrue(ConfigurationSnapshot.EMPTY.getTimestamp()==0);
+        assertThat(ConfigurationSnapshot.EMPTY.getTimestamp()).isEqualTo(0);
     }
 
     @Test
     public void testEMPTY_get(){
-        assertNull(ConfigurationSnapshot.EMPTY.get("foo"));
+        assertThat(ConfigurationSnapshot.EMPTY.get("foo")).isNull();
     }
 
     @Test
     public void testEMPTY_getOptional(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.getOptional("foo"));
-        assertFalse(ConfigurationSnapshot.EMPTY.getOptional("foo").isPresent());
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional("foo")).isNotNull();
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional("foo").isPresent()).isFalse();
     }
 
     @Test
     public void testEMPTY_getOrDefault_noValue(){
-        assertNull(ConfigurationSnapshot.EMPTY.getOrDefault("foo", null));
+        assertThat(ConfigurationSnapshot.EMPTY.getOrDefault("foo", null)).isNull();
     }
 
     @Test
     public void testEMPTY_getOrDefault_withValue(){
-        assertEquals("foo", ConfigurationSnapshot.EMPTY.getOrDefault("foo", "foo"));
+        assertThat("foo").isEqualTo(ConfigurationSnapshot.EMPTY.getOrDefault("foo", "foo"));
     }
 
     @Test
     public void testEMPTY_getOptional_Iterable(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo")));
-        assertFalse(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo")).isPresent());
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"))).isNotNull();
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo")).isPresent()).isFalse();
     }
 
     @Test
     public void testEMPTY_getOptional_Class_Iterable(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), String.class));
-        assertFalse(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), String.class).isPresent());
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), String.class)).isNotNull();
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), String.class).isPresent()).isFalse();
     }
 
     @Test
     public void testEMPTY_getOptional_Typeliteral_Iterable(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), TypeLiteral.of(String.class)));
-        assertFalse(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), TypeLiteral.of(String.class)).isPresent());
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), TypeLiteral.of(String.class))).isNotNull();
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), TypeLiteral.of(String.class)).isPresent()).isFalse();
     }
 
     @Test
     public void testEMPTY_get_Iterable(){
-        assertNull(ConfigurationSnapshot.EMPTY.get(Collections.singleton("foo")));
+        assertThat(ConfigurationSnapshot.EMPTY.get(Collections.singleton("foo"))).isNull();
     }
 
     @Test
     public void testEMPTY_get_Iterable_Class(){
-        assertNull(ConfigurationSnapshot.EMPTY.get(Collections.singleton("foo"), String.class));
+        assertThat(ConfigurationSnapshot.EMPTY.get(Collections.singleton("foo"), String.class)).isNull();
     }
 
     @Test
     public void testEMPTY_getOrDefault_Class_withValue(){
-        assertEquals("foo", ConfigurationSnapshot.EMPTY.getOrDefault("foo", String.class, "foo"));
+        assertThat("foo").isEqualTo(ConfigurationSnapshot.EMPTY.getOrDefault("foo", String.class, "foo"));
     }
 
     @Test
     public void testEMPTY_getOrDefault_TypeLiteral_withValue(){
-        assertEquals("foo", ConfigurationSnapshot.EMPTY.getOrDefault("foo", TypeLiteral.of(String.class), "foo"));
+        assertThat("foo").isEqualTo(ConfigurationSnapshot.EMPTY.getOrDefault("foo", TypeLiteral.of(String.class), "foo"));
     }
 
     @Test
     public void testEMPTY_get_Iterable_TypeLiteral(){
-        assertNull(ConfigurationSnapshot.EMPTY.get(Collections.singleton("foo"), TypeLiteral.of(String.class)));
+        assertThat((String) ConfigurationSnapshot.EMPTY.get(Collections.singleton("foo"), TypeLiteral.of(String.class))).isNull();
     }
 
     @Test
     public void testEMPTY_get_Classl(){
-        assertNull(ConfigurationSnapshot.EMPTY.get("foo", TypeLiteral.of(String.class)));
+        assertThat((String) ConfigurationSnapshot.EMPTY.get("foo", TypeLiteral.of(String.class))).isNull();
     }
 
     @Test
     public void testEMPTY_get_TypeLiteral(){
-        assertNull(ConfigurationSnapshot.EMPTY.get("foo", TypeLiteral.of(String.class)));
+        assertThat((String) ConfigurationSnapshot.EMPTY.get("foo", TypeLiteral.of(String.class))).isNull();
     }
 
     @Test
     public void testEMPTY_getKeys(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.getKeys());
-        assertTrue(ConfigurationSnapshot.EMPTY.getKeys().isEmpty());
+        assertThat(ConfigurationSnapshot.EMPTY.getKeys()).isNotNull();
+        assertThat(ConfigurationSnapshot.EMPTY.getKeys().isEmpty()).isTrue();
     }
 
     @Test
     public void testEMPTY_getContext(){
-        assertEquals(ConfigurationContext.EMPTY, ConfigurationSnapshot.EMPTY.getContext());
+        assertThat(ConfigurationContext.EMPTY).isEqualTo(ConfigurationSnapshot.EMPTY.getContext());
     }
 
     @Test
     public void testEMPTY_getPropertiest(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.getProperties());
-        assertTrue(ConfigurationSnapshot.EMPTY.getProperties().isEmpty());
+        assertThat(ConfigurationSnapshot.EMPTY.getProperties()).isNotNull();
+        assertThat(ConfigurationSnapshot.EMPTY.getProperties().isEmpty()).isTrue();
     }
 
     @Test
     public void testEMPTY_toBuildert(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.toBuilder());
+        assertThat(ConfigurationSnapshot.EMPTY.toBuilder()).isNotNull();
     }
 
     @Test
     public void testEMPTY_toStringt(){
-        assertNotNull(ConfigurationSnapshot.EMPTY.toString());
+        assertThat(ConfigurationSnapshot.EMPTY.toString()).isNotNull();
     }
 
     @Test
     public void testEMPTY_getSnapshot(){
-        assertEquals(ConfigurationSnapshot.EMPTY, ConfigurationSnapshot.EMPTY.getSnapshot());
+        assertThat(ConfigurationSnapshot.EMPTY).isEqualTo(ConfigurationSnapshot.EMPTY.getSnapshot());
     }
 
     @Test
     public void testEMPTY_getSnapshot_Keys(){
-        assertEquals(ConfigurationSnapshot.EMPTY, ConfigurationSnapshot.EMPTY.getSnapshot("foo"));
+        assertThat(ConfigurationSnapshot.EMPTY).isEqualTo(ConfigurationSnapshot.EMPTY.getSnapshot("foo"));
     }
 
     @Test
     public void testEMPTY_getSnapshot_Iterable(){
-        assertEquals(ConfigurationSnapshot.EMPTY, ConfigurationSnapshot.EMPTY.getSnapshot(Collections.singletonList("foo")));
+        assertThat(ConfigurationSnapshot.EMPTY).isEqualTo(ConfigurationSnapshot.EMPTY.getSnapshot(Collections.singletonList("foo")));
     }
 
 }

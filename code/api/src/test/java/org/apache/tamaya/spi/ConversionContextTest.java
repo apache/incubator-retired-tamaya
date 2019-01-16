@@ -29,8 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link ConversionContext}, created by atsticks on 20.08.16.
@@ -104,10 +103,10 @@ public class ConversionContextTest {
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
                 .setValues(PropertyValue.createValue("test", "value")).build();
-        assertNotNull(ctx.getValues());
-        assertEquals(ctx.getValues().size(), 1);
-        assertEquals("value", ctx.getValues().get(0).getValue());
-        assertEquals("test", ctx.getValues().get(0).getKey());
+        assertThat(ctx.getValues()).isNotNull();
+        assertThat(ctx.getValues().size()).isEqualTo(1);
+        assertThat("value").isEqualTo(ctx.getValues().get(0).getValue());
+        assertThat("test").isEqualTo(ctx.getValues().get(0).getKey());
     }
 
     @Test
@@ -115,10 +114,10 @@ public class ConversionContextTest {
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
                 .setValues(Collections.singletonList(PropertyValue.createValue("test", "value"))).build();
-        assertNotNull(ctx.getValues());
-        assertEquals(ctx.getValues().size(), 1);
-        assertEquals("value", ctx.getValues().get(0).getValue());
-        assertEquals("test", ctx.getValues().get(0).getKey());
+        assertThat(ctx.getValues()).isNotNull();
+        assertThat(ctx.getValues().size()).isEqualTo(1);
+        assertThat("value").isEqualTo(ctx.getValues().get(0).getValue());
+        assertThat("test").isEqualTo(ctx.getValues().get(0).getKey());
     }
 
     @Test
@@ -126,7 +125,7 @@ public class ConversionContextTest {
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
                 .setValues(PropertyValue.createValue("test", "value")).build();
-        assertNotNull(ctx.getConfigurationContext());
+        assertThat(ctx.getConfigurationContext()).isNotNull();
     }
 
     @Test
@@ -135,21 +134,21 @@ public class ConversionContextTest {
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
                 .setValues(PropertyValue.createValue("test", "value")
                 .setMeta("meta1", "val1").setMeta("meta2", "val2")).build();
-        assertNotNull(ctx.getMeta());
-        assertFalse(ctx.getMeta().isEmpty());
-        assertEquals(2, ctx.getMeta().size());
+        assertThat(ctx.getMeta()).isNotNull();
+        assertThat(ctx.getMeta().isEmpty()).isFalse();
+        assertThat(2).isEqualTo(ctx.getMeta().size());
     }
 
     @Test
     public void testBuilderToString() {
         ConversionContext.Builder b = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy");
-        assertNotNull(b.toString());
-        assertTrue(b.toString().contains("targetType=TypeLiteral{type=interface java.util.List}"));
-        assertTrue(b.toString().contains("supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]"));
-        assertTrue(b.toString().contains("annotatedElement"));
-        assertTrue(b.toString().contains("key='toString'"));
-        assertTrue(b.toString().contains("Builder"));
+        assertThat(b.toString()).isNotNull();
+        assertThat(b.toString().contains("targetType=TypeLiteral{type=interface java.util.List}")).isTrue();
+        assertThat(b.toString().contains("supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]")).isTrue();
+        assertThat(b.toString().contains("annotatedElement")).isTrue();
+        assertThat(b.toString().contains("key='toString'")).isTrue();
+        assertThat(b.toString().contains("Builder")).isTrue();
     }
 
     private static final AnnotatedElement MyAnnotatedElement = new AnnotatedElement() {

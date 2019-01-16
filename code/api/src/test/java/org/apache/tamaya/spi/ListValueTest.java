@@ -23,8 +23,7 @@ import org.junit.Test;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link ListValue}.
@@ -34,15 +33,15 @@ public class ListValueTest {
     @Test
     public void getCreation() {
         ListValue lv = PropertyValue.createList();
-        assertNotNull(lv);
+        assertThat(lv).isNotNull();
         lv = PropertyValue.createList("k");
-        assertNotNull(lv);
-        assertEquals("k", lv.getKey());
+        assertThat(lv).isNotNull();
+        assertThat("k").isEqualTo(lv.getKey());
     }
 
     @Test
     public void getValueType() {
-        assertEquals(PropertyValue.ValueType.ARRAY, PropertyValue.createList().getValueType());
+        assertThat(PropertyValue.ValueType.ARRAY).isEqualTo(PropertyValue.createList().getValueType());
     }
 
     @Test
@@ -52,22 +51,22 @@ public class ListValueTest {
         lv.add(val);
         PropertyValue val2 = PropertyValue.createValue("k2", "v2");
         lv.add(val2);
-        assertEquals(0, lv.getIndex(val));
-        assertEquals(1, lv.getIndex(val2));
+        assertThat(0).isEqualTo(lv.getIndex(val));
+        assertThat(1).isEqualTo(lv.getIndex(val2));
         PropertyValue val3 = PropertyValue.createValue("k3", "v");
-        assertEquals(-1, lv.getIndex(val3));
+        assertThat(-1).isEqualTo(lv.getIndex(val3));
     }
 
     @Test
     public void getSize() {
         ListValue lv = PropertyValue.createList();
-        assertEquals(0, lv.getSize());
+        assertThat(0).isEqualTo(lv.getSize());
         PropertyValue val = PropertyValue.createValue("k", "v");
         lv.add(val);
-        assertEquals(1, lv.getSize());
+        assertThat(1).isEqualTo(lv.getSize());
         PropertyValue val2 = PropertyValue.createValue("k", "v");
         lv.add(val2);
-        assertEquals(2, lv.getSize());
+        assertThat(2).isEqualTo(lv.getSize());
     }
 
     @Test
@@ -77,15 +76,15 @@ public class ListValueTest {
         lv.add(val);
         PropertyValue val2 = PropertyValue.createValue("k", "v");
         lv.add(val2);
-        assertNotNull(lv.getValues());
-        assertEquals(2, lv.getValues().size());
-        assertEquals(val, lv.getValues().get(0));
-        assertEquals(val2, lv.getValues().get(1));
+        assertThat(lv.getValues()).isNotNull();
+        assertThat(2).isEqualTo(lv.getValues().size());
+        assertThat(val).isEqualTo(lv.getValues().get(0));
+        assertThat(val2).isEqualTo(lv.getValues().get(1));
         lv.add(val2);
-        assertNotNull(lv.getValues());
-        assertEquals(2, lv.getValues().size());
-        assertEquals(val, lv.getValues().get(0));
-        assertEquals(val2, lv.getValues().get(1));
+        assertThat(lv.getValues()).isNotNull();
+        assertThat(2).isEqualTo(lv.getValues().size());
+        assertThat(val).isEqualTo(lv.getValues().get(0));
+        assertThat(val2).isEqualTo(lv.getValues().get(1));
     }
 
     @Test
@@ -98,9 +97,9 @@ public class ListValueTest {
         List<PropertyValue> result = lv.getValues(
                 pv -> "k1".equals(pv.getKey())
         );
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(val, result.get(0));
+        assertThat(result).isNotNull();
+        assertThat(1).isEqualTo(result.size());
+        assertThat(val).isEqualTo(result.get(0));
     }
 
     @Test
@@ -111,12 +110,12 @@ public class ListValueTest {
         lv.add(val);
         lv.add(val2);
         Iterator iter = lv.iterator();
-        assertNotNull(iter);
-        assertTrue(iter.hasNext());
-        assertEquals(val, iter.next());
-        assertTrue(iter.hasNext());
-        assertEquals(val2, iter.next());
-        assertFalse(iter.hasNext());
+        assertThat(iter).isNotNull();
+        assertThat(iter.hasNext()).isTrue();
+        assertThat(val).isEqualTo(iter.next());
+        assertThat(iter.hasNext()).isTrue();
+        assertThat(val2).isEqualTo(iter.next());
+        assertThat(iter.hasNext()).isFalse();
     }
 
     @Test
@@ -126,8 +125,8 @@ public class ListValueTest {
         lv.add(val);
         lv.add(val);
         lv.add(val);
-        assertEquals(1, lv.getSize());
-        assertEquals(val, lv.get(0));
+        assertThat(1).isEqualTo(lv.getSize());
+        assertThat(val).isEqualTo(lv.get(0));
 
     }
 
@@ -135,48 +134,48 @@ public class ListValueTest {
     public void addValue_Value() {
         ListValue lv = PropertyValue.createList();
         lv.addValue("v");
-        assertEquals(1, lv.getSize());
-        assertEquals("v", lv.get(0).getValue());
+        assertThat(1).isEqualTo(lv.getSize());
+        assertThat("v").isEqualTo(lv.get(0).getValue());
         lv.addValue("v2");
-        assertEquals(2, lv.getSize());
-        assertEquals("v2", lv.get(1).getValue());
+        assertThat(2).isEqualTo(lv.getSize());
+        assertThat("v2").isEqualTo(lv.get(1).getValue());
         lv.addValue("v");
-        assertEquals(3, lv.getSize());
-        assertEquals("v", lv.get(2).getValue());
+        assertThat(3).isEqualTo(lv.getSize());
+        assertThat("v").isEqualTo(lv.get(2).getValue());
     }
 
     @Test
     public void addValue_KeyValue() {
         ListValue lv = PropertyValue.createList();
         lv.addValue("k", "v");
-        assertEquals(1, lv.getSize());
-        assertEquals("v", lv.get(0).getValue());
-        assertEquals("k", lv.get(0).getKey());
+        assertThat(1).isEqualTo(lv.getSize());
+        assertThat("v").isEqualTo(lv.get(0).getValue());
+        assertThat("k").isEqualTo(lv.get(0).getKey());
         lv.addValue("k2", "v2");
-        assertEquals(2, lv.getSize());
-        assertEquals("v2", lv.get(1).getValue());
-        assertEquals("k2", lv.get(1).getKey());
+        assertThat(2).isEqualTo(lv.getSize());
+        assertThat("v2").isEqualTo(lv.get(1).getValue());
+        assertThat("k2").isEqualTo(lv.get(1).getKey());
         lv.addValue("k", "v");
-        assertEquals(3, lv.getSize());
-        assertEquals("v", lv.get(2).getValue());
-        assertEquals("k", lv.get(2).getKey());
+        assertThat(3).isEqualTo(lv.getSize());
+        assertThat("v").isEqualTo(lv.get(2).getValue());
+        assertThat("k").isEqualTo(lv.get(2).getKey());
     }
 
     @Test
     public void addValues() {
         ListValue lv = PropertyValue.createList();
         lv.addValues("v", "v1", "v");
-        assertEquals(3, lv.getSize());
-        assertEquals("v", lv.get(0).getValue());
-        assertEquals("v1", lv.get(1).getValue());
-        assertEquals("v", lv.get(2).getValue());
+        assertThat(3).isEqualTo(lv.getSize());
+        assertThat("v").isEqualTo(lv.get(0).getValue());
+        assertThat("v1").isEqualTo(lv.get(1).getValue());
+        assertThat("v").isEqualTo(lv.get(2).getValue());
     }
 
     @Test
     public void addObject() {
         ListValue lv = PropertyValue.createList();
         lv.addObject();
-        assertEquals(1, lv.getSize());
+        assertThat(1).isEqualTo(lv.getSize());
         ObjectValue ov = (ObjectValue)lv.get(0);
     }
 
@@ -184,27 +183,27 @@ public class ListValueTest {
     public void addObject_Key() {
         ListValue lv = PropertyValue.createList();
         lv.addObject("key");
-        assertEquals(1, lv.getSize());
+        assertThat(1).isEqualTo(lv.getSize());
         ObjectValue ov = (ObjectValue)lv.get(0);
-        assertEquals("key", ov.getKey());
+        assertThat("key").isEqualTo(ov.getKey());
     }
 
     @Test
     public void addList() {
         ListValue lv = PropertyValue.createList();
         lv.addList();
-        assertEquals(1, lv.getSize());
+        assertThat(1).isEqualTo(lv.getSize());
         ListValue ov = (ListValue)lv.get(0);
-        assertEquals("", ov.getKey());
+        assertThat("").isEqualTo(ov.getKey());
     }
 
     @Test
     public void addList_Key() {
         ListValue lv = PropertyValue.createList();
         lv.addList("key");
-        assertEquals(1, lv.getSize());
+        assertThat(1).isEqualTo(lv.getSize());
         ListValue ov = (ListValue)lv.get(0);
-        assertEquals("key", ov.getKey());
+        assertThat("key").isEqualTo(ov.getKey());
     }
 
     @Test
@@ -212,10 +211,10 @@ public class ListValueTest {
         ListValue lv = PropertyValue.createList();
         lv.addList("list");
         lv.addObject("object");
-        assertNotNull(lv.getValues(""));
-        assertEquals(0, lv.getValues("").size());
-        assertEquals(1, lv.getValues("list").size());
-        assertEquals(1, lv.getValues("object").size());
+        assertThat(lv.getValues("")).isNotNull();
+        assertThat(0).isEqualTo(lv.getValues("").size());
+        assertThat(1).isEqualTo(lv.getValues("list").size());
+        assertThat(1).isEqualTo(lv.getValues("object").size());
     }
 
     @Test
@@ -223,8 +222,8 @@ public class ListValueTest {
         ListValue lv = PropertyValue.createList("foo");
         lv.addList("list");
         PropertyValue pv = lv.toPropertyValue();
-        assertNotNull(pv);
-        assertEquals(pv.getKey(), lv.getKey());
+        assertThat(pv).isNotNull();
+        assertThat(pv.getKey()).isEqualTo(lv.getKey());
     }
 
     @Test
@@ -232,10 +231,10 @@ public class ListValueTest {
         ListValue lv = PropertyValue.createList("foo");
         lv.addList("list").setValue("a");
         ObjectValue ov = lv.toObjectValue();
-        assertNotNull(ov);
-        assertEquals(ov.getKey(), lv.getKey());
-        assertNotNull(ov.getValue("list[0]"));
-        assertEquals(lv.getLists("list").get(0).getValue(), ov.getValue("list[0]").getValue());
+        assertThat(ov).isNotNull();
+        assertThat(ov.getKey()).isEqualTo(lv.getKey());
+        assertThat(ov.getValue("list[0]")).isNotNull();
+        assertThat(lv.getLists("list").get(0).getValue()).isEqualTo(ov.getValue("list[0]").getValue());
     }
 
     @Test
@@ -243,17 +242,17 @@ public class ListValueTest {
         ListValue lv = PropertyValue.createList("foo");
         lv.addList("list");
         ListValue lv2 = lv.toListValue();
-        assertTrue(lv == lv2);
+        assertThat(lv == lv2).isTrue();
     }
 
     @Test
     public void mutable() {
         ListValue lv = PropertyValue.createList("foo");
         lv.addList("list");
-        assertFalse(lv.isImmutable());
+        assertThat(lv.isImmutable()).isFalse();
         ListValue lv2 = lv.mutable();
-        assertFalse(lv2.isImmutable());
-        assertTrue(lv == lv2);
+        assertThat(lv2.isImmutable()).isFalse();
+        assertThat(lv == lv2).isTrue();
     }
 
     @Test
@@ -261,10 +260,10 @@ public class ListValueTest {
         ListValue lv1 = PropertyValue.createList("foo");
         lv1.addList("list");
         ListValue lv2 = lv1.deepClone();
-        assertTrue(lv1.getValues()!=lv2.getValues());
-        assertTrue(lv1.getMeta()!=lv2.getMeta());
-        assertTrue(lv1.equals(lv2));
-        assertTrue(lv1.iterator().next()!=lv2.iterator().next());
+        assertThat(lv1.getValues()!=lv2.getValues()).isTrue();
+        assertThat(lv1.getMeta()!=lv2.getMeta()).isTrue();
+        assertThat(lv1.equals(lv2)).isTrue();
+        assertThat(lv1.iterator().next()!=lv2.iterator().next()).isTrue();
     }
 
     @Test
@@ -273,7 +272,7 @@ public class ListValueTest {
         lv1.addList("list");
         ListValue lv2 = PropertyValue.createList("foo");
         lv2.addList("list");
-        assertTrue(lv1.equals(lv2));
+        assertThat(lv1.equals(lv2)).isTrue();
     }
 
     @Test
@@ -282,23 +281,23 @@ public class ListValueTest {
         lv1.addList("list");
         ListValue lv2 = PropertyValue.createList("foo");
         lv2.addList("list");
-        assertTrue(lv1.hashCode() == lv2.hashCode());
+        assertThat(lv1.hashCode() == lv2.hashCode()).isTrue();
     }
 
     @Test
     public void testToString() {
         ListValue lv1 = PropertyValue.createList("foo");
         String toString = lv1.toString();
-        assertNotNull(toString);
+        assertThat(toString).isNotNull();
         lv1.addList("list");
         toString = lv1.toString();
-        assertNotNull(toString);
+        assertThat(toString).isNotNull();
         lv1.addObject("object");
         toString = lv1.toString();
-        assertNotNull(toString);
+        assertThat(toString).isNotNull();
         lv1.addValue("valueKey");
         toString = lv1.toString();
-        assertNotNull(toString);
-        assertEquals("PropertyValue[ARRAY]{'foo', size='3'}", toString);
+        assertThat(toString).isNotNull();
+        assertThat("PropertyValue[ARRAY]{'foo', size='3'}").isEqualTo(toString);
     }
 }

@@ -24,9 +24,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class PropertySourceTest {
@@ -48,17 +47,17 @@ public class PropertySourceTest {
 
     @Test
     public void getOrdinal(){
-        assertEquals(0, new PropertySourceImpl().getOrdinal());
+        assertThat(0).isEqualTo(new PropertySourceImpl().getOrdinal());
         PropertySourceImpl ps = new PropertySourceImpl();
         ps.value = PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "123");
-        assertEquals(123, ps.getOrdinal());
+        assertThat(123).isEqualTo(ps.getOrdinal());
         ps.value = PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "abc");
-        assertEquals(0, ps.getOrdinal());
+        assertThat(0).isEqualTo(ps.getOrdinal());
     }
 
     @Test
     public void getVersion(){
-        assertEquals("N/A", new PropertySourceImpl().getVersion());
+        assertThat("N/A").isEqualTo(new PropertySourceImpl().getVersion());
     }
 
     @Test
@@ -80,12 +79,12 @@ public class PropertySourceTest {
 
     @Test
     public void isScannable() {
-        assertTrue(new PropertySourceImpl().isScannable());
+        assertThat(new PropertySourceImpl().isScannable()).isTrue();
     }
 
     @Test
     public void getChangeSupport() {
-        assertEquals(ChangeSupport.UNSUPPORTED, new PropertySourceImpl().getChangeSupport());
+        assertThat(ChangeSupport.UNSUPPORTED).isEqualTo(new PropertySourceImpl().getChangeSupport());
     }
 
     public class PropertySourceImpl implements PropertySource {

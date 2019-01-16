@@ -28,8 +28,6 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class SystemPropertySourceTest {
 
@@ -38,10 +36,10 @@ public class SystemPropertySourceTest {
     @Test
     public void testConstrcutorWithPrefix() throws Exception {
         SystemPropertySource testPropertySource = new SystemPropertySource("PRE::");
-        assertNotNull(testPropertySource.getProperties());
+        assertThat(testPropertySource.getProperties()).isNotNull();
         for(Map.Entry en:System.getProperties().entrySet()){
-            assertEquals(System.getProperty(en.getKey().toString()),
-                    testPropertySource.get("PRE::"+en.getKey()).getValue());
+            assertThat(System.getProperty(en.getKey().toString()))
+                .isEqualTo(testPropertySource.get("PRE::"+en.getKey()).getValue());
         }
     }
 
