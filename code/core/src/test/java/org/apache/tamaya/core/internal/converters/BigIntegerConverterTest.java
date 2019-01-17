@@ -146,7 +146,7 @@ public class BigIntegerConverterTest {
         BigInteger value = converter.convert("", context);
 
         assertThat(value).isNull();
-        assertThat(context.getSupportedFormats().contains("<bigint> -> new BigInteger(bigint) (BigIntegerConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<bigint> -> new BigInteger(bigint) (BigIntegerConverter)");
     }
 
     @Test

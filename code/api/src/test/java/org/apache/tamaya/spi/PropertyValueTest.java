@@ -109,14 +109,12 @@ public class PropertyValueTest {
         PropertyValue pv = PropertyValue.createObject("k")
                 .setMeta(meta);
         assertThat(pv.getMeta()).isEqualTo(meta);
-        assertThat(pv.getMeta()).isEqualTo(meta);
     }
 
     @Test
     public void testGetMetaEntries2() throws Exception {
         PropertyValue pv = PropertyValue.of("k", "v", null);
-        assertThat(pv.getMeta()).isNotNull();
-        assertThat(pv.getMeta().isEmpty()).isTrue();
+        assertThat(pv.getMeta()).isNotNull().isEmpty();
     }
 
     @Test
@@ -125,8 +123,7 @@ public class PropertyValueTest {
         map.put("a", "b");
         map.put("b", "c");
         Map<String, PropertyValue> result = PropertyValue.map(map, "source");
-        assertThat(result).isNotNull();
-        assertThat(map.size()).isEqualTo(result.size());
+        assertThat(result).isNotNull().hasSize(map.size());
        for(PropertyValue pv:result.values()){
            assertThat("source").isEqualTo(pv.getMetaEntry("source"));
        }
@@ -143,8 +140,7 @@ public class PropertyValueTest {
         meta.put("m1", "m1v");
         meta.put("m2", "m2v");
         Map<String, PropertyValue> result = PropertyValue.map(map, "source", meta);
-        assertThat(result).isNotNull();
-        assertThat(map.size()).isEqualTo(result.size());
+        assertThat(result).isNotNull().hasSize(map.size());
         for(PropertyValue pv:result.values()){
             assertThat("source").isEqualTo(pv.getMetaEntry("source"));
             assertThat("m1v").isEqualTo(pv.getMeta("m1"));
@@ -432,7 +428,7 @@ public class PropertyValueTest {
         array.addValue("cVal2");
         Map<String,String> map = n.toMap();
         System.out.println(map);
-        assertThat(4).isEqualTo(map.size());
+        assertThat(map).hasSize(4);
         assertThat("aVal").isEqualTo(map.get("a"));
         assertThat("b3Val").isEqualTo(map.get("b.b2.b3"));
         assertThat("cVal1").isEqualTo(map.get("c[0]"));

@@ -154,8 +154,7 @@ public class CharConverterTest {
         CharConverter converter = new CharConverter();
         converter.convert("", context);
 
-        assertThat(context.getSupportedFormats().contains("<char> (CharConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("\\'<char>\\' (CharConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<char> (CharConverter)", "\\'<char>\\' (CharConverter)");
     }
 
     @Test

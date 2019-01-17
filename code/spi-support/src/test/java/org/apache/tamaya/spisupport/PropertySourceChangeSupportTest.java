@@ -133,7 +133,7 @@ public class PropertySourceChangeSupportTest {
         PropertySourceChangeSupport support = new PropertySourceChangeSupport(ChangeSupport.IMMUTABLE, ps);
         Map properties = support.getProperties();
         assertThat(properties).isNotNull();
-        assertThat(properties.isEmpty()).isTrue();
+        assertThat(properties).isEmpty();
         support.load(ps.getProperties());
         properties = support.getProperties();
         assertThat(properties).isNotNull();

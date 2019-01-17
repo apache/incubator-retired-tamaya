@@ -64,8 +64,7 @@ public class InstantConverterTest {
         InstantConverter converter = new InstantConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().toString().contains(" (InstantConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().toString()).contains(" (InstantConverter)");
     }
 
     @Test

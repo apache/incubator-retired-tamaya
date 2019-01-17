@@ -81,8 +81,7 @@ public class PathConverterTest {
         PathConverter converter = new PathConverter();
         converter.convert("notempty", context);
 
-
-        assertThat(context.getSupportedFormats().contains("<File> (PathConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<File> (PathConverter)");
     }
 
     @Test

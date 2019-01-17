@@ -79,7 +79,6 @@ public class RegexPropertyFilterTest {
     public void testToString() throws Exception {
         RegexPropertyFilter filter = new RegexPropertyFilter();
         filter.setIncludes("test\\..*");
-        assertThat(filter.toString().contains("test\\..*")).isTrue();
-        assertThat(filter.toString().contains("RegexPropertyFilter")).isTrue();
+        assertThat(filter.toString()).contains("test\\..*", "RegexPropertyFilter");
     }
 }

@@ -80,7 +80,7 @@ public class URIConverterTest {
         converter.convert("test:path", context);
 
 
-        assertThat(context.getSupportedFormats().contains("<uri> -> new URI(uri) (URIConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<uri> -> new URI(uri) (URIConverter)");
     }
 
     @Test

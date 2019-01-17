@@ -80,8 +80,7 @@ public class URLConverterTest {
         URLConverter converter = new URLConverter();
         converter.convert("http://localhost", context);
 
-
-        assertThat(context.getSupportedFormats().contains("<URL> (URLConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<URL> (URLConverter)");
     }
 
     @Test

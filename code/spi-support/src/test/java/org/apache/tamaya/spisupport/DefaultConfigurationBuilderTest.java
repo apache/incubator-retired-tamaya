@@ -60,17 +60,13 @@ public class DefaultConfigurationBuilderTest {
                 .addPropertySources(testPropertySource, testPS2);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertThat(ctx.getPropertySources()).hasSize(2);
-        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
-        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat(ctx.getPropertySources()).hasSize(2).contains(testPropertySource, testPS2);
 
         b = new DefaultConfigurationBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         cfg = b.removePropertySources(testPropertySource).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertySources()).hasSize(1);
-        assertThat(ctx.getPropertySources().contains(testPropertySource)).isFalse();
-        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat(ctx.getPropertySources()).hasSize(1).contains(testPS2).doesNotContain(testPropertySource);
     }
 
     @Test
@@ -80,17 +76,13 @@ public class DefaultConfigurationBuilderTest {
                 .addPropertySources(Arrays.asList(testPropertySource, testPS2));
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
-        assertThat(ctx.getPropertySources()).hasSize(2);
-        assertThat(ctx.getPropertySources().contains(testPropertySource)).isTrue();
-        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat(ctx.getPropertySources()).hasSize(2).contains(testPropertySource, testPS2);
 
         b = new DefaultConfigurationBuilder()
                 .addPropertySources(testPropertySource, testPS2);
         cfg = b.removePropertySources(Arrays.asList(testPropertySource)).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertySources()).hasSize(1);
-        assertThat(ctx.getPropertySources().contains(testPropertySource)).isFalse();
-        assertThat(ctx.getPropertySources().contains(testPS2)).isTrue();
+        assertThat(ctx.getPropertySources()).hasSize(1).contains(testPS2).doesNotContain(testPropertySource);
     }
 
     @Test
@@ -100,9 +92,7 @@ public class DefaultConfigurationBuilderTest {
         DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
         Configuration cfg = b.addPropertyFilters(filter1, filter2).build();
         ConfigurationContext ctx = cfg.getContext();
-        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
-        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
-        assertThat(ctx.getPropertyFilters()).hasSize(2);
+        assertThat(ctx.getPropertyFilters()).hasSize(2).contains(filter1, filter2);
 
         b = new DefaultConfigurationBuilder();
         b.addPropertyFilters(filter1, filter2);
@@ -114,9 +104,7 @@ public class DefaultConfigurationBuilderTest {
         b.addPropertyFilters(filter1, filter2);
         cfg = b.removePropertyFilters(filter1).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertyFilters()).hasSize(1);
-        assertThat(ctx.getPropertyFilters().contains(filter1)).isFalse();
-        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(1).contains(filter2).doesNotContain(filter1);
 
     }
 
@@ -127,9 +115,7 @@ public class DefaultConfigurationBuilderTest {
         DefaultConfigurationBuilder b = new DefaultConfigurationBuilder();
         Configuration cfg = b.addPropertyFilters(Arrays.asList(filter1, filter2)).build();
         ConfigurationContext ctx = cfg.getContext();
-        assertThat(ctx.getPropertyFilters().contains(filter1)).isTrue();
-        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
-        assertThat(ctx.getPropertyFilters()).hasSize(2);
+        assertThat(ctx.getPropertyFilters()).hasSize(2).contains(filter1, filter2);
 
         b = new DefaultConfigurationBuilder();
         b.addPropertyFilters(Arrays.asList(filter1, filter2, filter1));
@@ -141,9 +127,7 @@ public class DefaultConfigurationBuilderTest {
         b.addPropertyFilters(Arrays.asList(filter1, filter2));
         cfg = b.removePropertyFilters(Arrays.asList(filter1)).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertyFilters()).hasSize(1);
-        assertThat(ctx.getPropertyFilters().contains(filter1)).isFalse();
-        assertThat(ctx.getPropertyFilters().contains(filter2)).isTrue();
+        assertThat(ctx.getPropertyFilters()).hasSize(1).contains(filter2).doesNotContain(filter1);
 
     }
 
@@ -309,10 +293,8 @@ public class DefaultConfigurationBuilderTest {
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
         Map<TypeLiteral<?>, List<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1)).isTrue();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2)).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).hasSize(2).contains(converter1, converter2);
         assertThat(ctx.getPropertyConverters()).hasSize(1);
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).hasSize(2);
         assertThat(buildConverters.get(TypeLiteral.of(String.class)).containsAll(
                         ctx.getPropertyConverters().get(TypeLiteral.of(String.class)))).isTrue();
 
@@ -325,13 +307,12 @@ public class DefaultConfigurationBuilderTest {
         b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), converter1, converter2);
         cfg = b.removePropertyConverters(TypeLiteral.of(String.class), converter1).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1)).isFalse();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2)).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).contains(converter2).doesNotContain(converter1);
 
         b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), converter1, converter2);
         cfg = b.removePropertyConverters(TypeLiteral.of(String.class)).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty()).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).isEmpty();
     }
 
     @Test
@@ -343,10 +324,8 @@ public class DefaultConfigurationBuilderTest {
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();
         Map<TypeLiteral<?>, List<PropertyConverter<?>>> buildConverters = b.getPropertyConverter();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1)).isTrue();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2)).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).hasSize(2).contains(converter1, converter2);
         assertThat(ctx.getPropertyConverters()).hasSize(1);
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).hasSize(2);
         assertThat(buildConverters.get(TypeLiteral.of(String.class)).containsAll(
                         ctx.getPropertyConverters().get(TypeLiteral.of(String.class)))).isTrue();
 
@@ -359,13 +338,12 @@ public class DefaultConfigurationBuilderTest {
         b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1, converter2));
         cfg = b.removePropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1)).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter1)).isFalse();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).contains(converter2)).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).doesNotContain(converter1).contains(converter2);
 
         b = new DefaultConfigurationBuilder().addPropertyConverters(TypeLiteral.of(String.class), Arrays.asList(converter1, converter2));
         cfg = b.removePropertyConverters(TypeLiteral.of(String.class)).build();
         ctx = cfg.getContext();
-        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class)).isEmpty()).isTrue();
+        assertThat(ctx.getPropertyConverters(TypeLiteral.of(String.class))).isEmpty();
     }
 
     @Test

@@ -191,10 +191,8 @@ public class CurrencyConverterTest {
         CurrencyConverter converter = new CurrencyConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().contains("<numericValue> (CurrencyConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("<locale> (CurrencyConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("<currencyCode>, using Locale.ENGLISH (CurrencyConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<numericValue> (CurrencyConverter)",
+                "<locale> (CurrencyConverter)", "<currencyCode>, using Locale.ENGLISH (CurrencyConverter)");
     }
 
     @Test

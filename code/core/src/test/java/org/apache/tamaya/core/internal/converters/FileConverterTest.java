@@ -50,7 +50,7 @@ public class FileConverterTest {
 
 
         assertThat(result).isNotNull();
-        assertThat(context.getSupportedFormats().contains("<File> (FileConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<File> (FileConverter)");
     }
     
     @Test

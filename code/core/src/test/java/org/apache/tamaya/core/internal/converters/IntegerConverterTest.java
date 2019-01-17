@@ -124,10 +124,8 @@ public class IntegerConverterTest {
         IntegerConverter converter = new IntegerConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().contains("<int> (IntegerConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MIN_VALUE (IntegerConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MAX_VALUE (IntegerConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<int> (IntegerConverter)",
+                "MIN_VALUE (IntegerConverter)", "MAX_VALUE (IntegerConverter)");
     }
 
     @Test

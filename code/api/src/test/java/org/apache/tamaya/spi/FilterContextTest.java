@@ -41,7 +41,7 @@ public class FilterContextTest {
         assertThat(val).isEqualTo(ctx.getProperty());
         assertThat(ConfigurationContext.EMPTY).isEqualTo(ctx.getConfigurationContext());
         assertThat(ctx.getConfigEntries()).isNotNull();
-        assertThat(1).isEqualTo(ctx.getAllValues().size());
+        assertThat(ctx.getAllValues()).hasSize(1);
     }
 
 //    @Test
@@ -142,11 +142,8 @@ public class FilterContextTest {
 
         assertThat(toString).isNotNull();
         System.out.println(toString);
-        assertThat(toString.contains("FilterContext{value='[PropertyValue{'testToString', value='val'," +
-                " metaData={source=mySource}}]', configEntries=[")).isTrue();
-        assertThat(toString.contains("key-0")).isTrue();
-        assertThat(toString.contains("key-1")).isTrue();
-        assertThat(toString.endsWith("}")).isTrue();
+        assertThat(toString).contains("FilterContext{value='[PropertyValue{'testToString', value='val'," +
+                " metaData={source=mySource}}]', configEntries=[", "key-0", "key-1").endsWith("}");
     }
 
 }

@@ -34,14 +34,14 @@ public class DefaultJavaConfigurationTest {
             String key = "confkey" + i;
             String value = "javaconf-value" + i;
             // check if we had our key in configuration.current
-            assertThat(Configuration.current().getProperties().containsKey(key)).isTrue();
+            assertThat(Configuration.current().getProperties()).containsKey(key);
             assertThat(value).isEqualTo(Configuration.current().get(key));
         }
 
-        assertThat(Configuration.current().getProperties().containsKey("aaeehh")).isTrue();
+        assertThat(Configuration.current().getProperties()).containsKey("aaeehh");
         assertThat(Configuration.current().getProperties().get("aaeehh")).isEqualTo(A_UMLAUT);
 
-        assertThat(Configuration.current().getProperties().containsKey(O_UMLAUT)).isTrue();
+        assertThat(Configuration.current().getProperties()).containsKey(O_UMLAUT);
         assertThat(Configuration.current().getProperties().get(O_UMLAUT)).isEqualTo("o");
     }
 }

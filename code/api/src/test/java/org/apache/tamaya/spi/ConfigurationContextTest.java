@@ -31,16 +31,12 @@ public class ConfigurationContextTest {
     @Test
     public void test_EMPTY(){
         assertThat(ConfigurationContext.EMPTY.getPropertySource("foo")).isNull();
-        assertThat(ConfigurationContext.EMPTY.getPropertySources()).isNotNull();
-        assertThat(ConfigurationContext.EMPTY.getPropertySources().isEmpty()).isTrue();
+        assertThat(ConfigurationContext.EMPTY.getPropertySources()).isNotNull().isEmpty();
         assertThat(ConfigurationContext.EMPTY.getMetaData("foo")).isNotNull();
-        assertThat(ConfigurationContext.EMPTY.getPropertyConverters()).isNotNull();
-        assertThat(ConfigurationContext.EMPTY.getPropertyConverters().isEmpty()).isTrue();
-        assertThat(ConfigurationContext.EMPTY.getPropertyFilters()).isNotNull();
-        assertThat(ConfigurationContext.EMPTY.getPropertyFilters().isEmpty()).isTrue();
+        assertThat(ConfigurationContext.EMPTY.getPropertyConverters()).isNotNull().isEmpty();
+        assertThat(ConfigurationContext.EMPTY.getPropertyFilters()).isNotNull().isEmpty();
         assertThat(ConfigurationContext.EMPTY.getServiceContext()).isNotNull();
-        assertThat(ConfigurationContext.EMPTY.getPropertyConverters(TypeLiteral.of(Boolean.class))).isNotNull();
-        assertThat(ConfigurationContext.EMPTY.getPropertyConverters(TypeLiteral.of(Boolean.class)).isEmpty()).isTrue();
+        assertThat(ConfigurationContext.EMPTY.getPropertyConverters(TypeLiteral.of(Boolean.class))).isNotNull().isEmpty();
         assertThat(ConfigurationContext.EMPTY.toString()).isNotNull();
     }
 

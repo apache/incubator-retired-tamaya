@@ -50,11 +50,6 @@ public class PropertiesFilePropertySourceTest {
 
     @Test
     public void testGetProperties() throws Exception {
-        assertThat(testfilePropertySource.getProperties()).hasSize(5);
-        assertThat(testfilePropertySource.getProperties().containsKey("key1")).isTrue();
-        assertThat(testfilePropertySource.getProperties().containsKey("key2")).isTrue();
-        assertThat(testfilePropertySource.getProperties().containsKey("key3")).isTrue();
-        assertThat(testfilePropertySource.getProperties().containsKey("key4")).isTrue();
-        assertThat(testfilePropertySource.getProperties().containsKey("key5")).isTrue();
+        assertThat(testfilePropertySource.getProperties()).hasSize(5).containsKeys("key1", "key2", "key3", "key4", "key5");
     }
 }

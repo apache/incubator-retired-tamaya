@@ -100,8 +100,7 @@ public class ServiceContextTest {
     @Test
     public void testGetService() throws Exception {
         String service = serviceContext.getService(String.class);
-        assertThat(service).isNotNull();
-        assertThat(service).isEqualTo("ServiceContextTest");
+        assertThat(service).isNotNull().isEqualTo("ServiceContextTest");
         Integer intService = serviceContext.getService(Integer.class);
         assertThat(intService).isNull();
     }
@@ -109,12 +108,10 @@ public class ServiceContextTest {
     @Test
     public void testGetServices() throws Exception {
         Collection<String> services = serviceContext.getServices(String.class);
-        assertThat(services).isNotNull();
-        assertThat(services.isEmpty()).isFalse();
+        assertThat(services).isNotNull().isNotEmpty();
         assertThat(services.iterator().next()).isEqualTo("ServiceContextTest");
         List<Integer> intServices = serviceContext.getServices(Integer.class);
-        assertThat(intServices).isNotNull();
-        assertThat(intServices.isEmpty()).isTrue();
+        assertThat(intServices).isNotNull().isEmpty();
     }
 
     @Test

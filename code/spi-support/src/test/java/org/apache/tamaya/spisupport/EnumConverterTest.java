@@ -66,7 +66,7 @@ public class EnumConverterTest {
         ConversionContext context = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class)).build();
         EnumConverter<RoundingMode> converter = new EnumConverter<>(RoundingMode.class);
         converter.convert("fooBars", context);
-        assertThat(context.getSupportedFormats().contains("<enumValue> (EnumConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<enumValue> (EnumConverter)");
     }
 
     @Test

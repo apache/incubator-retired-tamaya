@@ -137,8 +137,8 @@ public class BooleanConverterTest {
         BooleanConverter converter = new BooleanConverter();
         converter.convert("", context);
 
-        assertThat(context.getSupportedFormats().contains("true (ignore case) (BooleanConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("false (ignore case) (BooleanConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("true (ignore case) (BooleanConverter)",
+                "false (ignore case) (BooleanConverter)");
     }
     
     @Test

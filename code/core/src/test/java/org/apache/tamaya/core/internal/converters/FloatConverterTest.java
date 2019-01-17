@@ -187,9 +187,8 @@ public class FloatConverterTest {
         FloatConverter converter = new FloatConverter();
         converter.convert("", context);
 
-        assertThat(context.getSupportedFormats().contains("<float> (FloatConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MIN_VALUE (FloatConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MAX_VALUE (FloatConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<float> (FloatConverter)",
+                "MIN_VALUE (FloatConverter)", "MAX_VALUE (FloatConverter)");
     }
 
     @Test

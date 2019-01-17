@@ -64,8 +64,7 @@ public class OffsetDateTimeConverterTest {
         OffsetDateTimeConverter converter = new OffsetDateTimeConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().toString().contains(" (OffsetDateTimeConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().toString()).contains(" (OffsetDateTimeConverter)");
     }
 
     @Test

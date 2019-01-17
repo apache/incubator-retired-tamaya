@@ -29,7 +29,7 @@ public class PropertySourceProviderTest {
     @Test
     public void testEmptySourceProvider() {
         PropertySourceProvider instance = PropertySourceProvider.EMPTY;
-        assertThat(instance.getPropertySources().isEmpty()).isTrue();
+        assertThat(instance.getPropertySources()).isEmpty();
         assertThat(instance.toString()).isEqualTo("PropertySourceProvider(empty)");
     }
 }

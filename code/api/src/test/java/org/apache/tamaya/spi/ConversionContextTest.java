@@ -84,7 +84,7 @@ public class ConversionContextTest {
                 < ctx.getSupportedFormats().indexOf(readable.get(1))).isTrue();
 
         ctx = new ConversionContext.Builder(TypeLiteral.of(List.class)).build();
-        assertThat(ctx.getSupportedFormats().isEmpty()).isTrue();
+        assertThat(ctx.getSupportedFormats()).isEmpty();
         ctx.addSupportedFormats(MyConverter.class, writeable.get(0), writeable.get(1));
         assertThat(ctx.getSupportedFormats().containsAll(readable)).isTrue();
         assertThat(ctx.getSupportedFormats().indexOf(readable.get(0))
@@ -103,8 +103,7 @@ public class ConversionContextTest {
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
                 .setValues(PropertyValue.createValue("test", "value")).build();
-        assertThat(ctx.getValues()).isNotNull();
-        assertThat(ctx.getValues().size()).isEqualTo(1);
+        assertThat(ctx.getValues()).isNotNull().hasSize(1);
         assertThat("value").isEqualTo(ctx.getValues().get(0).getValue());
         assertThat("test").isEqualTo(ctx.getValues().get(0).getKey());
     }
@@ -114,8 +113,7 @@ public class ConversionContextTest {
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
                 .setValues(Collections.singletonList(PropertyValue.createValue("test", "value"))).build();
-        assertThat(ctx.getValues()).isNotNull();
-        assertThat(ctx.getValues().size()).isEqualTo(1);
+        assertThat(ctx.getValues()).isNotNull().hasSize(1);
         assertThat("value").isEqualTo(ctx.getValues().get(0).getValue());
         assertThat("test").isEqualTo(ctx.getValues().get(0).getKey());
     }
@@ -134,21 +132,15 @@ public class ConversionContextTest {
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
                 .setValues(PropertyValue.createValue("test", "value")
                 .setMeta("meta1", "val1").setMeta("meta2", "val2")).build();
-        assertThat(ctx.getMeta()).isNotNull();
-        assertThat(ctx.getMeta().isEmpty()).isFalse();
-        assertThat(2).isEqualTo(ctx.getMeta().size());
+        assertThat(ctx.getMeta()).isNotNull().isNotEmpty().hasSize(2);
     }
 
     @Test
     public void testBuilderToString() {
         ConversionContext.Builder b = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy");
-        assertThat(b.toString()).isNotNull();
-        assertThat(b.toString().contains("targetType=TypeLiteral{type=interface java.util.List}")).isTrue();
-        assertThat(b.toString().contains("supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]")).isTrue();
-        assertThat(b.toString().contains("annotatedElement")).isTrue();
-        assertThat(b.toString().contains("key='toString'")).isTrue();
-        assertThat(b.toString().contains("Builder")).isTrue();
+        assertThat(b.toString()).isNotNull().contains("targetType=TypeLiteral{type=interface java.util.List}",
+                "supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]", "annotatedElement", "key='toString'", "Builder");
     }
 
     private static final AnnotatedElement MyAnnotatedElement = new AnnotatedElement() {
