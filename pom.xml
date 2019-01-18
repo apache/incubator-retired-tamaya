@@ -399,15 +399,10 @@
                     </executions>
                     <configuration>
                         <logViolationsToConsole>true</logViolationsToConsole>
-                        <configLocation>checkstyle/style.xml</configLocation>
+                        <configLocation>buildconfigurations/src/main/resources/checkstyle/style.xml</configLocation>
                         <failOnViolation>false</failOnViolation>
                     </configuration>
                     <dependencies>
-                        <dependency>
-                            <groupId>org.apache.tamaya</groupId>
-                            <artifactId>buildconfigurations</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
