@@ -82,7 +82,7 @@ public class OSGIServiceContextTest {
 
         List services = instance.getServices(Integer.class);
         assertThat(services).isNotNull();
-        assertThat(services.isEmpty()).isTrue();
+        assertThat(services).isEmpty();
     }
 
     /**
@@ -103,7 +103,7 @@ public class OSGIServiceContextTest {
         Enumeration<URL> resources = instance.getResources("dummy");
         assertThat(resources).isNotNull();
         URL resource = (URL)resources.nextElement();
-        assertThat(resource.toString().contains("mockbundle.service")).isTrue();
+        assertThat(resource.toString()).contains("mockbundle.service");
         assertThat(resources.hasMoreElements()).isFalse();
     }
 
@@ -123,7 +123,7 @@ public class OSGIServiceContextTest {
 
         URL resource = instance.getResource("mockbundle.service");
         assertThat(resource).isNotNull();
-        assertThat(resource.toString().contains("mockbundle.service")).isTrue();
+        assertThat(resource.toString()).contains("mockbundle.service");
     }
 
 }

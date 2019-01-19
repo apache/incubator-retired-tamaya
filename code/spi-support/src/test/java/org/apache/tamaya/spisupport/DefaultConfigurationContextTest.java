@@ -58,6 +58,6 @@ public class DefaultConfigurationContextTest {
         assertThat(ctx1.hashCode()).isNotEqualTo(ctx3.hashCode());
         String spaces = new String(new char[70 - sharedSource.getName().length()]).replace("\0", " ");
         System.out.println(ctx1.toString());
-        assertThat(ctx3.toString().contains(sharedSource.getName() + spaces)).isTrue();
+        assertThat(ctx3.toString()).contains(sharedSource.getName() + spaces);
     }
 }

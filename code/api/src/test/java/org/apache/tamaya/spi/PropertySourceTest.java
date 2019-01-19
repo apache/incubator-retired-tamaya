@@ -40,7 +40,7 @@ public class PropertySourceTest {
         assertThat(instance.getOrdinal()).isEqualTo(Integer.MIN_VALUE);
         assertThat(instance.getName()).isEqualTo("<empty>");
         assertThat(instance.get("key")).isNull();
-        assertThat(instance.getProperties().isEmpty()).isTrue();
+        assertThat(instance.getProperties()).isEmpty();
         assertThat(instance.toString()).isEqualTo("PropertySource.EMPTY");
 
     }

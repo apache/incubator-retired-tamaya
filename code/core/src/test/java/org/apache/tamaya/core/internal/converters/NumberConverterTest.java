@@ -156,11 +156,8 @@ public class NumberConverterTest {
         NumberConverter converter = new NumberConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().contains("<double>, <long> (NumberConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("POSITIVE_INFINITY (NumberConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("NEGATIVE_INFINITY (NumberConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("NAN (NumberConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<double>, <long> (NumberConverter)",
+                "POSITIVE_INFINITY (NumberConverter)", "NEGATIVE_INFINITY (NumberConverter)", "NAN (NumberConverter)");
     }
 
     @Test

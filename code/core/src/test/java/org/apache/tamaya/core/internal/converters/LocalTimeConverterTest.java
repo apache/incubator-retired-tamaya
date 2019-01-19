@@ -64,8 +64,7 @@ public class LocalTimeConverterTest {
         LocalTimeConverter converter = new LocalTimeConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().toString().contains(" (LocalTimeConverter)")).isTrue();
+        assertThat(context.getSupportedFormats().toString()).contains(" (LocalTimeConverter)");
     }
 
     @Test

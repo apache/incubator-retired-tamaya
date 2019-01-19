@@ -39,43 +39,43 @@ public class CLIPropertySourceTest {
             System.clearProperty("main.args");
             
             CLIPropertySource ps = new CLIPropertySource();
-            assertThat(ps.getProperties().isEmpty()).isTrue();
+            assertThat(ps.getProperties()).isEmpty();
             
             ps = new CLIPropertySource(26);
-            assertThat(ps.getProperties().isEmpty()).isTrue();
+            assertThat(ps.getProperties()).isEmpty();
             assertThat(ps.getOrdinal()).isEqualTo(26);
             
             ps = new CLIPropertySource("-a", "b");
-            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat(ps.getProperties()).isNotEmpty();
             assertThat("b").isEqualTo(ps.getProperties().get("a").getValue());
-            assertThat(ps.toStringValues().contains("args=[-a, b]")).isTrue();
+            assertThat(ps.toStringValues()).contains("args=[-a, b]");
             
             ps = new CLIPropertySource(16, "-c", "d");
-            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat(ps.getProperties()).isNotEmpty();
             assertThat("d").isEqualTo(ps.getProperties().get("c").getValue());
             assertThat(ps.getOrdinal()).isEqualTo(16);
             
             CLIPropertySource.initMainArgs("-e", "f");
-            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat(ps.getProperties()).isNotEmpty();
             assertThat("f").isEqualTo(ps.getProperties().get("e").getValue());
             
             CLIPropertySource.initMainArgs("--g");
-            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat(ps.getProperties()).isNotEmpty();
             assertThat("g").isEqualTo(ps.getProperties().get("g").getValue());
             
             CLIPropertySource.initMainArgs("sss");
-            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat(ps.getProperties()).isNotEmpty();
             assertThat("sss").isEqualTo(ps.getProperties().get("sss").getValue());
             
             CLIPropertySource.initMainArgs("-a", "b", "--c", "sss", "--val=vvv");
-            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat(ps.getProperties()).isNotEmpty();
             assertThat("b").isEqualTo(ps.getProperties().get("a").getValue());
             assertThat("c").isEqualTo(ps.getProperties().get("c").getValue());
             assertThat("sss").isEqualTo(ps.getProperties().get("sss").getValue());
             
             System.setProperty("main.args", "-a b\t--c sss  ");
             ps = new CLIPropertySource();
-            assertThat(ps.getProperties().isEmpty()).isFalse();
+            assertThat(ps.getProperties()).isNotEmpty();
             System.clearProperty("main.args");
             assertThat("b").isEqualTo(ps.getProperties().get("a").getValue());
             assertThat("c").isEqualTo(ps.getProperties().get("c").getValue());

@@ -125,9 +125,8 @@ public class LongConverterTest {
         converter.convert("", context);
 
 
-        assertThat(context.getSupportedFormats().contains("<long> (LongConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MIN_VALUE (LongConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MAX_VALUE (LongConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<long> (LongConverter)",
+                "MIN_VALUE (LongConverter)", "MAX_VALUE (LongConverter)");
     }
 
     @Test

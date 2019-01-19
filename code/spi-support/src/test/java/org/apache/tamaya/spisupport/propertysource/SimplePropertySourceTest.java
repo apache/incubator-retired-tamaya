@@ -147,7 +147,7 @@ public class SimplePropertySourceTest {
         SimplePropertySource source = new SimplePropertySource("testWithMap", propertyFirst, 166);
         assertThat(source.getName()).isEqualTo("testWithMap");
         assertThat(source.getDefaultOrdinal()).isEqualTo(166);
-        assertThat(source.getProperties().containsKey("firstKey")).isTrue();
+        assertThat(source.getProperties()).containsKey("firstKey");
 
     }
 

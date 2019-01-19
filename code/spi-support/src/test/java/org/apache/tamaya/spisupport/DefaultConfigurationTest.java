@@ -277,7 +277,7 @@ public class DefaultConfigurationTest {
         assertThat(config1).isNotEqualTo(config3);
         assertThat(config2.hashCode()).isEqualTo(config1.hashCode());
         assertThat(config1.hashCode()).isNotEqualTo(config3.hashCode());
-        assertThat(config1.toString().contains("Configuration{")).isTrue();
+        assertThat(config1.toString()).contains("Configuration{");
     }
 
 }

@@ -100,9 +100,8 @@ public class ByteConverterTest {
         ByteConverter converter = new ByteConverter();
         converter.convert("", context);
 
-        assertThat(context.getSupportedFormats().contains("<byte> (ByteConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MIN_VALUE (ByteConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MAX_VALUE (ByteConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<byte> (ByteConverter)",
+                "MIN_VALUE (ByteConverter)", "MAX_VALUE (ByteConverter)");
     }
     
     @Test

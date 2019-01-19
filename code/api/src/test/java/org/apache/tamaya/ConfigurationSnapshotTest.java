@@ -59,20 +59,17 @@ public class ConfigurationSnapshotTest {
 
     @Test
     public void testEMPTY_getOptional_Iterable(){
-        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"))).isNotNull();
-        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo")).isPresent()).isFalse();
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"))).isNotNull().isNotPresent();
     }
 
     @Test
     public void testEMPTY_getOptional_Class_Iterable(){
-        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), String.class)).isNotNull();
-        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), String.class).isPresent()).isFalse();
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), String.class)).isNotNull().isNotPresent();
     }
 
     @Test
     public void testEMPTY_getOptional_Typeliteral_Iterable(){
-        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), TypeLiteral.of(String.class))).isNotNull();
-        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), TypeLiteral.of(String.class)).isPresent()).isFalse();
+        assertThat(ConfigurationSnapshot.EMPTY.getOptional(Collections.singleton("foo"), TypeLiteral.of(String.class))).isNotNull().isNotPresent();
     }
 
     @Test
@@ -112,8 +109,7 @@ public class ConfigurationSnapshotTest {
 
     @Test
     public void testEMPTY_getKeys(){
-        assertThat(ConfigurationSnapshot.EMPTY.getKeys()).isNotNull();
-        assertThat(ConfigurationSnapshot.EMPTY.getKeys().isEmpty()).isTrue();
+        assertThat(ConfigurationSnapshot.EMPTY.getKeys()).isNotNull().isEmpty();
     }
 
     @Test
@@ -123,8 +119,7 @@ public class ConfigurationSnapshotTest {
 
     @Test
     public void testEMPTY_getPropertiest(){
-        assertThat(ConfigurationSnapshot.EMPTY.getProperties()).isNotNull();
-        assertThat(ConfigurationSnapshot.EMPTY.getProperties().isEmpty()).isTrue();
+        assertThat(ConfigurationSnapshot.EMPTY.getProperties()).isNotNull().isEmpty();
     }
 
     @Test

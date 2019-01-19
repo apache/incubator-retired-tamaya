@@ -36,16 +36,14 @@ public class PropertiesResourcePropertySourceTest {
     public void testBasicConstructor() {
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(resource);
         assertThat(source).isNotNull();
-        assertThat(5 == source.getProperties().size()).isTrue(); // double the getNumChilds for .source values.
-        assertThat(source.getProperties().containsKey("key1")).isTrue();
+        assertThat(source.getProperties()).hasSize(5).containsKey("key1"); // double the getNumChilds for .source values.
     }
 
     @Test
     public void testPrefixedConstructor() {
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(resource, "somePrefix");
         assertThat(source).isNotNull();
-        assertThat(5 == source.getProperties().size()).isTrue();
-        assertThat(source.getProperties().containsKey("somePrefixkey1")).isTrue();
+        assertThat(source.getProperties()).hasSize(5).containsKey("somePrefixkey1");
     }
 
     @Test
@@ -54,8 +52,7 @@ public class PropertiesResourcePropertySourceTest {
         System.out.println(resource.getPath());
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix");
         assertThat(source).isNotNull();
-        assertThat(5 == source.getProperties().size()).isTrue();
-        assertThat(source.getProperties().containsKey("somePrefixkey1")).isTrue();
+        assertThat(source.getProperties()).hasSize(5).containsKey("somePrefixkey1");
     }
     
     @Test
@@ -68,7 +65,7 @@ public class PropertiesResourcePropertySourceTest {
         };
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix", badLoader);
         assertThat(source).isNotNull();
-        assertThat(source.getProperties().isEmpty()).isTrue();
+        assertThat(source.getProperties()).isEmpty();
     }
     
     @Test
@@ -76,8 +73,7 @@ public class PropertiesResourcePropertySourceTest {
         PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix",
                 getClass().getClassLoader());
         assertThat(source).isNotNull();
-        assertThat(5 == source.getProperties().size()).isTrue();
-        assertThat(source.getProperties().containsKey("somePrefixkey1")).isTrue();
+        assertThat(source.getProperties()).hasSize(5).containsKey("somePrefixkey1");
     }
 
 }

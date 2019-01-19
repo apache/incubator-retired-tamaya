@@ -125,10 +125,8 @@ public class ShortConverterTest {
         ShortConverter converter = new ShortConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().contains("short (ShortConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MIN_VALUE (ShortConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MAX_VALUE (ShortConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("short (ShortConverter)",
+                "MIN_VALUE (ShortConverter)", "MAX_VALUE (ShortConverter)");
     }
 
     @Test

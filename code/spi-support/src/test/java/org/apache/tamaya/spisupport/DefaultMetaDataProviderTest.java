@@ -57,8 +57,7 @@ public class DefaultMetaDataProviderTest {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
         assertThat(provider).isEqualTo(provider.init(ConfigurationContext.EMPTY));
         provider.setMeta("foo", "a", "b");
-        assertThat(provider.getMetaData("foo")).isNotNull();
-        assertThat(1).isEqualTo(provider.getMetaData("foo").size());
+        assertThat(provider.getMetaData("foo")).isNotNull().hasSize(1);
     }
 
     @Test
@@ -68,8 +67,7 @@ public class DefaultMetaDataProviderTest {
         Map<String,String> map = new HashMap<>();
         map.put("a", "b");
         provider.setMeta("foo", map);
-        assertThat(provider.getMetaData("foo")).isNotNull();
-        assertThat(1).isEqualTo(provider.getMetaData("foo").size());
+        assertThat(provider.getMetaData("foo")).isNotNull().hasSize(1);
 
     }
 
@@ -78,8 +76,7 @@ public class DefaultMetaDataProviderTest {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
         assertThat(provider).isEqualTo(provider.init(ConfigurationContext.EMPTY));
         provider.reset();
-        assertThat(provider.getMetaData("foo")).isNotNull();
-        assertThat(provider.getMetaData("foo").isEmpty()).isTrue();
+        assertThat(provider.getMetaData("foo")).isNotNull().isEmpty();
     }
 
     @Test
@@ -87,8 +84,7 @@ public class DefaultMetaDataProviderTest {
         DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
         assertThat(provider).isEqualTo(provider.init(ConfigurationContext.EMPTY));
         provider.reset();
-        assertThat(provider.getMetaData("foo")).isNotNull();
-        assertThat(provider.getMetaData("foo").isEmpty()).isTrue();
+        assertThat(provider.getMetaData("foo")).isNotNull().isEmpty();
     }
 
 

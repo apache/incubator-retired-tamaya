@@ -51,35 +51,35 @@ public class SystemPropertySourceTest {
         String before = stringBufferWriter.toString();
 
         try {
-            assertThat(testPropertySource.toStringValues().contains("disabled=true")).isFalse();
+            assertThat(testPropertySource.toStringValues()).doesNotContain("disabled=true");
 
             System.setProperty("tamaya.sysprops.prefix", "fakeprefix");
             System.setProperty("tamaya.sysprops.disable", "true");
             localSystemPropertySource = new SystemPropertySource();
             //assertThat(localSystemPropertySource.getPrefix()).isEqualTo("fakeprefix");
-            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isTrue();
+            assertThat(localSystemPropertySource.toStringValues()).contains("disabled=true");
             assertThat(localSystemPropertySource.get(System.getenv().entrySet().iterator().next().getKey())).isNull();
-            assertThat(localSystemPropertySource.getName().contains("(disabled)")).isTrue();
-            assertThat(localSystemPropertySource.getProperties().isEmpty()).isTrue();
-            assertThat(localSystemPropertySource.toString().contains("disabled=true")).isTrue();
+            assertThat(localSystemPropertySource.getName()).contains("(disabled)");
+            assertThat(localSystemPropertySource.getProperties()).isEmpty();
+            assertThat(localSystemPropertySource.toString()).contains("disabled=true");
 
             System.getProperties().clear();
             System.getProperties().load(new StringReader(before));
             System.setProperty("tamaya.defaults.disable", "true");
             localSystemPropertySource = new SystemPropertySource();
-            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isTrue();
+            assertThat(localSystemPropertySource.toStringValues()).contains("disabled=true");
 
             System.getProperties().clear();
             System.getProperties().load(new StringReader(before));
             System.setProperty("tamaya.sysprops.disable", "");
             localSystemPropertySource = new SystemPropertySource();
-            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isFalse();
+            assertThat(localSystemPropertySource.toStringValues()).doesNotContain("disabled=true");
 
             System.getProperties().clear();
             System.getProperties().load(new StringReader(before));
             System.setProperty("tamaya.defaults.disable", "");
             localSystemPropertySource = new SystemPropertySource();
-            assertThat(localSystemPropertySource.toStringValues().contains("disabled=true")).isFalse();
+            assertThat(localSystemPropertySource.toStringValues()).doesNotContain("disabled=true");
 
         } finally {
             System.getProperties().clear();

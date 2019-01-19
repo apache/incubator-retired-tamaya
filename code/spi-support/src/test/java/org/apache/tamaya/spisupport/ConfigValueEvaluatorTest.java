@@ -57,13 +57,13 @@ public class ConfigValueEvaluatorTest {
     public void evaluteAllValues() {
         List<PropertyValue> values = evaluator.evaluateAllValues("foo", ConfigurationContext.EMPTY);
         assertThat(values).isNotNull();
-        assertThat(values.isEmpty()).isTrue();
+        assertThat(values).isEmpty();
     }
 
     @Test
     public void evaluateRawValues() {
         Map<String, PropertyValue> map = evaluator.evaluateRawValues(ConfigurationContext.EMPTY);
         assertThat(map).isNotNull();
-        assertThat(map.isEmpty()).isTrue();
+        assertThat(map).isEmpty();
     }
 }

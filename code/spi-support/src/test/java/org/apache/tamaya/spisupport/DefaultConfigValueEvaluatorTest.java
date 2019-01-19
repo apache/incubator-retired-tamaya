@@ -52,7 +52,7 @@ public class DefaultConfigValueEvaluatorTest {
         Configuration config = Configuration.current();
         DefaultConfigValueEvaluator instance = new DefaultConfigValueEvaluator();
         Map<String, PropertyValue> result = instance.evaluateRawValues(config.getContext());
-        assertThat(result.containsKey("confkey1")).isTrue();
+        assertThat(result).containsKey("confkey1");
         assertThat(result.get("confkey1").getValue()).isEqualTo("javaconf-value1");
     }
 

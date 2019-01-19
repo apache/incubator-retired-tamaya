@@ -57,7 +57,7 @@ public class OSGIServiceLoaderTest {
         mockBundleContext.installBundle(startedBundle);
         OSGIServiceLoader instance = new OSGIServiceLoader(mockBundleContext);
         Set<Bundle> result = instance.getResourceBundles();
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result).isNotEmpty();
     }
 
     /**

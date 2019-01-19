@@ -100,7 +100,7 @@ public class BasePropertySourceTest {
         assertThat(bs1).isNotEqualTo(bs3);
         assertThat(bs2.hashCode()).isEqualTo(bs1.hashCode());
         assertThat(bs1.hashCode()).isNotEqualTo(bs3.hashCode());
-        assertThat(bs1.toStringValues().contains("name='testEqualsName'")).isTrue();
+        assertThat(bs1.toStringValues()).contains("name='testEqualsName'");
     }
 
     private class EmptyPropertySource extends BasePropertySource {

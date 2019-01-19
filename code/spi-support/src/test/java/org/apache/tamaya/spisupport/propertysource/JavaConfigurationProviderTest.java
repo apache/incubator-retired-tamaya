@@ -60,8 +60,8 @@ public class JavaConfigurationProviderTest {
             System.setProperty("tamaya.defaultprops.disable", "true");
             localJavaConfigurationPropertySource = new JavaConfigurationPropertySource();
             assertThat(localJavaConfigurationPropertySource.isEnabled()).isFalse();
-            assertThat(localJavaConfigurationPropertySource.getProperties().isEmpty()).isTrue();
-            assertThat(localJavaConfigurationPropertySource.toString().contains("enabled=false")).isTrue();
+            assertThat(localJavaConfigurationPropertySource.getProperties()).isEmpty();
+            assertThat(localJavaConfigurationPropertySource.toString()).contains("enabled=false");
 
             System.getProperties().clear();
             System.getProperties().load(new StringReader(before));

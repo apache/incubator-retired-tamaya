@@ -72,7 +72,7 @@ public class ClassConverterTest {
         ClassConverter converter = new ClassConverter();
         converter.convert("", context);
 
-        assertThat(context.getSupportedFormats().contains("<fullyQualifiedClassName> (ClassConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<fullyQualifiedClassName> (ClassConverter)");
     }
 
     @Test

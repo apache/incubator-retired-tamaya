@@ -187,10 +187,8 @@ public class DoubleConverterTest {
         DoubleConverter converter = new DoubleConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().contains("<double> (DoubleConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MIN_VALUE (DoubleConverter)")).isTrue();
-        assertThat(context.getSupportedFormats().contains("MAX_VALUE (DoubleConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("<double> (DoubleConverter)",
+                    "MIN_VALUE (DoubleConverter)", "MAX_VALUE (DoubleConverter)");
     }
 
     @Test

@@ -84,8 +84,7 @@ public class DurationConverterTest {
         DurationConverter converter = new DurationConverter();
         converter.convert("", context);
 
-
-        assertThat(context.getSupportedFormats().contains("PT20M34S (DurationConverter)")).isTrue();
+        assertThat(context.getSupportedFormats()).contains("PT20M34S (DurationConverter)");
     }
 
     @Test

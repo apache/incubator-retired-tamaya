@@ -53,9 +53,9 @@ public class EnvironmentPropertySourceTest {
 			assertThat(localEnvironmentPropertySource.isDisabled()).isTrue();
 			assertThat(localEnvironmentPropertySource.get(System.getenv().entrySet().iterator().next().getKey()))
 					.isNull();
-			assertThat(localEnvironmentPropertySource.getName().contains("(disabled)")).isTrue();
-			assertThat(localEnvironmentPropertySource.getProperties().isEmpty()).isTrue();
-			assertThat(localEnvironmentPropertySource.toString().contains("disabled=true")).isTrue();
+			assertThat(localEnvironmentPropertySource.getName()).contains("(disabled)");
+			assertThat(localEnvironmentPropertySource.getProperties()).isEmpty();
+			assertThat(localEnvironmentPropertySource.toString()).contains("disabled=true");
 
 			System.getProperties().clear();
 			System.getProperties().load(new StringReader(before));

@@ -67,7 +67,7 @@ public class OSGIActivatorTest {
         //Start
         instance.start(mockBundleContext);
         assertThat(mockBundleContext.getBundleListenersCount()).isEqualTo(1);
-        assertThat(Configuration.current().getContext().getPropertyConverters().isEmpty()).isFalse();
+        assertThat(Configuration.current().getContext().getPropertyConverters()).isNotEmpty();
         assertThat(Configuration.current()).isNotSameAs(prevConfiguration);
 
         //Stop

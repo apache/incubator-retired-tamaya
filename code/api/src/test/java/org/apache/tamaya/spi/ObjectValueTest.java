@@ -80,13 +80,11 @@ public class ObjectValueTest {
         ov.set(val);
         PropertyValue val2 = PropertyValue.createValue("k2", "v");
         ov.set(val2);
-        assertThat(ov.getValues()).isNotNull();
-        assertThat(2).isEqualTo(ov.getValues().size());
+        assertThat(ov.getValues()).isNotNull().hasSize(2);
         assertThat(val).isEqualTo(ov.getValue("k1"));
         assertThat(val2).isEqualTo(ov.getValue("k2"));
         ov.set(val2);
-        assertThat(ov.getValues()).isNotNull();
-        assertThat(2).isEqualTo(ov.getValues().size());
+        assertThat(ov.getValues()).isNotNull().hasSize(2);
         assertThat(val).isEqualTo(ov.getValue("k1"));
         assertThat(val2).isEqualTo(ov.getValue("k2"));
     }
@@ -100,7 +98,7 @@ public class ObjectValueTest {
                 () -> PropertyValue.createValue("foo", "bar"));
         PropertyValue pv = ov.getOrSetValue("foo",  () -> PropertyValue.createValue("foo", "bar"));
         assertThat(pv).isNotNull();
-        assertThat(3).isEqualTo(ov.getValues().size());
+        assertThat(ov.getValues()).hasSize(3);
         assertThat(val).isEqualTo(ov.getValue("k1"));
         assertThat(val2).isEqualTo(ov.getValue("k2"));
         assertThat(pv).isEqualTo(ov.getValue("foo"));
@@ -215,8 +213,7 @@ public class ObjectValueTest {
         ov.setObject("k3");
         ov.setValue("k4", "v");
         Collection<PropertyValue> values = ov.getValues();
-        assertThat(values).isNotNull();
-        assertThat(4).isEqualTo(values.size());
+        assertThat(values).isNotNull().hasSize(4);
     }
 
     @Test
@@ -229,8 +226,7 @@ public class ObjectValueTest {
         Collection<PropertyValue> values = ov.getValues(
                 pv -> "k1".equals(pv.getKey())
         );
-        assertThat(values).isNotNull();
-        assertThat(1).isEqualTo(values.size());
+        assertThat(values).isNotNull().hasSize(1);
         assertThat("k1").isEqualTo(values.iterator().next().getKey());
     }
 
@@ -242,8 +238,7 @@ public class ObjectValueTest {
         ov.setObject("k3");
         ov.setValue("k4", "v");
         Collection<PropertyValue> values = ov.getValues();
-        assertThat(values).isNotNull();
-        assertThat(4).isEqualTo(values.size());
+        assertThat(values).isNotNull().hasSize(4);
     }
 
     @Test

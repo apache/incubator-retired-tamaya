@@ -102,7 +102,7 @@ public class DefaultServiceContextTest {
     public void testGetServices_noImpl_shouldReturnEmptyList() {
         Collection<NoImplInterface> services = context.getServices(NoImplInterface.class);
         assertThat(services).isNotNull();
-        assertThat(services.isEmpty()).isTrue();
+        assertThat(services).isEmpty();
     }
 
     @Test
@@ -116,9 +116,7 @@ public class DefaultServiceContextTest {
     public void testRegister_Many() throws Exception {
         context.register(Double.class, Arrays.asList(Double.valueOf(1.2345), Double.valueOf(2345), Double.valueOf(345)), false);
         List<Double> services = context.getServices(Double.class);
-        assertThat(services).isNotNull();
-        assertThat(services.isEmpty()).isFalse();
-        assertThat(services.size()).isEqualTo(3);
+        assertThat(services).isNotNull().isNotEmpty().hasSize(3);
     }
 
 
