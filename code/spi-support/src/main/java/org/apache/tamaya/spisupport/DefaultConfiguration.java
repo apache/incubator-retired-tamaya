@@ -203,7 +203,7 @@ public class DefaultConfiguration implements Configuration {
     }
 
     @SuppressWarnings("unchecked")
-	protected <T> T convertValue(String key, List<PropertyValue> values, TypeLiteral<T> type) {
+    protected <T> T convertValue(String key, List<PropertyValue> values, TypeLiteral<T> type) {
         if (values != null && !values.isEmpty()) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
             ConversionContext context = new ConversionContext.Builder(this, key, type)
@@ -265,12 +265,18 @@ public class DefaultConfiguration implements Configuration {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DefaultConfiguration that = (DefaultConfiguration) o;
 
-        if (!configurationContext.equals(that.configurationContext)) return false;
+        if (!configurationContext.equals(that.configurationContext)) {
+            return false;
+        }
         return configEvaluator.getClass().equals(that.configEvaluator.getClass());
     }
 

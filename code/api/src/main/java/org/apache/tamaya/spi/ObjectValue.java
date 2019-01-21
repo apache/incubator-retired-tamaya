@@ -295,8 +295,12 @@ public final class ObjectValue extends PropertyValue{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ObjectValue)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ObjectValue)) {
+            return false;
+        }
         ObjectValue dataNode = (ObjectValue) o;
         return Objects.equals(getKey(), dataNode.getKey()) &&
                 Objects.equals(fields, dataNode.fields) &&

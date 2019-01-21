@@ -23,6 +23,7 @@ package org.apache.tamaya;
  * to model additional functionality and applying it to a given {@link Configuration} instance by
  * calling the {@link Configuration#query(ConfigQuery)} method.
  *
+ * @param <T> the config query type
  * @deprecated Use {@link java.util.function.Function}
  */
 @FunctionalInterface

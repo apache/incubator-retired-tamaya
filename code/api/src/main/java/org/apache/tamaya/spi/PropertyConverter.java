@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.spi;
 
-import java.util.List;
-
 /**
  * Interface for an property that converts a configured String into something else.
  * This is used for implementing type conversion from a property (String) to a certain target

@@ -123,7 +123,7 @@ public class TypeLiteral<T> implements Serializable {
      * @return the actual type represented by this createObject
      */
     @SuppressWarnings("unchecked")
-	public final Class<T> getRawType() {
+    public final Class<T> getRawType() {
         Class<T> rawType;
 
         if (this.definedType instanceof ParameterizedType) {

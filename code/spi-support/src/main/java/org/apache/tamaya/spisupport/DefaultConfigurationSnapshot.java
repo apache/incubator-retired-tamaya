@@ -121,7 +121,7 @@ public class DefaultConfigurationSnapshot implements ConfigurationSnapshot, Seri
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public <T> T get(String key, Class<T> type) {
         return snapshot.get(key, type);
     }

@@ -579,8 +579,12 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PropertyValue)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PropertyValue)) {
+            return false;
+        }
         PropertyValue dataNode = (PropertyValue) o;
         return Objects.equals(getKey(), dataNode.getKey()) &&
                 Objects.equals(value, dataNode.value) &&

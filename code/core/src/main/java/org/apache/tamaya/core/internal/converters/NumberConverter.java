@@ -65,10 +65,9 @@ public class NumberConverter implements PropertyConverter<Number>{
                 if (lVal != null) {
                     return lVal;
                 }
-                try{
+                try {
                     return new BigDecimal(trimmed);
-                }
-                catch(Exception e){
+                } catch(Exception e) {
                     LOGGER.finest("Unparseable Number: " + trimmed);
                     return null;
                 }

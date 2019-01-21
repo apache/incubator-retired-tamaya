@@ -64,10 +64,9 @@ public class ShortConverter implements PropertyConverter<Short>{
             case "MAX":
                 return Short.MAX_VALUE;
             default:
-                try{
+                try {
                     return Short.decode(trimmed);
-                }
-                catch(Exception e){
+                } catch(Exception e) {
                     LOG.finest("Unparseable Short: " + trimmed);
                     return null;
                 }

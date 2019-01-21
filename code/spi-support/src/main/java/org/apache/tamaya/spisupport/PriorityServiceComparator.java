@@ -75,7 +75,7 @@ public class PriorityServiceComparator implements Comparator<Object>, Serializab
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static int getPriority(Class type) {
         int prio = 1;
-		Priority priority = (Priority)type.getAnnotation(Priority.class);
+        Priority priority = (Priority)type.getAnnotation(Priority.class);
         if (priority != null) {
             prio = priority.value();
         }

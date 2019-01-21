@@ -182,9 +182,7 @@ public final class ListValue extends PropertyValue{
      */
     public List<PropertyValue> getValues(Predicate<PropertyValue> filter) {
         List<PropertyValue> result = new ArrayList<>();
-        this.list.forEach(el -> {
-                if (filter.test(el)) result.add(el);
-            });
+        this.list.stream().filter(filter::test).forEach(result::add);
         return result;
     }
 
@@ -320,8 +318,12 @@ public final class ListValue extends PropertyValue{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ListValue)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ListValue)) {
+            return false;
+        }
         ListValue dataNode = (ListValue) o;
         return Objects.equals(getKey(), dataNode.getKey()) &&
                 Objects.equals(getValue(), dataNode.getValue()) &&

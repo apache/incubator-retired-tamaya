@@ -66,8 +66,7 @@ public class LongConverter implements PropertyConverter<Long>{
                 default:
                     try {
                         return Long.decode(trimmed);
-                    }
-                    catch(Exception e){
+                    } catch(Exception e) {
                         LOGGER.finest("Unable to parse Long createValue: " + value);
                         return null;
                     }

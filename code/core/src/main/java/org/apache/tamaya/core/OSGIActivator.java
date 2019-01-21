@@ -21,7 +21,9 @@ package org.apache.tamaya.core;
 
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.core.internal.*;
+import org.apache.tamaya.core.internal.CoreConfigurationBuilder;
+import org.apache.tamaya.core.internal.OSGIServiceContext;
+import org.apache.tamaya.core.internal.OSGIServiceLoader;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.PropertyFilterComparator;
 import org.apache.tamaya.spisupport.PropertySourceComparator;

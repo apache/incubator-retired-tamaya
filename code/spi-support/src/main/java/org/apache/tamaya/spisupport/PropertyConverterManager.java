@@ -37,7 +37,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Manager that deals with {@link org.apache.tamaya.spi.PropertyConverter} instances.
@@ -123,7 +122,7 @@ public class PropertyConverterManager {
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-			List<PropertyConverter<?>> converters = List.class.cast(this.converters.get(targetType));
+            List<PropertyConverter<?>> converters = List.class.cast(this.converters.get(targetType));
             if(converters!=null && converters.contains(converter)){
                 return;
             }
@@ -300,7 +299,7 @@ public class PropertyConverterManager {
      * @return the boxed type, or null.
      */
     @SuppressWarnings("unchecked")
-	private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
+    private <T> TypeLiteral<T> mapBoxedType(TypeLiteral<T> targetType) {
         Type parameterType = targetType.getType();
         if (parameterType == int.class) {
             return TypeLiteral.class.cast(TypeLiteral.of(Integer.class));
