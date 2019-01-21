@@ -59,7 +59,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
     @SuppressWarnings("unchecked")
-	protected DefaultConfigurationContext(DefaultConfigurationBuilder builder) {
+    protected DefaultConfigurationContext(DefaultConfigurationBuilder builder) {
         this.serviceContext = builder.serviceContext;
         this.metaDataProvider = Objects.requireNonNull(builder.metaDataProvider);
         this.metaDataProvider.init(this);

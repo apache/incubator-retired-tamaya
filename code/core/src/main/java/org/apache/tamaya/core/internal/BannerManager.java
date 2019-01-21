@@ -63,6 +63,9 @@ class BannerManager {
      */
     protected final static String BANNER_RESOURCE_PATH = "/tamaya-banner.txt";
 
+    /**
+     * The target for the Tamaya banner output.
+     */
     enum BannerTarget {
         OFF, CONSOLE, LOGGER
     }
@@ -98,6 +101,9 @@ class BannerManager {
     }
 }
 
+/**
+ * An abstract Tamaya banner printer.
+ */
 abstract class AbstractBannerPrinter implements BannerPrinter {
     private static final Logger log = Logger.getLogger(AbstractBannerPrinter.class.getName());
 

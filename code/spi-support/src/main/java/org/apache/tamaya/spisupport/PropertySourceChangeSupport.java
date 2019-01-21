@@ -105,8 +105,7 @@ public final class PropertySourceChangeSupport {
                 version.incrementAndGet();
                 fireListeners(changedKeys);
             }
-        }
-        else{
+        } else {
             if(!properties.equals(this.valueMap)){
                 this.valueMap = properties;
                 version.incrementAndGet();
@@ -128,7 +127,8 @@ public final class PropertySourceChangeSupport {
             if(valueMap != null){
                 if(!valueMap.containsKey(en.getKey())) {
                     result.add(en.getKey()); // added
-                }if(!Objects.equals(valueMap.get(en.getKey()), en.getValue())){
+                }
+                if(!Objects.equals(valueMap.get(en.getKey()), en.getValue())) {
                     result.add(en.getKey()); // changed
                 }
             }else{

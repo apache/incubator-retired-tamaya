@@ -47,7 +47,7 @@ public final class DefaultServiceContext implements ServiceContext {
      */
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
     @SuppressWarnings("rawtypes")
-	private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
+    private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
 
     @Override
     public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
@@ -147,13 +147,13 @@ public final class DefaultServiceContext implements ServiceContext {
     @Override
     public <T> List<T> getServices(final Class<T> serviceType, Supplier<List<T>> supplier) {
         @SuppressWarnings("unchecked")
-		List<T> found = (List<T>) servicesLoaded.get(serviceType);
+        List<T> found = (List<T>) servicesLoaded.get(serviceType);
         if (found != null) {
             return found;
         }
         List<T> services = loadServices(serviceType, supplier);
         @SuppressWarnings("unchecked")
-		final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
+        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
         return previousServices != null ? previousServices : services;
     }
 

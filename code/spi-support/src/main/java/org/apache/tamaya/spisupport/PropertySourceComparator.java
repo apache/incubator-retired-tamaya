@@ -23,9 +23,7 @@ import org.apache.tamaya.spi.PropertyValue;
 
 import javax.annotation.Priority;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.Comparator;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

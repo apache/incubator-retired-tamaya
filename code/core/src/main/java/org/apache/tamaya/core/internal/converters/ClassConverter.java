@@ -45,22 +45,19 @@ public class ClassConverter implements PropertyConverter<Class<?>>{
         }
         ctx.addSupportedFormats(getClass(),"<fullyQualifiedClassName>");
         String trimmed = Objects.requireNonNull(value).trim();
-        try{
+        try {
             return Class.forName(trimmed, false, Thread.currentThread().getContextClassLoader());
-        }
-        catch(Exception e){
+        } catch(Exception e) {
             LOG.finest("Class not found in context CL: " + trimmed);
         }
-        try{
+        try {
             return Class.forName(trimmed, false, ClassConverter.class.getClassLoader());
-        }
-        catch(Exception e){
+        } catch(Exception e) {
             LOG.finest("Class not found in ClassConverter's CL: " + trimmed);
         }
-        try{
+        try {
             return Class.forName(trimmed, false, ClassLoader.getSystemClassLoader());
-        }
-        catch(Exception e){
+        } catch(Exception e) {
             LOG.finest("Class not found in System CL (giving up): " + trimmed);
             return null;
         }

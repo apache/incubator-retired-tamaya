@@ -128,8 +128,12 @@ class WrappedPropertySource implements PropertySource{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WrappedPropertySource)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WrappedPropertySource)) {
+            return false;
+        }
 
         WrappedPropertySource that = (WrappedPropertySource) o;
 

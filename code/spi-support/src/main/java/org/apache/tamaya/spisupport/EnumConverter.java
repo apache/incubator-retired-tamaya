@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 /**
  * Converter, converting from String to the given enum type.
+ * @param <T> the enum type
  */
 public class EnumConverter<T> implements PropertyConverter<T> {
 

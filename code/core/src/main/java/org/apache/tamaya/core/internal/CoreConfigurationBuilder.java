@@ -63,7 +63,7 @@ public final class CoreConfigurationBuilder extends DefaultConfigurationBuilder 
     }
 
     @SuppressWarnings("unchecked")
-	protected void addCorePropertyConverters() {
+    protected void addCorePropertyConverters() {
         addPropertyConverters(TypeLiteral.<BigDecimal>of(BigDecimal.class), new BigDecimalConverter());
         addPropertyConverters(TypeLiteral.<BigInteger>of(BigInteger.class), new BigIntegerConverter());
         addPropertyConverters(TypeLiteral.<Boolean>of(Boolean.class), new BooleanConverter());

@@ -66,10 +66,9 @@ public class IntegerConverter implements PropertyConverter<Integer>{
             case "MAX":
                 return Integer.MAX_VALUE;
             default:
-                try{
+                try {
                     return Integer.decode(trimmed);
-                }
-                catch(Exception e){
+                } catch(Exception e) {
                     LOG.finest("Unparseable Integer createValue: " + trimmed);
                     return null;
                 }
