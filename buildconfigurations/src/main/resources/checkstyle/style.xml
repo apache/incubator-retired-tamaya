@@ -85,7 +85,7 @@ under the License.
         <!-- See http://checkstyle.sf.net/config_import.html -->
         <module name="AvoidStarImport">
             <property name="excludes"
-                      value="java.io,java.net,java.util,java.lang.annotation,org.osgi.framework,org.apache.tamaya,org.apache.tamaya.spi,org.apache.tamaya.core.internal.converters"/>
+                      value="java.io,java.net,java.util"/>
         </module>
         <module name="IllegalImport"/>
         <module name="RedundantImport"/>

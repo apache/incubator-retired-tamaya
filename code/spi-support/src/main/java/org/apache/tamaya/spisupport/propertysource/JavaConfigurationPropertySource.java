@@ -19,7 +19,11 @@
 package org.apache.tamaya.spisupport.propertysource;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ChangeSupport;
+import org.apache.tamaya.spi.ClassloaderAware;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import java.io.IOException;

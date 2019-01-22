@@ -18,8 +18,16 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.*;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.ConfigQuery;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -27,7 +35,7 @@ import java.util.logging.Logger;
 
 /**
  * Implementation of the Configuration API. This class uses the current {@link ConfigurationContext} to evaluate the
- * chain of {@link PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
+ * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
  * instances to evaluate the current Configuration.
  */
 public class DefaultConfiguration implements Configuration {
@@ -147,7 +155,7 @@ public class DefaultConfiguration implements Configuration {
     }
 
     /**
-     * Get the current properties, composed by the loaded {@link PropertySource} and filtered
+     * Get the current properties, composed by the loaded {@link org.apache.tamaya.spi.PropertySource} and filtered
      * by registered {@link org.apache.tamaya.spi.PropertyFilter}.
      *
      * @return the final properties.
