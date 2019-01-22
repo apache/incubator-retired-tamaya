@@ -19,7 +19,12 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.ServiceContext;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;

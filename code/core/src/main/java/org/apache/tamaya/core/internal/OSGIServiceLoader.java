@@ -27,7 +27,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.spisupport.PriorityServiceComparator;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceFactory;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * A bundle listener that registers services defined in META-INF/services, when

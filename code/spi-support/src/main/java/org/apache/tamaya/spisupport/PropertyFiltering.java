@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.FilterContext;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.*;
 import java.util.logging.Level;

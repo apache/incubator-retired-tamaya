@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya;
 
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationBuilder;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationProviderSpi;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.logging.Logger;
 
