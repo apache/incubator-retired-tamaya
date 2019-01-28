@@ -53,33 +53,14 @@ under the License.
                 </module>
         -->
 
-        <module name="ConstantName">
-            <!-- Normal rules, except that:
-               -  * any name can start with an underscore.
-               -  * "log" is allowed; this is a traditional name for log objects
-               -  * names ending with "ThreadLocal" are allowed so that threadlocal vars don't have to be
-               -    all-caps. They are static final, but are not really constants. Yes, type prefixes
-               -    on variable names sucks ("hungarian notation") but checkstyle doesn't allow
-               -    name rules to vary by the type of the constant, and no other alternative seems
-               -    any better.
-               -->
-            <property name="format"
-                      value="^_?((log)|(logger)|([a-z][a-zA-Z]*ThreadLocal)|([A-Z][A-Z0-9]*(_[A-Z0-9]+)*))$"/>
-        </module>
-
+        <module name="ConstantName"/>
         <module name="LocalVariableName"/>
-        <module name="MethodName">
-            <property name="format"
-                      value="^_?[a-z][a-zA-Z0-9]*$"/>
-        </module>
+        <module name="MethodName"/>
         <module name="PackageName"/>
         <module name="LocalFinalVariableName"/>
         <module name="ParameterName"/>
         <module name="StaticVariableName"/>
-        <module name="TypeName">
-            <property name="format"
-                      value="^_?[A-Z][a-zA-Z0-9]*$"/>
-        </module>
+        <module name="TypeName"/>
 
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->

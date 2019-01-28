@@ -105,7 +105,7 @@ class BannerManager {
  * An abstract Tamaya banner printer.
  */
 abstract class AbstractBannerPrinter implements BannerPrinter {
-    private static final Logger log = Logger.getLogger(AbstractBannerPrinter.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractBannerPrinter.class.getName());
 
     @Override
     public void outputBanner() {
@@ -117,7 +117,7 @@ abstract class AbstractBannerPrinter implements BannerPrinter {
                 outputSingleLine(line);
             }
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to output the banner of tamaya.", e);
+            LOG.log(Level.WARNING, "Failed to output the banner of tamaya.", e);
         }
     }
 
@@ -150,11 +150,11 @@ class SilentBannerPrinter implements BannerPrinter {
  * Logs the banner via JUL at level {@link java.util.logging.Level#INFO}.
  */
 class LoggingBannerPrinter extends AbstractBannerPrinter {
-    private static final Logger log = Logger.getLogger(LoggingBannerPrinter.class.getName());
+    private static final Logger LOG = Logger.getLogger(LoggingBannerPrinter.class.getName());
 
     @Override
     void outputSingleLine(String line) {
-        log.log(Level.INFO, line);
+        LOG.log(Level.INFO, line);
     }
 }
 
