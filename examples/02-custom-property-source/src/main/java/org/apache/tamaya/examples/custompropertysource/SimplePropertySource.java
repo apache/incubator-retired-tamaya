@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * A simple PropertySource class.
+ */
 public class SimplePropertySource extends BasePropertySource {
 
     public static final String CONFIG_PROPERTIES_LOCATION = "META-INF/MyOtherConfigProperties.properties";
@@ -38,7 +41,7 @@ public class SimplePropertySource extends BasePropertySource {
         URL url = ClassLoader.getSystemClassLoader().getResource(CONFIG_PROPERTIES_LOCATION);
         Properties properties = new Properties();
 
-        try(InputStream is = url.openStream()){
+        try(InputStream is = url.openStream()) {
             properties.load(is);
 
             for(Map.Entry en: properties.entrySet()){
@@ -46,8 +49,7 @@ public class SimplePropertySource extends BasePropertySource {
                         PropertyValue.createValue(en.getKey().toString(), en.getValue().toString())
                         .setMeta("source", getName()));
             }
-        }
-        finally{
+        } finally {
             props = Collections.unmodifiableMap(props);
         }
     }

@@ -28,6 +28,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A simple PropertySource provider class.
+ */
 public class SimplePropertySourceProvider implements PropertySourceProvider {
     private static final String[] RESOURCES = {
         "cfgOther/a.properties", "cfgOther/b.properties", "cfgOther/c.properties"
