@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import javax.annotation.Priority;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsticks on 12.09.16.

@@ -22,7 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for PropertySource for reading main arguments as configuration.

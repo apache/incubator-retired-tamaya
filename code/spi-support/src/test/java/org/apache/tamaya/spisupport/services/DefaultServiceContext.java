@@ -63,7 +63,7 @@ public final class DefaultServiceContext implements ServiceContext {
      */
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
     @SuppressWarnings("rawtypes")
-	private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
+    private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
 
 
     @Override

@@ -18,16 +18,14 @@
  */
 package org.apache.tamaya.spisupport;
 
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link RegexPropertyFilter}. Created by anatole on 11.02.16.

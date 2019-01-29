@@ -20,9 +20,10 @@ package org.apache.tamaya.core.internal;
 
 import javax.annotation.Priority;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

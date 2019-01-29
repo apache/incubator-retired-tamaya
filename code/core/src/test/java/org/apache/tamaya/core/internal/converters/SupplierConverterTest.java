@@ -26,9 +26,10 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Matchers.any;
 import org.mockito.Mockito;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 
 /**
  *

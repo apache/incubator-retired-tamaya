@@ -32,10 +32,9 @@ import javax.annotation.Priority;
 public class TestRemovingPropertyFilter implements PropertyFilter{
     @Override
     public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
-        if("name5".equals(valueToBeFiltered.getKey())){
+        if ("name5".equals(valueToBeFiltered.getKey())) {
             return null;
-        }
-        else if("name3".equals(valueToBeFiltered.getKey())){
+        } else if("name3".equals(valueToBeFiltered.getKey())) {
             return valueToBeFiltered
                     .setValue("Mapped to name: " + Configuration.current().get("name"));
         }

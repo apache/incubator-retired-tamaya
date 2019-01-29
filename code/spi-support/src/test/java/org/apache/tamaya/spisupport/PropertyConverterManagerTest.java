@@ -27,10 +27,9 @@ import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
-import java.math.RoundingMode;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PropertyConverterManagerTest {
 

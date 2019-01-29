@@ -21,7 +21,7 @@ package org.apache.tamaya.spisupport.propertysource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PropertiesFilePropertySourceTest {
 

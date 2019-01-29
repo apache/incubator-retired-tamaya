@@ -20,8 +20,6 @@ package org.apache.tamaya.spi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
 

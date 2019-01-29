@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
-import org.apache.tamaya.spisupport.propertysource.MapPropertySource;
 import org.junit.Before;
 import org.junit.Test;
 

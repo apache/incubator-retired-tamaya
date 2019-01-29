@@ -18,20 +18,17 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
-import java.util.List;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spi.FilterContext;
-import org.junit.Test;
-
-import java.util.Optional;
-
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
-import org.mockito.Mock;
+import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.assertj.core.api.Assertions.*;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OptionalConverterTest {
 

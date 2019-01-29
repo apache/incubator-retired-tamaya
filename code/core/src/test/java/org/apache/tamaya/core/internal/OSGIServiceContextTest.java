@@ -22,15 +22,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

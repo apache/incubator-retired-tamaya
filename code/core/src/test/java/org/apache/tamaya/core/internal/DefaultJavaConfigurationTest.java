@@ -21,7 +21,7 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.Configuration;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultJavaConfigurationTest {
 

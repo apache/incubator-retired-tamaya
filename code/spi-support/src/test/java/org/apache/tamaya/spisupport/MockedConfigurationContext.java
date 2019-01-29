@@ -21,7 +21,12 @@ package org.apache.tamaya.spisupport;
 import java.util.*;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  *

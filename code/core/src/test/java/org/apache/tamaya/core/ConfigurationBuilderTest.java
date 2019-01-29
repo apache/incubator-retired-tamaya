@@ -21,13 +21,17 @@ package org.apache.tamaya.core;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.internal.CoreConfigurationBuilder;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationBuilder;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link ConfigurationBuilder} by atsticks on 06.09.16.
@@ -175,7 +179,7 @@ public class ConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverters_Array() throws Exception {
-		PropertyConverter converter = (value, ctx) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = Configuration.createConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
@@ -191,7 +195,7 @@ public class ConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverters_Collection() throws Exception {
-		PropertyConverter converter = (value, ctx) -> value.toLowerCase();
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = Configuration.createConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class),
                         Arrays.<PropertyConverter<Object>>asList(new PropertyConverter[]{converter}));
@@ -225,7 +229,7 @@ public class ConfigurationBuilderTest {
 
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	@Test
+    @Test
     public void removePropertyConverters_Collection() throws Exception {
         PropertyConverter converter = (value, ctx) -> value.toLowerCase();
         ConfigurationBuilder b = Configuration.createConfigurationBuilder()

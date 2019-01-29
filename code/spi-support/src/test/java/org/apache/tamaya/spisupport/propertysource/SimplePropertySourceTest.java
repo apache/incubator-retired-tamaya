@@ -31,7 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 public class SimplePropertySourceTest {
 
@@ -233,17 +234,17 @@ public class SimplePropertySourceTest {
         assertThat(sps.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
         assertThat(sps.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
     }
-    
+
     @Test
     public void buildingWithValidName() {
-    	final String KEY = "myTestKey"; 
-    	Builder builder = SimplePropertySource.newBuilder().withName(KEY);
-    	assertThat(builder.build().getName()).isEqualTo(KEY);
+        final String key = "myTestKey";
+        Builder builder = SimplePropertySource.newBuilder().withName(key);
+        assertThat(builder.build().getName()).isEqualTo(key);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void buildingWithInvalidNameYieldsNPE() {
-    	SimplePropertySource.newBuilder().withName(null);
+        SimplePropertySource.newBuilder().withName(null);
     }
-    
+
 }

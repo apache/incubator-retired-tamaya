@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.spi;
 
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -85,7 +83,7 @@ public class FilterContextTest {
     }
 
     @SuppressWarnings("unchecked")
-	@Test(expected = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullPropertyValueThreeParameterVariant() {
         new FilterContext(null, Collections.EMPTY_MAP, ConfigurationContext.EMPTY);
     }

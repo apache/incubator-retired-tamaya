@@ -20,7 +20,7 @@ package org.apache.tamaya;
 
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests instantiating {@link ConfigException}.

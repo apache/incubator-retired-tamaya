@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.tamaya.TypeLiteral;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsti on 02.10.2017.
