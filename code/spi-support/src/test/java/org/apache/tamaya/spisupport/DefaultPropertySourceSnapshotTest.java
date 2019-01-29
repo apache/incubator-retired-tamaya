@@ -25,24 +25,25 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Tests for {@link DefaultPropertySourceSnapshot}.
  */
 public class DefaultPropertySourceSnapshotTest {
 
-    private static final PropertySource myPS = new SystemPropertySource();
+    private static final PropertySource MY_PS = new SystemPropertySource();
 
     @Test
     public void testOf() throws Exception {
-        PropertySource ps = DefaultPropertySourceSnapshot.of(myPS);
+        PropertySource ps = DefaultPropertySourceSnapshot.of(MY_PS);
         assertThat(ps).isNotNull();
     }
 
     @Test
     public void testGetName() throws Exception {
-        PropertySource ps = DefaultPropertySourceSnapshot.of(myPS);
+        PropertySource ps = DefaultPropertySourceSnapshot.of(MY_PS);
         String name = ps.getName();
         assertThat(name).isNotNull();
         assertThat(name).isEqualTo(ps.getName());
@@ -50,35 +51,35 @@ public class DefaultPropertySourceSnapshotTest {
 
     @Test
     public void testGetOrdinal() throws Exception {
-        PropertySource ps = DefaultPropertySourceSnapshot.of(myPS);
-        assertThat(PropertySourceComparator.getOrdinal(myPS))
+        PropertySource ps = DefaultPropertySourceSnapshot.of(MY_PS);
+        assertThat(PropertySourceComparator.getOrdinal(MY_PS))
             .isEqualTo(PropertySourceComparator.getOrdinal(ps));
     }
 
     @Test
     public void testGet() throws Exception {
-        PropertySource ps = DefaultPropertySourceSnapshot.of(myPS);
+        PropertySource ps = DefaultPropertySourceSnapshot.of(MY_PS);
         assertThat(ps).isNotNull();
-        for (Map.Entry<String, PropertyValue> e : myPS.getProperties().entrySet()) {
+        for (Map.Entry<String, PropertyValue> e : MY_PS.getProperties().entrySet()) {
             assertThat(ps.get(e.getKey()).getValue()).isEqualTo(e.getValue().getValue());
         }
     }
 
     @Test
     public void testGetProperties() throws Exception {
-        PropertySource ps = DefaultPropertySourceSnapshot.of(myPS);
+        PropertySource ps = DefaultPropertySourceSnapshot.of(MY_PS);
         assertThat(ps).isNotNull();
         assertThat(ps.getProperties()).isNotNull();
         assertThat(ps.getProperties()).isNotEmpty();
-        for(Map.Entry en:myPS.getProperties().entrySet()){
+        for(Map.Entry en:MY_PS.getProperties().entrySet()){
             assertThat(en.getValue()).isEqualTo(ps.get((String)en.getKey()));
         }
     }
 
     @Test
     public void testEquals() throws Exception {
-        PropertySource ps1 = DefaultPropertySourceSnapshot.of(myPS);
-        PropertySource ps2 = DefaultPropertySourceSnapshot.of(myPS);
+        PropertySource ps1 = DefaultPropertySourceSnapshot.of(MY_PS);
+        PropertySource ps2 = DefaultPropertySourceSnapshot.of(MY_PS);
         assertThat(ps1.getName()).isEqualTo(ps2.getName());
         assertThat(ps1.getProperties()).hasSize(ps2.getProperties().size());
     }
@@ -87,8 +88,8 @@ public class DefaultPropertySourceSnapshotTest {
     public void testHashCode() throws Exception {
         boolean alwaysDifferent = true;
         for(int i=0;i<10;i++){
-            PropertySource ps1 = DefaultPropertySourceSnapshot.of(myPS);
-            PropertySource ps2 = DefaultPropertySourceSnapshot.of(myPS);
+            PropertySource ps1 = DefaultPropertySourceSnapshot.of(MY_PS);
+            PropertySource ps2 = DefaultPropertySourceSnapshot.of(MY_PS);
             // sometimes not same, because frozenAt in ms maybe different
             if(ps1.hashCode()==ps2.hashCode()){
                 alwaysDifferent=false;
@@ -102,10 +103,10 @@ public class DefaultPropertySourceSnapshotTest {
 
     @Test
     public void testToString() throws Exception {
-        PropertySource ps = DefaultPropertySourceSnapshot.of(myPS);
+        PropertySource ps = DefaultPropertySourceSnapshot.of(MY_PS);
         String toString = ps.toString();
         assertThat(toString).isNotNull();
         assertThat(toString).contains("FrozenPropertySource");
-        assertThat(toString).contains(myPS.getName());
+        assertThat(toString).contains(MY_PS.getName());
     }
 }

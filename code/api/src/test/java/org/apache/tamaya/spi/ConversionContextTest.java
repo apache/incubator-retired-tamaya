@@ -56,8 +56,8 @@ public class ConversionContextTest {
     public void getSetAnnotatedElement() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("getAnnotatedElement", TypeLiteral.of(List.class)).build();
         assertThat(ctx.getAnnotatedElement()).isNull();
-        ctx = new ConversionContext.Builder(TypeLiteral.of(List.class)).setAnnotatedElement(MyAnnotatedElement).build();
-        assertThat(ctx.getAnnotatedElement()).isEqualTo(MyAnnotatedElement);
+        ctx = new ConversionContext.Builder(TypeLiteral.of(List.class)).setAnnotatedElement(MY_ANNOTATED_ELEMENT).build();
+        assertThat(ctx.getAnnotatedElement()).isEqualTo(MY_ANNOTATED_ELEMENT);
     }
 
     @Test
@@ -95,7 +95,9 @@ public class ConversionContextTest {
     public void testToString() throws Exception {
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy").build();
-        assertThat(ctx.toString()).isEqualTo("ConversionContext{configuration=null, key='toString', targetType=TypeLiteral{type=interface java.util.List}, annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]}");
+        assertThat(ctx.toString()).isEqualTo("ConversionContext{configuration=null, key='toString', "
+                + "targetType=TypeLiteral{type=interface java.util.List}, "
+                + "annotatedElement=null, supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]}");
     }
 
     @Test
@@ -143,7 +145,7 @@ public class ConversionContextTest {
                 "supportedFormats=[0.0.0.0/nnn (MyConverter), x.x.x.x/yyy (MyConverter)]", "annotatedElement", "key='toString'", "Builder");
     }
 
-    private static final AnnotatedElement MyAnnotatedElement = new AnnotatedElement() {
+    private static final AnnotatedElement MY_ANNOTATED_ELEMENT = new AnnotatedElement() {
         @Override
         public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
             throw new UnsupportedOperationException("Not supported yet.");

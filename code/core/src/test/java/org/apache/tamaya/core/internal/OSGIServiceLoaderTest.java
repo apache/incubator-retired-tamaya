@@ -20,10 +20,11 @@ package org.apache.tamaya.core.internal;
 
 import java.util.Set;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

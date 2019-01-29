@@ -18,15 +18,16 @@
  */
 package org.apache.tamaya.core.internal.converters;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.spi.ConversionContext;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConversionContext;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 /**
  * Tests the default converter for Number.

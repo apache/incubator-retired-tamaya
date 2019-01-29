@@ -22,7 +22,8 @@ import java.util.Map;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

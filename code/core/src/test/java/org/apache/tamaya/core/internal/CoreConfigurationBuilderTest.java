@@ -28,10 +28,15 @@ import java.util.*;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConfigurationBuilder;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link CoreConfigurationBuilder} by atsticks on 06.09.16.
@@ -118,8 +123,8 @@ public class CoreConfigurationBuilderTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addPropertyConverter() throws Exception {
-		PropertyConverter converter = (value, ctx) -> value.toLowerCase();
-		ConfigurationBuilder b = new CoreConfigurationBuilder()
+        PropertyConverter converter = (value, ctx) -> value.toLowerCase();
+        ConfigurationBuilder b = new CoreConfigurationBuilder()
                 .addPropertyConverters(TypeLiteral.of(String.class), converter);
         Configuration cfg = b.build();
         ConfigurationContext ctx = cfg.getContext();

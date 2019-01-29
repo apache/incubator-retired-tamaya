@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import org.apache.tamaya.spi.ConfigurationProviderSpi;
 import org.apache.tamaya.spi.ServiceContext;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Any;
 
 /**
  * Test Configuration class, that is used to testdata the default methods

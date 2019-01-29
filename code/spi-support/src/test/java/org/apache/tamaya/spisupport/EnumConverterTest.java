@@ -37,7 +37,7 @@ public class EnumConverterTest {
     private final ConversionContext DUMMY_CONTEXT = new ConversionContext.Builder("someKey", TypeLiteral.of(Enum.class))
             .build();
 
-    private enum TEST_ENUM {
+    private enum TestEnum {
         A, B, C, D
     };
 
@@ -73,7 +73,7 @@ public class EnumConverterTest {
     public void testEqualsAndHash() {
         EnumConverter converter1 = new EnumConverter<>(RoundingMode.class);
         EnumConverter converter2 = new EnumConverter<>(RoundingMode.class);
-        EnumConverter converter3 = new EnumConverter<>(TEST_ENUM.class);
+        EnumConverter converter3 = new EnumConverter<>(TestEnum.class);
 
         assertThat(converter1).isEqualTo(converter1);
         assertThat(converter1).isNotEqualTo(null);

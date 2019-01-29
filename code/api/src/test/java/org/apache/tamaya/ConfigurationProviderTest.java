@@ -20,8 +20,9 @@ package org.apache.tamaya;
 
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
 import org.mockito.Mockito;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

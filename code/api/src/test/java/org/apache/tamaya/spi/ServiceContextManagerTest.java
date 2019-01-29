@@ -27,7 +27,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Additional tests for {@link ServiceContextManager}, created by atsticks on 20.08.16.

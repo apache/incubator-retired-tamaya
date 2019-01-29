@@ -21,10 +21,14 @@ package org.apache.tamaya.core.internal;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.core.testdata.TestPropertyDefaultSource;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.FilterContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Simple tests for {@link CoreConfiguration} by atsticks on 16.08.16.

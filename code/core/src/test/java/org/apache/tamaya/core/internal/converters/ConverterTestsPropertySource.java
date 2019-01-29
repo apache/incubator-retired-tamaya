@@ -289,9 +289,9 @@ public class ConverterTestsPropertySource implements PropertySource {
                 return PropertyValue.createValue(key, "-0X0107");
             case "tests.converter.bd.invalid":
                 return PropertyValue.createValue(key, "invalid");
-
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override

@@ -21,11 +21,9 @@ package org.apache.tamaya.spisupport.propertysource;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JavaConfigurationProviderTest {
 

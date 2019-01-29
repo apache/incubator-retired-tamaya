@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;

@@ -19,10 +19,8 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

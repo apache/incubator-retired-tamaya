@@ -399,6 +399,8 @@
                     </executions>
                     <configuration>
                         <logViolationsToConsole>true</logViolationsToConsole>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        <suppressionsLocation>buildconfigurations/src/main/resources/checkstyle/suppressions.xml</suppressionsLocation>
                         <configLocation>buildconfigurations/src/main/resources/checkstyle/style.xml</configLocation>
                     </configuration>
                     <dependencies>

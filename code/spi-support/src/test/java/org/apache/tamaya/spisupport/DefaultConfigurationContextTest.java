@@ -20,13 +20,12 @@ package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

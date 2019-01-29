@@ -20,8 +20,8 @@ package org.apache.tamaya.spisupport.propertysource;
 
 import java.net.URL;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
- 	
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
