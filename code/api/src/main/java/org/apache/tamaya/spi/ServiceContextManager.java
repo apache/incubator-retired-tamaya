@@ -84,11 +84,28 @@ public final class ServiceContextManager {
      */
     public static ServiceContext set(ServiceContext serviceContext) {
         Objects.requireNonNull(serviceContext);
+        return setWithClassLoader(serviceContext, serviceContext.getClassLoader());
+    }
+    
+    /**
+     * Replace the current {@link ServiceContext} for the ServiceContextManager's classloader in use.
+     *
+     * @param serviceContext the new {@link ServiceContext}, not {@code null}.
+     * @return the currently used context after setting it.
+     */
+    public static ServiceContext setToStaticClassLoader(ServiceContext serviceContext) {
+        Objects.requireNonNull(serviceContext);
+        return setWithClassLoader(serviceContext, ServiceContextManager.class.getClassLoader());
+    }
+    
+    private static ServiceContext setWithClassLoader(ServiceContext serviceContext, ClassLoader cl) {
+        Objects.requireNonNull(serviceContext);
+        Objects.requireNonNull(cl);
 
         ServiceContext previousContext;
         synchronized (ServiceContextManager.class) {
             previousContext = ServiceContextManager.serviceContexts
-                    .put(serviceContext.getClassLoader(), serviceContext);
+                    .put(cl, serviceContext);
         }
         if(previousContext!=null) {
             LOG.log(Level.WARNING, "Replaced ServiceProvider " +
@@ -101,7 +118,7 @@ public final class ServiceContextManager {
         }
         return serviceContext;
     }
-
+    
     /**
      * Ge {@link ServiceContext}. If necessary the {@link ServiceContext} will be laziliy loaded.
      *
@@ -119,22 +136,14 @@ public final class ServiceContextManager {
      * @return the {@link ServiceContext} used.
      */
     public static ServiceContext getServiceContext() {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if(cl==null){
-            cl = ServiceContextManager.class.getClassLoader();
-        }
-        return getServiceContext(cl);
+        return getServiceContext(getDefaultClassLoader());
     }
 
     /**
-     * Evaluate the default classloader: 1. the thread context classloader, 2. This class's classloader.
+     * Evaluate the default classloader: This class's classloader.
      * @return the classloder, not null.
      */
     public static ClassLoader getDefaultClassLoader() {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if(cl==null){
-            cl = ServiceContextManager.class.getClassLoader();
-        }
-        return cl;
+        return ServiceContextManager.class.getClassLoader();
     }
 }
