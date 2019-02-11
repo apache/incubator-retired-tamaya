@@ -46,7 +46,7 @@ public class OSGIActivator implements BundleActivator {
         // Register marker service
         this.serviceLoader = new OSGIServiceLoader(context);
         context.addBundleListener(serviceLoader);
-        ServiceContextManager.set(new OSGIServiceContext(serviceLoader));
+        ServiceContextManager.setToStaticClassLoader(new OSGIServiceContext(serviceLoader));
         LOG.info("Registered Tamaya OSGI ServiceContext...");
         Configuration.setCurrent(
                        new CoreConfigurationBuilder()
