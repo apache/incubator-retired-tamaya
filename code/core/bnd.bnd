@@ -36,7 +36,7 @@ Private-Package: \
 	org.apache.tamaya.core.internal.converters
 Export-Service: \
     org.apache.tamaya.Configuration,\
-    org.apache.tamaya.core.internal.ConfigValueEvaluator,\
+    org.apache.tamaya.spisupport.ConfigValueEvaluator,\
     org.apache.tamaya.spi.ConfigurationContextBuilder,\
     org.apache.tamaya.spi.ConfigurationProviderSpi,\
     org.apache.tamaya.spi.PropertyConverter,\
