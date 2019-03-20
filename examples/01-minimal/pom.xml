@@ -28,9 +28,7 @@ under the License.
         <version>0.4-incubating-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.apache.tamaya.examples</groupId>
     <artifactId>01-minimal</artifactId>
-    <version>0.4-incubating-SNAPSHOT</version>
 
     <name>Apache Tamaya Minimal Example</name>
 
