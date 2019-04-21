@@ -130,7 +130,7 @@ public class OSGIServiceContext implements ServiceContext{
                     this.osgiServiceLoader.getBundleContext().registerService(serviceType, t, new Hashtable<>());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.log(Level.SERVERE, "Error while getting service.", e);
             }
         }
         return services;
