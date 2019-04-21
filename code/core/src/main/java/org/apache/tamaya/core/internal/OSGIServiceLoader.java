@@ -248,7 +248,7 @@ public class OSGIServiceLoader implements BundleListener {
                 LOG.fine("Creating Service...:" + serviceClass.getName());
                 return serviceClass.getConstructor().newInstance();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOG.log(Level.SEVERE, "Error while creating service.", ex);
                 throw new IllegalStateException("Failed to createObject service: " + serviceClass.getName(), ex);
             }
         }
