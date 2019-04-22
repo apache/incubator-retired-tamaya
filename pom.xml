@@ -76,6 +76,12 @@
         <!-- API checker -->
         <revapi-java.version>0.18.0</revapi-java.version>
         <revapi.plugin.version>0.10.5</revapi.plugin.version>
+
+        <!-- Sonar properties -->
+        <sonar.projectName>Apache Tamaya - Java Configuration</sonar.projectName>
+        <sonar.projectKey>apache:apache_incubator-tamaya</sonar.projectKey>
+        <sonar.links.homepage>https://tamaya.apache.org/</sonar.links.homepage>
+        <sonar.links.scm_dev>scm:git:git@github.com:apache/incubator-tamaya.git</sonar.links.scm_dev>
     </properties>
 
     <licenses>
@@ -352,11 +358,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${assembly.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.pitest</groupId>
@@ -697,6 +698,25 @@
                         </fileset>
                     </filesets>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <executions>
+                  <execution>
+                    <goals>
+                      <goal>prepare-agent</goal>
+                    </goals>
+                  </execution>
+                  <execution>
+                    <id>report</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                      <goal>report</goal>
+                    </goals>
+                  </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
