@@ -16,9 +16,10 @@ jdk:
 #  srcclr: true 
 addons:
   sonarcloud:
-    organization: "apache" 
-    token: "$SONAR_TOKEN"
+    organization: apache
+
 script:
   # other script steps might be done before running the actual analysis
   #- sonar-scanner
-  - mvn clean verify install sonar:sonar
+  - mvn clean verify install sonar:sonar -Dsonar.login=$SONAR_TOKEN
+

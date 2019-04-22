@@ -79,7 +79,6 @@
 
         <!-- Sonar properties -->
         <sonar.projectName>Apache Tamaya - Java Configuration</sonar.projectName>
-        <sonar.projectKey>apache:apache_incubator-tamaya</sonar.projectKey>
         <sonar.links.homepage>https://tamaya.apache.org/</sonar.links.homepage>
         <sonar.links.scm_dev>scm:git:git@github.com:apache/incubator-tamaya.git</sonar.links.scm_dev>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
