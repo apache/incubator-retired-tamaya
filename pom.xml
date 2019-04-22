@@ -76,6 +76,8 @@
         <!-- API checker -->
         <revapi-java.version>0.18.0</revapi-java.version>
         <revapi.plugin.version>0.10.5</revapi.plugin.version>
+        <!-- SonarCloud integration - TAMAYA-277 -->
+        <sonar.projectKey>apache_incubator-tamaya</sonar.projectKey>
     </properties>
 
     <licenses>
