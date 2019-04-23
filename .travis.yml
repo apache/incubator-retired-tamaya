@@ -1,9 +1,13 @@
 language: java
 dist: trusty
+sudo: required
 
 addons:
   sonarcloud:
     organization: "apache"
+
+script:
+  - sonar-scanner
 
 jobs:
     include:
