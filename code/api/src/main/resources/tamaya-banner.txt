@@ -6,6 +6,6 @@
 ██║  ██║██║     ██║  ██║╚██████╗██║  ██║███████╗       ██║   ██║  ██║██║ ╚═╝ ██║██║  ██║   ██║   ██║  ██║
 ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝       ╚═╝   ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
 
-Apache Tamaya Configuration API:  http://tamaya.incubator.apache.org
+Apache Tamaya Configuration API:  https://tamaya.incubator.apache.org
 
 
