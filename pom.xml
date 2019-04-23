@@ -80,6 +80,7 @@
         <!-- Sonar properties -->
         <sonar.projectName>Apache Tamaya - Java Configuration</sonar.projectName>
         <sonar.projectKey>apache_incubator-tamaya</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <licenses>
