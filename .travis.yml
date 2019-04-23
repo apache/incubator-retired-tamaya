@@ -1,25 +1,26 @@
 language: java
 dist: trusty
-jdk:
-  - openjdk8
-  - openjdk9
-  - openjdk10
-  - openjdk11
 
-#before_script:
-#  - pip install --user codecov
-
-#after_success:
-#  - codecov
-
-#addons:
-#  srcclr: true 
 addons:
   sonarcloud:
     organization: apache
 
-script:
-  # other script steps might be done before running the actual analysis
-  #- sonar-scanner
-  - mvn clean verify install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+jobs:
+    include:
+        - name: "Java 8"
+          jdk: openjdk8
+          script: mvn clean verify install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+
+        - name: "Java 9"
+          jdk: openjdk9
+          script: mvn clean verify install
+
+        - name: "Java 10"
+          jdk: openjdk10
+          script: mvn clean verify install
+
+        - name: "Java 11"
+          jdk: openjdk11
+          script: mvn clean verify install
+
 
