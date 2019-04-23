@@ -9,18 +9,18 @@ jobs:
     include:
         - name: "Java 8"
           jdk: openjdk8
-          script: mvn clean verify install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya -Dsonar.host.url="https://sonarcloud.io" -Dsonar.login="$SONAR_TOKEN"
+          script: mvn clean install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya -Dsonar.host.url="https://sonarcloud.io" -Dsonar.login="$SONAR_TOKEN"
 
         - name: "Java 9"
           jdk: openjdk9
-          script: mvn clean verify install
+          script: mvn clean install
 
         - name: "Java 10"
           jdk: openjdk10
-          script: mvn clean verify install
+          script: mvn clean install
 
         - name: "Java 11"
           jdk: openjdk11
-          script: mvn clean verify install
+          script: mvn clean install
 
 
