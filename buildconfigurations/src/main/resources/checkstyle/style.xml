@@ -26,8 +26,6 @@ under the License.
         <property name="file" value="${checkstyle.suppressions.file}"/>
     </module>
 
-    <module name="SuppressionCommentFilter"/>
-
     <!-- Checks for Size Violations.                    -->
     <!-- See http://checkstyle.sf.net/config_sizes.html -->
     <module name="FileLength">
@@ -41,8 +39,7 @@ under the License.
 
 
     <module name="TreeWalker">
-        <!-- needed for the SuppressionCommentFilter -->
-        <module name="FileContentsHolder"/>
+        <module name="SuppressionCommentFilter"/>
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
