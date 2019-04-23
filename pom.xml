@@ -76,11 +76,6 @@
         <!-- API checker -->
         <revapi-java.version>0.18.0</revapi-java.version>
         <revapi.plugin.version>0.10.5</revapi.plugin.version>
-
-        <!-- Sonar properties -->
-        <sonar.projectName>Apache Tamaya - Java Configuration</sonar.projectName>
-        <sonar.projectKey>apache_incubator-tamaya</sonar.projectKey>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <licenses>
