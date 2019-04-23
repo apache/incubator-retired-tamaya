@@ -3,13 +3,13 @@ dist: trusty
 
 addons:
   sonarcloud:
-    organization: apache
+    organization: "apache"
 
 jobs:
     include:
         - name: "Java 8"
           jdk: openjdk8
-          script: mvn clean verify install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+          script: mvn clean verify install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya -Dsonar.host.url="https://sonarcloud.io" -Dsonar.login="$SONAR_TOKEN"
 
         - name: "Java 9"
           jdk: openjdk9
