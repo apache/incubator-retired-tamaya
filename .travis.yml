@@ -21,5 +21,5 @@ addons:
 script:
   # other script steps might be done before running the actual analysis
   #- sonar-scanner
-  - mvn clean verify install sonar:sonar -Dsonar.login=$SONAR_TOKEN
+  - mvn clean verify install sonar:sonar
 
