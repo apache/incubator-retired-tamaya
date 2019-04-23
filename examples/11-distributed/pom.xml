@@ -19,15 +19,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.apache</groupId>
-        <artifactId>apache</artifactId>
-        <version>18</version>
+        <groupId>org.apache.tamaya.examples</groupId>
+        <artifactId>examples</artifactId>
+        <version>0.4-incubating-SNAPSHOT</version>
     </parent>
 
     <artifactId>tamaya-example-distributed</artifactId>
-    <groupId>org.apache.tamaya.examples</groupId>
     <name>Apache Tamaya Example: Distributed Configuration</name>
-    <description>This project contains a simple example based on JavaFX and Vertx.</description>
+    <description>This project contains a simple example based on JavaFX and VertX.</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -96,7 +95,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
                 <configuration>
                     <debug>true</debug>
                     <optimize>${maven.compile.optimize}</optimize>
