@@ -402,13 +402,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>7.8</version>
-                            <exclusions><!-- MCHECKSTYLE-156 -->
-                                <exclusion>
-                                    <groupId>com.sun</groupId>
-                                    <artifactId>tools</artifactId>
-                                </exclusion>
-                            </exclusions>
+                            <version>8.19</version>
                         </dependency>
                     </dependencies>
                 </plugin>
