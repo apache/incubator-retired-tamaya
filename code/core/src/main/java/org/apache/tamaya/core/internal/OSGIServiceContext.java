@@ -107,6 +107,7 @@ public class OSGIServiceContext implements ServiceContext{
                 return (T)this.osgiServiceLoader.getBundleContext().getService(ref).getClass().getConstructor()
                         .newInstance();
             } catch (Exception e) {
+                e.printStackTrace();
                 if(supplier!=null){
                     return supplier.get();
                 }
