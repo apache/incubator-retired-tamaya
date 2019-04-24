@@ -6,15 +6,11 @@ addons:
   sonarcloud:
     organization: "apache"
 
-script:
-  - sonar-scanner
-
 jobs:
     include:
         - name: "Java 8"
           jdk: openjdk8
-          # script: mvn clean install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya -Dsonar.host.url="https://sonarcloud.io" -Dsonar.login="$SONAR_TOKEN"
-          script: mvn clean install 
+           script: mvn clean install sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya
 
         - name: "Java 9"
           jdk: openjdk9
