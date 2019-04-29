@@ -23,5 +23,3 @@ jobs:
         - name: "Java 11"
           jdk: openjdk11
           script: mvn clean install
-
-
