@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +51,7 @@ public class OSGIServiceLoader implements BundleListener {
 
     private BundleContext context;
 
-    private Set<Bundle> resourceBundles = Collections.synchronizedSet(new HashSet<Bundle>());
+    private final Set<Bundle> resourceBundles = Collections.synchronizedSet(new HashSet<Bundle>());
 
     public OSGIServiceLoader(BundleContext context) {
         this.context = Objects.requireNonNull(context);
@@ -129,7 +130,7 @@ public class OSGIServiceLoader implements BundleListener {
             URL child = bundle.getEntry(entryPath);
             InputStream inStream = child.openStream();
             LOG.info("Loading Services " + serviceClass.getName() + " from bundle...: " + bundle.getSymbolicName());
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.UTF_8))) {
                 String implClassName = br.readLine();
                 while (implClassName != null) {
                     int hashIndex = implClassName.indexOf("#");
