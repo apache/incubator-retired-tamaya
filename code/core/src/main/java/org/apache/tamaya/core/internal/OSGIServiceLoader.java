@@ -164,9 +164,7 @@ public class OSGIServiceLoader implements BundleListener {
                             BundleContext bundleContext = bundle.getBundleContext();
                             bundleContext.registerService(serviceName, factory, props);
                             LOG.info("Registered Tamaya service class: " + implClassName + "(" + serviceName + ")");
-                        } catch (Exception e) {
-                            LOG.log(Level.SEVERE, "Failed to load service: " + implClassName, e);
-                        } catch (NoClassDefFoundError err) {
+                        } catch (NoClassDefFoundError | Exception err) {
                             LOG.log(Level.SEVERE, "Failed to load service: " + implClassName, err);
                         }
                     }
