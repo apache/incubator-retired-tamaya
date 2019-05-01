@@ -192,39 +192,39 @@ public class OSGIServiceLoader implements BundleListener {
             URL child = bundle.getEntry(entryPath);
             InputStream inStream = child.openStream();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
-            String implClassName = br.readLine();
-            while (implClassName != null) {
-                int hashIndex = implClassName.indexOf("#");
-                if (hashIndex > 0) {
-                    implClassName = implClassName.substring(0, hashIndex - 1);
-                } else if (hashIndex == 0) {
-                    implClassName = "";
-                }
-                implClassName = implClassName.trim();
-                if (implClassName.length() > 0) {
-                    LOG.fine("Unloading Service (" + serviceName + "): " + implClassName);
-                    try {
-                        // Load the service class
-                        Class<?> implClass = bundle.loadClass(implClassName);
-                        if (!serviceClass.isAssignableFrom(implClass)) {
-                            LOG.warning("Configured service: " + implClassName + " is not assignable to "
-                                    + serviceClass.getName());
-                            continue;
-                        }
-                        ServiceReference<?> ref = bundle.getBundleContext().getServiceReference(implClass);
-                        if (ref != null) {
-                            bundle.getBundleContext().ungetService(ref);
-                        }
-                    } catch (Exception e) {
-                        LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, e);
-                    } catch (NoClassDefFoundError err) {
-                        LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, err);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"))) {
+                String implClassName = br.readLine();
+                while (implClassName != null) {
+                    int hashIndex = implClassName.indexOf("#");
+                    if (hashIndex > 0) {
+                        implClassName = implClassName.substring(0, hashIndex - 1);
+                    } else if (hashIndex == 0) {
+                        implClassName = "";
                     }
+                    implClassName = implClassName.trim();
+                    if (implClassName.length() > 0) {
+                        LOG.fine("Unloading Service (" + serviceName + "): " + implClassName);
+                        try {
+                            // Load the service class
+                            Class<?> implClass = bundle.loadClass(implClassName);
+                            if (!serviceClass.isAssignableFrom(implClass)) {
+                                LOG.warning("Configured service: " + implClassName + " is not assignable to "
+                                        + serviceClass.getName());
+                                continue;
+                            }
+                            ServiceReference<?> ref = bundle.getBundleContext().getServiceReference(implClass);
+                            if (ref != null) {
+                                bundle.getBundleContext().ungetService(ref);
+                            }
+                        } catch (Exception e) {
+                            LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, e);
+                        } catch (NoClassDefFoundError err) {
+                            LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, err);
+                        }
+                    }
+                    implClassName = br.readLine();
                 }
-                implClassName = br.readLine();
             }
-            br.close();
         } catch (RuntimeException rte) {
             throw rte;
         } catch (Exception e) {
