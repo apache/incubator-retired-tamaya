@@ -191,7 +191,7 @@ public class OSGIServiceLoader implements BundleListener {
             URL child = bundle.getEntry(entryPath);
             InputStream inStream = child.openStream();
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.UTF_8))) {
                 String implClassName = br.readLine();
                 while (implClassName != null) {
                     int hashIndex = implClassName.indexOf("#");
@@ -215,9 +215,7 @@ public class OSGIServiceLoader implements BundleListener {
                             if (ref != null) {
                                 bundle.getBundleContext().ungetService(ref);
                             }
-                        } catch (Exception e) {
-                            LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, e);
-                        } catch (NoClassDefFoundError err) {
+                        } catch (NoClassDefFoundError | Exception err) {
                             LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, err);
                         }
                     }
