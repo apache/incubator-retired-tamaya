@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,9 +49,9 @@ public class OSGIServiceLoader implements BundleListener {
     private static final Logger LOG = Logger.getLogger(OSGIServiceLoader.class.getName());
     private static final String META_INF_SERVICES = "META-INF/services/";
 
-    private BundleContext context;
+    private final BundleContext context;
 
-    private Set<Bundle> resourceBundles = Collections.synchronizedSet(new HashSet<Bundle>());
+    private final Set<Bundle> resourceBundles = Collections.synchronizedSet(new HashSet<>());
 
     public OSGIServiceLoader(BundleContext context) {
         this.context = Objects.requireNonNull(context);
@@ -75,11 +76,10 @@ public class OSGIServiceLoader implements BundleListener {
     @Override
     public void bundleChanged(BundleEvent bundleEvent) {
         // Parse and createObject metadata when installed
+        Bundle bundle = bundleEvent.getBundle();
         if (bundleEvent.getType() == BundleEvent.STARTED) {
-            Bundle bundle = bundleEvent.getBundle();
             checkAndLoadBundle(bundle);
         } else if (bundleEvent.getType() == BundleEvent.STOPPED) {
-            Bundle bundle = bundleEvent.getBundle();
             checkAndUnloadBundle(bundle);
         }
     }
@@ -129,16 +129,10 @@ public class OSGIServiceLoader implements BundleListener {
             URL child = bundle.getEntry(entryPath);
             InputStream inStream = child.openStream();
             LOG.info("Loading Services " + serviceClass.getName() + " from bundle...: " + bundle.getSymbolicName());
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"))) {
-                String implClassName = br.readLine();
-                while (implClassName != null) {
-                    int hashIndex = implClassName.indexOf("#");
-                    if (hashIndex > 0) {
-                        implClassName = implClassName.substring(0, hashIndex - 1);
-                    } else if (hashIndex == 0) {
-                        implClassName = "";
-                    }
-                    implClassName = implClassName.trim();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.UTF_8))) {
+                String line = br.readLine();
+                while (line != null) {
+                    String implClassName = getImplClassName(line);
                     if (implClassName.length() > 0) {
                         try {
                             // Load the service class
@@ -164,13 +158,11 @@ public class OSGIServiceLoader implements BundleListener {
                             BundleContext bundleContext = bundle.getBundleContext();
                             bundleContext.registerService(serviceName, factory, props);
                             LOG.info("Registered Tamaya service class: " + implClassName + "(" + serviceName + ")");
-                        } catch (Exception e) {
-                            LOG.log(Level.SEVERE, "Failed to load service: " + implClassName, e);
-                        } catch (NoClassDefFoundError err) {
+                        } catch (NoClassDefFoundError | Exception err) {
                             LOG.log(Level.SEVERE, "Failed to load service: " + implClassName, err);
                         }
                     }
-                    implClassName = br.readLine();
+                    line = br.readLine();
                 }
             }
         } catch (RuntimeException rte) {
@@ -192,43 +184,46 @@ public class OSGIServiceLoader implements BundleListener {
             URL child = bundle.getEntry(entryPath);
             InputStream inStream = child.openStream();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
-            String implClassName = br.readLine();
-            while (implClassName != null) {
-                int hashIndex = implClassName.indexOf("#");
-                if (hashIndex > 0) {
-                    implClassName = implClassName.substring(0, hashIndex - 1);
-                } else if (hashIndex == 0) {
-                    implClassName = "";
-                }
-                implClassName = implClassName.trim();
-                if (implClassName.length() > 0) {
-                    LOG.fine("Unloading Service (" + serviceName + "): " + implClassName);
-                    try {
-                        // Load the service class
-                        Class<?> implClass = bundle.loadClass(implClassName);
-                        if (!serviceClass.isAssignableFrom(implClass)) {
-                            LOG.warning("Configured service: " + implClassName + " is not assignable to "
-                                    + serviceClass.getName());
-                            continue;
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.UTF_8))) {
+                String line = br.readLine();
+                while (line != null) {
+                    String implClassName = getImplClassName(line);
+                    if (implClassName.length() > 0) {
+                        LOG.fine("Unloading Service (" + serviceName + "): " + implClassName);
+                        try {
+                            // Load the service class
+                            Class<?> implClass = bundle.loadClass(implClassName);
+                            if (!serviceClass.isAssignableFrom(implClass)) {
+                                LOG.warning("Configured service: " + implClassName + " is not assignable to "
+                                        + serviceClass.getName());
+                                continue;
+                            }
+                            ServiceReference<?> ref = bundle.getBundleContext().getServiceReference(implClass);
+                            if (ref != null) {
+                                bundle.getBundleContext().ungetService(ref);
+                            }
+                        } catch (NoClassDefFoundError | Exception err) {
+                            LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, err);
                         }
-                        ServiceReference<?> ref = bundle.getBundleContext().getServiceReference(implClass);
-                        if (ref != null) {
-                            bundle.getBundleContext().ungetService(ref);
-                        }
-                    } catch (Exception e) {
-                        LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, e);
-                    } catch (NoClassDefFoundError err) {
-                        LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, err);
                     }
+                    line = br.readLine();
                 }
-                implClassName = br.readLine();
             }
-            br.close();
         } catch (RuntimeException rte) {
             throw rte;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Failed to read services from: " + entryPath, e);
+        }
+    }
+
+    private String getImplClassName(String line) {
+        int hashIndex = line.indexOf("#");
+        if (hashIndex > 0) {
+            return line.substring(0, hashIndex - 1).trim();
+        } else if (hashIndex == 0) {
+            return "";
+        } else {
+            return line.trim();
         }
     }
 
@@ -238,7 +233,7 @@ public class OSGIServiceLoader implements BundleListener {
     static class JDKUtilServiceFactory implements ServiceFactory {
         private final Class<?> serviceClass;
 
-        public JDKUtilServiceFactory(Class<?> serviceClass) {
+        JDKUtilServiceFactory(Class<?> serviceClass) {
             this.serviceClass = serviceClass;
         }
 
