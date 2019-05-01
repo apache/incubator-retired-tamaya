@@ -217,7 +217,7 @@ public class OSGIServiceLoader implements BundleListener {
     }
 
     private String getImplClassName(String line) {
-        int hashIndex = line.indexOf("#");
+        int hashIndex = line.indexOf('#');
         if (hashIndex > 0) {
             return line.substring(0, hashIndex - 1).trim();
         } else if (hashIndex == 0) {
