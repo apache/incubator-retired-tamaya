@@ -130,15 +130,9 @@ public class OSGIServiceLoader implements BundleListener {
             InputStream inStream = child.openStream();
             LOG.info("Loading Services " + serviceClass.getName() + " from bundle...: " + bundle.getSymbolicName());
             try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.UTF_8))) {
-                String implClassName = br.readLine();
-                while (implClassName != null) {
-                    int hashIndex = implClassName.indexOf("#");
-                    if (hashIndex > 0) {
-                        implClassName = implClassName.substring(0, hashIndex - 1);
-                    } else if (hashIndex == 0) {
-                        implClassName = "";
-                    }
-                    implClassName = implClassName.trim();
+                String line = br.readLine();
+                while (line != null) {
+                    String implClassName = getImplClassName(line);
                     if (implClassName.length() > 0) {
                         try {
                             // Load the service class
@@ -168,7 +162,7 @@ public class OSGIServiceLoader implements BundleListener {
                             LOG.log(Level.SEVERE, "Failed to load service: " + implClassName, err);
                         }
                     }
-                    implClassName = br.readLine();
+                    line = br.readLine();
                 }
             }
         } catch (RuntimeException rte) {
@@ -191,15 +185,9 @@ public class OSGIServiceLoader implements BundleListener {
             InputStream inStream = child.openStream();
 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.UTF_8))) {
-                String implClassName = br.readLine();
-                while (implClassName != null) {
-                    int hashIndex = implClassName.indexOf("#");
-                    if (hashIndex > 0) {
-                        implClassName = implClassName.substring(0, hashIndex - 1);
-                    } else if (hashIndex == 0) {
-                        implClassName = "";
-                    }
-                    implClassName = implClassName.trim();
+                String line = br.readLine();
+                while (line != null) {
+                    String implClassName = getImplClassName(line);
                     if (implClassName.length() > 0) {
                         LOG.fine("Unloading Service (" + serviceName + "): " + implClassName);
                         try {
@@ -218,13 +206,24 @@ public class OSGIServiceLoader implements BundleListener {
                             LOG.log(Level.SEVERE, "Failed to unload service: " + implClassName, err);
                         }
                     }
-                    implClassName = br.readLine();
+                    line = br.readLine();
                 }
             }
         } catch (RuntimeException rte) {
             throw rte;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Failed to read services from: " + entryPath, e);
+        }
+    }
+
+    private String getImplClassName(String line) {
+        int hashIndex = line.indexOf("#");
+        if (hashIndex > 0) {
+            return line.substring(0, hashIndex - 1).trim();
+        } else if (hashIndex == 0) {
+            return "";
+        } else {
+            return line.trim();
         }
     }
 
