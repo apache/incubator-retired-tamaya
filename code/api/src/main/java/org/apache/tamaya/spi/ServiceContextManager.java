@@ -41,7 +41,7 @@ public final class ServiceContextManager {
     /**
      * The ServiceProvider used.
      */
-    private static volatile Map<ClassLoader, ServiceContext> serviceContexts = new ConcurrentHashMap<>();
+    private static final Map<ClassLoader, ServiceContext> SERVICE_CONTEXTS = new ConcurrentHashMap<>();
 
     /**
      * Private singletons constructor.
@@ -104,7 +104,7 @@ public final class ServiceContextManager {
 
         ServiceContext previousContext;
         synchronized (ServiceContextManager.class) {
-            previousContext = ServiceContextManager.serviceContexts
+            previousContext = ServiceContextManager.SERVICE_CONTEXTS
                     .put(cl, serviceContext);
         }
         if(previousContext!=null) {
@@ -127,7 +127,7 @@ public final class ServiceContextManager {
      */
     public static ServiceContext getServiceContext(ClassLoader classLoader) {
         Objects.requireNonNull(classLoader, "Classloader required.");
-        return serviceContexts.computeIfAbsent(classLoader, ServiceContextManager::loadDefaultServiceProvider);
+        return SERVICE_CONTEXTS.computeIfAbsent(classLoader, ServiceContextManager::loadDefaultServiceProvider);
     }
 
     /**

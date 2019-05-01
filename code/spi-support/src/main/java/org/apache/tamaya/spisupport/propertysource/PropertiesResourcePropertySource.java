@@ -39,7 +39,7 @@ public class PropertiesResourcePropertySource extends BasePropertySource {
     /** The logger used. */
     private static final Logger LOGGER = Logger.getLogger(PropertiesResourcePropertySource.class.getName());
 
-    private volatile PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
+    private final PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
             ChangeSupport.SUPPORTED, this);
 
     /**
