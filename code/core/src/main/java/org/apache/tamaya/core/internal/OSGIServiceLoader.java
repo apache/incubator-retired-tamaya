@@ -49,9 +49,9 @@ public class OSGIServiceLoader implements BundleListener {
     private static final Logger LOG = Logger.getLogger(OSGIServiceLoader.class.getName());
     private static final String META_INF_SERVICES = "META-INF/services/";
 
-    private BundleContext context;
+    private final BundleContext context;
 
-    private final Set<Bundle> resourceBundles = Collections.synchronizedSet(new HashSet<Bundle>());
+    private final Set<Bundle> resourceBundles = Collections.synchronizedSet(new HashSet<>());
 
     public OSGIServiceLoader(BundleContext context) {
         this.context = Objects.requireNonNull(context);
@@ -76,11 +76,10 @@ public class OSGIServiceLoader implements BundleListener {
     @Override
     public void bundleChanged(BundleEvent bundleEvent) {
         // Parse and createObject metadata when installed
+        Bundle bundle = bundleEvent.getBundle();
         if (bundleEvent.getType() == BundleEvent.STARTED) {
-            Bundle bundle = bundleEvent.getBundle();
             checkAndLoadBundle(bundle);
         } else if (bundleEvent.getType() == BundleEvent.STOPPED) {
-            Bundle bundle = bundleEvent.getBundle();
             checkAndUnloadBundle(bundle);
         }
     }
