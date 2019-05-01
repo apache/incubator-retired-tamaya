@@ -235,7 +235,7 @@ public class OSGIServiceLoader implements BundleListener {
     static class JDKUtilServiceFactory implements ServiceFactory {
         private final Class<?> serviceClass;
 
-        public JDKUtilServiceFactory(Class<?> serviceClass) {
+        JDKUtilServiceFactory(Class<?> serviceClass) {
             this.serviceClass = serviceClass;
         }
 
