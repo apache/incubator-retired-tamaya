@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Tests for {@link DefaultMetaDataProvider}.
@@ -33,7 +34,7 @@ public class DefaultMetaDataProviderTest {
 
     @Test
     public void cretion() {
-        new DefaultMetaDataProvider();
+        assertThatCode(() -> new DefaultMetaDataProvider()).doesNotThrowAnyException();
     }
 
     @Test
@@ -85,8 +86,10 @@ public class DefaultMetaDataProviderTest {
         assertThat(provider.getMetaData("foo")).isNotNull().isEmpty();
     }
 
-
     @Test
     public void testToString() {
+        DefaultMetaDataProvider provider = new DefaultMetaDataProvider();
+        assertThat(provider.init(ConfigurationContext.EMPTY).toString())
+            .isEqualTo("DefaultMetaDataProvider[additionalProperties = {}, context = ConfigurationContext.EMPTY]");
     }
 }
