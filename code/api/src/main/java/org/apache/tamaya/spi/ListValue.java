@@ -90,7 +90,7 @@ public final class ListValue extends PropertyValue{
     public <T extends PropertyValue> T add(T value) {
         checkImmutable();
         value.setParent(this);
-        if(!this.list.stream().anyMatch(p -> p == value)) {
+        if(this.list.stream().noneMatch(p -> p == value)) {
             this.list.add(value);
         }
         return value;
