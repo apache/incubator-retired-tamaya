@@ -21,7 +21,6 @@ package org.apache.tamaya.spi;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -37,8 +36,6 @@ import java.util.stream.Collectors;
 public final class ObjectValue extends PropertyValue{
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger LOG = Logger.getLogger(ObjectValue.class.getName());
 
     /** List of child properties. */
     private Map<String, PropertyValue> fields = new HashMap<>();
@@ -57,6 +54,7 @@ public final class ObjectValue extends PropertyValue{
      * Get the item's current value type.
      * @return the value type, never null.
      */
+    @Override
     public ValueType getValueType() {
         return ValueType.MAP;
     }
@@ -138,7 +136,6 @@ public final class ObjectValue extends PropertyValue{
         array.setValue(getValue());
         array.setMeta(getMeta());
         array.setVersion(getVersion());
-        int index = 0;
         for(PropertyValue val:fields.values()){
             array.add(val.deepClone());
         }
@@ -260,14 +257,12 @@ public final class ObjectValue extends PropertyValue{
     public Map<String,String> toMap(){
         Map<String, String> map = new TreeMap<>();
         for (PropertyValue n : fields.values()) {
-            switch(n.getValueType()){
-                case VALUE:
-                    map.put(n.getQualifiedKey(), n.getValue());
-                    break;
-                default:
-                    for(PropertyValue val:n) {
-                        map.putAll(val.toMap());
-                    }
+            if (ValueType.VALUE.equals(n.getValueType())) {
+                map.put(n.getQualifiedKey(), n.getValue());
+            } else {
+                for(PropertyValue val:n) {
+                    map.putAll(val.toMap());
+                }
             }
         }
         return map;

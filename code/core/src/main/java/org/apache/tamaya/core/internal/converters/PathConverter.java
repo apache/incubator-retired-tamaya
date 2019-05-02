@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class PathConverter implements PropertyConverter<Path> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(PathConverter.class.getName());
 
     @Override
     public Path convert(String value, ConversionContext ctx) {

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SuppressWarnings("unchecked")
 public class PropertyValueTest {
@@ -35,7 +36,7 @@ public class PropertyValueTest {
 
     @Test
     public void ofDoesAcceptNullAsSource() throws Exception {
-        PropertyValue.of("a", "b", null);
+        assertThatCode(() -> PropertyValue.of("a", "b", null)).doesNotThrowAnyException();
     }
 
     @Test
@@ -207,12 +208,12 @@ public class PropertyValueTest {
 
     @Test
     public void testInstantiateNoValue2() throws Exception {
-        PropertyValue.createValue("k", null);
+        assertThatCode(() -> PropertyValue.createValue("k", null)).doesNotThrowAnyException();
     }
 
     @Test
     public void testInstantiateNoSource2() throws Exception {
-        PropertyValue.createValue("k", "v");
+        assertThatCode(() -> PropertyValue.createValue("k", "v")).doesNotThrowAnyException();
     }
 
     @Test(expected = NullPointerException.class)

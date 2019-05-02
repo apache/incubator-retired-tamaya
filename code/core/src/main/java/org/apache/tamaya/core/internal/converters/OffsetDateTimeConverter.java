@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class OffsetDateTimeConverter implements PropertyConverter<OffsetDateTime> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(OffsetDateTimeConverter.class.getName());
 
     @Override
     public OffsetDateTime convert(String value, ConversionContext ctx) {

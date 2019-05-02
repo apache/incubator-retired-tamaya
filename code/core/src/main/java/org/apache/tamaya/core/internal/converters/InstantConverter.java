@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class InstantConverter implements PropertyConverter<Instant> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(InstantConverter.class.getName());
 
     @Override
     public Instant convert(String value, ConversionContext ctx) {

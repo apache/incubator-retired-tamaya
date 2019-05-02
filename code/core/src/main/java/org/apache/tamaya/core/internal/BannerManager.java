@@ -61,7 +61,7 @@ class BannerManager {
     /**
      * The resouce path to the file containing the banner of Tamaya.
      */
-    protected final static String BANNER_RESOURCE_PATH = "/tamaya-banner.txt";
+    protected static final String BANNER_RESOURCE_PATH = "/tamaya-banner.txt";
 
     /**
      * The target for the Tamaya banner output.
