@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class LocalDateTimeConverter implements PropertyConverter<LocalDateTime> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(LocalDateTimeConverter.class.getName());
 
     @Override
     public LocalDateTime convert(String value, ConversionContext ctx) {

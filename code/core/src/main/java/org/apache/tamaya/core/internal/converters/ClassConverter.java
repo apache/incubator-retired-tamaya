@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class ClassConverter implements PropertyConverter<Class<?>>{
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(ClassConverter.class.getName());
 
     @Override
     public Class<?> convert(String value, ConversionContext ctx) {

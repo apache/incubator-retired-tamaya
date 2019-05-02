@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class FileConverter implements PropertyConverter<File> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(FileConverter.class.getName());
 
     @Override
     public File convert(String value, ConversionContext ctx) {

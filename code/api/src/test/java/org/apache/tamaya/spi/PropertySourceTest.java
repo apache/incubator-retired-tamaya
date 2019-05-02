@@ -26,6 +26,7 @@ import java.util.function.BiConsumer;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
 
 public class PropertySourceTest {
@@ -63,18 +64,18 @@ public class PropertySourceTest {
     @Test
     public void addChangeListener(){
         BiConsumer<Set<String>,PropertySource> l = mock(BiConsumer.class);
-        new PropertySourceImpl().addChangeListener(l);
+        assertThatCode(() -> new PropertySourceImpl().addChangeListener(l)).doesNotThrowAnyException();
     }
 
     @Test
     public void removeChangeListener(){
         BiConsumer<Set<String>,PropertySource> l = mock(BiConsumer.class);
-        new PropertySourceImpl().removeChangeListener(l);
+        assertThatCode(() -> new PropertySourceImpl().removeChangeListener(l)).doesNotThrowAnyException();
     }
 
     @Test
     public void removeAllChangeListeners(){
-        new PropertySourceImpl().removeAllChangeListeners();
+        assertThatCode(() -> new PropertySourceImpl().removeAllChangeListeners()).doesNotThrowAnyException();
     }
 
     @Test

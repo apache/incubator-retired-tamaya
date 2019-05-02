@@ -51,6 +51,7 @@ public final class ListValue extends PropertyValue{
      * Get the item's current createValue type.
      * @return the createValue type, never null.
      */
+    @Override
     public ValueType getValueType() {
         return ValueType.ARRAY;
     }
@@ -89,7 +90,7 @@ public final class ListValue extends PropertyValue{
     public <T extends PropertyValue> T add(T value) {
         checkImmutable();
         value.setParent(this);
-        if(!this.list.stream().filter(p -> p==value).findAny().isPresent()){
+        if(this.list.stream().noneMatch(p -> p == value)) {
             this.list.add(value);
         }
         return value;

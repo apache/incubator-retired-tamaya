@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class DurationConverter implements PropertyConverter<Duration> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(DurationConverter.class.getName());
 
     @Override
     public Duration convert(String value, ConversionContext ctx) {

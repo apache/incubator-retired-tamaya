@@ -35,6 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
     private static final long serialVersionUID = 2L;
+    private static final int EMPTY = 0;
+    private static final String SOURCE = "source";
     /** The requested key. */
     private String key;
     /** The createValue. */
@@ -133,7 +135,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     public static PropertyValue of(String key, String value, String source) {
         Objects.requireNonNull(key);
         if(source!=null) {
-            return new PropertyValue(null, key, value).setMeta("source", source);
+            return new PropertyValue(null, key, value).setMeta(SOURCE, source);
         }
         return new PropertyValue(null, key, value);
     }
@@ -147,7 +149,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     public static Map<String, PropertyValue> map(Map<String, String> config, String source) {
         Map<String, PropertyValue> result = new HashMap<>(config.size());
         for(Map.Entry<String,String> en:config.entrySet()){
-            result.put(en.getKey(), createValue(en.getKey(), en.getValue()).setMeta("source", source));
+            result.put(en.getKey(), createValue(en.getKey(), en.getValue()).setMeta(SOURCE, source));
         }
         return result;
     }
@@ -171,7 +173,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
             PropertyValue pv = createValue(en.getKey(), en.getValue())
                     .setMeta(metaData);
             if(source!=null){
-                pv.setMeta("source", source);
+                pv.setMeta(SOURCE, source);
             }
             result.put(en.getKey(), pv);
         }
@@ -259,7 +261,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      */
     @Deprecated
     public String getSource() {
-        return this.metaEntries.get("source");
+        return this.metaEntries.get(SOURCE);
     }
 
 
@@ -363,7 +365,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      */
     @Deprecated
     public String getMetaEntry(String key) {
-        return (String)this.metaEntries.get(Objects.requireNonNull(key));
+        return this.metaEntries.get(Objects.requireNonNull(key));
     }
 
     /**
@@ -381,7 +383,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return the getNumChilds of this multi createValue.
      */
     public int getSize() {
-        return 0;
+        return EMPTY;
     }
 
     @Override
