@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -115,7 +116,7 @@ public class PropertySourceChangeSupportTest {
     public void update() {
         PropertySource ps = BuildablePropertySource.builder().withName("test").build();
         PropertySourceChangeSupport support = new PropertySourceChangeSupport(ChangeSupport.IMMUTABLE, ps);
-        support.load(Collections.emptyMap());
+        assertThatCode(() -> support.load(Collections.emptyMap())).doesNotThrowAnyException();
     }
 
     @Test

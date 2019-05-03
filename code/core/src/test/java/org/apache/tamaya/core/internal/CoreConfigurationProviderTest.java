@@ -22,6 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Created by atsticks on 11.09.16.
@@ -30,7 +31,7 @@ public class CoreConfigurationProviderTest {
 
     @Test
     public void testInstantiation() throws Exception {
-        new CoreConfigurationProvider();
+        assertThatCode(() -> new CoreConfigurationProvider()).doesNotThrowAnyException();
     }
 
     @Test
@@ -53,11 +54,11 @@ public class CoreConfigurationProviderTest {
     @SuppressWarnings("deprecation")
     @Test
     public void setConfiguration() throws Exception {
-        new CoreConfigurationProvider()
+        assertThatCode(() -> new CoreConfigurationProvider()
                 .setConfiguration(new CoreConfigurationProvider().getConfiguration(
                         getClass().getClassLoader()),
                         getClass().getClassLoader()
-                );
+                )).doesNotThrowAnyException();
     }
 
     @SuppressWarnings("deprecation")
