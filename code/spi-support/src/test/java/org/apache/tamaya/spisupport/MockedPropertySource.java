@@ -62,7 +62,7 @@ public class MockedPropertySource implements PropertySource {
         } else if (key.contains("missing")){
             return null;
         }
-        return PropertyValue.of(key, "valueFromMockedPropertySource", "MockedPropertySource");
+        return PropertyValue.createValue(key, "valueFromMockedPropertySource");
     }
 
     @Override

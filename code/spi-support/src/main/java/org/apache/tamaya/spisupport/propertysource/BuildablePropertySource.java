@@ -149,7 +149,7 @@ public class BuildablePropertySource implements PropertySource{
          * @return the builder
          */
         public Builder withSimpleProperty(String key, String value) {
-            return withProperties(PropertyValue.of(key, value, this.source));
+            return withProperties(PropertyValue.createValue(key, value).setMeta("source", this.source));
         }
 
         /**
@@ -161,7 +161,7 @@ public class BuildablePropertySource implements PropertySource{
          * @return the builder
          */
         public Builder withSimpleProperty(String key, String value, String source) {
-            return withProperties(PropertyValue.of(key, value, source));
+            return withProperties(PropertyValue.createValue(key, value).setMeta("source", source));
         }
 
         /**
@@ -196,7 +196,7 @@ public class BuildablePropertySource implements PropertySource{
          * @return the builder
          */
         public Builder withProperties(Map<String, String> properties, String source) {
-            this.properties.putAll(PropertyValue.map(properties, source));
+            this.properties.putAll(PropertyValue.mapProperties(properties, source));
             return this;
         }
 
@@ -207,7 +207,7 @@ public class BuildablePropertySource implements PropertySource{
          * @return the builder
          */
         public Builder withSimpleProperties(Map<String, String> properties) {
-            this.properties.putAll(PropertyValue.map(properties, this.source));
+            this.properties.putAll(PropertyValue.mapProperties(properties, this.source));
             return this;
         }
 

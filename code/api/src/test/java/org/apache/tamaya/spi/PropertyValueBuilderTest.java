@@ -199,17 +199,17 @@
 //
 //    @Test(expected = NullPointerException.class)
 //    public void mapThreeParameterVariantRequiresNonNullValueForConfigParameter() {
-//        PropertyValueBuilder.map(null, "a", Collections.EMPTY_MAP);
+//        PropertyValueBuilder.mapProperties(null, "a", Collections.EMPTY_MAP);
 //    }
 //
 //    @Test
 //    public void mapThreeParameterVariantRequiresNonNullValueForSource() {
-//        PropertyValueBuilder.map(Collections.EMPTY_MAP, null, Collections.EMPTY_MAP);
+//        PropertyValueBuilder.mapProperties(Collections.EMPTY_MAP, null, Collections.EMPTY_MAP);
 //    }
 //
 //    @Test(expected = NullPointerException.class)
 //    public void mapThreeParameterVariantRequiresNonNullValueForMetaData() {
-//        PropertyValueBuilder.map(Collections.EMPTY_MAP, "s", null);
+//        PropertyValueBuilder.mapProperties(Collections.EMPTY_MAP, "s", null);
 //    }
 //
 //}

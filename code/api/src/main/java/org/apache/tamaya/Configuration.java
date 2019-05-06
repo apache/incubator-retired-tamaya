@@ -29,7 +29,7 @@ import java.util.function.UnaryOperator;
 
 
 /**
- * <p>A configuration models an aggregated set of current properties, identified by
+ * <p>A configuration models an aggregated setPropertyValue of current properties, identified by
  * a unique key, but adds higher level access functions to
  * a {@link org.apache.tamaya.spi.PropertySource}. Hereby in most
  * cases a configuration is a wrapper around a composite
@@ -46,7 +46,7 @@ import java.util.function.UnaryOperator;
  * </ul>
  *
  * <p>It is not recommended that implementations also are serializable, since the any configuration can be <i>frozen</i>
- * by reading out its complete configuration map into a serializable and remotable structure. This helps significantly
+ * by reading out its complete configuration mapProperties into a serializable and remotable structure. This helps significantly
  * by simplifying the development of this interface, e.g. for being backed up by systems and stores that are not part of
  * this library at all.</p>
  */

@@ -32,9 +32,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class RegexPropertyFilterTest {
 
-    private static PropertyValue prop1 = PropertyValue.of("test1", "test1", "test");
-    private static PropertyValue prop2 = PropertyValue.of("test2", "test2", "test");
-    private static PropertyValue prop3 = PropertyValue.of("test1.test3", "test.test3", "test");
+    private static PropertyValue prop1 = PropertyValue.createValue("test1", "test1");
+    private static PropertyValue prop2 = PropertyValue.createValue("test2", "test2");
+    private static PropertyValue prop3 = PropertyValue.createValue("test1.test3", "test.test3");
     private static ConfigurationContext configContext = ConfigurationContext.EMPTY;
 
     @org.junit.Test

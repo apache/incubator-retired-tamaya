@@ -79,7 +79,7 @@ public class DefaultPropertySourceSnapshot implements PropertySource, Serializab
         this.name = propertySource.getName();
         if(propertySource.getChangeSupport().equals(ChangeSupport.UNSUPPORTED) ||
             propertySource.getChangeSupport().equals(ChangeSupport.IMMUTABLE)){
-            // simply get the keys and we are done. We cant do more...
+            // simply getPropertyValue the keys and we are done. We cant do more...
             this.properties = initProperties(propertySource, false);
         }else{
             this.properties = initProperties(propertySource, true);
@@ -120,8 +120,8 @@ public class DefaultPropertySourceSnapshot implements PropertySource, Serializab
     }
 
     /**
-     * Creates a new FrozenPropertySource instance based on a PropertySource and the target key set given. This method
-     * uses all keys available in the property map.
+     * Creates a new FrozenPropertySource instance based on a PropertySource and the target key setPropertyValue given. This method
+     * uses all keys available in the property mapProperties.
      *
      * @param propertySource the property source to be frozen, not null.
      * @return the frozen property source.
@@ -132,7 +132,7 @@ public class DefaultPropertySourceSnapshot implements PropertySource, Serializab
     }
 
     /**
-     * Creates a new FrozenPropertySource instance based on a PropertySource and the target key set given.
+     * Creates a new FrozenPropertySource instance based on a PropertySource and the target key setPropertyValue given.
      *
      * @param propertySource the property source to be frozen, not null.
      * @param keys the keys to be evaluated for the snapshot. Only these keys will be contained in the resulting

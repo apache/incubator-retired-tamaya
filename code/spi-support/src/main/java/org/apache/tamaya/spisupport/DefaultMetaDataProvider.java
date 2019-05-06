@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 /**
  * Default metadata provider implementation, which searches for all kind of entries
  * formatted as {@code [(META)key].metaKey=metaValue}. All matching key/values are added to the
- * meta data map for the given key as {@code metaKey=metaValue} meta entries.
+ * meta data mapProperties for the given key as {@code metaKey=metaValue} meta entries.
  */
 public class DefaultMetaDataProvider implements MetadataProvider {
 

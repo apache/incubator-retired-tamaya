@@ -219,7 +219,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
         if(value==null){
             return null;
         }
-        return PropertyValue.of(key, value, getName());
+        return PropertyValue.createValue(key, value).setMeta("source", getName());
     }
 
     private boolean hasPrefix() {
@@ -235,13 +235,15 @@ public class EnvironmentPropertySource extends BasePropertySource {
         if(prefix==null) {
             Map<String, PropertyValue> entries = new HashMap<>(System.getenv().size());
             for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-                entries.put(entry.getKey(), PropertyValue.of(entry.getKey(), entry.getValue(), getName()));
+                entries.put(entry.getKey(), PropertyValue.createValue(entry.getKey(), entry.getValue())
+                        .setMeta("source", getName()));
             }
             return entries;
         }else{
             Map<String, PropertyValue> entries = new HashMap<>(System.getenv().size());
             for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-                entries.put(prefix + entry.getKey(), PropertyValue.of(prefix + entry.getKey(), entry.getValue(), getName()));
+                entries.put(prefix + entry.getKey(), PropertyValue.createValue(prefix + entry.getKey(), entry.getValue())
+                        .setMeta("source", getName()));
             }
             return entries;
         }

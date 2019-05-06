@@ -385,7 +385,7 @@ public class DefaultConfigurationBuilderTest {
 
         @Override
         public PropertyValue get(String key) {
-            return PropertyValue.of(key, key + "Value", getName());
+            return PropertyValue.createValue(key, key + "Value").setMeta("source", getName());
         }
 
         @Override

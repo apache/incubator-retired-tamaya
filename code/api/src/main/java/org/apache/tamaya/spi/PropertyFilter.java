@@ -20,7 +20,7 @@ package org.apache.tamaya.spi;
 
 
 /**
- * <p>Interface for filtering the current map of properties during the evaluation of the chain of PropertySources.
+ * <p>Interface for filtering the current mapProperties of properties during the evaluation of the chain of PropertySources.
  * Filters can be registered using the {@link org.apache.tamaya.spi.ServiceContext}. The ordinal
  * hereby is defined by the corresponding {@code @Priority} annotation.</p>
  * <p>Filters </p>
@@ -31,7 +31,7 @@ public interface PropertyFilter{
     /**
      * <p>Maps the current {@code value} to a new value. The resulting value will be used as the result
      * passed to the user.</p>
-     * <p>If a filter is currently not available, it should just pass the input map to the method's
+     * <p>If a filter is currently not available, it should just pass the input mapProperties to the method's
      * output.</p>
      * <p>Returning {@code null} will remove the entry.</p>
      * <h3>Implementation specification</h3>

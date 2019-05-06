@@ -87,7 +87,7 @@ public class BuildablePropertySourceTest {
         propertySecond.put("secondKey", "secondValue");
         
         Map<String, PropertyValue> propertyThird = new HashMap<>();
-        propertyThird.put("thirdKey", PropertyValue.of("thirdPVKey", "thirdValue", "thirdSource"));
+        propertyThird.put("thirdKey", PropertyValue.createValue("thirdPVKey", "thirdValue").setMeta("source", "thirdSource"));
         
         //This seems wrong
         BuildablePropertySource bps = BuildablePropertySource.builder()

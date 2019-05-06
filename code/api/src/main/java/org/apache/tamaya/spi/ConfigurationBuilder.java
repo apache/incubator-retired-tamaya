@@ -94,7 +94,7 @@ public interface ConfigurationBuilder {
      * lowest priority  regardless of its current ordinal value. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
-     * @param propertySources the {@link PropertySource}s to add
+     * @param propertySources the {@link PropertySource}s to addPropertyValue
      * @return this builder, for chaining, never null.
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
@@ -127,7 +127,7 @@ public interface ConfigurationBuilder {
      * lowest priority regardless of its current ordinal value. To sort the property
      * sources based on their ordinals call {@link #sortPropertySources}.
      *
-     * @param propertySources the {@link PropertySource}s to add
+     * @param propertySources the {@link PropertySource}s to addPropertyValue
      * @return this builder, for chaining, never null.
      * @throws IllegalArgumentException If a property source with a given name already
      * exists.
@@ -241,7 +241,7 @@ public interface ConfigurationBuilder {
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
      *
-     * @param filters the filters to add
+     * @param filters the filters to addPropertyValue
      * @return this builder, for chaining, never null.
      */
     default ConfigurationBuilder addPropertyFilters(PropertyFilter... filters){
@@ -254,7 +254,7 @@ public interface ConfigurationBuilder {
      * property filters remains unchanged. To sort the property
      * filters call {@link #sortPropertyFilter}.
      *
-     * @param filters the filters to add
+     * @param filters the filters to addPropertyValue
      * @return this builder, for chaining, never null.
      */
     ConfigurationBuilder addPropertyFilters(Collection<PropertyFilter> filters);
@@ -292,7 +292,7 @@ public interface ConfigurationBuilder {
      * method has no effect.
      *
      * @param typeToConvert     the type for which the converter is used
-     * @param propertyConverters the {@link PropertyConverter}s to add for this type
+     * @param propertyConverters the {@link PropertyConverter}s to addPropertyValue for this type
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */
@@ -309,7 +309,7 @@ public interface ConfigurationBuilder {
      * method has no effect.
      *
      * @param typeToConvert the type for which the converter is used
-     * @param propertyConverters the PropertyConverters to add for this type
+     * @param propertyConverters the PropertyConverters to addPropertyValue for this type
      * @param <T> the target type.
      * @return this builder, for chaining, never null.
      */

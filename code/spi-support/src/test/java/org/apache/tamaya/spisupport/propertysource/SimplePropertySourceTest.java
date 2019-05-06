@@ -44,8 +44,8 @@ public class SimplePropertySourceTest {
 
         assertThat(source).isNotNull();
         assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
-        assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
-        assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+        assertThat(source.getProperties()).contains(entry("a", PropertyValue.createValue("a", "b")));
+        assertThat(source.getProperties()).contains(entry("b", PropertyValue.createValue("b", "1")));
     }
 
     @Test(expected=ConfigException.class)
@@ -61,8 +61,8 @@ public class SimplePropertySourceTest {
 
         assertThat(source).isNotNull();
         assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
-        assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
-        assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+        assertThat(source.getProperties()).contains(entry("a", PropertyValue.createValue("a", "b")));
+        assertThat(source.getProperties()).contains(entry("b", PropertyValue.createValue("b", "1")));
     }
 
     @Test
@@ -73,8 +73,8 @@ public class SimplePropertySourceTest {
 
         assertThat(source).isNotNull();
         assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
-        assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
-        assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+        assertThat(source.getProperties()).contains(entry("a", PropertyValue.createValue("a", "b")));
+        assertThat(source.getProperties()).contains(entry("b", PropertyValue.createValue("b", "1")));
     }
 
     @Test
@@ -87,8 +87,8 @@ public class SimplePropertySourceTest {
 
         assertThat(source).isNotNull();
         assertThat(source.getProperties()).hasSize(2); // double the getNumChilds for .source values.
-        assertThat(source.getProperties()).contains(entry("a", PropertyValue.of("a", "b", "test")));
-        assertThat(source.getProperties()).contains(entry("b", PropertyValue.of("b", "1", "test")));
+        assertThat(source.getProperties()).contains(entry("a", PropertyValue.createValue("a", "b").setMeta("source", "test")));
+        assertThat(source.getProperties()).contains(entry("b", PropertyValue.createValue("b", "1").setMeta("source", "test")));
     }
 
     @Test
@@ -221,8 +221,8 @@ public class SimplePropertySourceTest {
                 .build();
 
         assertThat(sps.get("firstKey").getValue()).isEqualTo("firstValue");
-        assertThat(sps.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
-        assertThat(sps.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+        assertThat(sps.getProperties()).contains(entry("a", PropertyValue.createValue("a", "b")));
+        assertThat(sps.getProperties()).contains(entry("b", PropertyValue.createValue("b", "1")));
 
         sps = SimplePropertySource.newBuilder()
                 .withUuidName()
@@ -231,8 +231,8 @@ public class SimplePropertySourceTest {
                 .build();
 
         assertThat(sps.get("firstKey").getValue()).isEqualTo("firstValue");
-        assertThat(sps.getProperties()).contains(entry("a", PropertyValue.of("a", "b", resource.toString())));
-        assertThat(sps.getProperties()).contains(entry("b", PropertyValue.of("b", "1", resource.toString())));
+        assertThat(sps.getProperties()).contains(entry("a", PropertyValue.createValue("a", "b")));
+        assertThat(sps.getProperties()).contains(entry("b", PropertyValue.createValue("b", "1")));
     }
 
     @Test

@@ -40,22 +40,6 @@ public class PropertiesResourcePropertySourceTest {
     }
 
     @Test
-    public void testPrefixedConstructor() {
-        PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(resource, "somePrefix");
-        assertThat(source).isNotNull();
-        assertThat(source.getProperties()).hasSize(5).containsKey("somePrefixkey1");
-    }
-
-    @Test
-    public void testPrefixedPathConstructor() {
-        //File path must be relative to classloader, not the class
-        System.out.println(resource.getPath());
-        PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix");
-        assertThat(source).isNotNull();
-        assertThat(source.getProperties()).hasSize(5).containsKey("somePrefixkey1");
-    }
-    
-    @Test
     public void testPrefixedPathBadClassloaderConstructor() {
         ClassLoader badLoader = new ClassLoader() {
             @Override
@@ -63,17 +47,9 @@ public class PropertiesResourcePropertySourceTest {
                 return null;
             }
         };
-        PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix", badLoader);
+        PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, badLoader);
         assertThat(source).isNotNull();
         assertThat(source.getProperties()).isEmpty();
     }
     
-    @Test
-    public void testPrefixedPathClassloaderConstructor() {
-        PropertiesResourcePropertySource source = new PropertiesResourcePropertySource(testFileName, "somePrefix",
-                getClass().getClassLoader());
-        assertThat(source).isNotNull();
-        assertThat(source.getProperties()).hasSize(5).containsKey("somePrefixkey1");
-    }
-
 }

@@ -30,7 +30,7 @@ public interface PropertyConverter<T>{
 
     /**
      * Convert the given configuration keys from its String representation into the required target type.
-     * Additional data can be obtained from {@link ConversionContext}, which also allows to add a list
+     * Additional data can be obtained from {@link ConversionContext}, which also allows to addPropertyValue a list
      * of supported formats, which is very handy in case a
      * value could not be converted. This list of supported formats can then shown to the user to give some hints
      * how a value could be configured.

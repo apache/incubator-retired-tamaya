@@ -32,7 +32,7 @@ public class CLIPropertySource extends BasePropertySource {
     /** The original main arguments. */
     private static String[] args = new String[0];
 
-    /** The map of parsed main arguments. */
+    /** The mapProperties of parsed main arguments. */
     private static Map<String,PropertyValue> mainArgs;
 
     /** Initializes the initial state. */
@@ -120,7 +120,7 @@ public class CLIPropertySource extends BasePropertySource {
         Map<String,PropertyValue> finalProps = new HashMap<>();
         for(Map.Entry<String,String> en:result.entrySet()) {
             finalProps.put(en.getKey(),
-                    PropertyValue.of(en.getKey(), en.getValue(), "main-args"));
+                    PropertyValue.createValue(en.getKey(), en.getValue()).setMeta("source", "main-args"));
         }
         CLIPropertySource.mainArgs = Collections.unmodifiableMap(finalProps);
     }

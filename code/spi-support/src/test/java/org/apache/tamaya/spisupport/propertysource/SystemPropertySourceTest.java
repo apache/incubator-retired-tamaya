@@ -33,15 +33,15 @@ public class SystemPropertySourceTest {
 
     private final SystemPropertySource testPropertySource = new SystemPropertySource();
 
-    @Test
-    public void testConstrcutorWithPrefix() throws Exception {
-        SystemPropertySource testPropertySource = new SystemPropertySource("PRE::");
-        assertThat(testPropertySource.getProperties()).isNotNull();
-        for(Map.Entry en:System.getProperties().entrySet()){
-            assertThat(System.getProperty(en.getKey().toString()))
-                .isEqualTo(testPropertySource.get("PRE::"+en.getKey()).getValue());
-        }
-    }
+//    @Test
+//    public void testConstrcutorWithPrefix() throws Exception {
+//        SystemPropertySource testPropertySource = new SystemPropertySource("PRE::");
+//        assertThat(testPropertySource.getProperties()).isNotNull();
+//        for(Map.Entry en:System.getProperties().entrySet()){
+//            assertThat(System.getProperty(en.getKey().toString()))
+//                .isEqualTo(testPropertySource.get("PRE::"+en.getKey()).getValue());
+//        }
+//    }
 
     @Test
     public void testConstructionPropertiesAndDisabledBehavior() throws IOException {
@@ -104,7 +104,7 @@ public class SystemPropertySourceTest {
         SystemPropertySource constructorSetOrdinal22 = new SystemPropertySource(22);
         assertThat(constructorSetOrdinal22.getOrdinal()).isEqualTo(22);
 
-        SystemPropertySource constructorSetOrdinal16 = new SystemPropertySource("sixteenprefix", 16);
+        SystemPropertySource constructorSetOrdinal16 = new SystemPropertySource( 16);
         assertThat(constructorSetOrdinal16.getOrdinal()).isEqualTo(16);
     }
 

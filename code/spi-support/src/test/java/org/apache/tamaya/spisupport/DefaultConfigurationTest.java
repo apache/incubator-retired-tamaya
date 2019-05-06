@@ -206,7 +206,7 @@ public class DefaultConfigurationTest {
     public void testConvertValue() {
         DefaultConfiguration c = new DefaultConfiguration(new MockedConfigurationContext());
         assertThat(100 == (Integer) c.convertValue("aHundred",
-                Collections.singletonList(PropertyValue.of("aHundred", "100", null)),
+                Collections.singletonList(PropertyValue.createValue("aHundred", "100")),
                 TypeLiteral.of(Integer.class))).isTrue();
     }
 

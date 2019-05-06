@@ -34,7 +34,7 @@ public class FilterContextTest {
 
     @Test
     public void constructorWithContext() {
-        PropertyValue val = new PropertyValue(null, "");
+        PropertyValue val = new PropertyValue( "");
         FilterContext ctx = new FilterContext(val, ConfigurationContext.EMPTY);
         assertThat(val).isEqualTo(ctx.getProperty());
         assertThat(ConfigurationContext.EMPTY).isEqualTo(ctx.getConfigurationContext());
@@ -44,27 +44,27 @@ public class FilterContextTest {
 
 //    @Test
 //    public void setNullContext() {
-//        FilterContext.set(null);
+//        FilterContext.setPropertyValue(null);
 //    }
 //
 //    @Test
 //    public void setGetContext() {
-//        PropertyValue val = PropertyValue.of("getKey", "v", "");
+//        PropertyValue val = new PropertyValue( "getKey", "v", "");
 //        FilterContext ctx = new FilterContext(val,
 //                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
-//        FilterContext.set(ctx);
-//        assertEquals(ctx, FilterContext.get());
+//        FilterContext.setPropertyValue(ctx);
+//        assertEquals(ctx, FilterContext.getPropertyValue());
 //    }
 //
 //    @Test
 //    public void resetContext() {
-//        PropertyValue val = PropertyValue.of("getKey", "v", "");
+//        PropertyValue val = new PropertyValue( "getKey", "v", "");
 //        FilterContext ctx = new FilterContext(val,
 //                new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
-//        FilterContext.set(ctx);
-//        assertNotNull(FilterContext.get());
+//        FilterContext.setPropertyValue(ctx);
+//        assertNotNull(FilterContext.getPropertyValue());
 //        FilterContext.reset();
-//        assertNull(FilterContext.get());
+//        assertNull(FilterContext.getPropertyValue());
 //    }
 
     @Test(expected = NullPointerException.class)
@@ -79,7 +79,7 @@ public class FilterContextTest {
 
     @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullConfigurationContextTwoParameterVariant() {
-        new FilterContext(Collections.singletonList(PropertyValue.of("a", "b", "s")), null);
+        new FilterContext(Collections.singletonList(new PropertyValue( "a", "b")), null);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,17 +91,17 @@ public class FilterContextTest {
     @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullConfigurationContextThreeParameterVariant() {
-        new FilterContext(PropertyValue.of("a", "b", "s"), Collections.EMPTY_MAP, null);
+        new FilterContext(new PropertyValue( "a", "b"), Collections.EMPTY_MAP, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void constructorRequiresNonNullMapForConfigEntriesThreeParameterVariant() {
-        new FilterContext(PropertyValue.of("a", "b", "s"), null, ConfigurationContext.EMPTY);
+        new FilterContext(new PropertyValue("a", "b"), null, ConfigurationContext.EMPTY);
     }
 
     @Test
     public void getKey() throws Exception {
-        PropertyValue val = PropertyValue.of("getKey", "v", "");
+        PropertyValue val = new PropertyValue( "getKey", "v");
         FilterContext ctx = new FilterContext(val,
                 new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
         assertThat(ctx.getProperty()).isEqualTo(val);
@@ -109,7 +109,7 @@ public class FilterContextTest {
 
     @Test
     public void isSinglePropertyScoped() throws Exception {
-        PropertyValue val = PropertyValue.of("isSinglePropertyScoped", "v", "");
+        PropertyValue val = new PropertyValue( "isSinglePropertyScoped", "v");
         FilterContext ctx = new FilterContext(val, new HashMap<String,PropertyValue>(), ConfigurationContext.EMPTY);
         assertThat(ctx.isSinglePropertyScoped()).isEqualTo(false);
         ctx = new FilterContext(Collections.singletonList(val), ConfigurationContext.EMPTY);
@@ -120,9 +120,9 @@ public class FilterContextTest {
     public void getConfigEntries() throws Exception {
         Map<String,PropertyValue> config = new HashMap<>();
         for(int i=0;i<10;i++) {
-            config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
+            config.put("key-"+i, new PropertyValue( "key-"+i, "value-"+i));
         }
-        PropertyValue val = PropertyValue.of("getConfigEntries", "v", "");
+        PropertyValue val = new PropertyValue( "getConfigEntries", "v");
         FilterContext ctx = new FilterContext(val, config, ConfigurationContext.EMPTY);
         assertThat(ctx.getConfigEntries()).isEqualTo(config);
         assertThat(config != ctx.getConfigEntries()).isTrue();
@@ -130,18 +130,18 @@ public class FilterContextTest {
 
     @Test
     public void testToString() throws Exception {
-        Map<String,PropertyValue> config = new HashMap<>();
-        for(int i=0;i<2;i++) {
-            config.put("key-"+i, PropertyValue.of("key-"+i, "value-"+i, "test"));
+        Map<String, PropertyValue> config = new HashMap<>();
+        for (int i = 0; i < 2; i++) {
+            config.put("key-" + i, new PropertyValue("key-" + i, "value-" + i));
         }
-        PropertyValue val = PropertyValue.of("testToString", "val", "mySource");
+        PropertyValue val = new PropertyValue("testToString", "val");
         FilterContext ctx = new FilterContext(val, config, ConfigurationContext.EMPTY);
         String toString = ctx.toString();
 
         assertThat(toString).isNotNull();
         System.out.println(toString);
-        assertThat(toString).contains("FilterContext{value='[PropertyValue{'testToString', value='val'," +
-                " metaData={source=mySource}}]', configEntries=[", "key-0", "key-1").endsWith("}");
+        assertThat(toString).contains("FilterContext{value='[val]', configEntries=[",
+                "key-0", "key-1").endsWith("}");
     }
 
 }

@@ -125,7 +125,7 @@ public class BasePropertySourceTest {
         @Override
         public Map<String, PropertyValue> getProperties() {
             Map<String, PropertyValue> result = new HashMap<>(1);
-            result.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.of(PropertySource.TAMAYA_ORDINAL, "1000", getName()));
+            result.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "1000"));
             return result;
         }
     }
@@ -144,7 +144,8 @@ public class BasePropertySourceTest {
         @Override
         public Map<String, PropertyValue> getProperties() {
             Map<String, PropertyValue> result = new HashMap<>(1);
-            result.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.of(PropertySource.TAMAYA_ORDINAL, "invalid", getName()));
+            result.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "invalid")
+                    .setMeta("source", getName()));
             return result;
         }
     }

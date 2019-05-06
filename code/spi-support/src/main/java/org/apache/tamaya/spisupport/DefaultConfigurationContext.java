@@ -79,7 +79,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         List<PropertyFilter> propertyFilters = new ArrayList<>(builder.getPropertyFilters());
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
 
-        // Finally add the converters
+        // Finally addPropertyValue the converters
         for(Map.Entry<TypeLiteral<?>, List<PropertyConverter<?>>> en:builder.getPropertyConverter().entrySet()) {
             for (@SuppressWarnings("rawtypes") PropertyConverter converter : en.getValue()) {
                 this.propertyConverterManager.register(en.getKey(), converter);

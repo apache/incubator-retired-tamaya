@@ -78,12 +78,13 @@ public class SimplePropertySource extends BasePropertySource {
     public SimplePropertySource(String name, Map<String, String> properties, int defaultOrdinal){
         super(name, defaultOrdinal);
         for(Map.Entry<String,String> en: properties.entrySet()) {
-            this.properties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), name));
+            this.properties.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue())
+                    .setMeta("source", name));
         }
     }
 
     /**
-     * Creates a new Properties based PropertySource based on the given properties map.
+     * Creates a new Properties based PropertySource based on the given properties mapProperties.
      *
      * @param name       the name, not null.
      * @param properties the properties, not null.
@@ -150,7 +151,8 @@ public class SimplePropertySource extends BasePropertySource {
             }
             String source = propertiesFile.toString();
             for (String key : props.stringPropertyNames()) {
-                properties.put(key, PropertyValue.of(key, props.getProperty(key), source));
+                properties.put(key, PropertyValue.createValue(key, props.getProperty(key))
+                        .setMeta("source", source));
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties from " + propertiesFile, e);
@@ -259,7 +261,8 @@ public class SimplePropertySource extends BasePropertySource {
          */
         public Builder withProperties(Map<String, String> val) {
             for(Map.Entry<String,String> en: val.entrySet()) {
-                this.properties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), name));
+                this.properties.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue())
+                        .setMeta("source", name));
             }
             return this;
         }
@@ -272,7 +275,7 @@ public class SimplePropertySource extends BasePropertySource {
          * @return a reference to this Builder
          */
         public Builder withProperty(String key, String val) {
-            this.properties.put(key, PropertyValue.of(key, val, name));
+            this.properties.put(key, PropertyValue.createValue(key, val).setMeta("source", name));
             return this;
         }
 

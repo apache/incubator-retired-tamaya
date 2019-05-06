@@ -21,6 +21,7 @@ package org.apache.tamaya.spi;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 /**
  * Class modelling the result of a request for a property createValue. A property createValue is basically identified by its key.
@@ -60,29 +61,12 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         VALUE
     }
 
-
-    /**
-     * Creates a new builder instance.
-     * @param key the key, not {@code null}.
-     * @param source the source, typically the name of the {@link PropertySource}
-     *               providing the createValue, not {@code null}.
-     * @return a new builder instance.
-     * @deprecated Will be removed, use {@link PropertyValue} directly.
-     */
-    @Deprecated
-    public static PropertyValueBuilder builder(String key, String source){
-        Objects.requireNonNull(key, "Key must be given.");
-        Objects.requireNonNull(source, "Source must be given");
-
-        return new PropertyValueBuilder(key, null).setSource(source);
-    }
-
     /**
      * Creates a new (invisible) root, which is a node with an empty name.
      * @return a new empty root, never null.
      */
     public static ObjectValue createObject(){
-        return new ObjectValue(null, "");
+        return new ObjectValue("");
     }
 
     /**
@@ -90,7 +74,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return a new empty root, never null.
      */
     public static ListValue createList(){
-        return new ListValue(null, "");
+        return new ListValue("");
     }
 
     /**
@@ -100,7 +84,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return a new createValue instance.
      */
     public static PropertyValue createValue(String key, String value){
-        return new PropertyValue(null, key, value);
+        return new PropertyValue(key, value);
     }
 
     /**
@@ -109,7 +93,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return a new createValue instance.
      */
     public static ListValue createList(String key){
-        return new ListValue(null, key);
+        return new ListValue(key);
     }
 
     /**
@@ -118,62 +102,59 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return a new createValue instance.
      */
     public static ObjectValue createObject(String key){
-        return new ObjectValue(null, key);
+        return new ObjectValue(key);
     }
 
     /**
-     * Creates a new builder instance.
-     * @param key the key, not {@code null}.
-     * @param value the property createValue, not {@code null}.
-     * @param source the source, typically the name of the {@link PropertySource}
-     *               providing the createValue, not {@code null}.
-     * @return a new builder instance.
+     * Maps a mapProperties of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
+     * @param config the String based mapProperties, not {@code null}.
+     * @param source the source name, not {@code null}.
+     * @return the corresponding createValue based mapProperties.
      */
-    @Deprecated
-    public static PropertyValue of(String key, String value, String source) {
-        Objects.requireNonNull(key);
-        if(source!=null) {
-            return new PropertyValue(null, key, value).setMeta("source", source);
-        }
-        return new PropertyValue(null, key, value);
+    public static Map<String, PropertyValue> mapProperties(Map<String, String> config, String source) {
+        return mapProperties(config, source, null);
     }
 
     /**
-      * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
-      * @param config the String based map, not {@code null}.
-      * @param source the source name, not {@code null}.
-      * @return the corresponding createValue based map.
-      */
-    public static Map<String, PropertyValue> map(Map<String, String> config, String source) {
-        Map<String, PropertyValue> result = new HashMap<>(config.size());
-        for(Map.Entry<String,String> en:config.entrySet()){
-            result.put(en.getKey(), createValue(en.getKey(), en.getValue()).setMeta("source", source));
-        }
-        return result;
-    }
-
-    /**
-     * Maps a map of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
+     * Maps a mapProperties of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
      *
-     * @param config the String based map, not {@code null}.
+     * @param config the String based mapProperties, not {@code null}.
      * @param source the source name, not {@code null}.
      * @param metaData additional metadata, not {@code null}.
-     * @return the corresponding createValue based map.
+     * @return the corresponding createValue based mapProperties.
      */
-    public static Map<String, PropertyValue> map(Map<String, String> config, String source,
-                                                 Map<String,String> metaData) {
+    public static Map<String, PropertyValue> mapProperties(Map<String, String> config, String source,
+                                                           Map<String,String> metaData) {
+        return mapProperties(config, source, metaData, null);
+    }
+
+    /**
+     * Maps a mapProperties of {@code Map<String,String>} to a {@code Map<String,PropertyValue>}.
+     *
+     * @param config the String based mapProperties, not {@code null}.
+     * @param source the source name, not {@code null}.
+     * @param metaData additional metadata, not {@code null}.
+     * @return the corresponding createValue based mapProperties.
+     */
+    public static Map<String, PropertyValue> mapProperties(Map<String, String> config, String source,
+                                                           Map<String,String> metaData, String prefix) {
         Objects.requireNonNull(config, "Config must be given.");
-        Objects.requireNonNull(metaData, "Meta data must be given.");
 
         Map<String, PropertyValue> result = new HashMap<>(config.size());
 
         for(Map.Entry<String,String> en:config.entrySet()){
-            PropertyValue pv = createValue(en.getKey(), en.getValue())
-                    .setMeta(metaData);
+            PropertyValue pv = createValue(en.getKey(), en.getValue());
+            if(metaData!=null) {
+                pv.setMeta(metaData);
+            }
             if(source!=null){
                 pv.setMeta("source", source);
             }
-            result.put(en.getKey(), pv);
+            if(prefix==null) {
+                result.put(en.getKey(), pv);
+            }else{
+                result.put(prefix + en.getKey(), pv.setKey(prefix=en.getKey()));
+            }
         }
         return result;
     }
@@ -181,20 +162,17 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     /**
      * Creates a new instance
      * @param key the key, not {@code null}.
-     * @param parent the parent.
      */
-    protected PropertyValue(PropertyValue parent, String key){
-        this(parent, key, null);
+    public PropertyValue(String key){
+        this(key, null);
     }
 
     /**
      * Creates a new instance
      * @param key the key, not {@code null}.
-     * @param parent the parent.
      * @param value the initial text createValue.
      */
-    protected PropertyValue(PropertyValue parent, String key, String value){
-        this.parent = parent;
+    protected PropertyValue(String key, String value){
         this.key = Objects.requireNonNull(key);
         this.value = value;
     }
@@ -347,9 +325,9 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
     /**
-     * Creates a full configuration map for this key, createValue pair and all its getMeta context data. This map
+     * Creates a full configuration mapProperties for this key, createValue pair and all its getMeta context data. This mapProperties
      * is also used for subsequent processing, like createValue filtering.
-     * @return the property createValue entry map.
+     * @return the property createValue entry mapProperties.
      */
     public final Map<String, String> getMeta() {
         return Collections.unmodifiableMap(metaEntries);
@@ -387,23 +365,6 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     @Override
     public Iterator<PropertyValue> iterator() {
         return Collections.emptyIterator();
-    }
-
-
-    /**
-     * Changes the entry's key, mapping also corresponding context entries.
-     * @param key the new key, not {@code null}.
-     * @return the builder for chaining.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public PropertyValue setKey(String key) {
-        checkImmutable();
-        if(!Objects.equals(this.key, key)) {
-            this.key = Objects.requireNonNull(key);
-            version.incrementAndGet();
-        }
-        return this;
     }
 
 
@@ -462,8 +423,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
 
     /**
-     * Convert the value tree to a property map.
-     * @return the corresponding property map, not null.
+     * Convert the value tree to a property mapProperties using full keys.
+     * @return the corresponding property mapProperties, not null.
      */
     public Map<String,String> toMap(){
         Map<String, String> map = new TreeMap<>();
@@ -474,37 +435,25 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
     /**
+     * Convert the value tree to a property mapProperties using local keys.
+     * @return the corresponding property mapProperties, not null.
+     */
+    public Map<String,String> toLocalMap(){
+        Map<String, String> map = new TreeMap<>();
+        if(value!=null) {
+            map.put(getKey(), value);
+        }
+        return map;
+    }
+
+
+    /**
      * Create a String representation of the tree.
      * @return the corresponding String representation, not null.
      */
-    public String asString() {
-        Map<String, String> map = toMap();
-        StringBuilder b = new StringBuilder();
-        map.entrySet().forEach(en -> b.append(en.getKey()).append(" = ").append(en.getValue()).append('\n'));
-        if(b.length()==0){
-            return "<nodata>";
-        }
-        return b.toString();
-    }
-
-    /**
-     * Creates a new builder instance based on this item.
-     * @return a new builder, never null.
-     * @deprecated Use {@link PropertyValue} directly.
-     */
-    @Deprecated
-    public PropertyValueBuilder toBuilder() {
-        return new PropertyValueBuilder(this.getKey(), this.getValue())
-                .setMeta(this.metaEntries);
-    }
-
-    /**
-     * Convert an instance to a simple PropertyValue. Note, that in case
-     * of object/list values, data loss can occur.
-     * @return the simple value, never null.
-     */
-    public PropertyValue toPropertyValue(){
-        return this;
+    @Override
+    public String toString() {
+        return String.valueOf(value);
     }
 
     /**
@@ -512,8 +461,9 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return the list value, never null.
      */
     public ObjectValue toObjectValue(){
-        ObjectValue ov = new ObjectValue(getParent(),getKey());
-        ov.setValue("createValue", value);
+        ObjectValue ov = new ObjectValue(getKey());
+        ov.setParent(getParent());
+        ov.setValue("value", value);
         return ov;
     }
 
@@ -522,8 +472,9 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return the list value, never null.
      */
     public ListValue toListValue(){
-        ListValue lv = new ListValue(getParent(),getKey());
-        lv.addValue("createValue", value);
+        ListValue lv = new ListValue(getKey());
+        lv.setParent(getParent());
+        lv.addValue(value);
         return lv;
     }
 
@@ -533,7 +484,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return a clone, never null.
      */
     protected PropertyValue deepClone() {
-        PropertyValue newProp = new PropertyValue(getParent(), getKey(), this.value);
+        PropertyValue newProp = new PropertyValue(getKey(), this.value);
+        newProp.setParent(getParent());
         newProp.setMeta(getMeta());
         newProp.setVersion(getVersion());
         newProp.setValue(getValue());
@@ -567,6 +519,23 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
     /**
+     * Changes the entry's key, mapping also corresponding context entries.
+     *
+     * @param key the new key, not {@code null}.
+     * @return the builder for chaining.
+     * @throws IllegalStateException if the instance is immutable.
+     * @see #isImmutable()
+     */
+    public PropertyValue setKey(String key) {
+        checkImmutable();
+        if(!Objects.equals(this.key, key)) {
+            this.key = Objects.requireNonNull(key);
+            version.incrementAndGet();
+        }
+        return this;
+    }
+
+    /**
      * Sets the new parent, used iternally when converting between value types.
      * @param parent the parent value.
      * @return the simple value, never null.
@@ -587,23 +556,12 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         }
         PropertyValue dataNode = (PropertyValue) o;
         return Objects.equals(getKey(), dataNode.getKey()) &&
-                Objects.equals(value, dataNode.value) &&
-                Objects.equals(getMeta(), dataNode.getMeta());
+                Objects.equals(value, dataNode.value);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getParent(), getKey(), value, getMeta());
-    }
-
-
-    @Override
-    public String toString() {
-        return "PropertyValue{" +
-                '\'' +getQualifiedKey() + '\'' +
-                (value!=null?", value='" + value + '\'':"") +
-                (getMeta().isEmpty()?"":", metaData=" + getMeta()) +
-                '}';
     }
 
 }

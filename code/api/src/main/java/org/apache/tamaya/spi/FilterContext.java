@@ -132,18 +132,18 @@ public class FilterContext {
     }
 
     /**
-     * This map contains the following keys:
+     * This mapProperties contains the following keys:
      * <ul>
      * <li>the original createValue <b>before</b> any filters were applied on it.</li>
      * <li>all values starting with an {@code _<key>.}, for example {@code a.createValue}
-     * may have a map setCurrent with {@code a.createValue} (oringinal createValue), {@code _a.createValue.origin,
+     * may have a mapProperties setCurrent with {@code a.createValue} (oringinal createValue), {@code _a.createValue.origin,
      * _a.createValue.type, etc}. The exact contents is determine by the {@link PropertySource}s
      * active.</li>
      * </ul>
-     * Also important to know is that this map given contains all the evaluated raw entries, regardless
+     * Also important to know is that this mapProperties given contains all the evaluated raw entries, regardless
      * of the filters that are later applied. This ensures that met-information required by one filter is
      * not hidden by another filter, because of an invalid filter ordering. In other words filters may remove
-     * key/createValue pairs, e.g. fir security reasons, by returning {@code null}, but the values in the raw map
+     * key/createValue pairs, e.g. fir security reasons, by returning {@code null}, but the values in the raw mapProperties
      * passed as input to the filter process will not be affected by any such removal (but the final properties
      * returned are affected, of course).
      * 

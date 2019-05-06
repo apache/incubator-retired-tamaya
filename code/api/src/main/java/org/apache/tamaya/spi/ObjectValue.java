@@ -19,10 +19,8 @@
 package org.apache.tamaya.spi;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Class modelling the result of a request for a property value. A property value is basically identified by its key.
@@ -47,10 +45,9 @@ public final class ObjectValue extends PropertyValue{
     /**
      * Creates a new instance
      * @param key the key, not {@code null}.
-     * @param parent the parent.
      */
-    ObjectValue(PropertyValue parent, String key){
-        super(parent, key);
+    ObjectValue( String key){
+        super(key);
     }
 
     /**
@@ -70,23 +67,52 @@ public final class ObjectValue extends PropertyValue{
     }
 
     /**
-     * Get the fields of this instance, filtered with the given predicate.
-     * @param predicate the predicate, not null.
-     * @return the current fields, never null.
+     * Access the current present field names/keys.
+     * @return the keys present, never null.
      */
-    public Collection<PropertyValue> getValues(Predicate<PropertyValue> predicate){
-        return Collections.unmodifiableCollection(this.fields.values().stream()
-        .filter(predicate).collect(Collectors.toList()));
+    public Set<String> getKeys() {
+        return Collections.unmodifiableSet(this.fields.keySet());
     }
 
     /**
      * Get a single child getValue by name.
      * @param name the child's name, not null.
      * @return the child found, or null.
-     * @throws IllegalArgumentException if multiple getValues with the given name are existing (ambigous).
+     * @throws IllegalArgumentException if multiple getPropertyValues with the given name are existing (ambigous).
      */
-    public PropertyValue getValue(String name){
+    public PropertyValue getPropertyValue(String name){
         return this.fields.get(name);
+    }
+
+    /**
+     * Get the node's createValue.
+     * @return the createValue, or null.
+     */
+    public String getValue() {
+        return "Map: " + this.fields;
+    }
+
+    @Override
+    public PropertyValue setValue(String value) {
+        throw new UnsupportedOperationException("Cannot set value on object value.");
+    }
+
+    /**
+     * Get a String value with the given key, if possible. If a node is present, but no value is setPropertyValue, then the
+     * node's {@code toString()} method is used as a result.
+     * @param key the key, not null.
+     * @return the value found, or null.
+     */
+    public String getValue(String key) {
+        String result = null;
+        PropertyValue value = getPropertyValue(key);
+        if(value!=null){
+            result = value.getValue();
+            if(result==null){
+                result = value.toString();
+            }
+        }
+        return result;
     }
 
     /**
@@ -95,7 +121,7 @@ public final class ObjectValue extends PropertyValue{
      * @param valueSupplier the supplier to create a new instance, if no value is present, not null.
      * @param <T> the target type.
      * @return the child found or created, never null.
-     * @throws IllegalArgumentException if multiple getValues with the given name are existing (ambigous).
+     * @throws IllegalArgumentException if multiple getPropertyValues with the given name are existing (ambigous).
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
@@ -119,12 +145,38 @@ public final class ObjectValue extends PropertyValue{
         return this.fields.size();
     }
 
-    @Override
-    public PropertyValue toPropertyValue(){
-        PropertyValue value = new PropertyValue(getParent(), getKey(), getValue());
-        value.setMeta(getMeta());
-        value.setVersion(getVersion());
-        return value;
+    /**
+     * Applies a mapProperties of {@code Map<String,String>} to this instance as values.
+     * @param config the String based mapProperties, not {@code null}.
+     * @return the corresponding createValue based mapProperties.
+     */
+    public ObjectValue setValues(Map<String, String> config) {
+        return setValues(config, null, true);
+    }
+
+    /**
+     * Applies a mapProperties of {@code Map<String,String>} to this instance as values.
+     * @param config the String based mapProperties, not {@code null}.
+     * @param source the source name, optional.
+     * @param overwriteExisting if true, existing values will be overridden.
+     * @return the corresponding createValue based mapProperties.
+     */
+    public ObjectValue setValues(Map<String, String> config, String source, boolean overwriteExisting) {
+        checkImmutable();
+        Map<String, PropertyValue> result = PropertyValue.mapProperties(config, source);
+        for(Map.Entry<String,String> en:config.entrySet()){
+            PropertyValue value = new PropertyValue( en.getKey(), en.getValue());
+            value.setParent(this);
+            if(source!=null) {
+                value.setMeta("source", source);
+            }
+            if(overwriteExisting){
+                this.fields.put(en.getKey(), value);
+            }else{
+                this.fields.putIfAbsent(en.getKey(), value);
+            }
+        }
+        return this;
     }
 
     @Override
@@ -134,13 +186,13 @@ public final class ObjectValue extends PropertyValue{
 
     @Override
     public ListValue toListValue(){
-        ListValue array = new ListValue(getParent(), getKey());
-        array.setValue(getValue());
+        ListValue array = new ListValue(getKey());
+        array.setParent(getParent());
         array.setMeta(getMeta());
         array.setVersion(getVersion());
         int index = 0;
         for(PropertyValue val:fields.values()){
-            array.add(val.deepClone());
+            array.addPropertyValue(val.deepClone());
         }
         return array;
     }
@@ -151,36 +203,19 @@ public final class ObjectValue extends PropertyValue{
         return Collections.unmodifiableCollection(this.fields.values()).iterator();
     }
 
-    /**
-     * Adds text values to the createObject.
-     * @param values the child's values, not null.
-     * @return the created values, not null.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public Collection<PropertyValue> setValues(Map<String, String> values) {
-        checkImmutable();
-        List<PropertyValue> result = new ArrayList<>();
-        for(Map.Entry<String, String> en:values.entrySet()) {
-            PropertyValue val = setValue(en.getKey(), en.getValue());
-            result.add(val);
-        }
-        return result;
-    }
 
     /**
      * Adds another existing node, hereby setting the corresponding parent node.
      * @param value the value, not null
-     * @param <T> the value type.
      * @return the value added, not null.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public <T extends PropertyValue> T set(T value) {
+    protected ObjectValue setPropertyValue(PropertyValue value) {
         checkImmutable();
         value.setParent(this);
         this.fields.put(value.getKey(), value);
-        return value;
+        return this;
     }
 
     /**
@@ -189,8 +224,8 @@ public final class ObjectValue extends PropertyValue{
      * @param v the value, not null.
      * @return the value added, not null.
      */
-    public PropertyValue setValue(String k, String v) {
-        return set(PropertyValue.createValue(k,v));
+    public ObjectValue setValue(String k, String v) {
+        return setPropertyValue(new PropertyValue(k,v));
     }
 
     /**
@@ -198,8 +233,10 @@ public final class ObjectValue extends PropertyValue{
      * @param key the key, not null.
      * @return the value added, not null.
      */
-    public ListValue setList(String key) {
-        return set(PropertyValue.createList(key));
+    public ListValue addList(String key) {
+        ListValue lv = PropertyValue.createList(key);
+        setPropertyValue(lv);
+        return lv;
     }
 
     /**
@@ -207,8 +244,10 @@ public final class ObjectValue extends PropertyValue{
      * @param key the key, not null.
      * @return the value added, not null.
      */
-    public ObjectValue setObject(String key) {
-        return set(PropertyValue.createObject(key));
+    public ObjectValue addObject(String key) {
+        ObjectValue ov = PropertyValue.createObject(key);
+        setPropertyValue(ov);
+        return ov;
     }
 
     /**
@@ -229,7 +268,7 @@ public final class ObjectValue extends PropertyValue{
             if(tokenizer.hasMoreTokens()) {
                 node = node.getOrSetValue(token, () -> PropertyValue.createObject(token));
             }else{
-                return node.set(PropertyValue.createValue(token, value));
+                return node.setPropertyValue(new PropertyValue(token, value));
             }
         }
         return null;
@@ -253,8 +292,8 @@ public final class ObjectValue extends PropertyValue{
     }
 
     /**
-     * Convert the getValue tree to a property map.
-     * @return the corresponding property map, not null.
+     * Convert the getValue tree to a property mapProperties.
+     * @return the corresponding property mapProperties, not null.
      */
     @Override
     public Map<String,String> toMap(){
@@ -273,6 +312,28 @@ public final class ObjectValue extends PropertyValue{
         return map;
     }
 
+    /**
+     * Convert the value tree to a local property mapProperties.
+     * @return the corresponding local  mapProperties, not null.
+     */
+    @Override
+    public Map<String,String> toLocalMap(){
+        Map<String, String> map = new TreeMap<>();
+        for (PropertyValue n : fields.values()) {
+            switch(n.getValueType()){
+                case VALUE:
+                    map.put(n.getKey(), n.getValue());
+                    break;
+                default:
+                    for(PropertyValue val:n) {
+                        Map<String,String> valueMap = val.toLocalMap();
+                        map.putAll(valueMap);
+                    }
+            }
+        }
+        return map;
+    }
+
 
     /**
      * Clones this instance and all it's children, marking as mutable value.
@@ -285,11 +346,11 @@ public final class ObjectValue extends PropertyValue{
 
     @Override
     protected ObjectValue deepClone(){
-        ObjectValue newProp = new ObjectValue(getParent(), getKey());
+        ObjectValue newProp = new ObjectValue(getKey());
+        newProp.setParent(getParent());
         newProp.setMeta(getMeta());
-        fields.values().forEach(c -> newProp.set(c.deepClone().mutable()));
+        fields.values().forEach(c -> newProp.setPropertyValue(c.deepClone().mutable()));
         newProp.setVersion(getVersion());
-        newProp.setValue(getValue());
         return newProp;
     }
 
@@ -315,12 +376,27 @@ public final class ObjectValue extends PropertyValue{
 
     @Override
     public String toString() {
-        return "PropertyValue[MAP]{" +
-                '\'' +getQualifiedKey() + '\'' +
-                (getValue()!=null?", value='" + getValue() + '\'':"") +
-                ", size='" + getSize() + '\'' +
+        return "Object{" +
+                "size='" + getSize() + '\'' +
+                ", values='" + toLocalMap() +
                 (getMeta().isEmpty()?"":", metaData=" + getMeta()) +
                 '}';
+    }
+
+    /**
+     * Merges multiple values into one single node.
+     * @param values the values to merge, not null.
+     * @return the merged instance, or null.
+     */
+    public static ObjectValue from(Collection<PropertyValue> values) {
+        if(values.size()==1){
+            return values.iterator().next().toObjectValue();
+        }
+        ObjectValue merged = PropertyValue.createObject();
+        for(PropertyValue val:values){
+            merged.setPropertyValue(val);
+        }
+        return merged;
     }
 
 }

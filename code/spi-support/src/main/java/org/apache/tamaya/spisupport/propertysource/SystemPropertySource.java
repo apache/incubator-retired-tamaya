@@ -51,7 +51,8 @@ public class SystemPropertySource extends BasePropertySource {
      * </pre>
      */
     public SystemPropertySource(){
-        super("system-properties", DEFAULT_ORDINAL);
+        super("system-properties");
+        setDefaultOrdinal(DEFAULT_ORDINAL);
         initFromSystemProperties();
         if(!isDisabled()){
             reload();
@@ -71,7 +72,6 @@ public class SystemPropertySource extends BasePropertySource {
         if(value==null){
             value = System.getenv("tamaya.sysprops.prefix");
         }
-        setPrefix(value);
         value = System.getProperty("tamaya.sysprops.disable");
         if(value==null){
             value = System.getenv("tamaya.sysprops.disable");
@@ -92,31 +92,12 @@ public class SystemPropertySource extends BasePropertySource {
      * @param ordinal the ordinal number.
      */
     public SystemPropertySource(int ordinal){
-        this(null, ordinal);
-    }
-
-    /**
-     * Creates a new instance.
-     * @param prefix the prefix to be used, or null.
-     * @param ordinal the ordinal to be used.
-     */
-    public SystemPropertySource(String prefix, int ordinal){
-        setPrefix(prefix);
         setOrdinal(ordinal);
     }
 
-    /**
-     * Creates a new instance.
-     * @param prefix the prefix to be used, or null.
-     */
-    public SystemPropertySource(String prefix){
-        setPrefix(prefix);
-    }
-
-
     private Map<String, PropertyValue> loadProperties() {
         Map<String, String> props = MapPropertySource.getMap(System.getProperties());
-        return mapProperties(props, System.currentTimeMillis());
+        return PropertyValue.mapProperties(props, getName());
     }
 
     @Override

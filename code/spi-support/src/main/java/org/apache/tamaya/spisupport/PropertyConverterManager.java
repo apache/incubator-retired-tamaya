@@ -185,11 +185,11 @@ public class PropertyConverterManager {
     }
 
     /**
-     * Get a map of all property converters currently registered. This will not contain the converters that
+     * Get a mapProperties of all property converters currently registered. This will not contain the converters that
      * may be created, when an instance is adapted, which provides a String constructor or compatible
      * factory methods taking a single String instance.
      *
-     * @return the current map of instantiated and registered converters.
+     * @return the current mapProperties of instantiated and registered converters.
      * @see #createDefaultPropertyConverter(org.apache.tamaya.TypeLiteral)
      */
     public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {

@@ -19,7 +19,6 @@
 package org.apache.tamaya.spi;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Class modelling the result of a request for a property createValue. A property createValue is basically identified by its key.
@@ -41,10 +40,9 @@ public final class ListValue extends PropertyValue{
     /**
      * Creates a new instance
      * @param key the key, not {@code null}.
-     * @param parent the parent.
      */
-    ListValue(PropertyValue parent, String key){
-        super(parent, key);
+    ListValue(String key){
+        super(key);
     }
 
     /**
@@ -81,30 +79,18 @@ public final class ListValue extends PropertyValue{
     /**
      * Adds a createValue to the array.
      * @param value the createValue, not null
-     * @param <T> the instance type.
      * @return this instance, for chaining.
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public <T extends PropertyValue> T add(T value) {
+    public ListValue addPropertyValue(PropertyValue value) {
         checkImmutable();
-        value.setParent(this);
         if(!this.list.stream().filter(p -> p==value).findAny().isPresent()){
+            value.setKey(generateListKey());
+            value.setParent(this);
             this.list.add(value);
         }
-        return value;
-    }
-
-    /**
-     * Adds an named text value to the array.
-     * @param key the child's key, not null.
-     * @param value the child's value, not null.
-     * @return the created value, not null.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public PropertyValue addValue(String key, String value) {
-        return add(new PropertyValue(this,key, value));
+        return this;
     }
 
     /**
@@ -114,8 +100,8 @@ public final class ListValue extends PropertyValue{
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public PropertyValue addValue(String value) {
-        return add(new PropertyValue(this,"", value));
+    public ListValue addValue(String value) {
+        return addPropertyValue(new PropertyValue(generateListKey(), value));
     }
 
     /**
@@ -125,12 +111,12 @@ public final class ListValue extends PropertyValue{
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
-    public List<PropertyValue> addValues(String... values) {
+    public ListValue addValues(String... values) {
         List<PropertyValue> result = new ArrayList<>();
         for(String val:values) {
-            result.add(add(new PropertyValue(this, "", val)));
+            result.add(addPropertyValue(new PropertyValue(generateListKey(), val)));
         }
-        return result;
+        return this;
     }
 
     /**
@@ -140,18 +126,9 @@ public final class ListValue extends PropertyValue{
      * @see #isImmutable()
      */
     public ObjectValue addObject() {
-        return add(new ObjectValue(this, ""));
-    }
-
-    /**
-     * Adds a child createObject to the array.
-     * @param name the child's name, not null.
-     * @return the created createObject, not null.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
-     */
-    public ObjectValue addObject(String name) {
-        return add(new ObjectValue(this,name));
+        ObjectValue ov = new ObjectValue(generateListKey());
+        addPropertyValue(ov);
+        return ov;
     }
 
     /**
@@ -161,39 +138,26 @@ public final class ListValue extends PropertyValue{
      * @see #isImmutable()
      */
     public ListValue addList() {
-        return add(new ListValue(this, ""));
+        ListValue lv = new ListValue(generateListKey());
+        addPropertyValue(lv);
+        return lv;
     }
 
     /**
-     * Adds a named array.
-     * @param name the child's name, not null.
-     * @return this instance, for chaining.
-     * @throws IllegalStateException if the instance is immutable.
-     * @see #isImmutable()
+     * Get a String value with the given key, if possible. If a node is present, but no value is setPropertyValue, then the
+     * node's {@code toString()} method is used as a result.
+     * @param index the target index.
+     * @return the value found, or null.
      */
-    public ListValue addList(String name) {
-        return add(new ListValue(this,name));
-    }
-
-    /**
-     * Get the array elements, filtered by the given predicate.
-     * @param filter the filter predicate, null selects all elements.
-     * @return this values matching, never null.
-     */
-    public List<PropertyValue> getValues(Predicate<PropertyValue> filter) {
-        List<PropertyValue> result = new ArrayList<>();
-        this.list.stream().filter(filter::test).forEach(result::add);
-        return result;
-    }
-
-    /**
-     * Get the array elements.
-     * @return this values matching, never null.
-     */
-    public List<PropertyValue> getValues() {
-        List<PropertyValue> result = new ArrayList<>();
-        result.addAll(this.list);
-        return result;
+    public String getValue(int index) {
+        PropertyValue value = getPropertyValue(index);
+        if(value!=null){
+            if(value.getValueType()==ValueType.VALUE) {
+                return value.getValue();
+            }
+            return value.toString();
+        }
+        return null;
     }
 
     /**
@@ -202,8 +166,8 @@ public final class ListValue extends PropertyValue{
      * @return the element found
      * @throws NoSuchElementException if no such element exists.
      */
-    public PropertyValue get(int n) {
-        return this.getValues().get(n);
+    public PropertyValue getPropertyValue(int n) {
+        return this.list.get(n);
     }
 
 
@@ -256,7 +220,7 @@ public final class ListValue extends PropertyValue{
      * @param name the name of the objects, null selects all.
      * @return this values matching, never null.
      */
-    public List<PropertyValue> getValues(String name) {
+    public List<PropertyValue> getPropertyValues(String name) {
         List<PropertyValue> result = new ArrayList<>();
         if (name == null) {
             result.addAll(this.list);
@@ -271,22 +235,14 @@ public final class ListValue extends PropertyValue{
     }
 
     @Override
-    public PropertyValue toPropertyValue(){
-        PropertyValue value = new PropertyValue(getParent(), getKey(), getValue());
-        value.setMeta(getMeta());
-        value.setVersion(getVersion());
-        return value;
-    }
-
-    @Override
     public ObjectValue toObjectValue(){
-        ObjectValue object = new ObjectValue(getParent(), getKey());
+        ObjectValue object = new ObjectValue(getKey());
+        object.setParent(getParent());
         object.setMeta(getMeta());
         object.setVersion(getVersion());
-        object.setValue(getValue());
         int index = 0;
         for(PropertyValue val: list){
-            object.set(val.deepClone().setKey(val.getKey()+"["+index+"]"));
+            object.setPropertyValue(val.deepClone().setKey(val.getKey()));
             index++;
         }
         return object;
@@ -295,6 +251,19 @@ public final class ListValue extends PropertyValue{
     @Override
     public ListValue toListValue(){
         return this;
+    }
+
+    /**
+     * Get the node's createValue.
+     * @return the createValue, or null.
+     */
+    public String getValue() {
+        return "List: " + this.list;
+    }
+
+    @Override
+    public PropertyValue setValue(String value) {
+        throw new UnsupportedOperationException("Cannot set value on list value.");
     }
 
     /**
@@ -308,11 +277,11 @@ public final class ListValue extends PropertyValue{
 
     @Override
     protected ListValue deepClone(){
-        ListValue newProp = new ListValue(getParent(), getKey());
+        ListValue newProp = new ListValue(getKey());
+        newProp.setParent(getParent());
         newProp.setMeta(getMeta());
-        list.forEach(c -> newProp.add(c.deepClone().mutable()));
+        list.forEach(c -> newProp.addPropertyValue(c.deepClone().mutable()));
         newProp.setVersion(getVersion());
-        newProp.setValue(getValue());
         return newProp;
     }
 
@@ -331,6 +300,10 @@ public final class ListValue extends PropertyValue{
                 Objects.equals(getMeta(), dataNode.getMeta());
     }
 
+    private String generateListKey(){
+        return "["+this.list.size()+"]";
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(getKey(), list, getValue(), getMeta());
@@ -339,12 +312,24 @@ public final class ListValue extends PropertyValue{
 
     @Override
     public String toString() {
-        return "PropertyValue[ARRAY]{" +
-                '\'' +getQualifiedKey() + '\'' +
-                (getValue()!=null?", value='" + getValue() + '\'':"") +
+        return "List{" +
                 ", size='" + getSize() + '\'' +
+                ", values=" + list +
                 (getMeta().isEmpty()?"":", metaData=" + getMeta()) +
                 '}';
+    }
+
+    /**
+     * Merges multiple values into one single node.
+     * @param values the values to merge, not null.
+     * @return the merged instance, or null.
+     */
+    public static ListValue from(Collection<PropertyValue> values) {
+        ListValue merged = PropertyValue.createList();
+        for(PropertyValue val:values){
+            merged.addPropertyValue(val);
+        }
+        return merged;
     }
 
 }

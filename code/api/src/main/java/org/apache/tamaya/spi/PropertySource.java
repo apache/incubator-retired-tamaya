@@ -112,7 +112,7 @@ public interface PropertySource{
      *
      * <p>Reordering of the default order of the config-sources:</p>
      * <p>Example: If the properties file/s should be used <b>before</b> the other implementations,
-     * you have to configure an ordinal &gt; 1000. That means, you have to add e.g. tamaya.ordinal=401 to
+     * you have to configure an ordinal &gt; 1000. That means, you have to addPropertyValue e.g. tamaya.ordinal=401 to
      * /META-INF/javaconfiguration.properties . Hint: In case of property files every file is handled as independent
      * config-source, but all of them have ordinal 400 by default (and can be reordered in a fine-grained manner.</p>
      *
@@ -152,7 +152,7 @@ public interface PropertySource{
      * Access a property.
      *
      * @param key the property's key, not {@code null}.
-     * @return the property value map, where {@code map.current(key) == value}, including also any metadata. In case a
+     * @return the property value mapProperties, where {@code mapProperties.current(key) == value}, including also any metadata. In case a
      * value is null, simply return {@code null}.
      */
     PropertyValue get(String key);
@@ -161,7 +161,7 @@ public interface PropertySource{
      * Access the current properties as Set. The resulting Map may not return all items accessible, e.g.
      * when the underlying storage does not support iteration of its entries.
      {@code null}
-     * @return the corresponding map, never null.
+     * @return the corresponding mapProperties, never null.
      */
     Map<String, PropertyValue> getProperties();
 
@@ -197,7 +197,7 @@ public interface PropertySource{
     /**
      * Get the current version. A new version signals that it is known that properties have changed for this property
      * source. This is especially useful, when {@link #getChangeSupport()} is {@link ChangeSupport#SUPPORTED}.
-     * The content and format of the version String is imeplemtation specific. We recommend to add information
+     * The content and format of the version String is imeplemtation specific. We recommend to addPropertyValue information
      * such as the loading timestamp, the source systems read or whatever is appropriate. By default this
      * method returns {@code "N/A"}.
      * @return the version this property source, never null.

@@ -142,7 +142,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     /**
      * Adds the given sources as property sources.
      *
-     * @param sources property sources to add.
+     * @param sources property sources to addPropertyValue.
      * @return the current configuration builder.
      */
     @Override

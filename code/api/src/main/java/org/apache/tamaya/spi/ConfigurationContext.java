@@ -83,7 +83,7 @@ public interface ConfigurationContext {
      *  }
      * </pre>
      *
-     * @return map with sorted createList of registered {@link PropertySource}s per type.
+     * @return mapProperties with sorted createList of registered {@link PropertySource}s per type.
      */
     Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters();
 

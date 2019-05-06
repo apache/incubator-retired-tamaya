@@ -104,7 +104,7 @@ public class ConversionContextTest {
     public void testGetSetValues_Ellipse(){
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
-                .setValues(PropertyValue.createValue("test", "value")).build();
+                .setValues(new PropertyValue("test", "value")).build();
         assertThat(ctx.getValues()).isNotNull().hasSize(1);
         assertThat("value").isEqualTo(ctx.getValues().get(0).getValue());
         assertThat("test").isEqualTo(ctx.getValues().get(0).getKey());
@@ -114,7 +114,7 @@ public class ConversionContextTest {
     public void testGetSetValues_List(){
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
-                .setValues(Collections.singletonList(PropertyValue.createValue("test", "value"))).build();
+                .setValues(Collections.singletonList(new PropertyValue("test", "value"))).build();
         assertThat(ctx.getValues()).isNotNull().hasSize(1);
         assertThat("value").isEqualTo(ctx.getValues().get(0).getValue());
         assertThat("test").isEqualTo(ctx.getValues().get(0).getKey());
@@ -124,7 +124,7 @@ public class ConversionContextTest {
     public void testGetConfigurationContext(){
         ConversionContext ctx = new ConversionContext.Builder("toString", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
-                .setValues(PropertyValue.createValue("test", "value")).build();
+                .setValues(PropertyValue.createObject().setValue("test", "value")).build();
         assertThat(ctx.getConfigurationContext()).isNotNull();
     }
 
@@ -132,7 +132,7 @@ public class ConversionContextTest {
     public void testGetMeta(){
         ConversionContext ctx = new ConversionContext.Builder("test", TypeLiteral.of(List.class))
                 .addSupportedFormats(MyConverter.class, "0.0.0.0/nnn", "x.x.x.x/yyy")
-                .setValues(PropertyValue.createValue("test", "value")
+                .setValues(new PropertyValue("test", "value")
                 .setMeta("meta1", "val1").setMeta("meta2", "val2")).build();
         assertThat(ctx.getMeta()).isNotNull().isNotEmpty().hasSize(2);
     }

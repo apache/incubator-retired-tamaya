@@ -49,9 +49,9 @@ public class PropertySourceTest {
     public void getOrdinal(){
         assertThat(0).isEqualTo(new PropertySourceImpl().getOrdinal());
         PropertySourceImpl ps = new PropertySourceImpl();
-        ps.value = PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "123");
+        ps.value = new PropertyValue(PropertySource.TAMAYA_ORDINAL, "123");
         assertThat(123).isEqualTo(ps.getOrdinal());
-        ps.value = PropertyValue.createValue(PropertySource.TAMAYA_ORDINAL, "abc");
+        ps.value = new PropertyValue(PropertySource.TAMAYA_ORDINAL, "abc");
         assertThat(0).isEqualTo(ps.getOrdinal());
     }
 

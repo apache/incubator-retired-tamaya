@@ -100,7 +100,7 @@ public class ConversionContext {
 
     /**
      * Evaluate the metadata for the current target key from the given values. Later values hereby are more significant.
-     * @return the evaluated meta data map.
+     * @return the evaluated meta data mapProperties.
      */
     public Map<String, String> getMeta() {
         Map<String, String> metaMap = new HashMap<>();
@@ -116,7 +116,7 @@ public class ConversionContext {
     }
 
     /**
-     * Allows to add information on the supported/tried formats, which can be shown to the user, especially when
+     * Allows to addPropertyValue information on the supported/tried formats, which can be shown to the user, especially when
      * conversion failed. Adding of formats is synchronized, all formats are added in order to the overall createList.
      * This means formats should be passed in order of precedence.
      * @param converterType the converters, which implements the formats provided.

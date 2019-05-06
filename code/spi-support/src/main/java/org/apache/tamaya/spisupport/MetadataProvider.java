@@ -63,7 +63,7 @@ public interface MetadataProvider {
      * from alternate sources.
      *
      * @param property the property key, not null.
-     * @param metaData the metadata to set/replace.
+     * @param metaData the metadata to setPropertyValue/replace.
      * @return this instance, for chaining.
      */
     MetadataProvider setMeta(String property, Map<String, String> metaData);

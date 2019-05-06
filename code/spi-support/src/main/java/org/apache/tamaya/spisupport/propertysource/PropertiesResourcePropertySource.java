@@ -57,7 +57,6 @@ public class PropertiesResourcePropertySource extends BasePropertySource {
      */
     public PropertiesResourcePropertySource(URL url, String prefix){
         super(url.toExternalForm());
-        setPrefix(prefix);
         this.cachedProperties.load(loadProps(url));
         this.cachedProperties.scheduleChangeMonitor(() -> loadProps(url),
                 120, TimeUnit.SECONDS);
@@ -65,22 +64,19 @@ public class PropertiesResourcePropertySource extends BasePropertySource {
 
     /**
      * Creates a new instance.
-     * @param prefix the (optional) prefix context for mapping (prefixing) the properties loaded.
      * @param path the resource path, not null.
      */
-    public PropertiesResourcePropertySource(String path, String prefix){
-        this(path, prefix, ServiceContextManager.getDefaultClassLoader());
+    public PropertiesResourcePropertySource(String path){
+        this(path, ServiceContextManager.getDefaultClassLoader());
     }
 
     /**
      * Creates a new instance.
-     * @param prefix the (optional) prefix context for mapping (prefixing) the properties loaded.
      * @param path the resource path, not null.
      * @param cl the class loader.
      */
-    public PropertiesResourcePropertySource(String path, String prefix, ClassLoader cl){
+    public PropertiesResourcePropertySource(String path, ClassLoader cl){
         super(path);
-        setPrefix(prefix);
         this.cachedProperties.load(loadProps(path, cl));
         this.cachedProperties.scheduleChangeMonitor(() -> loadProps(path, cl),
                 120, TimeUnit.SECONDS);
@@ -106,7 +102,7 @@ public class PropertiesResourcePropertySource extends BasePropertySource {
             try (InputStream is = url.openStream()) {
                 Properties props = new Properties();
                 props.load(is);
-                return mapProperties(MapPropertySource.getMap(props), System.currentTimeMillis());
+                return PropertyValue.mapProperties(MapPropertySource.getMap(props), getName());
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Failed to read properties from " + url, e);
             }

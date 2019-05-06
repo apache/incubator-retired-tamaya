@@ -55,7 +55,7 @@ public class ConfigurationBuilderTest {
                 .addPropertySources(testPropertySource, testPS2);
         Configuration cfg = b.build();
         assertThat(cfg.getContext().getPropertySources()).hasSize(2).contains(testPropertySource, testPS2);
-        // Ensure no sorting happens during add, so switch ordinals!
+        // Ensure no sorting happens during addPropertyValue, so switch ordinals!
         testPS2 = new TestPropertySource("addPropertySources_Array", 1);
         b = Configuration.createConfigurationBuilder()
                 .addPropertySources(testPS2, testPropertySource);
@@ -74,7 +74,7 @@ public class ConfigurationBuilderTest {
         assertThat(cfg.getContext().getPropertySources()).hasSize(2).contains(testPropertySource, testPS2);
         assertThat("TestPropertySource").isEqualTo(cfg.getContext().getPropertySources().get(0).getName());
         assertThat("addPropertySources_Collection").isEqualTo(cfg.getContext().getPropertySources().get(1).getName());
-        // Ensure no sorting happens during add, so switch ordinals!
+        // Ensure no sorting happens during addPropertyValue, so switch ordinals!
         testPS2 = new TestPropertySource("addPropertySources_Collection", 1);
         b = Configuration.createConfigurationBuilder()
                 .addPropertySources(Arrays.asList(new PropertySource[]{testPS2, testPropertySource}));

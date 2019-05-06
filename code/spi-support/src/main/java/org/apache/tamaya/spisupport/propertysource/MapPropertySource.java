@@ -30,6 +30,9 @@ import java.util.Properties;
  */
 public class MapPropertySource extends BasePropertySource {
 
+    /** The optional prefix. */
+    private String prefix;
+
     /**
      * The current properties.
      */
@@ -93,6 +96,43 @@ public class MapPropertySource extends BasePropertySource {
     @Override
     public ChangeSupport getChangeSupport(){
         return ChangeSupport.IMMUTABLE;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    protected Map<String,PropertyValue> mapProperties(Map<String, String> props, long timestamp) {
+        Map<String,PropertyValue> result = new HashMap<>();
+        String timestampVal = String.valueOf(timestamp);
+        if (prefix == null) {
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                result.put(en.getKey(),
+                        PropertyValue.createValue(en.getKey(), en.getValue())
+                                .setMeta("source", getName())
+                                .setMeta("timestamp", timestampVal));
+            }
+        } else {
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                result.put(prefix + en.getKey(),
+                        PropertyValue.createValue(prefix + en.getKey(), en.getValue())
+                                .setMeta("source", getName())
+                                .setMeta("timestamp", timestampVal));
+            }
+        }
+        return result;
+    }
+
+    protected String toStringValues() {
+        return  "  defaultOrdinal=" + getDefaultOrdinal() + '\n' +
+                "  ordinal=" + getOrdinal()  + '\n' +
+                "  prefix=" + prefix + '\n' +
+                "  disabled=" + isDisabled() + '\n' +
+                "  name='" + getName() + '\''  + '\n';
     }
 
 }

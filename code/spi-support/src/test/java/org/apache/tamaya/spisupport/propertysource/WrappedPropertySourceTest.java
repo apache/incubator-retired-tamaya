@@ -149,7 +149,7 @@ public class WrappedPropertySourceTest {
 
         @Override
         public PropertyValue get(String key) {
-            return PropertyValue.of(key, "valueFromMockedWrappablePropertySource", "MockedWrappablePropertySource");
+            return PropertyValue.createValue(key, "valueFromMockedWrappablePropertySource");
         }
 
         @Override
