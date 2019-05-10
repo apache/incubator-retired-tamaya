@@ -21,7 +21,6 @@ package org.apache.tamaya.spi;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 /**
  * Class modelling the result of a request for a property createValue. A property createValue is basically identified by its key.
@@ -36,6 +35,8 @@ import java.util.function.Predicate;
 public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
     private static final long serialVersionUID = 2L;
+    private static final int EMPTY = 0;
+    private static final String SOURCE = "source";
     /** The requested key. */
     private String key;
     /** The createValue. */
@@ -60,6 +61,23 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
         /** A simple value property. */
         VALUE
     }
+
+
+//    /**
+//     * Creates a new builder instance.
+//     * @param key the key, not {@code null}.
+//     * @param source the source, typically the name of the {@link PropertySource}
+//     *               providing the createValue, not {@code null}.
+//     * @return a new builder instance.
+//     * @deprecated Will be removed, use {@link PropertyValue} directly.
+//     */
+//    @Deprecated
+//    public static PropertyValueBuilder builder(String key, String source){
+//        Objects.requireNonNull(key, "Key must be given.");
+//        Objects.requireNonNull(source, "Source must be given");
+//
+//        return new PropertyValueBuilder(key, null).setSource(source);
+//    }
 
     /**
      * Creates a new (invisible) root, which is a node with an empty name.
@@ -148,7 +166,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
                 pv.setMeta(metaData);
             }
             if(source!=null){
-                pv.setMeta("source", source);
+                pv.setMeta(SOURCE, source);
             }
             if(prefix==null) {
                 result.put(en.getKey(), pv);
@@ -237,7 +255,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      */
     @Deprecated
     public String getSource() {
-        return this.metaEntries.get("source");
+        return this.metaEntries.get(SOURCE);
     }
 
 
@@ -325,9 +343,9 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
     /**
-     * Creates a full configuration mapProperties for this key, createValue pair and all its getMeta context data. This mapProperties
+     * Creates a full configuration map for this key, createValue pair and all its getMeta context data. This map
      * is also used for subsequent processing, like createValue filtering.
-     * @return the property createValue entry mapProperties.
+     * @return the property createValue entry map.
      */
     public final Map<String, String> getMeta() {
         return Collections.unmodifiableMap(metaEntries);
@@ -341,7 +359,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      */
     @Deprecated
     public String getMetaEntry(String key) {
-        return (String)this.metaEntries.get(Objects.requireNonNull(key));
+        return this.metaEntries.get(Objects.requireNonNull(key));
     }
 
     /**
@@ -359,7 +377,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @return the getNumChilds of this multi createValue.
      */
     public int getSize() {
-        return 0;
+        return EMPTY;
     }
 
     @Override
@@ -423,8 +441,8 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
 
 
     /**
-     * Convert the value tree to a property mapProperties using full keys.
-     * @return the corresponding property mapProperties, not null.
+     * Convert the value tree to a property map.
+     * @return the corresponding property map, not null.
      */
     public Map<String,String> toMap(){
         Map<String, String> map = new TreeMap<>();

@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class BooleanConverter implements PropertyConverter<Boolean> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(BooleanConverter.class.getName());
 
     @Override
     public Boolean convert(String value, ConversionContext ctx) {

@@ -37,9 +37,9 @@ public class SystemPropertySource extends BasePropertySource {
      */
     public static final int DEFAULT_ORDINAL = 1000;
 
-    private AtomicInteger savedHashcode = new AtomicInteger();
+    private final AtomicInteger savedHashcode = new AtomicInteger();
 
-    private volatile PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
+    private final PropertySourceChangeSupport cachedProperties = new PropertySourceChangeSupport(
             ChangeSupport.SUPPORTED, this);
 
     /**

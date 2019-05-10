@@ -32,6 +32,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Tests for {@link  DefaultConfigurationBuilder} by atsticks on 06.09.16.
@@ -358,7 +359,7 @@ public class DefaultConfigurationBuilderTest {
     @Test
     public void bla() throws Exception {
         ConfigurationBuilder builder = ConfigurationProvider.getConfigurationBuilder();
-        builder.addDefaultPropertyConverters();
+        assertThatCode(() -> builder.addDefaultPropertyConverters()).doesNotThrowAnyException();
     }
 
     private static class TestPropertySource implements PropertySource {

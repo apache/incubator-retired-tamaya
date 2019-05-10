@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class ByteConverter implements PropertyConverter<Byte>{
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(ByteConverter.class.getName());
 
     @Override
     public Byte convert(String value, ConversionContext ctx) {

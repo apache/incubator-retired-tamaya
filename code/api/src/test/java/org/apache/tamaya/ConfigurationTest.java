@@ -266,7 +266,7 @@ public class ConfigurationTest {
     public void testMap() throws Exception {
         UnaryOperator<Configuration> noop = (Configuration config) -> config;
         assertThat(Configuration.current().map(noop)).isNotNull();
-        assertThat(Configuration.current().map(noop)== Configuration.current());
+        assertThat(Configuration.current().map(noop)).isEqualTo(Configuration.current());
     }
 
     @Test

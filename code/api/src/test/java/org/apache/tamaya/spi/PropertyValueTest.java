@@ -25,9 +25,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SuppressWarnings("unchecked")
 public class PropertyValueTest {
+
+//    @Test
+//    public void builder() throws Exception {
+//        PropertyValueBuilder b = PropertyValue.builder("a", "b");
+//        assertThat(b).isNotNull();
+//        assertThat("a").isEqualTo(b.key);
+//        assertThat("b").isEqualTo(b.source);
+//    }
+//
+//
+//    @Test
+//    public void builder() throws Exception {
+//        PropertyValueBuilder b = PropertyValue.builder("a", "b");
+//        assertThat(b).isNotNull();
+//        assertThat("a").isEqualTo(b.key);
+//        assertThat("b").isEqualTo(b.source);
+//    }
 
     @Test
     public void from(){
@@ -164,12 +182,12 @@ public class PropertyValueTest {
 
     @Test
     public void testInstantiateNoValue2() throws Exception {
-        new PropertyValue("k", null);
+        assertThatCode(() -> PropertyValue.createValue("k", null)).doesNotThrowAnyException();
     }
 
     @Test
     public void testInstantiateNoSource2() throws Exception {
-        new PropertyValue("k", "v");
+        assertThatCode(() -> PropertyValue.createValue("k", "v")).doesNotThrowAnyException();
     }
 
     @Test(expected = NullPointerException.class)

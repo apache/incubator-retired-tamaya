@@ -48,6 +48,7 @@ public class CoreConfigurationTest {
     @Test
     public void testToString() throws Exception {
         String toString = Configuration.current().getContext().toString();
+        assertThat(toString).contains("Property Filters").contains("Property Converters");
     }
 
     @Test

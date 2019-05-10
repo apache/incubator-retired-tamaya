@@ -45,6 +45,7 @@ public class DefaultConfigurationSnapshotTest {
         Configuration config = Configuration.current();
         DefaultConfigurationSnapshot snapshot = new DefaultConfigurationSnapshot(config,
                 Arrays.asList("confkey1", "confkey2", "confkey3"));
+        assertThat(snapshot).isNotNull();
     }
 
     @Test

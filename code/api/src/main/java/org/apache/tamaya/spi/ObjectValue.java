@@ -20,7 +20,6 @@ package org.apache.tamaya.spi;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 /**
  * Class modelling the result of a request for a property value. A property value is basically identified by its key.
@@ -35,8 +34,6 @@ import java.util.logging.Logger;
 public final class ObjectValue extends PropertyValue{
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger LOG = Logger.getLogger(ObjectValue.class.getName());
 
     /** List of child properties. */
     private Map<String, PropertyValue> fields = new HashMap<>();
@@ -54,6 +51,7 @@ public final class ObjectValue extends PropertyValue{
      * Get the item's current value type.
      * @return the value type, never null.
      */
+    @Override
     public ValueType getValueType() {
         return ValueType.MAP;
     }
@@ -121,7 +119,6 @@ public final class ObjectValue extends PropertyValue{
      * @param valueSupplier the supplier to create a new instance, if no value is present, not null.
      * @param <T> the target type.
      * @return the child found or created, never null.
-     * @throws IllegalArgumentException if multiple getPropertyValues with the given name are existing (ambigous).
      * @throws IllegalStateException if the instance is immutable.
      * @see #isImmutable()
      */
@@ -190,7 +187,6 @@ public final class ObjectValue extends PropertyValue{
         array.setParent(getParent());
         array.setMeta(getMeta());
         array.setVersion(getVersion());
-        int index = 0;
         for(PropertyValue val:fields.values()){
             array.addPropertyValue(val.deepClone());
         }
@@ -292,29 +288,27 @@ public final class ObjectValue extends PropertyValue{
     }
 
     /**
-     * Convert the getValue tree to a property mapProperties.
-     * @return the corresponding property mapProperties, not null.
+     * Convert the value tree to a property map.
+     * @return the corresponding property map, not null.
      */
     @Override
     public Map<String,String> toMap(){
         Map<String, String> map = new TreeMap<>();
         for (PropertyValue n : fields.values()) {
-            switch(n.getValueType()){
-                case VALUE:
-                    map.put(n.getQualifiedKey(), n.getValue());
-                    break;
-                default:
-                    for(PropertyValue val:n) {
-                        map.putAll(val.toMap());
-                    }
+            if (ValueType.VALUE.equals(n.getValueType())) {
+                map.put(n.getQualifiedKey(), n.getValue());
+            } else {
+                for(PropertyValue val:n) {
+                    map.putAll(val.toMap());
+                }
             }
         }
         return map;
     }
 
     /**
-     * Convert the value tree to a local property mapProperties.
-     * @return the corresponding local  mapProperties, not null.
+     * Convert the value tree to a local property map.
+     * @return the corresponding local map, not null.
      */
     @Override
     public Map<String,String> toLocalMap(){

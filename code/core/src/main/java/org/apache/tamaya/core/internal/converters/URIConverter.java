@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 @Component(service = PropertyConverter.class)
 public class URIConverter implements PropertyConverter<URI> {
 
-    private final Logger LOG = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(URIConverter.class.getName());
 
     @Override
     public URI convert(String value, ConversionContext ctx) {
