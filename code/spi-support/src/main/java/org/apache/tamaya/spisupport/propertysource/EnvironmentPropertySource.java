@@ -198,6 +198,13 @@ public class EnvironmentPropertySource extends BasePropertySource {
         return "environment-properties";
     }
 
+    /*
+    Exact match (i.e. com.ACME.size)
+
+Replace the character that is neither alphanumeric nor _ with _ (i.e. com_ACME_size)
+
+Replace the character that is neither alphanumeric nor _ with _ and convert to upper case (i.e. COM_ACME_SIZE)
+     */
     @Override
     public PropertyValue get(String key) {
         if (isDisabled()) {
@@ -209,18 +216,20 @@ public class EnvironmentPropertySource extends BasePropertySource {
         String value = getPropertiesProvider().getenv(effectiveKey);
         // Replace all . by _ (i.e. com_ACME_size)
         if(value==null){
-            value = getPropertiesProvider().getenv(effectiveKey.replaceAll("\\.", "_"));
+            effectiveKey = effectiveKey.replaceAll("\\W", "_");
+            value = getPropertiesProvider().getenv(effectiveKey);
         }
         // Replace all . by _ and convert to upper case (i.e. COM_ACME_SIZE)
         if(value==null){
-            value = getPropertiesProvider().getenv(effectiveKey.replaceAll("\\.", "_")
-                    .toUpperCase());
+            effectiveKey = effectiveKey.toUpperCase();
+            value = getPropertiesProvider().getenv(effectiveKey);
         }
         if(value==null){
             return null;
         }
         return PropertyValue.createValue(key, value).setMeta("source", getName());
     }
+
 
     private boolean hasPrefix() {
         return null != prefix && prefix.isEmpty();

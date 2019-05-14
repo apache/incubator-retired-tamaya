@@ -24,6 +24,8 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,10 +42,10 @@ public class DefaultConfigurationSnapshot implements ConfigurationSnapshot, Seri
     /**
      * The properties frozen.
      */
-    private Configuration snapshot;
+    private DefaultConfiguration snapshot;
     private long frozenAt = System.nanoTime();
     private UUID id = UUID.randomUUID();
-    private transient ConfigurationContext context;
+    private DefaultConfigurationContext context;
     private Set<String> keys = new HashSet<>();
 
     /**
@@ -101,6 +103,7 @@ public class DefaultConfigurationSnapshot implements ConfigurationSnapshot, Seri
      * Get the evaluated keys of this frozen coinfiguration.
      * @return the keys, not null.
      */
+    @Override
     public Set<String> getKeys() {
         return keys;
     }
@@ -209,4 +212,5 @@ public class DefaultConfigurationSnapshot implements ConfigurationSnapshot, Seri
     public UUID getId() {
         return id;
     }
+
 }

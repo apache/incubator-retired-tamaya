@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -31,6 +33,24 @@ import java.util.function.Supplier;
  */
 public interface ServiceContext extends ClassloaderAware{
 
+    /**
+     * True if the {@link Priority} annotation class is available on the classpath.
+     */
+    boolean PRIORITY_ANNOTATION_AVAILABLE = checkPriorityAnnotation(ServiceContextManager.getDefaultClassLoader());
+
+    /**
+     * Checks if the {@link Priority} annotation class is on the classpath.
+     * @param classLoader the target classloader, not null.
+     * @return true, if the annotation is loaded.
+     */
+    static boolean checkPriorityAnnotation(ClassLoader classLoader) {
+        try{
+            Class.forName("javax.annotation.Priority", true, classLoader);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
     /**
      * Get the ordinal of the ServiceContext.
      * @return ordinal of the ServiceContext. The one with the highest ordinal will be taken.
@@ -46,10 +66,12 @@ public interface ServiceContext extends ClassloaderAware{
      * @return a priority, by default 1.
      */
     static int getPriority(Object o){
-        int prio = 1; //X TODO discuss default priority
-        Priority priority = o.getClass().getAnnotation(Priority.class);
-        if (priority != null) {
-            prio = priority.value();
+        int prio = 1;
+        if(PRIORITY_ANNOTATION_AVAILABLE) {
+            Priority priority = o.getClass().getAnnotation(Priority.class);
+            if (priority != null) {
+                prio = priority.value();
+            }
         }
         return prio;
     }
@@ -149,8 +171,18 @@ public interface ServiceContext extends ClassloaderAware{
      * @return the resources found
      * @throws IOException if load fails.
      */
-    default Enumeration<URL> getResources(String resource) throws IOException{
-        return getClassLoader().getResources(resource);
+    default Collection<URL> getResources(String resource){
+        List<URL> urls = new ArrayList<>();
+        try {
+            Enumeration<URL> found = getClassLoader().getResources(resource);
+            while (found.hasMoreElements()) {
+                urls.add(found.nextElement());
+            }
+        }catch(Exception e){
+            Logger.getLogger(ServiceContext.class.getName())
+                    .log(Level.FINEST, e, () -> "Failed to lookup resources: " + resource);
+        }
+        return urls;
     }
 
     /**

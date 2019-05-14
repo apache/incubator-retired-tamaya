@@ -82,7 +82,7 @@ public class CoreConfigurationProvider implements ConfigurationProviderSpi {
         Objects.requireNonNull(config.getContext());
         Configuration old = this.configurations.put(classLoader, Objects.requireNonNull(config));
         if(old != null){
-            LOG.warning(String.format("Replaced config %S with %S for classloader %S", old, config, classLoader));
+            LOG.warning(String.format("Replaced config %s with %s for classloader %s", old, config, classLoader));
         }
     }
 

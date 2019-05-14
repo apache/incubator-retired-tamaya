@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -88,8 +89,8 @@ public class ServiceContextManagerTest {
         }
 
         @Override
-        public Enumeration<URL> getResources(String resource) throws IOException {
-            return null;
+        public Collection<URL> getResources(String resource) {
+            return Collections.emptySet();
         }
 
         @Override

@@ -63,22 +63,6 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
     }
 
 
-//    /**
-//     * Creates a new builder instance.
-//     * @param key the key, not {@code null}.
-//     * @param source the source, typically the name of the {@link PropertySource}
-//     *               providing the createValue, not {@code null}.
-//     * @return a new builder instance.
-//     * @deprecated Will be removed, use {@link PropertyValue} directly.
-//     */
-//    @Deprecated
-//    public static PropertyValueBuilder builder(String key, String source){
-//        Objects.requireNonNull(key, "Key must be given.");
-//        Objects.requireNonNull(source, "Source must be given");
-//
-//        return new PropertyValueBuilder(key, null).setSource(source);
-//    }
-
     /**
      * Creates a new (invisible) root, which is a node with an empty name.
      * @return a new empty root, never null.

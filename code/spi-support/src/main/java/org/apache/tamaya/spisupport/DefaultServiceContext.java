@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContext;
 
-import javax.annotation.Priority;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

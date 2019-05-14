@@ -30,23 +30,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 @SuppressWarnings("unchecked")
 public class PropertyValueTest {
 
-//    @Test
-//    public void builder() throws Exception {
-//        PropertyValueBuilder b = PropertyValue.builder("a", "b");
-//        assertThat(b).isNotNull();
-//        assertThat("a").isEqualTo(b.key);
-//        assertThat("b").isEqualTo(b.source);
-//    }
-//
-//
-//    @Test
-//    public void builder() throws Exception {
-//        PropertyValueBuilder b = PropertyValue.builder("a", "b");
-//        assertThat(b).isNotNull();
-//        assertThat("a").isEqualTo(b.key);
-//        assertThat("b").isEqualTo(b.source);
-//    }
-
     @Test
     public void from(){
 

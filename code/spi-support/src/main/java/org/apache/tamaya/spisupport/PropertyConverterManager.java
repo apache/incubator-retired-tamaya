@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
@@ -254,6 +255,15 @@ public class PropertyConverterManager {
                 readLock.unlock();
             }
         }
+        if(converterList.isEmpty() && targetType.getRawType().isArray() &&
+            !targetType.getRawType().getComponentType().isPrimitive()){
+            try {
+                readLock.lock();
+                addConvertersToList(List.class.cast(this.converters.get(TypeLiteral.of(Object[].class))), converterList);
+            } finally {
+                readLock.unlock();
+            }
+        }
         if (converterList.isEmpty() && !TypeLiteral.of(String.class).equals(targetType)) {
             // adding any converters created on the fly, e.g. for enum types.
             PropertyConverter<T> defaultConverter = createDefaultPropertyConverter(targetType);
@@ -364,36 +374,38 @@ public class PropertyConverterManager {
             return new EnumConverter<>(targetType.getRawType());
         }
         PropertyConverter<T> converter = null;
-        final Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "createValue", "instanceOf", "getInstance", "from", "fromString", "parse");
+        final Method factoryMethod = getFactoryMethod(targetType.getRawType(), "of", "valueOf", "createValue", "instanceOf", "getInstance", "from", "fromString", "parse");
         if (factoryMethod != null) {
             converter = new DefaultPropertyConverter<>(factoryMethod, targetType.getRawType());
         }
         if (converter == null) {
-            final Constructor<T> constr;
+            Constructor<T> constr;
             try {
                 constr = targetType.getRawType().getDeclaredConstructor(String.class);
             } catch (NoSuchMethodException e) {
-                LOG.log(Level.FINEST, "No matching constructor for " + targetType, e);
-                return null;
+                try {
+                    constr = targetType.getRawType().getDeclaredConstructor(CharSequence.class);
+                } catch (NoSuchMethodException e2) {
+                    LOG.log(Level.FINEST, "No matching constructor found for " + targetType);
+                    return null;
+                }
             }
+            Constructor<T> finalConstr = constr;
             converter = new PropertyConverter<T>() {
                     @Override
                     public T convert(String value, ConversionContext context) {
                         AccessController.doPrivileged(new PrivilegedAction<Object>() {
                             @Override
                             public Object run() {
-                                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                                    @Override
-                                    public Object run() {
-                                        constr.setAccessible(true);
-                                        return null;
-                                    }
+                                AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                                    finalConstr.setAccessible(true);
+                                    return null;
                                 });
                                 return null;
                             }
                         });
                         try {
-                            return constr.newInstance(value);
+                            return finalConstr.newInstance(value);
                         } catch (Exception e) {
                             LOG.log(Level.SEVERE, "Error creating new PropertyConverter instance " + targetType, e);
                         }
@@ -416,6 +428,12 @@ public class PropertyConverterManager {
         for (String name : methodNames) {
             try {
                 m = type.getDeclaredMethod(name, String.class);
+                return m;
+            } catch (NoSuchMethodException | RuntimeException e) {
+                // continue, try also with CharSequence
+            }
+            try {
+                m = type.getDeclaredMethod(name, CharSequence.class);
                 return m;
             } catch (NoSuchMethodException | RuntimeException e) {
                 LOG.finest("No such factory method found on type: " + type.getName() + ", methodName: " + name);

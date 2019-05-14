@@ -20,6 +20,7 @@ package org.apache.tamaya.core.internal;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -98,11 +99,11 @@ public class OSGIServiceContextTest {
         mockBundleContext.installBundle(startedBundle);
         OSGIServiceContext instance = new OSGIServiceContext(loader);
 
-        Enumeration<URL> resources = instance.getResources("dummy");
+        Collection<URL> resources = instance.getResources("dummy");
         assertThat(resources).isNotNull();
-        URL resource = (URL)resources.nextElement();
+        URL resource = (URL)resources.iterator().next();
         assertThat(resource.toString()).contains("mockbundle.service");
-        assertThat(resources.hasMoreElements()).isFalse();
+        assertThat(resources.size()).isEqualTo(1);
     }
 
     /**

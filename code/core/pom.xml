@@ -98,7 +98,7 @@ under the License.
                     <!--
                      ! Add -Djava.security.debug=all for debugging if needed
                      !-->
-                    <argLine>-Djava.security.policy=${project.basedir}/src/test/resources/java-security.policy ${argLine}</argLine>
+                    <argLine>-Djava.security.policy=${project.basedir}/src/test/resources/java-security.policy</argLine>
                 </configuration>
             </plugin>
         </plugins>

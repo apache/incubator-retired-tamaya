@@ -113,8 +113,18 @@ public final class TestServiceContext implements ServiceContext {
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource) throws IOException {
-        return classLoader.getResources(resource);
+    public Collection<URL> getResources(String resource) {
+        List<URL> urls = new ArrayList<>();
+        try {
+            Enumeration<URL> found = getClassLoader().getResources(resource);
+            while (found.hasMoreElements()) {
+                urls.add(found.nextElement());
+            }
+        }catch(Exception e){
+            Logger.getLogger(ServiceContext.class.getName())
+                    .log(Level.FINEST, e, () -> "Failed to lookup resources: " + resource);
+        }
+        return urls;
     }
 
     @Override

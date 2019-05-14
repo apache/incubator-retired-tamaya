@@ -21,7 +21,6 @@ package org.apache.tamaya.spisupport;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
-import javax.annotation.Priority;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.logging.Logger;
@@ -76,7 +75,7 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
      *     to convert it to an {@code int} createValue, using {@link Integer#parseInt(String)}.</li>
      *     <li>It tries to find and evaluate a method {@code int getOrdinal()}.</li>
      *     <li>It tries to find and evaluate a static field {@code int ORDINAL}.</li>
-     *     <li>It tries to find and evaluate a class level {@link Priority} annotation.</li>
+     *     <li>It tries to find and evaluate a class level {@link javax.annotation.Priority} annotation.</li>
      *     <li>It uses the default priority ({@code 0}.</li>
      * </ol>
      * @param propertySource the property source, not {@code null}.

@@ -231,6 +231,11 @@ public class ConfigurationBuilderTest {
         }
 
         @Override
+        public ConfigurationBuilder sortPropertyConverter(Comparator<PropertyConverter> comparator) {
+            return null;
+        }
+
+        @Override
         public Configuration build() {
             return null;
         }

@@ -22,31 +22,30 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.osgi.service.component.annotations.Component;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Converter, converting from String to LocalDateTime.
+ * Converter, converting from String to YearMonth.
  */
 @Component(service = PropertyConverter.class)
-public class LocalDateTimeConverter implements PropertyConverter<LocalDateTime> {
+public class YearMonthConverter implements PropertyConverter<YearMonth> {
 
-    private static final Logger LOG = Logger.getLogger(LocalDateTimeConverter.class.getName());
-
+    private static final Logger LOG = Logger.getLogger(YearMonthConverter.class.getName());
 
     @Override
-    public LocalDateTime convert(String value, ConversionContext ctx) {
-        ctx.addSupportedFormats(getClass(), LocalDateTime.now().toString());
+    public YearMonth convert(String value, ConversionContext ctx) {
+        ctx.addSupportedFormats(getClass(), YearMonth.now().toString());
         if(value==null){
             return null;
         }
         try{
-            return LocalDateTime.parse(value);
+            return YearMonth.parse(value);
         }catch(Exception e){
-            LOG.log(Level.FINEST, e, () -> "Cannot parse LocalDateTime: " + value);
+            LOG.log(Level.FINEST, e, () -> "Cannot parse YearMonth: " + value);
             return null;
         }
     }

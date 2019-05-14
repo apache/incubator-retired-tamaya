@@ -19,25 +19,26 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.*;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of a simple {@link ConfigurationContext}.
  */
-public class DefaultConfigurationContext implements ConfigurationContext {
+public class DefaultConfigurationContext implements ConfigurationContext, Serializable {
 
     /** The logger used. */
     private final static Logger LOG = Logger.getLogger(DefaultConfigurationContext.class.getName());
-    private final MetadataProvider metaDataProvider;
+
+    private MetadataProvider metaDataProvider;
 
     /**
      * Subcomponent handling {@link PropertyConverter} instances.
@@ -61,7 +62,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     /**
      * Lock for internal synchronization.
      */
-    private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
     @SuppressWarnings("unchecked")
     protected DefaultConfigurationContext(DefaultConfigurationBuilder builder) {
@@ -266,6 +267,44 @@ public class DefaultConfigurationContext implements ConfigurationContext {
     @Override
     public List<PropertyFilter> getPropertyFilters() {
         return immutablePropertyFilters;
+    }
+
+    /**
+     * Evaluates all present keys from the property sources loaded.
+     * @return the keys found, never null.
+     */
+    private Set<String> getKeys() {
+        Set<String> keys = new HashSet<>();
+        for(PropertySource ps:immutablePropertySources){
+            keys.addAll(ps.getProperties().keySet());
+        }
+        return keys;
+    }
+
+    /**
+     * Deserialization only reads the property source snapshots from the stream. Converters, filters,
+     * meta data provider and the service context are reinitialized based on the current environment.
+     * @param ois the input stream
+     * @throws IOException if the stream is corrupted
+     * @throws ClassNotFoundException if s property source class cannot be serialized.
+     */
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.serviceContext = ServiceContextManager.getServiceContext();
+        this.propertyConverterManager = new PropertyConverterManager(
+                this.serviceContext, true);
+        this.immutablePropertySources = Collections.unmodifiableList(
+                (List<PropertySource>)ois.readObject());
+        this.immutablePropertyFilters = Collections.unmodifiableList(
+                this.serviceContext.getServices(PropertyFilter.class));
+        this.metaDataProvider = this.serviceContext.getService(MetadataProvider.class);
+        propertySourceLock = new ReentrantReadWriteLock();
+    }
+
+    private void writeObject(ObjectOutputStream oos)throws IOException{
+        // omit converters, they will be reloaded from scratch.
+        oos.writeObject(this.immutablePropertySources.stream()
+                .map(ps -> DefaultPropertySourceSnapshot.of(ps, getKeys())).collect(Collectors.toList()));
+        // omit filters, they will be reloaded from scratch
     }
 
 }

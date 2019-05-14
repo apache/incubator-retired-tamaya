@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
 import java.io.Serializable;
@@ -51,11 +52,19 @@ public final class PropertyFilterComparator implements Comparator<PropertyFilter
      * @return the comparison result
      */
     private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
-        Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
-        Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
-        int ord1 = prio1 != null ? prio1.value() : 0;
-        int ord2 = prio2 != null ? prio2.value() : 0;
+        int ord1 = 0;
+        int ord2 = 0;
 
+        if(ServiceContext.PRIORITY_ANNOTATION_AVAILABLE) {
+            Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
+            Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
+            if(prio1!=null) {
+                ord1 = prio1.value();
+            }
+            if(prio2!=null) {
+                ord2 = prio2.value();
+            }
+        }
         if (ord1 < ord2) {
             return -1;
         } else if (ord1 > ord2) {

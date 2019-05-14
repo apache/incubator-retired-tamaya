@@ -77,7 +77,7 @@ public final class TestLowerOrdinalServiceContext implements ServiceContext {
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource) throws IOException {
+    public Collection<URL> getResources(String resource) {
         throw ex;
     }
 

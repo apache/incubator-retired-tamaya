@@ -18,12 +18,14 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.PropertySourceChangeSupport;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -88,8 +90,12 @@ public class PropertiesResourcePropertySource extends BasePropertySource {
      * @return the loaded properties.
      */
     private Map<String, PropertyValue> loadProps(String path, ClassLoader cl) {
-        URL url = ServiceContextManager.getServiceContext(cl).getResource(path);
-        return loadProps(url);
+        try {
+            URL url = ServiceContextManager.getServiceContext(cl).getResource(path);
+            return loadProps(url);
+        }catch(Exception e){
+            throw new ConfigException("Failed to load properties from " + path, e);
+        }
     }
 
     /**

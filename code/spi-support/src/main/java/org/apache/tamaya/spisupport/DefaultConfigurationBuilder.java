@@ -61,6 +61,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
      * Creates a new builder instance.
      */
     public DefaultConfigurationBuilder() {
+
     }
 
 
@@ -87,6 +88,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     @Override
     public ConfigurationBuilder setClassLoader(ClassLoader classLoader) {
         setServiceContext(ServiceContextManager.getServiceContext(classLoader));
+        serviceContext.reset();
         return this;
     }
 
@@ -149,9 +151,14 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     public ConfigurationBuilder addPropertySources(Collection<PropertySource> sources){
         checkBuilderState();
         for(PropertySource source:sources) {
-            if (!this.propertySources.contains(source)) {
-                this.propertySources.add(source);
+            if(this.propertySources.stream()
+                    .filter(ex -> Objects.equals(ex.getName(), source.getName()))
+                    .findAny()
+                    .isPresent()){
+                LOG.finest(() -> "Omitting already present property source: " + source.getName());
+                continue;
             }
+            this.propertySources.add(source);
         }
         return this;
     }
@@ -308,7 +315,7 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
             if (!converters.contains(propertyConverter)) {
                 converters.add(propertyConverter);
             } else {
-                LOG.warning("Converter ignored, already registered: " + propertyConverter);
+                LOG.finest("Converter ignored, already registered: " + propertyConverter);
             }
         }
         return this;
@@ -342,6 +349,14 @@ public class DefaultConfigurationBuilder implements ConfigurationBuilder {
     @Override
     public ConfigurationBuilder sortPropertySources(Comparator<PropertySource> comparator) {
         Collections.sort(propertySources, comparator);
+        return this;
+    }
+
+    @Override
+    public ConfigurationBuilder sortPropertyConverter(Comparator<PropertyConverter> comparator) {
+        for(List<PropertyConverter<?>> converters:this.propertyConverters.values()) {
+            Collections.sort(converters, comparator);
+        }
         return this;
     }
 

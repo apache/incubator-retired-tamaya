@@ -86,23 +86,12 @@ public class JavaConfigurationPropertySource extends BasePropertySource implemen
 
     private Collection<? extends PropertySource> loadPropertySourcesByName(String filename, ClassLoader classLoader) {
         List<PropertySource> propertySources = new ArrayList<>();
-        Enumeration<URL> propertyLocations;
-        try {
-            propertyLocations = ServiceContextManager.getServiceContext(classLoader)
+        Collection<URL> propertyLocations = ServiceContextManager.getServiceContext(classLoader)
                     .getResources(filename);
-        } catch (IOException e) {
-            String msg = format("Error while searching for %s", filename);
 
-            throw new ConfigException(msg, e);
+        for (URL currentUrl:propertyLocations) {
+            propertySources.add(new SimplePropertySource(currentUrl));
         }
-
-        while (propertyLocations.hasMoreElements()) {
-            URL currentUrl = propertyLocations.nextElement();
-            SimplePropertySource sps = new SimplePropertySource(currentUrl);
-
-            propertySources.add(sps);
-        }
-
         return propertySources;
     }
 

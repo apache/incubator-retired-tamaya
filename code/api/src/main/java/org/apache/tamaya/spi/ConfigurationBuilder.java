@@ -378,6 +378,16 @@ public interface ConfigurationBuilder {
     ConfigurationBuilder sortPropertyFilter(Comparator<PropertyFilter> comparator);
 
     /**
+     * Sorts the current registered property converters using the given comparator.
+     *
+     * <p>NOTE: property converters at the beginning have minimal significance.
+     *
+     * @param comparator the comparator to be used, not {@code null}.
+     * @return this instance for chaining.
+     */
+    ConfigurationBuilder sortPropertyConverter(Comparator<PropertyConverter> comparator);
+
+    /**
      * Builds a new {@link Configuration} based on the data in this builder. The ordering of property
      * sources and property filters is not changed, regardless of their ordinals. For ensure a certain
      * ordering/significance use {@link #sortPropertyFilter(Comparator)} and/or {@link #sortPropertySources(Comparator)}

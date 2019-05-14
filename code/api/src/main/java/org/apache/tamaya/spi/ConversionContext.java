@@ -141,6 +141,20 @@ public class ConversionContext {
         }
     }
 
+    /**
+     * Creates a builder based on this instance.
+     */
+    public Builder toBuilder(){
+        Builder builder = new Builder(key, targetType)
+                .setConfiguration(this.configuration)
+                .setValues(this.values);
+        if(annotatedElement!=null) {
+            builder.setAnnotatedElement(annotatedElement);
+        }
+        builder.supportedFormats.addAll(this.supportedFormats);
+        return builder;
+    }
+
     @Override
     public String toString() {
         return "ConversionContext{" +

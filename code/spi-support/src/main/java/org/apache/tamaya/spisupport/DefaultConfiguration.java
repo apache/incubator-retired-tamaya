@@ -29,6 +29,10 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertyValue;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +42,7 @@ import java.util.logging.Logger;
  * chain of {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.spi.PropertyFilter}
  * instances to evaluate the current Configuration.
  */
-public class DefaultConfiguration implements Configuration {
+public class DefaultConfiguration implements Configuration, Serializable {
     /**
      * The logger.
      */
@@ -47,12 +51,12 @@ public class DefaultConfiguration implements Configuration {
     /**
      * The current {@link ConfigurationContext} of the current instance.
      */
-    private final ConfigurationContext configurationContext;
+    private ConfigurationContext configurationContext;
 
     /**
      * EvaluationStrategy
      */
-    private ConfigValueEvaluator configEvaluator;
+    private transient ConfigValueEvaluator configEvaluator;
 
 
     private ConfigValueEvaluator loadConfigValueEvaluator() {
@@ -300,5 +304,24 @@ public class DefaultConfiguration implements Configuration {
         return "Configuration{\n " +
                 configurationContext +
                 '}';
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        configurationContext = (ConfigurationContext)ois.readObject();
+        configEvaluator = loadConfigValueEvaluator();
+    }
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        if(configurationContext instanceof Serializable){
+            oos.writeObject(configurationContext);
+        }else{
+            oos.writeObject(new DefaultConfigurationContext(
+                    this.configurationContext.getServiceContext(),
+                    this.configurationContext.getPropertyFilters(),
+                    this.configurationContext.getPropertySources(),
+                    this.configurationContext.getPropertyConverters(),
+                    this.configurationContext.getServiceContext().getService(MetadataProvider.class,
+                            () -> new DefaultMetaDataProvider())));
+        }
     }
 }

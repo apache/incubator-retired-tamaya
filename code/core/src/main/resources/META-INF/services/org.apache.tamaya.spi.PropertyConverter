@@ -28,6 +28,7 @@ org.apache.tamaya.core.internal.converters.ShortConverter
 org.apache.tamaya.core.internal.converters.BigDecimalConverter
 org.apache.tamaya.core.internal.converters.BigIntegerConverter
 org.apache.tamaya.core.internal.converters.CurrencyConverter
+org.apache.tamaya.core.internal.converters.MonthDayConverter
 org.apache.tamaya.core.internal.converters.NumberConverter
 org.apache.tamaya.core.internal.converters.URIConverter
 org.apache.tamaya.core.internal.converters.URLConverter
@@ -42,3 +43,5 @@ org.apache.tamaya.core.internal.converters.OffsetTimeConverter
 org.apache.tamaya.core.internal.converters.InstantConverter
 org.apache.tamaya.core.internal.converters.OptionalConverter
 org.apache.tamaya.core.internal.converters.SupplierConverter
+org.apache.tamaya.core.internal.converters.YearConverter
+org.apache.tamaya.core.internal.converters.YearMonthConverter

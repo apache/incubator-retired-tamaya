@@ -461,7 +461,7 @@ public interface Configuration {
      * @return the builder, never null.
      */
     static ConfigurationBuilder createConfigurationBuilder(){
-        return ServiceContextManager.getServiceContext(Configuration.class.getClassLoader())
+        return ServiceContextManager.getServiceContext(ServiceContextManager.getDefaultClassLoader())
                 .getService(ConfigurationProviderSpi.class).getConfigurationBuilder();
     }
 

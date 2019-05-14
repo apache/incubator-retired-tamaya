@@ -167,7 +167,7 @@ public class OSGIServiceContext implements ServiceContext{
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource) throws IOException{
+    public Collection<URL> getResources(String resource){
         LOG.finest("TAMAYA  Loading resources: " + resource);
         List<URL> result = new ArrayList<>();
         URL url = osgiServiceLoader.getBundleContext().getBundle()
@@ -191,7 +191,7 @@ public class OSGIServiceContext implements ServiceContext{
                 result.add(url);
             }
         }
-        return Collections.enumeration(result);
+        return result;
     }
 
     @Override

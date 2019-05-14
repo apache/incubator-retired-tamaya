@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.core.internal;
 
+import org.apache.tamaya.spi.ServiceContext;
 import org.osgi.framework.ServiceReference;
 
 import javax.annotation.Priority;
@@ -61,9 +62,11 @@ class OSGIServiceComparator implements Comparator<ServiceReference> {
      */
     public static int getPriority(Class<? extends Object> type) {
         int prio = 1;
-        Priority priority = type.getAnnotation(Priority.class);
-        if (priority != null) {
-            prio = priority.value();
+        if(ServiceContext.PRIORITY_ANNOTATION_AVAILABLE) {
+            Priority priority = type.getAnnotation(Priority.class);
+            if (priority != null) {
+                prio = priority.value();
+            }
         }
         return prio;
     }

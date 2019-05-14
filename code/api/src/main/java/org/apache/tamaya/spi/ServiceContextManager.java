@@ -140,10 +140,15 @@ public final class ServiceContextManager {
     }
 
     /**
-     * Evaluate the default classloader: This class's classloader.
+     * Evaluate the default classloader: This return the current thread context classloader, or this
+     * class's classloader as fallback.
      * @return the classloder, not null.
      */
     public static ClassLoader getDefaultClassLoader() {
-        return ServiceContextManager.class.getClassLoader();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if(cl==null) {
+            cl = ServiceContextManager.class.getClassLoader();
+        }
+        return cl;
     }
 }

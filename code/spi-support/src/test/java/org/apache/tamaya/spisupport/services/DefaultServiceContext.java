@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spisupport.PriorityServiceComparator;
+import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 
 import javax.annotation.Priority;
 import java.io.IOException;
@@ -150,10 +151,12 @@ public final class DefaultServiceContext implements ServiceContext {
      * @return a priority, by default 1.
      */
     public static int getPriority(Object o){
-        int prio = 1; //X TODO discuss default priority
-        Priority priority = o.getClass().getAnnotation(Priority.class);
-        if (priority != null) {
-            prio = priority.value();
+        int prio = 1;
+        if(ServiceContext.PRIORITY_ANNOTATION_AVAILABLE) {
+            Priority priority = o.getClass().getAnnotation(Priority.class);
+            if (priority != null) {
+                prio = priority.value();
+            }
         }
         return prio;
     }
@@ -213,8 +216,18 @@ public final class DefaultServiceContext implements ServiceContext {
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource) throws IOException {
-        return classLoader.getResources(resource);
+    public Collection<URL> getResources(String resource) {
+        List<URL> urls = new ArrayList<>();
+        try {
+            Enumeration<URL> found = getClassLoader().getResources(resource);
+            while (found.hasMoreElements()) {
+                urls.add(found.nextElement());
+            }
+        }catch(Exception e){
+            Logger.getLogger(ServiceContext.class.getName())
+                    .log(Level.FINEST, e, () -> "Failed to lookup resources: " + resource);
+        }
+        return urls;
     }
 
     @Override
