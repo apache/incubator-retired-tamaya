@@ -19,7 +19,6 @@
 package org.apache.tamaya.spi;
 
 import javax.annotation.Priority;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
@@ -169,7 +168,6 @@ public interface ServiceContext extends ClassloaderAware{
      * specific code to load resources, e.g. within OSGI environments.
      * @param resource the resource, not {@code null}.
      * @return the resources found
-     * @throws IOException if load fails.
      */
     default Collection<URL> getResources(String resource){
         List<URL> urls = new ArrayList<>();

@@ -25,7 +25,6 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.PropertySourceChangeSupport;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;

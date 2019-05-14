@@ -20,11 +20,9 @@ package org.apache.tamaya.spi;
 
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Supplier;
 

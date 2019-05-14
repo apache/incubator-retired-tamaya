@@ -22,10 +22,8 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spisupport.PriorityServiceComparator;
-import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 
 import javax.annotation.Priority;
-import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;

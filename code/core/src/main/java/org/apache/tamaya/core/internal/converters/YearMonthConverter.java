@@ -22,7 +22,6 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.osgi.service.component.annotations.Component;
 
-import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Objects;
 import java.util.logging.Level;

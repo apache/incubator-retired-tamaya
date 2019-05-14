@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.spisupport.propertysource;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.PropertySource;
@@ -26,11 +25,8 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
-import static java.lang.String.format;
 
 /**
  * Provider which reads all {@value DEFAULT_SIMPLE_PROPERTIES_FILE_NAME} and

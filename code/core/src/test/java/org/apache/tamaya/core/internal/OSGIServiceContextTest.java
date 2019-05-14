@@ -21,7 +21,6 @@ package org.apache.tamaya.core.internal;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.junit.Test;

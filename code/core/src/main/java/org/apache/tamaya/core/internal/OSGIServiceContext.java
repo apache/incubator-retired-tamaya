@@ -25,7 +25,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;

@@ -136,6 +136,7 @@ public class PropertyValue implements Serializable, Iterable<PropertyValue>{
      * @param config the String based mapProperties, not {@code null}.
      * @param source the source name, not {@code null}.
      * @param metaData additional metadata, not {@code null}.
+     * @param prefix the prefix to add (optional).
      * @return the corresponding createValue based mapProperties.
      */
     public static Map<String, PropertyValue> mapProperties(Map<String, String> config, String source,
