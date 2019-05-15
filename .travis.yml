@@ -1,15 +1,30 @@
 language: java
-jdk:
-  - openjdk8
-  - openjdk9
-  - openjdk10
-  - openjdk11
+dist: trusty
+sudo: required
 
-#before_script:
-#  - pip install --user codecov
+addons:
+  sonarcloud:
+    organization: "apache"
 
-#after_success:
-#  - codecov
+jobs:
+    include:
+        - name: "Java 8"
+          jdk: openjdk8
+          script: mvn clean install
+          after_success: mvn sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya
 
-#addons:
-#  srcclr: true 
+        - name: "Java 9"
+          jdk: openjdk9
+          script: mvn clean install
+
+        - name: "Java 10"
+          jdk: openjdk10
+          script: mvn clean install
+
+        - name: "Java 11"
+          jdk: openjdk11
+          script: mvn clean install
+
+        - name: "Java 12"
+          jdk: openjdk12
+          script: mvn clean install

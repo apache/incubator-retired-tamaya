@@ -30,8 +30,12 @@ $ export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
 $ mvn
 ```
 
-### Travis / CI
+### Travis / CI / badges
 
 Apart from integration into ASF CI there's a travis build:
 
 [![Build Status](https://travis-ci.org/apache/incubator-tamaya.svg?branch=master)](https://travis-ci.org/apache/incubator-tamaya/branches)
+
+Sonarcloud integration:
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=apache_incubator-tamaya&metric=alert_status)](https://sonarcloud.io/dashboard?id=apache_incubator-tamaya)
