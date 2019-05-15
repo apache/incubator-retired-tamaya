@@ -65,7 +65,7 @@
         <jruby.version>1.7.26</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
         <mockito.version>1.10.19</mockito.version>
-        <rat.version>0.12</rat.version>
+        <rat.version>0.13</rat.version>
         <toolchains.plugin>1.1</toolchains.plugin>
         <assertj.version>3.10.0</assertj.version>
 
@@ -354,11 +354,6 @@
                     <version>${assembly.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.2</version>
-                </plugin>
-                <plugin>
                     <groupId>org.pitest</groupId>
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-plugin.version}</version>
@@ -407,13 +402,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>7.8</version>
-                            <exclusions><!-- MCHECKSTYLE-156 -->
-                                <exclusion>
-                                    <groupId>com.sun</groupId>
-                                    <artifactId>tools</artifactId>
-                                </exclusion>
-                            </exclusions>
+                            <version>8.19</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -648,6 +637,37 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                	<groupId>org.eclipse.m2e</groupId>
+                	<artifactId>lifecycle-mapping</artifactId>
+                	<version>1.0.0</version>
+                	<configuration>
+                		<lifecycleMappingMetadata>
+                			<pluginExecutions>
+                				<pluginExecution>
+                					<pluginExecutionFilter>
+                						<groupId>
+                							org.apache.rat
+                						</groupId>
+                						<artifactId>
+                							apache-rat-plugin
+                						</artifactId>
+                						<versionRange>
+                							[0.12,)
+                						</versionRange>
+                						<goals>
+                							<goal>check</goal>
+                						</goals>
+                					</pluginExecutionFilter>
+                					<action>
+                						<ignore></ignore>
+                					</action>
+                				</pluginExecution>
+                			</pluginExecutions>
+                		</lifecycleMappingMetadata>
+                	</configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -666,6 +686,25 @@
                         </fileset>
                     </filesets>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <executions>
+                  <execution>
+                    <goals>
+                      <goal>prepare-agent</goal>
+                    </goals>
+                  </execution>
+                  <execution>
+                    <id>report</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                      <goal>report</goal>
+                    </goals>
+                  </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
