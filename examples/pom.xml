@@ -46,7 +46,6 @@ under the License.
     <modules>
         <module>01-minimal</module>
         <module>02-custom-property-source</module>
-        <module>11-distributed</module>
     </modules>
 
     
