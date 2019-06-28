@@ -109,12 +109,13 @@ public class TypeLiteralTest {
         assertThat("java.lang.String").isEqualTo(t.getTypeName());
     }
 
+    @SuppressWarnings("rawtypes")
     @Test(expected = RuntimeException.class)
     public void testTypeTakingParametersMustNotBeSubclassOfObject() {
-        //Create a class hierarchy where B is a subclass of Object and not
+        // Create a class hierarchy where B is a subclass of Object and not
         // ParameterizedType, but still takes parameters.
         class A<T> { };
-        class B<T> extends A<T> { };
+		class B extends A { };
         TypeLiteral<List<String>> checker = new TypeLiteral<List<String>>() { };
         checker.getDefinedType(B.class);
     }
