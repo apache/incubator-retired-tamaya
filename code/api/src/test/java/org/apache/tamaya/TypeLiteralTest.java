@@ -115,7 +115,7 @@ public class TypeLiteralTest {
         // Create a class hierarchy where B is a subclass of Object and not
         // ParameterizedType, but still takes parameters.
         class A<T> { };
-		class B extends A { };
+        class B extends A { };
         TypeLiteral<List<String>> checker = new TypeLiteral<List<String>>() { };
         checker.getDefinedType(B.class);
     }
