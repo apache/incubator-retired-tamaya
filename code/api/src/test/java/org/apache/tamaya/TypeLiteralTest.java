@@ -114,22 +114,22 @@ public class TypeLiteralTest {
         //Create a class hierarchy where B is a subclass of Object and not
         // ParameterizedType, but still takes parameters.
         class A<T> { };
-        class B extends A { };
+        class B<T> extends A<T> { };
         TypeLiteral<List<String>> checker = new TypeLiteral<List<String>>() { };
         checker.getDefinedType(B.class);
     }
     
     @Test
     public void testHashAndEquals(){
-        TypeLiteral a = TypeLiteral.of(List.class);
-        TypeLiteral b = TypeLiteral.of(List.class);
-        TypeLiteral c = TypeLiteral.of(Map.class);
+        TypeLiteral<List<?>> a = TypeLiteral.of(List.class);
+        TypeLiteral<List<?>> b = TypeLiteral.of(List.class);
+        TypeLiteral<Map<?,?>> c = TypeLiteral.of(Map.class);
         assertThat(b.hashCode()).isEqualTo(a.hashCode());
         assertThat(a.hashCode()).isNotEqualTo(c.hashCode());
         assertThat(a.equals(a)).isTrue();
         assertThat(a.equals(b)).isTrue();
         assertThat(a.equals(null)).isFalse();
-        assertThat(a.equals("SomeString")).isFalse();
+        assertThat("SomeString".equals(a)).isFalse();
         assertThat(a.equals(c)).isFalse();
     }
 
