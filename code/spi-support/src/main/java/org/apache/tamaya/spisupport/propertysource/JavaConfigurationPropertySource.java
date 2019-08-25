@@ -88,6 +88,7 @@ public class JavaConfigurationPropertySource extends BasePropertySource implemen
         for (URL currentUrl:propertyLocations) {
             propertySources.add(new SimplePropertySource(currentUrl));
         }
+        propertySources.sort(PropertySourceComparator.getInstance());
         return propertySources;
     }
 
