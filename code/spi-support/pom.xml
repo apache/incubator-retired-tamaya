@@ -24,7 +24,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya</groupId>
         <artifactId>tamaya-code</artifactId>
-        <version>0.4-incubating-SNAPSHOT</version>
+        <version>0.4-incubating</version>
     </parent>
 
     <artifactId>tamaya-spisupport</artifactId>

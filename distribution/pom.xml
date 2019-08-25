@@ -23,7 +23,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya</groupId>
         <artifactId>tamaya-all</artifactId>
-        <version>0.4-incubating-SNAPSHOT</version>
+        <version>0.4-incubating</version>
     </parent>
 
     <artifactId>tamaya-distribution</artifactId>
