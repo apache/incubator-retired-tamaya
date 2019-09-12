@@ -882,9 +882,6 @@
             <id>distribution</id>
             <activation>
                 <property>
-                    <name>build-dist</name>
-                </property>
-                <property>
                     <name>performRelease</name>
                     <value>true</value>
                 </property>
