@@ -22,7 +22,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya</groupId>
         <artifactId>tamaya-code</artifactId>
-        <version>0.4-incubating</version>
+        <version>0.5-incubating-SNAPSHOT</version>
     </parent>
 
     <artifactId>tamaya-core</artifactId>
@@ -79,7 +79,7 @@ under the License.
                 <artifactId>revapi-maven-plugin</artifactId>
                 <configuration>
                     <oldArtifacts>
-                        <artifact>${project.groupId}:${project.artifactId}:0.3-incubating</artifact>
+                        <artifact>${project.groupId}:${project.artifactId}:0.4-incubating</artifact>
                     </oldArtifacts>
                     <newArtifacts>
                         <artifact>${project.groupId}:${project.artifactId}:${project.version}</artifact>
